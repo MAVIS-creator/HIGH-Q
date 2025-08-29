@@ -20,9 +20,12 @@ admin/
      ├─ csrf.php
      ├─ header.php
      └─ footer.php
-/vendor
-    (Composer dependencies)
-/assets
-    css/
-    js/
-    images/
+public/
+ ├─ index.php
+ ├─ about.php
+ ├─ tutors.php
+ ├─ tutor_profile.php
+ ├─ programs.php
+ ├─ post.php
+ ├─ register.php
+ └─ assets/
