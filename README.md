@@ -20,7 +20,6 @@ admin/
      ├─ csrf.php
      ├─ header.php
      └─ footer.php
-project-root/
 ├─ .env                     # Environment variables (DB creds, API keys, etc.)
 ├─ .gitignore               # Git ignore rules
 ├─ composer.json            # Composer dependencies
