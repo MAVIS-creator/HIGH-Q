@@ -1,6 +1,6 @@
 <?php
 require '../includes/auth.php';
-require '.../db.php';
+require '.../config/db.php';
 
 // Get requested page or default to dashboard
 $page = isset($_GET['page']) ? basename($_GET['page']) : 'dashboard';
