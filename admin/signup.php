@@ -28,8 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
-<!-- Your HTML form here (same as your design) -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
