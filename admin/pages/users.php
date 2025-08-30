@@ -141,6 +141,12 @@ $roleClass = 'role-' . $roleSlug;
         </tr>
         <?php endforeach; ?>
     </table>
+    <span class="role-badge <?= $roleClass; ?>">
+    <?= htmlspecialchars($roleName['name']); ?>
+</span>
+
+<span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
+
 </div>
 
 <?php include '../includes/footer.php'; ?>
