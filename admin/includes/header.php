@@ -6,20 +6,20 @@
 <head>
 <meta charset="UTF-8">
 <title><?= isset($pageTitle) ? $pageTitle : 'Admin Panel'; ?> - HIGH Q SOLID ACADEMY</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <link rel="stylesheet" href="../public/assets/css/admin.css">
 </head>
 <body>
+
 <header class="admin-header">
-    <div class="logo">HIGH Q SOLID ACADEMY</div>
-    <nav>
-        <ul>
-            <li><a href="index.php">Dashboard</a></li>
-            <?php if ($_SESSION['user']['role_slug'] === 'admin'): ?>
-                <li><a href="users.php">Users</a></li>
-                <li><a href="settings.php">Settings</a></li>
-            <?php endif; ?>
-            <li><a href="../logout.php">Logout</a></li>
-        </ul>
-    </nav>
+    <div class="header-left">
+        <!-- Hamburger Menu Button -->
+        <i class='bx bx-menu' id="menuToggle"></i>
+        <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
+    </div>
+    <div class="header-right">
+        <span>Welcome, <?= htmlspecialchars($_SESSION['user']['name']); ?></span>
+    </div>
 </header>
 <main class="admin-main">
