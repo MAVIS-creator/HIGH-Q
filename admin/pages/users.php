@@ -52,7 +52,7 @@ $banned_users  = $pdo->query("SELECT * FROM users WHERE is_active=2")->fetchAll(
 <head>
 <meta charset="UTF-8">
 <title>User Management - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href="../assets/css/admin.css">
+<link rel="stylesheet" href="..public/assets/css/admin.css">
 </head>
 <body>
 
