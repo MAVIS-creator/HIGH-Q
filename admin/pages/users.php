@@ -46,6 +46,7 @@ if (isset($_GET['action'], $_GET['id'])) {
 $pending_users = $pdo->query("SELECT * FROM users WHERE is_active=0")->fetchAll();
 $active_users  = $pdo->query("SELECT * FROM users WHERE is_active=1")->fetchAll();
 $banned_users  = $pdo->query("SELECT * FROM users WHERE is_active=2")->fetchAll();
+
 // Status badge function
 $statusClass = '';
 $statusText  = '';
@@ -60,8 +61,10 @@ if ($u['is_active'] == 0) {
     $statusClass = 'status-banned';
     $statusText  = 'Banned';
 }
+$roleName  = $pdo->query("SELECT name, slug FROM roles WHERE id={$u['role_id']}")->fetch();
+$roleSlug  = strtolower($roleName['slug']);
+$roleClass = 'role-' . $roleSlug;
 ?>
-<span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
 
 <!DOCTYPE html>
 <html lang="en">
