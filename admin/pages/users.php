@@ -47,6 +47,23 @@ $pending_users = $pdo->query("SELECT * FROM users WHERE is_active=0")->fetchAll(
 $active_users  = $pdo->query("SELECT * FROM users WHERE is_active=1")->fetchAll();
 $banned_users  = $pdo->query("SELECT * FROM users WHERE is_active=2")->fetchAll();
 ?>
+<?php
+$statusClass = '';
+$statusText  = '';
+
+if ($u['is_active'] == 0) {
+    $statusClass = 'status-pending';
+    $statusText  = 'Pending';
+} elseif ($u['is_active'] == 1) {
+    $statusClass = 'status-active';
+    $statusText  = 'Active';
+} elseif ($u['is_active'] == 2) {
+    $statusClass = 'status-banned';
+    $statusText  = 'Banned';
+}
+?>
+<span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
