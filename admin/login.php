@@ -43,21 +43,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <title>Admin Login - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href="../public/assets/css/theme.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    :root {
+        --primary-red: #d62828;
+        --accent-yellow: #fcbf49;
+        --dark-black: #000000;
+        --pure-white: #ffffff;
+    }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, var(--accent-yellow), var(--primary-red));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+    .login-card {
+        background: var(--pure-white);
+        padding: 2rem;
+        border-radius: 10px;
+        width: 350px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+    .login-card h2 {
+        color: var(--primary-red);
+        margin-bottom: 0.5rem;
+    }
+    .login-card p {
+        color: var(--dark-black);
+        margin-bottom: 1.5rem;
+    }
+    label {
+        display: block;
+        text-align: left;
+        font-weight: bold;
+        margin-top: 1rem;
+        color: var(--dark-black);
+    }
+    input {
+        width: 100%;
+        padding: 0.6rem;
+        margin-top: 0.3rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    button {
+        background: var(--primary-red);
+        color: var(--pure-white);
+        border: none;
+        padding: 0.8rem;
+        width: 100%;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 1.5rem;
+    }
+    button:hover {
+        background: var(--accent-yellow);
+        color: var(--dark-black);
+    }
+    .error {
+        background: #ffdddd;
+        color: var(--primary-red);
+        padding: 0.5rem;
+        border-left: 4px solid var(--primary-red);
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+    .footer {
+        margin-top: 1.5rem;
+        font-size: 0.8rem;
+        color: #555;
+    }
+</style>
 </head>
 <body>
+
 <div class="login-card">
-    <h2>Sign In</h2>
+    <img src="../public/assets/images/logo.png" alt="Academy Logo" style="width:60px; margin-bottom:1rem;">
+    <h2>Admin Panel Access</h2>
+    <p>Always Ahead of Others</p>
+
     <?php if ($error): ?>
         <div class="error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
+
     <form method="POST">
         <label>Email</label>
-        <input type="email" name="email" required>
+        <input type="email" name="email" placeholder="you@example.com" required>
+
         <label>Password</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" placeholder="********" required>
+
         <button type="submit">Sign In</button>
     </form>
+
+    <div class="footer">
+        © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
+    </div>
 </div>
+
 </body>
 </html>
