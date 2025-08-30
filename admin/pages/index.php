@@ -1,14 +1,37 @@
 <?php
-require_once __DIR__ . "/../includes/auth.php";
-requireLogin();
+require '../includes/auth.php';
+require '.../db.php';
 
-echo "<h1>Welcome, " . $_SESSION['user']['name'] . " (" . $_SESSION['user']['role_name'] . ")</h1>";
+// Get requested page or default to dashboard
+$page = isset($_GET['page']) ? basename($_GET['page']) : 'dashboard';
 
-if (userRole() === 'admin') {
-    echo "<a href='users.php'>Manage Users</a><br>";
-    echo "<a href='roles.php'>Manage Roles</a><br>";
+// Whitelist allowed pages
+$allowed_pages = [
+    'dashboard' => ['admin','sub-admin','moderator'],
+    'users'     => ['admin'],
+    'roles'     => ['admin'],
+    'courses'   => ['admin','sub-admin'],
+    'tutors'    => ['admin','sub-admin'],
+    'students'  => ['admin','sub-admin'],
+    'payments'  => ['admin','sub-admin'],
+    'posts'     => ['admin','sub-admin','moderator'],
+    'comments'  => ['admin','sub-admin','moderator'],
+    'chat'      => ['admin','sub-admin','moderator'],
+    'settings'  => ['admin']
+];
+
+// Security: if page not allowed or role not permitted, fallback to dashboard
+if (!array_key_exists($page, $allowed_pages) || 
+    !in_array($_SESSION['user']['role_slug'], $allowed_pages[$page])) {
+    $page = 'dashboard';
 }
 
-echo "<a href='courses.php'>Manage Courses</a><br>";
-echo "<a href='posts.php'>Manage Posts</a><br>";
-echo "<a href='../logout.php'>Logout</a>";
+$pageTitle = ucfirst($page);
+
+include '../includes/header.php';
+include '../includes/sidebar.php';
+
+// Include the requested page
+include __DIR__ . "/{$page}.php";
+
+include '../includes/footer.php';
