@@ -430,3 +430,198 @@ tr:hover { background:#fff8e1; }
   .profile-grid { grid-template-columns:1fr; }
   .container { margin-left:0 !important; }
 }
+/* Users toolbar (search area) */
+.container form[action="index.php"] {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.container form[action="index.php"] input[type="text"] {
+    flex: 1;
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+.container form[action="index.php"] button {
+    background: var(--primary-red);
+    color: var(--pure-white);
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.container form[action="index.php"] button:hover {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+
+/* Action buttons */
+.btn-view {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-left: 0.4rem;
+}
+.btn-view:hover {
+    filter: brightness(0.95);
+}
+.btn-approve,
+.btn-banish {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.btn-approve {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+.btn-approve:hover {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+.btn-banish {
+    background: var(--dark-black);
+    color: var(--pure-white);
+}
+.btn-banish:hover {
+    background: var(--primary-red);
+}
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 0.3rem;
+}
+.status-pending { background: var(--accent-yellow); color: var(--dark-black); }
+.status-active  { background: #28a745; color: var(--pure-white); }
+.status-banned  { background: var(--primary-red); color: var(--pure-white); }
+
+/* Role badges */
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.role-admin     { background: var(--primary-red); color: var(--pure-white); }
+.role-sub-admin { background: var(--dark-black); color: var(--pure-white); }
+.role-moderator { background: var(--accent-yellow); color: var(--dark-black); }
+.role-student   { background: #6c757d; color: var(--pure-white); }
+/* Modal overlay */
+#modalOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1200;
+}
+#modalOverlay.open { display: block; }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+    align-items: center;
+    justify-content: center;
+}
+.modal.open { display: flex; }
+.modal-content {
+    width: 520px;
+    max-width: 92%;
+    background: var(--pure-white);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    padding: 1.2rem;
+    position: relative;
+    animation: popIn 0.2s ease;
+}
+.modal-close {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    font-size: 1.6rem;
+    color: var(--dark-black);
+    cursor: pointer;
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.profile-header img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--accent-yellow);
+}
+.profile-header h3 {
+    margin: 0;
+    color: var(--primary-red);
+}
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 1rem;
+}
+.profile-grid .label {
+    font-weight: 600;
+    color: #444;
+    display: inline-block;
+    min-width: 90px;
+}
+@keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: var(--pure-white);
+    border-radius: 8px;
+    overflow: hidden;
+}
+table th, table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+table th {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+    font-weight: bold;
+}
+table tr:hover {
+    background: #fff8e1;
+}
+
+/* Responsive tables: keep simple, no full stack to maintain actions/buttons usability */
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    .container form[action="index.php"] {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
