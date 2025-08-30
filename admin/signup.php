@@ -1,4 +1,4 @@
-
+<?php
 require '../includes/db.php';
 require '../includes/csrf.php';
 
@@ -25,3 +25,4 @@ sendEmail($email, "Account Pending Approval", "
 // Redirect to a styled "Pending Approval" page
 header("Location: pending.php");
 exit;
+?>
