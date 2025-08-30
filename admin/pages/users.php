@@ -1,6 +1,7 @@
 <?php
 require '../includes/auth.php'; // checks login + role
 require '../includes/db.php';
+require '../includes/functions.php'; // sendEmail()
 
 // Only allow Admins and Sub‑Admins
 if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
@@ -18,7 +19,6 @@ if (isset($_GET['action'], $_GET['id'])) {
         $stmt = $pdo->prepare("UPDATE users SET is_active=1, role_id=? WHERE id=?");
         $stmt->execute([$role_id, $id]);
 
-        // Send approval email
         $user = $pdo->query("SELECT name,email FROM users WHERE id=$id")->fetch();
         sendEmail($user['email'], "Account Approved", "
             Hi {$user['name']},<br><br>
@@ -47,31 +47,26 @@ $pending_users = $pdo->query("SELECT * FROM users WHERE is_active=0")->fetchAll(
 $active_users  = $pdo->query("SELECT * FROM users WHERE is_active=1")->fetchAll();
 $banned_users  = $pdo->query("SELECT * FROM users WHERE is_active=2")->fetchAll();
 
-// Status badge function
-$statusClass = '';
-$statusText  = '';
-
-if ($u['is_active'] == 0) {
-    $statusClass = 'status-pending';
-    $statusText  = 'Pending';
-} elseif ($u['is_active'] == 1) {
-    $statusClass = 'status-active';
-    $statusText  = 'Active';
-} elseif ($u['is_active'] == 2) {
-    $statusClass = 'status-banned';
-    $statusText  = 'Banned';
+// Helper to get badges
+function getStatusBadge($status) {
+    switch ($status) {
+        case 0: return ['status-pending', 'Pending'];
+        case 1: return ['status-active', 'Active'];
+        case 2: return ['status-banned', 'Banned'];
+    }
 }
-$roleName  = $pdo->query("SELECT name, slug FROM roles WHERE id={$u['role_id']}")->fetch();
-$roleSlug  = strtolower($roleName['slug']);
-$roleClass = 'role-' . $roleSlug;
+function getRoleBadge($pdo, $role_id) {
+    if (!$role_id) return ['role-student', 'Student'];
+    $role = $pdo->query("SELECT name, slug FROM roles WHERE id={$role_id}")->fetch();
+    return ['role-' . strtolower($role['slug']), $role['name']];
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>User Management - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href="..public/assets/css/admin.css">
+<link rel="stylesheet" href="../public/assets/css/admin.css">
 </head>
 <body>
 
@@ -111,19 +106,18 @@ $roleClass = 'role-' . $roleSlug;
     <h2>Active Users</h2>
     <table>
         <tr>
-            <th>Name</th><th>Email</th><th>Role</th><th>Status</th>
+            <th>Name</th><th>Email</th><th>Role & Status</th>
         </tr>
         <?php foreach ($active_users as $u): ?>
+        <?php list($statusClass, $statusText) = getStatusBadge($u['is_active']); ?>
+        <?php list($roleClass, $roleText) = getRoleBadge($pdo, $u['role_id']); ?>
         <tr>
             <td><?= htmlspecialchars($u['name']) ?></td>
             <td><?= htmlspecialchars($u['email']) ?></td>
             <td>
-                <?php
-                $role = $pdo->query("SELECT name FROM roles WHERE id={$u['role_id']}")->fetchColumn();
-                echo htmlspecialchars($role);
-                ?>
+                <span class="role-badge <?= $roleClass; ?>"><?= htmlspecialchars($roleText); ?></span>
+                <span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
             </td>
-            <td>Active</td>
         </tr>
         <?php endforeach; ?>
     </table>
@@ -131,22 +125,21 @@ $roleClass = 'role-' . $roleSlug;
     <h2>Banned Users</h2>
     <table>
         <tr>
-            <th>Name</th><th>Email</th><th>Status</th>
+            <th>Name</th><th>Email</th><th>Role & Status</th>
         </tr>
         <?php foreach ($banned_users as $u): ?>
+        <?php list($statusClass, $statusText) = getStatusBadge($u['is_active']); ?>
+        <?php list($roleClass, $roleText) = getRoleBadge($pdo, $u['role_id']); ?>
         <tr>
             <td><?= htmlspecialchars($u['name']) ?></td>
             <td><?= htmlspecialchars($u['email']) ?></td>
-            <td>Banned</td>
+            <td>
+                <span class="role-badge <?= $roleClass; ?>"><?= htmlspecialchars($roleText); ?></span>
+                <span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
+            </td>
         </tr>
         <?php endforeach; ?>
     </table>
-    <span class="role-badge <?= $roleClass; ?>">
-    <?= htmlspecialchars($roleName['name']); ?>
-</span>
-
-<span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
-
 </div>
 
 <?php include '../includes/footer.php'; ?>
