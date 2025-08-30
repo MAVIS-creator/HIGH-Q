@@ -1,42 +1,35 @@
 <?php
 require '../includes/db.php';
-require '../includes/csrf.php';
-require '../includes/functions.php'; // sendEmail() helper
-
-$errors = [];
+require '../includes/functions.php'; // sendEmail()
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['name']);
     $phone    = trim($_POST['phone']);
     $email    = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    if (!$name || !$email || !$password) {
-        $errors[] = "All fields are required.";
-    }
+    // Insert as pending
+    $stmt = $pdo->prepare("
+        INSERT INTO users (role_id, name, email, password, is_active)
+        VALUES (NULL, ?, ?, ?, 0)
+    ");
+    $stmt->execute([$name, $email, $password]);
 
-    if (empty($errors)) {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+    // Send pending approval email
+    sendEmail($email, "Account Pending Approval", "
+        Hi $name,<br><br>
+        Thanks for registering with HIGH Q SOLID ACADEMY.<br>
+        Your account is pending admin approval.<br>
+        You’ll receive another email when approved.
+    ");
 
-        $stmt = $pdo->prepare("
-            INSERT INTO users (role_id, name, email, password, is_active)
-            VALUES (NULL, ?, ?, ?, 0)
-        ");
-        $stmt->execute([$name, $email, $hash]);
-
-        // Send pending approval email
-        sendEmail($email, "Account Pending Approval", "
-            Hi $name,<br><br>
-            Thanks for registering with HIGH Q SOLID ACADEMY.<br>
-            Your account is pending admin approval.<br>
-            You’ll receive another email when approved.
-        ");
-
-        header("Location: pending.php");
-        exit;
-    }
+    // Redirect to pending page
+    header("Location: pending.php");
+    exit;
 }
 ?>
+<!-- Your HTML form here (same as your design) -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
