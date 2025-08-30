@@ -30,7 +30,6 @@ closeBtn.addEventListener('click', closeSidebar);
 
 // Optional: open sidebar from a menu button in header
 document.getElementById('menuToggle')?.addEventListener('click', openSidebar);
-<script>
 const menuToggle = document.getElementById('menuToggle');
 
 menuToggle.addEventListener('click', () => {
