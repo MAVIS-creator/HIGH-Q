@@ -2,25 +2,14 @@
 // admin/includes/auth.php
 session_start();
 
-function isLoggedIn() {
-    return isset($_SESSION['user']);
+if (!isset($_SESSION['user'])) {
+    header("Location: ../login.php");
+    exit;
 }
 
-function requireLogin() {
-    if (!isLoggedIn()) {
-        header("Location: /admin/login.php");
-        exit;
-    }
-}
-
-function userRole() {
-    return $_SESSION['user']['role_slug'] ?? null;
-}
-
-// Restrict by role
 function requireRole($roles = []) {
-    if (!isLoggedIn() || !in_array(userRole(), $roles)) {
-        header("Location: /admin/pages/index.php?error=unauthorized");
+    if (!in_array($_SESSION['user']['role_slug'], $roles)) {
+        header("Location: index.php");
         exit;
     }
 }
