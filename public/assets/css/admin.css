@@ -625,3 +625,4 @@ table tr:hover {
         align-items: stretch;
     }
 }
+.sidebar-nav a.active { background: var(--primary-red); color: var(--pure-white); }
