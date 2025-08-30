@@ -46,8 +46,7 @@ if (isset($_GET['action'], $_GET['id'])) {
 $pending_users = $pdo->query("SELECT * FROM users WHERE is_active=0")->fetchAll();
 $active_users  = $pdo->query("SELECT * FROM users WHERE is_active=1")->fetchAll();
 $banned_users  = $pdo->query("SELECT * FROM users WHERE is_active=2")->fetchAll();
-?>
-<?php
+// Status badge function
 $statusClass = '';
 $statusText  = '';
 
