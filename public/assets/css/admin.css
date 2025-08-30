@@ -257,3 +257,42 @@ select {
 #sidebarOverlay.active {
     display: block;
 }
+.admin-header {
+    height: 60px;
+    background: var(--dark-black);
+    color: var(--pure-white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+#menuToggle {
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--accent-yellow);
+}
+.header-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.header-right {
+    font-size: 0.9rem;
+}
+.admin-main {
+    margin-top: 60px; /* Push content below header */
+    margin-left: 240px; /* Default sidebar width */
+    transition: margin-left 0.3s ease;
+}
+.admin-sidebar:not(.active) ~ .admin-main {
+    margin-left: 0;
+}
