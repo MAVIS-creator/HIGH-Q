@@ -296,3 +296,56 @@ select {
 .admin-sidebar:not(.active) ~ .admin-main {
     margin-left: 0;
 }
+.dashboard {
+    padding: 1rem;
+}
+.dashboard h1 {
+    color: var(--primary-red);
+    margin-bottom: 0.2rem;
+}
+.role-label {
+    color: var(--dark-black);
+    margin-bottom: 1.5rem;
+}
+.dashboard-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+.widget-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    color: var(--pure-white);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.widget-card i {
+    font-size: 2.5rem;
+}
+.widget-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+.widget-card p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+.widget-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* Color Variants */
+.widget-card.red {
+    background: var(--primary-red);
+}
+.widget-card.yellow {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+.widget-card.black {
+    background: var(--dark-black);
+}
