@@ -80,7 +80,7 @@
         You will receive an email once your account has been approved.<br>
         Please check your inbox (and spam folder) for updates.
     </p>
-    <a href="landing.php" class="btn-home">Return to Home</a>
+    <a href="index.php" class="btn-home">Return to Home</a>
 </div>
 
 </body>
