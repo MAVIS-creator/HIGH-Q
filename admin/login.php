@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
 
             $userModel->updateLastLogin($user['id']);
-            header("Location: /admin/index.php");
+            header("Location: /admin/pages/index.php");
             exit;
         }
     } else {
