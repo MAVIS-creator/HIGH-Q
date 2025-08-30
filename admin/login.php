@@ -1,36 +1,36 @@
 <?php
-require_once __DIR__ . "/../config/db.php";
-require_once __DIR__ . "/../src/Models/User.php";
-
 session_start();
-$userModel = new User($pdo);
-$error = "";
+require '../includes/db.php';
+require '../includes/functions.php'; // sendEmail(), etc.
+
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
+    $email    = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
-    $user = $userModel->findByEmail($email);
+    $stmt = $pdo->prepare("SELECT u.*, r.slug AS role_slug, r.name AS role_name 
+                           FROM users u 
+                           LEFT JOIN roles r ON u.role_id = r.id 
+                           WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
         if ($user['is_active'] == 0) {
-            $error = "Account is inactive. Contact Admin.";
+            $error = "Your account is pending approval.";
+        } elseif ($user['is_active'] == 2) {
+            $error = "Your account has been banned.";
         } else {
-            // Fetch role name/slug
-            $stmt = $pdo->prepare("SELECT * FROM roles WHERE id = ?");
-            $stmt->execute([$user['role_id']]);
-            $role = $stmt->fetch();
-
             $_SESSION['user'] = [
-                "id" => $user['id'],
-                "name" => $user['name'],
-                "email" => $user['email'],
-                "role_slug" => $role['slug'],
-                "role_name" => $role['name']
+                'id'        => $user['id'],
+                'name'      => $user['name'],
+                'email'     => $user['email'],
+                'role_id'   => $user['role_id'],
+                'role_slug' => $user['role_slug'],
+                'role_name' => $user['role_name']
             ];
-
-            $userModel->updateLastLogin($user['id']);
-            header("Location: /admin/pages/index.php");
+            header("Location: pages/index.php");
             exit;
         }
     } else {
@@ -39,22 +39,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login</title>
-    <link rel="stylesheet" href="../public/assets/css/style.css">
+<meta charset="UTF-8">
+<title>Admin Login - HIGH Q SOLID ACADEMY</title>
+<link rel="stylesheet" href="../public/assets/css/theme.css">
 </head>
 <body>
-    <div class="login-box">
-        <h2>Admin Login</h2>
-        <?php if ($error): ?>
-            <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-        <?php endif; ?>
-        <form method="POST">
-            <input type="email" name="email" placeholder="Email" required><br><br>
-            <input type="password" name="password" placeholder="Password" required><br><br>
-            <button type="submit">Login</button>
-        </form>
-    </div>
+<div class="login-card">
+    <h2>Sign In</h2>
+    <?php if ($error): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+    <form method="POST">
+        <label>Email</label>
+        <input type="email" name="email" required>
+        <label>Password</label>
+        <input type="password" name="password" required>
+        <button type="submit">Sign In</button>
+    </form>
+</div>
 </body>
 </html>
