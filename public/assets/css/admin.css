@@ -626,3 +626,55 @@ table tr:hover {
     }
 }
 .sidebar-nav a.active { background: var(--primary-red); color: var(--pure-white); }
+/* Roles table */
+.roles-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: var(--pure-white);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.roles-table th, .roles-table td {
+  padding: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+.roles-table th {
+  background: var(--accent-yellow);
+  color: var(--dark-black);
+  font-weight: bold;
+}
+.roles-table tr:hover {
+  background: #fff8e1;
+}
+
+/* Buttons */
+.btn-editRole {
+  background: #4e73df;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.btn-editRole:hover {
+  filter: brightness(0.95);
+}
+
+/* Reuse existing .btn-approve and .btn-banish */
+
+/* Modal */
+.modal { display: none; position: fixed; inset: 0; align-items: center; justify-content: center; z-index: 1200; }
+.modal.open { display: flex; }
+.modal-content { background: var(--pure-white); border-radius: 10px; width: 400px; max-width: 95%; padding: 1.2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; }
+.modal-close { position: absolute; right: 12px; top: 10px; font-size: 1.6rem; cursor: pointer; color: var(--dark-black); }
+.form-row { margin-bottom: 0.8rem; display: flex; flex-direction: column; }
+.form-row label { font-weight: 600; margin-bottom: 0.3rem; }
+.form-row input { padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; }
+.form-actions { text-align: right; }
+
+/* Overlay */
+#modalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1100; }
+#modalOverlay.open { display: block; }
