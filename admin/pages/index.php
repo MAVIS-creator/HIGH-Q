@@ -1,5 +1,5 @@
 <?php
-require '../includes/auth.php';
+require './includes/auth.php';
 require '.../config/db.php';
 
 // Get requested page or default to dashboard
