@@ -1,6 +1,8 @@
 admin/
  ├─ login.php
  ├─ logout.php
+ ___signup.php
+ ___
  ├─ pages/
  ├  ├─ index.php           -- dashboard (role-aware)
  ├  ├─ users.php           -- list/create/edit (admins only)
