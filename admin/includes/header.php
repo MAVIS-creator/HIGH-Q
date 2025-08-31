@@ -20,6 +20,10 @@
     </div>
     <div class="header-right">
         <span>Welcome, <?= htmlspecialchars($_SESSION['user']['name']); ?></span>
+        <div class="header-avatar">
+            <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
+        </div>
     </div>
 </header>
+
 <main class="admin-main">
