@@ -120,8 +120,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
 
 <div class="container" style="margin-left:240px;">
   <h1>Roles Management</h1>
