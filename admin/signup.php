@@ -1,103 +1,187 @@
 <?php
+session_start();
 require './includes/db.php';
-require './includes/db.php'; // sendEmail()
+require './includes/functions.php'; // contains sendEmail()
+require './includes/csrf.php';
+require __DIR__ . '/../vendor/autoload.php';
+
+$errors = [];
+$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name     = trim($_POST['name']);
-    $phone    = trim($_POST['phone']);
-    $email    = trim($_POST['email']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $token    = $_POST['_csrf_token'] ?? '';
+    $name     = trim($_POST['name'] ?? '');
+    $phone    = trim($_POST['phone'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    // Insert as pending
-    $stmt = $pdo->prepare("
-        INSERT INTO users (role_id, name, email, password, is_active)
-        VALUES (NULL, ?, ?, ?, 0)
-    ");
-    $stmt->execute([$name, $email, $password]);
+    // CSRF check
+    if (!verifyToken('signup_form', $token)) {
+        $errors[] = "Invalid CSRF token. Please refresh and try again.";
+    }
 
-    // Send pending approval email
-    sendEmail($email, "Account Pending Approval", "
-        Hi $name,<br><br>
-        Thanks for registering with HIGH Q SOLID ACADEMY.<br>
-        Your account is pending admin approval.<br>
-        You’ll receive another email when approved.
-    ");
+    // Basic validation
+    if (!$name || !$email || !$password) {
+        $errors[] = "Name, Email, and Password are required.";
+    }
 
-    // Redirect to pending page
-    header("Location: pending.php");
-    exit;
+    // Email format check
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email address.";
+    }
+
+    // Check if email already exists
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        $errors[] = "Email already registered.";
+    }
+
+    if (empty($errors)) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // Check if this is the first admin
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role_id = 1");
+        $stmt->execute();
+        $adminCount = $stmt->fetchColumn();
+
+        if ($adminCount == 0) {
+            // First user → Main Admin
+            $role_id   = 1; // Main Admin
+            $is_active = 1; // Active immediately
+        } else {
+            // Other users → Pending approval
+            $role_id   = NULL;
+            $is_active = 0;
+        }
+
+        // Insert user
+        $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, is_active)
+                               VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $is_active]);
+
+        // Send email notification
+        if ($is_active) {
+            $subject = "Welcome to HIGH Q SOLID ACADEMY";
+            $html = "<p>Hello $name,</p>
+                     <p>Your account has been created with Main Admin privileges.</p>
+                     <p>You can now log in to the admin panel.</p>";
+        } else {
+            $subject = "Account Pending Approval";
+            $html = "<p>Hello $name,</p>
+                     <p>Thanks for registering with HIGH Q SOLID ACADEMY.</p>
+                     <p>Your account is pending admin approval. You’ll receive an email when approved.</p>";
+        }
+
+        sendEmail($email, $subject, $html);
+
+        $success = $is_active
+            ? "Account created successfully! You can now log in."
+            : "Account created successfully! Pending admin approval.";
+    }
 }
+
+// Generate CSRF token
+$csrfToken = generateToken('signup_form');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Sign Up - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href="../public/assets/css/theme.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #fcbf49, #d62828);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-    }
-    .signup-card {
-        background: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        width: 350px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-    h2 {
-        color: #d62828;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-    label {
-        font-weight: bold;
-        color: #000;
-    }
-    input {
-        width: 100%;
-        padding: 0.6rem;
-        margin: 0.4rem 0 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    button {
-        background: #d62828;
-        color: #fff;
-        border: none;
-        padding: 0.8rem;
-        width: 100%;
-        font-size: 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    button:hover {
-        background: #fcbf49;
-        color: #000;
-    }
-    .error {
-        background: #ffdddd;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-        border-left: 4px solid #d62828;
-    }
+:root {
+    --hq-yellow: #ffd600;
+    --hq-yellow-light: #ffe566;
+    --hq-red: #ff4b2b;
+    --hq-black: #0a0a0a;
+    --hq-gray: #f3f4f6;
+    --max-width: 960px;
+    --card-width: 760px;
+    --radius: 12px;
+}
+body {
+    margin: 0;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(135deg, var(--hq-yellow), var(--hq-red));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 18px;
+    height: 100vh;
+}
+.signup-card {
+    background: var(--hq-gray);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 350px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+.signup-card h2 {
+    color: var(--hq-red);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+label {
+    display: block;
+    font-weight: 600;
+    margin-top: 1rem;
+    color: var(--hq-black);
+}
+input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+button {
+    background: var(--hq-red);
+    color: var(--hq-gray);
+    border: none;
+    padding: 0.8rem;
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1.5rem;
+}
+button:hover {
+    background: var(--hq-yellow);
+    color: var(--hq-black);
+}
+.error {
+    background: #ffdddd;
+    color: var(--hq-red);
+    padding: 0.5rem;
+    border-left: 4px solid var(--hq-red);
+    margin-bottom: 1rem;
+}
+.success {
+    background: #ddffdd;
+    color: green;
+    padding: 0.5rem;
+    border-left: 4px solid green;
+    margin-bottom: 1rem;
+}
 </style>
 </head>
 <body>
-
 <div class="signup-card">
     <h2>Create Account</h2>
+
     <?php if (!empty($errors)): ?>
         <div class="error">
             <?php foreach ($errors as $err) echo "<p>$err</p>"; ?>
         </div>
+    <?php elseif ($success): ?>
+        <div class="success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
+
     <form method="POST">
+        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+
         <label>Name</label>
         <input type="text" name="name" placeholder="John Doe" required>
 
@@ -108,11 +192,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="email" name="email" placeholder="you@example.com" required>
 
         <label>Password</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" placeholder="********" required>
 
         <button type="submit">Create Account</button>
     </form>
-</div>
 
+    <p style="margin-top: 1rem; text-align:center;">
+        <a href="login.php">Already have an account? Log in</a>
+    </p>
+</div>
 </body>
 </html>
