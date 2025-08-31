@@ -193,13 +193,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </div>
 
 <!-- Role Modal -->
+<!-- Role Modal -->
 <div class="modal" id="roleModal">
   <div class="modal-content">
     <span class="modal-close" id="roleModalClose"><i class='bx bx-x'></i></span>
     <h3 id="roleModalTitle">New Role</h3>
 
     <form id="roleForm" method="post">
-      <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+      <!-- CSRF token -->
+      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+
       <div class="form-row">
         <label>Name</label>
         <input type="text" name="name" id="roleName" required>
@@ -217,7 +220,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div id="menusContainer">
           <?php foreach ($allMenus as $slug => $label): ?>
             <label>
-              <input type="checkbox" name="menus[]" value="<?= $slug ?>"> <?= $label ?>
+              <input type="checkbox" name="menus[]" value="<?= htmlspecialchars($slug) ?>"> <?= htmlspecialchars($label) ?>
             </label><br>
           <?php endforeach; ?>
         </div>
@@ -229,8 +232,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   </div>
 </div>
 <div id="modalOverlay"></div>
-
-<?php include '../includes/footer.php'; ?>
 
 <script>
 const roleModal    = document.getElementById('roleModal');
