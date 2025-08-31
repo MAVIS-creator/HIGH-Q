@@ -14,21 +14,24 @@
 
 <body>
 
-    <header class="admin-header">
-        <div class="header-left">
-            <!-- Hamburger Menu Button -->
-            <i class='bx bx-menu' id="menuToggle"></i>
-            <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
+   <?php
+// admin/includes/header.php
+?>
+<header class="admin-header">
+    <div class="header-left">
+        <!-- Hamburger Menu Button -->
+        <i class='bx bx-menu' id="menuToggle"></i>
+        <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
+    </div>
+    <div class="header-right">
+        <span>Welcome, <?= htmlspecialchars($_SESSION['user']['name']); ?></span>
+        <div class="header-avatar">
+            <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
         </div>
-        <div class="header-right">
-            <span>Welcome, <?= htmlspecialchars($_SESSION['user']['name']); ?></span>
-            <div class="header-avatar">
-                <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
-            </div>
-        </div>
-    </header>
+    </div>
+</header>
+<main class="admin-main">
 
-    <main class="admin-main">
         <script>
             const menuToggle = document.getElementById('menuToggle');
             const sidebar = document.querySelector('.admin-sidebar');
