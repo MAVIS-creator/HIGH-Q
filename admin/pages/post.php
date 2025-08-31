@@ -369,4 +369,51 @@ $posts = $stmt->fetchAll();
       });
     });
   });
-  </script>
+<script>
+const overlay      = document.getElementById('modalOverlay');
+const editModal    = document.getElementById('editPostModal');
+const editContent  = document.getElementById('editPostModalContent');
+
+// Open modal and load form
+document.querySelectorAll('.edit-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const id = link.dataset.id;
+    fetch(`post_edit.php?id=${id}`)
+      .then(res => res.text())
+      .then(html => {
+        editContent.innerHTML = html;
+        overlay.classList.add('open');
+        editModal.classList.add('open');
+        bindAjaxForm(); // bind submit after content loads
+      });
+  });
+});
+
+// Close modal
+overlay.addEventListener('click', closeEditModal);
+function closeEditModal() {
+  overlay.classList.remove('open');
+  editModal.classList.remove('open');
+}
+
+// Bind AJAX submit
+function bindAjaxForm() {
+  const form = document.getElementById('ajaxEditPostForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch(`index.php?page=posts&action=edit&id=${formData.get('id')}`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.text())
+    .then(() => {
+      closeEditModal();
+      // Optionally refresh just the row or reload page
+      location.reload();
+    });
+  });
+}
+</script>
+
