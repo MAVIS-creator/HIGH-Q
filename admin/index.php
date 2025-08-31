@@ -75,9 +75,11 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
         }
 
+
         .logo-circle i {
             color: var(--hq-yellow);
-            font-size: 34px;
+            font-size: 28px;
+            /* smaller so it fits perfectly */
         }
 
         .site-title {
