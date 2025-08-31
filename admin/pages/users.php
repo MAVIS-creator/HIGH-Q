@@ -4,7 +4,7 @@
 require './includes/auth.php';
 require './includes/db.php';
 require './includes/functions.php';
-require './includes/csrf.php';
+require '../includes/csrf.php';
 
 // Only Admins & Sub-Admins
 if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
