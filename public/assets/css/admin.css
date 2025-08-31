@@ -859,3 +859,163 @@ table tr:hover {
   text-align: right;
   margin-top: 1rem;
 }
+/*----------------------------------------------------------------------
+  Posts Management Styles
+----------------------------------------------------------------------*/
+
+/* Module Header */
+.module-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.module-header .subtitle {
+  color: #666;
+  margin-top: 0.25rem;
+}
+.module-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.search-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Table */
+.posts-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+.posts-table th,
+.posts-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  vertical-align: middle;
+}
+.posts-table th {
+  background: var(--accent-yellow);
+  color: var(--dark-black);
+  font-weight: bold;
+}
+.posts-table .thumb {
+  width: 60px; height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* No Data */
+.no-data {
+  text-align: center;
+  margin: 2rem 0;
+  color: #666;
+}
+
+/* Buttons in Table */
+.btn-editPost,
+.btn-approve,
+.btn-banish {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 0.3rem;
+}
+.btn-editPost {
+  background: #4e73df;
+  color: #fff;
+}
+.btn-approve {
+  background: var(--primary-red);
+  color: #fff;
+}
+.btn-banish {
+  background: var(--dark-black);
+  color: #fff;
+}
+.btn-approve:hover,
+.btn-banish:hover,
+.btn-editPost:hover {
+  filter: brightness(0.9);
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.status-active  { background: var(--success-green); color: var(--pure-white); }
+.status-pending { background: var(--accent-yellow); color: var(--dark-black); }
+
+/* Modal Overlay */
+#modalOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1200;
+}
+#modalOverlay.open { display: block; }
+
+/* Modal Base */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  align-items: center;
+  justify-content: center;
+}
+.modal.open { display: flex; }
+.modal-content {
+  background: #fff;
+  width: 600px; max-width: 95%;
+  padding: 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-close {
+  position: absolute; top:10px; right:12px;
+  font-size:1.6rem; cursor:pointer;
+}
+
+/* Form Layout */
+.form-row {
+  margin-bottom: 0.8rem;
+  display: flex; flex-direction: column;
+}
+.form-row label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.form-row input,
+.form-row textarea,
+.form-row select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.form-actions {
+  text-align: right;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .module-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+  .posts-table th, .posts-table td { padding: 0.6rem; font-size: 0.9rem; }
+  .modal-content { width: 90%; }
+}
