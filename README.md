@@ -2,7 +2,7 @@ admin/
  ├─ login.php
  ├─ logout.php
  ___signup.php
- ___
+ ___index.php
  ├─ pages/
  ├  ├─ index.php           -- dashboard (role-aware)
  ├  ├─ users.php           -- list/create/edit (admins only)
