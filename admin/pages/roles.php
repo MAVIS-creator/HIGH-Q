@@ -12,6 +12,21 @@ $csrf   = generateToken();
 $errors = [];
 $flash  = [];
 
+// Define all menu items (matches sidebar.php)
+$allMenus = [
+    'dashboard' => 'Dashboard',
+    'users'     => 'Manage Users',
+    'roles'     => 'Roles',
+    'settings'  => 'Site Settings',
+    'courses'   => 'Courses',
+    'tutors'    => 'Tutors',
+    'students'  => 'Students',
+    'payments'  => 'Payments',
+    'posts'     => 'News / Blog',
+    'comments'  => 'Comments',
+    'chat'      => 'Chat Support',
+];
+
 // Handle POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     if (!verifyToken($_POST['csrf_token'] ?? '')) {
@@ -21,19 +36,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
         // Sanitize inputs
-        $name      = trim($_POST['name']      ?? '');
-        $slug      = trim($_POST['slug']      ?? '');
+        $name      = trim($_POST['name'] ?? '');
+        $slug      = trim($_POST['slug'] ?? '');
         $max_count = (int)($_POST['max_count'] ?? 0) ?: null;
+        $menus     = $_POST['menus'] ?? [];
 
         if ($action === 'create') {
             if (!$name || !$slug) {
                 $errors[] = "Name and slug are required.";
             } else {
-                $stmt = $pdo->prepare(
-                    "INSERT INTO roles (name, slug, max_count) VALUES (?,?,?)"
-                );
+                $stmt = $pdo->prepare("INSERT INTO roles (name, slug, max_count) VALUES (?,?,?)");
                 $stmt->execute([$name, $slug, $max_count]);
-                logAction($pdo, $_SESSION['user']['id'], 'role_created', ['slug'=>$slug]);
+                $roleId = $pdo->lastInsertId();
+
+                // Save menu permissions
+                $stmtPerm = $pdo->prepare("INSERT INTO role_permissions (role_id, menu_slug) VALUES (?, ?)");
+                foreach ($menus as $menu) {
+                    $stmtPerm->execute([$roleId, $menu]);
+                }
+
+                logAction($pdo, $_SESSION['user']['id'], 'role_created', ['slug' => $slug]);
                 $flash[] = "Role '{$name}' created.";
             }
         }
@@ -42,11 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             if (!$name || !$slug) {
                 $errors[] = "Name and slug are required.";
             } else {
-                $stmt = $pdo->prepare(
-                    "UPDATE roles SET name=?, slug=?, max_count=? WHERE id=?"
-                );
+                $stmt = $pdo->prepare("UPDATE roles SET name=?, slug=?, max_count=? WHERE id=?");
                 $stmt->execute([$name, $slug, $max_count, $id]);
-                logAction($pdo, $_SESSION['user']['id'], 'role_updated', ['role_id'=>$id]);
+
+                // Update menu permissions
+                $pdo->prepare("DELETE FROM role_permissions WHERE role_id=?")->execute([$id]);
+                $stmtPerm = $pdo->prepare("INSERT INTO role_permissions (role_id, menu_slug) VALUES (?, ?)");
+                foreach ($menus as $menu) {
+                    $stmtPerm->execute([$id, $menu]);
+                }
+
+                logAction($pdo, $_SESSION['user']['id'], 'role_updated', ['role_id' => $id]);
                 $flash[] = "Role '{$name}' updated.";
             }
         }
@@ -55,7 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             // Optional: prevent deletion if users assigned
             $stmt = $pdo->prepare("DELETE FROM roles WHERE id=?");
             $stmt->execute([$id]);
-            logAction($pdo, $_SESSION['user']['id'], 'role_deleted', ['role_id'=>$id]);
+            // role_permissions cascade delete
+            logAction($pdo, $_SESSION['user']['id'], 'role_deleted', ['role_id' => $id]);
             $flash[] = "Role deleted.";
         }
     }
@@ -65,8 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     exit;
 }
 
-// Fetch roles list
+// Fetch roles with permissions
 $roles = $pdo->query("SELECT * FROM roles ORDER BY id ASC")->fetchAll();
+
+// Fetch all permissions per role
+$permissionsByRole = [];
+$stmt = $pdo->query("SELECT role_id, menu_slug FROM role_permissions");
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $permissionsByRole[$row['role_id']][] = $row['menu_slug'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,155 +113,181 @@ $roles = $pdo->query("SELECT * FROM roles ORDER BY id ASC")->fetchAll();
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-  <?php include '../includes/header.php'; ?>
-  <?php include '../includes/sidebar.php'; ?>
+<?php include '../includes/header.php'; ?>
+<?php include '../includes/sidebar.php'; ?>
 
-  <div class="container" style="margin-left:240px;">
-    <h1>Roles Management</h1>
+<div class="container" style="margin-left:240px;">
+  <h1>Roles Management</h1>
 
-    <?php if ($flash): ?>
-      <div class="alert success">
-        <?php foreach ($flash as $msg): ?>
-          <p><?= htmlspecialchars($msg) ?></p>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
-
-    <?php if ($errors): ?>
-      <div class="alert error">
-        <?php foreach ($errors as $err): ?>
-          <p><?= htmlspecialchars($err) ?></p>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
-
-    <button id="newRoleBtn" class="btn-approve"><i class='bx bx-plus'></i> New Role</button>
-
-    <table class="roles-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Slug</th>
-          <th>Max Users</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($roles as $r): ?>
-        <tr>
-          <td><?= $r['id'] ?></td>
-          <td><?= htmlspecialchars($r['name']) ?></td>
-          <td><?= htmlspecialchars($r['slug']) ?></td>
-          <td><?= $r['max_count'] ?? '∞' ?></td>
-          <td>
-            <button
-              class="btn-editRole"
-              data-id="<?= $r['id'] ?>"
-              data-name="<?= htmlspecialchars($r['name']) ?>"
-              data-slug="<?= htmlspecialchars($r['slug']) ?>"
-              data-max="<?= $r['max_count'] ?>"
-            >
-              <i class='bx bx-edit'></i> Edit
-            </button>
-            <form
-              method="post"
-              action="index.php?page=roles&action=delete&id=<?= $r['id'] ?>"
-              style="display:inline"
-            >
-              <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-              <button type="submit" class="btn-banish">
-                <i class='bx bx-trash'></i> Delete
-              </button>
-            </form>
-          </td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Role Modal -->
-  <div class="modal" id="roleModal">
-    <div class="modal-content">
-      <span class="modal-close" id="roleModalClose"><i class='bx bx-x'></i></span>
-      <h3 id="roleModalTitle">New Role</h3>
-
-      <form id="roleForm" method="post">
-        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-        <div class="form-row">
-          <label>Name</label>
-          <input type="text" name="name" id="roleName" required>
-        </div>
-        <div class="form-row">
-          <label>Slug</label>
-          <input type="text" name="slug" id="roleSlug" required>
-        </div>
-        <div class="form-row">
-          <label>Max Users (0 for unlimited)</label>
-          <input type="number" name="max_count" id="roleMax" min="0">
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-approve">Save Role</button>
-        </div>
-      </form>
+  <?php if ($flash): ?>
+    <div class="alert success">
+      <?php foreach ($flash as $msg): ?>
+        <p><?= htmlspecialchars($msg) ?></p>
+      <?php endforeach; ?>
     </div>
+  <?php endif; ?>
+
+  <?php if ($errors): ?>
+    <div class="alert error">
+      <?php foreach ($errors as $err): ?>
+        <p><?= htmlspecialchars($err) ?></p>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+
+  <button id="newRoleBtn" class="btn-approve"><i class='bx bx-plus'></i> New Role</button>
+
+  <table class="roles-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Max Users</th>
+        <th>Menus</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($roles as $r): ?>
+      <tr>
+        <td><?= $r['id'] ?></td>
+        <td><?= htmlspecialchars($r['name']) ?></td>
+        <td><?= htmlspecialchars($r['slug']) ?></td>
+        <td><?= $r['max_count'] ?? '∞' ?></td>
+        <td>
+          <?php
+            $roleMenus = $permissionsByRole[$r['id']] ?? [];
+            foreach ($roleMenus as $menu) {
+                echo "<span class='role-badge role-$menu'>" . htmlspecialchars($allMenus[$menu] ?? $menu) . "</span> ";
+            }
+          ?>
+        </td>
+        <td>
+          <button class="btn-editRole"
+                  data-id="<?= $r['id'] ?>"
+                  data-name="<?= htmlspecialchars($r['name']) ?>"
+                  data-slug="<?= htmlspecialchars($r['slug']) ?>"
+                  data-max="<?= $r['max_count'] ?>"
+                  data-menus='<?= json_encode($roleMenus) ?>'>
+            <i class='bx bx-edit'></i> Edit
+          </button>
+          <form method="post" action="index.php?page=roles&action=delete&id=<?= $r['id'] ?>" style="display:inline">
+            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+            <button type="submit" class="btn-banish">
+              <i class='bx bx-trash'></i> Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+
+<!-- Role Modal -->
+<div class="modal" id="roleModal">
+  <div class="modal-content">
+    <span class="modal-close" id="roleModalClose"><i class='bx bx-x'></i></span>
+    <h3 id="roleModalTitle">New Role</h3>
+
+    <form id="roleForm" method="post">
+      <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+      <div class="form-row">
+        <label>Name</label>
+        <input type="text" name="name" id="roleName" required>
+      </div>
+      <div class="form-row">
+        <label>Slug</label>
+        <input type="text" name="slug" id="roleSlug" required>
+      </div>
+      <div class="form-row">
+        <label>Max Users (0 for unlimited)</label>
+        <input type="number" name="max_count" id="roleMax" min="0">
+      </div>
+      <div class="form-row">
+        <label>Menus</label>
+        <div id="menusContainer">
+          <?php foreach ($allMenus as $slug => $label): ?>
+            <label>
+              <input type="checkbox" name="menus[]" value="<?= $slug ?>"> <?= $label ?>
+            </label><br>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-approve">Save Role</button>
+      </div>
+    </form>
   </div>
-  <div id="modalOverlay"></div>
+</div>
+<div id="modalOverlay"></div>
 
-  <?php include '../includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 
-  <script>
-  // Modal control
-  const roleModal    = document.getElementById('roleModal');
-  const overlay      = document.getElementById('modalOverlay');
-  const closeRoleBtn = document.getElementById('roleModalClose');
-  const newRoleBtn   = document.getElementById('newRoleBtn');
-  const roleForm     = document.getElementById('roleForm');
-  const modalTitle   = document.getElementById('roleModalTitle');
-  const nameInput    = document.getElementById('roleName');
-  const slugInput    = document.getElementById('roleSlug');
-  const maxInput     = document.getElementById('roleMax');
+<script>
+const roleModal    = document.getElementById('roleModal');
+const overlay      = document.getElementById('modalOverlay');
+const closeRoleBtn = document.getElementById('roleModalClose');
+const newRoleBtn   = document.getElementById('newRoleBtn');
+const roleForm     = document.getElementById('roleForm');
+const modalTitle   = document.getElementById('roleModalTitle');
+const nameInput    = document.getElementById('roleName');
+const slugInput    = document.getElementById('roleSlug');
+const maxInput     = document.getElementById('roleMax');
+const menusContainer = document.getElementById('menusContainer');
 
-  function openModal(mode, role = {}) {
-    overlay.classList.add('open');
-    roleModal.classList.add('open');
-    if (mode === 'edit') {
-      modalTitle.textContent = 'Edit Role';
-      roleForm.action      = `index.php?page=roles&action=edit&id=${role.id}`;
-      nameInput.value      = role.name;
-      slugInput.value      = role.slug;
-      maxInput.value       = role.max_count || '';
-    } else {
-      modalTitle.textContent = 'New Role';
-      roleForm.action       = 'index.php?page=roles&action=create';
-      nameInput.value       = '';
-      slugInput.value       = '';
-      maxInput.value        = '';
-    }
-  }
-  function closeModal() {
-    overlay.classList.remove('open');
-    roleModal.classList.remove('open');
-  }
+function openModal(mode, role = {}) {
+  overlay.classList.add('open');
+  roleModal.classList.add('open');
 
-  newRoleBtn.addEventListener('click', () => openModal('create'));
-  closeRoleBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', closeModal);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  // Reset checkboxes
+  menusContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-  // Edit buttons
-  document.querySelectorAll('.btn-editRole').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const role = {
-        id: btn.dataset.id,
-        name: btn.dataset.name,
-        slug: btn.dataset.slug,
-        max_count: btn.dataset.max
-      };
-      openModal('edit', role);
+  if (mode === 'edit') {
+    modalTitle.textContent = 'Edit Role';
+    roleForm.action = `index.php?page=roles&action=edit&id=${role.id}`;
+    nameInput.value = role.name;
+    slugInput.value = role.slug;
+    maxInput.value  = role.max_count || '';
+
+    // Check current role menus
+    (role.menus || []).forEach(menu => {
+      const cb = menusContainer.querySelector(`input[value="${menu}"]`);
+      if (cb) cb.checked = true;
     });
+  } else {
+    modalTitle.textContent = 'New Role';
+    roleForm.action = 'index.php?page=roles&action=create';
+    nameInput.value = '';
+    slugInput.value = '';
+    maxInput.value  = '';
+  }
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  roleModal.classList.remove('open');
+}
+
+newRoleBtn.addEventListener('click', () => openModal('create'));
+closeRoleBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Edit buttons
+document.querySelectorAll('.btn-editRole').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const role = {
+      id: btn.dataset.id,
+      name: btn.dataset.name,
+      slug: btn.dataset.slug,
+      max_count: btn.dataset.max,
+      menus: JSON.parse(btn.dataset.menus || '[]')
+    };
+    openModal('edit', role);
   });
-  </script>
+});
+</script>
 </body>
 </html>
