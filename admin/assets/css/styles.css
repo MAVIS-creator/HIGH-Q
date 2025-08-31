@@ -1,0 +1,115 @@
+/* ==========================
+   Forgot Password Styling
+   ========================== */
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+}
+
+body {
+  background: var(--hq-gray);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--hq-black);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.form-container {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.form-container h2 {
+  margin-bottom: 1rem;
+  color: var(--hq-red);
+  font-weight: bold;
+}
+
+label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+  text-align: left;
+  color: var(--hq-black);
+}
+
+input[type="email"] {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid #ddd;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+input[type="email"]:focus {
+  border-color: var(--hq-yellow);
+  box-shadow: 0 0 0 3px var(--hq-yellow-light);
+}
+
+button {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--hq-red);
+  color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: #e13a1d;
+  transform: translateY(-2px);
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.alert-danger {
+  background: #ffe6e1;
+  color: var(--hq-red);
+  border: 1px solid var(--hq-red);
+}
+
+.alert-success {
+  background: #f9ffe1;
+  color: #3d7a00;
+  border: 1px solid #b2d233;
+}
+
+.form-container p {
+  margin-top: 1rem;
+}
+
+.form-container a {
+  color: var(--hq-yellow);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-container a:hover {
+  text-decoration: underline;
+}
