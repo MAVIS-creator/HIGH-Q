@@ -1,9 +1,9 @@
 admin/
  ├─ login.php
  ├─ logout.php
- ___signup.php
- ___index.php
- ___pending.php
+ ├─signup.php
+ ├─index.php
+ ├─pending.php
  ├─ pages/
  ├  ├─ index.php           -- dashboard (role-aware)
  ├  ├─ users.php           -- list/create/edit (admins only)
