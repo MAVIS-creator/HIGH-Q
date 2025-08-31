@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ './includes/db.php';
+require __DIR__ . '/../includes/db.php';
 
 // Get requested page or default to dashboard
 $page = isset($_GET['page']) ? basename($_GET['page']) : 'dashboard';
