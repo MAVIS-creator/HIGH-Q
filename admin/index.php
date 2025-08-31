@@ -12,8 +12,8 @@
     <!-- Boxicons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-      <!-- Font Awesome (for graduation cap) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome (for graduation cap) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 
     <style>
@@ -162,6 +162,36 @@
             text-align: center;
         }
 
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 14px;
+        }
+
+        .feature i {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--hq-red);
+        }
+
+        .feature h4 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .feature p {
+            margin: 6px 0 0;
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.65);
+        }
+
         .feature {
             padding: 14px 8px;
         }
@@ -293,7 +323,7 @@
         <!-- Header -->
         <header class="site-header" role="banner">
             <div class="logo-circle" aria-hidden="true">
-               <i class="fas fa-graduation-cap"></i>
+                <i class="fas fa-graduation-cap"></i>
             </div>
             <h1 class="site-title">HIGH Q SOLID ACADEMY</h1>
             <p class="site-sub">LIMITED</p>
