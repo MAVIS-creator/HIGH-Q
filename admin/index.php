@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="feature" role="listitem">
-                        <i class="fas fa-graduation-cap feat-icon-yellow"></i>
+                        <i class="fas fa-graduation-cap feat-icon-red"></i>
                         <h4>Admissions</h4>
                         <p>Student applications</p>
                     </div>
