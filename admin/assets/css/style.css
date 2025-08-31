@@ -11,7 +11,17 @@ body {
   font-family: 'Poppins', sans-serif;
   background: #f7f7f7;
   color: #222;
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 40%, #FF9A4D 65%, var(--hq-red) 100%); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial;
+  background: linear-gradient(
+    135deg,
+    var(--hq-yellow) 0%,
+    var(--hq-yellow-light) 40%,
+    #ff9a4d 65%,
+    var(--hq-red) 100%
+  );
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   display: flex;
   justify-content: center;
@@ -143,7 +153,6 @@ body {
 .feat-icon-red {
   color: #e63946;
 }
-
 
 /* =============================
    Buttons
