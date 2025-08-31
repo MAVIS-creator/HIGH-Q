@@ -6,6 +6,7 @@ admin/
  ├  ├─ users.php           -- list/create/edit (admins only)
  ├  ├─ roles.php           -- view (admins only)
  ├  ├─ courses.php         -- manage courses
+ 
  ├  ├─ posts.php           -- list posts, draft/publish controls
  ├  ├─ post_edit.php       -- WYSIWYG editor, save drafts
  ├  ├─ comments.php        -- moderate comments + reply inline
