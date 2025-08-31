@@ -225,20 +225,22 @@
             flex-direction: column;
         }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            min-width: 200px;
-            transition: all .18s ease;
-            border: 2px solid transparent;
-            font-size: 16px;
-        }
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    min-width: 240px; /* wider button */
+    transition: all .18s ease;
+    border: 2px solid transparent;
+    font-size: 17px;
+}
+
+
 
         .btn-primary {
             background: var(--hq-yellow);
