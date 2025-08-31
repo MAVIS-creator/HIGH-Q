@@ -1,7 +1,7 @@
 <?php
 session_start();
-require '../includes/db.php';
-require '../includes/functions.php'; // sendEmail(), etc.
+require './includes/db.php';
+require './includes/functions.php'; // sendEmail(), etc.
 
 $error = '';
 
