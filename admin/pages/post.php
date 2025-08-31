@@ -369,7 +369,6 @@ $posts = $stmt->fetchAll();
       });
     });
   });
-<script>
 const overlay      = document.getElementById('modalOverlay');
 const editModal    = document.getElementById('editPostModal');
 const editContent  = document.getElementById('editPostModalContent');
