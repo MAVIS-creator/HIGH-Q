@@ -6,7 +6,7 @@ require '../includes/csrf.php';
 require '../includes/functions.php';
 
 // Only Admin / Sub-Admin / Moderator
-requireRole(['admin','sub-admin','moderator']);
+requireRole(['admin', 'sub-admin', 'moderator']);
 
 $csrf     = generateToken();
 $errors   = [];
@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         // Slugify if empty
         if (!$slug && $title) {
-            $slug = preg_replace('/[^a-z0-9]+/','-',strtolower($title));
-            $slug = trim($slug,'-');
+            $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
+            $slug = trim($slug, '-');
         }
 
         // Handle featured image upload
@@ -67,13 +67,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   VALUES (?,?,?,?,?,?,?,?,?)
                 ");
                 $stmt->execute([
-                  $title, $slug, $excerpt, $content,
-                  $category_id ?: null,
-                  $tags, $imgPath ?: null,
-                  $status,
-                  $_SESSION['user']['id']
+                    $title,
+                    $slug,
+                    $excerpt,
+                    $content,
+                    $category_id ?: null,
+                    $tags,
+                    $imgPath ?: null,
+                    $status,
+                    $_SESSION['user']['id']
                 ]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug'=>$slug]);
+                logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
                 $success[] = "Article '{$title}' created.";
             }
 
@@ -92,21 +96,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   WHERE id=?
                 ");
                 $stmt->execute([
-                  $title, $slug, $excerpt, $content,
-                  $category_id ?: null,
-                  $tags,
-                  $imgPath ?: null,
-                  $status,
-                  $id
+                    $title,
+                    $slug,
+                    $excerpt,
+                    $content,
+                    $category_id ?: null,
+                    $tags,
+                    $imgPath ?: null,
+                    $status,
+                    $id
                 ]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id'=>$id]);
+                logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
                 $success[] = "Article '{$title}' updated.";
             }
 
             // DELETE
             if ($act === 'delete' && $id) {
                 $pdo->prepare("DELETE FROM posts WHERE id=?")->execute([$id]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_deleted', ['post_id'=>$id]);
+                logAction($pdo, $_SESSION['user']['id'], 'post_deleted', ['post_id' => $id]);
                 $success[] = "Article deleted.";
             }
 
@@ -114,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             if ($act === 'toggle' && $id) {
                 $stmt = $pdo->prepare("UPDATE posts SET status = IF(status='draft','published','draft') WHERE id=?");
                 $stmt->execute([$id]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_toggled', ['post_id'=>$id]);
+                logAction($pdo, $_SESSION['user']['id'], 'post_toggled', ['post_id' => $id]);
                 $success[] = "Article status toggled.";
             }
         }
@@ -138,81 +145,86 @@ $sql  = "SELECT p.*, u.name AS author, c.name AS category
          WHERE p.title LIKE :q
          ORDER BY p.created_at DESC";
 $stmt = $pdo->prepare($sql);
-$stmt->execute([':q'=>"%{$q}%"]);
+$stmt->execute([':q' => "%{$q}%"]);
 $posts = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>News & Blog Management — Admin</title>
-  <link rel="stylesheet" href="../public/assets/css/admin.css">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>News & Blog Management — Admin</title>
+    <link rel="stylesheet" href="../public/assets/css/admin.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
+
 <body>
-  <?php include '../includes/header.php'; ?>
-  <?php include '../includes/sidebar.php'; ?>
+    <?php include '../includes/header.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
-  <div class="container">
-    <div class="module-header">
-      <div>
-        <h1>News & Blog Management</h1>
-        <p class="subtitle">Create and manage news articles and blog posts.</p>
-      </div>
-      <div class="module-actions">
-        <form method="get" action="index.php" class="search-form">
-          <input type="hidden" name="page" value="posts">
-          <input type="text" name="q" placeholder="Search by title..." value="<?=htmlspecialchars($q)?>">
-          <td>
-  <?= htmlspecialchars($p['title']) ?><br>
-  <a href="post_edit.php?id=<?= $p['id'] ?>" 
-     class="edit-link" 
-     data-id="<?= $p['id'] ?>">Edit Post</a>
-</td>
+    <div class="container">
+        <div class="module-header">
+            <div>
+                <h1>News & Blog Management</h1>
+                <p class="subtitle">Create and manage news articles and blog posts.</p>
+            </div>
+            <div class="module-actions">
+                <form method="get" action="index.php" class="search-form">
+                    <input type="hidden" name="page" value="posts">
+                    <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
+                    <td>
+                        <?= htmlspecialchars($p['title']) ?><br>
+                        <a href="post_edit.php?id=<?= $p['id'] ?>"
+                            class="edit-link"
+                            data-id="<?= $p['id'] ?>">Edit Post</a>
+                    </td>
 
-        </form>
-        <button id="newPostBtn" class="btn-approve">
-          <i class="bx bx-plus"></i> Add Article
-        </button>
-      </div>
-    </div>
+                </form>
+                <button id="newPostBtn" class="btn-approve">
+                    <i class="bx bx-plus"></i> Add Article
+                </button>
+            </div>
+        </div>
 
-    <?php if($posts): ?>
-      <table class="posts-table">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Tags</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach($posts as $p): ?>
-          <tr>
-            <td>
-                <td>
-
-              <?php if($p['featured_image']): ?>
-                <img src="../public/<?=htmlspecialchars($p['featured_image'])?>" class="thumb">
-              <?php else: ?>
-                —
-              <?php endif; ?>
-            </td>
-            <td><?=htmlspecialchars($p['title'])?></td>
-            <td><?=htmlspecialchars($p['category'] ?? 'Uncategorized')?></td>
-            <td><?=htmlspecialchars($p['tags'])?></td>
-            <td>
-              <span class="status-badge <?=$p['status']=='published'?'status-active':'status-pending'?>">
-                <?=ucfirst($p['status'])?>
-              </span>
-            </td>
-            <td><?=date('d/m/Y',strtotime($p['created_at']))?></td>
-            <td>
-              <button
+        <?php if ($posts): ?>
+            <table class="posts-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Tags</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($posts as $p): ?>
+                        <tr id="post-row-<?= $p['id'] ?>">
+                            <td>
+                                <?php if ($p['featured_image']): ?>
+                                    <img src="../public/<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
+                                <?php else: ?>
+                                    —
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars($p['title']) ?><br>
+                                <a href="post_edit.php?id=<?= $p['id'] ?>"
+                                    class="edit-link"
+                                    data-id="<?= $p['id'] ?>">Edit Post</a>
+                            </td>
+                            <td><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?></td>
+                            <td><?= htmlspecialchars($p['tags']) ?></td>
+                            <td>
+                                <span class="status-badge <?= $p['status'] == 'published' ? 'status-active' : 'status-pending' ?>">
+                                    <?= ucfirst($p['status']) ?>
+                                </span>
+                            </td>
+                            <td><?= date('d/m/Y', strtotime($p['created_at'])) ?></td>
+                            <td>
+                                   <button
                 class="btn-editPost"
                 data-id="<?=$p['id']?>"
                 data-title="<?=htmlspecialchars($p['title'])?>"
@@ -235,188 +247,189 @@ $posts = $stmt->fetchAll();
                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                 <button class="btn-banish"><i class="bx bx-trash"></i></button>
               </form>
-            </td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
 
-    <?php else: ?>
-      <p class="no-data">No articles found matching your search.</p>
-    <?php endif; ?>
-  </div>
+            </table>
 
-  <!-- Post Modal -->
-  <div class="modal" id="postModal">
-    <div class="modal-content">
-      <span class="modal-close" id="postModalClose"><i class="bx bx-x"></i></span>
-      <h3 id="postModalTitle">New Article</h3>
-      <form id="postForm" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="<?=$csrf?>">
-
-        <div class="form-row">
-          <label>Title *</label>
-          <input type="text" name="title" id="pTitle" required>
-        </div>
-        <div class="form-row">
-          <label>Slug</label>
-          <input type="text" name="slug" id="pSlug">
-        </div>
-        <div class="form-row">
-          <label>Excerpt</label>
-          <input type="text" name="excerpt" id="pExcerpt">
-        </div>
-        <div class="form-row">
-          <label>Content *</label>
-          <textarea name="content" id="pContent" rows="6" required></textarea>
-        </div>
-        <div class="form-row">
-          <label>Category</label>
-          <select name="category_id" id="pCategory">
-            <option value="">Uncategorized</option>
-            <?php foreach($categories as $c): ?>
-              <option value="<?=$c['id']?>"><?=htmlspecialchars($c['name'])?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Tags (comma-separated)</label>
-          <input type="text" name="tags" id="pTags">
-        </div>
-        <div class="form-row">
-          <label>Featured Image</label>
-          <input type="file" name="featured_image" id="pImage" accept="image/*">
-        </div>
-        <div class="form-row">
-          <label><input type="checkbox" name="publish" id="pPublish"> Publish immediately</label>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn-approve">Save Article</button>
-        </div>
-      </form>
+        <?php else: ?>
+            <p class="no-data">No articles found matching your search.</p>
+        <?php endif; ?>
     </div>
-  </div>
-  <div id="modalOverlay"></div>
-<div class="modal" id="editPostModal">
-  <div class="modal-content" id="editPostModalContent">
-    <!-- AJAX-loaded content will go here -->
-  </div>
-</div>
-<div id="modalOverlay"></div>
 
-  <?php include '../includes/footer.php'; ?>
+    <!-- Post Modal -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <span class="modal-close" id="postModalClose"><i class="bx bx-x"></i></span>
+            <h3 id="postModalTitle">New Article</h3>
+            <form id="postForm" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
-  <script>
-  // Modal logic
-  const postModal    = document.getElementById('postModal');
-  const overlay      = document.getElementById('modalOverlay');
-  const closePostBtn = document.getElementById('postModalClose');
-  const newPostBtn   = document.getElementById('newPostBtn');
-  const postForm     = document.getElementById('postForm');
-  const modalTitle   = document.getElementById('postModalTitle');
-  const fields       = {
-    title:    document.getElementById('pTitle'),
-    slug:     document.getElementById('pSlug'),
-    excerpt:  document.getElementById('pExcerpt'),
-    content:  document.getElementById('pContent'),
-    category: document.getElementById('pCategory'),
-    tags:     document.getElementById('pTags'),
-    image:    document.getElementById('pImage'),
-    publish:  document.getElementById('pPublish')
-  };
+                <div class="form-row">
+                    <label>Title *</label>
+                    <input type="text" name="title" id="pTitle" required>
+                </div>
+                <div class="form-row">
+                    <label>Slug</label>
+                    <input type="text" name="slug" id="pSlug">
+                </div>
+                <div class="form-row">
+                    <label>Excerpt</label>
+                    <input type="text" name="excerpt" id="pExcerpt">
+                </div>
+                <div class="form-row">
+                    <label>Content *</label>
+                    <textarea name="content" id="pContent" rows="6" required></textarea>
+                </div>
+                <div class="form-row">
+                    <label>Category</label>
+                    <select name="category_id" id="pCategory">
+                        <option value="">Uncategorized</option>
+                        <?php foreach ($categories as $c): ?>
+                            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Tags (comma-separated)</label>
+                    <input type="text" name="tags" id="pTags">
+                </div>
+                <div class="form-row">
+                    <label>Featured Image</label>
+                    <input type="file" name="featured_image" id="pImage" accept="image/*">
+                </div>
+                <div class="form-row">
+                    <label><input type="checkbox" name="publish" id="pPublish"> Publish immediately</label>
+                </div>
 
-  function openPostModal(mode, data={}) {
-    overlay.classList.add('open');
-    postModal.classList.add('open');
-    if (mode === 'edit') {
-      modalTitle.textContent = 'Edit Article';
-      postForm.action = `index.php?page=posts&action=edit&id=${data.id}`;
-      fields.title.value    = data.title;
-      fields.slug.value     = data.slug;
-      fields.excerpt.value  = data.excerpt;
-      fields.content.value  = data.content;
-      fields.category.value = data.category_id || '';
-      fields.tags.value     = data.tags;
-      fields.publish.checked= data.status==='published';
-    } else {
-      modalTitle.textContent = 'New Article';
-      postForm.action = 'index.php?page=posts&action=create';
-      Object.values(fields).forEach(f => {
-        if (f.type === 'checkbox') f.checked = false;
-        else if (f.tagName === 'INPUT' || f.tagName === 'TEXTAREA' || f.tagName === 'SELECT') f.value = '';
-      });
-    }
-  }
+                <div class="form-actions">
+                    <button type="submit" class="btn-approve">Save Article</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="modalOverlay"></div>
+    <div class="modal" id="editPostModal">
+        <div class="modal-content" id="editPostModalContent">
+            <!-- AJAX-loaded content will go here -->
+        </div>
+    </div>
+    <div id="modalOverlay"></div>
 
-  function closePostModal() {
-    overlay.classList.remove('open');
-    postModal.classList.remove('open');
-  }
+    <?php include '../includes/footer.php'; ?>
 
-  newPostBtn.addEventListener('click', () => openPostModal('create'));
-  closePostBtn.addEventListener('click', closePostModal);
-  overlay.addEventListener('click', closePostModal);
-  document.addEventListener('keydown', e => e.key==='Escape' && closePostModal());
+    <script>
+        // Modal logic
+        const postModal = document.getElementById('postModal');
+        const overlay = document.getElementById('modalOverlay');
+        const closePostBtn = document.getElementById('postModalClose');
+        const newPostBtn = document.getElementById('newPostBtn');
+        const postForm = document.getElementById('postForm');
+        const modalTitle = document.getElementById('postModalTitle');
+        const fields = {
+            title: document.getElementById('pTitle'),
+            slug: document.getElementById('pSlug'),
+            excerpt: document.getElementById('pExcerpt'),
+            content: document.getElementById('pContent'),
+            category: document.getElementById('pCategory'),
+            tags: document.getElementById('pTags'),
+            image: document.getElementById('pImage'),
+            publish: document.getElementById('pPublish')
+        };
 
-  document.querySelectorAll('.btn-editPost').forEach(btn => {
-    btn.addEventListener('click', () => {
-      openPostModal('edit', {
-        id:           btn.dataset.id,
-        title:        btn.dataset.title,
-        slug:         btn.dataset.slug,
-        excerpt:      btn.dataset.excerpt,
-        content:      btn.dataset.content,
-        category_id:  btn.dataset.category,
-        tags:         btn.dataset.tags,
-        status:       btn.dataset.status
-      });
-    });
-  });
-const overlay      = document.getElementById('modalOverlay');
-const editModal    = document.getElementById('editPostModal');
-const editContent  = document.getElementById('editPostModalContent');
+        function openPostModal(mode, data = {}) {
+            overlay.classList.add('open');
+            postModal.classList.add('open');
+            if (mode === 'edit') {
+                modalTitle.textContent = 'Edit Article';
+                postForm.action = `index.php?page=posts&action=edit&id=${data.id}`;
+                fields.title.value = data.title;
+                fields.slug.value = data.slug;
+                fields.excerpt.value = data.excerpt;
+                fields.content.value = data.content;
+                fields.category.value = data.category_id || '';
+                fields.tags.value = data.tags;
+                fields.publish.checked = data.status === 'published';
+            } else {
+                modalTitle.textContent = 'New Article';
+                postForm.action = 'index.php?page=posts&action=create';
+                Object.values(fields).forEach(f => {
+                    if (f.type === 'checkbox') f.checked = false;
+                    else if (f.tagName === 'INPUT' || f.tagName === 'TEXTAREA' || f.tagName === 'SELECT') f.value = '';
+                });
+            }
+        }
 
-// Open modal and load form
-document.querySelectorAll('.edit-link').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const id = link.dataset.id;
-    fetch(`post_edit.php?id=${id}`)
-      .then(res => res.text())
-      .then(html => {
-        editContent.innerHTML = html;
-        overlay.classList.add('open');
-        editModal.classList.add('open');
-        bindAjaxForm(); // bind submit after content loads
-      });
-  });
-});
+        function closePostModal() {
+            overlay.classList.remove('open');
+            postModal.classList.remove('open');
+        }
 
-// Close modal
-overlay.addEventListener('click', closeEditModal);
-function closeEditModal() {
-  overlay.classList.remove('open');
-  editModal.classList.remove('open');
-}
+        newPostBtn.addEventListener('click', () => openPostModal('create'));
+        closePostBtn.addEventListener('click', closePostModal);
+        overlay.addEventListener('click', closePostModal);
+        document.addEventListener('keydown', e => e.key === 'Escape' && closePostModal());
 
-// Bind AJAX submit
-function bindAjaxForm() {
-  const form = document.getElementById('ajaxEditPostForm');
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(form);
-    fetch(`index.php?page=posts&action=edit&id=${formData.get('id')}`, {
-      method: 'POST',
-      body: formData
-    })
-    .then(res => res.text())
-    .then(() => {
-      closeEditModal();
-      // Optionally refresh just the row or reload page
-      location.reload();
-    });
-  });
-}
-</script>
+        document.querySelectorAll('.btn-editPost').forEach(btn => {
+            btn.addEventListener('click', () => {
+                openPostModal('edit', {
+                    id: btn.dataset.id,
+                    title: btn.dataset.title,
+                    slug: btn.dataset.slug,
+                    excerpt: btn.dataset.excerpt,
+                    content: btn.dataset.content,
+                    category_id: btn.dataset.category,
+                    tags: btn.dataset.tags,
+                    status: btn.dataset.status
+                });
+            });
+        });
+        const overlay = document.getElementById('modalOverlay');
+        const editModal = document.getElementById('editPostModal');
+        const editContent = document.getElementById('editPostModalContent');
 
+        // Open modal and load form
+        document.querySelectorAll('.edit-link').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const id = link.dataset.id;
+                fetch(`post_edit.php?id=${id}`)
+                    .then(res => res.text())
+                    .then(html => {
+                        editContent.innerHTML = html;
+                        overlay.classList.add('open');
+                        editModal.classList.add('open');
+                        bindAjaxForm(); // bind submit after content loads
+                    });
+            });
+        });
+
+        // Close modal
+        overlay.addEventListener('click', closeEditModal);
+
+        function closeEditModal() {
+            overlay.classList.remove('open');
+            editModal.classList.remove('open');
+        }
+
+        // Bind AJAX submit
+        function bindAjaxForm() {
+            const form = document.getElementById('ajaxEditPostForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                fetch(`index.php?page=posts&action=edit&id=${formData.get('id')}`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.text())
+                    .then(() => {
+                        closeEditModal();
+                        // Optionally refresh just the row or reload page
+                        location.reload();
+                    });
+            });
+        }
+    </script>
