@@ -3,6 +3,7 @@ admin/
  ├─ logout.php
  ___signup.php
  ___index.php
+ ___pending.php
  ├─ pages/
  ├  ├─ index.php           -- dashboard (role-aware)
  ├  ├─ users.php           -- list/create/edit (admins only)
