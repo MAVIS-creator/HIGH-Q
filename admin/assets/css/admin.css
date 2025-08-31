@@ -462,6 +462,8 @@ table tr:hover {
     border: 2px solid var(--hq-yellow);
 }
 
+
+
 .admin-main {
     margin-left: 0;
     transition: margin-left 0.3s ease;
