@@ -278,4 +278,20 @@ table tr:hover {
         font-weight: bold;
         white-space: nowrap;
     }
+}/* Admin = Red */
+.role-admin {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+
+/* Sub-Admin = Black */
+.role-sub-admin {
+    background: var(--dark-black);
+    color: var(--pure-white);
+}
+
+/* Moderator = Yellow */
+.role-moderator {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
 }
