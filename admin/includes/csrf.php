@@ -6,7 +6,10 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-session_start();
+// Start session only if not started yet
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $csrfTokenManager = new CsrfTokenManager();
 
