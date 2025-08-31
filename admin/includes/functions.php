@@ -1,9 +1,14 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Dotenv\Dotenv;
 
-// Autoload PHPMailer classes (via Composer)
+// Autoload (Composer)
 require_once __DIR__ . '/../../vendor/autoload.php';
+
+// Load .env (project root is 2 levels up from /admin/includes/)
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 
 /**
  * Log actions into audit_logs
@@ -20,17 +25,17 @@ function sendEmail(string $to, string $subject, string $html): bool {
     $mail = new PHPMailer(true);
 
     try {
-        // Server settings
+        // Server settings (from .env)
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';     // change if using another provider
+        $mail->Host       = $_ENV['MAIL_HOST'];
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'your-email@gmail.com'; // your Gmail
-        $mail->Password   = 'your-app-password';   // use App Password, not Gmail login
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Username   = $_ENV['MAIL_USERNAME'];
+        $mail->Password   = $_ENV['MAIL_PASSWORD'];
+        $mail->SMTPSecure = $_ENV['MAIL_ENCRYPTION'] ?? PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = $_ENV['MAIL_PORT'] ?? 587;
 
         // Recipients
-        $mail->setFrom('no-reply@yourdomain.com', 'HIGH Q SOLID ACADEMY');
+        $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
         $mail->addAddress($to);
 
         // Content
