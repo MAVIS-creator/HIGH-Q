@@ -477,3 +477,16 @@ table tr:hover {
 .admin-sidebar.active ~ .admin-footer {
   left: 240px;
 }
+.admin-footer {
+    position: fixed; bottom:0; left:0; width:100%; height:40px;
+    background: var(--hq-black); color: var(--hq-yellow);
+    display:flex; justify-content:center; align-items:center; z-index:1001;
+}
+
+.sidebar-overlay {
+    position: fixed; top:0; left:0; width:0; height:100%;
+    background: rgba(0,0,0,0.5); opacity:0;
+    transition: 0.3s; z-index: 1000;
+}
+
+.sidebar-overlay.active { width:100%; opacity:1; }
