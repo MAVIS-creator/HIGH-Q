@@ -2,8 +2,8 @@
 // admin/pages/posts.php
 require './includes/auth.php';
 require './admin/includes/db.php';
-require './includes/csrf.php';
-require './includes/functions.php';
+require './admin/includes/csrf.php';
+require './admin/includes/functions.php';
 
 // Only Admin / Sub-Admin / Moderator
 requireRole(['admin', 'sub-admin', 'moderator']);
