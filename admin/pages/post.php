@@ -190,37 +190,55 @@ $posts = $stmt->fetchAll();
             <th>Actions</th>
           </tr>
         </thead>
-       <tbody>
-<?php foreach($posts as $p): ?>
-<tr id="post-row-<?= $p['id'] ?>">
-  <td>
-    <?php if($p['featured_image']): ?>
-      <img src="../public/<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
-    <?php else: ?>
-      —
-    <?php endif; ?>
-  </td>
-  <td>
-    <?= htmlspecialchars($p['title']) ?><br>
-    <a href="post_edit.php?id=<?= $p['id'] ?>" 
-       class="edit-link" 
-       data-id="<?= $p['id'] ?>">Edit Post</a>
-  </td>
-  <td><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?></td>
-  <td><?= htmlspecialchars($p['tags']) ?></td>
-  <td>
-    <span class="status-badge <?= $p['status']=='published'?'status-active':'status-pending' ?>">
-      <?= ucfirst($p['status']) ?>
-    </span>
-  </td>
-  <td><?= date('d/m/Y', strtotime($p['created_at'])) ?></td>
-  <td>
-    <!-- your toggle/delete buttons here -->
-  </td>
-</tr>
-<?php endforeach; ?>
-</tbody>
+        <tbody>
+          <?php foreach($posts as $p): ?>
+          <tr>
+            <td>
+                <td>
 
+              <?php if($p['featured_image']): ?>
+                <img src="../public/<?=htmlspecialchars($p['featured_image'])?>" class="thumb">
+              <?php else: ?>
+                —
+              <?php endif; ?>
+            </td>
+            <td><?=htmlspecialchars($p['title'])?></td>
+            <td><?=htmlspecialchars($p['category'] ?? 'Uncategorized')?></td>
+            <td><?=htmlspecialchars($p['tags'])?></td>
+            <td>
+              <span class="status-badge <?=$p['status']=='published'?'status-active':'status-pending'?>">
+                <?=ucfirst($p['status'])?>
+              </span>
+            </td>
+            <td><?=date('d/m/Y',strtotime($p['created_at']))?></td>
+            <td>
+              <button
+                class="btn-editPost"
+                data-id="<?=$p['id']?>"
+                data-title="<?=htmlspecialchars($p['title'])?>"
+                data-slug="<?=htmlspecialchars($p['slug'])?>"
+                data-excerpt="<?=htmlspecialchars($p['excerpt'])?>"
+                data-content="<?=htmlspecialchars($p['content'])?>"
+                data-category="<?=$p['category_id']?>"
+                data-tags="<?=htmlspecialchars($p['tags'])?>"
+                data-status="<?=$p['status']?>"
+              >
+                <i class="bx bx-edit"></i>
+              </button>
+              <form method="post" action="index.php?page=posts&action=toggle&id=<?=$p['id']?>" style="display:inline">
+                <input type="hidden" name="csrf_token" value="<?=$csrf?>">
+                <button class="btn-approve">
+                  <i class="bx bx-refresh"></i>
+                </button>
+              </form>
+              <form method="post" action="index.php?page=posts&action=delete&id=<?=$p['id']?>" style="display:inline">
+                <input type="hidden" name="csrf_token" value="<?=$csrf?>">
+                <button class="btn-banish"><i class="bx bx-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
       </table>
 
     <?php else: ?>
