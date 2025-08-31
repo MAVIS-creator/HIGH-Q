@@ -1019,3 +1019,18 @@ table tr:hover {
   .posts-table th, .posts-table td { padding: 0.6rem; font-size: 0.9rem; }
   .modal-content { width: 90%; }
 }
+.edit-link {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--primary-red);
+}
+.edit-link:hover {
+  text-decoration: underline;
+}
+
+/* Modal reuse */
+#editPostModal .modal-content {
+  width: 600px;
+  max-width: 95%;
+}

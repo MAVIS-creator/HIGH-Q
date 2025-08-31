@@ -187,6 +187,11 @@ $posts = $stmt->fetchAll();
           <?php foreach($posts as $p): ?>
           <tr>
             <td>
+                <td>
+  <?= htmlspecialchars($p['title']) ?><br>
+  <a href="post_edit.php?id=<?= $p['id'] ?>" class="edit-link" data-id="<?= $p['id'] ?>">Edit Post</a>
+</td>
+
               <?php if($p['featured_image']): ?>
                 <img src="../public/<?=htmlspecialchars($p['featured_image'])?>" class="thumb">
               <?php else: ?>
