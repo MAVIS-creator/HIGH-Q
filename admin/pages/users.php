@@ -2,7 +2,7 @@
 // admin/pages/users.php
 
 require '../includes/auth.php';
-require '../C:\xampp\htdocs\HIGH Q\admin\includes\db.php';
+require '/';
 require './includes/functions.php';
 require './includes/csrf.php';
 
