@@ -6,7 +6,183 @@
     --light-gray: #f5f5f5;
 }
 
+/* Page Layout */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--light-gray);
+    margin: 0;
+    padding: 0;
+    color: var(--dark-black);
+}
 
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: var(--pure-white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: var(--primary-red);
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    margin-top: 2rem;
+    color: var(--dark-black);
+    border-left: 5px solid var(--accent-yellow);
+    padding-left: 0.5rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: var(--pure-white);
+}
+
+table th, table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+    font-weight: bold;
+}
+
+table tr:hover {
+    background: #fff8e1;
+}
+
+/* Buttons */
+.btn-approve, .btn-banish {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-approve {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+
+.btn-approve:hover {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+
+.btn-banish {
+    background: var(--dark-black);
+    color: var(--pure-white);
+}
+
+.btn-banish:hover {
+    background: var(--primary-red);
+}
+
+/* Role Select Dropdown */
+select {
+    padding: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    table tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ddd;
+    }
+    table td {
+        padding-left: 50%;
+        position: relative;
+    }
+    table td::before {
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 0.5rem;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+}
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Pending = Yellow */
+.status-pending {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+
+/* Active = Green (stands out from your main palette) */
+.status-active {
+    background: #28a745;
+    color: var(--pure-white);
+}
+
+/* Banned = Red */
+.status-banned {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+/* Role Badges */
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 0.3rem;
+}
+
+/* Admin = Red */
+.role-admin {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
+
+/* Sub-Admin = Black */
+.role-sub-admin {
+    background: var(--dark-black);
+    color: var(--pure-white);
+}
+
+/* Moderator = Yellow */
+.role-moderator {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+
+/* Student / Default = Gray */
+.role-student {
+    background: #6c757d;
+    color: var(--pure-white);
+}
 .admin-sidebar {
     width: 240px;
     background: var(--dark-black);
