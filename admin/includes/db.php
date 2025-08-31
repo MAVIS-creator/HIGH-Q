@@ -5,7 +5,7 @@ require __DIR__ . '/../../vendor/autoload.php'; // adjust path if needed
 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 // Fetch env vars
