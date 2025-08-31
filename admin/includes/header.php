@@ -27,12 +27,3 @@
         </div>
     </header>
     <main class="admin-main">
-
-        <script>
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.querySelector('.admin-sidebar');
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                document.querySelector('.admin-main').classList.toggle('expanded');
-            });
-        </script>
