@@ -18,7 +18,7 @@ $menuItems = [
     'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?page=tutors'],
     'students'  => ['title' => 'Students', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?page=students'],
     'payments'  => ['title' => 'Payments', 'icon' => 'bx bxs-credit-card', 'url' => 'index.php?page=payments'],
-    'posts'     => ['title' => 'News / Blog', 'icon' => 'bx bxs-news', 'url' => 'index.php?page=posts'],
+    'post'     => ['title' => 'News / Blog', 'icon' => 'bx bxs-news', 'url' => 'index.php?page=posts'],
     'comments'  => ['title' => 'Comments', 'icon' => 'bx bxs-comment-detail', 'url' => 'index.php?page=comments'],
     'chat'      => ['title' => 'Chat Support', 'icon' => 'bx bxs-message-dots', 'url' => 'index.php?page=chat'],
 ];

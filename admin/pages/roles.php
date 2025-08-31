@@ -29,7 +29,7 @@ $allMenus = [
     'tutors'    => 'Tutors',
     'students'  => 'Students',
     'payments'  => 'Payments',
-    'posts'     => 'News / Blog',
+    'post'     => 'News / Blog',
     'comments'  => 'Comments',
     'chat'      => 'Chat Support',
 ];
