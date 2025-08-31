@@ -1,0 +1,227 @@
+/* =============================
+   Global Reset & Base
+============================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f7f7f7;
+  color: #222;
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  padding: 20px;
+}
+
+/* =============================
+   Header
+============================= */
+.site-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #000;
+  color: #ffd700; /* gold */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 2rem;
+}
+
+.site-title {
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: #000;
+}
+
+.site-sub {
+  color: #e63946; /* red */
+  font-weight: 600;
+}
+
+.site-tagline {
+  font-style: italic;
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* =============================
+   Card
+============================= */
+.card-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  width: 100%;
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.shield-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.6rem;
+  color: #000;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.card-desc {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+/* =============================
+   Features
+============================= */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.feature {
+  text-align: center;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  transition: 0.3s ease;
+  background: #fafafa;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.feature i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.feat-icon-red {
+  color: #e63946;
+}
+
+.feat-icon-yellow {
+  color: #ffd700;
+}
+
+/* =============================
+   Buttons
+============================= */
+.btn-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: #ffd700;
+  color: #000;
+}
+
+.btn-primary:hover {
+  background: #e6c200;
+}
+
+.btn-outline {
+  border: 2px solid #e63946;
+  color: #e63946;
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background: #e63946;
+  color: #fff;
+}
+
+/* =============================
+   Role Box
+============================= */
+.role-box {
+  background: #fdf1f1;
+  border-left: 4px solid #e63946;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.role-box strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #000;
+}
+
+.role-box ul {
+  margin-left: 1rem;
+  list-style: disc;
+}
+
+/* =============================
+   Footer
+============================= */
+.page-footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1rem;
+  background: #000;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.page-footer p + p {
+  margin-top: 0.3rem;
+}
