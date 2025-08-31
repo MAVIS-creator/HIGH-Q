@@ -518,3 +518,20 @@ table tr:hover {
         width: 100%;
     }
 }
+.admin-main {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.admin-sidebar.active ~ .admin-main {
+    margin-left: 240px;
+}
+
+.admin-footer {
+    left: 0;
+    transition: left 0.3s ease;
+}
+
+.admin-sidebar.active ~ .admin-footer {
+    left: 240px;
+}
