@@ -1,6 +1,13 @@
-/* =============================
-   Global Reset & Base
-============================= */
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+}
 * {
   margin: 0;
   padding: 0;
