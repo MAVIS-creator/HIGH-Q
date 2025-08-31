@@ -140,7 +140,7 @@ button:hover { background: var(--hq-yellow); color: var(--hq-black); }
     <?php endif; ?>
 
     <?php if($showForm): ?>
-    <form method="POST" method>
+    <form method="POST" action="reset">
         <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <input type="text" name="otp" placeholder="Enter OTP" required>
         <input type="password" name="password" placeholder="New Password" required>
