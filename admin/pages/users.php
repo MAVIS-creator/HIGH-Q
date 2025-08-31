@@ -1,9 +1,9 @@
 <?php
 // admin/pages/users.php
 
-require './includes/auth.php';
-require './includes/db.php';
-require './includes/functions.php';
+require '../includes/auth.php';
+require '../includes/db.php';
+require '../includes/functions.php';
 require '../includes/csrf.php';
 
 // Only Admins & Sub-Admins
