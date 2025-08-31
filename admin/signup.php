@@ -1,6 +1,6 @@
 <?php
-require '/includes/db.php';
-require '/includes/functions.php'; // sendEmail()
+require './includes/db.php';
+require './includes/db.php'; // sendEmail()
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['name']);
