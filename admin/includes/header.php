@@ -27,3 +27,6 @@
 </header>
 
 <main class="admin-main">
+    <script>
+        
+        </script>
