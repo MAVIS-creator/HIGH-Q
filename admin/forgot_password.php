@@ -67,7 +67,7 @@ $csrfToken = generateToken('forgot_password_form');
             <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" >
             <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
             <label for="email">Registered Email</label>
