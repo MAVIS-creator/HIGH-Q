@@ -1,117 +1,140 @@
 <?php
-// admin/reset_password.php
 session_start();
-
-require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/includes/db.php';        // your PDO connection
-require __DIR__ . '/includes/functions.php'; // for sendEmail + logging
-require __DIR__ . '/includes/csrf.php';      // Symfony CSRF wrapper
-
-use Symfony\Component\Security\Csrf\CsrfToken;
+require_once './includes/db.php';
+require_once './includes/functions.php'; // sendEmail()
+require_once './includes/csrf.php';
 
 $errors = [];
-$success = "";
+$success = '';
+$showForm = true;
 
-// Step 1: Verify OTP & allow reset
+// Generate CSRF token
+$csrfToken = generateToken('reset_form');
+
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrfToken = $_POST['csrf_token'] ?? '';
-    if (!verifyToken(new CsrfToken('reset_form', $csrfToken))) {
-        $errors[] = "Invalid CSRF token.";
+    // CSRF verification
+    if (!verifyToken('reset_form', $_POST['_csrf_token'] ?? '')) {
+        $errors[] = "Invalid CSRF token. Please refresh and try again.";
     } else {
         $email = trim($_POST['email'] ?? '');
-        $otp   = trim($_POST['otp'] ?? '');
-        $pass1 = $_POST['password'] ?? '';
-        $pass2 = $_POST['confirm_password'] ?? '';
-
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "Invalid email format.";
-        }
-
-        if ($pass1 !== $pass2) {
-            $errors[] = "Passwords do not match.";
-        }
-
-        if (strlen($pass1) < 8) {
-            $errors[] = "Password must be at least 8 characters.";
-        }
-
-        if (empty($errors)) {
-            // check OTP validity
-            $stmt = $pdo->prepare("SELECT * FROM password_resets WHERE email = ? AND otp = ? AND expires_at > NOW()");
-            $stmt->execute([$email, $otp]);
-            $reset = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$reset) {
-                $errors[] = "Invalid or expired OTP.";
+            $errors[] = "Invalid email address.";
+        } else {
+            // Rate limiting: max 3 attempts per 15 minutes
+            if (!isset($_SESSION['reset_attempts'])) {
+                $_SESSION['reset_attempts'] = [];
+            }
+            $_SESSION['reset_attempts'] = array_filter($_SESSION['reset_attempts'], fn($t) => $t > time() - 900);
+            if (count($_SESSION['reset_attempts']) >= 3) {
+                $errors[] = "Too many reset attempts. Try again in 15 minutes.";
             } else {
-                // OTP is valid → update password
-                $hashed = password_hash($pass1, PASSWORD_DEFAULT);
-                $pdo->beginTransaction();
-                try {
-                    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE email = ?");
-                    $stmt->execute([$hashed, $email]);
+                // Find user
+                $stmt = $pdo->prepare("SELECT id, name FROM users WHERE email = ? LIMIT 1");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch();
 
-                    // Remove used OTP
-                    $stmt = $pdo->prepare("DELETE FROM password_resets WHERE email = ?");
-                    $stmt->execute([$email]);
+                if ($user) {
+                    // Generate OTP
+                    $otp = random_int(100000, 999999);
 
-                    $pdo->commit();
+                    // Store OTP temporarily in session (or DB)
+                    $_SESSION['reset_otp'] = [
+                        'user_id' => $user['id'],
+                        'otp' => $otp,
+                        'expires' => time() + 900 // 15 min expiry
+                    ];
 
-                    // Log action
-                    logAction($pdo, 0, "password_reset", ['email' => $email]);
+                    // Send OTP via email
+                    $subject = "Password Reset OTP - HIGH Q SOLID ACADEMY";
+                    $html = "<p>Hello {$user['name']},</p>
+                             <p>You requested a password reset. Use the OTP below to reset your password:</p>
+                             <h2>{$otp}</h2>
+                             <p>This OTP expires in 15 minutes.</p>";
+                    sendEmail($email, $subject, $html);
 
-                    $success = "Password successfully reset. You may now <a href='login.php'>log in</a>.";
-                } catch (Exception $e) {
-                    $pdo->rollBack();
-                    $errors[] = "An error occurred. Please try again.";
+                    $success = "OTP sent to your email. Enter it below to reset your password.";
+                } else {
+                    $errors[] = "Email not found in our system.";
                 }
+
+                $_SESSION['reset_attempts'][] = time();
             }
         }
     }
 }
-
-$csrfToken = generateToken('reset_form');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Reset Password</title>
-  <link rel="stylesheet" href="../assets/css/styles.css">
+<meta charset="UTF-8">
+<title>Reset Password - HIGH Q SOLID ACADEMY</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root { 
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+}
+
+body {
+    margin:0;
+    font-family:"Poppins", sans-serif;
+    background: linear-gradient(135deg, var(--hq-yellow), var(--hq-red));
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
+
+.card {
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:0 12px 32px rgba(0,0,0,0.18);
+    padding:32px;
+    max-width:400px;
+    width:100%;
+    text-align:center;
+}
+
+h2 { margin-bottom: 0.5rem; color: var(--hq-red);}
+p { margin-bottom: 1rem; color: var(--hq-black);}
+input { width:100%; padding:0.6rem; margin:0.5rem 0 1rem; border-radius:6px; border:1px solid #ccc;}
+button { background: var(--hq-red); color:#fff; padding:0.8rem; width:100%; border:none; border-radius:6px; cursor:pointer;}
+button:hover { background: var(--hq-yellow); color: var(--hq-black); }
+
+.error { background:#ffe6e6; border-left:4px solid var(--hq-red); color: var(--hq-red); padding:0.5rem; margin-bottom:1rem; text-align:left;}
+.success { background:#fff3cd; border-left:4px solid var(--hq-yellow); color: var(--hq-black); padding:0.5rem; margin-bottom:1rem; text-align:left;}
+</style>
 </head>
 <body>
-  <div class="form-container">
+
+<div class="card">
     <h2>Reset Password</h2>
+    <p>Enter your email to receive a one-time password (OTP)</p>
 
-    <?php if ($errors): ?>
-      <div class="alert alert-danger">
-        <?= implode("<br>", array_map('htmlspecialchars', $errors)) ?>
-      </div>
+    <?php foreach($errors as $e): ?>
+        <div class="error"><?= htmlspecialchars($e) ?></div>
+    <?php endforeach; ?>
+    <?php if($success): ?>
+        <div class="success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
 
-    <?php if ($success): ?>
-      <div class="alert alert-success">
-        <?= $success ?>
-      </div>
-    <?php else: ?>
-      <form method="post">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-
-        <label for="email">Email Address</label>
-        <input type="email" name="email" id="email" required>
-
-        <label for="otp">OTP Code</label>
-        <input type="text" name="otp" id="otp" required>
-
-        <label for="password">New Password</label>
-        <input type="password" name="password" id="password" required>
-
-        <label for="confirm_password">Confirm New Password</label>
-        <input type="password" name="confirm_password" id="confirm_password" required>
-
-        <button type="submit">Reset Password</button>
-      </form>
+    <?php if($showForm): ?>
+    <form method="POST">
+        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+        <input type="email" name="email" placeholder="you@example.com" required>
+        <button type="submit">Send OTP</button>
+    </form>
     <?php endif; ?>
-  </div>
+</div>
+
 </body>
 </html>
