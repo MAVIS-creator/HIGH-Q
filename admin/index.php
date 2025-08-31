@@ -65,10 +65,12 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="btn-row">
-                    <a href="signup.php" class="btn btn-primary">Access Admin Panel</a>
-                    <a href="learnmore.php" class="btn btn-outline">Learn More</a>
-                </div>
+                <!-- Buttons -->
+<div class="btn-row">
+    <a href="login.php" class="btn btn-primary">Access Admin Panel</a>
+    <a href="signup.php" class="btn btn-outline">Register New Admin</a>
+</div>
+
 
                 <!-- Role box -->
                 <div class="role-box">
