@@ -163,6 +163,7 @@ $posts = $stmt->fetchAll();
         <form method="get" action="index.php" class="search-form">
           <input type="hidden" name="page" value="posts">
           <input type="text" name="q" placeholder="Search by title..." value="<?=htmlspecialchars($q)?>">
+          
         </form>
         <button id="newPostBtn" class="btn-approve">
           <i class="bx bx-plus"></i> Add Article
@@ -188,9 +189,6 @@ $posts = $stmt->fetchAll();
           <tr>
             <td>
                 <td>
-  <?= htmlspecialchars($p['title']) ?><br>
-  <a href="post_edit.php?id=<?= $p['id'] ?>" class="edit-link" data-id="<?= $p['id'] ?>">Edit Post</a>
-</td>
 
               <?php if($p['featured_image']): ?>
                 <img src="../public/<?=htmlspecialchars($p['featured_image'])?>" class="thumb">
