@@ -1,6 +1,6 @@
 <?php
 // admin/pages/roles.php
-require './includes/auth.php';
+require '../includes';
 require './includes/db.php';
 require './includes/csrf.php';
 require './includes/functions.php';
