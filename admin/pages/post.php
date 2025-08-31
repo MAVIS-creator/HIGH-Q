@@ -1,7 +1,7 @@
 <?php
 // admin/pages/posts.php
 require './includes/auth.php';
-require './includes/db.php';
+require './admin/includes/db.php';
 require './includes/csrf.php';
 require './includes/functions.php';
 
