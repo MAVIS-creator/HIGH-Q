@@ -64,9 +64,9 @@
         }
 
         .logo-circle {
-            width: 96px;
-            height: 96px;
-            border-radius: 999px;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
             background: var(--hq-black);
             margin: 0 auto 16px;
             display: flex;
