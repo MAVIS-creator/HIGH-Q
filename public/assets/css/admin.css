@@ -678,3 +678,184 @@ table tr:hover {
 /* Overlay */
 #modalOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1100; }
 #modalOverlay.open { display: block; }
+/*--------------------------------------------
+ Tutors Management — Admin Panel
+--------------------------------------------*/
+
+/* Header */
+.tutors-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.tutors-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.search-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Grid */
+.tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+  gap: 1.2rem;
+}
+
+/* Card */
+.tutor-card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+.tutor-photo {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+.tutor-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tutor-info {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.tutor-info h3 {
+  margin: 0 0 0.4rem;
+  color: var(--primary-red);
+}
+.tutor-info .role {
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+}
+.tutor-info .subjects {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.8rem;
+}
+.tutor-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+.tutor-meta .date {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Buttons inside card */
+.btn-editTutor,
+.btn-banish {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: auto;
+  align-self: flex-start;
+}
+.btn-editTutor {
+  background: #4e73df;
+  color: #fff;
+}
+.btn-editTutor:hover {
+  filter: brightness(0.9);
+}
+.btn-banish {
+  background: var(--dark-black);
+  color: var(--pure-white);
+  margin-left: 0.5rem;
+}
+.btn-banish:hover {
+  background: var(--primary-red);
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+.status-active {
+  background: var(--accent-yellow);
+  color: var(--dark-black);
+}
+.status-banned {
+  background: var(--dark-black);
+  color: var(--pure-white);
+}
+
+/* Modal & Overlay */
+#modalOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1200;
+}
+#modalOverlay.open {
+  display: block;
+}
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  align-items: center;
+  justify-content: center;
+}
+.modal.open {
+  display: flex;
+}
+.modal-content {
+  background: #fff;
+  width: 600px;
+  max-width: 90%;
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+/* Form inside modal */
+.form-row {
+  margin-bottom: 0.8rem;
+  display: flex;
+  flex-direction: column;
+}
+.form-row label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.form-row input,
+.form-row textarea {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.form-actions {
+  text-align: right;
+  margin-top: 1rem;
+}
