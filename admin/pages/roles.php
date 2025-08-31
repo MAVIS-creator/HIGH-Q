@@ -8,9 +8,16 @@ require './includes/functions.php';
 // Only Admins
 requireRole(['admin']);
 
-$csrf   = generateToken();
+// Generate CSRF token
+$csrf = generateToken('default_form'); // token for default_form
+
 $errors = [];
 $flash  = [];
+
+// --- CSRF wrapper for simplicity ---
+function verifyCsrfToken(string $token): bool {
+    return verifyToken('default_form', $token);
+}
 
 // Define all menu items (matches sidebar.php)
 $allMenus = [
@@ -29,7 +36,7 @@ $allMenus = [
 
 // Handle POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
-    if (!verifyToken($_POST['csrf_token'] ?? '')) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = "Invalid CSRF token.";
     } else {
         $action = $_GET['action'];
