@@ -170,133 +170,132 @@ $users = $pdo->query("
 <div class="container" style="margin-left:240px;">
     <h1>User Management</h1>
 
-    <!-- Pending -->
-    <h2>Pending Approval</h2>
-    <table>
-        <tr><th>Name</th><th>Email</th><th>Actions</th></tr>
-        <?php foreach ($pending_users as $u): ?>
-        <tr>
-            <td><?= htmlspecialchars($u['name']) ?></td>
-            <td><?= htmlspecialchars($u['email']) ?></td>
-            <td>
-                <?php if ($_SESSION['user']['role_slug'] === 'admin'): ?>
-                    <form method="post" action="index.php?page=users&action=approve&id=<?= $u['id'] ?>" style="display:inline;">
-                        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                        <select name="role_id" required>
-                            <option value="">Assign Role</option>
-                            <?php foreach ($all_roles as $r): ?>
-                                <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button type="submit" class="btn-approve">Approve</button>
-                    </form>
-                    <form method="post" action="index.php?page=users&action=banish&id=<?= $u['id'] ?>" style="display:inline;">
-                        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                        <button type="submit" class="btn-banish">Banish</button>
-                    </form>
-                <?php endif; ?>
-                <a href="#" class="btn-view" data-user-id="<?= $u['id'] ?>">View</a>
-            </td>
-        </tr>
+    <!-- Users Table -->
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role & Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($users as $u): 
+            $statusClass = $u['is_active']==1 ? 'status-active' : ($u['is_active']==0 ? 'status-pending' : 'status-banned');
+            $roleClass = 'role-' . strtolower($u['role_slug'] ?? 'student');
+        ?>
+            <tr>
+                <td><?= htmlspecialchars($u['name']) ?></td>
+                <td><?= htmlspecialchars($u['email']) ?></td>
+                <td>
+                    <span class="role-badge <?= $roleClass ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
+                    <span class="status-badge <?= $statusClass ?>"><?= $statusClass==='status-active' ? 'Active' : ($statusClass==='status-pending' ? 'Pending' : 'Banned') ?></span>
+                </td>
+                <td>
+                    <a href="#" class="btn-view" data-user-id="<?= $u['id'] ?>">View</a>
+                    <a href="#" class="btn-edit" data-user-id="<?= $u['id'] ?>">Edit</a>
+                    <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
+                        <?php if($u['is_active']===0): ?>
+                        <form method="post" action="index.php?page=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                            <select name="role_id" required>
+                                <option value="">Assign Role</option>
+                                <?php foreach ($all_roles as $r): ?>
+                                    <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit" class="btn-approve">Approve</button>
+                        </form>
+                        <form method="post" action="index.php?page=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                            <button type="submit" class="btn-banish">Banish</button>
+                        </form>
+                        <?php elseif($u['is_active']===1): ?>
+                        <form method="post" action="index.php?page=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                            <button type="submit" class="btn-banish">Banish</button>
+                        </form>
+                        <?php else: ?>
+                        <form method="post" action="index.php?page=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                            <button type="submit" class="btn-approve">Reactivate</button>
+                        </form>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
         <?php endforeach; ?>
-    </table>
-
-    <!-- Active -->
-    <h2>Active Users</h2>
-    <table>
-        <tr><th>Name</th><th>Email</th><th>Role & Status</th><th>Actions</th></tr>
-        <?php foreach ($active_users as $u): ?>
-        <?php [$statusClass, $statusText] = getStatusBadge($u['is_active']); ?>
-        <?php [$roleClass, $roleText] = getRoleBadge($pdo, $u['role_id']); ?>
-        <tr>
-            <td><?= htmlspecialchars($u['name']) ?></td>
-            <td><?= htmlspecialchars($u['email']) ?></td>
-            <td>
-                <span class="role-badge <?= $roleClass; ?>"><?= htmlspecialchars($roleText); ?></span>
-                <span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
-            </td>
-            <td>
-                <a href="#" class="btn-view" data-user-id="<?= $u['id'] ?>">View</a>
-                <a href="#" class="btn-edit" data-user-id="<?= $u['id'] ?>">Edit</a>
-                <?php if ($_SESSION['user']['role_slug'] === 'admin'): ?>
-                    <form method="post" action="index.php?page=users&action=banish&id=<?= $u['id'] ?>" style="display:inline;">
-                        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                        <button type="submit" class="btn-banish">Banish</button>
-                    </form>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
-
-    <!-- Banned -->
-    <h2>Banned Users</h2>
-    <table>
-        <tr><th>Name</th><th>Email</th><th>Role & Status</th><th>Actions</th></tr>
-        <?php foreach ($banned_users as $u): ?>
-        <?php [$statusClass, $statusText] = getStatusBadge($u['is_active']); ?>
-        <?php [$roleClass, $roleText] = getRoleBadge($pdo, $u['role_id']); ?>
-        <tr>
-            <td><?= htmlspecialchars($u['name']) ?></td>
-            <td><?= htmlspecialchars($u['email']) ?></td>
-            <td>
-                <span class="role-badge <?= $roleClass; ?>"><?= htmlspecialchars($roleText); ?></span>
-                <span class="status-badge <?= $statusClass; ?>"><?= $statusText; ?></span>
-            </td>
-            <td>
-                <a href="#" class="btn-view" data-user-id="<?= $u['id'] ?>">View</a>
-                <?php if ($_SESSION['user']['role_slug'] === 'admin'): ?>
-                    <form method="post" action="index.php?page=users&action=reactivate&id=<?= $u['id'] ?>" style="display:inline;">
-                        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                        <button type="submit" class="btn-approve">Reactivate</button>
-                    </form>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <?php endforeach; ?>
+        </tbody>
     </table>
 </div>
 
-<!-- Unified View/Edit Modal -->
+<!-- Modal -->
 <div class="modal" id="userModal">
-  <div class="modal-content">
-    <span class="modal-close" id="userModalClose"><i class='bx bx-x'></i></span>
-
-    <div class="modal-tabs">
-      <button class="tab-btn active" data-tab="viewTab">Profile</button>
-      <button class="tab-btn" data-tab="editTab">Edit</button>
-    </div>
-
-    <!-- View Tab -->
-    <div id="viewTab" class="tab-pane active">
-      <div class="profile-header">
-        <img id="mAvatar" src="../public/assets/images/avatar-placeholder.png" alt="Avatar">
-        <div>
-          <h3 id="mName">Name</h3>
-          <p id="mRole" class="role-badge role-student">Role</p>
-          <p id="mStatus" class="status-badge status-pending">Status</p>
+    <div class="modal-content">
+        <span class="modal-close" id="userModalClose"><i class='bx bx-x'></i></span>
+        <div class="modal-tabs">
+            <button class="tab-btn active" data-tab="viewTab">Profile</button>
+            <button class="tab-btn" data-tab="editTab">Edit</button>
         </div>
-      </div>
-      <div class="profile-grid">
-        <div><span class="label">Email:</span> <span id="mEmail"></span></div>
-        <div><span class="label">Last Login:</span> <span id="mLastLogin"></span></div>
-        <div><span class="label">Created:</span> <span id="mCreated"></span></div>
-        <div><span class="label">Updated:</span> <span id="mUpdated"></span></div>
-        <div><span class="label">Posts:</span> <span id="mPosts"></span></div>
-        <div><span class="label">Comments:</span> <span id="mComments"></span></div>
-      </div>
-    </div>
-
-    <!-- Edit Tab -->
-    <div id="editTab" class="tab-pane">
-      <form id="editForm" method="post">
-        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-        <div class="form-row">
-          <label>Name</label>
-          <input type="text" name="name" id="fName" required>
+        <!-- View Tab -->
+        <div id="viewTab" class="tab-pane active">
+            <div class="profile-header">
+                <img id="mAvatar" src="../public/assets/images/avatar-placeholder.png" alt="Avatar">
+                <div>
+                    <h3 id="mName">Name</h3>
+                    <p id="mRole" class="role-badge role-student">Role</p>
+                    <p id="mStatus" class="status-badge status-pending">Status</p>
+                </div>
+            </div>
+            <div class="profile-grid">
+                <div><span class="label">Email:</span> <span id="mEmail"></span></div>
+                <div><span class="label">Last Login:</span> <span id="mLastLogin"></span></div>
+                <div><span class="label">Created:</span> <span id="mCreated"></span></div>
+                <div><span class="label">Updated:</span> <span id="mUpdated"></span></div>
+                <div><span class="label">Posts:</span> <span id="mPosts"></span></div>
+                <div><span class="label">Comments:</span> <span id="mComments"></span></div>
+            </div>
         </div>
-        <div class="form-row">
-          <label>Email</label>
+        <!-- Edit Tab -->
+        <div id="editTab" class="tab-pane">
+            <form id="editForm" method="post">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <div class="form-row">
+                    <label>Name</label>
+                    <input type="text" name="name" id="fName" required>
+                </div>
+                <div class="form-row">
+                    <label>Email</label>
+                    <input type="email" name="email" id="fEmail" required>
+                </div>
+                <div class="form-row">
+                    <label>Role</label>
+                    <select name="role_id" id="fRole">
+                        <?php foreach ($all_roles as $r): ?>
+                        <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Status</label>
+                    <select name="is_active" id="fStatus">
+                        <option value="1">Active</option>
+                        <option value="0">Pending</option>
+                        <option value="2">Banned</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-approve">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="modalOverlay"></div>
+
+<?php include '../includes/footer.php'; ?>
+   <label>Email</label>
           <input type="email" name="email" id="fEmail" required>
         </div>
         <div class="form-row">
