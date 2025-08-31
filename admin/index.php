@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,6 +20,7 @@
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
     <div class="container">
 
@@ -65,11 +67,10 @@
                 </div>
 
                 <!-- Buttons -->
-                <!-- Buttons -->
-<div class="btn-row">
-    <a href="login.php" class="btn btn-primary">Access Admin Panel</a>
-    <a href="signup.php" class="btn btn-outline">Register New Admin</a>
-</div>
+                <div class="btn-row">
+                    <a href="login.php" class="btn btn-primary">Access Admin Panel</a>
+                    <a href="signup.php" class="btn btn-outline">Register New Admin</a>
+                </div>
 
 
                 <!-- Role box -->
@@ -91,4 +92,5 @@
         </footer>
     </div>
 </body>
+
 </html>
