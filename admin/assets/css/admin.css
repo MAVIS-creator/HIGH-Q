@@ -295,3 +295,20 @@ table tr:hover {
     background: var(--accent-yellow);
     color: var(--dark-black);
 }
+/* Pending = Yellow */
+.status-pending {
+    background: var(--accent-yellow);
+    color: var(--dark-black);
+}
+
+/* Active = Green (stands out from your main palette) */
+.status-active {
+    background: #28a745;
+    color: var(--pure-white);
+}
+
+/* Banned = Red */
+.status-banned {
+    background: var(--primary-red);
+    color: var(--pure-white);
+}
