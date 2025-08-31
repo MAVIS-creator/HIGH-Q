@@ -319,116 +319,66 @@ $posts = $stmt->fetchAll();
 
     <?php include '../includes/footer.php'; ?>
 
-    <script>
-        // Modal logic
-        const postModal = document.getElementById('postModal');
-        const overlay = document.getElementById('modalOverlay');
-        const closePostBtn = document.getElementById('postModalClose');
-        const newPostBtn = document.getElementById('newPostBtn');
-        const postForm = document.getElementById('postForm');
-        const modalTitle = document.getElementById('postModalTitle');
-        const fields = {
-            title: document.getElementById('pTitle'),
-            slug: document.getElementById('pSlug'),
-            excerpt: document.getElementById('pExcerpt'),
-            content: document.getElementById('pContent'),
-            category: document.getElementById('pCategory'),
-            tags: document.getElementById('pTags'),
-            image: document.getElementById('pImage'),
-            publish: document.getElementById('pPublish')
-        };
+   <script>
+const overlay     = document.getElementById('modalOverlay');
+const editModal   = document.getElementById('editPostModal');
+const editContent = document.getElementById('editPostModalContent');
 
-        function openPostModal(mode, data = {}) {
-            overlay.classList.add('open');
-            postModal.classList.add('open');
-            if (mode === 'edit') {
-                modalTitle.textContent = 'Edit Article';
-                postForm.action = `index.php?page=posts&action=edit&id=${data.id}`;
-                fields.title.value = data.title;
-                fields.slug.value = data.slug;
-                fields.excerpt.value = data.excerpt;
-                fields.content.value = data.content;
-                fields.category.value = data.category_id || '';
-                fields.tags.value = data.tags;
-                fields.publish.checked = data.status === 'published';
-            } else {
-                modalTitle.textContent = 'New Article';
-                postForm.action = 'index.php?page=posts&action=create';
-                Object.values(fields).forEach(f => {
-                    if (f.type === 'checkbox') f.checked = false;
-                    else if (f.tagName === 'INPUT' || f.tagName === 'TEXTAREA' || f.tagName === 'SELECT') f.value = '';
-                });
-            }
+// Open modal and load form
+document.querySelectorAll('.edit-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const id = link.dataset.id;
+    fetch(`post_edit.php?id=${id}`)
+      .then(res => res.text())
+      .then(html => {
+        editContent.innerHTML = html;
+        overlay.classList.add('open');
+        editModal.classList.add('open');
+        bindAjaxForm(id);
+      });
+  });
+});
+
+function closeEditModal() {
+  overlay.classList.remove('open');
+  editModal.classList.remove('open');
+}
+overlay.addEventListener('click', closeEditModal);
+
+// Bind AJAX submit
+function bindAjaxForm(id) {
+  const form = document.getElementById('ajaxEditPostForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch(`index.php?page=posts&action=edit&id=${id}`, {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // Update row in place
+        const row = document.getElementById(`post-row-${id}`);
+        row.querySelector('td:nth-child(2)').innerHTML =
+          `${data.post.title}<br><a href="post_edit.php?id=${id}" class="edit-link" data-id="${id}">Edit Post</a>`;
+        row.querySelector('td:nth-child(3)').textContent = data.post.category || 'Uncategorized';
+        row.querySelector('td:nth-child(4)').textContent = data.post.tags;
+        row.querySelector('td:nth-child(5)').innerHTML =
+          `<span class="status-badge ${data.post.status==='published'?'status-active':'status-pending'}">
+            ${data.post.status.charAt(0).toUpperCase() + data.post.status.slice(1)}
+           </span>`;
+        if (data.post.featured_image) {
+          row.querySelector('td:nth-child(1)').innerHTML =
+            `<img src="../public/${data.post.featured_image}" class="thumb">`;
         }
-
-        function closePostModal() {
-            overlay.classList.remove('open');
-            postModal.classList.remove('open');
-        }
-
-        newPostBtn.addEventListener('click', () => openPostModal('create'));
-        closePostBtn.addEventListener('click', closePostModal);
-        overlay.addEventListener('click', closePostModal);
-        document.addEventListener('keydown', e => e.key === 'Escape' && closePostModal());
-
-        document.querySelectorAll('.btn-editPost').forEach(btn => {
-            btn.addEventListener('click', () => {
-                openPostModal('edit', {
-                    id: btn.dataset.id,
-                    title: btn.dataset.title,
-                    slug: btn.dataset.slug,
-                    excerpt: btn.dataset.excerpt,
-                    content: btn.dataset.content,
-                    category_id: btn.dataset.category,
-                    tags: btn.dataset.tags,
-                    status: btn.dataset.status
-                });
-            });
-        });
-        const overlay = document.getElementById('modalOverlay');
-        const editModal = document.getElementById('editPostModal');
-        const editContent = document.getElementById('editPostModalContent');
-
-        // Open modal and load form
-        document.querySelectorAll('.edit-link').forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                const id = link.dataset.id;
-                fetch(`post_edit.php?id=${id}`)
-                    .then(res => res.text())
-                    .then(html => {
-                        editContent.innerHTML = html;
-                        overlay.classList.add('open');
-                        editModal.classList.add('open');
-                        bindAjaxForm(); // bind submit after content loads
-                    });
-            });
-        });
-
-        // Close modal
-        overlay.addEventListener('click', closeEditModal);
-
-        function closeEditModal() {
-            overlay.classList.remove('open');
-            editModal.classList.remove('open');
-        }
-
-        // Bind AJAX submit
-        function bindAjaxForm() {
-            const form = document.getElementById('ajaxEditPostForm');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-                fetch(`index.php?page=posts&action=edit&id=${formData.get('id')}`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(res => res.text())
-                    .then(() => {
-                        closeEditModal();
-                        // Optionally refresh just the row or reload page
-                        location.reload();
-                    });
-            });
-        }
-    </script>
+        closeEditModal();
+      } else {
+        alert(data.error || 'Update failed');
+      }
+    });
+  });
+}
+</script>
