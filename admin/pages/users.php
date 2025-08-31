@@ -2,7 +2,7 @@
 // admin/pages/users.php
 
 require '../includes/auth.php';
-require '/';
+require './admin/includes/db.php';
 require './includes/functions.php';
 require './includes/csrf.php';
 
