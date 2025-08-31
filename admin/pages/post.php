@@ -289,6 +289,12 @@ $posts = $stmt->fetchAll();
     </div>
   </div>
   <div id="modalOverlay"></div>
+<div class="modal" id="editPostModal">
+  <div class="modal-content" id="editPostModalContent">
+    <!-- AJAX-loaded content will go here -->
+  </div>
+</div>
+<div id="modalOverlay"></div>
 
   <?php include '../includes/footer.php'; ?>
 
