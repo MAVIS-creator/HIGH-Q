@@ -28,5 +28,4 @@ overlay.addEventListener('click', () => {
     sidebar.classList.remove('active');
     overlay.classList.remove('active');
 });
-
 </script>
