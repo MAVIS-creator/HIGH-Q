@@ -2,19 +2,16 @@
 // admin/includes/footer.php
 ?>
 </main>
-
 <footer class="admin-footer">
     © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
 </footer>
 
-<!-- Sidebar overlay -->
 <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 </body>
 </html>
 
 <script>
-// Sidebar toggle
 const sidebar = document.querySelector('.admin-sidebar');
 const overlay = document.getElementById('sidebarOverlay');
 const menuToggle = document.getElementById('menuToggle');
