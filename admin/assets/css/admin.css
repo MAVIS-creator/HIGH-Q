@@ -419,6 +419,8 @@ table tr:hover {
 .widget-card.red    { background: var(--hq-red); }
 .widget-card.yellow { background: var(--hq-yellow); color: var(--hq-black); }
 .widget-card.black  { background: var(--hq-black); }
+
+
 /* Admin Header */
 .admin-header {
     position: fixed;
