@@ -18,8 +18,9 @@ if (!$post) {
 ?>
 <div class="modal-content-inner">
   <h3>Edit Post: <?= htmlspecialchars($post['title']) ?></h3>
-  <form method="post" action="index.php?page=posts&action=edit&id=<?= $post['id'] ?>" enctype="multipart/form-data">
+  <form id="ajaxEditPostForm" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+    <input type="hidden" name="id" value="<?= $post['id'] ?>">
     <div class="form-row">
       <label>Title</label>
       <input type="text" name="title" value="<?= htmlspecialchars($post['title']) ?>" required>
