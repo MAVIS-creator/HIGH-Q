@@ -327,79 +327,65 @@ $users = $pdo->query("
 <?php include '../includes/footer.php'; ?>
 
 <script>
-// Open/close modal
 const userModal = document.getElementById('userModal');
 const overlay   = document.getElementById('modalOverlay');
 const closeBtn  = document.getElementById('userModalClose');
+
 function openModal(){ userModal.classList.add('open'); overlay.classList.add('open'); }
 function closeModal(){ userModal.classList.remove('open'); overlay.classList.remove('open'); }
+
 overlay.addEventListener('click', closeModal);
 closeBtn.addEventListener('click', closeModal);
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
-// Tabs switch
+// Tabs
 const tabButtons = document.querySelectorAll('.tab-btn');
-const tabPanes   = document.querySelectorAll('.tab-pane');
+const tabPanes = document.querySelectorAll('.tab-pane');
 function activateTab(id){
-  tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
-  tabPanes.forEach(p=>p.classList.toggle('active', p.id===id));
+    tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+    tabPanes.forEach(p=>p.classList.toggle('active', p.id===id));
 }
 
-// Populate modal (view/edit)
+// Load user data via AJAX
 async function loadUser(id, mode='view'){
-  const res = await fetch(`index.php?page=users&action=view&id=${encodeURIComponent(id)}`);
-  const data = await res.json();
-  if (data.error) return alert(data.error);
+    const res = await fetch(`index.php?page=users&action=view&id=${id}`);
+    const data = await res.json();
+    if(data.error) return alert(data.error);
 
-  // View fields
-  document.getElementById('mName').textContent = data.name;
-  document.getElementById('mEmail').textContent = data.email;
-  document.getElementById('mLastLogin').textContent = data.last_login ?? '—';
-  document.getElementById('mCreated').textContent = data.created_at ?? '—';
-  document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
-  document.getElementById('mPosts').textContent = data.posts_count;
-  document.getElementById('mComments').textContent = data.comments_count;
+    // Fill view fields
+    document.getElementById('mName').textContent = data.name;
+    document.getElementById('mEmail').textContent = data.email;
+    document.getElementById('mRole').textContent = data.role_name;
+    document.getElementById('mRole').className = `role-badge role-${data.role_slug}`;
+    document.getElementById('mStatus').textContent = data.status;
+    document.getElementById('mStatus').className = `status-badge ${data.status_value===1?'status-active':data.status_value===0?'status-pending':'status-banned'}`;
+    document.getElementById('mLastLogin').textContent = data.last_login ?? '—';
+    document.getElementById('mCreated').textContent = data.created_at ?? '—';
+    document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
+    document.getElementById('mPosts').textContent = data.posts_count;
+    document.getElementById('mComments').textContent = data.comments_count;
+    document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "../public/assets/images/avatar-placeholder.png";
 
-  const avatarEl = document.getElementById('mAvatar');
-  avatarEl.src = data.avatar ? (data.avatar.startsWith('http') ? data.avatar : `../${data.avatar}`) : "../public/assets/images/avatar-placeholder.png";
+    // Fill edit form
+    const form = document.getElementById('editForm');
+    form.action = `index.php?page=users&action=edit&id=${data.id}`;
+    document.getElementById('fName').value = data.name;
+    document.getElementById('fEmail').value = data.email;
+    document.getElementById('fRole').value = data.role_id ?? '';
+    document.getElementById('fStatus').value = data.status_value;
 
-  const roleEl = document.getElementById('mRole');
-  roleEl.textContent = data.role_name;
-  roleEl.className = `role-badge role-${data.role_slug || 'student'}`;
-
-  const statusEl = document.getElementById('mStatus');
-  const statusClass = data.status_value === 1 ? 'status-active' : (data.status_value === 0 ? 'status-pending' : 'status-banned');
-  statusEl.textContent = data.status;
-  statusEl.className = `status-badge ${statusClass}`;
-
-  // Edit fields
-  const form = document.getElementById('editForm');
-  form.action = `index.php?page=users&action=edit&id=${encodeURIComponent(data.id)}`;
-  document.getElementById('fName').value   = data.name;
-  document.getElementById('fEmail').value  = data.email;
-  document.getElementById('fRole').value   = data.role_id ?? '';
-  document.getElementById('fStatus').value = data.status_value;
-
-  // Switch tab based on mode
-  activateTab(mode === 'edit' ? 'editTab' : 'viewTab');
-  openModal();
+    activateTab(mode==='edit'?'editTab':'viewTab');
+    openModal();
 }
 
 // Button handlers
-document.querySelectorAll('.btn-view').forEach(btn=>{
-  btn.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const id = btn.dataset.userId;
-    loadUser(id, 'view');
-  });
-});
-document.querySelectorAll('.btn-edit').forEach(btn=>{
-  btn.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const id = btn.dataset.userId;
-    loadUser(id, 'edit');
-  });
-});
+document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click', e=>{
+    e.preventDefault(); loadUser(btn.dataset.userId,'view');
+}));
+document.querySelectorAll('.btn-edit').forEach(btn=>btn.addEventListener('click', e=>{
+    e.preventDefault(); loadUser(btn.dataset.userId,'edit');
+}));
+
 </script>
 </body>
 </html>
