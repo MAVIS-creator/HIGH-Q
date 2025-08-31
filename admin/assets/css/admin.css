@@ -91,6 +91,8 @@
     background: var(--hq-yellow);
     color: var(--hq-black);
 }
+
+.container {
 width: 1200px;
     margin: 2rem auto;
     background: #fff;
