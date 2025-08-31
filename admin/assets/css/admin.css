@@ -91,3 +91,191 @@
     background: var(--hq-yellow);
     color: var(--hq-black);
 }
+width: 1200px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: var(--hq-red);
+    margin-bottom: 1.5rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: #fff;
+}
+
+table th, table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background: var(--hq-yellow);
+    color: var(--hq-black);
+    font-weight: bold;
+}
+
+table tr:hover {
+    background: var(--hq-yellow-light);
+}
+
+/* Buttons */
+.btn-approve, .btn-banish {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-approve {
+    background: var(--hq-red);
+    color: #fff;
+}
+
+.btn-approve:hover {
+    background: var(--hq-yellow);
+    color: var(--hq-black);
+}
+
+.btn-banish {
+    background: var(--hq-black);
+    color: #fff;
+}
+
+.btn-banish:hover {
+    background: var(--hq-red);
+}
+
+/* Role & Menu Badges */
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 2px 2px 0;
+    white-space: nowrap;
+}
+
+/* Colors matching HQ theme */
+.role-dashboard { background: var(--hq-yellow); color: var(--hq-black); }
+.role-users     { background: var(--hq-red); color: #fff; }
+.role-roles     { background: var(--hq-red); color: #fff; }
+.role-settings  { background: var(--hq-black); color: #fff; }
+.role-courses   { background: var(--hq-yellow-light); color: var(--hq-black); }
+.role-tutors    { background: var(--hq-yellow); color: var(--hq-black); }
+.role-students  { background: var(--hq-yellow-light); color: var(--hq-black); }
+.role-payments  { background: var(--hq-red); color: #fff; }
+.role-posts     { background: var(--hq-yellow); color: var(--hq-black); }
+.role-comments  { background: var(--hq-yellow-light); color: var(--hq-black); }
+.role-chat      { background: var(--hq-black); color: #fff; }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+.modal.open {
+    display: block;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--hq-black);
+}
+
+.form-row {
+    margin-bottom: 1rem;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+}
+
+.form-row input[type="text"],
+.form-row input[type="number"],
+.form-row select {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-actions {
+    text-align: right;
+}
+
+/* Overlay */
+#modalOverlay {
+    display: none;
+    position: fixed;
+    z-index: 998;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#modalOverlay.open {
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    table tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ddd;
+    }
+    table td {
+        padding-left: 50%;
+        position: relative;
+    }
+    table td::before {
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 0.5rem;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+}
