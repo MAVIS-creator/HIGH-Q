@@ -1,74 +1,94 @@
 <?php
+// admin/pages/users.php
+
 require './includes/auth.php';
 require './includes/db.php';
 require './includes/functions.php';
 require './includes/csrf.php';
 
-// Only allow Admins and Sub‑Admins
+// Only Admins & Sub-Admins
 if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
     header("Location: index.php");
     exit;
 }
 
-$csrf = generateToken();
+// Generate CSRF token
+$csrf = generateToken('users_form');
 
-// Actions
+// Action handling
 if (isset($_GET['action'], $_GET['id'])) {
     $id = (int) $_GET['id'];
+    $action = $_GET['action'];
 
-    // Approve (Admin only)
-    if ($_GET['action'] === 'approve' && $_SESSION['user']['role_slug'] === 'admin') {
-        if (!verifyToken($_POST['csrf_token'])) die("Invalid CSRF token");
-        $role_id = (int) $_POST['role_id'];
-        $pdo->prepare("UPDATE users SET is_active=1, role_id=? WHERE id=?")->execute([$role_id, $id]);
-        $user = $pdo->query("SELECT name,email FROM users WHERE id=$id")->fetch();
-        sendEmail($user['email'], "Account Approved", "Hi {$user['name']},<br>Your account has been approved.");
-        logAction($pdo, $_SESSION['user']['id'], "Approved user", ['user_id'=>$id]);
+    // CSRF check for POST actions
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !verifyToken('users_form', $_POST['csrf_token'] ?? '')) {
+        die("Invalid CSRF token.");
     }
 
-    // Banish (Admin only)
-    if ($_GET['action'] === 'banish' && $_SESSION['user']['role_slug'] === 'admin') {
-        if (!verifyToken($_POST['csrf_token'])) die("Invalid CSRF token");
-        $pdo->prepare("UPDATE users SET is_active=2 WHERE id=?")->execute([$id]);
-        $user = $pdo->query("SELECT name,email FROM users WHERE id=$id")->fetch();
-        sendEmail($user['email'], "Account Banned", "Hi {$user['name']},<br>Your account has been banned.");
-        logAction($pdo, $_SESSION['user']['id'], "Banned user", ['user_id'=>$id]);
-    }
+    switch ($action) {
+        case 'approve':
+            if ($_SESSION['user']['role_slug'] !== 'admin') break;
+            $role_id = (int) $_POST['role_id'];
+            $stmt = $pdo->prepare("UPDATE users SET is_active=1, role_id=? WHERE id=?");
+            $stmt->execute([$role_id, $id]);
 
-    // Reactivate (Admin only)
-    if ($_GET['action'] === 'reactivate' && $_SESSION['user']['role_slug'] === 'admin') {
-        if (!verifyToken($_POST['csrf_token'])) die("Invalid CSRF token");
-        $pdo->prepare("UPDATE users SET is_active=1 WHERE id=?")->execute([$id]);
-        $user = $pdo->query("SELECT name,email FROM users WHERE id=$id")->fetch();
-        sendEmail($user['email'], "Account Reactivated", "Hi {$user['name']},<br>Your account has been reactivated.");
-        logAction($pdo, $_SESSION['user']['id'], "Reactivated user", ['user_id'=>$id]);
-    }
+            $user = $pdo->prepare("SELECT name,email FROM users WHERE id=?");
+            $user->execute([$id]);
+            $user = $user->fetch();
 
-    // Edit (Admin + Sub-Admin can edit, but only Admin can change status to banned or assign Admin role)
-    if ($_GET['action'] === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!verifyToken($_POST['csrf_token'])) die("Invalid CSRF token");
+            sendEmail($user['email'], "Account Approved", "Hi {$user['name']},<br>Your account has been approved.");
+            logAction($pdo, $_SESSION['user']['id'], "Approved user", ['user_id'=>$id]);
+            break;
 
-        $name    = trim($_POST['name']);
-        $email   = trim($_POST['email']);
-        $role_id = (int) $_POST['role_id'];
-        $status  = (int) $_POST['is_active'];
+        case 'banish':
+            if ($_SESSION['user']['role_slug'] !== 'admin') break;
+            $stmt = $pdo->prepare("UPDATE users SET is_active=2 WHERE id=?");
+            $stmt->execute([$id]);
 
-        // Safety gates: prevent non-admins from escalating roles or banning
-        if ($_SESSION['user']['role_slug'] !== 'admin') {
-            // Force non-admins to keep non-admin roles and not ban
-            $status = $status === 2 ? 1 : $status;
-            // Prevent assigning admin role
-            $isAdminRole = (bool)$pdo->query("SELECT 1 FROM roles WHERE id={$role_id} AND slug='admin'")->fetchColumn();
-            if ($isAdminRole) {
-                // fallback to existing role
-                $role_id = (int)$pdo->query("SELECT role_id FROM users WHERE id={$id}")->fetchColumn();
+            $user = $pdo->prepare("SELECT name,email FROM users WHERE id=?");
+            $user->execute([$id]);
+            $user = $user->fetch();
+
+            sendEmail($user['email'], "Account Banned", "Hi {$user['name']},<br>Your account has been banned.");
+            logAction($pdo, $_SESSION['user']['id'], "Banned user", ['user_id'=>$id]);
+            break;
+
+        case 'reactivate':
+            if ($_SESSION['user']['role_slug'] !== 'admin') break;
+            $stmt = $pdo->prepare("UPDATE users SET is_active=1 WHERE id=?");
+            $stmt->execute([$id]);
+
+            $user = $pdo->prepare("SELECT name,email FROM users WHERE id=?");
+            $user->execute([$id]);
+            $user = $user->fetch();
+
+            sendEmail($user['email'], "Account Reactivated", "Hi {$user['name']},<br>Your account has been reactivated.");
+            logAction($pdo, $_SESSION['user']['id'], "Reactivated user", ['user_id'=>$id]);
+            break;
+
+        case 'edit':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $name    = trim($_POST['name']);
+                $email   = trim($_POST['email']);
+                $role_id = (int) $_POST['role_id'];
+                $status  = (int) $_POST['is_active'];
+
+                // Prevent non-admins from escalating privileges
+                if ($_SESSION['user']['role_slug'] !== 'admin') {
+                    $status = $status === 2 ? 1 : $status; // no ban
+                    $isAdminRole = (bool)$pdo->prepare("SELECT 1 FROM roles WHERE id=? AND slug='admin'")
+                        ->execute([$role_id]);
+                    if ($isAdminRole) {
+                        $role_id = (int)$pdo->prepare("SELECT role_id FROM users WHERE id=?")
+                                    ->execute([$id]);
+                    }
+                }
+
+                $stmt = $pdo->prepare("UPDATE users SET name=?, email=?, role_id=?, is_active=? WHERE id=?");
+                $stmt->execute([$name, $email, $role_id, $status, $id]);
+                logAction($pdo, $_SESSION['user']['id'], "Edited user", ['user_id'=>$id]);
             }
-        }
-
-        $stmt = $pdo->prepare("UPDATE users SET name=?, email=?, role_id=?, is_active=? WHERE id=?");
-        $stmt->execute([$name, $email, $role_id, $status, $id]);
-
-        logAction($pdo, $_SESSION['user']['id'], "Edited user", ['user_id'=>$id]);
+            break;
     }
 
     header("Location: index.php?page=users");
@@ -82,14 +102,16 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) 
         echo json_encode(['error' => 'Forbidden']);
         exit;
     }
-    header('Content-Type: application/json');
+
     $id = (int) $_GET['id'];
 
-    $stmt = $pdo->prepare("SELECT u.id, u.name, u.email, u.avatar, u.is_active, u.last_login, u.created_at, u.updated_at,
-                                  r.name AS role_name, r.slug AS role_slug, r.id AS role_id
-                           FROM users u
-                           LEFT JOIN roles r ON r.id = u.role_id
-                           WHERE u.id = ?");
+    $stmt = $pdo->prepare("
+        SELECT u.id, u.name, u.email, u.avatar, u.is_active, u.last_login, u.created_at, u.updated_at,
+               r.name AS role_name, r.slug AS role_slug, r.id AS role_id
+        FROM users u
+        LEFT JOIN roles r ON r.id = u.role_id
+        WHERE u.id = ?
+    ");
     $stmt->execute([$id]);
     $user = $stmt->fetch();
 
@@ -98,49 +120,41 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) 
         exit;
     }
 
-    $posts_count    = (int)$pdo->query("SELECT COUNT(*) FROM posts WHERE author_id = {$id}")->fetchColumn();
-    $comments_count = (int)$pdo->query("SELECT COUNT(*) FROM comments WHERE user_id = {$id}")->fetchColumn();
-    $status_map     = [0 => 'Pending', 1 => 'Active', 2 => 'Banned'];
+    // Use prepared statements for counts
+    $posts_count = (int)$pdo->prepare("SELECT COUNT(*) FROM posts WHERE author_id=?")->execute([$id])->fetchColumn();
+    $comments_count = (int)$pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id=?")->execute([$id])->fetchColumn();
+
+    $status_map = [0=>'Pending', 1=>'Active', 2=>'Banned'];
 
     echo json_encode([
-        'id'             => (int)$user['id'],
-        'name'           => $user['name'],
-        'email'          => $user['email'],
-        'avatar'         => $user['avatar'],
-        'role_id'        => $user['role_id'] ?? null,
-        'role_name'      => $user['role_name'] ?? 'Student',
-        'role_slug'      => $user['role_slug'] ?? 'student',
-        'status'         => $status_map[(int)$user['is_active']] ?? 'Unknown',
-        'status_value'   => (int)$user['is_active'],
-        'last_login'     => $user['last_login'],
-        'created_at'     => $user['created_at'],
-        'updated_at'     => $user['updated_at'],
-        'posts_count'    => $posts_count,
-        'comments_count' => $comments_count
+        'id'           => $user['id'],
+        'name'         => $user['name'],
+        'email'        => $user['email'],
+        'avatar'       => $user['avatar'],
+        'role_id'      => $user['role_id'] ?? null,
+        'role_name'    => $user['role_name'] ?? 'Student',
+        'role_slug'    => $user['role_slug'] ?? 'student',
+        'status'       => $status_map[(int)$user['is_active']] ?? 'Unknown',
+        'status_value' => (int)$user['is_active'],
+        'last_login'   => $user['last_login'],
+        'created_at'   => $user['created_at'],
+        'updated_at'   => $user['updated_at'],
+        'posts_count'  => $posts_count,
+        'comments_count'=> $comments_count
     ]);
     exit;
 }
 
-// Data
-$pending_users = $pdo->query("SELECT * FROM users WHERE is_active=0 ORDER BY created_at DESC")->fetchAll();
-$active_users  = $pdo->query("SELECT * FROM users WHERE is_active=1 ORDER BY created_at DESC")->fetchAll();
-$banned_users  = $pdo->query("SELECT * FROM users WHERE is_active=2 ORDER BY created_at DESC")->fetchAll();
-$all_roles     = $pdo->query("SELECT id,name,slug FROM roles ORDER BY id ASC")->fetchAll();
+// Fetch users + roles in one query to avoid N+1
+$users = $pdo->query("
+    SELECT u.*, r.name AS role_name, r.slug AS role_slug
+    FROM users u
+    LEFT JOIN roles r ON r.id = u.role_id
+    ORDER BY u.created_at DESC
+")->fetchAll();
 
-// Badge helpers
-function getStatusBadge($status) {
-    return match($status) {
-        0 => ['status-pending', 'Pending'],
-        1 => ['status-active', 'Active'],
-        2 => ['status-banned', 'Banned'],
-    };
-}
-function getRoleBadge($pdo, $role_id) {
-    if (!$role_id) return ['role-student', 'Student'];
-    $role = $pdo->query("SELECT name, slug FROM roles WHERE id={$role_id}")->fetch();
-    return ['role-' . strtolower($role['slug']), $role['name']];
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
