@@ -4,12 +4,15 @@ require '../includes/auth.php';
 require '../includes/db.php';
 require '../includes/csrf.php';
 require '../includes/functions.php';
-
-// Only Admins
 requireRole(['admin']);
 
 // Generate CSRF token
 $csrf = generateToken('default_form'); // token for default_form
+
+
+$pageTitle = 'Roles Management';
+include '../includes/header.php';
+include '../includes/sidebar.php';
 
 $errors = [];
 $flash  = [];

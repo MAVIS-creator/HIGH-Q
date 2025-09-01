@@ -1,30 +1,39 @@
 admin/
- ├─ login.php
- ├─ logout.php
- ├─signup.php
- ├─index.php
- ├─pending.php
- ├─ pages/
- ├  ├─ index.php           -- dashboard (role-aware)
- ├  ├─ users.php           -- list/create/edit (admins only)
- ├  ├─ roles.php           -- view (admins only)
- ├  ├─ courses.php         -- manage courses
- ├   ├─dashboard.php
- ├  ├─ posts.php           -- list posts, draft/publish controls
- ├  ├─ post_edit.php       -- WYSIWYG editor, save drafts
- ├  ├─ comments.php        -- moderate comments + reply inline
- ├  ├─ tutors.php          -- manage tutors
- ├  ├─ chat.php            -- live admin chat interface (threads)
- ├  ├─ students.php        -- registrations
- ├─ payments.php
- ├─ settings.php
- ├─ uploads/            -- store uploaded files
- └─ includes/
+├─ login.php
+├─ logout.php
+├─ signup.php
+├─ index.php
+├─ pending.php
+├─ forgot_password.php
+├─ reset_password_final.php
+├─ .env
+├─  assets/              # Frontend assets
+│       ├─ css/
+│       ├─ js/
+│       └─ img/
+├─ pages/
+├  ├─ index.php           -- dashboard (role-aware)
+├  ├─ users.php           -- list/create/edit (admins only)
+├  ├─ roles.php           -- view (admins only)
+├  ├─ courses.php         -- manage courses
+├  ├─dashboard.php
+├  ├─ posts.php           -- list posts, draft/publish controls
+├  ├─ post_edit.php       -- WYSIWYG editor, save drafts
+├  ├─ comments.php        -- moderate comments + reply inline
+├  ├─ tutors.php          -- manage tutors
+├  ├─ chat.php            -- live admin chat interface (threads)
+├  ├─ students.php        -- registrations
+├  ├─  payments.php
+├  ├─ settings.php
+├─ uploads/            -- store uploaded files
+└─ includes/
      ├─ db.php
      ├─ auth.php        -- login helpers, session + role checks
      ├─ csrf.php
      ├─ header.php
-     └─ footer.php
+     ├─ footer.php
+     ├─ sidebar.php
+     └─ db.php
 ├─ .env                     # Environment variables (DB creds, API keys, etc.)
 ├─ .gitignore               # Git ignore rules
 ├─ composer.json            # Composer dependencies
