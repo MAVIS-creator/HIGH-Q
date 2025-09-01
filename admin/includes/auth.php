@@ -1,24 +1,15 @@
-function requirePermission(string $menuSlug) {
-    global $pdo;
-    $userId = $_SESSION['user']['id'] ?? null;
-    if (!$userId) {
-        header("Location: ../login.php");
+<?php
+// admin/includes/auth.php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+function requireRole($roles = []) {
+    if (!in_array($_SESSION['user']['role_slug'], $roles)) {
+        header("Location: index.php");
         exit;
-    }
-
-    // Fetch role_id
-    $stmt = $pdo->prepare("SELECT role_id FROM users WHERE id=?");
-    $stmt->execute([$userId]);
-    $roleId = $stmt->fetchColumn();
-
-    if (!$roleId) {
-        die("Access denied: no role assigned.");
-    }
-
-    // Check permission
-    $stmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=?");
-    $stmt->execute([$roleId, $menuSlug]);
-    if (!$stmt->fetch()) {
-        die("Access denied: insufficient permission.");
     }
 }
