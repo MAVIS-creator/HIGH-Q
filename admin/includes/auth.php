@@ -1,6 +1,11 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 function requirePermission(string $menuSlug) {
     global $pdo;
+
     $userId = $_SESSION['user']['id'] ?? null;
     if (!$userId) {
         header("Location: ../login.php");
