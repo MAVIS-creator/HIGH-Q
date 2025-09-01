@@ -10,12 +10,12 @@ $stmt->execute([$userRoleId]);
 $permissions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 $menuItems = [
-    'dashboard' => ['title' => 'Dashboard', 'icon' => 'bx bxs-dashboard', 'url' => 'index.php?page=dashboard'],
-    'users'     => ['title' => 'Manage Users', 'icon' => 'bx bxs-user-detail', 'url' => 'index.php?page=users'],
-    'roles'     => ['title' => 'Roles', 'icon' => 'bx bxs-shield', 'url' => 'index.php?page=roles'],
-    'settings'  => ['title' => 'Site Settings', 'icon' => 'bx bxs-cog', 'url' => 'index.php?page=settings'],
-    'courses'   => ['title' => 'Courses', 'icon' => 'bx bxs-book', 'url' => 'index.php?page=courses'],
-    'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?page=tutors'],
+    'dashboard' => ['title' => 'Dashboard', 'icon' => 'bx bxs-dashboard', 'url' => 'index.php?pages=dashboard'],
+    'users'     => ['title' => 'Manage Users', 'icon' => 'bx bxs-user-detail', 'url' => 'index.php?pages=users'],
+    'roles'     => ['title' => 'Roles', 'icon' => 'bx bxs-shield', 'url' => 'index.php?pages=roles'],
+    'settings'  => ['title' => 'Site Settings', 'icon' => 'bx bxs-cog', 'url' => 'index.php?pages=settings'],
+    'courses'   => ['title' => 'Courses', 'icon' => 'bx bxs-book', 'url' => 'index.php?pages=courses'],
+    'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?pages=tutors'],
     'students'  => ['title' => 'Students', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?page=students'],
     'payments'  => ['title' => 'Payments', 'icon' => 'bx bxs-credit-card', 'url' => 'index.php?page=payments'],
     'post'     => ['title' => 'News / Blog', 'icon' => 'bx bxs-news', 'url' => 'index.php?page=post'],
