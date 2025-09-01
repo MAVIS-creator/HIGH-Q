@@ -1,2 +1,2 @@
 <?php
-https://preview--high-q-admin-suite.lovable.app/auth
+authhttps://preview--high-q-admin-suite.lovable.app/
