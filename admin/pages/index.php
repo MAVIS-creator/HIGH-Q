@@ -12,6 +12,11 @@ $stmt = $pdo->prepare("SELECT menu_slug FROM role_permissions WHERE role_id = ?"
 $stmt->execute([$userRoleId]);
 $allowed_pages = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+// Normalize slugs (remove .php if present)
+$allowed_pages = array_map(function($slug) {
+    return basename($slug, '.php');
+}, $allowed_pages);
+
 // Security: if page not allowed, fallback to dashboard
 if (!in_array($page, $allowed_pages)) {
     $page = 'dashboard';
@@ -26,7 +31,7 @@ $pageFile = __DIR__ . "/pages/{$page}.php";
 if (file_exists($pageFile)) {
     include $pageFile;
 } else {
-    echo "<div class='container'><h2>Page not found!</h2></div>";
+    echo "<div class='container'><h2>Page not found: {$pageFile}</h2></div>";
 }
 
 include '../includes/footer.php';
