@@ -6,7 +6,7 @@ require __DIR__ . '/../includes/db.php';
 require __DIR__ . '/../includes/csrf.php';
 require __DIR__ . '/../includes/functions.php';
 
-requireRole(['admin']);
+requirePermission('roles'); // where 'roles' matches the menu slug
 
 // Generate CSRF token
 $csrf = generateToken('default_form'); // token for default_form
