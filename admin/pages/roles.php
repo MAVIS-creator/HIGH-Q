@@ -114,9 +114,6 @@ $stmt = $pdo->query("SELECT role_id, menu_slug FROM role_permissions");
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $permissionsByRole[$row['role_id']][] = $row['menu_slug'];
 }
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 ?>
 <!DOCTYPE html>
