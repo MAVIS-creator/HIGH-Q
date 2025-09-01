@@ -21,8 +21,8 @@ if (!in_array($page, $allowed_pages)) {
 include '../includes/header.php';
 include '../includes/sidebar.php';
 
-// Include the requested page safely
-$pageFile = __DIR__ . "/{$page}.php";
+// Include the requested page safely from /pages folder
+$pageFile = __DIR__ . "/pages/{$page}.php";
 if (file_exists($pageFile)) {
     include $pageFile;
 } else {
