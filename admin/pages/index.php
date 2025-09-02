@@ -3,6 +3,11 @@
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../includes/db.php';
 
+// Show all errors - for development only
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Use the 'pages' query param (you said you want 'pages' all through)
 $page = isset($_GET['pages']) ? basename($_GET['pages']) : 'dashboard';
 // sanitize page slug
