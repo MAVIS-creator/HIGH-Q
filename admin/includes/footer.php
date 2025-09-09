@@ -18,29 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('sidebarOverlay');
     const menuToggle = document.getElementById('menuToggle');
 
-    function openSidebar() {
-        sidebar.classList.add('active');
-        overlay.classList.add('active');
-    }
-    function closeSidebar() {
+    if(!sidebar || !menuToggle || !overlay) return;
+
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
-    }
-
-    if (sidebar && menuToggle && overlay) {
-        menuToggle.addEventListener('click', () => {
-            if (sidebar.classList.contains('active')) {
-                closeSidebar();
-            } else {
-                openSidebar();
-            }
-        });
-        overlay.addEventListener('click', closeSidebar);
-    }
-
-    // Optional: close sidebar on ESC key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeSidebar();
     });
 });
 </script>
