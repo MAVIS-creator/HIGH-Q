@@ -52,15 +52,6 @@ $candidates = [
 ];
 
 
-// DEBUG: Show routing info
-echo "<div style='background:#ffe;padding:10px;border:1px solid #fc0;margin:10px;'>";
-echo "<strong>DEBUG:</strong> page='" . htmlspecialchars($page) . "'<br>";
-echo "Candidates:";
-echo "<ul>";
-foreach ($candidates as $file) {
-    echo "<li>" . htmlspecialchars($file) . " (" . (file_exists($file) ? 'FOUND' : 'NOT FOUND') . ")</li>";
-}
-echo "</ul></div>";
 
 $found = false;
 foreach ($candidates as $file) {
