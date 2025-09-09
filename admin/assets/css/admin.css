@@ -429,9 +429,9 @@ table tr:hover {
     max-width: 320px;
   }
 }
-  transform: translateY(-3px);
+  /* transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
+} */
 
 /* Color variants using HQ palette */
 .widget-card.red {
