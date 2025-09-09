@@ -1,7 +1,7 @@
 <?php
 // admin/pages/index.php
-require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Show all errors - for development only
 ini_set('display_errors', 1);
@@ -41,15 +41,26 @@ if (!in_array($page, $allowed_pages)) {
 }
 
 // Include layout parts (paths relative to this file)
-include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/sidebar.php';
 
 // Try sensible locations for the page file (avoids pages/pages/ double-nesting)
 $candidates = [
-    __DIR__ . "/{$page}.php",           // admin/pages/{page}.php
-    __DIR__ . "/pages/{$page}.php",     // admin/pages/pages/{page}.php (if that exists)
-    __DIR__ . "/../pages/{$page}.php",  // admin/pages/../pages/{page}.php
+    __DIR__ . "/{$page}.php",         
+    __DIR__ . "/pages/{$page}.php",    
+    __DIR__ . "/../pages/{$page}.php", 
 ];
+
+
+// DEBUG: Show routing info
+echo "<div style='background:#ffe;padding:10px;border:1px solid #fc0;margin:10px;'>";
+echo "<strong>DEBUG:</strong> page='" . htmlspecialchars($page) . "'<br>";
+echo "Candidates:";
+echo "<ul>";
+foreach ($candidates as $file) {
+    echo "<li>" . htmlspecialchars($file) . " (" . (file_exists($file) ? 'FOUND' : 'NOT FOUND') . ")</li>";
+}
+echo "</ul></div>";
 
 $found = false;
 foreach ($candidates as $file) {
@@ -71,4 +82,4 @@ if (!$found) {
     echo "</ul></div>";
 }
 
-include __DIR__ . '/../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';

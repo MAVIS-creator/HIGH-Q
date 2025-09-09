@@ -158,7 +158,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="email" name="email" placeholder="you@example.com" required>
 
         <label>Password</label>
-        <input type="password" name="password" placeholder="********" required>
+            <div style="position:relative;">
+                <input type="password" name="password" id="login_password" placeholder="********" required>
+                <span class="toggle-eye" onclick="togglePassword('login_password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                    &#128065;
+                </span>
+            </div>
 
         <button type="submit">Sign In</button>
     </form>
@@ -169,6 +174,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
     </div>
 </div>
+
+    <script>
+    function togglePassword(fieldId, icon) {
+        var input = document.getElementById(fieldId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.innerHTML = "&#128064;"; // open eye
+        } else {
+            input.type = "password";
+            icon.innerHTML = "&#128065;"; // closed eye
+        }
+    }
+    </script>
 
 </body>
 </html>
