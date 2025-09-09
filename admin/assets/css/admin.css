@@ -62,7 +62,7 @@
 }
 .sidebar-nav ul li a:hover,
 .sidebar-nav ul li a.active {
-  background: var(--hq-red);
+  background: var(--hq-yello);
   color: var(--hq-black);
 }
 .logout-link {
