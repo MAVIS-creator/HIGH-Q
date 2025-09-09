@@ -68,7 +68,7 @@
 .logout-link {
   display: block;
   margin: 1rem;
-  background: var(--hq-red);
+  background: var(--hq-yellow-light);
   padding: 0.6rem 1rem;
   border-radius: 6px;
   text-align: center;
