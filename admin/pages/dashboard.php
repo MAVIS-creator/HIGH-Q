@@ -12,64 +12,65 @@ $permissions = $stmt->fetchAll(PDO::FETCH_COLUMN);
     <p class="role-label">Role: <?= htmlspecialchars($_SESSION['user']['role_name']); ?></p>
 
     <div class="dashboard-widgets">
-        <?php if (in_array('users', $permissions)): ?>
-            <div class="widget-card red">
-                <i class='bx bxs-user-detail'></i>
-                <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(); ?></h3>
-                    <p>Total Users</p>
-                </div>
+        <div class="widget-card yellow">
+            <i class='bx bxs-graduation'></i>
+            <div>
+                <h3><?= $pdo->query("SELECT COUNT(*) FROM students")->fetchColumn(); ?></h3>
+                <p>Student applications</p>
             </div>
-        <?php endif; ?>
-
-        <?php if (in_array('settings', $permissions)): ?>
-            <div class="widget-card black">
-                <i class='bx bxs-cog'></i>
-                <div>
-                    <h3>Settings</h3>
-                    <p>Manage Site</p>
-                </div>
+        </div>
+        <div class="widget-card red">
+            <i class='bx bxs-chalkboard'></i>
+            <div>
+                <h3><?= $pdo->query("SELECT COUNT(*) FROM tutors WHERE is_active=1")->fetchColumn(); ?></h3>
+                <p>Currently teaching</p>
             </div>
-        <?php endif; ?>
-
-        <?php if (in_array('courses', $permissions)): ?>
-            <div class="widget-card yellow">
-                <i class='bx bxs-book'></i>
-                <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM courses")->fetchColumn(); ?></h3>
-                    <p>Courses</p>
-                </div>
+        </div>
+        <div class="widget-card yellow">
+            <i class='bx bxs-book'></i>
+            <div>
+                <h3><?= $pdo->query("SELECT COUNT(*) FROM programs")->fetchColumn(); ?></h3>
+                <p>Available programs</p>
             </div>
-        <?php endif; ?>
-
-        <?php if (in_array('students', $permissions)): ?>
-            <div class="widget-card red">
-                <i class='bx bxs-graduation'></i>
-                <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM students")->fetchColumn(); ?></h3>
-                    <p>Students</p>
-                </div>
+        </div>
+        <div class="widget-card yellow">
+            <i class='bx bxs-news'></i>
+            <div>
+                <h3><?= $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn(); ?></h3>
+                <p>Published articles</p>
             </div>
-        <?php endif; ?>
-
-        <?php if (in_array('posts', $permissions)): ?>
-            <div class="widget-card yellow">
-                <i class='bx bxs-news'></i>
-                <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn(); ?></h3>
-                    <p>Posts</p>
-                </div>
+        </div>
+        <div class="widget-card black">
+            <i class='bx bxs-comment-detail'></i>
+            <div>
+                <h3><?= $pdo->query("SELECT COUNT(*) FROM comments WHERE status='pending'")->fetchColumn(); ?></h3>
+                <p>Awaiting approval</p>
             </div>
-        <?php endif; ?>
-
-        <?php if (in_array('comments', $permissions)): ?>
-            <div class="widget-card black">
-                <i class='bx bxs-comment-detail'></i>
-                <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM comments WHERE status='pending'")->fetchColumn(); ?></h3>
-                    <p>Pending Comments</p>
-                </div>
+        </div>
+        <div class="widget-card yellow">
+            <i class='bx bxs-shield'></i>
+            <div>
+                <h3><?= $pdo->query("SELECT COUNT(*) FROM users WHERE is_active=0")->fetchColumn(); ?></h3>
+                <p>User approvals needed</p>
             </div>
-        <?php endif; ?>
+        </div>
+        <div class="widget-card red" style="grid-column: span 2;">
+            <i class='bx bxs-error'></i>
+            <div>
+                <h3>All caught up! 🦾</h3>
+                <p>Attention Required</p>
+            </div>
+        </div>
+        <div class="widget-card black" style="grid-column: span 2;">
+            <i class='bx bxs-bar-chart-alt-2'></i>
+            <div>
+                <h3>System Status</h3>
+                <p>
+                    Database <span style="color:green;">✓ Online</span><br>
+                    Website <span style="color:green;">✓ Active</span><br>
+                    Admin Panel <span style="color:green;">✓ Running</span>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
