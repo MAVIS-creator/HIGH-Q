@@ -55,7 +55,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 1rem;
-  color: var(--hq-white);
+  color: var(--hq-gray);
   text-decoration: none;
   border-radius: 6px;
   transition: background 0.3s ease, color 0.3s ease;
