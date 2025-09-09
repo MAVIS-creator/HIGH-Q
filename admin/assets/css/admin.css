@@ -12,7 +12,7 @@
 .admin-sidebar {
   width: 240px;
   background: var(--hq-black);
-  color: var(--hq-yellow);
+  color: var(--hq-gray);
   position: fixed;
   top: 0;
   left: -240px;
