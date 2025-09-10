@@ -1,9 +1,9 @@
 <?php
 
-require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/db.php';
-require __DIR__ . '/../includes/csrf.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('roles'); // where 'roles' matches the menu slug
 
@@ -12,8 +12,8 @@ $csrf = generateToken('default_form'); // token for default_form
 
 
 $pageTitle = 'Roles Management';
-include '../includes/header.php';
-include '../includes/sidebar.php';
+require_once '../includes/header.php';
+require_once '../includes/sidebar.php';
 
 $errors = [];
 $flash  = [];

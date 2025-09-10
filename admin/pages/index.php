@@ -1,7 +1,7 @@
 <?php
 // admin/pages/index.php
-require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Show all errors - for development only
 ini_set('display_errors', 1);
@@ -41,15 +41,17 @@ if (!in_array($page, $allowed_pages)) {
 }
 
 // Include layout parts (paths relative to this file)
-include __DIR__ . '/../includes/header.php';
-include __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/sidebar.php';
 
 // Try sensible locations for the page file (avoids pages/pages/ double-nesting)
 $candidates = [
-    __DIR__ . "/{$page}.php",           // admin/pages/{page}.php
-    __DIR__ . "/pages/{$page}.php",     // admin/pages/pages/{page}.php (if that exists)
-    __DIR__ . "/../pages/{$page}.php",  // admin/pages/../pages/{page}.php
+    __DIR__ . "/{$page}.php",         
+    __DIR__ . "/pages/{$page}.php",    
+    __DIR__ . "/../pages/{$page}.php", 
 ];
+
+
 
 $found = false;
 foreach ($candidates as $file) {
@@ -71,4 +73,4 @@ if (!$found) {
     echo "</ul></div>";
 }
 
-include __DIR__ . '/../includes/footer.php';
+require_once __DIR__ . '/../includes/footer.php';

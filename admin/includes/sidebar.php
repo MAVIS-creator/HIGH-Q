@@ -1,6 +1,6 @@
 <?php
 // admin/includes/sidebar.php
-require __DIR__ . '/db.php';
+require_once __DIR__ . '/db.php';
 
 $current = $_GET['pages'] ?? 'dashboard'; // ✅ match index.php
 $userRoleId = $_SESSION['user']['role_id'];
@@ -12,7 +12,7 @@ $permissions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 $menuItems = [
     'dashboard' => ['title' => 'Dashboard', 'icon' => 'bx bxs-dashboard', 'url' => 'index.php?pages=dashboard'],
     'users'     => ['title' => 'Manage Users', 'icon' => 'bx bxs-user-detail', 'url' => 'index.php?pages=users'],
-    'roles'     => ['title' => 'Roles', 'icon' => 'bx bxs-shield', 'url' => 'index.php?pages=roles'],
+    'roles'     => ['title' => 'Roles Management', 'icon' => 'bx bxs-shield', 'url' => 'index.php?pages=roles'],
     'settings'  => ['title' => 'Site Settings', 'icon' => 'bx bxs-cog', 'url' => 'index.php?pages=settings'],
     'courses'   => ['title' => 'Courses', 'icon' => 'bx bxs-book', 'url' => 'index.php?pages=courses'],
     'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?pages=tutors'],
