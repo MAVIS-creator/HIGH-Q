@@ -1,0 +1,578 @@
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+}
+
+.admin-sidebar {
+  width: 240px;
+  background: var(--hq-black);
+  color: var(--hq-gray);
+  position: fixed;
+  top: 0;
+  left: -240px;
+  min-height: 100vh;
+  padding-top: 1rem;
+  transition: left 0.3s ease;
+  z-index: 1002;
+}
+
+.admin-sidebar.active {
+  left: 0;
+}
+
+.sidebar-logo {
+  text-align: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+}
+.sidebar-logo img {
+  width: 60px;
+  margin-bottom: 0.5rem;
+}
+.sidebar-logo h3 {
+  margin: 0;
+  color: var(--hq-yellow);
+  font-size: 1rem;
+}
+.sidebar-logo small {
+  color: #ccc;
+  font-size: 0.75rem;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar-nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  color: var(--hq-gray);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.sidebar-nav ul li a:hover,
+.sidebar-nav ul li a.active {
+  background: var(--hq-yellow-light);
+  color: var(--hq-black);
+}
+.logout-link {
+  display: block;
+  margin: 1rem;
+  background: var(--hq-yellow-light);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  text-align: center;
+  color: var(--hq-black);
+  font-weight: bold;
+}
+.logout-link:hover {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--hq-gray);
+  margin: 0;
+  padding: 0;
+  color: var(--hq-black);
+}
+
+.container {
+  width: 1200px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: var(--hq-red);
+  margin-bottom: 1.5rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #fff;
+}
+
+table th,
+table td {
+  padding: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+  font-weight: bold;
+}
+
+table tr:hover {
+  background: var(--hq-yellow-light);
+}
+
+/* Buttons */
+.btn-approve,
+.btn-banish {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-approve {
+  background: var(--hq-red);
+  color: #fff;
+}
+
+.btn-approve:hover {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+.btn-banish {
+  background: var(--hq-black);
+  color: #fff;
+}
+
+.btn-banish:hover {
+  background: var(--hq-red);
+}
+
+/* Role & Menu Badges */
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 2px 2px 0;
+  white-space: nowrap;
+}
+
+/* Colors matching HQ theme */
+.role-dashboard {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+.role-users {
+  background: var(--hq-red);
+  color: #fff;
+}
+.role-roles {
+  background: var(--hq-red);
+  color: #fff;
+}
+.role-settings {
+  background: var(--hq-black);
+  color: #fff;
+}
+.role-courses {
+  background: var(--hq-yellow-light);
+  color: var(--hq-black);
+}
+.role-tutors {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+.role-students {
+  background: var(--hq-yellow-light);
+  color: var(--hq-black);
+}
+.role-payments {
+  background: var(--hq-red);
+  color: #fff;
+}
+.role-posts {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+.role-comments {
+  background: var(--hq-yellow-light);
+  color: var(--hq-black);
+}
+.role-chat {
+  background: var(--hq-black);
+  color: #fff;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease-in-out;
+}
+
+.modal.open {
+  display: block;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--hq-black);
+}
+
+.form-row {
+  margin-bottom: 1rem;
+}
+
+.form-row label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+}
+
+.form-row input[type='text'],
+.form-row input[type='number'],
+.form-row select {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-actions {
+  text-align: right;
+}
+
+/* Overlay */
+#modalOverlay {
+  display: none;
+  position: fixed;
+  z-index: 998;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#modalOverlay.open {
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+  table tr {
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #ddd;
+  }
+  table td {
+    padding-left: 50%;
+    position: relative;
+  }
+  table td::before {
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding-left: 0.5rem;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+} 
+
+/* Admin = Red */
+.role-admin {
+  background: var(--hq-red);
+  color: #fff;
+}
+
+/* Sub-Admin = Black */
+.role-sub-admin {
+  background: var(--hq-black);
+  color: #fff;
+}
+
+/* Moderator = Yellow */
+.role-moderator {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+/* Pending = Yellow */
+.status-pending {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+/* Active = Green (stands out from your main palette) */
+.status-active {
+  background: #28a745;
+  color: #fff;
+}
+
+/* Banned = Red */
+.status-banned {
+  background: var(--hq-red);
+  color: #fff;
+}
+
+.dashboard {
+  padding: 1rem;
+}
+
+.dashboard h1 {
+  color: var(--hq-red);
+  margin-bottom: 0.2rem;
+}
+
+.role-label {
+  color: var(--hq-black);
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.widget-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.widget-card i {
+  font-size: 2.5rem;
+}
+
+.widget-card h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.widget-card p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.widget-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Color variants using HQ palette */
+.widget-card.red {
+  background: var(--hq-red);
+}
+.widget-card.yellow {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+.widget-card.black {
+  background: var(--hq-black);
+}
+
+/*Admin Header*/
+.admin-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: var(--hq-black);
+  color: var(--hq-yellow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 1001;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.header-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+#menuToggle {
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.header-avatar img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--hq-yellow);
+}
+
+.admin-main {
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.admin-sidebar.active ~ .admin-main {
+  margin-left: 240px;
+}
+
+.admin-footer {
+  left: 0;
+  transition: left 0.3s ease;
+}
+
+.admin-sidebar.active ~ .admin-footer {
+  left: 240px;
+}
+.admin-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: var(--hq-black);
+  color: var(--hq-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: 0.3s;
+  z-index: 1000;
+}
+
+.sidebar-overlay.active {
+  width: 100%;
+  opacity: 1;
+}
+.admin-sidebar.active {
+  left: 0;
+}
+.sidebar-overlay.active {
+  width: 100%;
+  opacity: 1;
+}
+
+/* ======================
+   ROLES PAGE CORRECTIONS
+====================== */
+
+/* Remove boxed container look for roles page */
+.roles-page {
+  margin-left: 240px; /* leaves space for sidebar */
+  padding: 2rem;
+  background: transparent; /* no white card */
+  width: calc(100% - 240px);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Title styling */
+.roles-page h1 {
+  color: var(--hq-red);
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Table styling for full width */
+.roles-page table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff; /* keep white background for readability */
+}
+
+.roles-page table th,
+.roles-page table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.roles-page table th {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+/* Alerts (success/error messages) */
+.roles-page .alert {
+  margin: 15px 0;
+  padding: 12px;
+  border-radius: 5px;
+}
+
+.roles-page .alert.success {
+  background: #e6f9ee;
+  color: #1b7a34;
+}
+
+.roles-page .alert.error {
+  background: #fbeaea;
+  color: #a33a3a;
+}
