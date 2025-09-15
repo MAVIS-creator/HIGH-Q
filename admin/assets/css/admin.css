@@ -1,52 +1,53 @@
-<?phpDEBAR.PHP */
-// admin/includes/footer.php
-?>dmin-sidebar {
-</main>: 260px;
-<footer class="admin-footer">
-    © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
-</footer>: flex;
-  flex-direction: column;
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
-  padding: 15px 0;
-</body>ion: fixed;
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+}
+
+/* ==== GENERAL LAYOUT ==== */
+body {
+  background: var(--hq-gray);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--hq-black);
+  margin: 0;
+}
+
+.admin-main {
+  padding: 2rem;
+}
+
+/* ==== SIDEBAR ==== */
+.admin-sidebar {
+  position: fixed;
   top: 0;
-</html> 0;
-  color: #fff;
-<script>amily: Arial, sans-serif;
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.querySelector('.admin-sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const menuToggle = document.getElementById('menuToggle');
+  left: 0;
+  width: 260px;
+  height: 100%;
+  background: var(--hq-black);
+  display: flex;
+  flex-direction: column;
+  padding: 15px 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
 
-    function openSidebar() {
-        sidebar.classList.add('active');.sidebar-logo {
-        overlay.classList.add('active');
-    }
-    function closeSidebar() {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');.sidebar-logo img {
-    }
+.sidebar-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    if (sidebar && menuToggle && overlay) {
-        menuToggle.addEventListener('click', () => {n-bottom: 5px;
-            if (sidebar.classList.contains('active')) {
-                closeSidebar();
-            } else {.sidebar-logo h3 {
+.sidebar-logo img {
+  max-width: 120px;
+  margin-bottom: 5px;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-</script>});    });        }            closeSidebar();        if (e.key === 'Escape' && sidebar.classList.contains('active')) {    document.addEventListener('keydown', (e) => {    }        overlay.addEventListener('click', closeSidebar);        });            }                openSidebar();  font-size: 1rem;
+.sidebar-logo h3 {
+  font-size: 1rem;
   font-weight: bold;
   margin: 0;
   color: #fff;
@@ -80,29 +81,23 @@ document.addEventListener('DOMContentLoaded', () => {
   border-radius: 8px;
 }
 
-.sidebar-nav a i {
-  font-size: 1.2rem;
-}
-
-/* Hover effect */
 .sidebar-nav a:hover {
   background: rgba(255, 204, 0, 0.2);
   color: #fff;
 }
 
-/* Active (highlighted) menu item */
 .sidebar-nav a.active {
-  background: #ffcc00;
+  background: var(--hq-yellow);
   color: #111;
   font-weight: bold;
 }
 
-/* Logout link at the bottom */
 .logout-link {
-  margin-top: 15px;
+  margin-top: auto;
   display: block;
+  padding: 12px 20px;
   text-align: left;
-  color: #ff4d4d;
+  color: var(--hq-red);
   font-weight: bold;
 }
 
@@ -112,19 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
   border-radius: 8px;
 }
 
-/* ==== RESPONSIVE (collapsible sidebar on small screens) ==== */
-@media (max-width: 768px) {
-  .admin-sidebar {
-    width: 200px;
-  }
-  .sidebar-nav a {
-    font-size: 0.85rem;
-    padding: 10px 15px;
-  }
-  .sidebar-logo h3 {
-    font-size: 0.85rem;
-  }
-}
 /* ==== HEADER ==== */
 .admin-header {
   background: var(--hq-black);
@@ -137,24 +119,23 @@ document.addEventListener('DOMContentLoaded', () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 900;
 }
 
-/* Left section (menu + title) */
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.header-left #menuToggle {
+#menuToggle {
   font-size: 1.6rem;
   cursor: pointer;
   color: var(--hq-yellow);
   transition: transform 0.2s ease, color 0.3s ease;
 }
 
-.header-left #menuToggle:hover {
+#menuToggle:hover {
   color: var(--hq-yellow-light);
   transform: scale(1.1);
 }
@@ -162,20 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
 .header-title {
   font-size: 1.1rem;
   font-weight: bold;
-  color: white;
 }
 
-/* Right section (welcome + avatar) */
 .header-right {
   display: flex;
   align-items: center;
   gap: 15px;
   font-size: 0.95rem;
   color: #ddd;
-}
-
-.header-right span {
-  color: #ccc;
 }
 
 .header-avatar {
@@ -195,29 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
   object-fit: cover;
 }
 
-/* ==== MOBILE RESPONSIVENESS ==== */
-@media (max-width: 768px) {
-  .admin-header {
-    padding: 0 12px;
-  }
-
-  .header-title {
-    font-size: 1rem;
-  }
-
-  .header-right span {
-    display: none; /* hide text on small screens */
-  }
-}
-/* ==== MAIN LAYOUT FIX ==== */
+/* ==== MAIN CONTENT MARGIN ==== */
 .admin-header,
 .admin-main,
 .admin-footer {
-  margin-left: 260px; /* same as sidebar width */
+  margin-left: 260px;
   transition: margin-left 0.3s ease;
 }
 
-/* When sidebar is collapsed (on toggle) */
 .admin-sidebar.active ~ .admin-header,
 .admin-sidebar.active ~ .admin-main,
 .admin-sidebar.active ~ .admin-footer {
@@ -234,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ==== SIDEBAR OVERLAY FOR MOBILE ==== */
+/* ==== OVERLAY FOR MOBILE ==== */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -242,11 +202,11 @@ document.addEventListener('DOMContentLoaded', () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.6);
-  z-index: 1001;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 900;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
+  transition: opacity 0.3s ease;
 }
 
 .sidebar-overlay.active {
@@ -255,23 +215,21 @@ document.addEventListener('DOMContentLoaded', () => {
   pointer-events: auto;
 }
 
-/* ==== MOBILE VIEW (COLLAPSIBLE SIDEBAR) ==== */
+/* ==== MOBILE RESPONSIVENESS ==== */
 @media (max-width: 768px) {
   .admin-sidebar {
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
   }
-
   .admin-sidebar.active {
     transform: translateX(0);
-    z-index: 1000;
   }
-
-  /* Push header, main, and footer back to full width */
   .admin-header,
   .admin-main,
   .admin-footer {
     margin-left: 0;
+  }
+  .header-right span {
+    display: none;
   }
 }
 :root {
@@ -413,49 +371,49 @@ h1 {
   display: block;
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
-  background: rgba(0, 0, 0, 0.5);y: none;modalOverlay {
-  z-index: 1000; background: rgba(0, 0, 0, 0.5);
-}  z-index: 1000;
+}
+
+#modalOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 
 #modalOverlay.open {
   display: block;
 }
 
 .modal-close {
-  float: right;e {
+  float: right;
   font-size: 1.5rem;
-  cursor: pointer;rem;
+  cursor: pointer;
 }
 
 .form-row {
   margin-bottom: 1rem;
-  display: flex;em;
+  display: flex;
   flex-direction: column;
-} flex-direction: column;
 }
+
 .form-row label {
   font-weight: 600;
-  margin-bottom: 0.3rem;;
+  margin-bottom: 0.3rem;
 }
 
 .form-row input[type="text"],
-.form-row input[type="number"] {form-row input[type="text"],
-  padding: 0.5rem;.form-row input[type="number"] {
+.form-row input[type="number"] {
+  padding: 0.5rem;
   border-radius: var(--radius);
   border: 1px solid #ccc;
   outline: none;
-} outline: none;
 }
+
 .form-row input:focus {
-  border-color: var(--hq-yellow);s {
-  box-shadow: 0 0 0 2px var(--hq-yellow-light); border-color: var(--hq-yellow);
-}  box-shadow: 0 0 0 2px var(--hq-yellow-light);
-
-
-
-
-
-}  text-align: right;.form-actions {}
+  border-color: var(--hq-yellow);
+  box-shadow: 0 0 0 2px var(--hq-yellow-light);
+}
 
 .form-actions {
   text-align: right;
