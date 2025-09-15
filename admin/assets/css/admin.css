@@ -320,40 +320,44 @@ table tr:hover {
     font-weight: bold;
     white-space: nowrap;
   }
-} /* Admin = Red */
+} 
+
+/* Admin = Red */
 .role-admin {
-  background: var(--primary-red);
-  color: var(--pure-white);
+  background: var(--hq-red);
+  color: #fff;
 }
 
 /* Sub-Admin = Black */
 .role-sub-admin {
-  background: var(--dark-black);
-  color: var(--pure-white);
+  background: var(--hq-black);
+  color: #fff;
 }
 
 /* Moderator = Yellow */
 .role-moderator {
-  background: var(--accent-yellow);
-  color: var(--dark-black);
+  background: var(--hq-yellow);
+  color: var(--hq-black);
 }
+
 /* Pending = Yellow */
 .status-pending {
-  background: var(--accent-yellow);
-  color: var(--dark-black);
+  background: var(--hq-yellow);
+  color: var(--hq-black);
 }
 
 /* Active = Green (stands out from your main palette) */
 .status-active {
   background: #28a745;
-  color: var(--pure-white);
+  color: #fff;
 }
 
 /* Banned = Red */
 .status-banned {
-  background: var(--primary-red);
-  color: var(--pure-white);
+  background: var(--hq-red);
+  color: #fff;
 }
+
 .dashboard {
   padding: 1rem;
 }
@@ -513,4 +517,62 @@ table tr:hover {
 .sidebar-overlay.active {
   width: 100%;
   opacity: 1;
+}
+
+/* ======================
+   ROLES PAGE CORRECTIONS
+====================== */
+
+/* Remove boxed container look for roles page */
+.roles-page {
+  margin-left: 240px; /* leaves space for sidebar */
+  padding: 2rem;
+  background: transparent; /* no white card */
+  width: calc(100% - 240px);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Title styling */
+.roles-page h1 {
+  color: var(--hq-red);
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Table styling for full width */
+.roles-page table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff; /* keep white background for readability */
+}
+
+.roles-page table th,
+.roles-page table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.roles-page table th {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+/* Alerts (success/error messages) */
+.roles-page .alert {
+  margin: 15px 0;
+  padding: 12px;
+  border-radius: 5px;
+}
+
+.roles-page .alert.success {
+  background: #e6f9ee;
+  color: #1b7a34;
+}
+
+.roles-page .alert.error {
+  background: #fbeaea;
+  color: #a33a3a;
 }

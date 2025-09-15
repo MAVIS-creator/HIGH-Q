@@ -8,12 +8,81 @@ require __DIR__ . '/../vendor/autoload.php';
 $errors = [];
 $success = '';
 
+function resizeAndCrop($srcPath, $destPath, $targetWidth = 300, $targetHeight = 300) {
+    [$srcWidth, $srcHeight, $srcType] = getimagesize($srcPath);
+
+    switch ($srcType) {
+        case IMAGETYPE_JPEG:
+            $srcImage = imagecreatefromjpeg($srcPath);
+            break;
+        case IMAGETYPE_PNG:
+            $srcImage = imagecreatefrompng($srcPath);
+            break;
+        case IMAGETYPE_WEBP:
+            $srcImage = imagecreatefromwebp($srcPath);
+            break;
+        default:
+            return false; // not supported
+    }
+
+    // Calculate crop area (center crop)
+    $srcAspect = $srcWidth / $srcHeight;
+    $targetAspect = $targetWidth / $targetHeight;
+
+    if ($srcAspect > $targetAspect) {
+        $newHeight = $srcHeight;
+        $newWidth  = intval($srcHeight * $targetAspect);
+        $srcX = intval(($srcWidth - $newWidth) / 2);
+        $srcY = 0;
+    } else {
+        $newWidth  = $srcWidth;
+        $newHeight = intval($srcWidth / $targetAspect);
+        $srcX = 0;
+        $srcY = intval(($srcHeight - $newHeight) / 2);
+    }
+
+    $destImage = imagecreatetruecolor($targetWidth, $targetHeight);
+
+    // Preserve transparency
+    if ($srcType == IMAGETYPE_PNG || $srcType == IMAGETYPE_WEBP) {
+        imagealphablending($destImage, false);
+        imagesavealpha($destImage, true);
+    }
+
+    imagecopyresampled(
+        $destImage,
+        $srcImage,
+        0, 0,
+        $srcX, $srcY,
+        $targetWidth, $targetHeight,
+        $newWidth, $newHeight
+    );
+
+    switch ($srcType) {
+        case IMAGETYPE_JPEG:
+            imagejpeg($destImage, $destPath, 90);
+            break;
+        case IMAGETYPE_PNG:
+            imagepng($destImage, $destPath, 8);
+            break;
+        case IMAGETYPE_WEBP:
+            imagewebp($destImage, $destPath, 90);
+            break;
+    }
+
+    imagedestroy($srcImage);
+    imagedestroy($destImage);
+
+    return true;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token    = $_POST['_csrf_token'] ?? '';
     $name     = trim($_POST['name'] ?? '');
     $phone    = trim($_POST['phone'] ?? '');
     $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
+    $avatar   = $_FILES['avatar'] ?? null; // NEW: avatar upload
 
     // CSRF check
     if (!verifyToken('signup_form', $token)) {
@@ -25,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Name, Email, and Password are required.";
     }
 
-    // Email format check
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email address.";
     }
@@ -37,6 +105,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Email already registered.";
     }
 
+    // Avatar validation
+    $avatarPath = null;
+    if ($avatar && $avatar['error'] === 0) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        $maxSize = 2 * 1024 * 1024; // 2MB
+
+        if (!in_array($avatar['type'], $allowedTypes)) {
+            $errors[] = "Only JPG, PNG, and WEBP images are allowed.";
+        } elseif ($avatar['size'] > $maxSize) {
+            $errors[] = "Avatar too large. Max 2MB allowed.";
+        } else {
+            $uploadDir = __DIR__ . "./assets/avatars/";
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $ext = pathinfo($avatar['name'], PATHINFO_EXTENSION);
+            $fileName = uniqid("avatar_") . "." . strtolower($ext);
+            $targetPath = $uploadDir . $fileName;
+
+            if (move_uploaded_file($avatar['tmp_name'], $targetPath)) {
+                // Crop & resize to passport style (300x300)
+                resizeAndCrop($targetPath, $targetPath, 300, 300);
+                $avatarPath = "uploads/avatars/" . $fileName;
+            } else {
+                $errors[] = "Failed to upload avatar.";
+            }
+        }
+    }
+
     if (empty($errors)) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -46,19 +144,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminCount = $stmt->fetchColumn();
 
         if ($adminCount == 0) {
-            // First user → Main Admin
             $role_id   = 1; // Main Admin
             $is_active = 1; // Active immediately
         } else {
-            // Other users → Pending approval
             $role_id   = NULL;
             $is_active = 0;
         }
 
         // Insert user
-        $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, is_active)
-                               VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $is_active]);
+        $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, avatar, is_active)
+                               VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active]);
 
         // Send email notification
         if ($is_active) {
@@ -166,6 +262,51 @@ button:hover {
     border-left: 4px solid green;
     margin-bottom: 1rem;
 }
+/* File input styling */
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    background: var(--hq-red);
+    color: var(--hq-gray);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-weight: 600;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background: var(--hq-yellow);
+    color: var(--hq-black);
+}
+
+input[type="file"]::file-selector-button {
+    background: var(--hq-red);
+    color: var(--hq-gray);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-weight: 600;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: var(--hq-yellow);
+    color: var(--hq-black);
+}
+
 </style>
 </head>
 <body>
@@ -180,7 +321,8 @@ button:hover {
         <div class="success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
 
-    <form method="POST">
+    <!-- NOTE: added enctype for file upload -->
+    <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
         <label>Name</label>
@@ -200,6 +342,9 @@ button:hover {
                 </span>
             </div>
 
+        <label>Upload Passport Photo</label>
+        <input type="file" name="avatar" accept="image/png, image/jpeg, image/webp" required>
+
         <button type="submit">Create Account</button>
     </form>
 <script>
@@ -207,10 +352,10 @@ function togglePassword(fieldId, icon) {
     var input = document.getElementById(fieldId);
     if (input.type === "password") {
         input.type = "text";
-        icon.innerHTML = "&#128064;"; // open eye
+        icon.innerHTML = "&#128064;";
     } else {
         input.type = "password";
-        icon.innerHTML = "&#128065;"; // closed eye
+        icon.innerHTML = "&#128065;";
     }
 }
 </script>

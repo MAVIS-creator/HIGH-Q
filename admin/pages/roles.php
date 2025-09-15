@@ -126,7 +126,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </head>
 <body>
 
-<div class="container" style="margin-left:240px;">
+<div class="roles-page">
   <h1>Roles Management</h1>
 
   <?php if ($flash): ?>
