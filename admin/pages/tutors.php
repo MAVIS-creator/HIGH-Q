@@ -5,7 +5,7 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 // Only Admin & Sub-Admin
-requireRole(['admin','sub-admin']);
+requirePermission('roles'); // where 'roles' matches the menu slug
 
 $csrf     = generateToken();
 $errors   = [];
