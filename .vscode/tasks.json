@@ -5,7 +5,10 @@
       "label": "Auto Git Save",
       "type": "shell",
       "command": ".\\autosave.bat",
-      "problemMatcher": []
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
     }
   ]
 }
