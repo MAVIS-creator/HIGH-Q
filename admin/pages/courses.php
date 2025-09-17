@@ -6,7 +6,7 @@ require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 
 // Only Admin & Sub-Admin can manage courses
-requirePermission(['admin','sub-admin']);
+requirePermission('roles'); // where 'roles' matches the menu slug
 
 $csrf    = generateToken();
 $errors  = [];
