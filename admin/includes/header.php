@@ -18,7 +18,12 @@
         <div class="header-left">
             <!-- Hamburger Menu Button -->
             <i class='bx bx-menu' id="menuToggle"></i>
-            <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
+            <div>
+                <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
+                <?php if (!empty($pageSubtitle)): ?>
+                    <p class="header-subtitle"><?= htmlspecialchars($pageSubtitle) ?></p>
+                <?php endif; ?>
+            </div>
         </div>
         <div class="header-right">
             <div class="header-avatar">
