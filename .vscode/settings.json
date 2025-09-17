@@ -1,10 +1,7 @@
 {
-    "files.exclude": {
-        "**/.git": false
-        
-    }
-}
-  "task.autoDetect": "on", {
+  "files.exclude": {
+    "**/.git": false
+  },
+  "task.autoDetect": "on",
   "task.startOnOpen": "Auto Git Save"
-}
 }
