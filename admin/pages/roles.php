@@ -11,7 +11,9 @@ requirePermission('roles'); // where 'roles' matches the menu slug
 $csrf = generateToken('default_form'); // token for default_form
 
 
+// Page title and subtitle for header
 $pageTitle = 'Roles Management';
+$pageSubtitle = 'Manage roles, permissions, and access control';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 
