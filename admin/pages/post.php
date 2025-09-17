@@ -20,7 +20,7 @@ if (!is_dir($uploadDir)) {
 
 // Handle Create / Edit / Delete / Toggle Publish
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
-    if (!verifyToken($_POST['csrf_token'] ?? '')) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = "Invalid CSRF token.";
     } else {
         $act = $_GET['action'];

@@ -231,10 +231,12 @@ $users = $pdo->query("
                             </select>
                             <button type="submit" class="btn-approve">Approve</button>
                         </form>
+                        <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
                         <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                             <button type="submit" class="btn-banish">Banish</button>
                         </form>
+                        <?php endif; ?>
                         <?php elseif($u['is_active']===1): ?>
                         <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
