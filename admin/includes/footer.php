@@ -14,19 +14,18 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.querySelector('.admin-sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     const menuToggle = document.getElementById('menuToggle');
 
-    if(!sidebar || !menuToggle || !overlay) return;
+    if(!menuToggle || !overlay) return;
 
     menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
+        document.body.classList.toggle('sidebar-collapsed');
         overlay.classList.toggle('active');
     });
 
     overlay.addEventListener('click', () => {
-        sidebar.classList.remove('active');
+        document.body.classList.remove('sidebar-collapsed');
         overlay.classList.remove('active');
     });
 });

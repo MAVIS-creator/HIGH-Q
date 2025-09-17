@@ -65,6 +65,60 @@ body {
   padding: 0;
 }
 
+/* ==== HEADER ==== */
+.admin-header {
+  background: transparent;
+  color: var(--hq-black);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 260px; /* default with sidebar */
+  right: 0;
+  z-index: 900;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: left 0.3s ease; /* smooth collapse */
+}
+
+/* ==== FOOTER ==== */
+.admin-footer {
+  background: transparent;
+  color: var(--hq-black);
+  text-align: center;
+  padding: 15px 0;
+  font-size: 0.85rem;
+  position: fixed;
+  bottom: 0;
+  left: 260px; /* default with sidebar */
+  right: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  transition: left 0.3s ease; /* smooth collapse */
+}
+
+/* ==== MAIN CONTENT ==== */
+.admin-main {
+  margin-left: 260px;
+  padding-top: 80px;
+  padding-bottom: 60px;
+  transition: margin-left 0.3s ease;
+}
+
+/* When sidebar is collapsed */
+
+body.sidebar-collapsed .admin-sidebar {
+  transform: translateX(-100%);
+}
+body.sidebar-collapsed .admin-header,
+body.sidebar-collapsed .admin-footer {
+  left: 0;
+}
+body.sidebar-collapsed .admin-main {
+  margin-left: 0;
+}
+
 .sidebar-nav li {
   margin: 5px 0;
 }
@@ -109,17 +163,19 @@ body {
 
 /* ==== HEADER ==== */
 .admin-header {
-  background: var(--hq-black);
-  color: white;
+  background: transparent; /* remove background */
+  color: var(--hq-black); /* keep text readable */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
   height: 60px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: sticky;
+  position: fixed; /* stick to top */
   top: 0;
+  left: 260px; /* shift after sidebar */
+  right: 0;
   z-index: 900;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* optional subtle line */
 }
 
 .header-left {
@@ -143,6 +199,7 @@ body {
 .header-title {
   font-size: 1.1rem;
   font-weight: bold;
+  color: var(--hq-black); /* ensure contrast */
 }
 
 .header-right {
@@ -159,9 +216,6 @@ body {
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--hq-yellow);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .header-avatar img {
@@ -171,27 +225,24 @@ body {
 }
 
 /* ==== MAIN CONTENT MARGIN ==== */
-.admin-header,
-.admin-main,
-.admin-footer {
+.admin-main {
   margin-left: 260px;
-  transition: margin-left 0.3s ease;
-}
-
-.admin-sidebar.active ~ .admin-header,
-.admin-sidebar.active ~ .admin-main,
-.admin-sidebar.active ~ .admin-footer {
-  margin-left: 0;
+  padding-top: 80px;   /* leave space below header */
+  padding-bottom: 60px; /* leave space above footer */
 }
 
 /* ==== FOOTER ==== */
 .admin-footer {
-  background: var(--hq-black);
-  color: #bbb;
+  background: transparent; /* remove background */
+  color: var(--hq-black);
   text-align: center;
   padding: 15px 0;
   font-size: 0.85rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed; /* stick to bottom */
+  bottom: 0;
+  left: 260px; /* after sidebar */
+  right: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05); /* optional subtle line */
 }
 
 /* ==== OVERLAY FOR MOBILE ==== */
