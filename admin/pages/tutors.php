@@ -4,6 +4,9 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
+$pageTitle = 'Tutors';
+$pageSubtitle = 'Manage tutor profiles and listings';
+
 // Only Admin & Sub-Admin
 requirePermission('roles'); // where 'roles' matches the menu slug
 
@@ -106,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-        header("Location: index.php?page=tutors");
+  header("Location: index.php?pages=tutors");
         exit;
     }
 }
