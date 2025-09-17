@@ -5,6 +5,9 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 
+$pageTitle = 'News & Blog';
+$pageSubtitle = 'Create and manage news articles and blog posts';
+
 // Only Admin / Sub-Admin / Moderator
 requirePermission('roles'); // where 'roles' matches the menu slug
 
@@ -126,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-        header("Location: index.php?page=posts");
+    header("Location: index.php?pages=posts");
         exit;
     }
 }
