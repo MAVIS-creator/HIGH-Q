@@ -1,12 +1,12 @@
 <?php
 // admin/pages/posts.php
-require './includes/auth.php';
-require './admin/includes/db.php';
-require './admin/includes/csrf.php';
-require './admin/includes/functions.php';
+require_once '../includes/auth.php';
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
+require_once '../includes/csrf.php';
 
 // Only Admin / Sub-Admin / Moderator
-requireRole(['admin', 'sub-admin', 'moderator']);
+requirePermission('roles'); // where 'roles' matches the menu slug
 
 $csrf     = generateToken();
 $errors   = [];
