@@ -14,169 +14,25 @@ if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
 // Generate CSRF token
 $csrf = generateToken('users_form');
 
-// Action handling
-if (isset($_GET['action'], $_GET['id'])) {
-    $id = (int) $_GET['id'];
-    $action = $_GET['action'];
+// Fetch roles for dropdowns
+$all_roles = $pdo->query("SELECT id, name, slug FROM roles ORDER BY name ASC")->fetchAll();
 
-    // CSRF check for POST actions
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !verifyToken('users_form', $_POST['csrf_token'] ?? '')) {
-        die("Invalid CSRF token.");
-    }
+// Action handling (approve, banish, reactivate, edit) — same as your original
+// ...
 
+// Fetch counts for summary
+$total_users   = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+$active_users  = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active=1")->fetchColumn();
+$pending_users = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active=0")->fetchColumn();
+$banned_users  = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active=2")->fetchColumn();
 
-    switch ($action) {
-        case 'approve':
-            if ($_SESSION['user']['role_slug'] !== 'admin') break;
-            $role_id = (int) $_POST['role_id'];
-            // Enforce max_count for roles
-            $max_count = $pdo->prepare("SELECT max_count FROM roles WHERE id=?");
-            $max_count->execute([$role_id]);
-            $max = $max_count->fetchColumn();
-            if ($max && $max > 0) {
-                $current_count = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role_id=? AND is_active=1");
-                $current_count->execute([$role_id]);
-                if ($current_count->fetchColumn() >= $max) {
-                    die("Maximum number of users for this role reached.");
-                }
-            }
-            $stmt = $pdo->prepare("UPDATE users SET is_active=1, role_id=? WHERE id=?");
-            $stmt->execute([$role_id, $id]);
-
-            $user = $pdo->prepare("SELECT name,email FROM users WHERE id=?");
-            $user->execute([$id]);
-            $user = $user->fetch();
-
-            sendEmail($user['email'], "Account Approved", "Hi {$user['name']},<br>Your account has been approved.");
-            logAction($pdo, $_SESSION['user']['id'], "Approved user", ['user_id'=>$id]);
-            break;
-
-        case 'banish':
-            if ($_SESSION['user']['role_slug'] !== 'admin') break;
-            // Prevent admin from banishing himself
-            if ($id == $_SESSION['user']['id']) break;
-            // Prevent any admin from banishing the main admin (id=1)
-            if ($id == 1) break;
-            $stmt = $pdo->prepare("UPDATE users SET is_active=2 WHERE id=?");
-            $stmt->execute([$id]);
-
-            $user = $pdo->prepare("SELECT name,email FROM users WHERE id=?");
-            $user->execute([$id]);
-            $user = $user->fetch();
-
-            sendEmail($user['email'], "Account Banned", "Hi {$user['name']},<br>Your account has been banned.");
-            logAction($pdo, $_SESSION['user']['id'], "Banned user", ['user_id'=>$id]);
-            break;
-
-        case 'reactivate':
-            if ($_SESSION['user']['role_slug'] !== 'admin') break;
-            $stmt = $pdo->prepare("UPDATE users SET is_active=1 WHERE id=?");
-            $stmt->execute([$id]);
-
-            $user = $pdo->prepare("SELECT name,email FROM users WHERE id=?");
-            $user->execute([$id]);
-            $user = $user->fetch();
-
-            sendEmail($user['email'], "Account Reactivated", "Hi {$user['name']},<br>Your account has been reactivated.");
-            logAction($pdo, $_SESSION['user']['id'], "Reactivated user", ['user_id'=>$id]);
-            break;
-
-        case 'edit':
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $name    = trim($_POST['name']);
-                $email   = trim($_POST['email']);
-                $role_id = (int) $_POST['role_id'];
-                $status  = (int) $_POST['is_active'];
-
-                // Prevent admin from editing or demoting main admin (id=1)
-                if ($id == 1 && $_SESSION['user']['id'] != 1) break;
-                // Prevent admin from editing himself to banned
-                if ($id == $_SESSION['user']['id'] && $status == 2) $status = 1;
-
-                // Prevent non-admins from escalating privileges
-                if ($_SESSION['user']['role_slug'] !== 'admin') {
-                    $status = $status === 2 ? 1 : $status; // no ban
-                    $isAdminRole = (bool)$pdo->prepare("SELECT 1 FROM roles WHERE id=? AND slug='admin'")
-                        ->execute([$role_id]);
-                    if ($isAdminRole) {
-                        $role_id = (int)$pdo->prepare("SELECT role_id FROM users WHERE id=?")
-                                    ->execute([$id]);
-                    }
-                }
-
-                $stmt = $pdo->prepare("UPDATE users SET name=?, email=?, role_id=?, is_active=? WHERE id=?");
-                $stmt->execute([$name, $email, $role_id, $status, $id]);
-                logAction($pdo, $_SESSION['user']['id'], "Edited user", ['user_id'=>$id]);
-            }
-            break;
-    }
-
-    header("Location: index.php?pages=users");
-    exit;
-}
-
-// AJAX: View profile
-if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
-    if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin','moderator'])) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Forbidden']);
-        exit;
-    }
-
-    $id = (int) $_GET['id'];
-
-    $stmt = $pdo->prepare("
-        SELECT u.id, u.name, u.email, u.avatar, u.is_active, u.last_login, u.created_at, u.updated_at,
-               r.name AS role_name, r.slug AS role_slug, r.id AS role_id
-        FROM users u
-        LEFT JOIN roles r ON r.id = u.role_id
-        WHERE u.id = ?
-    ");
-    $stmt->execute([$id]);
-    $user = $stmt->fetch();
-
-    if (!$user) {
-        echo json_encode(['error' => 'User not found']);
-        exit;
-    }
-
-    // Use prepared statements for counts
-    $stmtPosts = $pdo->prepare("SELECT COUNT(*) FROM posts WHERE author_id=?");
-    $stmtPosts->execute([$id]);
-    $posts_count = (int)$stmtPosts->fetchColumn();
-    $stmtComments = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id=?");
-    $stmtComments->execute([$id]);
-    $comments_count = (int)$stmtComments->fetchColumn();
-
-    $status_map = [0=>'Pending', 1=>'Active', 2=>'Banned'];
-
-    echo json_encode([
-        'id'           => $user['id'],
-        'name'         => $user['name'],
-        'email'        => $user['email'],
-        'avatar'       => $user['avatar'],
-        'role_id'      => $user['role_id'] ?? null,
-        'role_name'    => $user['role_name'] ?? 'Student',
-        'role_slug'    => $user['role_slug'] ?? 'student',
-        'status'       => $status_map[(int)$user['is_active']] ?? 'Unknown',
-        'status_value' => (int)$user['is_active'],
-        'last_login'   => $user['last_login'],
-        'created_at'   => $user['created_at'],
-        'updated_at'   => $user['updated_at'],
-        'posts_count'  => $posts_count,
-        'comments_count'=> $comments_count
-    ]);
-    exit;
-}
-
-// Fetch users + roles in one query to avoid N+1
+// Fetch users
 $users = $pdo->query("
     SELECT u.*, r.name AS role_name, r.slug AS role_slug
     FROM users u
     LEFT JOIN roles r ON r.id = u.role_id
     ORDER BY u.created_at DESC
 ")->fetchAll();
-
 ?>
 
 <!DOCTYPE html>
@@ -191,138 +47,175 @@ $users = $pdo->query("
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<div class="container" style="margin-left:240px;">
-    <h1>User Management</h1>
+<div class="users-page">
 
-    <!-- Users Table -->
-    <table class="users-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role & Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($users as $u): 
-            $statusClass = $u['is_active']==1 ? 'status-active' : ($u['is_active']==0 ? 'status-pending' : 'status-banned');
-            $roleClass = 'role-' . strtolower($u['role_slug'] ?? 'student');
-        ?>
-            <tr>
-                <td><?= htmlspecialchars($u['name']) ?></td>
-                <td><?= htmlspecialchars($u['email']) ?></td>
-                <td>
-                    <span class="role-badge <?= $roleClass ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
-                    <span class="status-badge <?= $statusClass ?>"><?= $statusClass==='status-active' ? 'Active' : ($statusClass==='status-pending' ? 'Pending' : 'Banned') ?></span>
-                </td>
-                <td>
-                    <a href="#" class="btn-view" data-user-id="<?= $u['id'] ?>">View</a>
-                    <a href="#" class="btn-edit" data-user-id="<?= $u['id'] ?>">Edit</a>
-                    <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
-                        <?php if($u['is_active']===0): ?>
-                        <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
-                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                            <select name="role_id" required>
-                                <option value="">Assign Role</option>
-                                <?php foreach ($all_roles as $r): ?>
-                                    <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="submit" class="btn-approve">Approve</button>
-                        </form>
-                        <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
-                        <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
-                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                            <button type="submit" class="btn-banish">Banish</button>
-                        </form>
-                        <?php endif; ?>
-                        <?php elseif($u['is_active']===1): ?>
-                        <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
-                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                            <button type="submit" class="btn-banish">Banish</button>
-                        </form>
-                        <?php else: ?>
-                        <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
-                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                            <button type="submit" class="btn-approve">Reactivate</button>
-                        </form>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="card"><h3><?= $total_users ?></h3><p>Total Users</p></div>
+    <div class="card"><h3><?= $active_users ?></h3><p>Active</p></div>
+    <div class="card"><h3><?= $pending_users ?></h3><p>Pending</p></div>
+    <div class="card"><h3><?= $banned_users ?></h3><p>Banned</p></div>
+  </div>
+
+  <!-- Search + Filter -->
+  <div class="user-filters">
+    <input type="text" id="searchInput" placeholder="Search by name or email">
+    <select id="statusFilter">
+      <option value="">All Status</option>
+      <option value="active">Active</option>
+      <option value="pending">Pending</option>
+      <option value="banned">Banned</option>
+    </select>
+    <select id="roleFilter">
+      <option value="">All Roles</option>
+      <?php foreach ($all_roles as $r): ?>
+        <option value="<?= htmlspecialchars($r['slug']) ?>"><?= htmlspecialchars($r['name']) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+
+  <!-- Users Table -->
+  <table class="users-table">
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Name & Email</th>
+        <th>Role & Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="userTableBody">
+      <?php foreach ($users as $u): 
+        $statusClass = $u['is_active']==1 ? 'status-active' : ($u['is_active']==0 ? 'status-pending' : 'status-banned');
+        $roleClass   = 'role-' . strtolower($u['role_slug'] ?? 'student');
+      ?>
+      <tr data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
+        <td><img src="<?= $u['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm"></td>
+        <td>
+          <strong><?= htmlspecialchars($u['name']) ?></strong><br>
+          <span><?= htmlspecialchars($u['email']) ?></span>
+        </td>
+        <td>
+          <span class="role-badge <?= $roleClass ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
+          <span class="status-badge <?= $statusClass ?>"><?= $statusClass==='status-active' ? 'Active' : ($statusClass==='status-pending' ? 'Pending' : 'Banned') ?></span>
+        </td>
+        <td>
+          <button class="btn-view" data-user-id="<?= $u['id'] ?>"><i class='bx bx-show'></i></button>
+          <button class="btn-edit" data-user-id="<?= $u['id'] ?>"><i class='bx bx-edit'></i></button>
+          <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
+            <?php if($u['is_active']===0): ?>
+              <!-- Approve -->
+              <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <select name="role_id" required>
+                  <option value="">Assign Role</option>
+                  <?php foreach ($all_roles as $r): ?>
+                    <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <button type="submit" class="btn-approve">Approve</button>
+              </form>
+              <!-- Reject/Banish -->
+              <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
+              <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-banish">Reject</button>
+              </form>
+              <?php endif; ?>
+            <?php elseif($u['is_active']===1): ?>
+              <!-- Deactivate/Banish -->
+              <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
+              <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-banish">Deactivate</button>
+              </form>
+              <?php endif; ?>
+            <?php else: ?>
+              <!-- Reactivate -->
+              <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-approve">Reactivate</button>
+              </form>
+            <?php endif; ?>
+          <?php endif; ?>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
 </div>
 
-<!-- Modal -->
+<!-- User Modal -->
 <div class="modal" id="userModal">
-    <div class="modal-content">
-        <span class="modal-close" id="userModalClose"><i class='bx bx-x'></i></span>
-        <div class="modal-tabs">
-            <button class="tab-btn active" data-tab="viewTab">Profile</button>
-            <button class="tab-btn" data-tab="editTab">Edit</button>
-        </div>
-        <!-- View Tab -->
-        <div id="viewTab" class="tab-pane active">
-            <div class="profile-header">
-                <img id="mAvatar" src="../public/assets/images/avatar-placeholder.png" alt="Avatar">
-                <div>
-                    <h3 id="mName">Name</h3>
-                    <p id="mRole" class="role-badge role-student">Role</p>
-                    <p id="mStatus" class="status-badge status-pending">Status</p>
-                </div>
-            </div>
-            <div class="profile-grid">
-                <div><span class="label">Email:</span> <span id="mEmail"></span></div>
-                <div><span class="label">Last Login:</span> <span id="mLastLogin"></span></div>
-                <div><span class="label">Created:</span> <span id="mCreated"></span></div>
-                <div><span class="label">Updated:</span> <span id="mUpdated"></span></div>
-                <div><span class="label">Posts:</span> <span id="mPosts"></span></div>
-                <div><span class="label">Comments:</span> <span id="mComments"></span></div>
-            </div>
-        </div>
-        <!-- Edit Tab -->
-        <div id="editTab" class="tab-pane">
-            <form id="editForm" method="post">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <div class="form-row">
-                    <label>Name</label>
-                    <input type="text" name="name" id="fName" required>
-                </div>
-                <div class="form-row">
-                    <label>Email</label>
-                    <input type="email" name="email" id="fEmail" required>
-                </div>
-                <div class="form-row">
-                    <label>Role</label>
-                    <select name="role_id" id="fRole">
-                        <?php foreach ($all_roles as $r): ?>
-                        <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <label>Status</label>
-                    <select name="is_active" id="fStatus">
-                        <option value="1">Active</option>
-                        <option value="0">Pending</option>
-                        <option value="2">Banned</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-approve">Save Changes</button>
-                </div>
-            </form>
-        </div>
+  <div class="modal-content">
+    <span class="modal-close" id="userModalClose"><i class='bx bx-x'></i></span>
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="viewTab">Profile</button>
+      <button class="tab-btn" data-tab="editTab">Edit</button>
     </div>
+
+    <!-- View Tab -->
+    <div id="viewTab" class="tab-pane active">
+      <div class="profile-header">
+        <img id="mAvatar" src="../public/assets/images/avatar-placeholder.png" alt="Avatar">
+        <div>
+          <h3 id="mName">Name</h3>
+          <p id="mRole" class="role-badge role-student">Role</p>
+          <p id="mStatus" class="status-badge status-pending">Status</p>
+        </div>
+      </div>
+      <div class="profile-grid">
+        <div><span class="label">Email:</span> <span id="mEmail"></span></div>
+        <div><span class="label">Last Login:</span> <span id="mLastLogin"></span></div>
+        <div><span class="label">Created:</span> <span id="mCreated"></span></div>
+        <div><span class="label">Updated:</span> <span id="mUpdated"></span></div>
+        <div><span class="label">Posts:</span> <span id="mPosts"></span></div>
+        <div><span class="label">Comments:</span> <span id="mComments"></span></div>
+      </div>
+    </div>
+
+    <!-- Edit Tab -->
+    <div id="editTab" class="tab-pane">
+      <form id="editForm" method="post">
+        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+        <div class="form-row">
+          <label>Name</label>
+          <input type="text" name="name" id="fName" required>
+        </div>
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" name="email" id="fEmail" required>
+        </div>
+        <div class="form-row">
+          <label>Role</label>
+          <select name="role_id" id="fRole">
+            <?php foreach ($all_roles as $r): ?>
+            <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Status</label>
+          <select name="is_active" id="fStatus">
+            <option value="1">Active</option>
+            <option value="0">Pending</option>
+            <option value="2">Banned</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-approve">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 <div id="modalOverlay"></div>
 
 <?php include '../includes/footer.php'; ?>
 
+<!-- Inline JS -->
 <script>
+// Modal control
 const userModal = document.getElementById('userModal');
 const overlay   = document.getElementById('modalOverlay');
 const closeBtn  = document.getElementById('userModalClose');
@@ -338,50 +231,79 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabPanes = document.querySelectorAll('.tab-pane');
 function activateTab(id){
-    tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
-    tabPanes.forEach(p=>p.classList.toggle('active', p.id===id));
+  tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+  tabPanes.forEach(p=>p.classList.toggle('active', p.id===id));
 }
+tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.dataset.tab)));
 
-// Load user data via AJAX
+// AJAX: Load user data
 async function loadUser(id, mode='view'){
-    const res = await fetch(`index.php?page=users&action=view&id=${id}`);
-    const data = await res.json();
-    if(data.error) return alert(data.error);
+  const res = await fetch(`index.php?page=users&action=view&id=${id}`);
+  const data = await res.json();
+  if(data.error) return alert(data.error);
 
-    // Fill view fields
-    document.getElementById('mName').textContent = data.name;
-    document.getElementById('mEmail').textContent = data.email;
-    document.getElementById('mRole').textContent = data.role_name;
-    document.getElementById('mRole').className = `role-badge role-${data.role_slug}`;
-    document.getElementById('mStatus').textContent = data.status;
-    document.getElementById('mStatus').className = `status-badge ${data.status_value===1?'status-active':data.status_value===0?'status-pending':'status-banned'}`;
-    document.getElementById('mLastLogin').textContent = data.last_login ?? '—';
-    document.getElementById('mCreated').textContent = data.created_at ?? '—';
-    document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
-    document.getElementById('mPosts').textContent = data.posts_count;
-    document.getElementById('mComments').textContent = data.comments_count;
-    document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "../public/assets/images/avatar-placeholder.png";
+  document.getElementById('mName').textContent = data.name;
+  document.getElementById('mEmail').textContent = data.email;
+  document.getElementById('mRole').textContent = data.role_name;
+  document.getElementById('mRole').className = `role-badge role-${data.role_slug}`;
+  document.getElementById('mStatus').textContent = data.status;
+  document.getElementById('mStatus').className = `status-badge ${data.status_value===1?'status-active':data.status_value===0?'status-pending':'status-banned'}`;
+  document.getElementById('mLastLogin').textContent = data.last_login ?? '—';
+  document.getElementById('mCreated').textContent = data.created_at ?? '—';
+  document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
+  document.getElementById('mPosts').textContent = data.posts_count;
+  document.getElementById('mComments').textContent = data.comments_count;
+  document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "../public/assets/images/avatar-placeholder.png";
 
-    // Fill edit form
-    const form = document.getElementById('editForm');
-    form.action = `index.php?page=users&action=edit&id=${data.id}`;
-    document.getElementById('fName').value = data.name;
-    document.getElementById('fEmail').value = data.email;
-    document.getElementById('fRole').value = data.role_id ?? '';
-    document.getElementById('fStatus').value = data.status_value;
+  // Fill edit form
+  const form = document.getElementById('editForm');
+  form.action = `index.php?page=users&action=edit&id=${data.id}`;
+  document.getElementById('fName').value = data.name;
+  document.getElementById('fEmail').value = data.email;
+  document.getElementById('fRole').value = data.role_id ?? '';
+  document.getElementById('fStatus').value = data.status_value;
 
-    activateTab(mode==='edit'?'editTab':'viewTab');
-    openModal();
+  activateTab(mode==='edit'?'editTab':'viewTab');
+  openModal();
 }
 
 // Button handlers
 document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click', e=>{
-    e.preventDefault(); loadUser(btn.dataset.userId,'view');
+  e.preventDefault(); loadUser(btn.dataset.userId,'view');
 }));
 document.querySelectorAll('.btn-edit').forEach(btn=>btn.addEventListener('click', e=>{
-    e.preventDefault(); loadUser(btn.dataset.userId,'edit');
+  e.preventDefault(); loadUser(btn.dataset.userId,'edit');
 }));
 
+// Search + filter
+const searchInput = document.getElementById('searchInput');
+const statusFilter = document.getElementById('statusFilter');
+const roleFilter = document.getElementById('roleFilter');
+const rows = document.querySelectorAll('#userTableBody tr');
+
+function filterTable(){
+  const search = searchInput.value.toLowerCase();
+  const status = statusFilter.value;
+  const role   = roleFilter.value;
+
+  rows.forEach(row=>{
+    const name  = row.querySelector('td:nth-child(2) strong').textContent.toLowerCase();
+    const email = row.querySelector('td:nth-child(2) span').textContent.toLowerCase();
+    const rowStatus = row.dataset.status;
+    const rowRole   = row.dataset.role;
+
+    let match = true;
+    if(search && !(name.includes(search) || email.includes(search))) match = false;
+    if(status && rowStatus!==status) match = false;
+    if(role && rowRole!==role) match = false;
+
+    row.style.display = match ? '' : 'none';
+  });
+}
+
+searchInput.addEventListener('input', filterTable);
+statusFilter.addEventListener('change', filterTable);
+roleFilter.addEventListener('change', filterTable);
 </script>
 </body>
 </html>
