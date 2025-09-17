@@ -1,7 +1,7 @@
 <?php
 // admin/pages/courses.php
-require './includes/auth.php';      // session + requireRole()
-require './includes/db.php';        // $pdo
+require '../includes/auth.php';      // session + requireRole()
+require './.includes/db.php';        // $pdo
 require './includes/csrf.php';      // generateToken(), verifyToken()
 require './includes/functions.php'; // sendEmail(), logAction()
 
