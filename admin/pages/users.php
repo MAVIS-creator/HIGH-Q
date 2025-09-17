@@ -162,37 +162,30 @@ $users = $pdo->query("
     </select>
   </div>
 
-  <!-- Users Table -->
-  <table class="users-table">
-    <thead>
-      <tr>
-        <th>Avatar</th>
-        <th>Name & Email</th>
-        <th>Role & Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="userTableBody">
-      <?php foreach ($users as $u): 
-        $statusClass = $u['is_active']==1 ? 'status-active' : ($u['is_active']==0 ? 'status-pending' : 'status-banned');
-        $roleClass   = 'role-' . strtolower($u['role_slug'] ?? 'student');
-      ?>
-      <tr data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
-        <td><img src="<?= $u['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm"></td>
-        <td>
-          <strong><?= htmlspecialchars($u['name']) ?></strong><br>
-          <span><?= htmlspecialchars($u['email']) ?></span>
-        </td>
-        <td>
-          <span class="role-badge <?= $roleClass ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
-          <span class="status-badge <?= $statusClass ?>"><?= $statusClass==='status-active' ? 'Active' : ($statusClass==='status-pending' ? 'Pending' : 'Banned') ?></span>
-        </td>
-        <td>
-          <button class="btn-view" data-user-id="<?= $u['id'] ?>"><i class='bx bx-show'></i></button>
-          <button class="btn-edit" data-user-id="<?= $u['id'] ?>"><i class='bx bx-edit'></i></button>
+  <!-- Users Cards -->
+  <div class="users-list" id="userTableBody">
+    <?php foreach ($users as $u): 
+      $status = $u['is_active']==1 ? 'Active' : ($u['is_active']==0 ? 'Pending' : 'Banned');
+      $roleClass   = 'role-' . strtolower($u['role_slug'] ?? 'student');
+    ?>
+    <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
+      <div class="card-left">
+        <img src="<?= $u['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+        <div class="card-meta">
+          <div class="card-name"><?= htmlspecialchars($u['name']) ?></div>
+          <div class="card-email"><?= htmlspecialchars($u['email']) ?></div>
+          <div class="card-badges">
+            <span class="role-badge <?= $roleClass ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
+            <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
+          </div>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="card-actions">
+          <button class="btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+          <button class="btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
             <?php if($u['is_active']===0): ?>
-              <!-- Approve -->
               <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <select name="role_id" required>
@@ -203,7 +196,6 @@ $users = $pdo->query("
                 </select>
                 <button type="submit" class="btn-approve">Approve</button>
               </form>
-              <!-- Reject/Banish -->
               <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
               <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
@@ -211,7 +203,6 @@ $users = $pdo->query("
               </form>
               <?php endif; ?>
             <?php elseif($u['is_active']===1): ?>
-              <!-- Deactivate/Banish -->
               <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
               <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
@@ -219,18 +210,20 @@ $users = $pdo->query("
               </form>
               <?php endif; ?>
             <?php else: ?>
-              <!-- Reactivate -->
               <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-approve">Reactivate</button>
               </form>
             <?php endif; ?>
           <?php endif; ?>
-        </td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+        </div>
+        <?php if ($u['id'] === 1): ?>
+          <div class="main-admin-badge">Main Admin</div>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
 </div>
 
 <!-- User Modal -->
