@@ -1,9 +1,9 @@
 <?php
 // admin/pages/courses.php
-require '../includes/auth.php';      // session + requireRole()
-require '../includes/db.php';        // $pdo
-require '../includes/csrf.php';      // generateToken(), verifyToken()
-require '../includes/functions.php'; // sendEmail(), logAction()
+require_once '../includes/auth.php';
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
+require_once '../includes/csrf.php';
 
 // Only Admin & Sub-Admin can manage courses
 requireRole(['admin','sub-admin']);

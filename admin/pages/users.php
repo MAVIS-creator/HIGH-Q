@@ -24,10 +24,22 @@ if (isset($_GET['action'], $_GET['id'])) {
         die("Invalid CSRF token.");
     }
 
+
     switch ($action) {
         case 'approve':
             if ($_SESSION['user']['role_slug'] !== 'admin') break;
             $role_id = (int) $_POST['role_id'];
+            // Enforce max_count for roles
+            $max_count = $pdo->prepare("SELECT max_count FROM roles WHERE id=?");
+            $max_count->execute([$role_id]);
+            $max = $max_count->fetchColumn();
+            if ($max && $max > 0) {
+                $current_count = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role_id=? AND is_active=1");
+                $current_count->execute([$role_id]);
+                if ($current_count->fetchColumn() >= $max) {
+                    die("Maximum number of users for this role reached.");
+                }
+            }
             $stmt = $pdo->prepare("UPDATE users SET is_active=1, role_id=? WHERE id=?");
             $stmt->execute([$role_id, $id]);
 
@@ -41,6 +53,10 @@ if (isset($_GET['action'], $_GET['id'])) {
 
         case 'banish':
             if ($_SESSION['user']['role_slug'] !== 'admin') break;
+            // Prevent admin from banishing himself
+            if ($id == $_SESSION['user']['id']) break;
+            // Prevent any admin from banishing the main admin (id=1)
+            if ($id == 1) break;
             $stmt = $pdo->prepare("UPDATE users SET is_active=2 WHERE id=?");
             $stmt->execute([$id]);
 
@@ -72,6 +88,11 @@ if (isset($_GET['action'], $_GET['id'])) {
                 $role_id = (int) $_POST['role_id'];
                 $status  = (int) $_POST['is_active'];
 
+                // Prevent admin from editing or demoting main admin (id=1)
+                if ($id == 1 && $_SESSION['user']['id'] != 1) break;
+                // Prevent admin from editing himself to banned
+                if ($id == $_SESSION['user']['id'] && $status == 2) $status = 1;
+
                 // Prevent non-admins from escalating privileges
                 if ($_SESSION['user']['role_slug'] !== 'admin') {
                     $status = $status === 2 ? 1 : $status; // no ban
@@ -90,7 +111,7 @@ if (isset($_GET['action'], $_GET['id'])) {
             break;
     }
 
-    header("Location: index.php?page=users");
+    header("Location: index.php?pages=users");
     exit;
 }
 
@@ -196,7 +217,7 @@ $users = $pdo->query("
                     <a href="#" class="btn-edit" data-user-id="<?= $u['id'] ?>">Edit</a>
                     <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
                         <?php if($u['is_active']===0): ?>
-                        <form method="post" action="index.php?page=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
+                        <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                             <select name="role_id" required>
                                 <option value="">Assign Role</option>
@@ -206,17 +227,17 @@ $users = $pdo->query("
                             </select>
                             <button type="submit" class="btn-approve">Approve</button>
                         </form>
-                        <form method="post" action="index.php?page=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+                        <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                             <button type="submit" class="btn-banish">Banish</button>
                         </form>
                         <?php elseif($u['is_active']===1): ?>
-                        <form method="post" action="index.php?page=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+                        <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                             <button type="submit" class="btn-banish">Banish</button>
                         </form>
                         <?php else: ?>
-                        <form method="post" action="index.php?page=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
+                        <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                             <button type="submit" class="btn-approve">Reactivate</button>
                         </form>
