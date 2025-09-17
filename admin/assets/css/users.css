@@ -444,47 +444,40 @@
     text-align: right;
 }
 
-/* Strong overrides to ensure the users page is centered and large (overrides admin.css) */
-.admin-main .users-page {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
+/* Layout: left-aligned inside the admin content area */
+.users-page {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 0 2rem 40px; /* inset from admin main left edge (space from sidebar) */
 }
 
-.admin-main .users-page .summary-cards,
-.admin-main .users-page .user-filters,
-.admin-main .users-page .users-list {
-    width: 100% !important;
-    max-width: 1100px !important;
-    margin: 1rem 0 !important;
+/* Make summary cards moderate size and 3 columns on desktop */
+.summary-cards {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 1.5rem;
 }
-
-/* Make summary cards much larger and centered */
 .summary-cards .card {
-    padding: 3rem 2rem !important;
-    min-height: 140px !important;
+    padding: 1.75rem 1.25rem;
+    min-height: 110px;
 }
-.summary-cards h3 { font-size: 3rem !important; }
-.summary-cards p { font-size: 1.05rem !important; }
+.summary-cards h3 { font-size: 1.9rem; }
+.summary-cards p { font-size: 0.95rem; }
 
-/* Larger filter inputs */
-.user-filters input, .user-filters select { padding: 1.1rem 1.2rem !important; font-size: 1.05rem !important; }
+/* Filter inputs slightly larger but balanced */
+.user-filters input, .user-filters select { padding: 0.8rem 0.9rem; font-size: 0.98rem; }
 
-/* Make user cards and avatars larger */
-.user-card { padding: 1.75rem 2rem !important; }
-.card-avatar { width: 120px !important; height: 120px !important; }
-.card-name { font-size: 1.4rem !important; }
-.card-email { font-size: 1.05rem !important; }
-.main-admin-badge { padding: 12px 16px !important; font-size: 1.05rem !important; }
+/* User card sizes tuned to match screenshot two */
+.user-card { padding: 1.25rem 1.5rem; box-shadow: 0 3px 8px rgba(0,0,0,0.03); }
+.card-avatar { width: 64px; height: 64px; }
+.card-name { font-size: 1.05rem; }
+.card-email { font-size: 0.95rem; }
+.main-admin-badge { padding: 8px 12px; font-size: 0.95rem; }
 
-/* Ensure actions are spaced and buttons slightly larger */
-.card-actions .btn-view, .card-actions .btn-edit, .card-actions .btn-approve, .card-actions .btn-banish {
-    padding: 0.6rem 0.8rem !important;
-    font-size: 0.95rem !important;
-}
+/* actions */
+.card-actions .btn-view, .card-actions .btn-edit, .card-actions .btn-approve, .card-actions .btn-banish { padding: 0.45rem 0.6rem; }
 
-/* Small screens adjustments still responsive */
 @media (max-width: 1000px) {
-    .summary-cards { grid-template-columns: repeat(2,1fr) !important; }
-    .card-avatar { width: 88px !important; height: 88px !important; }
+    .summary-cards { grid-template-columns: repeat(2,1fr); }
+    .users-page { margin-left: 20px; }
+    .card-avatar { width: 56px; height: 56px; }
 }
