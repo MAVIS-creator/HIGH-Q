@@ -1,6 +1,10 @@
 <?php
 // admin/pages/dashboard.php
 
+// Page title and subtitle for header
+$pageTitle = 'Dashboard';
+$pageSubtitle = 'Overview and quick stats for your site';
+
 // Fetch allowed menus for current role
 $userRoleId = $_SESSION['user']['role_id'];
 $stmt = $pdo->prepare("SELECT menu_slug FROM role_permissions WHERE role_id = ?");
