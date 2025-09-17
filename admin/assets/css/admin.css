@@ -202,6 +202,13 @@ body.sidebar-collapsed .admin-main {
   color: var(--hq-black); /* ensure contrast */
 }
 
+.header-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.1;
+}
+
 .header-right {
   display: flex;
   align-items: center;
