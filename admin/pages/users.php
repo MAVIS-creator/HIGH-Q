@@ -19,6 +19,9 @@ $all_roles = $pdo->query("SELECT id, name, slug FROM roles ORDER BY name ASC")->
 
 // Ensure users.css is loaded after admin.css by providing $pageCss for header
 $pageCss = '<link rel="stylesheet" href="../assets/css/users.css">';
+// Page title and subtitle for header
+$pageTitle = 'User Management';
+$pageSubtitle = 'Manage user accounts, roles, and permissions';
 
 // Server-side action handling (POST) and AJAX view (GET)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
