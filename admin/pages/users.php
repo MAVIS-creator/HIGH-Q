@@ -360,7 +360,7 @@ document.querySelectorAll('.btn-edit').forEach(btn=>btn.addEventListener('click'
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 const roleFilter = document.getElementById('roleFilter');
-const rows = document.querySelectorAll('#userTableBody tr');
+const rows = document.querySelectorAll('#userTableBody .user-card');
 
 function filterTable(){
   const search = searchInput.value.toLowerCase();
@@ -368,8 +368,10 @@ function filterTable(){
   const role   = roleFilter.value;
 
   rows.forEach(row=>{
-    const name  = row.querySelector('td:nth-child(2) strong').textContent.toLowerCase();
-    const email = row.querySelector('td:nth-child(2) span').textContent.toLowerCase();
+    const nameEl  = row.querySelector('.card-name');
+    const emailEl = row.querySelector('.card-email');
+    const name  = nameEl ? nameEl.textContent.toLowerCase() : '';
+    const email = emailEl ? emailEl.textContent.toLowerCase() : '';
     const rowStatus = row.dataset.status;
     const rowRole   = row.dataset.role;
 
