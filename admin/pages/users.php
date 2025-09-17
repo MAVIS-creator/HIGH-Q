@@ -294,36 +294,6 @@ $users = $pdo->query("
 <div id="modalOverlay"></div>
 
 <?php include '../includes/footer.php'; ?>
-   <label>Email</label>
-          <input type="email" name="email" id="fEmail" required>
-        </div>
-        <div class="form-row">
-          <label>Role</label>
-          <select name="role_id" id="fRole">
-            <?php foreach ($all_roles as $r): ?>
-              <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Status</label>
-          <select name="is_active" id="fStatus">
-            <option value="1">Active</option>
-            <option value="0">Pending</option>
-            <option value="2">Banned</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-approve">Save Changes</button>
-        </div>
-      </form>
-    </div>
-
-  </div>
-</div>
-<div id="modalOverlay"></div>
-
-<?php include '../includes/footer.php'; ?>
 
 <script>
 const userModal = document.getElementById('userModal');
