@@ -23,12 +23,51 @@
   font-size: 0.9rem;
 }
 
-/* Center summary area */
+/* Page wrapper */
 .admin-main {
   display: flex;
-  justify-content: center; /* center inner content */
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
 }
-.summary-cards { max-width: 1100px; margin: 2rem auto; grid-template-columns: repeat(4, 1fr); }
+
+/* Shared max-width for all main blocks */
+.summary-cards,
+.user-filters,
+.users-list {
+  width: 100%;
+  max-width: 1100px; /* adjust if you want wider/narrower */
+  margin: 1rem auto;
+}
+
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem auto;
+}
+
+.summary-cards .card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.summary-cards h3 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.summary-cards p {
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
+}
 
 /* Search and filters */
 .user-filters {
@@ -51,10 +90,8 @@
   background: #fafafa;
 }
 
-/* Users table */
-
 /* Users list (cards) */
-.users-list { max-width: 1100px; margin: 1rem auto 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
+.users-list { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 4rem; }
 .user-card {
   display: flex;
   justify-content: space-between;
