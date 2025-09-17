@@ -1,10 +1,9 @@
 <?php
 // admin/pages/tutors.php
-require './includes/auth.php';
-require './includes/db.php';
-require './includes/csrf.php';
-require './includes/functions.php';
-
+require_once '../includes/auth.php';
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
+require_once '../includes/csrf.php';
 // Only Admin & Sub-Admin
 requireRole(['admin','sub-admin']);
 
