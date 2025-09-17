@@ -17,8 +17,96 @@ $csrf = generateToken('users_form');
 // Fetch roles for dropdowns
 $all_roles = $pdo->query("SELECT id, name, slug FROM roles ORDER BY name ASC")->fetchAll();
 
-// Action handling (approve, banish, reactivate, edit) — same as your original
-// ...
+// Server-side action handling (POST) and AJAX view (GET)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+  $action = $_GET['action'];
+  $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+  // CSRF
+  $token = $_POST['csrf_token'] ?? '';
+  if (!verifyToken('users_form', $token)) {
+    header('Location: index.php?pages=users'); exit;
+  }
+
+  // Basic protections
+  $currentUserId = $_SESSION['user']['id'];
+  $isMainAdmin = ($id === 1);
+
+  if ($action === 'approve') {
+    // Approve a pending user and assign role (respect roles.max_count)
+    $role_id = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 0;
+    if (!$role_id) { header('Location: index.php?pages=users'); exit; }
+
+    // Check role max_count
+    $stmt = $pdo->prepare('SELECT max_count FROM roles WHERE id = ?');
+    $stmt->execute([$role_id]);
+    $max = $stmt->fetchColumn();
+    if ($max !== false && $max !== null && (int)$max > 0) {
+      $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE role_id = ? AND is_active = 1');
+      $stmt->execute([$role_id]);
+      $count = (int)$stmt->fetchColumn();
+      if ($count >= (int)$max) {
+        // Role is full
+        header('Location: index.php?pages=users'); exit;
+      }
+    }
+
+    $stmt = $pdo->prepare('UPDATE users SET role_id = ?, is_active = 1, updated_at = NOW() WHERE id = ?');
+    $stmt->execute([$role_id, $id]);
+    logAction($pdo, $currentUserId, 'approve_user', ['user_id' => $id, 'role_id' => $role_id]);
+    header('Location: index.php?pages=users'); exit;
+  }
+
+  if ($action === 'banish') {
+    // Prevent banishing main admin or yourself
+    if ($id === $currentUserId || $id === 1) { header('Location: index.php?pages=users'); exit; }
+    $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
+    $stmt->execute([$id]);
+    logAction($pdo, $currentUserId, 'banish_user', ['user_id' => $id]);
+    header('Location: index.php?pages=users'); exit;
+  }
+
+  if ($action === 'reactivate') {
+    // Reactivate a banned/pending user
+    $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
+    $stmt->execute([$id]);
+    logAction($pdo, $currentUserId, 'reactivate_user', ['user_id' => $id]);
+    header('Location: index.php?pages=users'); exit;
+  }
+
+  if ($action === 'edit') {
+    // Edit user details from modal
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $role_id = isset($_POST['role_id']) ? (int)$_POST['role_id'] : null;
+    $is_active = isset($_POST['is_active']) ? (int)$_POST['is_active'] : null;
+
+    // Don't allow editing main admin by non-main admin
+    if ($id === 1 && $_SESSION['user']['id'] !== 1) { header('Location: index.php?pages=users'); exit; }
+
+    $stmt = $pdo->prepare('UPDATE users SET name = ?, email = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?');
+    $stmt->execute([$name, $email, $role_id, $is_active, $id]);
+    logAction($pdo, $currentUserId, 'edit_user', ['user_id' => $id]);
+    header('Location: index.php?pages=users'); exit;
+  }
+}
+
+// AJAX: return JSON for a single user view
+if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
+  $id = (int)$_GET['id'];
+  $stmt = $pdo->prepare('SELECT u.*, r.name AS role_name, r.slug AS role_slug,
+    (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS posts_count,
+    (SELECT COUNT(*) FROM comments WHERE user_id = u.id) AS comments_count
+    FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?');
+  $stmt->execute([$id]);
+  $u = $stmt->fetch(PDO::FETCH_ASSOC);
+  if (!$u) {
+    header('Content-Type: application/json'); echo json_encode(['error' => 'User not found']); exit;
+  }
+  $u['status'] = $u['is_active']==1 ? 'Active' : ($u['is_active']==0 ? 'Pending' : 'Banned');
+  $u['status_value'] = (int)$u['is_active'];
+  header('Content-Type: application/json'); echo json_encode($u); exit;
+}
 
 // Fetch counts for summary
 $total_users   = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
@@ -238,7 +326,7 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await fetch(`index.php?page=users&action=view&id=${id}`);
+  const res = await fetch(`index.php?pages=users&action=view&id=${id}`);
   const data = await res.json();
   if(data.error) return alert(data.error);
 
@@ -257,7 +345,7 @@ async function loadUser(id, mode='view'){
 
   // Fill edit form
   const form = document.getElementById('editForm');
-  form.action = `index.php?page=users&action=edit&id=${data.id}`;
+  form.action = `index.php?pages=users&action=edit&id=${data.id}`;
   document.getElementById('fName').value = data.name;
   document.getElementById('fEmail').value = data.email;
   document.getElementById('fRole').value = data.role_id ?? '';
