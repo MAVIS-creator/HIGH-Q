@@ -1,322 +1,232 @@
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    background: var(--hq-gray);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+}
+/* Root palette is already defined in admin.css, we just use it here */
+
+/* Page layout */
+.users-page {
+  margin-left: 240px; /* account for sidebar */
+  padding: 2rem;
+  width: calc(100% - 240px);
 }
 
-/* Headings */
-h1, h2 {
-    margin-bottom: 1rem;
-    color: var(--hq-red);
+.users-page h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+  color: var(--text);
 }
 
-h2 {
-    border-left: 5px solid var(--hq-yellow);
-    padding-left: 0.5rem;
-    margin-top: 2rem;
+.users-page p {
+  color: var(--gray);
+  margin-bottom: 1.5rem;
 }
 
-/* Tables */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    background: #fff;
-    border-radius: 5px;
-    overflow: hidden;
+/* Table */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
-table th, table td {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
+.users-table th,
+.users-table td {
+  padding: 0.9rem 1rem;
+  text-align: left;
 }
 
-table th {
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-    font-weight: bold;
+.users-table th {
+  background: var(--surface-2);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-light);
 }
 
-table tr:hover {
-    background: var(--hq-yellow-light);
+.users-table tr:nth-child(even) td {
+  background: var(--surface-1);
 }
+
+.users-table tr:hover td {
+  background: var(--surface-hover);
+}
+
+/* Role & status badges */
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
+
+.role-admin { background: var(--primary); color: #fff; }
+.role-sub-admin { background: var(--accent); color: #fff; }
+.role-moderator { background: var(--warning); color: #fff; }
+.role-student { background: var(--gray); color: #fff; }
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-active { background: var(--success); color: #fff; }
+.status-pending { background: var(--warning); color: #fff; }
+.status-banned { background: var(--danger); color: #fff; }
 
 /* Buttons */
-.btn-approve, .btn-banish, .btn-view, .btn-edit {
-    padding: 0.4rem 0.8rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: 0.2s;
+.btn-view,
+.btn-edit {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: none;
+  cursor: pointer;
+  margin-right: 0.3rem;
+  transition: background 0.2s;
+  text-decoration: none;
+  color: var(--text);
 }
 
-.btn-approve {
-    background: var(--hq-red);
-    color: #fff;
+.btn-view:hover { background: var(--surface-hover); }
+.btn-edit:hover { background: var(--surface-hover); }
+
+.inline-form {
+  display: inline-block;
+  margin-left: 0.3rem;
 }
 
-.btn-approve:hover {
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-}
-
-.btn-banish {
-    background: var(--hq-black);
-    color: #fff;
-}
-
-.btn-banish:hover {
-    background: var(--hq-red);
-}
-
-.btn-view, .btn-edit {
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-}
-
-.btn-view:hover, .btn-edit:hover {
-    background: var(--hq-yellow-light);
-}
-
-/* Status badges */
-.status-badge {
-    display: inline-block;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-pending {
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-}
-.status-active {
-    background: var(--hq-red);
-    color: #fff;
-}
-.status-banned {
-    background: var(--hq-black);
-    color: #fff;
-}
-
-/* Role badges */
-.role-badge {
-    display: inline-block;
-    padding: 0.25rem 0.6rem;
-    font-size: 0.75rem;
-    font-weight: bold;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-left: 0.3rem;
-}
-
-.role-admin {
-    background: var(--hq-red);
-    color: #fff;
-}
-.role-sub-admin {
-    background: var(--hq-black);
-    color: #fff;
-}
-.role-moderator {
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-}
-.role-student {
-    background: #6c757d;
-    color: #fff;
+.inline-form select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-right: 0.3rem;
+  font-size: 0.85rem;
 }
 
 /* Modal */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.6);
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
 }
 
-.modal.open {
-    display: block;
-}
+.modal.open { display: flex; }
 
 .modal-content {
-    background: #fff;
-    margin: 5% auto;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
-    position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: 600px;
+  max-width: 90%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
 }
 
 .modal-close {
-    position: absolute;
-    top: 0.5rem; right: 0.5rem;
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: var(--hq-red);
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+  color: var(--gray);
 }
 
-/* Modal Tabs */
 .modal-tabs {
-    display: flex;
-    margin-bottom: 1rem;
-    gap: 1rem;
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
 }
+
 .tab-btn {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    background: var(--hq-gray);
-    border: none;
-    cursor: pointer;
-    border-radius: 5px 5px 0 0;
-    font-weight: bold;
-    text-align: center;
-    transition: 0.2s;
+  flex: 1;
+  padding: 0.7rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-light);
+  transition: color 0.2s, border-bottom 0.2s;
 }
+
 .tab-btn.active {
-    background: var(--hq-red);
-    color: #fff;
-}
-.tab-pane {
-    display: none;
-}
-.tab-pane.active {
-    display: block;
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
 }
 
-/* Profile Modal */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* Profile view */
 .profile-header {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
 }
+
 .profile-header img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
 }
+
+.profile-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
 .profile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
 }
+
 .profile-grid .label {
-    font-weight: bold;
+  font-weight: 600;
+  color: var(--text-light);
 }
 
-/* Form rows */
+/* Forms */
 .form-row {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
+
 .form-row label {
-    display: block;
-    margin-bottom: 0.3rem;
-    font-weight: bold;
-}
-.form-row input, .form-row select {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
 }
 
-/* Form actions */
+.form-row input,
+.form-row select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
 .form-actions {
-    text-align: right;
-    margin-top: 1rem;
+  text-align: right;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-    table, thead, tbody, th, td, tr { display: block; }
-    table tr { margin-bottom: 1rem; border-bottom: 2px solid #ddd; }
-    table td {
-        padding-left: 50%;
-        position: relative;
-    }
-    table td::before {
-        position: absolute;
-        left: 0;
-        width: 45%;
-        padding-left: 0.5rem;
-        font-weight: bold;
-        white-space: nowrap;
-    }
-    .profile-grid { grid-template-columns: 1fr; }
-}
-/* General table */
-.users-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-.users-table th, .users-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--hq-gray);
-    text-align: left;
-}
-.users-table th {
-    background: var(--hq-black);
-    color: var(--hq-yellow);
-}
-.users-table td {
-    background: var(--hq-gray);
-}
-
-/* Buttons */
-.btn-approve { background: var(--hq-yellow); color: var(--hq-black); padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; }
-.btn-banish  { background: var(--hq-red); color: #fff; padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; }
-.btn-view, .btn-edit { background: var(--hq-black); color: var(--hq-yellow); padding:0.3rem 0.6rem; border:none; border-radius:4px; cursor:pointer; margin-right:4px; }
-
-/* Inline forms */
-.inline-form { display:inline; margin-right: 5px; }
-
-/* Badges */
-.role-badge { padding:2px 6px; border-radius:4px; color:#fff; font-weight:bold; margin-right:3px; }
-.role-admin { background: var(--hq-red); }
-.role-sub-admin { background: var(--hq-yellow); color: var(--hq-black); }
-.role-moderator { background: var(--hq-black); }
-.role-student { background: var(--hq-gray); color: var(--hq-black); }
-
-.status-badge { padding:2px 6px; border-radius:4px; font-weight:bold; }
-.status-active { background: var(--hq-yellow); color: var(--hq-black); }
-.status-pending { background: var(--hq-gray); color: var(--hq-black); }
-.status-banned { background: var(--hq-red); color: #fff; }
-
-/* Modal */
-.modal { position: fixed; top:0; left:0; width:100%; height:100%; display:none; justify-content:center; align-items:center; z-index:999; }
-.modal.open { display:flex; }
-#modalOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:none; z-index:998; }
-#modalOverlay.open { display:block; }
-.modal-content { background:#fff; padding:1rem; border-radius:8px; max-width:600px; width:100%; position:relative; }
-.modal-close { position:absolute; top:10px; right:10px; cursor:pointer; }
-
-/* Tabs */
-.modal-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; }
-.tab-btn { flex:1; padding:0.5rem; cursor:pointer; background:#ddd; border:none; border-radius:4px; }
-.tab-btn.active { background: var(--hq-yellow); color: var(--hq-black); }
-.tab-pane { display:none; }
-.tab-pane.active { display:block; }
-
-/* Profile grid */
-.profile-grid { display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; margin-top:1rem; }
-.profile-header { display:flex; gap:1rem; align-items:center; }
-.profile-header img { width:80px; height:80px; border-radius:50%; }

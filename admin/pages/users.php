@@ -1,10 +1,9 @@
 <?php
 // admin/pages/users.php
-
-require '../includes/auth.php';
-require '../admin/includes/db.php';
-require './includes/functions.php';
-require './includes/csrf.php';
+require_once '../includes/auth.php';
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
+require_once '../includes/csrf.php';
 
 // Only Admins & Sub-Admins
 if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
@@ -160,7 +159,7 @@ $users = $pdo->query("
 <head>
 <meta charset="UTF-8">
 <title>User Management - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href=".assets/css/users.css">
+<link rel="stylesheet" href="../assets/css/users.css">
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>

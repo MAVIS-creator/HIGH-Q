@@ -13,9 +13,9 @@ $dotenv->load();
 /**
  * Log actions into audit_logs
  */
-function logAction(PDO $pdo, int $actor_id, string $action, array $meta = []): void {
-    $stmt = $pdo->prepare("INSERT INTO audit_logs (actor_id, action, meta, created_at) VALUES (?, ?, ?, NOW())");
-    $stmt->execute([$actor_id, $action, json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)]);
+function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): void {
+    $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, meta, created_at) VALUES (?, ?, ?, NOW())");
+    $stmt->execute([$user_id, $action, json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)]);
 }
 
 /**

@@ -17,11 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('sidebarOverlay');
     const menuToggle = document.getElementById('menuToggle');
 
-    if(!menuToggle || !overlay) return;
+    if (!menuToggle || !overlay) return;
 
     menuToggle.addEventListener('click', () => {
         document.body.classList.toggle('sidebar-collapsed');
-        overlay.classList.toggle('active');
+
+        // Only show overlay on mobile
+        if (window.innerWidth <= 768) {
+            if (document.body.classList.contains('sidebar-collapsed')) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        } else {
+            overlay.classList.remove('active');
+        }
     });
 
     overlay.addEventListener('click', () => {
@@ -29,4 +39,5 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.classList.remove('active');
     });
 });
+
 </script>
