@@ -141,8 +141,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) 
     }
 
     // Use prepared statements for counts
-    $posts_count = (int)$pdo->prepare("SELECT COUNT(*) FROM posts WHERE author_id=?")->execute([$id])->fetchColumn();
-    $comments_count = (int)$pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id=?")->execute([$id])->fetchColumn();
+    $stmtPosts = $pdo->prepare("SELECT COUNT(*) FROM posts WHERE author_id=?");
+    $stmtPosts->execute([$id]);
+    $posts_count = (int)$stmtPosts->fetchColumn();
+    $stmtComments = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id=?");
+    $stmtComments->execute([$id]);
+    $comments_count = (int)$stmtComments->fetchColumn();
 
     $status_map = [0=>'Pending', 1=>'Active', 2=>'Banned'];
 
