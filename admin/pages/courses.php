@@ -5,6 +5,9 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 
+$pageTitle = 'Courses';
+$pageSubtitle = 'Manage courses and programs offered on the site';
+
 // Only Admin & Sub-Admin can manage courses
 requirePermission('roles'); // where 'roles' matches the menu slug
 
