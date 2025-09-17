@@ -1,230 +1,188 @@
-:root {
-  --hq-yellow: #ffd600;
-  --hq-yellow-light: #ffe566;
-  --hq-red: #ff4b2b;
-  --hq-black: #0a0a0a;
-  --hq-gray: #f3f4f6;
-  --max-width: 960px;
-  --card-width: 760px;
-  --radius: 12px;
-}
-/* Root palette is already defined in admin.css, we just use it here */
-
-/* Page layout */
-.users-page {
-  margin-left: 240px; /* account for sidebar */
+/* Page container */
+.container {
+  margin-left: 240px; /* keep space for sidebar */
   padding: 2rem;
-  width: calc(100% - 240px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* center horizontally */
 }
 
-.users-page h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.25rem;
-  color: var(--text);
+/* Page title */
+.container h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.users-page p {
-  color: var(--gray);
-  margin-bottom: 1.5rem;
-}
-
-/* Table */
+/* Users Table */
 .users-table {
-  width: 100%;
+  width: 90%;
+  max-width: 1100px;
   border-collapse: collapse;
-  margin-top: 1rem;
-  background: var(--surface);
-  border-radius: var(--radius);
+  background: #fff;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .users-table th,
 .users-table td {
-  padding: 0.9rem 1rem;
-  text-align: left;
+  padding: 14px 18px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
 .users-table th {
-  background: var(--surface-2);
+  background: #f8f9fa;
   font-weight: 600;
+  text-transform: uppercase;
   font-size: 0.9rem;
-  color: var(--text-light);
 }
 
-.users-table tr:nth-child(even) td {
-  background: var(--surface-1);
+.users-table tr:hover {
+  background: #fafafa;
 }
 
-.users-table tr:hover td {
-  background: var(--surface-hover);
-}
-
-/* Role & status badges */
+/* Role + Status badges */
 .role-badge {
   display: inline-block;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-right: 0.3rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-right: 6px;
 }
-
-.role-admin { background: var(--primary); color: #fff; }
-.role-sub-admin { background: var(--accent); color: #fff; }
-.role-moderator { background: var(--warning); color: #fff; }
-.role-student { background: var(--gray); color: #fff; }
+.role-admin { background: #ffe3e3; color: #d93025; }
+.role-sub-admin { background: #e8f0fe; color: #1967d2; }
+.role-student { background: #e6f4ea; color: #137333; }
 
 .status-badge {
   display: inline-block;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+  padding: 3px 10px;
+  border-radius: 20px;
   font-size: 0.75rem;
-  font-weight: 600;
 }
-
-.status-active { background: var(--success); color: #fff; }
-.status-pending { background: var(--warning); color: #fff; }
-.status-banned { background: var(--danger); color: #fff; }
+.status-active { background: #e6f4ea; color: #137333; }
+.status-pending { background: #fff4e5; color: #b06f00; }
+.status-banned { background: #fdecea; color: #b3261e; }
 
 /* Buttons */
-.btn-view,
-.btn-edit {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  border: none;
-  cursor: pointer;
-  margin-right: 0.3rem;
-  transition: background 0.2s;
-  text-decoration: none;
-  color: var(--text);
-}
-
-.btn-view:hover { background: var(--surface-hover); }
-.btn-edit:hover { background: var(--surface-hover); }
-
-.inline-form {
+a.btn-view, a.btn-edit, .btn-approve, .btn-banish {
   display: inline-block;
-  margin-left: 0.3rem;
-}
-
-.inline-form select {
-  padding: 0.35rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  margin-right: 0.3rem;
+  padding: 6px 12px;
+  margin: 2px;
+  border-radius: 6px;
   font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
 }
+a.btn-view { background: #e8f0fe; color: #1967d2; }
+a.btn-view:hover { background: #d2e3fc; }
+a.btn-edit { background: #fff4e5; color: #b06f00; }
+a.btn-edit:hover { background: #ffe0b2; }
+.btn-approve { background: #e6f4ea; color: #137333; border: none; }
+.btn-approve:hover { background: #d0e9d7; }
+.btn-banish { background: #fdecea; color: #b3261e; border: none; }
+.btn-banish:hover { background: #f9d6d2; }
 
 /* Modal */
 .modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
   display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+  width: 600px;
+  max-width: 95%;
+  z-index: 1001;
+  padding: 20px;
+  transition: all 0.2s ease-in-out;
 }
-
-.modal.open { display: flex; }
+.modal.open { display: block; transform: translate(-50%, -50%) scale(1); }
 
 .modal-content {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  width: 600px;
-  max-width: 90%;
-  box-shadow: var(--shadow-lg);
   position: relative;
 }
 
 .modal-close {
   position: absolute;
-  top: 0.7rem;
-  right: 0.7rem;
+  top: 12px;
+  right: 12px;
+  font-size: 22px;
   cursor: pointer;
-  font-size: 1.4rem;
-  color: var(--gray);
 }
 
+/* Modal tabs */
 .modal-tabs {
   display: flex;
-  border-bottom: 1px solid var(--border);
   margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
 }
-
 .tab-btn {
   flex: 1;
-  padding: 0.7rem;
+  padding: 10px;
+  text-align: center;
   background: none;
   border: none;
+  font-weight: 500;
   cursor: pointer;
-  font-weight: 600;
-  color: var(--text-light);
-  transition: color 0.2s, border-bottom 0.2s;
 }
-
 .tab-btn.active {
-  color: var(--primary);
-  border-bottom: 2px solid var(--primary);
+  border-bottom: 3px solid #1967d2;
+  color: #1967d2;
 }
-
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
 
-/* Profile view */
+/* Profile header inside modal */
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.2rem;
+  gap: 15px;
+  margin-bottom: 1rem;
 }
-
 .profile-header img {
   width: 70px;
   height: 70px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid #eee;
 }
-
 .profile-header h3 {
   margin: 0;
-  font-size: 1.2rem;
 }
 
+/* Profile grid */
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.8rem;
+  grid-template-columns: repeat(2,1fr);
+  gap: 10px;
 }
-
 .profile-grid .label {
   font-weight: 600;
-  color: var(--text-light);
+  color: #555;
 }
 
-/* Forms */
+/* Form inside modal */
 .form-row {
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
-
 .form-row label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
   font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #444;
 }
-
 .form-row input,
 .form-row select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .form-actions {
