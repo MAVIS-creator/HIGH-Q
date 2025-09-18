@@ -261,7 +261,6 @@ $posts = $stmt->fetchAll();
             </form>
         </div>
     </div>
-    <div id="modalOverlay"></div>
     <div class="modal" id="editPostModal">
         <div class="modal-content" id="editPostModalContent">
             <!-- AJAX-loaded content will go here -->
