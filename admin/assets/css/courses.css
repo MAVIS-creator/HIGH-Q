@@ -6,6 +6,9 @@
   box-sizing: border-box;
 }
 
+/* Ensure the courses page doesn't float to the right — align with admin-main padding */
+.admin-main .courses-page { padding-left: 20px; padding-right: 20px; }
+
 /* Page header like roles.php */
 .page-header {
   display: flex;
@@ -62,6 +65,12 @@
 .courses-page .page-header .page-title { margin-left: 0 }
 
 .course-card.empty-state { max-width: 800px; margin: 0 auto; }
+
+/* Small screens: reduce grid columns and center the empty state properly */
+@media (max-width: 768px) {
+  .courses-grid { grid-template-columns: 1fr }
+  .courses-page { padding-left: 12px; padding-right: 12px }
+}
 .course-title h3 { margin: 0; }
 
 /* Modal (reused from roles.php) */
