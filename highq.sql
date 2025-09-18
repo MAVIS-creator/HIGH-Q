@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 01, 2025 at 05:58 PM
+-- Generation Time: Sep 18, 2025 at 03:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -36,6 +36,35 @@ CREATE TABLE `audit_logs` (
   `meta` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`meta`)),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `audit_logs`
+--
+
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `ip`, `user_agent`, `meta`, `created_at`) VALUES
+(1, 1, 'role_updated', NULL, NULL, '{\"role_id\":2}', '2025-09-17 21:29:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `slug`, `created_at`) VALUES
+(1, 'General', 'general', '2025-09-18 12:44:37'),
+(2, 'Announcements', 'announcements', '2025-09-18 12:44:37'),
+(3, 'Tips', 'tips', '2025-09-18 12:44:37');
 
 -- --------------------------------------------------------
 
@@ -162,6 +191,7 @@ CREATE TABLE `payments` (
 CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
   `author_id` int(11) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
   `excerpt` text DEFAULT NULL,
@@ -194,7 +224,7 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`id`, `name`, `slug`, `max_count`, `created_at`) VALUES
 (1, 'Admin', 'admin', 2, '2025-08-29 08:46:25'),
-(2, 'Sub-Admin', 'sub-admin', 1, '2025-08-29 08:46:25'),
+(2, 'Sub-Admin', 'sub-admin', 3, '2025-08-29 08:46:25'),
 (3, 'Moderator', 'moderator', NULL, '2025-08-29 08:46:25');
 
 -- --------------------------------------------------------
@@ -225,15 +255,15 @@ INSERT INTO `role_permissions` (`id`, `role_id`, `menu_slug`) VALUES
 (9, 1, 'post'),
 (10, 1, 'comments'),
 (11, 1, 'chat'),
-(12, 2, 'dashboard'),
-(13, 2, 'courses'),
-(14, 2, 'tutors'),
-(15, 2, 'students'),
-(16, 2, 'payments'),
 (17, 3, 'dashboard'),
 (18, 3, 'post'),
 (19, 3, 'comments'),
-(20, 3, 'chat');
+(20, 3, 'chat'),
+(26, 2, 'dashboard'),
+(27, 2, 'courses'),
+(28, 2, 'tutors'),
+(29, 2, 'students'),
+(30, 2, 'payments');
 
 -- --------------------------------------------------------
 
@@ -343,6 +373,13 @@ ALTER TABLE `audit_logs`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
 -- Indexes for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
@@ -385,7 +422,7 @@ ALTER TABLE `login_attempts`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `password_resets`now fir
+-- Indexes for table `password_resets`
 --
 ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`id`),
@@ -405,7 +442,8 @@ ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `slug` (`slug`),
   ADD KEY `author_id` (`author_id`),
-  ADD KEY `idx_posts_slug` (`slug`);
+  ADD KEY `idx_posts_slug` (`slug`),
+  ADD KEY `idx_created_by` (`created_by`);
 
 --
 -- Indexes for table `roles`
@@ -466,7 +504,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `chat_messages`
@@ -526,7 +570,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `role_permissions`
 --
 ALTER TABLE `role_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `settings`
