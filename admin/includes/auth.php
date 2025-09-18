@@ -8,6 +8,20 @@ function requirePermission(string $menuSlug) {
 
     $userId = $_SESSION['user']['id'] ?? null;
     if (!$userId) {
+        // If there are no users in the system yet, redirect to signup for initial setup.
+        try {
+            $stmt = $pdo->query('SELECT COUNT(*) FROM users');
+            $total = (int)$stmt->fetchColumn();
+        } catch (Exception $e) {
+            // If DB not available, fall back to login
+            $total = 1;
+        }
+
+        if ($total === 0) {
+            header("Location: ../signup.php");
+            exit;
+        }
+
         header("Location: ../login.php");
         exit;
     }
