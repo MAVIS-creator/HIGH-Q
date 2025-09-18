@@ -123,7 +123,9 @@ $tutors = $pdo->query("
   </div>
 
   <?php if ($success): ?>
-  ...
+   <div class="alert error">
+        <?php foreach ($errors as $err): ?><p><?= htmlspecialchars($err) ?></p><?php endforeach; ?>
+      </div>
   <?php endif; ?>
 
     <button id="newCourseBtn" class="btn-approve">
