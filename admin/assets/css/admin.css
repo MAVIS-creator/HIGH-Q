@@ -278,18 +278,20 @@ body.sidebar-collapsed .admin-main {
   .admin-sidebar {
     transform: translateX(-100%);
   }
-  .admin-sidebar.active {
+  body.sidebar-collapsed .admin-sidebar {
     transform: translateX(0);
   }
   .admin-header,
   .admin-main,
   .admin-footer {
     margin-left: 0;
+    left: 0;
   }
   .header-right span {
     display: none;
   }
 }
+
 :root {
   --hq-yellow: #ffd600;
   --hq-yellow-light: #ffe566;
