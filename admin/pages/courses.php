@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
 
     // avoid form resubmission
-    header("Location: index.php?page=courses");
+    header("Location: index.php?pages=courses");
     exit;
 }
 
@@ -132,6 +132,12 @@ $tutors = $pdo->query("
     </button>
 
  <div class="courses-grid">
+  <?php if (empty($courses)): ?>
+    <div class="course-card empty-state">
+      <h3>No programs yet</h3>
+      <p>Add a program using the <strong>New Course</strong> button. When empty, each program will show its summary here.</p>
+    </div>
+  <?php endif; ?>
   <?php foreach ($courses as $c): ?>
     <div class="course-card">
       <div class="course-header">
@@ -140,7 +146,7 @@ $tutors = $pdo->query("
           <h3><?= htmlspecialchars($c['title']) ?></h3>
           <small><?= htmlspecialchars($c['duration'] ?: 'Flexible') ?></small>
         </div>
-        <form method="post" action="index.php?page=courses&action=delete&id=<?= $c['id'] ?>" class="delete-form">
+        <form method="post" action="index.php?pages=courses&action=delete&id=<?= $c['id'] ?>" class="delete-form">
           <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
           <button type="submit" class="btn-delete">Delete</button>
         </form>
@@ -254,7 +260,7 @@ $tutors = $pdo->query("
 
     if (mode === 'edit') {
       modalTitle.textContent = 'Edit Course';
-      courseForm.action = `index.php?page=courses&action=edit&id=${data.id}`;
+      courseForm.action = `index.php?pages=courses&action=edit&id=${data.id}`;
       fTitle.value    = data.title;
       fSlug.value     = data.slug;
       fDesc.value     = data.desc;
@@ -264,7 +270,7 @@ $tutors = $pdo->query("
       fActive.checked = data.is_active == 1;
     } else {
       modalTitle.textContent = 'New Course';
-      courseForm.action = 'index.php?page=courses&action=create';
+      courseForm.action = 'index.php?pages=courses&action=create';
       fTitle.value = fSlug.value = fDesc.value = fDuration.value = fPrice.value = '';
       fTutor.value = '';
       fActive.checked = true;
