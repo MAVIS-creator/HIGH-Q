@@ -385,7 +385,7 @@ ALTER TABLE `login_attempts`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `password_resets`
+-- Indexes for table `password_resets`now fir
 --
 ALTER TABLE `password_resets`
   ADD PRIMARY KEY (`id`),
