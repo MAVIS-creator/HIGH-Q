@@ -128,9 +128,6 @@ $tutors = $pdo->query("
       </div>
   <?php endif; ?>
 
-    <button id="newCourseBtn" class="btn-approve">
-      <i class='bx bx-plus'></i> New Course
-    </button>
 
  <div class="courses-grid">
   <?php if (empty($courses)): ?>
