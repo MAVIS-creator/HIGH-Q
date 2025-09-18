@@ -13,31 +13,15 @@
 </html>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.getElementById('sidebarOverlay');
-    const menuToggle = document.getElementById('menuToggle');
+menuToggle.addEventListener('click', () => {
+    document.body.classList.toggle('sidebar-collapsed');
 
-    if (!menuToggle || !overlay) return;
-
-    menuToggle.addEventListener('click', () => {
-        document.body.classList.toggle('sidebar-collapsed');
-
-        // Only show overlay on mobile
-        if (window.innerWidth <= 768) {
-            if (document.body.classList.contains('sidebar-collapsed')) {
-                overlay.classList.add('active');
-            } else {
-                overlay.classList.remove('active');
-            }
-        } else {
-            overlay.classList.remove('active');
-        }
-    });
-
-    overlay.addEventListener('click', () => {
-        document.body.classList.remove('sidebar-collapsed');
+    // Overlay only for mobile
+    if (window.innerWidth <= 768) {
+        overlay.classList.toggle('active', document.body.classList.contains('sidebar-collapsed'));
+    } else {
         overlay.classList.remove('active');
-    });
+    }
 });
 
 </script>
