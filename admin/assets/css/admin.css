@@ -499,7 +499,7 @@ h1 {
 .form-actions {
   text-align: right;
 }
-/* Grid layout for cards */
+Grid layout for cards
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
