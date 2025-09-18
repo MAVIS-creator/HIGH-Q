@@ -1,27 +1,73 @@
 /* Minimal modal and card tweaks for courses page to match provided design */
 .courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(420px,1fr));
-  gap: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 1.25rem;
 }
+
 .course-card {
-  background:#fff;
-  border-radius:12px;
-  padding:1.25rem;
-  box-shadow:0 6px 18px rgba(0,0,0,0.04);
-  border:1px solid #f1f1f1;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f1f1;
 }
-.course-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.course-title h3{margin:0}
-.course-desc{color:#444;margin:1rem 0}
-.course-meta{display:flex;gap:12px;align-items:center;justify-content:flex-end}
-.course-actions{display:flex;gap:8px}
+
+.course-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px
+}
+
+.course-title h3 {
+    margin: 0
+}
+
+.course-desc {
+    color: #444;
+    margin: 1rem 0
+}
+
+.course-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end
+}
+
+.course-actions {
+    display: flex;
+    gap: 8px
+}
 
 /* Modal tweaks */
-.modal .form-row input, .modal .form-row textarea, .modal .form-row select{
-  width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.95rem
+.modal .form-row input,
+.modal .form-row textarea,
+.modal .form-row select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem
 }
-.modal .modal-content{max-width:700px}
 
-.btn-delete{background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:8px}
-.btn-approve{background:#ffca28;color:#222;border:none;padding:8px 12px;border-radius:8px}
+.modal .modal-content {
+    max-width: 700px
+}
+
+.btn-delete {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px
+}
+
+.btn-approve {
+    background: #ffca28;
+    color: #222;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px
+}
