@@ -172,12 +172,7 @@ $posts = $stmt->fetchAll();
                 <form method="get" action="index.php" class="search-form">
                     <input type="hidden" name="pages" value="posts">
                     <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
-                    <td>
-                        <?= htmlspecialchars($p['title']) ?><br>
-                        <a href="post_edit.php?id=<?= $p['id'] ?>"
-                            class="edit-link"
-                            data-id="<?= $p['id'] ?>">Edit Post</a>
-                    </td>
+                    <!-- search input only (removed stray post reference) -->
 
                 </form>
                 <button id="newPostBtn" class="btn-approve">
