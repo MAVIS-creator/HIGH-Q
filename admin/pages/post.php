@@ -215,46 +215,6 @@ $posts = $stmt->fetchAll();
                 <p>No articles yet. Click "Add Article" to create the first post.</p>
             </div>
         <?php endif; ?>
-                            <td><?= htmlspecialchars($p['tags']) ?></td>
-                            <td>
-                                <span class="status-badge <?= $p['status'] == 'published' ? 'status-active' : 'status-pending' ?>">
-                                    <?= ucfirst($p['status']) ?>
-                                </span>
-                            </td>
-                            <td><?= date('d/m/Y', strtotime($p['created_at'])) ?></td>
-                            <td>
-                                <button
-                                    class="btn-editPost"
-                                    data-id="<?= $p['id'] ?>"
-                                    data-title="<?= htmlspecialchars($p['title']) ?>"
-                                    data-slug="<?= htmlspecialchars($p['slug']) ?>"
-                                    data-excerpt="<?= htmlspecialchars($p['excerpt']) ?>"
-                                    data-content="<?= htmlspecialchars($p['content']) ?>"
-                                    data-category="<?= $p['category_id'] ?>"
-                                    data-tags="<?= htmlspecialchars($p['tags']) ?>"
-                                    data-status="<?= $p['status'] ?>">
-                                    <i class="bx bx-edit"></i>
-                                </button>
-                                <form method="post" action="index.php?page=posts&action=toggle&id=<?= $p['id'] ?>" style="display:inline">
-                                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                                    <button class="btn-approve">
-                                        <i class="bx bx-refresh"></i>
-                                    </button>
-                                </form>
-                                <form method="post" action="index.php?page=posts&action=delete&id=<?= $p['id'] ?>" style="display:inline">
-                                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                                    <button class="btn-banish"><i class="bx bx-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-
-            </table>
-
-        <?php else: ?>
-            <p class="no-data">No articles found matching your search.</p>
-        <?php endif; ?>
     </div>
 
     <!-- Post Modal -->
