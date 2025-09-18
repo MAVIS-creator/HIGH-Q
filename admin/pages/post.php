@@ -66,13 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         if (empty($errors)) {
                         // CREATE
                         if ($act === 'create') {
-                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
+                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
                                 $stmt->execute([
                                         $title,
                                         $slug,
                                         $excerpt,
                                         $content,
-                                        $category_id ?: null,
+                                    $_POST['category'] ?? null,
                                         $tags,
                                         $imgPath ?: null,
                                         $status,
@@ -90,13 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
+                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
                 $stmt->execute([
                     $title,
                     $slug,
                     $excerpt,
                     $content,
-                    $category_id ?: null,
+                                    $_POST['category'] ?? null,
                     $tags,
                     $imgPath ?: null,
                     $status,
