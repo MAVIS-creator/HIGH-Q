@@ -1,0 +1,6 @@
+/* tutors.css - card grid for tutors listing */
+.tutors-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:1rem; margin-top:1rem }
+.tutor-card{ background:#fff; border:1px solid #e9e9e9; padding:12px; border-radius:8px; display:flex; gap:10px; align-items:flex-start }
+.tutor-card .avatar{ width:64px; height:64px; border-radius:6px; object-fit:cover }
+.tutor-card .info{ flex:1 }
+.tutor-card .actions{ display:flex; gap:6px }

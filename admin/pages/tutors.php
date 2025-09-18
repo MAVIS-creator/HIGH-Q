@@ -14,6 +14,9 @@ $csrf     = generateToken();
 $errors   = [];
 $success  = [];
 
+// Per-page CSS
+$pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">';
+
 // Directory for photo uploads
 $uploadDir = __DIR__ . '/../../public/uploads/tutors/';
 if (!is_dir($uploadDir)) {
