@@ -128,58 +128,46 @@ $tutors = $pdo->query("
       <i class='bx bx-plus'></i> New Course
     </button>
 
-    <table class="courses-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Title</th>
-          <th>Slug</th>
-          <th>Duration</th>
-          <th>Price (₦)</th>
-          <th>Tutor</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($courses as $c): ?>
-        <tr>
-          <td><?= $c['id'] ?></td>
-          <td><?= htmlspecialchars($c['title']) ?></td>
-          <td><?= htmlspecialchars($c['slug']) ?></td>
-          <td><?= htmlspecialchars($c['duration']) ?></td>
-          <td><?= number_format($c['price'],2) ?></td>
-          <td><?= htmlspecialchars($c['tutor_name'] ?? '—') ?></td>
-          <td>
-            <span class="status-badge <?= $c['is_active']?'status-active':'status-banned' ?>">
-              <?= $c['is_active'] ? 'Active' : 'Inactive' ?>
-            </span>
-          </td>
-          <td>
-            <button
-              class="btn-editCourse"
-              data-id="<?= $c['id'] ?>"
-              data-title="<?= htmlspecialchars($c['title']) ?>"
-              data-slug="<?= htmlspecialchars($c['slug']) ?>"
-              data-desc="<?= htmlspecialchars($c['description']) ?>"
-              data-duration="<?= htmlspecialchars($c['duration']) ?>"
-              data-price="<?= $c['price'] ?>"
-              data-tutor="<?= $c['tutor_id'] ?>"
-              data-active="<?= $c['is_active'] ?>"
-            ><i class='bx bx-edit'></i>Edit</button>
+ <div class="courses-grid">
+  <?php foreach ($courses as $c): ?>
+    <div class="course-card">
+      <div class="course-header">
+        <div class="course-icon"><i class='bx bxs-graduation'></i></div>
+        <div class="course-title">
+          <h3><?= htmlspecialchars($c['title']) ?></h3>
+          <small><?= htmlspecialchars($c['duration'] ?: 'Flexible') ?></small>
+        </div>
+        <form method="post" action="index.php?page=courses&action=delete&id=<?= $c['id'] ?>" class="delete-form">
+          <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+          <button type="submit" class="btn-delete">Delete</button>
+        </form>
+      </div>
 
-            <form method="post" action="index.php?page=courses&action=delete&id=<?= $c['id'] ?>" style="display:inline">
-              <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-              <button type="submit" class="btn-banish">
-                <i class='bx bx-trash'></i>Delete
-              </button>
-            </form>
-          </td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div>
+      <p class="course-desc"><?= nl2br(htmlspecialchars($c['description'])) ?></p>
+
+      <div class="course-meta">
+        <span class="price">₦<?= number_format($c['price'],0) ?></span>
+        <span class="tutor"><?= htmlspecialchars($c['tutor_name'] ?? 'No Tutor') ?></span>
+        <span class="status-badge <?= $c['is_active']?'status-active':'status-banned' ?>">
+          <?= $c['is_active'] ? 'Active' : 'Inactive' ?>
+        </span>
+      </div>
+
+      <div class="course-actions">
+        <button class="btn-editCourse"
+          data-id="<?= $c['id'] ?>"
+          data-title="<?= htmlspecialchars($c['title']) ?>"
+          data-slug="<?= htmlspecialchars($c['slug']) ?>"
+          data-desc="<?= htmlspecialchars($c['description']) ?>"
+          data-duration="<?= htmlspecialchars($c['duration']) ?>"
+          data-price="<?= $c['price'] ?>"
+          data-tutor="<?= $c['tutor_id'] ?>"
+          data-active="<?= $c['is_active'] ?>"
+        ><i class='bx bx-edit'></i> Edit</button>
+      </div>
+    </div>
+  <?php endforeach; ?>
+</div>
 
   <!-- Course Modal (Create/Edit) -->
   <div class="modal" id="courseModal">
