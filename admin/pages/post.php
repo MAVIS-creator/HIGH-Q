@@ -137,8 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 // Search filter
 $q = trim($_GET['q'] ?? '');
 
-// Fetch categories
-$categories = $pdo->query("SELECT id,name FROM categories ORDER BY name")->fetchAll();
+// Fetch categories (table may not exist on some installs)
+try {
+    $categories = $pdo->query("SELECT id,name FROM categories ORDER BY name")->fetchAll();
+} catch (Exception $e) {
+    // Provide an empty array and set a warning so UI can show a helpful message
+    $categories = [];
+    $catWarning = 'Categories table not found. Create the table or add categories to enable categorization.';
+}
 
 // Fetch posts with optional search
 $sql  = "SELECT p.*, u.name AS author, c.name AS category
@@ -173,7 +179,7 @@ $posts = $stmt->fetchAll();
             </div>
             <div class="module-actions">
                 <form method="get" action="index.php" class="search-form">
-                    <input type="hidden" name="page" value="posts">
+                    <input type="hidden" name="pages" value="posts">
                     <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
                     <td>
                         <?= htmlspecialchars($p['title']) ?><br>

@@ -142,7 +142,7 @@ $tutors = $stmt->fetchAll();
       <h1>Tutors Management</h1>
       <div class="tutors-actions">
         <form method="get" action="index.php" class="search-form">
-          <input type="hidden" name="page" value="tutors">
+          <input type="hidden" name="pages" value="tutors">
           <input type="text" name="q" placeholder="Search Tutors" value="<?= htmlspecialchars($q) ?>">
         </form>
         <button id="newTutorBtn" class="btn-approve">
@@ -198,7 +198,7 @@ $tutors = $stmt->fetchAll();
           >
             <i class="bx bx-edit"></i> Edit
           </button>
-          <form method="post" action="index.php?page=tutors&action=delete&id=<?= $t['id'] ?>"
+          <form method="post" action="index.php?pages=tutors&action=delete&id=<?= $t['id'] ?>"
                 style="display:inline">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <button type="submit" class="btn-banish">
