@@ -114,23 +114,17 @@ $tutors = $pdo->query("
   <?php include '../includes/header.php'; ?>
   <?php include '../includes/sidebar.php'; ?>
 
-  <div class="container" style="margin-left:240px;">
-    <h1>Courses / Programs</h1>
-
-    <?php if ($success): ?>
-      <div class="alert success">
-        <?php foreach ($success as $msg): ?><p><?= htmlspecialchars($msg) ?></p><?php endforeach; ?>
-      </div>
-    <?php endif; ?>
-    <?php if ($errors): ?>
-      <div class="alert error">
-        <?php foreach ($errors as $err): ?><p><?= htmlspecialchars($err) ?></p><?php endforeach; ?>
-      </div>
-    <?php endif; ?>
-
-    <button id="newCourseBtn" class="btn-approve">
+<div class="courses-page" style="margin-left:240px;">
+  <div class="page-header">
+    <h2>Courses / Programs</h2>
+    <button id="newCourseBtn" class="btn-add">
       <i class='bx bx-plus'></i> New Course
     </button>
+  </div>
+
+  <?php if ($success): ?>
+  ...
+  <?php endif; ?>
 
  <div class="courses-grid">
   <?php if (empty($courses)): ?>
