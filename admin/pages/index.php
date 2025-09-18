@@ -42,6 +42,9 @@ if (!empty($pageMeta[$page])) {
     if (!isset($pageCss) && !empty($pageMeta[$page]['css'])) $pageCss = $pageMeta[$page]['css'];
 }
 
+// Ensure the user is authenticated before proceeding to header/sidebar
+ensureAuthenticated();
+
 // Fetch allowed pages for the current user's role
 $userRoleId = $_SESSION['user']['role_id'] ?? null;
 $allowed_pages = [];

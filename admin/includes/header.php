@@ -31,4 +31,15 @@
             </div>
         </div>
     </header>
+    <?php
+    // Render flash messages (if any)
+    if (function_exists('getFlash')) {
+        $flash = getFlash();
+        if (!empty($flash)) {
+            $type = $flash['type'] ?? 'info';
+            $msg  = $flash['message'] ?? '';
+            echo "<div class=\"admin-flash admin-flash-{$type}\">" . htmlspecialchars($msg) . "</div>";
+        }
+    }
+    ?>
     <main class="admin-main">
