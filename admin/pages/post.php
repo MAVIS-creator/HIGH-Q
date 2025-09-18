@@ -139,11 +139,9 @@ try {
     $catWarning = 'Categories table not found. Create the table or add categories to enable categorization.';
 }
 
-// Fetch posts with optional search
-$sql  = "SELECT p.*, u.name AS author, c.name AS category
+$sql  = "SELECT p.*, u.name AS author, p.category AS category
          FROM posts p
          LEFT JOIN users u ON u.id = p.author_id
-         LEFT JOIN categories c ON c.id = p.category_id
          WHERE p.title LIKE :q
          ORDER BY p.created_at DESC";
 $stmt = $pdo->prepare($sql);
