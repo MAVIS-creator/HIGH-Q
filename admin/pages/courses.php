@@ -106,8 +106,7 @@ $tutors = $pdo->query("
 <head>
   <meta charset="UTF-8">
   <title>Courses Management - HIGH Q SOLID ACADEMY</title>
-  <!-- <link rel="stylesheet" href="../assets/css/admin.css"> -->
-  <link rel="stylesheet" href="../assets/css/courses.css">
+  <!-- admin.css & per-page CSS are injected by header.php -->
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
