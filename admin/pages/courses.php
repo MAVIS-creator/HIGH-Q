@@ -114,7 +114,7 @@ $tutors = $pdo->query("
   <?php include '../includes/header.php'; ?>
   <?php include '../includes/sidebar.php'; ?>
 
- <div class="courses-page" style="margin-left:240px;">
+ <div class="courses-page">
   <div class="page-header">
     <h2>Courses / Programs</h2>
     <button id="newCourseBtn" class="btn-add">
