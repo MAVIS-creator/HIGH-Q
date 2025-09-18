@@ -119,10 +119,10 @@ $q = trim($_GET['q'] ?? '');
 
 // FETCH tutors (with optional search)
 $sql  = "SELECT * FROM tutors 
-         WHERE name LIKE :q OR slug LIKE :q
+         WHERE name LIKE :q1 OR slug LIKE :q2
          ORDER BY created_at DESC";
 $stmt = $pdo->prepare($sql);
-$stmt->execute([':q'=>"%{$q}%"]);
+$stmt->execute([':q1'=>"%{$q}%", ':q2'=>"%{$q}%"]);
 $tutors = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
