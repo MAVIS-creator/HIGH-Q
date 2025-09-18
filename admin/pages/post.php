@@ -64,53 +64,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         }
 
         if (empty($errors)) {
-            // CREATE
-            if ($act === 'create') {
-                $stmt = $pdo->prepare("
-                  INSERT INTO posts
-                    (title, slug, excerpt, content, category_id, tags, featured_image,
-                     status, author_id)
-                  VALUES (?,?,?,?,?,?,?,?,?)
-                ");
-                  INSERT INTO posts
-                    (title, slug, excerpt, content, category_id, tags, featured_image,
-                     status, created_by)
-                  VALUES (?,?,?,?,?,?,?,?,?)
-                ");
-                $stmt->execute([
-                    $title,
-                    $slug,
-                    $excerpt,
-                    $content,
-                    $category_id ?: null,
-                    $tags,
-                    $imgPath ?: null,
-                    $status,
-                    $_SESSION['user']['id']
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
-                $success[] = "Article '{$title}' created.";
-            }
+                        // CREATE
+                        if ($act === 'create') {
+                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
+                                $stmt->execute([
+                                        $title,
+                                        $slug,
+                                        $excerpt,
+                                        $content,
+                                        $category_id ?: null,
+                                        $tags,
+                                        $imgPath ?: null,
+                                        $status,
+                                        $_SESSION['user']['id']
+                                ]);
+                                logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                $success[] = "Article '{$title}' created.";
+                        }
 
             // EDIT
-            if ($act === 'edit' && $id) {
+                        if ($act === 'edit' && $id) {
                 // If no new image, keep existing
                 if (!$imgPath) {
                     $old = $pdo->prepare("SELECT featured_image FROM posts WHERE id=?");
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                $stmt = $pdo->prepare("
-                  UPDATE posts SET
-                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,
-                    featured_image=?, status=?, updated_at=NOW()
-                  WHERE id=?
-                ");
-                  UPDATE posts SET
-                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,
-                    featured_image=?, status=?, updated_at=NOW()
-                  WHERE id=?
-                ");
+                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
                 $stmt->execute([
                     $title,
                     $slug,
