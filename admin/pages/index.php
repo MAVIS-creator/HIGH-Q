@@ -10,6 +10,38 @@ $page = isset($_GET['pages']) ? basename($_GET['pages']) : 'dashboard';
 $page = preg_replace('/[^a-z0-9_-]/i', '', $page);
 $pageTitle = ucwords(str_replace(['-', '_'], ' ', $page));
 
+// Provide sensible default subtitles and optional per-page CSS links
+$pageMeta = [
+    'dashboard' => [
+        'subtitle' => 'Overview and quick stats for your site',
+    ],
+    'users' => [
+        'subtitle' => 'Manage user accounts, roles, and permissions',
+        'css' => '<link rel="stylesheet" href="../assets/css/users.css">',
+    ],
+    'roles' => [
+        'subtitle' => 'Manage roles and permissions',
+    ],
+    'courses' => [
+        'subtitle' => 'Manage courses and programs offered on the site',
+    ],
+    'tutors' => [
+        'subtitle' => 'Manage tutor profiles and listings',
+    ],
+    'posts' => [
+        'subtitle' => 'Create and manage news articles and blog posts',
+    ],
+];
+
+// If the page hasn't set its own pageTitle/subtitle/css, use defaults from mapping
+if (empty($pageTitle)) {
+    $pageTitle = ucwords(str_replace(['-', '_'], ' ', $page));
+}
+if (!empty($pageMeta[$page])) {
+    if (!isset($pageSubtitle)) $pageSubtitle = $pageMeta[$page]['subtitle'] ?? '';
+    if (!isset($pageCss) && !empty($pageMeta[$page]['css'])) $pageCss = $pageMeta[$page]['css'];
+}
+
 // Fetch allowed pages for the current user's role
 $userRoleId = $_SESSION['user']['role_id'] ?? null;
 $allowed_pages = [];
