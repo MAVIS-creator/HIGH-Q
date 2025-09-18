@@ -189,35 +189,32 @@ $posts = $stmt->fetchAll();
         </div>
 
         <?php if ($posts): ?>
-            <table class="posts-table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Tags</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($posts as $p): ?>
-                        <tr id="post-row-<?= $p['id'] ?>">
-                            <td>
-                                <?php if ($p['featured_image']): ?>
-                                    <img src="../public/<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
-                                <?php else: ?>
-                                    —
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?= htmlspecialchars($p['title']) ?><br>
-                                <a href="post_edit.php?id=<?= $p['id'] ?>"
-                                    class="edit-link"
-                                    data-id="<?= $p['id'] ?>">Edit Post</a>
-                            </td>
-                            <td><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?></td>
+            <div class="posts-grid">
+                <?php foreach ($posts as $p): ?>
+                    <div class="post-card" id="post-row-<?= $p['id'] ?>">
+                        <?php if ($p['featured_image']): ?>
+                            <img src="../public/<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
+                        <?php endif; ?>
+                        <div class="meta">
+                            <strong><?= htmlspecialchars($p['title']) ?></strong>
+                            <div class="info"><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?> • <?= htmlspecialchars($p['author'] ?? '') ?></div>
+                        </div>
+                        <div class="excerpt"><?= nl2br(htmlspecialchars($p['excerpt'] ?: '')) ?></div>
+                        <div class="actions">
+                            <a href="post_edit.php?id=<?= $p['id'] ?>" class="btn">Edit</a>
+                            <form method="post" action="index.php?action=delete&amp;id=<?= $p['id'] ?>&amp;pages=posts" style="display:inline">
+                                <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="posts-empty">
+                <p>No articles yet. Click "Add Article" to create the first post.</p>
+            </div>
+        <?php endif; ?>
                             <td><?= htmlspecialchars($p['tags']) ?></td>
                             <td>
                                 <span class="status-badge <?= $p['status'] == 'published' ? 'status-active' : 'status-pending' ?>">
