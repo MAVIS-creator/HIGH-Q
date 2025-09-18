@@ -15,6 +15,9 @@ $csrf     = generateToken();
 $errors   = [];
 $success  = [];
 
+// Ensure posts page CSS loads after admin.css
+$pageCss = '<link rel="stylesheet" href="../assets/css/posts.css">';
+
 // Make sure uploads folder exists
 $uploadDir = __DIR__ . '/../../public/uploads/posts/';
 if (!is_dir($uploadDir)) {
@@ -66,6 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $stmt = $pdo->prepare("
                   INSERT INTO posts
                     (title, slug, excerpt, content, category_id, tags, featured_image,
+                     status, author_id)
+                  VALUES (?,?,?,?,?,?,?,?,?)
+                ");
+                  INSERT INTO posts
+                    (title, slug, excerpt, content, category_id, tags, featured_image,
                      status, created_by)
                   VALUES (?,?,?,?,?,?,?,?,?)
                 ");
@@ -93,6 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $imgPath = $old->fetchColumn();
                 }
                 $stmt = $pdo->prepare("
+                  UPDATE posts SET
+                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,
+                    featured_image=?, status=?, updated_at=NOW()
+                  WHERE id=?
+                ");
                   UPDATE posts SET
                     title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,
                     featured_image=?, status=?, updated_at=NOW()
@@ -149,7 +162,7 @@ try {
 // Fetch posts with optional search
 $sql  = "SELECT p.*, u.name AS author, c.name AS category
          FROM posts p
-         LEFT JOIN users u ON u.id = p.created_by
+         LEFT JOIN users u ON u.id = p.author_id
          LEFT JOIN categories c ON c.id = p.category_id
          WHERE p.title LIKE :q
          ORDER BY p.created_at DESC";
