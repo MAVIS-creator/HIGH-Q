@@ -189,19 +189,18 @@ $csrfToken = generateToken('signup_form');
  <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
 <style>
 :root {
-    --hq-yellow: #ffd600;
-    --hq-yellow-light: #ffe566;
-    --hq-red: #ff4b2b;
+    --hq-primary: #ffd600;
+    --hq-accent: #ff4b2b;
     --hq-black: #0a0a0a;
     --hq-gray: #f3f4f6;
-    --max-width: 960px;
-    --card-width: 760px;
-    --radius: 12px;
+    --btn-padding: 0.8rem 1rem;
+    --btn-radius: 8px;
+    --btn-font-size: 1rem;
 }
 body {
     margin: 0;
     font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-    background: linear-gradient(135deg, var(--hq-yellow), var(--hq-red));
+    background: linear-gradient(135deg, var(--hq-primary), var(--hq-accent));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -211,57 +210,17 @@ body {
 .signup-card {
     background: var(--hq-gray);
     padding: 2rem;
-    border-radius: var(--radius);
-    width: 350px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
 }
-.signup-card h2 {
-    color: var(--hq-red);
-    margin-bottom: 1rem;
-    text-align: center;
-}
-label {
-    display: block;
-    font-weight: 600;
-    margin-top: 1rem;
-    color: var(--hq-black);
-}
-input {
-    width: 100%;
-    padding: 0.6rem;
-    margin-top: 0.3rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-button {
-    background: var(--hq-red);
-    color: var(--hq-gray);
-    border: none;
-    padding: 0.8rem;
-    width: 100%;
-    font-size: 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 1.5rem;
-}
-button:hover {
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-}
-.error {
-    background: #ffdddd;
-    color: var(--hq-red);
-    padding: 0.5rem;
-    border-left: 4px solid var(--hq-red);
-    margin-bottom: 1rem;
-}
-.success {
-    background: #ddffdd;
-    color: green;
-    padding: 0.5rem;
-    border-left: 4px solid green;
-    margin-bottom: 1rem;
-}
+.signup-card h2 { color: var(--hq-accent); margin-bottom: 1rem; text-align:center; font-size:1.25rem }
+label { display:block; font-weight:700; margin-top:0.9rem; color:var(--hq-black) }
+input { width:100%; padding:0.65rem; margin-top:0.3rem; border:1px solid #ddd; border-radius:8px }
+button { background:var(--hq-accent); color:#fff; border:none; padding:var(--btn-padding); width:100%; font-size:var(--btn-font-size); border-radius:var(--btn-radius); cursor:pointer; margin-top:1.2rem; font-weight:700 }
+button:hover { background:var(--hq-primary); color:var(--hq-black) }
+.error { background:#ffefef; color:var(--hq-accent); padding:0.5rem; border-left:4px solid var(--hq-accent); margin-bottom:1rem }
+.success { background:#ddffdd; color:green; padding:0.5rem; border-left:4px solid green; margin-bottom:1rem }
 /* File input styling */
 input[type="file"] {
     display: block;
