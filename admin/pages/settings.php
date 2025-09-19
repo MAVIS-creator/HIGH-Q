@@ -2,6 +2,7 @@
 // admin/pages/settings.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 // Only users with 'settings' permission may access
 requirePermission('settings');
@@ -305,14 +306,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($
     }
     try {
         if ($action === 'runScan') {
-            // simple placeholder: insert an audit log entry
-            $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, ip, user_agent, meta) VALUES (?, ?, ?, ?, ?)");
+            // Run the full security scan, save report, log and email results
             $uid = $_SESSION['user']['id'] ?? null;
-            $ip = $_SERVER['REMOTE_ADDR'] ?? null;
-            $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
-            $meta = json_encode(['note' => 'Manual security scan triggered']);
-            $stmt->execute([$uid, 'security_scan_started', $ip, $ua, $meta]);
-            echo json_encode(['status' => 'ok', 'message' => 'Security scan started.']);
+            $userEmail = $_SESSION['user']['email'] ?? null;
+
+            // perform scan
+            $report = performSecurityScan($pdo, $current);
+
+            // ensure uploads folder exists under admin
+            $reportsDir = realpath(__DIR__ . '/../') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'reports';
+            if (!is_dir($reportsDir)) @mkdir($reportsDir, 0755, true);
+            $filename = 'scan_' . date('Ymd_His') . '.json';
+            $filePath = $reportsDir . DIRECTORY_SEPARATOR . $filename;
+            @file_put_contents($filePath, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            // log audit entry
+            $meta = ['summary' => $report['summary'] ?? '', 'file' => '/admin/uploads/reports/' . $filename];
+            try {
+                logAction($pdo, $uid ?? 0, 'security_scan_completed', $meta);
+            } catch (Exception $e) {
+                // fallback insert
+                $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, ip, user_agent, meta) VALUES (?, ?, ?, ?, ?)");
+                $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+                $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
+                $stmt->execute([$uid, 'security_scan_completed', $ip, $ua, json_encode($meta)]);
+            }
+
+            // Email recipients: logged-in user (if available), site admin from settings, and hard-coded address
+            $siteUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+            $downloadUrl = $siteUrl . '/admin/uploads/reports/' . $filename;
+
+            $recipients = [];
+            if (!empty($userEmail)) $recipients[] = $userEmail;
+            // try to use contact email from settings
+            $adminEmail = $current['contact']['email'] ?? null;
+            if (!empty($adminEmail)) $recipients[] = $adminEmail;
+            $recipients[] = 'highqsolidacademy@gmail.com';
+
+            // build email content
+            $subject = 'HIGH-Q Security Scan Report - ' . date('Y-m-d H:i:s');
+            $html = "<h2>Security Scan Completed</h2>";
+            $html .= "<p>Summary: " . htmlspecialchars($report['summary'] ?? '') . "</p>";
+            $html .= "<p>Scanned: " . intval($report['totals']['files_scanned'] ?? 0) . " files. PHP syntax errors: " . intval($report['totals']['php_syntax_errors'] ?? 0) . ". Suspicious files: " . intval($report['totals']['suspicious_patterns'] ?? 0) . ". Writable files: " . intval($report['totals']['writable_files'] ?? 0) . ". Exposed files: " . intval($report['totals']['exposed_files'] ?? 0) . "</p>";
+            $html .= "<p>Download full report: <a href='" . htmlspecialchars($downloadUrl) . "'>" . htmlspecialchars($downloadUrl) . "</a></p>";
+
+            // include a short list of issues (limited)
+            $html .= "<h3>Top findings</h3>";
+            $html .= "<ul>";
+            $max = 20; $n = 0;
+            foreach (['errors','suspicious','writable','exposed'] as $key) {
+                if (!empty($report[$key])) {
+                    foreach ($report[$key] as $item) {
+                        if ($n++ > $max) break 2;
+                        if (is_array($item)) $html .= '<li>' . htmlspecialchars(json_encode($item)) . '</li>';
+                        else $html .= '<li>' . htmlspecialchars((string)$item) . '</li>';
+                    }
+                }
+            }
+            $html .= "</ul>";
+
+            $sent = [];
+            foreach (array_unique($recipients) as $to) {
+                if (empty($to)) continue;
+                // use sendEmail from includes/functions.php
+                try {
+                    $ok = sendEmail($to, $subject, $html);
+                    $sent[$to] = $ok ? 'ok' : 'failed';
+                } catch (Exception $e) {
+                    $sent[$to] = 'error';
+                }
+            }
+
+            echo json_encode(['status' => 'ok', 'message' => 'Security scan completed. Emails attempted to: ' . implode(', ', array_keys($sent)), 'report' => $report]);
             exit;
         }
         if ($action === 'clearIPs') {
