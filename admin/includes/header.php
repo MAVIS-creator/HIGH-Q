@@ -61,6 +61,8 @@
         dirname($script) . '/assets/css/admin.css',
         '../assets/css/admin.css'
     ])));
+    // Ensure a guaranteed absolute path for typical XAMPP setup (project in /HIGH-Q)
+    echo '<link rel="stylesheet" href="/HIGH-Q/admin/assets/css/admin.css">\n';
     // Output link tags for each candidate (browser will use the first that 200s)
     $debugParts = [];
     foreach ($hrefs as $h) {
