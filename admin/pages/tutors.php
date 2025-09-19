@@ -304,7 +304,7 @@ $tutors = $stmt->fetchAll();
     tutorModal.classList.add('open');
     if (mode === 'edit') {
       modalTitle.textContent = 'Edit Tutor';
-      tutorForm.action = `index.php?page=tutors&action=edit&id=${data.id}`;
+      tutorForm.action = `index.php?pages=tutors&action=edit&id=${data.id}`;
       Object.keys(fields).forEach(key => {
         if (key === 'featured') {
           fields[key].checked = data.featured == 1;
@@ -314,7 +314,7 @@ $tutors = $stmt->fetchAll();
       });
     } else {
       modalTitle.textContent = 'Add Tutor';
-      tutorForm.action = 'index.php?page=tutors&action=create';
+  tutorForm.action = 'index.php?pages=tutors&action=create';
       Object.values(fields).forEach(f => {
         if (f.type === 'checkbox') f.checked = false;
         else f.value = '';
