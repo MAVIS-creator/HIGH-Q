@@ -214,56 +214,7 @@ $tutors = $stmt->fetchAll();
     </div>
   </div>
 
-  <!-- Tutor Modal -->
-  <div class="modal" id="tutorModal">
-    <div class="modal-content">
-      <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
-      <h3 id="tutorModalTitle">Add Tutor</h3>
-      <form id="tutorForm" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-
-        <div class="form-row">
-          <label>Name</label>
-          <input type="text" name="name" id="tName" required>
-        </div>
-        <div class="form-row">
-          <label>Slug</label>
-          <input type="text" name="slug" id="tSlug" required>
-        </div>
-        <div class="form-row">
-          <label>Photo Upload</label>
-          <input type="file" name="photo" id="tPhoto" accept="image/*">
-        </div>
-        <div class="form-row">
-          <label>Short Bio</label>
-          <textarea name="short_bio" id="tShort" rows="2"></textarea>
-        </div>
-        <div class="form-row">
-          <label>Long Bio</label>
-          <textarea name="long_bio" id="tLong" rows="4"></textarea>
-        </div>
-        <div class="form-row">
-          <label>Qualifications</label>
-          <textarea name="qualifications" id="tQuals" rows="2"></textarea>
-        </div>
-        <div class="form-row">
-          <label>Subjects (comma-separated)</label>
-          <input type="text" name="subjects" id="tSubjects">
-        </div>
-        <div class="form-row">
-          <label>Contact Email</label>
-          <input type="email" name="contact_email" id="tEmail">
-        </div>
-        <div class="form-row">
-          <label>Phone</label>
-          <input type="text" name="phone" id="tPhone">
-        </div>
-        <div class="form-row">
-          <label>Rating (0–5)</label>
-    </div>
-  </div>
-
-  <!-- Tutor Modal -->
+  <!-- Tutor Modal (single instance) -->
   <div class="modal" id="tutorModal">
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
