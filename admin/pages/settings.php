@@ -379,10 +379,29 @@ $csrf = generateToken('settings_form');
         // Top save button
         document.getElementById('saveTop').addEventListener('click', function(){ document.querySelector('#settingsForm button[type=submit]').click(); });
 
-        // Simple actions (placeholders)
-        document.getElementById('runScan').addEventListener('click', function(){ alert('Security scan started (placeholder).'); });
-        document.getElementById('clearIPs').addEventListener('click', function(){ alert('Blocked IPs cleared (placeholder).'); });
-        document.getElementById('clearLogs').addEventListener('click', function(){ alert('Logs cleared (placeholder).'); });
+        // Simple actions (AJAX)
+        function doAction(action) {
+            var fd = new FormData();
+            fd.append('action', action);
+            fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', location.href, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onload = function(){
+                try { var res = JSON.parse(xhr.responseText); } catch(e) { alert('Unexpected response'); return; }
+                if (res.status === 'ok') {
+                    alert(res.message || 'Done');
+                    if (action === 'clearIPs' || action === 'clearLogs') location.reload();
+                } else {
+                    alert(res.message || 'Action failed');
+                }
+            };
+            xhr.send(fd);
+        }
+
+        document.getElementById('runScan').addEventListener('click', function(){ if (confirm('Start security scan?')) doAction('runScan'); });
+        document.getElementById('clearIPs').addEventListener('click', function(){ if (confirm('Clear blocked IPs?')) doAction('clearIPs'); });
+        document.getElementById('clearLogs').addEventListener('click', function(){ if (confirm('Clear audit logs (except seed)?')) doAction('clearLogs'); });
     })();
     </script>
 
