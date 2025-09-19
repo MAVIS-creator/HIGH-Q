@@ -48,6 +48,66 @@ function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings'
     }
 }
 
+// Upsert into the new `site_settings` structured table for client-side SQL reads
+function upsertSiteSettings(PDO $pdo, array $data) {
+    // Map to columns with safe defaults
+    $site = $data['site'] ?? [];
+    $contact = $data['contact'] ?? [];
+    $security = $data['security'] ?? [];
+
+    $params = [
+        'site_name' => $site['name'] ?? null,
+        'tagline' => $site['tagline'] ?? null,
+        'logo_url' => $site['logo'] ?? null,
+        'vision' => $site['vision'] ?? null,
+        'about' => $site['about'] ?? null,
+        'contact_phone' => $contact['phone'] ?? null,
+        'contact_email' => $contact['email'] ?? null,
+        'contact_address' => $contact['address'] ?? null,
+        'contact_facebook' => $contact['facebook'] ?? null,
+        'contact_twitter' => $contact['twitter'] ?? null,
+        'contact_instagram' => $contact['instagram'] ?? null,
+        'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+        'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
+        'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
+        'two_factor' => !empty($security['two_factor']) ? 1 : 0,
+        'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0
+    ];
+
+    // If a row exists, update the first row; otherwise insert
+    try {
+        $stmt = $pdo->query('SELECT id FROM site_settings ORDER BY id ASC LIMIT 1');
+        $id = $stmt->fetchColumn();
+    } catch (Exception $e) { $id = false; }
+
+    if ($id) {
+        $sql = "UPDATE site_settings SET
+            site_name = :site_name, tagline = :tagline, logo_url = :logo_url,
+            vision = :vision, about = :about,
+            contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
+            contact_facebook = :contact_facebook, contact_twitter = :contact_twitter, contact_instagram = :contact_instagram,
+            maintenance = :maintenance, registration = :registration, email_verification = :email_verification,
+            two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
+            WHERE id = :id";
+        $params['id'] = $id;
+        $upd = $pdo->prepare($sql);
+        return $upd->execute($params);
+    } else {
+        $sql = "INSERT INTO site_settings
+            (site_name, tagline, logo_url, vision, about,
+             contact_phone, contact_email, contact_address,
+             contact_facebook, contact_twitter, contact_instagram,
+             maintenance, registration, email_verification, two_factor, comment_moderation)
+            VALUES
+            (:site_name, :tagline, :logo_url, :vision, :about,
+             :contact_phone, :contact_email, :contact_address,
+             :contact_facebook, :contact_twitter, :contact_instagram,
+             :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
+        $ins = $pdo->prepare($sql);
+        return $ins->execute($params);
+    }
+}
+
 // performSecurityScan() has been moved to `admin/includes/scan.php` and is required earlier.
 
 // Default settings structure
