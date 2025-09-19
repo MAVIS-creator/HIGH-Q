@@ -10,9 +10,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <?php
-    // Build a reliable path to the admin assets directory based on the current script URL.
-    $adminBase = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-    if ($adminBase === '') $adminBase = '/';
+    // Build a reliable path to the admin assets directory by locating the 'admin' segment
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    $parts = explode('/', trim($script, '/'));
+    $adminBase = '';
+    $idx = array_search('admin', $parts, true);
+    if ($idx !== false) {
+        $adminBase = '/' . implode('/', array_slice($parts, 0, $idx + 1));
+    } else {
+        // fallback to dirname
+        $adminBase = rtrim(dirname($script), '/');
+        if ($adminBase === '') $adminBase = '/';
+    }
     ?>
     <link rel="stylesheet" href="<?= $adminBase ?>/assets/css/admin.css">
     <?php if (!empty($pageCss)) echo $pageCss; ?>
