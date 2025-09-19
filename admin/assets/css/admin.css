@@ -398,6 +398,61 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
+/* Dashboard widget styles (restored) */
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.widget-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+  text-decoration: none;
+  color: inherit;
+}
+
+.widget-card i {
+  font-size: 1.8rem;
+  color: var(--hq-yellow);
+}
+
+.widget-card .count {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.widget-card.red i { color: var(--hq-red); }
+.widget-card.yellow i { color: var(--hq-yellow); }
+.widget-card.black i { color: #444; }
+
+.widget-link { display: block; }
+
+.system-status .system-list {
+  margin: 0.25rem 0 0 0;
+  padding-left: 1.1rem;
+}
+.system-status .system-list li { margin-bottom: 0.2rem; font-size: 0.95rem }
+.status-ok { color: #16a34a; font-weight: 700 }
+.status-bad { color: #dc2626; font-weight: 700 }
+
+@media (max-width: 600px) {
+  .dashboard-widgets { grid-template-columns: repeat(1, 1fr); }
+}
+
 .page-title-block h1 {
   font-size: 1.5rem;
   font-weight: bold;
