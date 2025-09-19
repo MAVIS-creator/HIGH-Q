@@ -335,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
 // Page rendering
 $pageTitle = 'System Settings';
 $pageSubtitle = 'Configure site settings and security options';
-$pageCss = '<link rel="stylesheet" href="../assets/css/admin.css">';
+// header.php already includes the correct admin stylesheet; avoid adding a relative duplicate here
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
