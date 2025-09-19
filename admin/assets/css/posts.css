@@ -18,3 +18,14 @@
 .post-card .meta { font-size:0.85rem; color:#666 }
 .posts-empty { text-align:center; padding:40px; color:#777 }
 .module-header .search-form input[type=text]{ width:320px }
+
+/* Modal styling for posts (same z-index rules as tutors) */
+.modal { display:none; position:fixed; inset:0; justify-content:center; align-items:center; z-index:3000; }
+.modal.open { display:flex; }
+#modalOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2500; }
+#modalOverlay.open { display:block; }
+.modal-content { background:#fff; border-radius:12px; width:92%; max-width:900px; padding:1.25rem; box-shadow:0 12px 40px rgba(0,0,0,0.12); position:relative; z-index:3500 }
+.modal-close { position:absolute; top:12px; right:12px; cursor:pointer; font-size:1.4rem; color:#666 }
+.modal form .form-row { margin-bottom:0.75rem }
+.modal form label { display:block; margin-bottom:6px; font-weight:600; }
+.modal form input[type="text"], .modal form input[type="email"], .modal form textarea { width:100%; padding:0.6rem; border:1px solid #e9e9e9; border-radius:8px }
