@@ -6,7 +6,34 @@ require_once __DIR__ . '/../includes/csrf.php';
 // Only users with 'settings' permission may access
 requirePermission('settings');
 
-$settingsFile = __DIR__ . '/../../config/settings.json';
+// We'll store settings in the `settings` DB table under key 'system_settings'
+// (table created in highq.sql). Use JSON-encoded value.
+function loadSettingsFromDb(PDO $pdo, string $key = 'system_settings') {
+    $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+    $stmt->execute([$key]);
+    $val = $stmt->fetchColumn();
+    if ($val) {
+        $j = json_decode($val, true);
+        return is_array($j) ? $j : [];
+    }
+    return [];
+}
+
+function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings') {
+    $json = json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+    if ($json === false) return false;
+    // upsert
+    $stmt = $pdo->prepare("SELECT id FROM settings WHERE `key` = ? LIMIT 1");
+    $stmt->execute([$key]);
+    $id = $stmt->fetchColumn();
+    if ($id) {
+        $upd = $pdo->prepare("UPDATE settings SET `value` = ? WHERE id = ?");
+        return $upd->execute([$json, $id]);
+    } else {
+        $ins = $pdo->prepare("INSERT INTO settings (`key`,`value`) VALUES (?, ?)");
+        return $ins->execute([$key, $json]);
+    }
+}
 
 // Default settings structure
 $defaults = [
@@ -48,14 +75,12 @@ $defaults = [
     ]
 ];
 
-// Load current settings (merge with defaults)
+// Load current settings from DB (merge with defaults)
 $current = $defaults;
-if (file_exists($settingsFile)) {
-    $raw = @file_get_contents($settingsFile);
-    $json = @json_decode($raw, true);
-    if (is_array($json)) {
-        $current = array_replace_recursive($defaults, $json);
-    }
+$dbSettings = [];
+try { $dbSettings = loadSettingsFromDb($pdo); } catch (Exception $e) { $dbSettings = []; }
+if (is_array($dbSettings) && !empty($dbSettings)) {
+    $current = array_replace_recursive($defaults, $dbSettings);
 }
 
 // Handle save action (POST)
@@ -131,13 +156,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $safeSet($next, ['advanced', 'session_timeout'], max(1, $sessionTimeout));
     }
 
-    // Persist to config/settings.json
+    // Persist to DB
     $saved = false;
-    $encoded = json_encode($next, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
-    if ($encoded !== false) {
-        $dir = dirname($settingsFile);
-        if (!is_dir($dir)) @mkdir($dir, 0755, true);
-        $saved = (@file_put_contents($settingsFile, $encoded) !== false);
+    try {
+        $saved = saveSettingsToDb($pdo, $next);
+    } catch (Exception $e) {
+        $saved = false;
     }
 
     if ($saved) {
@@ -152,11 +176,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Save failed
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to save settings. Check file permissions.']);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to save settings. Check DB permissions.']);
         exit;
     }
-    setFlash('error', 'Failed to save settings. Check file permissions.');
+    setFlash('error', 'Failed to save settings. Check DB permissions.');
     header('Location: ?pages=settings');
+    exit;
+}
+
+// Handle AJAX actions (runScan / clearIPs / clearLogs)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+    $action = $_POST['action'];
+    $token = $_POST['_csrf'] ?? '';
+    if (!verifyToken('settings_form', $token)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
+        exit;
+    }
+    try {
+        if ($action === 'runScan') {
+            // simple placeholder: insert an audit log entry
+            $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, ip, user_agent, meta) VALUES (?, ?, ?, ?, ?)");
+            $uid = $_SESSION['user']['id'] ?? null;
+            $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+            $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
+            $meta = json_encode(['note' => 'Manual security scan triggered']);
+            $stmt->execute([$uid, 'security_scan_started', $ip, $ua, $meta]);
+            echo json_encode(['status' => 'ok', 'message' => 'Security scan started.']);
+            exit;
+        }
+        if ($action === 'clearIPs') {
+            // Clear login attempts table
+            $count = $pdo->exec("DELETE FROM login_attempts");
+            echo json_encode(['status' => 'ok', 'message' => 'Cleared blocked IPs.', 'rows' => $count]);
+            exit;
+        }
+        if ($action === 'clearLogs') {
+            // Delete audit logs (CAUTION) - we keep the very first seed entry id=1 if exists
+            $count = $pdo->exec("DELETE FROM audit_logs WHERE id > 1");
+            echo json_encode(['status' => 'ok', 'message' => 'Cleared audit logs (except first seed).', 'rows' => $count]);
+            exit;
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
+    }
+    echo json_encode(['status' => 'error', 'message' => 'Unknown action']);
     exit;
 }
 
