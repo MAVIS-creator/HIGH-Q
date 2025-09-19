@@ -87,13 +87,13 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('settings', $permissions)): ?>
-            <div class="widget-card black">
+            <a href="/admin/pages/settings.php" class="widget-card black widget-link">
                 <i class='bx bxs-cog'></i>
                 <div>
                     <h3>Settings</h3>
                     <p>Manage Site</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('courses', $permissions)): ?>
@@ -132,6 +132,21 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
                 <div>
                     <h3><?= $pdo->query("SELECT COUNT(*) FROM comments WHERE status='pending'")->fetchColumn(); ?></h3>
                     <p>Pending Comments</p>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if (in_array('settings', $permissions)): ?>
+            <div class="widget-card system-status">
+                <i class='bx bxs-dashboard'></i>
+                <div>
+                    <h3>System Status</h3>
+                    <ul class="system-list">
+                        <li>Database: <strong class="status-<?= $dbStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($dbStatus['message']) ?></strong></li>
+                        <li>Website: <strong class="status-<?= $siteStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($siteStatus['message']) ?></strong></li>
+                        <li>Admin Panel: <strong class="status-<?= $adminStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($adminStatus['message']) ?></strong></li>
+                    </ul>
+                    <p><a href="/admin/pages/settings.php">Open settings</a></p>
                 </div>
             </div>
         <?php endif; ?>
