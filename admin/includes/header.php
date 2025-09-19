@@ -26,9 +26,13 @@
             </div>
         </div>
         <div class="header-right">
-            <div class="header-avatar">
-                <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
-            </div>
+            <?php if (empty($_SESSION['user'])): ?>
+                <a href="../signup.php" class="header-cta">Sign up</a>
+            <?php else: ?>
+                <div class="header-avatar">
+                    <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
+                </div>
+            <?php endif; ?>
         </div>
     </header>
     <?php
