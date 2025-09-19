@@ -1,9 +1,9 @@
 /* Summary cards */
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: repeat(3, 1fr); /* force three across on desktop like screenshots */
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .summary-cards .card {
@@ -11,7 +11,7 @@
     border-radius: 12px;
     padding: 1rem;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
 .summary-cards h3 {
@@ -29,29 +29,29 @@
 /* Page wrapper */
 .admin-main {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;  /* left align, not center */
-    padding: 2rem 1rem;
-}
-
-/* Shared max-width for all main blocks */
-.summary-cards,
-.user-filters,
-.users-list {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1rem auto;
+    max-width: 1100px;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border-radius: 14px;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
     width: 100%;
     max-width: 1100px;
     margin: 1rem auto; /* center these blocks inside admin-main */
 }
-
-
-.summary-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 across like screenshot */
+    padding: 0.9rem 1rem;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #fafafa;
     gap: 1.5rem;
     margin: 1.5rem auto;
 }
-
-.summary-cards .card {
+    flex: 1 1 560px; /* wider search like screenshots */
+    max-width: 720px;
     background: #fff;
     border-radius: 12px;
     padding: 1.25rem 1rem;
