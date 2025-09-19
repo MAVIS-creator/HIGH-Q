@@ -9,7 +9,12 @@
     <title><?= isset($pageTitle) ? $pageTitle : 'Admin Panel'; ?> - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <?php
+    // Build a reliable path to the admin assets directory based on the current script URL.
+    $adminBase = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    if ($adminBase === '') $adminBase = '/';
+    ?>
+    <link rel="stylesheet" href="<?= $adminBase ?>/assets/css/admin.css">
     <?php if (!empty($pageCss)) echo $pageCss; ?>
 </head>
 
