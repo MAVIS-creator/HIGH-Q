@@ -617,6 +617,21 @@ $csrf = generateToken('settings_form');
             var url = location.pathname + '?action=download_logs&_csrf=' + encodeURIComponent(token);
             window.open(url, '_blank');
         });
+        document.getElementById('exportClear').addEventListener('click', function(){
+            if (!confirm('This will export audit logs and then clear them. Continue?')) return;
+            // trigger download first
+            var token = document.querySelector('input[name="_csrf"]').value;
+            var url = location.pathname + '?action=download_logs&_csrf=' + encodeURIComponent(token);
+            // open download in new tab then call clear
+            var w = window.open(url, '_blank');
+            setTimeout(function(){
+                // then clear via AJAX
+                var fd = new FormData(); fd.append('action','clearLogs'); fd.append('_csrf', token);
+                var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+                xhr.onload = function(){ try { var res = JSON.parse(xhr.responseText); } catch(e){ alert('Clear failed'); return; } if (res.status==='ok') { alert('Exported and cleared logs'); location.reload(); } else alert('Clear failed: '+(res.message||'unknown')); };
+                xhr.send(fd);
+            }, 1500);
+        });
     })();
     </script>
 

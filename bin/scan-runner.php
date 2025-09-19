@@ -26,6 +26,11 @@ try {
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
     $stmt->execute(['system_settings']);
     $val = $stmt->fetchColumn();
+    if (!$val) {
+        // fallback to first settings row
+        $stmt = $pdo->query("SELECT value FROM settings LIMIT 1");
+        $val = $stmt->fetchColumn();
+    }
     if ($val) {
         $settings = json_decode($val, true);
         $adminEmail = $settings['contact']['email'] ?? null;
@@ -33,6 +38,14 @@ try {
     }
 } catch (Exception $e) {}
 $recipients[] = 'highqsolidacademy@gmail.com';
+
+// Also include all admin users
+try {
+    $stmt = $pdo->prepare("SELECT email FROM users WHERE role_id = ?");
+    $stmt->execute([1]);
+    $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    foreach ($users as $u) if (!empty($u)) $recipients[] = $u;
+} catch (Exception $e) {}
 
 $subject = 'HIGH-Q Security Scan Report (CLI) - ' . date('Y-m-d H:i:s');
 $html = '<h2>Security Scan Completed (CLI)</h2>';
