@@ -2,7 +2,9 @@
 // admin/pages/settings.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
+
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/scan.php';
 
 // Only users with 'settings' permission may access
 requirePermission('settings');
@@ -411,6 +413,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) { $logs = []; }
     echo json_encode(['settings' => $settings, 'audit_logs' => $logs], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+// Secure report download (serve files from storage/reports to authenticated admins)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report'])) {
+    // requirePermission already called above; just validate filename
+    $name = basename($_GET['report']);
+    $root = realpath(__DIR__ . '/../../');
+    $reportsDir = $root . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'reports';
+    $path = realpath($reportsDir . DIRECTORY_SEPARATOR . $name);
+    if (!$path || strpos($path, $reportsDir) !== 0 || !is_readable($path)) {
+        http_response_code(404);
+        echo 'Report not found';
+        exit;
+    }
+    header('Content-Type: application/json');
+    header('Content-Disposition: attachment; filename="' . $name . '"');
+    readfile($path);
     exit;
 }
 
