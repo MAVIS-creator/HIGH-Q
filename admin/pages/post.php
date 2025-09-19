@@ -66,13 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         if (empty($errors)) {
                         // CREATE
                         if ($act === 'create') {
-                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
+                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
                                 $stmt->execute([
                                         $title,
                                         $slug,
                                         $excerpt,
                                         $content,
-                                    $_POST['category'] ?? null,
+                                        $category_id ?: null,
                                         $tags,
                                         $imgPath ?: null,
                                         $status,
@@ -90,13 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
+                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
                 $stmt->execute([
                     $title,
                     $slug,
                     $excerpt,
                     $content,
-                                    $_POST['category'] ?? null,
+                    $category_id ?: null,
                     $tags,
                     $imgPath ?: null,
                     $status,
@@ -172,7 +172,12 @@ $posts = $stmt->fetchAll();
                 <form method="get" action="index.php" class="search-form">
                     <input type="hidden" name="pages" value="posts">
                     <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
-                    <!-- search input only (removed stray post reference) -->
+                    <td>
+                        <?= htmlspecialchars($p['title']) ?><br>
+                        <a href="post_edit.php?id=<?= $p['id'] ?>"
+                            class="edit-link"
+                            data-id="<?= $p['id'] ?>">Edit Post</a>
+                    </td>
 
                 </form>
                 <button id="newPostBtn" class="btn-approve">
@@ -261,6 +266,7 @@ $posts = $stmt->fetchAll();
             </form>
         </div>
     </div>
+    <div id="modalOverlay"></div>
     <div class="modal" id="editPostModal">
         <div class="modal-content" id="editPostModalContent">
             <!-- AJAX-loaded content will go here -->
