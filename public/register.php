@@ -91,8 +91,14 @@ $csrf = generateToken('signup_form');
 <html>
 <head><meta charset="utf-8"><title>Register & Pay</title></head>
 <body>
-<?php if (!empty($errors)): foreach($errors as $e) echo '<div style="color:red">'.htmlspecialchars($e).'</div>'; endforeach; ?>
-<?php if ($success): echo '<div style="color:green">'.htmlspecialchars($success).'</div>'; endif; ?>
+<?php if (!empty($errors)): ?>
+	<?php foreach($errors as $e): ?>
+		<div style="color:red"><?php echo htmlspecialchars($e) ?></div>
+	<?php endforeach; ?>
+<?php endif; ?>
+<?php if ($success): ?>
+	<div style="color:green"><?php echo htmlspecialchars($success) ?></div>
+<?php endif; ?>
 <form method="post">
 	<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 	<label>Name</label><input name="name" required>
