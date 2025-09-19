@@ -267,7 +267,6 @@ $posts = $stmt->fetchAll();
             <!-- AJAX-loaded content will go here -->
         </div>
     </div>
-    <div id="modalOverlay"></div>
 
     <?php include '../includes/footer.php'; ?>
 
@@ -304,7 +303,7 @@ function bindAjaxForm(id) {
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(form);
-    fetch(`index.php?page=posts&action=edit&id=${id}`, {
+    fetch(`index.php?pages=posts&action=edit&id=${id}`, {
       method: 'POST',
       body: formData,
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
