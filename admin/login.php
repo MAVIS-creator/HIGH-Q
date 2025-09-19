@@ -169,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <a href="forgot_password.php" class="forgot-link">Forgot Password?</a>
+    <a href="signup.php" class="forgot-link" style="margin-top:0.25rem;">Don't have an account? Sign up</a>
 
     <div class="footer">
         © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
