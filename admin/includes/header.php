@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <?php
+    <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
     $parts = explode('/', trim($script, '/'));
@@ -22,9 +23,37 @@
         $adminBase = rtrim(dirname($script), '/');
         if ($adminBase === '') $adminBase = '/';
     }
+
+    // Try several candidate hrefs and pick the first that exists on disk (DOCUMENT_ROOT)
+    $candidates = [
+        $adminBase . '/assets/css/admin.css',
+        '/admin/assets/css/admin.css',
+        dirname($script) . '/assets/css/admin.css',
+        $adminBase . '/includes/../assets/css/admin.css',
+        '/assets/css/admin.css'
+    ];
+
+    $chosen = null;
+    $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
+    foreach ($candidates as $cand) {
+        // normalize
+        $candNorm = '/' . ltrim($cand, '/');
+        $fs = $docRoot . $candNorm;
+        if ($docRoot !== '' && is_readable($fs)) {
+            $chosen = $candNorm;
+            break;
+        }
+    }
+
+    if ($chosen === null) {
+        // fallback to adminBase path (best-effort)
+        $chosen = $adminBase . '/assets/css/admin.css';
+    }
+    // Output the chosen stylesheet href
     ?>
-    <link rel="stylesheet" href="<?= $adminBase ?>/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($chosen, ENT_QUOTES) ?>">
     <?php if (!empty($pageCss)) echo $pageCss; ?>
+    <!-- admin css chosen: <?= htmlspecialchars($chosen, ENT_QUOTES) ?> -->
 </head>
 
 <body>
