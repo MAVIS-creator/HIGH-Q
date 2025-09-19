@@ -588,3 +588,59 @@ h1 {
   text-align: right;
 }
 
+/* === Settings page polish (overrides to match screenshots) === */
+.admin-main { padding-top: 100px; }
+.roles-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem 1.25rem 3rem;
+}
+
+.page-header {
+  align-items: start;
+  gap: 12px;
+}
+.page-header h1 { margin: 0; font-size: 1.6rem; display:flex; align-items:center; gap:10px }
+.page-header .header-cta { margin-left: 12px; float: right; }
+
+.card {
+  border-radius: 12px;
+  border: 1px solid rgba(244, 219, 140, 0.6);
+  box-shadow: 0 8px 30px rgba(17,17,17,0.04);
+  padding: 22px;
+}
+.card h3 { display:flex; align-items:center; gap:10px; font-size:1.05rem; }
+.card h3::before { content: '\25A0'; color: var(--hq-yellow); display:inline-block; width:18px; height:18px; border-radius:4px; margin-right:8px; }
+
+/* nicer inputs */
+.input, input.input, textarea.input { display:block; width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e6e6e6; background:#fff; box-shadow:none; box-sizing:border-box; }
+textarea.input { min-height:80px; }
+
+.tabs { margin-bottom: 16px; }
+.tab-btn { background:#fff; border:1px solid #e6e6e6; padding:6px 10px; border-radius:6px; font-size:0.9rem; }
+.tab-btn.active { background: var(--hq-yellow); color:#111; border-color: rgba(0,0,0,0.06); }
+
+/* security list layout */
+.tab-panel .card label { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
+.tab-panel .card label span { font-weight:600; color:#222; }
+.tab-panel .card input[type="checkbox"] { transform: scale(1.15); margin-left:8px; }
+
+/* Notifications and advanced sections spacing */
+.card + .card { margin-top: 18px; }
+
+/* Ensure content stays centered when sidebar collapsed */
+body.sidebar-collapsed .admin-main { margin-left: 0; }
+body.sidebar-collapsed .roles-page { padding-left: 1rem; padding-right: 1rem; }
+
+/* responsive tweaks */
+@media (min-width: 1000px) {
+  .roles-page { padding-left: 2rem; padding-right: 2rem; }
+  .page-header { display:flex; justify-content:space-between; align-items:center }
+}
+
+/* small visual niceties for switches (works with native checkboxes) */
+input[type="checkbox"] { width:18px; height:18px; accent-color: #ffd600; cursor:pointer; }
+
+/* footer spacing fix */
+.admin-footer { left: 0; }
+
