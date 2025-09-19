@@ -329,6 +329,7 @@ body {
   padding: 1rem;  /* keeps space inside */
 }
 
+.muted { color: #6b6b6b; font-size: 0.95rem; margin-bottom: 8px; }
 h1 {
   text-align: left;
   font-size: 2rem;
