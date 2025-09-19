@@ -19,9 +19,10 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
 }
 
 /**
- * Send email using PHPMailer (SMTP)
+ * Send email using PHPMailer (SMTP). Optionally attach files.
+ * $attachments = ['/path/to/file1', '/path/to/file2']
  */
-function sendEmail(string $to, string $subject, string $html): bool {
+function sendEmail(string $to, string $subject, string $html, array $attachments = []): bool {
     $mail = new PHPMailer(true);
 
     try {
@@ -37,6 +38,13 @@ function sendEmail(string $to, string $subject, string $html): bool {
         // Recipients
         $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
         $mail->addAddress($to);
+
+        // Attach files if present
+        foreach ($attachments as $file) {
+            if (is_readable($file)) {
+                $mail->addAttachment($file);
+            }
+        }
 
         // Content
         $mail->isHTML(true);
