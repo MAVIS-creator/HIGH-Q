@@ -544,6 +544,7 @@ $csrf = generateToken('settings_form');
                         <button type="button" id="clearIPs" class="btn">Clear Blocked IPs</button>
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
                         <button type="button" id="downloadLogs" class="btn">Download Logs</button>
+                        <button type="button" id="exportClear" class="btn">Export &amp; Clear Logs</button>
                     </div>
                 </div>
             </div>
