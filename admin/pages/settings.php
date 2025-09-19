@@ -417,7 +417,7 @@ $csrf = generateToken('settings_form');
             <p>Configure site settings and security options</p>
         </div>
         <div>
-            <button id="saveTop" class="header-cta">Save Changes</button>
+            <!-- top save button removed to avoid duplication; use the form submit button below -->
         </div>
     </div>
 
@@ -486,8 +486,8 @@ $csrf = generateToken('settings_form');
                         foreach ($sec as $k=>$meta) {
                             $v = !empty($current['security'][$k]);
                     ?>
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;">
-                            <div style="max-width:78%;">
+                        <div class="toggle-row">
+                            <div class="meta">
                                 <strong><?= htmlspecialchars($meta['label']) ?></strong>
                                 <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
                             </div>
@@ -515,8 +515,8 @@ $csrf = generateToken('settings_form');
                         foreach ($notes as $k=>$meta) {
                             $v = !empty($current['notifications'][$k]);
                     ?>
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;">
-                            <div style="max-width:78%;">
+                        <div class="toggle-row">
+                            <div class="meta">
                                 <strong><?= htmlspecialchars($meta['label']) ?></strong>
                                 <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
                             </div>
@@ -546,8 +546,8 @@ $csrf = generateToken('settings_form');
                         foreach ($adv as $k=>$meta) {
                             $v = !empty($current['advanced'][$k]);
                     ?>
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;">
-                            <div style="max-width:78%;">
+                        <div class="toggle-row">
+                            <div class="meta">
                                 <strong><?= htmlspecialchars($meta['label']) ?></strong>
                                 <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
                             </div>
