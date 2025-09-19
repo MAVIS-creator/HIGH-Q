@@ -391,10 +391,11 @@ $csrf = generateToken('settings_form');
                     <label>Session Timeout (minutes)</label>
                     <input type="number" min="1" name="settings[advanced][session_timeout]" value="<?= htmlspecialchars($current['advanced']['session_timeout']) ?>" class="input">
 
-                    <div style="margin-top:16px;display:flex;gap:8px;">
+                    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
                         <button type="button" id="runScan" class="header-cta">Run Security Scan</button>
                         <button type="button" id="clearIPs" class="btn">Clear Blocked IPs</button>
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
+                        <button type="button" id="downloadLogs" class="btn">Download Logs</button>
                     </div>
                 </div>
             </div>
@@ -461,6 +462,12 @@ $csrf = generateToken('settings_form');
         document.getElementById('runScan').addEventListener('click', function(){ if (confirm('Start security scan?')) doAction('runScan'); });
         document.getElementById('clearIPs').addEventListener('click', function(){ if (confirm('Clear blocked IPs?')) doAction('clearIPs'); });
         document.getElementById('clearLogs').addEventListener('click', function(){ if (confirm('Clear audit logs (except seed)?')) doAction('clearLogs'); });
+        document.getElementById('downloadLogs').addEventListener('click', function(){
+            // open download endpoint in new tab to stream CSV
+            var token = document.querySelector('input[name="_csrf"]').value;
+            var url = location.pathname + '?action=download_logs&_csrf=' + encodeURIComponent(token);
+            window.open(url, '_blank');
+        });
     })();
     </script>
 
