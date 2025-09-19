@@ -48,11 +48,22 @@
         // fallback to adminBase path (best-effort)
         $chosen = $adminBase . '/assets/css/admin.css';
     }
-    // Output the chosen stylesheet href
-    ?>
-    <link rel="stylesheet" href="<?= htmlspecialchars($chosen, ENT_QUOTES) ?>">
-    <?php if (!empty($pageCss)) echo $pageCss; ?>
-    <!-- admin css chosen: <?= htmlspecialchars($chosen, ENT_QUOTES) ?> -->
+
+    // Prepare several href fallbacks for the browser to try.
+    $hrefs = array_values(array_unique(array_filter([
+        $chosen,
+        $adminBase . '/assets/css/admin.css',
+        '/admin/assets/css/admin.css',
+        '/assets/css/admin.css',
+        dirname($script) . '/assets/css/admin.css',
+        '../assets/css/admin.css'
+    ])));
+    // Output link tags for each candidate (browser will use the first that 200s)
+    foreach ($hrefs as $h) {
+        echo '<link rel="stylesheet" href="' . htmlspecialchars($h, ENT_QUOTES) . '">\n';
+    }
+    if (!empty($pageCss)) echo $pageCss;
+    echo '<!-- admin css chosen (filesystem): ' . htmlspecialchars($chosen, ENT_QUOTES) . ' -->\n';
 </head>
 
 <body>
