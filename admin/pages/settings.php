@@ -438,77 +438,125 @@ $csrf = generateToken('settings_form');
         <div class="tab-panels">
             <div class="tab-panel" data-panel="site" style="display:block">
                 <div class="card">
-                    <h3>Site Information</h3>
+                    <h3><i class="bx bxs-building"></i> Site Information</h3>
+                    <p class="muted">Basic details that appear across the site (name, logo and short descriptions).</p>
                     <label>Site Name</label>
-                    <input name="settings[site][name]" value="<?= htmlspecialchars($current['site']['name']) ?>" class="input">
+                    <input name="settings[site][name]" placeholder="Education Academy" value="<?= htmlspecialchars($current['site']['name']) ?>" class="input">
                     <label>Tagline</label>
-                    <input name="settings[site][tagline]" value="<?= htmlspecialchars($current['site']['tagline']) ?>" class="input">
+                    <input name="settings[site][tagline]" placeholder="Excellence in Education" value="<?= htmlspecialchars($current['site']['tagline']) ?>" class="input">
                     <label>Logo URL</label>
-                    <input name="settings[site][logo]" value="<?= htmlspecialchars($current['site']['logo']) ?>" class="input">
+                    <input name="settings[site][logo]" placeholder="https://example.com/logo.png" value="<?= htmlspecialchars($current['site']['logo']) ?>" class="input">
                     <label>Vision Statement</label>
-                    <textarea name="settings[site][vision]" class="input" rows="3"><?= htmlspecialchars($current['site']['vision']) ?></textarea>
+                    <textarea name="settings[site][vision]" placeholder="To be the leading educational institution in our region" class="input" rows="3"><?= htmlspecialchars($current['site']['vision']) ?></textarea>
                     <label>About Description</label>
-                    <textarea name="settings[site][about]" class="input" rows="4"><?= htmlspecialchars($current['site']['about']) ?></textarea>
+                    <textarea name="settings[site][about]" placeholder="Providing quality education and training programs" class="input" rows="4"><?= htmlspecialchars($current['site']['about']) ?></textarea>
                 </div>
             </div>
 
             <div class="tab-panel" data-panel="contact">
                 <div class="card">
-                    <h3>Contact Information</h3>
-                    <label>Phone Number</label>
-                    <input name="settings[contact][phone]" value="<?= htmlspecialchars($current['contact']['phone']) ?>" class="input">
-                    <label>Email Address</label>
-                    <input name="settings[contact][email]" value="<?= htmlspecialchars($current['contact']['email']) ?>" class="input">
-                    <label>Physical Address</label>
-                    <textarea name="settings[contact][address]" class="input" rows="3"><?= htmlspecialchars($current['contact']['address']) ?></textarea>
-                    <div style="display:flex;gap:8px;">
-                      <input name="settings[contact][facebook]" placeholder="Facebook URL" value="<?= htmlspecialchars($current['contact']['facebook']) ?>" class="input">
-                      <input name="settings[contact][twitter]" placeholder="Twitter URL" value="<?= htmlspecialchars($current['contact']['twitter']) ?>" class="input">
-                      <input name="settings[contact][instagram]" placeholder="Instagram URL" value="<?= htmlspecialchars($current['contact']['instagram']) ?>" class="input">
-                    </div>
+                                        <h3><i class="bx bxs-phone"></i> Contact Information</h3>
+                                        <p class="muted">Contact details used on public pages and in communications.</p>
+                                        <label>Phone Number</label>
+                                        <input name="settings[contact][phone]" placeholder="+1234567890" value="<?= htmlspecialchars($current['contact']['phone']) ?>" class="input">
+                                        <label>Email Address</label>
+                                        <input name="settings[contact][email]" placeholder="contact@academy.com" value="<?= htmlspecialchars($current['contact']['email']) ?>" class="input">
+                                        <label>Physical Address</label>
+                                        <textarea name="settings[contact][address]" placeholder="123 Education Street, Learning City" class="input" rows="3"><?= htmlspecialchars($current['contact']['address']) ?></textarea>
+                                        <div style="display:flex;gap:8px;">
+                                            <input name="settings[contact][facebook]" placeholder="https://facebook.com/..." value="<?= htmlspecialchars($current['contact']['facebook']) ?>" class="input">
+                                            <input name="settings[contact][twitter]" placeholder="https://twitter.com/..." value="<?= htmlspecialchars($current['contact']['twitter']) ?>" class="input">
+                                            <input name="settings[contact][instagram]" placeholder="https://instagram.com/..." value="<?= htmlspecialchars($current['contact']['instagram']) ?>" class="input">
+                                        </div>
                 </div>
             </div>
 
             <div class="tab-panel" data-panel="security">
                 <div class="card">
-                    <h3>Security & System Settings</h3>
-                    <?php foreach ($current['security'] as $k => $v): ?>
-                        <label style="display:flex;justify-content:space-between;align-items:center;">
-                            <span><?= htmlspecialchars(ucwords(str_replace('_',' ', $k))) ?></span>
-                            <input type="checkbox" name="settings[security][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
-                        </label>
-                    <?php endforeach; ?>
+                    <h3><i class="bx bxs-shield"></i> Security & System Settings</h3>
+                    <p class="muted">Core security features and user-related system options.</p>
+                    <?php
+                        $sec = [
+                            'maintenance' => ['label'=>'Maintenance Mode','desc'=>'Temporarily disable public access to the site'],
+                            'registration' => ['label'=>'User Registration','desc'=>'Allow new users to register for accounts'],
+                            'email_verification' => ['label'=>'Email Verification','desc'=>'Require email verification for new accounts'],
+                            'two_factor' => ['label'=>'Two-Factor Authentication','desc'=>'Enable 2FA for enhanced security'],
+                            'comment_moderation' => ['label'=>'Comment Moderation','desc'=>'Require approval before comments are published']
+                        ];
+                        foreach ($sec as $k=>$meta) {
+                            $v = !empty($current['security'][$k]);
+                    ?>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;">
+                            <div style="max-width:78%;">
+                                <strong><?= htmlspecialchars($meta['label']) ?></strong>
+                                <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
+                            </div>
+                            <div>
+                                <input type="checkbox" name="settings[security][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                            </div>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
 
             <div class="tab-panel" data-panel="notifications">
                 <div class="card">
-                    <h3>Notifications</h3>
-                    <?php foreach ($current['notifications'] as $k => $v): ?>
-                        <label style="display:flex;justify-content:space-between;align-items:center;">
-                            <span><?= htmlspecialchars(ucwords($k)) ?></span>
-                            <input type="checkbox" name="settings[notifications][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
-                        </label>
-                    <?php endforeach; ?>
+                    <h3><i class="bx bxs-bell"></i> Notifications</h3>
+                    <p class="muted">Choose which channels the system should use to notify users.</p>
+                    <?php
+                        $notes = [
+                            'email' => ['label'=>'Email Notifications','desc'=>'Send email notifications for important events'],
+                            'sms' => ['label'=>'SMS Notifications','desc'=>'Send SMS notifications for critical alerts'],
+                            'push' => ['label'=>'Push Notifications','desc'=>'Send browser push notifications']
+                        ];
+                        foreach ($notes as $k=>$meta) {
+                            $v = !empty($current['notifications'][$k]);
+                    ?>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;">
+                            <div style="max-width:78%;">
+                                <strong><?= htmlspecialchars($meta['label']) ?></strong>
+                                <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
+                            </div>
+                            <div>
+                                <input type="checkbox" name="settings[notifications][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                            </div>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
 
             <div class="tab-panel" data-panel="advanced">
                 <div class="card">
-                    <h3>Advanced Security</h3>
-                    <?php foreach (['ip_logging','security_scanning','brute_force','ssl_enforce','auto_backup'] as $k): $v = $current['advanced'][$k] ?? false; ?>
-                        <label style="display:flex;justify-content:space-between;align-items:center;">
-                            <span><?= htmlspecialchars(ucwords(str_replace('_',' ', $k))) ?></span>
-                            <input type="checkbox" name="settings[advanced][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
-                        </label>
-                    <?php endforeach; ?>
+                    <h3><i class="bx bxs-shield-quarter"></i> Advanced Security</h3>
+                    <p class="muted">Advanced protections and diagnostic options for administrators.</p>
+                    <?php
+                        $adv = [
+                          'ip_logging'=>['label'=>'IP Address Logging','desc'=>'Log visitor IP addresses for security monitoring'],
+                          'security_scanning'=>['label'=>'Security Scanning','desc'=>'Automatically scan for security vulnerabilities'],
+                          'brute_force'=>['label'=>'Brute Force Protection','desc'=>'Block IPs after 5 failed login attempts'],
+                          'ssl_enforce'=>['label'=>'SSL Enforcement','desc'=>'Force HTTPS connections for all users'],
+                          'auto_backup'=>['label'=>'Automated Backups','desc'=>'Automatically backup site data daily']
+                        ];
+                        foreach ($adv as $k=>$meta) {
+                            $v = !empty($current['advanced'][$k]);
+                    ?>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;">
+                            <div style="max-width:78%;">
+                                <strong><?= htmlspecialchars($meta['label']) ?></strong>
+                                <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
+                            </div>
+                            <div>
+                                <input type="checkbox" name="settings[advanced][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                            </div>
+                        </div>
+                    <?php } ?>
 
                     <label>Max Login Attempts</label>
                     <input type="number" min="1" name="settings[advanced][max_login_attempts]" value="<?= htmlspecialchars($current['advanced']['max_login_attempts']) ?>" class="input">
                     <label>Session Timeout (minutes)</label>
                     <input type="number" min="1" name="settings[advanced][session_timeout]" value="<?= htmlspecialchars($current['advanced']['session_timeout']) ?>" class="input">
 
-                    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
                         <button type="button" id="runScan" class="header-cta">Run Security Scan</button>
                         <button type="button" id="clearIPs" class="btn">Clear Blocked IPs</button>
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
