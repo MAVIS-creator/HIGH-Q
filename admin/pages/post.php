@@ -172,12 +172,7 @@ $posts = $stmt->fetchAll();
                 <form method="get" action="index.php" class="search-form">
                     <input type="hidden" name="pages" value="posts">
                     <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
-                    <td>
-                        <?= htmlspecialchars($p['title']) ?><br>
-                        <a href="post_edit.php?id=<?= $p['id'] ?>"
-                            class="edit-link"
-                            data-id="<?= $p['id'] ?>">Edit Post</a>
-                    </td>
+                    
 
                 </form>
                 <button id="newPostBtn" class="btn-approve">
@@ -316,25 +311,29 @@ function bindAjaxForm(id) {
     })
     .then(res => res.json())
     .then(data => {
-      if (data.success) {
-        // Update row in place
-        const row = document.getElementById(`post-row-${id}`);
-        row.querySelector('td:nth-child(2)').innerHTML =
-          `${data.post.title}<br><a href="post_edit.php?id=${id}" class="edit-link" data-id="${id}">Edit Post</a>`;
-        row.querySelector('td:nth-child(3)').textContent = data.post.category || 'Uncategorized';
-        row.querySelector('td:nth-child(4)').textContent = data.post.tags;
-        row.querySelector('td:nth-child(5)').innerHTML =
-          `<span class="status-badge ${data.post.status==='published'?'status-active':'status-pending'}">
-            ${data.post.status.charAt(0).toUpperCase() + data.post.status.slice(1)}
-           </span>`;
-        if (data.post.featured_image) {
-          row.querySelector('td:nth-child(1)').innerHTML =
-            `<img src="../public/${data.post.featured_image}" class="thumb">`;
-        }
-        closeEditModal();
-      } else {
-        alert(data.error || 'Update failed');
-      }
+            if (data.success) {
+                // Update card in place
+                const card = document.getElementById(`post-row-${id}`);
+                if (card) {
+                    card.querySelector('.meta strong').textContent = data.post.title;
+                    const info = card.querySelector('.meta .info');
+                    if (info) info.textContent = `${data.post.category || 'Uncategorized'} • ${data.post.author || ''}`;
+                    const excerpt = card.querySelector('.excerpt');
+                    if (excerpt) excerpt.innerHTML = (data.post.excerpt || '').replace(/\n/g, '<br>');
+                    if (data.post.featured_image) {
+                        let img = card.querySelector('img.thumb');
+                        if (!img) {
+                            img = document.createElement('img');
+                            img.className = 'thumb';
+                            card.insertBefore(img, card.firstChild);
+                        }
+                        img.src = `../public/${data.post.featured_image}`;
+                    }
+                }
+                closeEditModal();
+            } else {
+                alert(data.error || 'Update failed');
+            }
     });
   });
 }
