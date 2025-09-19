@@ -56,88 +56,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
 <style>
     :root {
-        --primary-red: #d62828;
-        --accent-yellow: #fcbf49;
-        --dark-black: #000000;
-        --pure-white: #ffffff;
+        --hq-primary: #ffd600; /* yellow */
+        --hq-accent: #ff4b2b;  /* red */
+        --hq-black: #0a0a0a;
+        --hq-white: #ffffff;
+        --btn-padding: 0.8rem 1rem;
+        --btn-radius: 8px;
+        --btn-font-size: 1rem;
     }
     body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, var(--accent-yellow), var(--primary-red));
+        background: linear-gradient(135deg, var(--hq-primary), var(--hq-accent));
         display: flex;
         align-items: center;
         justify-content: center;
         height: 100vh;
+        padding: 20px;
     }
     .login-card {
-        background: var(--pure-white);
+        background: var(--hq-white);
         padding: 2rem;
-        border-radius: 10px;
-        width: 350px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        border-radius: 12px;
+        width: 380px;
+        box-shadow: 0 6px 30px rgba(0,0,0,0.18);
         text-align: center;
     }
-    .login-card h2 {
-        color: var(--primary-red);
-        margin-bottom: 0.5rem;
-    }
-    .login-card p {
-        color: var(--dark-black);
-        margin-bottom: 1.5rem;
-    }
-    label {
-        display: block;
-        text-align: left;
-        font-weight: bold;
-        margin-top: 1rem;
-        color: var(--dark-black);
-    }
-    input {
-        width: 100%;
-        padding: 0.6rem;
-        margin-top: 0.3rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    button {
-        background: var(--primary-red);
-        color: var(--pure-white);
-        border: none;
-        padding: 0.8rem;
-        width: 100%;
-        font-size: 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 1.5rem;
-    }
-    button:hover {
-        background: var(--accent-yellow);
-        color: var(--dark-black);
-    }
-    .error {
-        background: #ffdddd;
-        color: var(--primary-red);
-        padding: 0.5rem;
-        border-left: 4px solid var(--primary-red);
-        margin-bottom: 1rem;
-        text-align: left;
-    }
-    .forgot-link {
-        margin-top: 1rem;
-        display: block;
-        font-size: 0.9rem;
-        color: var(--primary-red);
-        text-decoration: none;
-    }
-    .forgot-link:hover {
-        text-decoration: underline;
-    }
-    .footer {
-        margin-top: 1.5rem;
-        font-size: 0.8rem;
-        color: #555;
-    }
+    .login-card h2 { color: var(--hq-accent); margin-bottom: 0.5rem; font-size:1.25rem }
+    .login-card p { color: var(--hq-black); margin-bottom: 1rem }
+    label { display:block; text-align:left; font-weight:700; margin-top:0.9rem; color:var(--hq-black) }
+    input { width:100%; padding:0.65rem; margin-top:0.3rem; border:1px solid #ddd; border-radius:8px }
+    button { background:var(--hq-accent); color:var(--hq-white); border:none; padding:var(--btn-padding); width:100%; font-size:var(--btn-font-size); border-radius:var(--btn-radius); cursor:pointer; margin-top:1.2rem; font-weight:700 }
+    button:hover { background:var(--hq-primary); color:var(--hq-black) }
+    .error { background:#ffefef; color:var(--hq-accent); padding:0.5rem; border-left:4px solid var(--hq-accent); margin-bottom:1rem; text-align:left }
+    .forgot-link { margin-top:1rem; display:block; font-size:0.95rem; color:var(--hq-accent); text-decoration:none }
+    .forgot-link:hover { text-decoration:underline }
+    .footer { margin-top:1rem; font-size:0.85rem; color:#555 }
 </style>
 </head>
 <body>
