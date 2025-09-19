@@ -308,78 +308,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($
     }
     try {
         if ($action === 'runScan') {
-            // Run the full security scan, save report, log and email results
-            $uid = $_SESSION['user']['id'] ?? null;
-            $userEmail = $_SESSION['user']['email'] ?? null;
-
-            // perform scan
-            $report = performSecurityScan($pdo, $current);
-
-            // ensure uploads folder exists under admin
-            $reportsDir = realpath(__DIR__ . '/../') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'reports';
-            if (!is_dir($reportsDir)) @mkdir($reportsDir, 0755, true);
-            $filename = 'scan_' . date('Ymd_His') . '.json';
-            $filePath = $reportsDir . DIRECTORY_SEPARATOR . $filename;
-            @file_put_contents($filePath, json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-            // log audit entry
-            $meta = ['summary' => $report['summary'] ?? '', 'file' => '/admin/uploads/reports/' . $filename];
-            try {
-                logAction($pdo, $uid ?? 0, 'security_scan_completed', $meta);
-            } catch (Exception $e) {
-                // fallback insert
-                $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, ip, user_agent, meta) VALUES (?, ?, ?, ?, ?)");
-                $ip = $_SERVER['REMOTE_ADDR'] ?? null;
-                $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
-                $stmt->execute([$uid, 'security_scan_completed', $ip, $ua, json_encode($meta)]);
+            // Queue the CLI scan runner asynchronously so large scans don't time out.
+            $php = PHP_BINARY;
+            $root = realpath(__DIR__ . '/../../');
+            $runner = $root . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'scan-runner.php';
+            if (!is_file($runner)) {
+                echo json_encode(['status' => 'error', 'message' => 'Scan runner not available']);
+                exit;
             }
 
-            // Email recipients: logged-in user (if available), site admin from settings, and hard-coded address
-            $siteUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-            $downloadUrl = $siteUrl . '/admin/uploads/reports/' . $filename;
-
-            $recipients = [];
-            if (!empty($userEmail)) $recipients[] = $userEmail;
-            // try to use contact email from settings
-            $adminEmail = $current['contact']['email'] ?? null;
-            if (!empty($adminEmail)) $recipients[] = $adminEmail;
-            $recipients[] = 'highqsolidacademy@gmail.com';
-
-            // build email content
-            $subject = 'HIGH-Q Security Scan Report - ' . date('Y-m-d H:i:s');
-            $html = "<h2>Security Scan Completed</h2>";
-            $html .= "<p>Summary: " . htmlspecialchars($report['summary'] ?? '') . "</p>";
-            $html .= "<p>Scanned: " . intval($report['totals']['files_scanned'] ?? 0) . " files. PHP syntax errors: " . intval($report['totals']['php_syntax_errors'] ?? 0) . ". Suspicious files: " . intval($report['totals']['suspicious_patterns'] ?? 0) . ". Writable files: " . intval($report['totals']['writable_files'] ?? 0) . ". Exposed files: " . intval($report['totals']['exposed_files'] ?? 0) . "</p>";
-            $html .= "<p>Download full report: <a href='" . htmlspecialchars($downloadUrl) . "'>" . htmlspecialchars($downloadUrl) . "</a></p>";
-
-            // include a short list of issues (limited)
-            $html .= "<h3>Top findings</h3>";
-            $html .= "<ul>";
-            $max = 20; $n = 0;
-            foreach (['errors','suspicious','writable','exposed'] as $key) {
-                if (!empty($report[$key])) {
-                    foreach ($report[$key] as $item) {
-                        if ($n++ > $max) break 2;
-                        if (is_array($item)) $html .= '<li>' . htmlspecialchars(json_encode($item)) . '</li>';
-                        else $html .= '<li>' . htmlspecialchars((string)$item) . '</li>';
-                    }
-                }
-            }
-            $html .= "</ul>";
-
-            $sent = [];
-            foreach (array_unique($recipients) as $to) {
-                if (empty($to)) continue;
-                // use sendEmail from includes/functions.php
-                try {
-                    $ok = sendEmail($to, $subject, $html);
-                    $sent[$to] = $ok ? 'ok' : 'failed';
-                } catch (Exception $e) {
-                    $sent[$to] = 'error';
-                }
+            // Launch background process
+            if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
+                // Windows: use start /B
+                $cmd = "start /B " . escapeshellarg($php) . ' ' . escapeshellarg($runner);
+                pclose(popen($cmd, 'r'));
+            } else {
+                // Unix-like: nohup
+                $cmd = "nohup " . escapeshellarg($php) . ' ' . escapeshellarg($runner) . " > /dev/null 2>&1 &";
+                @exec($cmd);
             }
 
-            echo json_encode(['status' => 'ok', 'message' => 'Security scan completed. Emails attempted to: ' . implode(', ', array_keys($sent)), 'report' => $report]);
+            // Log queue action
+            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'security_scan_queued', ['by' => $_SESSION['user']['email'] ?? null]); } catch (Exception $e) {}
+
+            echo json_encode(['status' => 'ok', 'message' => 'Security scan queued; you will receive an email when it completes.']);
             exit;
         }
         if ($action === 'clearIPs') {
