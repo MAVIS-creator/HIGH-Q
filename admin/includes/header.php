@@ -50,10 +50,13 @@
     }
 
     // Prepare several href fallbacks for the browser to try.
+    $projectSub = '/HIGH-Q';
     $hrefs = array_values(array_unique(array_filter([
         $chosen,
         $adminBase . '/assets/css/admin.css',
         '/admin/assets/css/admin.css',
+        $projectSub . '/admin/assets/css/admin.css',
+        $projectSub . '/assets/css/admin.css',
         '/assets/css/admin.css',
         dirname($script) . '/assets/css/admin.css',
         '../assets/css/admin.css'
