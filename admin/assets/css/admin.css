@@ -217,6 +217,17 @@ body.sidebar-collapsed .admin-main {
   color: #ddd;
 }
 
+.header-cta {
+  background: var(--hq-yellow);
+  color: #111;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+.header-cta:hover { opacity: 0.95 }
+
 .header-avatar {
   width: 40px;
   height: 40px;
@@ -374,10 +385,12 @@ h1 {
   padding: 0.3rem 0.6rem;
   margin: 0.2rem;
   font-size: 0.8rem;
-  background: var(--hq-yellow-light);
+  background: #fff3cf;
   border-radius: var(--radius);
   font-weight: 500;
 }
+
+.summary-cards .card { border: 1px solid #f0f0f0 }
 .page-header {
   display: flex;
   justify-content: space-between;
