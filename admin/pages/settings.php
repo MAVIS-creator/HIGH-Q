@@ -224,6 +224,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($
     exit;
 }
 
+// Export/import endpoints (GET for export, POST for import file)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'export') {
+    // export settings and audit logs as a zip-like JSON payload
+    header('Content-Type: application/json');
+    $settings = loadSettingsFromDb($pdo);
+    $logs = [];
+    try {
+        $stmt = $pdo->query('SELECT * FROM audit_logs ORDER BY id ASC');
+        $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) { $logs = []; }
+    echo json_encode(['settings' => $settings, 'audit_logs' => $logs], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
+    $token = $_POST['_csrf'] ?? '';
+    if (!verifyToken('settings_form', $token)) { setFlash('error','Invalid CSRF token for import'); header('Location: ?pages=settings'); exit; }
+    $tmp = $_FILES['import_file']['tmp_name'] ?? null;
+    if (!$tmp || !is_readable($tmp)) { setFlash('error','No file uploaded or unreadable'); header('Location: ?pages=settings'); exit; }
+    $raw = @file_get_contents($tmp);
+    $json = @json_decode($raw, true);
+    if (!is_array($json) || empty($json['settings'])) { setFlash('error','Invalid import file'); header('Location: ?pages=settings'); exit; }
+    $ok = saveSettingsToDb($pdo, $json['settings']);
+    if ($ok) { setFlash('success','Settings imported'); header('Location: ?pages=settings'); exit; }
+    setFlash('error','Failed to import settings'); header('Location: ?pages=settings'); exit;
+}
+
 // Page rendering
 $pageTitle = 'System Settings';
 $pageSubtitle = 'Configure site settings and security options';
