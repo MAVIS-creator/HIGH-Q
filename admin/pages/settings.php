@@ -12,9 +12,19 @@ requirePermission('settings');
 // We'll store settings in the `settings` DB table under key 'system_settings'
 // (table created in highq.sql). Use JSON-encoded value.
 function loadSettingsFromDb(PDO $pdo, string $key = 'system_settings') {
+    // Prefer the named key, but fall back to the first row if not present.
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
     $stmt->execute([$key]);
     $val = $stmt->fetchColumn();
+    if (!$val) {
+        // fallback to first settings row
+        try {
+            $stmt = $pdo->query("SELECT value FROM settings LIMIT 1");
+            $val = $stmt->fetchColumn();
+        } catch (Exception $e) {
+            $val = null;
+        }
+    }
     if ($val) {
         $j = json_decode($val, true);
         return is_array($j) ? $j : [];
