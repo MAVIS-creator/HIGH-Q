@@ -238,6 +238,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     exit;
 }
 
+    // Download audit logs as CSV attachment
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'download_logs') {
+        try {
+            $stmt = $pdo->query('SELECT * FROM audit_logs ORDER BY id ASC');
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) { $rows = []; }
+
+        // send CSV headers
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="audit_logs_' . date('Ymd_His') . '.csv"');
+        $out = fopen('php://output', 'w');
+        if ($out) {
+            // header row
+            fputcsv($out, ['id','user_id','action','ip','user_agent','meta','created_at']);
+            foreach ($rows as $r) {
+                // ensure meta is a JSON string (flatten) and preserve values
+                $meta = is_string($r['meta']) ? $r['meta'] : json_encode($r['meta']);
+                fputcsv($out, [
+                    $r['id'] ?? '',
+                    $r['user_id'] ?? '',
+                    $r['action'] ?? '',
+                    $r['ip'] ?? '',
+                    $r['user_agent'] ?? '',
+                    $meta,
+                    $r['created_at'] ?? ''
+                ]);
+            }
+            fclose($out);
+        }
+        exit;
+    }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('settings_form', $token)) { setFlash('error','Invalid CSRF token for import'); header('Location: ?pages=settings'); exit; }
