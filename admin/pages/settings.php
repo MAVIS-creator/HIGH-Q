@@ -240,6 +240,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($saved) {
+        // Also upsert into the structured site_settings table for client-side SQL reads
+        try {
+            upsertSiteSettings($pdo, $next);
+        } catch (Exception $e) {
+            // non-fatal; we'll continue but log an audit entry
+            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'site_settings_upsert_failed', ['error'=>$e->getMessage()]); } catch (Exception $ee) {}
+        }
+
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             echo json_encode(['status' => 'ok', 'message' => 'Settings saved.']);
             exit;
