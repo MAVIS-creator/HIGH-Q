@@ -611,8 +611,7 @@ $csrf = generateToken('settings_form');
             xhr.send(data);
         });
 
-        // Top save button
-        document.getElementById('saveTop').addEventListener('click', function(){ document.querySelector('#settingsForm button[type=submit]').click(); });
+    // Top save button removed from markup; no-op here to avoid errors
 
         // Simple actions (AJAX)
         function doAction(action) {
