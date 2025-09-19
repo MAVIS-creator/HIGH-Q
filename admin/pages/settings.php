@@ -492,7 +492,10 @@ $csrf = generateToken('settings_form');
                                 <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
                             </div>
                             <div>
-                                <input type="checkbox" name="settings[security][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                <label class="toggle">
+                                    <input type="checkbox" name="settings[security][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                    <span class="track"><span class="thumb"></span></span>
+                                </label>
                             </div>
                         </div>
                     <?php } ?>
@@ -518,7 +521,10 @@ $csrf = generateToken('settings_form');
                                 <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
                             </div>
                             <div>
-                                <input type="checkbox" name="settings[notifications][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                <label class="toggle">
+                                    <input type="checkbox" name="settings[notifications][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                    <span class="track"><span class="thumb"></span></span>
+                                </label>
                             </div>
                         </div>
                     <?php } ?>
@@ -546,7 +552,10 @@ $csrf = generateToken('settings_form');
                                 <div class="muted" style="margin-top:6px"><?= htmlspecialchars($meta['desc']) ?></div>
                             </div>
                             <div>
-                                <input type="checkbox" name="settings[advanced][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                <label class="toggle">
+                                    <input type="checkbox" name="settings[advanced][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                    <span class="track"><span class="thumb"></span></span>
+                                </label>
                             </div>
                         </div>
                     <?php } ?>
