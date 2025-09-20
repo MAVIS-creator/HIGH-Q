@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../../public/config/functions.php';
 
 $threadId = intval($_GET['thread_id'] ?? 0);
 if (!$threadId) { header('Location: ?pages=chat'); exit; }
@@ -11,6 +12,9 @@ if (!$threadId) { header('Location: ?pages=chat'); exit; }
 // If unassigned, claim it for this admin
 $claim = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND assigned_admin_id IS NULL');
 $claim->execute([$_SESSION['user']['id'], $threadId]);
+if ($claim->rowCount() > 0) {
+  logAction($pdo, $_SESSION['user']['id'], 'chat_claimed', ['thread_id'=>$threadId]);
+}
 
 $thread = $pdo->prepare('SELECT ct.*, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id WHERE ct.id = ? LIMIT 1');
 $thread->execute([$threadId]); $thread = $thread->fetch(PDO::FETCH_ASSOC);
@@ -40,7 +44,28 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <script>
-document.getElementById('replyForm').addEventListener('submit', function(e){ e.preventDefault(); var fd=new FormData(this); fd.append('action','reply'); fd.append('thread_id','<?= $threadId ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>',true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ location.reload(); } else alert('Failed'); }; xhr.send(fd); });
+document.getElementById('replyForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var fd=new FormData(this); fd.append('action','reply'); fd.append('thread_id','<?= $threadId ?>');
+  var xhr=new XMLHttpRequest(); xhr.open('POST',location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>',true);
+  xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ location.reload(); } else alert('Failed'); };
+  xhr.send(fd);
+});
+
+// Poll messages every 5 seconds
+setInterval(function(){
+  var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
+  xhr.onload = function(){ if (xhr.status !== 200) return; try{ var html = xhr.responseText; } catch(e){ return; }
+    var parser = new DOMParser(); var doc = parser.parseFromString(html, 'text/html');
+    var messagesContainer = doc.querySelector('.card > div');
+    if (messagesContainer) {
+      var target = document.querySelector('.card > div');
+      target.innerHTML = messagesContainer.innerHTML;
+    }
+  };
+  xhr.send();
+}, 5000);
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
