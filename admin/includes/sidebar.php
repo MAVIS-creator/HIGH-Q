@@ -29,11 +29,11 @@ $menuItems = [
 ?>
 
 <aside class="admin-sidebar">
-    <div class="sidebar-logo">
-    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
-        <h3>HIGH Q SOLID ACADEMY</h3>
-    <small><?= htmlspecialchars($_SESSION['user']['role_name'] ?? ''); ?></small>
-    </div>
+    <a href="index.php?pages=dashboard" class="sidebar-logo" style="text-decoration:none;">
+        <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
+        <h3 style="color:#fff;">HIGH Q SOLID ACADEMY</h3>
+        <small style="color:#bbb;"><?= htmlspecialchars($_SESSION['user']['role_name'] ?? ''); ?></small>
+    </a>
     <nav class="sidebar-nav">
         <ul>
             <?php foreach ($menuItems as $slug => $item): ?>
