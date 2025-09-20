@@ -98,6 +98,14 @@
 </head>
 
 <body>
+    <style>
+        /* Critical, high-specificity fallbacks to force layout when external CSS missing/cached */
+        .admin-sidebar{position:fixed !important;top:0;left:0;width:260px;height:100vh;background:#111;color:#fff;z-index:1000;padding:18px 16px;overflow:auto}
+        .admin-header{position:fixed !important;top:0;left:260px;right:0;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:900}
+        .admin-footer{position:fixed !important;bottom:0;left:260px;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:8px 20px;z-index:880}
+        .admin-main{margin-left:260px;padding-top:84px;padding-bottom:68px}
+        .sidebar-overlay{display:none}
+    </style>
     <header class="admin-header">
         <div class="header-left">
             <i class='bx bx-menu' id="menuToggle"></i>
