@@ -83,95 +83,144 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Set New Password - HIGH Q SOLID ACADEMY</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-:root { 
-  --hq-yellow: #ffd600;
-  --hq-yellow-light: #ffe566;
-  --hq-red: #ff4b2b;
-  --hq-black: #0a0a0a;
-  --hq-gray: #f3f4f6;
-  --max-width: 960px;
-  --card-width: 760px;
-  --radius: 12px;
-}
-body {
-    margin:0;
-    font-family:"Poppins", sans-serif;
-    background: linear-gradient(135deg, var(--hq-yellow), var(--hq-red));
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    padding:20px;
-}
-.card {
-    background:#fff;
-    border-radius:var(--radius);
-    box-shadow:0 12px 32px rgba(0,0,0,0.18);
-    padding:32px;
-    max-width:400px;
-    width:100%;
-    text-align:center;
-}
-h2 { margin-bottom: 0.5rem; color: var(--hq-red);}
-p { margin-bottom: 1rem; color: var(--hq-black);}
-input { width:100%; padding:0.6rem; margin:0.5rem 0 1rem; border-radius:6px; border:1px solid #ccc;}
-button { background: var(--hq-red); color:#fff; padding:0.8rem; width:100%; border:none; border-radius:6px; cursor:pointer;}
-button:hover { background: var(--hq-yellow); color: var(--hq-black); }
-.error { background:#ffe6e6; border-left:4px solid var(--hq-red); color: var(--hq-red); padding:0.5rem; margin-bottom:1rem; text-align:left;}
-.success { background:#fff3cd; border-left:4px solid var(--hq-yellow); color: var(--hq-black); padding:0.5rem; margin-bottom:1rem; text-align:left;}
-</style>
+    <meta charset="UTF-8">
+    <title>Set New Password - HIGH Q SOLID ACADEMY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --hq-yellow: #ffd600;
+            --hq-yellow-light: #ffe566;
+            --hq-red: #ff4b2b;
+            --hq-black: #0a0a0a;
+            --hq-gray: #f3f4f6;
+            --max-width: 960px;
+            --card-width: 760px;
+            --radius: 12px;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, var(--hq-yellow), var(--hq-red));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+            color: var(--hq-red);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--hq-black);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.6rem;
+            margin: 0.5rem 0 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: var(--hq-red);
+            color: #fff;
+            padding: 0.8rem;
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--hq-yellow);
+            color: var(--hq-black);
+        }
+
+        .error {
+            background: #ffe6e6;
+            border-left: 4px solid var(--hq-red);
+            color: var(--hq-red);
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .success {
+            background: #fff3cd;
+            border-left: 4px solid var(--hq-yellow);
+            color: var(--hq-black);
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="card">
-    <h2>Set New Password</h2>
-    <p>Enter OTP and your new password</p>
+    <div class="card">
+        <h2>Set New Password</h2>
+        <p>Enter OTP and your new password</p>
 
-    <?php foreach($errors as $e): ?>
-        <div class="error"><?= htmlspecialchars($e) ?></div>
-    <?php endforeach; ?>
-    <?php if($success): ?>
-        <div class="success"><?= $success ?></div>
-    <?php endif; ?>
+        <?php foreach ($errors as $e): ?>
+            <div class="error"><?= htmlspecialchars($e) ?></div>
+        <?php endforeach; ?>
+        <?php if ($success): ?>
+            <div class="success"><?= $success ?></div>
+        <?php endif; ?>
 
-    <?php if($showForm): ?>
-    <form method="POST">
-        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-            <input type="text" name="otp" placeholder="Enter OTP" required>
-            <div style="position:relative;">
-                <input type="password" name="password" id="password" placeholder="New Password" required>
-                <span class="toggle-eye" onclick="togglePassword('password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
-                    &#128065;
-                </span>
-            </div>
-            <div style="position:relative;">
-                <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
-                <span class="toggle-eye" onclick="togglePassword('confirm_password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
-                    &#128065;
-                </span>
-            </div>
-            <button type="submit">Reset Password</button>
-    </form>
-    <?php endif; ?>
-</div>
+        <?php if ($showForm): ?>
+            <form method="POST">
+                <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                <input type="text" name="otp" placeholder="Enter OTP" required>
+                <div style="position:relative;">
+                    <input type="password" name="password" id="password" placeholder="New Password" required>
+                    <span class="toggle-eye" onclick="togglePassword('password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                        &#128065;
+                    </span>
+                </div>
+                <div style="position:relative;">
+                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+                    <span class="toggle-eye" onclick="togglePassword('confirm_password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
+                        &#128065;
+                    </span>
+                </div>
+                <button type="submit">Reset Password</button>
+            </form>
+        <?php endif; ?>
+    </div>
 
     <script>
-    function togglePassword(fieldId, icon) {
-        var input = document.getElementById(fieldId);
-        if (input.type === "password") {
-            input.type = "text";
-            icon.innerHTML = "&#128064;"; // open eye
-        } else {
-            input.type = "password";
-            icon.innerHTML = "&#128065;"; // closed eye
+        function togglePassword(fieldId, icon) {
+            var input = document.getElementById(fieldId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.innerHTML = "&#128064;"; // open eye
+            } else {
+                input.type = "password";
+                icon.innerHTML = "&#128065;"; // closed eye
+            }
         }
-    }
     </script>
 
 </body>
+
 </html>

@@ -49,33 +49,9 @@
         $chosen = $adminBase . '/assets/css/admin.css';
     }
 
-    // Prepare several href fallbacks for the browser to try.
-    $projectSub = '/HIGH-Q';
-    $hrefs = array_values(array_unique(array_filter([
-        $chosen,
-        $adminBase . '/assets/css/admin.css',
-        '/admin/assets/css/admin.css',
-        $projectSub . '/admin/assets/css/admin.css',
-        $projectSub . '/assets/css/admin.css',
-        '/assets/css/admin.css',
-        dirname($script) . '/assets/css/admin.css',
-        '../assets/css/admin.css'
-    ])));
-    // Ensure a guaranteed absolute path for typical XAMPP setup (project in /HIGH-Q)
-    echo "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/admin.css\">\n";
-    // Output link tags for each candidate (browser will use the first that 200s)
-    $debugParts = [];
-    foreach ($hrefs as $h) {
-        echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($h, ENT_QUOTES) . "\">\n";
-        $fsCheck = '';
-        $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
-        $candNorm = '/' . ltrim($h, '/');
-        if ($docRoot !== '' && is_readable($docRoot . $candNorm)) $fsCheck = 'exists'; else $fsCheck = 'missing';
-        $debugParts[] = $h . ' (' . $fsCheck . ')';
-    }
+    // (TEMP) Disabled external stylesheet output to rely on inline fallback while debugging path/link issues
+    // Once layout is confirmed restore external link tags here for improved caching/performance.
     if (!empty($pageCss)) echo $pageCss;
-    // Debug comment for quick inspection in View Source
-    echo "<!-- admin css candidates: " . implode(' | ', $debugParts) . " | chosen: " . htmlspecialchars($chosen, ENT_QUOTES) . " -->\n";
 
     // Full inline fallback CSS (applies core layout if external CSS fails). Kept here intentionally to ensure admin UI renders.
     echo "<style>\n" .
@@ -100,11 +76,54 @@
 <body>
     <style>
         /* Critical, high-specificity fallbacks to force layout when external CSS missing/cached */
-        .admin-sidebar{position:fixed !important;top:0;left:0;width:260px;height:100vh;background:#111;color:#fff;z-index:1000;padding:18px 16px;overflow:auto}
-        .admin-header{position:fixed !important;top:0;left:260px;right:0;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:900}
-        .admin-footer{position:fixed !important;bottom:0;left:260px;right:0;height:56px;display:flex;align-items:center;justify-content:center;padding:8px 20px;z-index:880}
-        .admin-main{margin-left:260px;padding-top:84px;padding-bottom:68px}
-        .sidebar-overlay{display:none}
+        .admin-sidebar {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #111;
+            color: #fff;
+            z-index: 1000;
+            padding: 18px 16px;
+            overflow: auto
+        }
+
+        .admin-header {
+            position: fixed !important;
+            top: 0;
+            left: 260px;
+            right: 0;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 900
+        }
+
+        .admin-footer {
+            position: fixed !important;
+            bottom: 0;
+            left: 260px;
+            right: 0;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            z-index: 880
+        }
+
+        .admin-main {
+            margin-left: 260px;
+            padding-top: 84px;
+            padding-bottom: 68px
+        }
+
+        .sidebar-overlay {
+            display: none
+        }
     </style>
     <header class="admin-header">
         <div class="header-left">
