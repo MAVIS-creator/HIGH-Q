@@ -19,8 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $ok = $upd->execute([$id]);
         if ($ok) {
             // activate user
-            $stmt = $pdo->prepare('SELECT student_id FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
-            if ($p && !empty($p['student_id'])) { $act = $pdo->prepare('UPDATE users SET is_active = 1 WHERE id = ?'); $act->execute([$p['student_id']]); }
+            $stmt = $pdo->prepare('SELECT student_id, reference FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
+            if ($p && !empty($p['student_id'])) { $act = $pdo->prepare('UPDATE users SET is_active = 1 WHERE id = ?'); $act->execute([$p['student_id']]);
+                // send confirmation email to user
+                $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
+                if ($user && !empty($user['email'])) {
+                    $subject = 'Payment Confirmed — HIGH Q SOLID ACADEMY';
+                    $html = "<p>Hi " . htmlspecialchars($user['name']) . ",</p><p>Your payment (reference: " . htmlspecialchars($p['reference']) . ") has been confirmed. Your account is now active.</p>";
+                    @sendEmail($user['email'], $subject, $html);
+                }
+            }
             echo json_encode(['status'=>'ok','message'=>'Payment confirmed']);
         } else echo json_encode(['status'=>'error','message'=>'DB error']);
         exit;
@@ -28,15 +36,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     if ($action === 'reject') {
         $upd = $pdo->prepare('UPDATE payments SET status = "failed", updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
-        if ($ok) echo json_encode(['status'=>'ok','message'=>'Payment rejected']); else echo json_encode(['status'=>'error','message'=>'DB error']);
+        if ($ok) {
+            // notify user of rejection
+            $stmt = $pdo->prepare('SELECT student_id, reference FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
+            if ($p && !empty($p['student_id'])) { $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
+                if ($user && !empty($user['email'])) {
+                    $subject = 'Payment Not Accepted — HIGH Q SOLID ACADEMY';
+                    $html = "<p>Hi " . htmlspecialchars($user['name']) . ",</p><p>We could not accept your payment (reference: " . htmlspecialchars($p['reference']) . "). Please review and contact support.</p>";
+                    @sendEmail($user['email'], $subject, $html);
+                }
+            }
+            echo json_encode(['status'=>'ok','message'=>'Payment rejected']);
+        } else echo json_encode(['status'=>'error','message'=>'DB error']);
         exit;
     }
     echo json_encode(['status'=>'error','message'=>'Unknown action']); exit;
 }
 
-// List pending payments
-$stmt = $pdo->query("SELECT p.*, u.email, u.name FROM payments p LEFT JOIN users u ON p.student_id = u.id ORDER BY p.created_at DESC");
+// List payments with pagination, search & filter
+$perPage = 20;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$statusFilter = $_GET['status'] ?? '';
+$search = trim($_GET['q'] ?? '');
+$params = [];
+$where = [];
+if ($statusFilter !== '') { $where[] = 'p.status = ?'; $params[] = $statusFilter; }
+if ($search !== '') { $where[] = '(p.reference LIKE ? OR u.email LIKE ? OR u.name LIKE ?)'; $params[] = "%{$search}%"; $params[] = "%{$search}%"; $params[] = "%{$search}%"; }
+$whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+$countStmt = $pdo->prepare("SELECT COUNT(*) FROM payments p LEFT JOIN users u ON p.student_id = u.id {$whereSql}");
+$countStmt->execute($params);
+$total = (int)$countStmt->fetchColumn();
+$offset = ($page - 1) * $perPage;
+$sql = "SELECT p.*, u.email, u.name FROM payments p LEFT JOIN users u ON p.student_id = u.id {$whereSql} ORDER BY p.created_at DESC LIMIT {$perPage} OFFSET {$offset}";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$totalPages = (int)ceil($total / $perPage);
 
 ?>
 <div class="roles-page">
