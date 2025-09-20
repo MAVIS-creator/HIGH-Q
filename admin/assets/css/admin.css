@@ -330,12 +330,21 @@ body.sidebar-collapsed .admin-main {
   --radius: 12px;
 }
 
+/* Avoid applying global padding when this css is loaded in non-admin contexts */
+body.admin {
+  background: var(--hq-gray);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--hq-black);
+  margin: 0;
+  padding: 0; /* admin layouts manage spacing per container */
+}
+
+/* fallback for non-admin consumers (public header used earlier) */
 body {
   background: var(--hq-gray);
   font-family: "Segoe UI", Arial, sans-serif;
   color: var(--hq-black);
   margin: 0;
-  padding: 2rem;
 }
 
 .roles-page {
