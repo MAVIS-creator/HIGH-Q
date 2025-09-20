@@ -185,10 +185,10 @@ $users = $pdo->query("
 
   <!-- Summary Cards -->
   <div class="summary-cards">
-    <div class="card"><h3><?= $total_users ?></h3><p>Total Users</p></div>
-    <div class="card"><h3><?= $active_users ?></h3><p>Active</p></div>
-    <div class="card"><h3><?= $pending_users ?></h3><p>Pending</p></div>
-    <div class="card"><h3><?= $banned_users ?></h3><p>Banned</p></div>
+    <div class="card"><span class="icon"><i class='bx bx-user'></i></span><div><h3><?= $total_users ?></h3><p>Total Users</p></div></div>
+    <div class="card"><span class="icon"><i class='bx bx-user-check'></i></span><div><h3><?= $active_users ?></h3><p>Active</p></div></div>
+    <div class="card"><span class="icon"><i class='bx bx-time-five'></i></span><div><h3><?= $pending_users ?></h3><p>Pending</p></div></div>
+    <div class="card"><span class="icon"><i class='bx bx-user-x'></i></span><div><h3><?= $banned_users ?></h3><p>Banned</p></div></div>
   </div>
 
   <!-- Search + Filter -->
