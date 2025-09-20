@@ -75,23 +75,21 @@ body{
 
 /* FOOTER */
 .admin-footer{
-  /* fixed to viewport bottom so it behaves like a normal site footer */
-  position: fixed;
-  bottom: 12px;
-  left: var(--sidebar-width);
-  right: var(--footer-right-offset);
+  /* in-flow footer (sticky-like): sits after page content. Use margins to sit beside
+     the fixed sidebar so it doesn't overlap. When page content is short the
+     `.admin-main` min-height keeps the footer at the bottom of the viewport. */
+  position: relative;
+  margin-left: var(--sidebar-width);
+  margin-right: var(--footer-right-offset);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
-  /* ensure the sidebar (z-index:1000) visually sits above the footer */
-  z-index: 700;
+  padding: 12px;
   background: transparent;
-  transition: left .25s ease, right .25s ease, width .25s ease;
+  transition: margin-left .25s ease, margin-right .25s ease, width .25s ease;
 }
 .admin-footer > .footer-card{
   box-sizing: border-box;
-  /* fill the fixed container (left/right determine available width) */
   width: 100%;
   max-width: none; /* allow expansion to the extreme right */
   margin: 0;
@@ -102,8 +100,9 @@ body{
 .admin-main{
   margin-left:var(--sidebar-width);
   padding-top:calc(var(--header-height) + 12px);
-  /* increase bottom padding to account for lifted footer */
+  /* Reserve space for footer and ensure the main area expands to push footer to page bottom when content is short */
   padding-bottom:calc(var(--footer-height) + 48px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 24px);
   transition:margin-left 0.25s ease,left 0.25s ease;
 }
 
@@ -114,8 +113,8 @@ body{
 /* Collapsed sidebar state - toggle class on body */
 body.sidebar-collapsed .admin-sidebar{transform:translateX(-100%)}
 /* when sidebar is collapsed, allow header/footer to expand into the freed space */
-body.sidebar-collapsed .admin-header, body.sidebar-collapsed .admin-footer{left:0}
-body.sidebar-collapsed .admin-footer{right:var(--footer-right-offset)}
+body.sidebar-collapsed .admin-header{left:0}
+body.sidebar-collapsed .admin-footer{margin-left:0}
 body.sidebar-collapsed .admin-main{margin-left:0}
 
 /* Responsive adjustments */
