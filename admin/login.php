@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Admin Login - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/HIGH-Q/public/assets/images/hq-favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/HIGH-Q/admin/assets/img/hq-favicon.ico" type="image/x-icon">
     <style>
         :root {
             --hq-primary: #ffd600;
@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
     <div class="login-card">
-        <img src="../public/assets/images/hq-logo.jpeg" alt="Academy Logo" style="width:60px; margin-bottom:1rem; border-radius:8px;">
+    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" style="width:60px; margin-bottom:1rem; border-radius:8px;">
         <h2>Admin Panel Access</h2>
         <p>Always Ahead of Others</p>
 
