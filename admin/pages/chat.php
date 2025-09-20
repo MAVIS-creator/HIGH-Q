@@ -73,14 +73,28 @@ $threads = $pdo->query('SELECT ct.*, u.name as assigned_admin_name FROM chat_thr
 <script>
 function claim(id){ if(!confirm('Take this thread?')) return; var fd=new FormData(); fd.append('action','claim'); fd.append('thread_id',id); fd.append('_csrf','<?= generateToken('chat_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{ var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok') location.reload(); else alert('Taken'); }; xhr.send(fd); }
 
-// Polling: refresh thread list every 5 seconds
-setInterval(function(){
-  var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=chat&ajax=1&_=' + Date.now(), true);
-  xhr.onload = function(){ if (xhr.status !== 200) return; try{ var html = xhr.responseText; } catch(e){ return; } // replace thread list
-    var parser = new DOMParser(); var doc = parser.parseFromString(html, 'text/html'); var newList = doc.getElementById('threadList'); if(newList){ document.getElementById('threadList').innerHTML = newList.innerHTML; }
-  };
-  xhr.send();
-}, 5000);
+// Polling: use lightweight JSON API every 5 seconds
+async function pollThreads(){
+  try{
+    const res = await fetch('/HIGH-Q/admin/api/threads.php');
+    if(!res.ok) return;
+    const j = await res.json();
+    if(!j.threads) return;
+    const ul = document.getElementById('threadList');
+    if(!ul) return;
+    // Rebuild list
+    ul.innerHTML = '';
+    j.threads.forEach(t=>{
+      const li = document.createElement('li'); li.dataset.thread = t.id; li.style.padding='12px'; li.style.borderBottom='1px solid #eee'; li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center';
+      const left = document.createElement('div'); left.innerHTML = `<strong>#${t.id}</strong> ${t.visitor_name}<div style="font-size:0.9rem;color:#666">Last: ${t.last_activity} Assigned: ${t.assigned_admin_id? t.assigned_admin_id : '—'}</div>`;
+      const right = document.createElement('div');
+      if(!t.assigned_admin_id){ const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Claim'; btn.onclick = ()=>{ claim(t.id); }; right.appendChild(btn); }
+      else { const a = document.createElement('a'); a.className='btn'; a.href = `?pages=chat_view&thread_id=${t.id}`; a.textContent='Open'; right.appendChild(a); }
+      li.appendChild(left); li.appendChild(right); ul.appendChild(li);
+    });
+  }catch(e){ /* ignore */ }
+}
+pollThreads(); setInterval(pollThreads, 5000);
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php';

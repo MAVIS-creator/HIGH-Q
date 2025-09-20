@@ -83,9 +83,15 @@
             <?php if (empty($_SESSION['user'])): ?>
                 <a href="../signup.php" class="header-cta">Sign up</a>
             <?php else: ?>
-                <div class="header-avatar">
-                    <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
-                </div>
+                    <div class="header-notifications">
+                        <button id="notifBtn" class="header-cta" title="Notifications">
+                            <i class='bx bx-bell'></i>
+                            <span id="notifBadge" style="display:none;background:#ff3b30;color:#fff;border-radius:999px;padding:2px 6px;margin-left:8px;font-size:0.8rem;">0</span>
+                        </button>
+                    </div>
+                    <div class="header-avatar">
+                        <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
+                    </div>
             <?php endif; ?>
         </div>
     </header>
@@ -101,3 +107,23 @@
     }
     ?>
     <main class="admin-main">
+        <script>
+        // Poll admin threads API for unread counts and update header badge
+        (function(){
+            async function fetchNotif(){
+                try{
+                    const res = await fetch('/HIGH-Q/admin/api/threads.php');
+                    if(!res.ok) return;
+                    const j = await res.json();
+                    const b = document.getElementById('notifBadge');
+                    if(!b) return;
+                    const n = j.unread_total || 0;
+                    if(n>0){ b.style.display='inline-block'; b.textContent = n; }
+                    else { b.style.display='none'; }
+                }catch(e){ /* ignore */ }
+            }
+            fetchNotif(); setInterval(fetchNotif,5000);
+            // Clicking the badge opens the chat page
+            document.addEventListener('click', function(e){ if(e.target && (e.target.id==='notifBtn' || e.target.closest('#notifBtn'))){ window.location='/HIGH-Q/admin/index.php?pages=chat'; } });
+        })();
+        </script>
