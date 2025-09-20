@@ -58,3 +58,9 @@
 /* small utilities */
 .btn-approve{ background:var(--hq-yellow); color:#111; border:none; padding:0.5rem 0.75rem; border-radius:8px }
 
+/* Icon button (used in user list for view/edit) */
+.btn-view, .btn-edit { background: transparent; border: none; padding: 8px; font-size: 1.05rem; cursor: pointer; color: #333; border-radius:8px }
+.btn-view:hover, .btn-edit:hover { background: rgba(0,0,0,0.04); }
+
+.btn-icon { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:6px 10px; border-radius:8px; background:#fff; border:1px solid #eee }
+
