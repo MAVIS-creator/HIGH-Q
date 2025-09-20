@@ -80,7 +80,8 @@ body{
   bottom:12px;
   /* start exactly at the sidebar edge so footer never overlaps it */
   left: var(--sidebar-width);
-  right: var(--footer-right-offset);
+  /* pin to the right edge so the footer can expand fully */
+  right: 0;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -91,7 +92,8 @@ body{
 }
 .admin-footer > .footer-card{
   box-sizing:border-box;
-  width:100%;
+  /* compute width exactly to prevent accidental overlap under the sidebar */
+  width: calc(100vw - var(--sidebar-width) - var(--footer-right-offset));
   max-width:none; /* allow expansion to the extreme right */
   margin:0;
   box-shadow:0 14px 36px rgba(11,37,64,0.14);
@@ -103,7 +105,7 @@ body{
   margin-left:var(--sidebar-width);
   padding-top:calc(var(--header-height) + 12px);
   /* increase bottom padding to account for lifted footer */
-  padding-bottom:calc(var(--footer-height) + 28px);
+  padding-bottom:calc(var(--footer-height) + 48px);
   transition:margin-left 0.25s ease,left 0.25s ease;
 }
 
