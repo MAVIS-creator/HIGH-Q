@@ -585,6 +585,29 @@ h1 {
   font-size: 0.95rem
 }
 
+/* Improved system-status card layout */
+.system-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 140px; /* same as other cards */
+}
+
+.system-status i {
+  margin-bottom: 8px; /* spacing between icon and text */
+}
+
+.system-status .system-content {
+  flex: 1; /* makes it stretch nicely */
+}
+
+.system-status ul {
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+}
+
+.system-status p { margin: 0; }
+
 .system-status { display:flex; flex-direction:column; justify-content:center; }
 .system-status > div { width:100% }
 
