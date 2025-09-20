@@ -123,7 +123,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'upload_receipt' && isset($_GE
   $f = $_FILES['receipt'];
   $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
   $allowed = ['jpg','jpeg','png','pdf'];
-  if (!in_array(strtolower($ext), $allowed)) { header('Content-Type: application/json'); echo json_encode(['error'=>'Invalid file type']); exit; }
+  // Size limit 5MB
+  if ($f['size'] > 5 * 1024 * 1024) { header('Content-Type: application/json'); echo json_encode(['error'=>'File too large (max 5MB)']); exit; }
+  // MIME check
+  $finfo = finfo_open(FILEINFO_MIME_TYPE);
+  $mime = finfo_file($finfo, $f['tmp_name']);
+  finfo_close($finfo);
+  $mimeAllowed = ['image/jpeg','image/png','application/pdf'];
+  if (!in_array($mime, $mimeAllowed) || !in_array(strtolower($ext), $allowed)) { header('Content-Type: application/json'); echo json_encode(['error'=>'Invalid file type']); exit; }
   $uploadDir = __DIR__ . '/../../public/uploads/receipts/'; if (!is_dir($uploadDir)) mkdir($uploadDir,0755,true);
   $fileName = 'receipt_' . $id . '_' . time() . '.' . $ext;
   $target = $uploadDir . $fileName;
