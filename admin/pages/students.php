@@ -219,5 +219,54 @@ document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click'
 }));
 </script>
 
+<!-- Approve & Message Modal -->
+<div id="studentModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
+  <div class="modal-content" style="background:#fff;padding:18px;border-radius:8px;max-width:560px;width:94%;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+    <h3 id="modalTitle">Message Student</h3>
+    <form id="modalForm" method="post">
+      <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+      <div style="margin-bottom:8px;"><label>To: <span id="modalStudentName"></span> (<span id="modalStudentEmail"></span>)</label></div>
+      <div style="margin-bottom:8px;"><label>Message</label><textarea name="message" rows="6" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;"></textarea></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;"><label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="activate" id="modalActivate"> Activate student</label></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;"><button type="button" id="modalCancel" class="btn">Cancel</button><button type="submit" class="btn btn-approve">Send & Close</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Modal wiring
+const modal = document.getElementById('studentModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalStudentName = document.getElementById('modalStudentName');
+const modalStudentEmail = document.getElementById('modalStudentEmail');
+const modalForm = document.getElementById('modalForm');
+const modalCancel = document.getElementById('modalCancel');
+
+function openStudentModal(id, name, email){
+  modal.style.display = 'flex';
+  modalStudentName.textContent = name;
+  modalStudentEmail.textContent = email;
+  modalForm.action = `index.php?pages=students&action=send_message&id=${id}`;
+}
+
+modalCancel.addEventListener('click', ()=> modal.style.display='none');
+
+// Attach openers to each student card view button (augment existing)
+document.querySelectorAll('.user-card .btn-view').forEach(btn=>{
+  btn.addEventListener('contextmenu', e=>e.preventDefault());
+  btn.addEventListener('dblclick', e=>{
+    // double-click to open approve/message modal
+    const card = btn.closest('.user-card');
+    const id = btn.dataset.userId;
+    const name = card.querySelector('.card-name').textContent.trim();
+    const email = card.querySelector('.card-email').textContent.trim();
+    openStudentModal(id, name, email);
+  });
+});
+
+// Close modal when clicking outside content
+modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
+</script>
+
 </body>
 </html>
