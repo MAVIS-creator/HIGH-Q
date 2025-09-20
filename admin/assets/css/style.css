@@ -16,24 +16,33 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 40%, #ff9a4d 65%, var(--hq-red) 100%);
+  background: #f7f7f7;
   color: #222;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial;
+  background: linear-gradient(
+    135deg,
+    var(--hq-yellow) 0%,
+    var(--hq-yellow-light) 40%,
+    #ff9a4d 65%,
+    var(--hq-red) 100%
+  );
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  min-height: 100vh;
 }
 
 .container {
   width: 100%;
-  max-width: 1200px;
-  padding: 28px;
-  margin: 0 auto;
+  max-width: 1100px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 40px);
+  min-height: 100vh;
 }
 
 /* =============================
@@ -79,8 +88,8 @@ body {
    Card
 ============================= */
 .card-wrap {
-  display: flex;
-  justify-content: center;
+  display: block;
+  flex: 1 1 auto; /* make space for footer */
 }
 
 .card {
@@ -88,26 +97,9 @@ body {
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  max-width: 1100px;
+  max-width: 800px;
   width: 100%;
 }
-
-/* Dashboard grid for summary boxes */
-.dash-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.dash-card{
-  background:#fff;border-radius:10px;padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;box-shadow:0 6px 16px rgba(0,0,0,0.06);cursor:pointer;border:1px solid #f0f0f0;
-}
-.dash-card h3{margin:0;font-size:1.6rem;color:#111}
-.dash-card p{margin-top:6px;color:#666}
-.dash-card .dash-icon{font-size:1.6rem;margin-right:8px;color:#ffd700}
-
-.dash-actions{display:flex;gap:8px;margin-top:12px}
 
 .card-header {
   text-align: center;
@@ -143,29 +135,46 @@ body {
 ============================= */
 .features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
   margin-bottom: 2rem;
+  align-items: stretch;
 }
 
 .feature {
   text-align: center;
-  padding: 1rem;
+  padding: 1.25rem;
   border: 1px solid #eee;
-  border-radius: 10px;
-  transition: 0.3s ease;
-  background: #fafafa;
+  border-radius: 12px;
+  transition: 0.2s ease;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 140px;
 }
 
 .feature:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .feature i {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  margin-bottom: 0.6rem;
   display: block;
+}
+
+/* Make feature clickable when wrapped in anchor */
+.feature a{ color:inherit; text-decoration:none; display:block; height:100%; }
+.feature .feat-value{ font-size:1.4rem; font-weight:700; margin-bottom:6px; color:#111 }
+
+/* Footer stick to bottom */
+.page-footer {
+  margin-top: auto;
+  background: linear-gradient(90deg, rgba(255,214,0,0.12), rgba(255,214,0,0.06));
+  padding: 18px 14px;
+  border-radius: 10px;
 }
 
 .feat-icon-red {
@@ -238,15 +247,12 @@ body {
    Footer
 ============================= */
 .page-footer {
-  text-align: left;
-  margin-top: auto;
-  padding: 18px 22px;
-  color: #111;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  background: linear-gradient(90deg,var(--hq-yellow),var(--hq-yellow-light));
-  box-shadow:0 8px 24px rgba(0,0,0,0.08);
-  margin-bottom: 12px;
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1rem;
+  color: #807c7cff;
+  border-radius: 8px;
+  font-size: 0.85rem;
 }
 
 .page-footer p + p {
