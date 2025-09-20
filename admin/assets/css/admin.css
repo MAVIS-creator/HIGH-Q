@@ -74,25 +74,31 @@ body{
 /* FOOTER */
 .admin-footer{
   position:fixed;
-  bottom:0;
+  /* lift footer slightly off the ground */
+  bottom:12px;
   left:var(--sidebar-width);
-  right:0;
-  height:var(--footer-height);
+  /* inset right so the footer card doesn't touch the right edge */
+  right:20px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:8px 20px;
+  padding:0 12px;
   z-index:880;
   background:transparent;
-  border-top:1px solid rgba(0,0,0,0.04);
 }
-.admin-footer > div{max-width:1200px;width:100%}
+.admin-footer > .footer-card{
+  /* make the footer-card expand evenly across available width */
+  width:100%;
+  max-width:1400px; /* allow wider layouts while keeping some margin */
+  box-shadow:0 10px 30px rgba(11,37,64,0.12);
+}
 
 /* MAIN CONTENT - reserve space for header and footer */
 .admin-main{
   margin-left:var(--sidebar-width);
   padding-top:calc(var(--header-height) + 12px);
-  padding-bottom:calc(var(--footer-height) + 12px);
+  /* increase bottom padding to account for lifted footer */
+  padding-bottom:calc(var(--footer-height) + 28px);
   transition:margin-left 0.25s ease,left 0.25s ease;
 }
 
