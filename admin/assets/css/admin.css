@@ -212,7 +212,7 @@ body {
   box-sizing: border-box;
   /* Fill the entire available area between the positioned footer container's left and right edges */
   width: 100%;
-  max-width: none;
+  max-width: calc(100% - var(--sidebar-width) - 48px);
   margin: 0;
   box-shadow: 0 14px 36px rgba(11, 37, 64, 0.14);
 }
@@ -256,6 +256,16 @@ body.sidebar-collapsed .admin-header {
 
 body.sidebar-collapsed .admin-footer {
   margin-left: 0
+}
+
+/* When sidebar is collapsed shift footer left to viewport edge so it appears expanded */
+body.sidebar-collapsed .admin-footer {
+  left: 12px;
+}
+
+/* add subtle transform for visual expansion */
+body.sidebar-collapsed .admin-footer > .footer-card {
+  transform: translateX(-6px);
 }
 
 body.sidebar-collapsed .admin-main {
