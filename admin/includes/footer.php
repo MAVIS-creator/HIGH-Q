@@ -1,19 +1,23 @@
 <?php
 // admin/includes/footer.php
 ?>
-</main>
-<footer class="admin-footer">
-    © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
-</footer>
+    </main>
+    <footer style="padding:24px;">
+        <div style="background:var(--hq-yellow);padding:18px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+                <div style="font-weight:700;color:#111;">HIGH Q SOLID ACADEMY</div>
+                <div style="color:#333;">Always Ahead of Others</div>
+            </div>
+            <div style="color:#222;font-size:0.95rem;">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</div>
+        </div>
+    </footer>
 
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 </body>
 
 </html>
 
-<script>
-</script>
 <script>
 // Sidebar toggle — ensure elements exist
 const menuToggle = document.getElementById('menuToggle');

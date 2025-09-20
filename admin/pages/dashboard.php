@@ -72,8 +72,10 @@ $adminUrl = $siteUrl ? rtrim($siteUrl, '/') . '/admin/' : null;
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
 ?>
 <div class="dashboard">
-    <h1>Welcome, <?= htmlspecialchars($_SESSION['user']['name']); ?>!</h1>
-    <p class="role-label">Role: <?= htmlspecialchars($_SESSION['user']['role_name']); ?></p>
+    <div class="dashboard-intro">
+        <h1><?= htmlspecialchars($pageTitle) ?></h1>
+        <p class="role-label">Role: <?= htmlspecialchars($_SESSION['user']['role_name']); ?></p>
+    </div>
 
     <div class="dashboard-widgets">
         <?php if (in_array('users', $permissions)): ?>
@@ -132,6 +134,16 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
                 <div>
                     <h3><?= $pdo->query("SELECT COUNT(*) FROM comments WHERE status='pending'")->fetchColumn(); ?></h3>
                     <p>Pending Comments</p>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if (in_array('payments', $permissions)): ?>
+            <div class="widget-card yellow">
+                <i class='bx bxs-credit-card'></i>
+                <div>
+                    <h3><?= $pdo->query("SELECT COUNT(*) FROM payments WHERE status='pending'")->fetchColumn(); ?></h3>
+                    <p>Pending Payments</p>
                 </div>
             </div>
         <?php endif; ?>
