@@ -30,7 +30,7 @@ $menuItems = [
 
 <aside class="admin-sidebar">
     <div class="sidebar-logo">
-        <img src="../public/assets/images/logo.png" alt="Academy Logo">
+        <img src="../public/assets/images/logo.svg" alt="Academy Logo" style="width:64px;display:block;margin-bottom:8px;">
         <h3>HIGH Q SOLID ACADEMY</h3>
     <small><?= htmlspecialchars($_SESSION['user']['role_name'] ?? ''); ?></small>
     </div>
