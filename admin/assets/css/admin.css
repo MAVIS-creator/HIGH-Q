@@ -125,7 +125,6 @@ h1{font-size:2rem;margin-bottom:1rem;color:var(--hq-black)}
 .roles-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.08)}
 .roles-table th{background:var(--hq-black);color:#fff;padding:.75rem;text-align:left;font-weight:600}
 .roles-table td{padding:.75rem;border-bottom:1px solid #eee}
-}
 
 .roles-table tr:last-child td {
   border-bottom: none;
