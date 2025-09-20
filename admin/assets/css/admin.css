@@ -78,8 +78,7 @@ body{
   position:fixed;
   /* lift footer slightly off the ground */
   bottom:12px;
-  /* position the footer to the right of the sidebar with a small offset */
-  left: calc(var(--sidebar-width) + var(--footer-offset));
+  left:0; /* full-bleed container; we reserve sidebar space with padding-left */
   right: var(--footer-right-offset);
   display:flex;
   align-items:center;
@@ -91,7 +90,7 @@ body{
 .admin-footer > .footer-card{
   /* compute width from available space so it never goes under the sidebar */
   box-sizing: border-box;
-  width: calc(100% - var(--sidebar-width) - var(--footer-offset) - var(--footer-right-offset));
+  width:calc(100vw - var(--sidebar-width) - var(--footer-offset) - var(--footer-right-offset));
   max-width:1600px; /* cap maximum expansion */
   box-shadow:0 14px 36px rgba(11,37,64,0.14);
   transform: translateZ(0); /* create stacking context to avoid z-index weirdness */
@@ -125,9 +124,9 @@ body.sidebar-collapsed .admin-main{margin-left:0}
 
 /* Prevent footer overlapping the sidebar at narrower widths by making footer full-width */
 @media (max-width:1100px) {
-  .admin-footer { left: 0; right: 0; padding: 0 8px; }
-  .admin-footer > .footer-card { margin-left: 0; margin-right: 0; border-radius: 6px; }
-  .admin-main { padding-bottom: calc(var(--footer-height) + 32px); }
+  .admin-footer { left: 0; right: 0; padding-left: 12px; padding-right: 12px; }
+  .admin-footer > .footer-card { margin-left: 0; margin-right: 0; border-radius: 6px; width: calc(100% - 24px); max-width:none; }
+  .admin-main { padding-bottom: calc(var(--footer-height) + 36px); }
 }
 
 /* Small screens: footer becomes full width and floats above content */
