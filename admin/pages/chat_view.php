@@ -1,0 +1,46 @@
+<?php
+// admin/pages/chat_view.php
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+requirePermission('chat');
+require_once __DIR__ . '/../includes/db.php';
+
+$threadId = intval($_GET['thread_id'] ?? 0);
+if (!$threadId) { header('Location: ?pages=chat'); exit; }
+
+// If unassigned, claim it for this admin
+$claim = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND assigned_admin_id IS NULL');
+$claim->execute([$_SESSION['user']['id'], $threadId]);
+
+$thread = $pdo->prepare('SELECT ct.*, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id WHERE ct.id = ? LIMIT 1');
+$thread->execute([$threadId]); $thread = $thread->fetch(PDO::FETCH_ASSOC);
+$messages = $pdo->prepare('SELECT * FROM chat_messages WHERE thread_id = ? ORDER BY created_at ASC'); $messages->execute([$threadId]); $msgs = $messages->fetchAll(PDO::FETCH_ASSOC);
+
+$pageTitle = 'Chat Thread #' . $threadId;
+require_once __DIR__ . '/../includes/header.php';
+
+?>
+<div class="roles-page">
+  <div class="page-header"><h1><i class="bx bxs-message-dots"></i> Thread #<?= htmlspecialchars($threadId) ?></h1></div>
+  <div class="card">
+    <div style="max-height:400px;overflow:auto;padding:8px;border:1px solid #eee;margin-bottom:12px">
+      <?php foreach($msgs as $m): ?>
+        <div style="margin-bottom:10px">
+          <div style="font-size:0.85rem;color:#666"><?= htmlspecialchars($m['created_at']) ?> — <?= $m['is_from_staff'] ? htmlspecialchars($m['sender_name']) : htmlspecialchars($m['sender_name']?:'Visitor') ?></div>
+          <div style="background:<?= $m['is_from_staff'] ? '#fff3cf' : '#f6f6f6' ?>;padding:8px;border-radius:6px;margin-top:4px"><?= nl2br(htmlspecialchars($m['message'])) ?></div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+    <form id="replyForm">
+      <textarea name="message" style="width:100%;height:100px;padding:8px" placeholder="Reply..."></textarea>
+      <div style="text-align:right;margin-top:8px"><button class="btn" type="submit">Send</button></div>
+      <input type="hidden" name="_csrf" value="<?= htmlspecialchars(generateToken('chat_form')) ?>">
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('replyForm').addEventListener('submit', function(e){ e.preventDefault(); var fd=new FormData(this); fd.append('action','reply'); fd.append('thread_id','<?= $threadId ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>',true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ location.reload(); } else alert('Failed'); }; xhr.send(fd); });
+</script>
+
+<?php require_once __DIR__ . '/../includes/footer.php';
