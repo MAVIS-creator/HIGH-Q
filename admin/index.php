@@ -18,74 +18,107 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href=".zzzzassets/css/style.css">
-    <link rel="stylesheet" href="./assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<body>
+<body class="landing-page">
     <div class="container">
 
         <!-- Header -->
         <header class="site-header" role="banner">
             <div class="logo-circle" aria-hidden="true">
-                    <img src="./assets/img/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-                <i class="fas fa-graduation-cap"></i>
+                <img src="./assets/img/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
             </div>
             <h1 class="site-title">HIGH Q SOLID ACADEMY</h1>
             <p class="site-sub">LIMITED</p>
             <p class="site-tagline">Always Ahead of Others</p>
         </header>
 
-        <!-- Card -->
-        <div class="card-wrap">
-            <section class="card" aria-labelledby="admin-title">
-                <div class="card-header">
-                    <div class="shield-circle" aria-hidden="true">
-                        <i class='bx bx-shield'></i>
+        <!-- Dashboard Card area -->
+            <div class="card-wrap">
+                <?php
+                // quick DB-driven dashboard (best-effort if DB available)
+                $counts = [
+                    'users' => 0,
+                    'students' => 0,
+                    'pending_comments' => 0,
+                    'pending_payments' => 0,
+                    'courses' => 0
+                ];
+                try {
+                    if (file_exists(__DIR__ . '/includes/db.php')) {
+                        require_once __DIR__ . '/includes/db.php';
+                        $counts['users'] = (int)($pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() ?: 0);
+                        $counts['students'] = (int)($pdo->query("SELECT COUNT(*) FROM users u LEFT JOIN roles r ON r.id=u.role_id WHERE r.slug='student' OR u.role_id IS NULL")->fetchColumn() ?: 0);
+                        $counts['pending_comments'] = (int)($pdo->query("SELECT COUNT(*) FROM comments WHERE is_approved=0")->fetchColumn() ?: 0);
+                        $counts['pending_payments'] = (int)($pdo->query("SELECT COUNT(*) FROM payments WHERE status IN ('pending','uploaded')")->fetchColumn() ?: 0);
+                        $counts['courses'] = (int)($pdo->query("SELECT COUNT(*) FROM courses")->fetchColumn() ?: 0);
+                    }
+                } catch (Exception $e){ /* ignore DB errors - fallback to zeros */ }
+                ?>
+
+                <section class="card" aria-labelledby="admin-title">
+                    <div class="card-header">
+                        <h2 id="admin-title" class="card-title">Dashboard</h2>
+                        <p class="card-desc">Overview and quick stats for your site</p>
                     </div>
-                    <h2 id="admin-title" class="card-title">Admin Panel Access</h2>
-                    <p class="card-desc">Manage your academy with our comprehensive admin dashboard</p>
-                </div>
 
-                <!-- Features -->
-                <div class="features" role="list">
-                    <div class="feature" role="listitem">
-                        <i class="bx bx-group feat-icon-red"></i>
-                        <h4>User Management</h4>
-                        <p>Manage staff and students</p>
+                    <div class="features" role="list">
+                        <a href="index.php?pages=users" class="feature" role="listitem">
+                            <div><i class='bx bx-user'></i></div>
+                            <div class="feat-value"><?= htmlspecialchars($counts['users']) ?></div>
+                            <div> Total Users</div>
+                        </a>
+
+                        <a href="index.php?pages=settings" class="feature" role="listitem">
+                            <div><i class='bx bx-cog'></i></div>
+                            <div class="feat-value">Settings</div>
+                            <div>Manage Site</div>
+                        </a>
+
+                        <a href="index.php?pages=courses" class="feature" role="listitem">
+                            <div><i class='bx bx-book'></i></div>
+                            <div class="feat-value"><?= htmlspecialchars($counts['courses']) ?></div>
+                            <div> Courses</div>
+                        </a>
+
+                        <a href="index.php?pages=students" class="feature" role="listitem">
+                            <div><i class='bx bx-graduation'></i></div>
+                            <div class="feat-value"><?= htmlspecialchars($counts['students']) ?></div>
+                            <div> Students</div>
+                        </a>
+
+                        <a href="index.php?pages=comments" class="feature" role="listitem">
+                            <div><i class='bx bx-message-square-detail'></i></div>
+                            <div class="feat-value"><?= htmlspecialchars($counts['pending_comments']) ?></div>
+                            <div> Pending Comments</div>
+                        </a>
+
+                        <a href="index.php?pages=payments" class="feature" role="listitem">
+                            <div><i class='bx bx-credit-card'></i></div>
+                            <div class="feat-value"><?= htmlspecialchars($counts['pending_payments']) ?></div>
+                            <div> Pending Payments</div>
+                        </a>
+
+                        <div class="feature" role="listitem">
+                            <div><i class='bx bx-server'></i></div>
+                            <div class="feat-value">System Status</div>
+                            <div style="text-align:left;font-size:0.9rem;margin-top:8px;color:#444">
+                                <?php
+                                // lightweight system checks
+                                $dbStatus = 'Unknown'; $siteStatus='Online';
+                                try{
+                                    if (isset($pdo)) { $dbStatus = $pdo ? 'Online' : 'Offline'; }
+                                } catch(Exception $e){ $dbStatus='Offline'; }
+                                echo "<div>Database: <strong style='color:" . ($dbStatus==='Online' ? 'green' : 'red') . ";'>$dbStatus</strong></div>";
+                                echo "<div>Website: <strong style='color:green;'>$siteStatus</strong></div>";
+                                echo "<div>Admin Panel: <strong style='color:green;'>Reachable</strong></div>";
+                                ?>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="feature" role="listitem">
-                        <i class="bx bx-book-open feat-icon-red"></i>
-                        <h4>Content Management</h4>
-                        <p>Courses, news & tutorials</p>
-                    </div>
-
-                    <div class="feature" role="listitem">
-                        <i class="fas fa-graduation-cap feat-icon-red"></i>
-                        <h4>Admissions</h4>
-                        <p>Student applications</p>
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="btn-row">
-                    <a href="login.php" class="btn btn-primary">Access Admin Panel</a>
-                    <a href="signup.php" class="btn btn-outline">Register New Admin</a>
-                </div>
-
-
-                <!-- Role box -->
-                <div class="role-box">
-                    <strong>Role-Based Access Control</strong>
-                    <ul>
-                        <li><strong>Admin:</strong> Full system access and management</li>
-                        <li><strong>Sub-Admin:</strong> Content and user management</li>
-                        <li><strong>Moderator:</strong> Comment and content moderation</li>
-                    </ul>
-                </div>
-            </section>
-        </div>
+                </section>
+            </div>
 
         <!-- Footer -->
         <footer class="page-footer">
