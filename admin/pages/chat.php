@@ -50,9 +50,9 @@ $threads = $pdo->query('SELECT ct.*, u.name as assigned_admin_name FROM chat_thr
   <div class="page-header"><h1><i class="bx bxs-message-dots"></i> Chat Support</h1></div>
   <div class="card">
     <h3>Open Threads</h3>
-    <ul style="list-style:none;padding:0;margin:0">
+    <ul id="threadList" style="list-style:none;padding:0;margin:0">
       <?php foreach($threads as $t): ?>
-        <li style="padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+        <li data-thread="<?= $t['id'] ?>" style="padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
           <div>
             <strong>#<?= htmlspecialchars($t['id']) ?></strong> <?= htmlspecialchars($t['visitor_name']?:'Guest') ?>
             <div style="font-size:0.9rem;color:#666">Last: <?= htmlspecialchars($t['last_activity']) ?> Assigned: <?= htmlspecialchars($t['assigned_admin_name']?:'—') ?></div>
@@ -72,6 +72,15 @@ $threads = $pdo->query('SELECT ct.*, u.name as assigned_admin_name FROM chat_thr
 
 <script>
 function claim(id){ if(!confirm('Take this thread?')) return; var fd=new FormData(); fd.append('action','claim'); fd.append('thread_id',id); fd.append('_csrf','<?= generateToken('chat_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{ var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok') location.reload(); else alert('Taken'); }; xhr.send(fd); }
+
+// Polling: refresh thread list every 5 seconds
+setInterval(function(){
+  var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=chat&ajax=1&_=' + Date.now(), true);
+  xhr.onload = function(){ if (xhr.status !== 200) return; try{ var html = xhr.responseText; } catch(e){ return; } // replace thread list
+    var parser = new DOMParser(); var doc = parser.parseFromString(html, 'text/html'); var newList = doc.getElementById('threadList'); if(newList){ document.getElementById('threadList').innerHTML = newList.innerHTML; }
+  };
+  xhr.send();
+}, 5000);
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
