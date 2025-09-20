@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <title>Account Pending Approval - HIGH Q SOLID ACADEMY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
 <style>
     :root {
         --primary-red: #d62828;
@@ -70,7 +71,7 @@
 <body>
 
 <div class="pending-card">
-    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
+    <img src="./assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
     <h1>Account Pending Approval</h1>
     <p>
         Thank you for creating an account with <strong>HIGH Q SOLID ACADEMY</strong>.<br>
