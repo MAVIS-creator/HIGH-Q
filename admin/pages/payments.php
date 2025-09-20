@@ -26,7 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                 if ($user && !empty($user['email'])) {
                     $subject = 'Payment Confirmed — HIGH Q SOLID ACADEMY';
                     $html = "<p>Hi " . htmlspecialchars($user['name']) . ",</p><p>Your payment (reference: " . htmlspecialchars($p['reference']) . ") has been confirmed. Your account is now active.</p>";
-                    @sendEmail($user['email'], $subject, $html);
+                    $attachments = [];
+                    if (!empty($p['receipt_path'])) {
+                        $fp = __DIR__ . '/../../public/' . ltrim($p['receipt_path'], '/');
+                        if (is_readable($fp)) $attachments[] = $fp;
+                    }
+                    @sendEmail($user['email'], $subject, $html, $attachments);
                 }
             }
             echo json_encode(['status'=>'ok','message'=>'Payment confirmed']);
