@@ -70,7 +70,7 @@
 <body>
 
 <div class="pending-card">
-    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="logo">
+    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
     <h1>Account Pending Approval</h1>
     <p>
         Thank you for creating an account with <strong>HIGH Q SOLID ACADEMY</strong>.<br>

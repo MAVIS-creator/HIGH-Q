@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
     <div class="login-card">
-    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" style="width:60px; margin-bottom:1rem; border-radius:8px;">
+    <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo" style="margin-bottom:1rem;">
         <h2>Admin Panel Access</h2>
         <p>Always Ahead of Others</p>
 

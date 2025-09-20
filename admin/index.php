@@ -27,7 +27,7 @@
         <!-- Header -->
         <header class="site-header" role="banner">
             <div class="logo-circle" aria-hidden="true">
-                    <img src="../assets/img/hq-logo.jpeg" alt="HQ Logo" style="width:48px;height:48px;object-fit:cover;border-radius:6px;">
+                    <img src="../assets/img/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
                 <i class="fas fa-graduation-cap"></i>
             </div>
             <h1 class="site-title">HIGH Q SOLID ACADEMY</h1>
