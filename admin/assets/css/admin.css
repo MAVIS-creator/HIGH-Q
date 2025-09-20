@@ -10,8 +10,8 @@
   --sidebar-width:260px;
   --header-height:72px;
   --footer-height:56px;
-  --footer-offset:12px; /* horizontal spacing from sidebar */
-  --footer-right-offset:12px; /* spacing from right edge */
+  --footer-offset:6px; /* horizontal spacing from sidebar; set to 0 for extreme flush */
+  --footer-right-offset:6px; /* spacing from right edge; set to 0 for extreme flush */
 }
 
 /* Reset and base */
