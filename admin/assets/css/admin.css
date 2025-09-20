@@ -585,31 +585,22 @@ h1 {
   font-size: 0.95rem
 }
 
-/* Improved system-status card layout */
+/* Consolidated system-status card layout */
 .system-status {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: flex-start; /* keep content at top like other cards */
   min-height: 140px; /* same as other cards */
+  gap: 8px;
 }
 
-.system-status i {
-  margin-bottom: 8px; /* spacing between icon and text */
-}
+.system-status i { margin-bottom: 8px; }
 
-.system-status .system-content {
-  flex: 1; /* makes it stretch nicely */
-}
+/* Main content area inside the widget - stretches to fill card */
+.system-status .system-content { flex: 1; width: 100%; }
 
-.system-status ul {
-  margin: 0.5rem 0;
-  padding-left: 1rem;
-}
-
+.system-status ul { margin: 0.5rem 0; padding-left: 1rem; }
 .system-status p { margin: 0; }
-
-.system-status { display:flex; flex-direction:column; justify-content:center; }
-.system-status > div { width:100% }
 
 .status-ok {
   color: #16a34a;
