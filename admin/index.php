@@ -8,7 +8,7 @@
     <title>HIGH Q SOLID ACADEMY — Admin Access</title>
 
     <!-- Favicon -->
-        <link rel="shortcut icon" href="/HIGH-Q/admin/assets/img/hq-favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/HIGH-Q/admin/assets/img/favicon.ico" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
