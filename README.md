@@ -1,3 +1,4 @@
+```bash
 admin/
 ├─ login.php
 ├─ logout.php
@@ -74,5 +75,5 @@ admin/
 │   └─ components/          # Reusable bits (cards, modals, forms…)
 │
 └─ vendor/                  # Composer dependencies
-
+```
 

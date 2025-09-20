@@ -39,7 +39,7 @@ function checkUrl(string $url)
     $result = ['ok' => false, 'message' => 'Unknown'];
     if (!function_exists('curl_init')) {
         // fallback to get_headers
-        set_error_handler(function() {});
+        set_error_handler(function () {});
         $headers = @get_headers($url);
         restore_error_handler();
         if ($headers && strpos($headers[0], '200') !== false) {
@@ -81,7 +81,9 @@ $dbStatus = checkDatabase($pdo);
 $dbServer = null;
 try {
     $dbServer = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
-} catch (Exception $e) { $dbServer = null; }
+} catch (Exception $e) {
+    $dbServer = null;
+}
 $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unknown'];
 $adminUrl = $siteUrl ? rtrim($siteUrl, '/') . '/admin/' : null;
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
@@ -171,9 +173,9 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('settings', $permissions)): ?>
-            <a href="index.php?pages=settings" class="widget-card system-status widget-link">
+            <div class="widget-card system-status">
                 <i class='bx bxs-dashboard'></i>
-                <div>
+                <div class="system-content">
                     <h3>System Status</h3>
                     <ul class="system-list">
                         <li>Database: <strong class="status-<?= $dbStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($dbStatus['message']) ?></strong></li>
@@ -182,7 +184,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
                     </ul>
                     <p><a href="/admin/pages/settings.php">Open settings</a></p>
                 </div>
-            </a>
+            </div>
         <?php endif; ?>
     </div>
 </div>
