@@ -3,12 +3,16 @@
 ?>
     </main>
     <footer class="admin-footer">
-        <div style="background:var(--hq-yellow);padding:12px 18px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;">
-            <div>
-                <div style="font-weight:700;color:#111;">HIGH Q SOLID ACADEMY</div>
-                <div style="color:#333;">Always Ahead of Others</div>
+        <div class="footer-card">
+            <div class="footer-card-left">
+                <span class="footer-icon"><i class='bx bx-award'></i></span>
             </div>
-            <div style="color:#222;font-size:0.95rem;">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</div>
+            <div class="footer-card-body">
+                <div class="footer-title">HIGH Q SOLID ACADEMY</div>
+                <div class="footer-sub">Always Ahead of Others</div>
+                <div class="footer-desc muted">Empowering students since 2018 with quality education and excellent results</div>
+            </div>
+            <div class="footer-card-right">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</div>
         </div>
     </footer>
 
