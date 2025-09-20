@@ -26,8 +26,6 @@ const sidebarOverlay = document.getElementById('sidebarOverlay');
 if (menuToggle) {
     menuToggle.addEventListener('click', () => {
         document.body.classList.toggle('sidebar-collapsed');
-
-        // Overlay only for mobile
         if (window.innerWidth <= 768) {
             if (sidebarOverlay) sidebarOverlay.classList.toggle('active', document.body.classList.contains('sidebar-collapsed'));
         } else {
