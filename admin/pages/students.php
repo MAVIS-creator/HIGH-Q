@@ -58,6 +58,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         }
         header('Location: index.php?pages=students'); exit;
     }
+
+  // Custom: send message/approve flow from modal
+  if ($action === 'send_message') {
+    $message = trim($_POST['message'] ?? '');
+    $activate = isset($_POST['activate']) ? 1 : 0;
+
+    // load student
+    $sstmt = $pdo->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
+    $sstmt->execute([$id]);
+    $student = $sstmt->fetch(PDO::FETCH_ASSOC);
+    if ($student) {
+      if ($activate) {
+        $ust = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
+        $ust->execute([$id]);
+        logAction($pdo, $currentUserId, 'student_activate_via_modal', ['student_id'=>$id]);
+      }
+
+      // send email using existing helper if available
+      if (function_exists('sendEmail') && filter_var($student['email'], FILTER_VALIDATE_EMAIL)) {
+        $subject = 'Message from HIGH Q admin';
+        $body = "Hello " . htmlspecialchars($student['name']) . ",\n\n" . $message . "\n\nRegards,\nHIGH Q Team";
+        try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
+      }
+    }
+    header('Location: index.php?pages=students'); exit;
+  }
 }
 
 // Fetch students (users with role slug 'student' or where role is null)
