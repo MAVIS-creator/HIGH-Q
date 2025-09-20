@@ -530,7 +530,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 18px;
-  align-items: stretch;
+  align-items: start; /* ensure cards align to top of the row */
 }
 
 .widget-card {
@@ -546,7 +546,7 @@ h1 {
   color: inherit;
   min-height: 160px;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* keep contents at top so multi-line content doesn't center */
 }
 
 .widget-card i {
