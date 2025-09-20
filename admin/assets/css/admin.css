@@ -78,22 +78,24 @@ body{
   position:fixed;
   /* lift footer slightly off the ground */
   bottom:12px;
-    left: calc(var(--sidebar-width) + var(--footer-offset));
+  /* start exactly at the sidebar edge so footer never overlaps it */
+  left: var(--sidebar-width);
   right: var(--footer-right-offset);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 6px;
-    z-index:880; /* ensure sidebar remains above the footer */
+  padding:0 12px;
+  /* make sure sidebar (z-index:1000) stays above the footer */
+  z-index:840;
   background:transparent;
 }
 .admin-footer > .footer-card{
-  /* compute width from available space so it never goes under the sidebar */
-  box-sizing: border-box;
-    width:100%;
-  max-width:1600px; /* cap maximum expansion */
+  box-sizing:border-box;
+  width:100%;
+  max-width:none; /* allow expansion to the extreme right */
+  margin:0;
   box-shadow:0 14px 36px rgba(11,37,64,0.14);
-  transform: translateZ(0); /* create stacking context to avoid z-index weirdness */
+  transform:translateZ(0);
 }
 
 /* MAIN CONTENT - reserve space for header and footer */
