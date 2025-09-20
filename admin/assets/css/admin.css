@@ -7,14 +7,18 @@
   --max-width: 960px;
   --card-width: 760px;
   --radius: 12px;
+  --hq-primary: var(--hq-yellow);
+  --hq-accent: var(--hq-red);
 }
 :root {
   --hq-yellow: #ffd600;
-  --hq-yellow-light: #ffe566;
-  --hq-red: #ff4b2b;
-  --hq-black: #0a0a0a;
-  --hq-gray: #f3f4f6;
-  --hq-primary: var(--hq-yellow);
+/* Reset body padding for admin area to prevent content shifting under the sidebar */
+body {
+  background: var(--hq-gray);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--hq-black);
+  margin: 0;
+  padding: 0; /* override any later page padding that caused overlap */
   --hq-accent: var(--hq-red);
   --max-width: 960px;
   --card-width: 760px;
@@ -43,20 +47,22 @@ body {
   top: 0;
   left: 0;
   width: 260px;
-  height: 100%;
-  background: var(--hq-black);
-  display: flex;
-  flex-direction: column;
-  padding: 15px 0;
-  z-index: 1000;
-  transition: transform 0.3s ease;
-}
+    position: fixed;
+    top: 0;
+    left: 260px; /* to the right of the sidebar */
+    width: calc(100% - 260px);
+    z-index: 900;
+    padding: 18px 24px;
+    box-sizing: border-box;
 
-.sidebar-logo {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
+  .admin-header .header-card {
+    background: var(--hq-yellow);
+    padding: 16px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 .sidebar-logo img {
   max-width: 120px;
   margin-bottom: 5px;
@@ -93,24 +99,25 @@ body {
   position: fixed;
   top: 0;
   left: 260px; /* default with sidebar */
-  right: 0;
-  z-index: 900;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: left 0.3s ease; /* smooth collapse */
+    margin-left: 260px !important;
+    padding-top: 120px;   /* leave space for the larger header card */
+    padding-bottom: 56px; /* leave space above compact footer */
+    transition: margin-left 0.3s ease;
 }
 
 /* ==== FOOTER ==== */
 .admin-footer {
-  background: transparent;
-  color: var(--hq-black);
-  text-align: center;
-  padding: 15px 0;
-  font-size: 0.85rem;
-  position: fixed;
-  bottom: 0;
-  left: 260px; /* default with sidebar */
-  right: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 0;
+    left: 260px;
+    width: calc(100% - 260px);
+    z-index: 850;
+    background: #fff;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding: 10px 20px;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 0.9rem;
   transition: left 0.3s ease; /* smooth collapse */
 }
 
@@ -330,21 +337,12 @@ body.sidebar-collapsed .admin-main {
   --radius: 12px;
 }
 
-/* Avoid applying global padding when this css is loaded in non-admin contexts */
-body.admin {
-  background: var(--hq-gray);
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: var(--hq-black);
-  margin: 0;
-  padding: 0; /* admin layouts manage spacing per container */
-}
-
-/* fallback for non-admin consumers (public header used earlier) */
 body {
   background: var(--hq-gray);
   font-family: "Segoe UI", Arial, sans-serif;
   color: var(--hq-black);
   margin: 0;
+  padding: 2rem;
 }
 
 .roles-page {
