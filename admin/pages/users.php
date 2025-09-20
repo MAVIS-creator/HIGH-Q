@@ -114,6 +114,39 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) 
   header('Content-Type: application/json'); echo json_encode($u); exit;
 }
 
+// Handle receipt upload by admin on user profile (AJAX file upload)
+if (isset($_GET['action']) && $_GET['action'] === 'upload_receipt' && isset($_GET['id']) && $_SERVER['REQUEST_METHOD']==='POST') {
+  $id = (int)$_GET['id'];
+  $token = $_POST['csrf_token'] ?? '';
+  if (!verifyToken('users_form', $token)) { header('Content-Type: application/json'); echo json_encode(['error'=>'Invalid CSRF']); exit; }
+  if (empty($_FILES['receipt']) || $_FILES['receipt']['error'] !== UPLOAD_ERR_OK) { header('Content-Type: application/json'); echo json_encode(['error'=>'No file uploaded']); exit; }
+  $f = $_FILES['receipt'];
+  $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
+  $allowed = ['jpg','jpeg','png','pdf'];
+  if (!in_array(strtolower($ext), $allowed)) { header('Content-Type: application/json'); echo json_encode(['error'=>'Invalid file type']); exit; }
+  $uploadDir = __DIR__ . '/../../public/uploads/receipts/'; if (!is_dir($uploadDir)) mkdir($uploadDir,0755,true);
+  $fileName = 'receipt_' . $id . '_' . time() . '.' . $ext;
+  $target = $uploadDir . $fileName;
+  if (!move_uploaded_file($f['tmp_name'], $target)) { header('Content-Type: application/json'); echo json_encode(['error'=>'Failed to move file']); exit; }
+
+  // Create a payments record or attach to existing pending payment for user
+  $stmt = $pdo->prepare('SELECT id FROM payments WHERE student_id = ? AND status = "pending" ORDER BY created_at DESC LIMIT 1');
+  $stmt->execute([$id]); $p = $stmt->fetch();
+  if ($p) {
+    $pid = $p['id'];
+    $upd = $pdo->prepare('UPDATE payments SET receipt_path = ?, updated_at = NOW() WHERE id = ?');
+    $upd->execute(["uploads/receipts/{$fileName}", $pid]);
+  } else {
+    $ref = 'RCPT-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
+    $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, receipt_path, created_at) VALUES (?, 0, "bank_transfer", ?, "uploaded", ?, NOW())');
+    $ins->execute([$id, $ref, "uploads/receipts/{$fileName}"]); $pid = $pdo->lastInsertId();
+  }
+
+  // Notify admins via log
+  logAction($pdo, $_SESSION['user']['id'], 'upload_receipt', ['user_id'=>$id, 'payment_id'=>$pid, 'path'=>"uploads/receipts/{$fileName}"]);
+  header('Content-Type: application/json'); echo json_encode(['ok'=>true,'payment_id'=>$pid,'path'=>"uploads/receipts/{$fileName}"]); exit;
+}
+
 // Fetch counts for summary
 $total_users   = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $active_users  = $pdo->query("SELECT COUNT(*) FROM users WHERE is_active=1")->fetchColumn();
