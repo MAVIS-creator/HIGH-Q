@@ -63,6 +63,20 @@ body {
   font-size: 2rem;
 }
 
+/* Landing page tweaks: align top and size logo image correctly */
+body.landing-page {
+  align-items: flex-start; /* push content to top */
+  padding-top: 40px;
+}
+
+.logo-circle .brand-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
 .site-title {
   font-weight: 800;
   font-size: 1.8rem;
