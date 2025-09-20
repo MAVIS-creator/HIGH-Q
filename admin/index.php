@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="./assets/css/admin.css">
 </head>
 
-<body>
+<body  class="landing-page">
     <div class="container">
 
         <!-- Header -->
