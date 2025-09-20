@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('comments');
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../../public/config/functions.php';
 
 $pageTitle = 'Comments';
 require_once __DIR__ . '/../includes/header.php';
@@ -14,14 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     if (!verifyToken('comments_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
     $action = $_POST['action'] ?? '';
     $id = intval($_POST['id'] ?? 0);
-    if ($action === 'approve') {
-        $upd = $pdo->prepare('UPDATE comments SET status = "approved" WHERE id = ?'); $ok = $upd->execute([$id]);
-        echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
-    }
-    if ($action === 'reject') {
-        $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
-        echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
-    }
+  if ($action === 'approve') {
+    $upd = $pdo->prepare('UPDATE comments SET status = "approved" WHERE id = ?'); $ok = $upd->execute([$id]);
+    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_approved', ['comment_id'=>$id]);
+    echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
+  }
+  if ($action === 'reject') {
+    $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
+    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_deleted', ['comment_id'=>$id]);
+    echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
+  }
     echo json_encode(['status'=>'error']); exit;
 }
 
