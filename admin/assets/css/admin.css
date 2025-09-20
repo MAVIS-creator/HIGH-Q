@@ -536,7 +536,7 @@ h1 {
 .widget-card {
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: flex-start;
   background: #fff;
   padding: 18px;
   border-radius: 10px;
@@ -544,6 +544,9 @@ h1 {
   border: 1px solid rgba(0, 0, 0, 0.04);
   text-decoration: none;
   color: inherit;
+  min-height: 140px;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .widget-card i {
@@ -581,6 +584,9 @@ h1 {
   margin-bottom: 0.2rem;
   font-size: 0.95rem
 }
+
+.system-status { display:flex; flex-direction:column; justify-content:center; }
+.system-status > div { width:100% }
 
 .status-ok {
   color: #16a34a;
