@@ -20,6 +20,21 @@
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="stylesheet" href="./assets/css/admin.css">
+    <!-- Landing overrides: ensure landing gradient and single logo (override admin.css) -->
+    <style>
+        body.landing-page { 
+            background: linear-gradient(135deg, #ffd600 0%, #ffe566 40%, #ff9a4d 65%, #ff4b2b 100%) !important;
+            display: flex; justify-content: center; align-items: flex-start;
+        }
+        /* Remove admin.css background/padding that can wrap the logo image */
+        body.landing-page .logo-circle { background: transparent !important; }
+        body.landing-page .brand-logo { background: none !important; padding: 0 !important; box-shadow: none !important; }
+        /* Ensure the logo image fits the circle and no duplicate styling appears */
+        body.landing-page .logo-circle .brand-logo { width:64px; height:64px; object-fit:cover; border-radius:50%; display:block; }
+        /* Accent colors for title/subtitle on gradient */
+        body.landing-page .site-title { color: #0a0a0a; }
+        body.landing-page .site-sub { color: #e63946; }
+    </style>
 </head>
 
 <body  class="landing-page">
