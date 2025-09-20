@@ -87,17 +87,17 @@ body{
   justify-content:center;
   padding:0 12px;
   /* make sure sidebar (z-index:1000) stays above the footer */
-  z-index:840;
+  z-index:700;
   background:transparent;
 }
 .admin-footer > .footer-card{
   box-sizing:border-box;
   /* compute width exactly to prevent accidental overlap under the sidebar */
-  width: calc(100vw - var(--sidebar-width) - var(--footer-right-offset));
-  max-width:none; /* allow expansion to the extreme right */
-  margin:0;
-  box-shadow:0 14px 36px rgba(11,37,64,0.14);
-  transform:translateZ(0);
+  /* tighten width calc by subtracting small padding buffer to prevent overflow at non-integer zoom */
+  width: calc(100vw - var(--sidebar-width) - var(--footer-right-offset) - 8px);
+  max-width: none; /* allow expansion to the extreme right */
+  margin: 0;
+  box-shadow: 0 14px 36px rgba(11,37,64,0.14);
 }
 
 /* MAIN CONTENT - reserve space for header and footer */
