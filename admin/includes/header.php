@@ -78,9 +78,10 @@
     echo '<!-- admin css candidates: ' . implode(' | ', $debugParts) . ' | chosen: ' . htmlspecialchars($chosen, ENT_QUOTES) . ' -->\n';
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)
+    // NOTE: keep these conservative and avoid overriding admin layout variables (no body padding or zero margin-left on .admin-main)
     echo "<style>\n" .
-        "body{background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;color:#111;margin:0;padding:2rem;}\n" .
-        ".admin-main{margin-left:0;padding-top:80px;}\n" .
+        "body{background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;color:#111;margin:0;padding:0;}\n" .
+        ".admin-main{margin-left:260px;padding-top:84px;padding-bottom:68px;}\n" .
         ".page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}\n" .
         ".card{background:#fff;padding:18px;border-radius:8px;border:1px solid #eee;box-shadow:0 4px 10px rgba(0,0,0,0.04);margin-bottom:12px;}\n" .
         ".header-cta{background:#ffd600;color:#111;padding:8px 12px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;}\n" .
