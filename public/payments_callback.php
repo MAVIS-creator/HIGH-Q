@@ -1,6 +1,7 @@
 <?php
 // public/payments_callback.php
-require_once __DIR__ . '/admin/includes/db.php';
+// Use public config includes
+require_once __DIR__ . '/config/db.php';
 $cfg = require __DIR__ . '/config/payments.php';
 $secret = $cfg['paystack']['secret'] ?? '';
 
