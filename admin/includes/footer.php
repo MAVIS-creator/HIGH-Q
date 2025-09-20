@@ -2,8 +2,8 @@
 // admin/includes/footer.php
 ?>
     </main>
-    <footer style="padding:24px;">
-        <div style="background:var(--hq-yellow);padding:18px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+    <footer class="admin-footer">
+        <div style="background:var(--hq-yellow);padding:12px 18px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;">
             <div>
                 <div style="font-weight:700;color:#111;">HIGH Q SOLID ACADEMY</div>
                 <div style="color:#333;">Always Ahead of Others</div>
@@ -26,6 +26,8 @@ const sidebarOverlay = document.getElementById('sidebarOverlay');
 if (menuToggle) {
     menuToggle.addEventListener('click', () => {
         document.body.classList.toggle('sidebar-collapsed');
+
+        // Overlay only for mobile
         if (window.innerWidth <= 768) {
             if (sidebarOverlay) sidebarOverlay.classList.toggle('active', document.body.classList.contains('sidebar-collapsed'));
         } else {
