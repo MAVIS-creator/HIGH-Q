@@ -162,7 +162,7 @@ h1{font-size:2rem;margin-bottom:1rem;color:var(--hq-black)}
 .summary-cards .icon{font-size:1.8rem;color:var(--hq-yellow);width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#fff3cf}
 
 /* Footer card style matching screenshot */
-.footer-card{background:linear-gradient(180deg,var(--hq-yellow-light),var(--hq-yellow));padding:18px;border-radius:8px;display:flex;align-items:center;gap:18px;max-width:1200px;margin:0 auto}
+.footer-card{background:linear-gradient(180deg,var(--hq-yellow-light),var(--hq-yellow));padding:18px;border-radius:8px;display:flex;align-items:center;gap:18px;max-width:none;margin:0}
 .footer-icon{width:56px;height:56px;border-radius:50%;background:#0b2540;display:flex;align-items:center;justify-content:center;color:var(--hq-yellow);font-size:1.4rem}
 .footer-card-body{flex:1}
 .footer-title{font-weight:800;color:#0b2540}
