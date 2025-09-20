@@ -8,7 +8,7 @@
     <title>HIGH Q SOLID ACADEMY — Admin Access</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/HIGH-Q/public/assets/images/hq-favicon.ico" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -27,6 +27,7 @@
         <!-- Header -->
         <header class="site-header" role="banner">
             <div class="logo-circle" aria-hidden="true">
+                    <img src="../public/assets/images/hq-logo.jpeg" alt="HQ Logo" style="width:48px;height:48px;object-fit:cover;border-radius:6px;">
                 <i class="fas fa-graduation-cap"></i>
             </div>
             <h1 class="site-title">HIGH Q SOLID ACADEMY</h1>
