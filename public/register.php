@@ -1,8 +1,9 @@
 <?php
 // public/register.php
-require_once __DIR__ . '/../admin/includes/db.php';
-require_once __DIR__ . '/../admin/includes/csrf.php';
-require_once __DIR__ . '/../admin/includes/functions.php';
+// Use public-side config/includes (avoid pulling admin internals)
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/functions.php';
 $cfg = require __DIR__ . '/../config/payments.php';
 
 $errors = [];
