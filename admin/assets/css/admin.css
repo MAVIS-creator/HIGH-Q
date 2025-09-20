@@ -76,9 +76,9 @@ body{
 /* FOOTER */
 .admin-footer{
   position:fixed;
-  /* align footer to the top of the main area so it sits flush beside the sidebar;
-    increased offset to visually lower the footer without changing layout */
-  top: calc(var(--header-height) + 36px);
+  /* position footer at the bottom of the viewport so it behaves like a normal footer */
+  top: auto;
+  bottom: 12px;
   /* remove bottom positioning (we want it near the header area) */
   bottom: auto;
   /* start at the sidebar edge so the footer never overlaps it */
