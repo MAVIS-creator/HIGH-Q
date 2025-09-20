@@ -124,19 +124,17 @@ body {
 }
 
 /* HEADER */
-.admin-header {
+.admin-footer {
   position: fixed;
-  top: 0;
-  left: var(--sidebar-width);
-  right: 0;
-  height: var(--header-height);
+  right: var(--footer-right-offset);
+  bottom: var(--footer-offset);
+  left: calc(var(--sidebar-width) + 12px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  z-index: 900;
+  justify-content: center;
+  padding: 12px;
   background: transparent;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  z-index: 800;
 }
 
 .header-left {
@@ -208,9 +206,8 @@ body {
 
 .admin-footer>.footer-card {
   box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  /* allow expansion to the extreme right */
+  width: auto;
+  max-width: calc(100% - var(--sidebar-width) - 48px);
   margin: 0;
   box-shadow: 0 14px 36px rgba(11, 37, 64, 0.14);
 }
@@ -219,9 +216,9 @@ body {
 .admin-main {
   margin-left: var(--sidebar-width);
   padding-top: calc(var(--header-height) + 12px);
-  /* Reserve space for footer and ensure the main area expands to push footer to page bottom when content is short */
-  padding-bottom: calc(var(--footer-height) + 48px);
-  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 24px);
+  /* Reserve space for fixed footer so content doesn't hide behind it */
+  padding-bottom: calc(var(--footer-height) + 28px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px);
   transition: margin-left 0.25s ease, left 0.25s ease;
 }
 
