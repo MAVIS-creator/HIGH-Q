@@ -10,6 +10,8 @@
   --sidebar-width:260px;
   --header-height:72px;
   --footer-height:56px;
+  --footer-offset:12px; /* horizontal spacing from sidebar */
+  --footer-right-offset:12px; /* spacing from right edge */
 }
 
 /* Reset and base */
@@ -76,21 +78,21 @@ body{
   position:fixed;
   /* lift footer slightly off the ground */
   bottom:12px;
-  left:var(--sidebar-width);
-  /* inset right so the footer card doesn't touch the right edge */
-  right:20px;
+  /* position the footer to the right of the sidebar with a small offset */
+  left: calc(var(--sidebar-width) + var(--footer-offset));
+  right: var(--footer-right-offset);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 12px;
-  z-index:880;
+  padding:0 6px;
+  z-index:1100; /* make footer visible above sidebar when needed */
   background:transparent;
 }
 .admin-footer > .footer-card{
   /* make the footer-card expand evenly across available width */
   width:100%;
-  max-width:1400px; /* allow wider layouts while keeping some margin */
-  box-shadow:0 10px 30px rgba(11,37,64,0.12);
+  max-width:1600px; /* allow wider layouts while keeping some margin */
+  box-shadow:0 14px 36px rgba(11,37,64,0.14);
 }
 
 /* MAIN CONTENT - reserve space for header and footer */
@@ -117,6 +119,19 @@ body.sidebar-collapsed .admin-main{margin-left:0}
   body.sidebar-collapsed .admin-sidebar{transform:translateX(0)}
   .admin-header,.admin-main,.admin-footer{left:0;margin-left:0}
   .header-right span{display:none}
+}
+
+/* Prevent footer overlapping the sidebar at narrower widths by making footer full-width */
+@media (max-width:1100px) {
+  .admin-footer { left: 0; right: 0; padding: 0 8px; }
+  .admin-footer > .footer-card { margin-left: 0; margin-right: 0; border-radius: 6px; }
+  .admin-main { padding-bottom: calc(var(--footer-height) + 32px); }
+}
+
+/* Small screens: footer becomes full width and floats above content */
+@media (max-width:768px) {
+  .admin-footer { bottom:8px; left:8px; right:8px; }
+  .admin-footer > .footer-card { width:100%; max-width:none; }
 }
 
 /* Utilities, cards and tables (kept from original file) */
