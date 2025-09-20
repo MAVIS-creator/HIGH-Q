@@ -89,10 +89,12 @@ body{
   background:transparent;
 }
 .admin-footer > .footer-card{
-  /* make the footer-card expand evenly across available width */
-  width:100%;
-  max-width:1600px; /* allow wider layouts while keeping some margin */
+  /* compute width from available space so it never goes under the sidebar */
+  box-sizing: border-box;
+  width: calc(100% - var(--sidebar-width) - var(--footer-offset) - var(--footer-right-offset));
+  max-width:1600px; /* cap maximum expansion */
   box-shadow:0 14px 36px rgba(11,37,64,0.14);
+  transform: translateZ(0); /* create stacking context to avoid z-index weirdness */
 }
 
 /* MAIN CONTENT - reserve space for header and footer */
