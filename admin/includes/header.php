@@ -62,11 +62,11 @@
         '../assets/css/admin.css'
     ])));
     // Ensure a guaranteed absolute path for typical XAMPP setup (project in /HIGH-Q)
-    echo '<link rel="stylesheet" href="/HIGH-Q/admin/assets/css/admin.css">\n';
+    echo "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/admin.css\">\n";
     // Output link tags for each candidate (browser will use the first that 200s)
     $debugParts = [];
     foreach ($hrefs as $h) {
-        echo '<link rel="stylesheet" href="' . htmlspecialchars($h, ENT_QUOTES) . '">\n';
+        echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($h, ENT_QUOTES) . "\">\n";
         $fsCheck = '';
         $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
         $candNorm = '/' . ltrim($h, '/');
@@ -75,7 +75,7 @@
     }
     if (!empty($pageCss)) echo $pageCss;
     // Debug comment for quick inspection in View Source
-    echo '<!-- admin css candidates: ' . implode(' | ', $debugParts) . ' | chosen: ' . htmlspecialchars($chosen, ENT_QUOTES) . ' -->\n';
+    echo "<!-- admin css candidates: " . implode(' | ', $debugParts) . " | chosen: " . htmlspecialchars($chosen, ENT_QUOTES) . " -->\n";
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)
     // NOTE: keep these conservative and avoid overriding admin layout variables (no body padding or zero margin-left on .admin-main)
