@@ -4,6 +4,8 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
 require_once __DIR__ . '/../includes/db.php';
+// include public helper functions for logging
+require_once __DIR__ . '/../../public/config/functions.php';
 
 $pageTitle = 'Chat Support';
 require_once __DIR__ . '/../includes/header.php';
@@ -16,9 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         // attempt to set assigned_admin_id where null
         $stmt = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND assigned_admin_id IS NULL');
         $ok = $stmt->execute([$_SESSION['user']['id'], $threadId]);
-        if ($stmt->rowCount() > 0) {
-            echo json_encode(['status'=>'ok','message'=>'Claimed']);
-        } else {
+    if ($stmt->rowCount() > 0) {
+      // audit log: admin claimed thread
+      logAction($pdo, $_SESSION['user']['id'], 'chat_claimed', ['thread_id' => $threadId]);
+      echo json_encode(['status'=>'ok','message'=>'Claimed']);
+    } else {
             // already claimed, return current assignment
             $q = $pdo->prepare('SELECT assigned_admin_id FROM chat_threads WHERE id = ? LIMIT 1'); $q->execute([$threadId]); $aid = $q->fetchColumn();
             echo json_encode(['status'=>'taken','assigned_admin_id'=>$aid]);
@@ -31,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $ins->execute([$threadId, $_SESSION['user']['id'], $_SESSION['user']['name'], $msg]);
         // update thread last_activity
         $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?'); $u->execute([$threadId]);
-        echo json_encode(['status'=>'ok']); exit;
+    // audit log: admin replied
+    logAction($pdo, $_SESSION['user']['id'], 'chat_reply', ['thread_id' => $threadId, 'message_preview' => mb_substr($msg,0,120)]);
+    echo json_encode(['status'=>'ok']); exit;
     }
     echo json_encode(['status'=>'error']); exit;
 }
