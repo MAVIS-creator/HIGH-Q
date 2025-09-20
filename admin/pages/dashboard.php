@@ -11,6 +11,17 @@ $stmt = $pdo->prepare("SELECT menu_slug FROM role_permissions WHERE role_id = ?"
 $stmt->execute([$userRoleId]);
 $permissions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+// Helper: safe count query wrapper
+function safeCount(PDO $pdo, string $sql)
+{
+    try {
+        $val = $pdo->query($sql)->fetchColumn();
+        return (int)$val;
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
 // Helper: check database connectivity
 function checkDatabase(PDO $pdo)
 {
@@ -79,13 +90,13 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
 
     <div class="dashboard-widgets">
         <?php if (in_array('users', $permissions)): ?>
-            <div class="widget-card red">
+            <a href="/admin/pages/users.php" class="widget-card red widget-link">
                 <i class='bx bxs-user-detail'></i>
                 <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(); ?></h3>
+                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM users") ?></h3>
                     <p>Total Users</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('settings', $permissions)): ?>
@@ -99,57 +110,64 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('courses', $permissions)): ?>
-            <div class="widget-card yellow">
+            <a href="/admin/pages/courses.php" class="widget-card yellow widget-link">
                 <i class='bx bxs-book'></i>
                 <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM courses")->fetchColumn(); ?></h3>
+                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM courses") ?></h3>
                     <p>Courses</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('students', $permissions)): ?>
-            <div class="widget-card red">
+            <a href="/admin/pages/students.php" class="widget-card red widget-link">
                 <i class='bx bxs-graduation'></i>
                 <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM students")->fetchColumn(); ?></h3>
+                    <?php
+                    // Some installs store students in `users` with a student role; try students table then fallback
+                    $studentsCount = safeCount($pdo, "SELECT COUNT(*) FROM students");
+                    if ($studentsCount === 0) {
+                        $studentsCount = safeCount($pdo, "SELECT COUNT(*) FROM users u LEFT JOIN roles r ON r.id=u.role_id WHERE r.slug='student' OR u.role_id IS NULL");
+                    }
+                    ?>
+                    <h3><?= $studentsCount ?></h3>
                     <p>Students</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('posts', $permissions)): ?>
-            <div class="widget-card yellow">
+            <a href="/admin/pages/posts.php" class="widget-card yellow widget-link">
                 <i class='bx bxs-news'></i>
                 <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn(); ?></h3>
+                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM posts") ?></h3>
                     <p>Posts</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('comments', $permissions)): ?>
-            <div class="widget-card black">
+            <a href="/admin/pages/comments.php" class="widget-card black widget-link">
                 <i class='bx bxs-comment-detail'></i>
                 <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM comments WHERE status='pending'")->fetchColumn(); ?></h3>
+                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM comments WHERE status='pending'") ?></h3>
                     <p>Pending Comments</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('payments', $permissions)): ?>
-            <div class="widget-card yellow">
+            <a href="/admin/pages/payments.php" class="widget-card yellow widget-link">
                 <i class='bx bxs-credit-card'></i>
                 <div>
-                    <h3><?= $pdo->query("SELECT COUNT(*) FROM payments WHERE status='pending'")->fetchColumn(); ?></h3>
+                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM payments WHERE status='pending'") ?></h3>
                     <p>Pending Payments</p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
 
         <?php if (in_array('settings', $permissions)): ?>
-            <div class="widget-card system-status">
+            <a href="/admin/pages/settings.php" class="widget-card system-status widget-link">
                 <i class='bx bxs-dashboard'></i>
                 <div>
                     <h3>System Status</h3>
@@ -160,7 +178,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
                     </ul>
                     <p><a href="/admin/pages/settings.php">Open settings</a></p>
                 </div>
-            </div>
+            </a>
         <?php endif; ?>
     </div>
 </div>
