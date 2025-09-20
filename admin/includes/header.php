@@ -93,22 +93,34 @@
 
 <body class="admin">
     <header class="admin-header">
-        <div class="header-left">
-            <i class='bx bx-menu' id="menuToggle"></i>
-            <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
-            <?php if (!empty($pageSubtitle)): ?>
-                <p class="header-subtitle"><?= htmlspecialchars($pageSubtitle) ?></p>
-            <?php endif; ?>
+        <div class="header-top" style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px;height:60px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <i class='bx bx-menu' id="menuToggle" style="font-size:1.6rem;color:var(--hq-yellow)"></i>
+                <div style="font-weight:700;color:var(--hq-black);">Admin Panel</div>
+            </div>
+            <div class="header-right">
+                <?php if (empty($_SESSION['user'])): ?>
+                    <a href="../signup.php" class="header-cta">Sign up</a>
+                <?php else: ?>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div class="header-avatar"><img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar"></div>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="header-right">
-            <?php if (empty($_SESSION['user'])): ?>
-                <a href="../signup.php" class="header-cta">Sign up</a>
-            <?php else: ?>
-                <div class="header-avatar">
-                    <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
+        <?php if (!empty($pageTitle)): ?>
+            <div class="admin-banner" style="background:var(--hq-yellow);padding:18px 28px;border-bottom:1px solid rgba(0,0,0,0.04);">
+                <div style="display:flex;align-items:center;gap:12px;max-width:1200px;margin:0 auto;">
+                    <div style="width:56px;height:56px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.25rem;">
+                        <i class='bx bx-award'></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:700;color:#111;font-size:1.25rem;"><?= htmlspecialchars($pageTitle) ?></div>
+                        <?php if (!empty($pageSubtitle)): ?><div style="color:#222;"><?= htmlspecialchars($pageSubtitle) ?></div><?php endif; ?>
+                    </div>
                 </div>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php endif; ?>
     </header>
     <?php
     // Render flash messages (if any)
