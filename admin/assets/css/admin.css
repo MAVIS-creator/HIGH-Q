@@ -528,8 +528,10 @@ h1 {
 
 .dashboard-widgets {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* try slightly smaller min width and denser packing to avoid sparse gaps */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 18px;
+  grid-auto-flow: dense; /* pack items to fill holes */
   align-items: start; /* ensure cards align to top of the row */
 }
 
@@ -592,6 +594,8 @@ h1 {
   justify-content: flex-start; /* keep content at top like other cards */
   min-height: 160px; /* match widget-card min height */
   gap: 8px;
+  /* make the status card visually larger by spanning 2 grid rows */
+  grid-row: span 2;
 }
 
 .system-status i { margin-bottom: 8px; }
