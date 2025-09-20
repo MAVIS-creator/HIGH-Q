@@ -92,25 +92,27 @@
 </head>
 
 <body>
-    <header class="admin-header">
-        <div class="header-left">
-            <!-- Hamburger Menu Button -->
-            <i class='bx bx-menu' id="menuToggle"></i>
-            <div>
-                <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
-                <?php if (!empty($pageSubtitle)): ?>
-                    <p class="header-subtitle"><?= htmlspecialchars($pageSubtitle) ?></p>
+    <header class="admin-header" style="background:transparent;padding:0 1rem 1rem 1rem;">
+        <div class="header-card" style="display:flex;align-items:center;gap:1rem;background:var(--hq-yellow);padding:18px;border-radius:8px;">
+            <div style="width:60px;height:60px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;color:#ffd;">
+                <i class='bx bx-award' style="font-size:1.3rem;color:#fff"></i>
+            </div>
+            <div style="flex:1;">
+                <div style="font-weight:700;color:#111;">HIGH Q SOLID ACADEMY</div>
+                <div style="font-size:0.9rem;color:#333;">Always Ahead of Others</div>
+            </div>
+            <div style="min-width:180px;text-align:right;">
+                <?php if (!empty($_SESSION['user'])): ?>
+                    <div style="display:inline-flex;align-items:center;gap:8px;">
+                        <div class="header-avatar" style="width:40px;height:40px;border-radius:999px;overflow:hidden;border:2px solid rgba(0,0,0,0.06);">
+                            <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                        <div style="font-size:0.85rem;color:#222;">Admin</div>
+                    </div>
+                <?php else: ?>
+                    <a href="../signup.php" class="header-cta">Sign up</a>
                 <?php endif; ?>
             </div>
-        </div>
-        <div class="header-right">
-            <?php if (empty($_SESSION['user'])): ?>
-                <a href="../signup.php" class="header-cta">Sign up</a>
-            <?php else: ?>
-                <div class="header-avatar">
-                    <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/avatar-placeholder.png'; ?>" alt="Avatar">
-                </div>
-            <?php endif; ?>
         </div>
     </header>
     <?php
