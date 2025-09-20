@@ -78,6 +78,10 @@ if (!empty($envUrl)) {
 
 // Run quick checks
 $dbStatus = checkDatabase($pdo);
+$dbServer = null;
+try {
+    $dbServer = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
+} catch (Exception $e) { $dbServer = null; }
 $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unknown'];
 $adminUrl = $siteUrl ? rtrim($siteUrl, '/') . '/admin/' : null;
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
@@ -90,7 +94,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
 
     <div class="dashboard-widgets">
         <?php if (in_array('users', $permissions)): ?>
-            <a href="/admin/pages/users.php" class="widget-card red widget-link">
+            <a href="index.php?pages=users" class="widget-card red widget-link">
                 <i class='bx bxs-user-detail'></i>
                 <div>
                     <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM users") ?></h3>
@@ -100,7 +104,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('settings', $permissions)): ?>
-            <a href="/admin/pages/settings.php" class="widget-card black widget-link">
+            <a href="index.php?pages=settings" class="widget-card black widget-link">
                 <i class='bx bxs-cog'></i>
                 <div>
                     <h3>Settings</h3>
@@ -110,7 +114,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('courses', $permissions)): ?>
-            <a href="/admin/pages/courses.php" class="widget-card yellow widget-link">
+            <a href="index.php?pages=courses" class="widget-card yellow widget-link">
                 <i class='bx bxs-book'></i>
                 <div>
                     <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM courses") ?></h3>
@@ -120,7 +124,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('students', $permissions)): ?>
-            <a href="/admin/pages/students.php" class="widget-card red widget-link">
+            <a href="index.php?pages=students" class="widget-card red widget-link">
                 <i class='bx bxs-graduation'></i>
                 <div>
                     <?php
@@ -137,7 +141,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('posts', $permissions)): ?>
-            <a href="/admin/pages/posts.php" class="widget-card yellow widget-link">
+            <a href="index.php?pages=posts" class="widget-card yellow widget-link">
                 <i class='bx bxs-news'></i>
                 <div>
                     <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM posts") ?></h3>
@@ -147,7 +151,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('comments', $permissions)): ?>
-            <a href="/admin/pages/comments.php" class="widget-card black widget-link">
+            <a href="index.php?pages=comments" class="widget-card black widget-link">
                 <i class='bx bxs-comment-detail'></i>
                 <div>
                     <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM comments WHERE status='pending'") ?></h3>
@@ -157,7 +161,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('payments', $permissions)): ?>
-            <a href="/admin/pages/payments.php" class="widget-card yellow widget-link">
+            <a href="index.php?pages=payments" class="widget-card yellow widget-link">
                 <i class='bx bxs-credit-card'></i>
                 <div>
                     <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM payments WHERE status='pending'") ?></h3>
@@ -167,7 +171,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
         <?php endif; ?>
 
         <?php if (in_array('settings', $permissions)): ?>
-            <a href="/admin/pages/settings.php" class="widget-card system-status widget-link">
+            <a href="index.php?pages=settings" class="widget-card system-status widget-link">
                 <i class='bx bxs-dashboard'></i>
                 <div>
                     <h3>System Status</h3>

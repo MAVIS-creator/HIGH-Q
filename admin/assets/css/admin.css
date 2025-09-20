@@ -195,14 +195,16 @@ body {
   /* in-flow footer (sticky-like): sits after page content. Use margins to sit beside
      the fixed sidebar so it doesn't overlap. When page content is short the
      `.admin-main` min-height keeps the footer at the bottom of the viewport. */
-  position: relative;
-  margin-left: var(--sidebar-width);
-  margin-right: var(--footer-right-offset);
+  position: fixed;
+  right: var(--footer-right-offset);
+  bottom: var(--footer-offset);
+  left: calc(var(--sidebar-width) + 12px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px;
   background: transparent;
+  z-index: 800;
   transition: margin-left .25s ease, margin-right .25s ease, width .25s ease;
 }
 
