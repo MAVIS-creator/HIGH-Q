@@ -2,8 +2,9 @@
 // public/payments_callback.php
 // Use public config includes
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 $cfg = require __DIR__ . '/config/payments.php';
-$secret = $cfg['paystack']['secret'] ?? '';
+$paymentsHelper = new \Src\Helpers\Payments($cfg);
 
 $reference = $_GET['reference'] ?? ($_POST['reference'] ?? null);
 if (!$reference) {
@@ -11,12 +12,11 @@ if (!$reference) {
 }
 
 // Verify transaction server-side
-$ch = curl_init('https://api.paystack.co/transaction/verify/' . urlencode($reference));
-curl_setopt($ch, CURLOPT_HTTPHEADER, [ 'Authorization: Bearer ' . $secret ]);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$res = curl_exec($ch);
-curl_close($ch);
-$data = json_decode($res, true);
+try {
+    $data = $paymentsHelper->verifyPaystackReference($reference);
+} catch (Exception $e) {
+    echo '<h3>Payment verification error</h3><p>' . htmlspecialchars($e->getMessage()) . '</p>'; exit;
+}
 
 if (!empty($data['status']) && $data['status'] && !empty($data['data'])) {
     $d = $data['data'];

@@ -4,13 +4,14 @@
 // Use public-side config and DB
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/functions.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 $cfg = require __DIR__ . '/../config/payments.php';
-$secret = $cfg['paystack']['webhook_secret'] ?? '';
+$paymentsHelper = new \Src\Helpers\Payments($cfg);
 
 $body = @file_get_contents('php://input');
 $signature = $_SERVER['HTTP_X_PAYSTACK_SIGNATURE'] ?? '';
 
-if (!$secret || !hash_equals(hash_hmac('sha512', $body, $secret), $signature)) {
+if (!$paymentsHelper->verifyWebhookSignature($body, $signature)) {
     http_response_code(400);
     error_log('Invalid webhook signature');
     exit('Invalid signature');

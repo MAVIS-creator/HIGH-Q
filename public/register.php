@@ -56,22 +56,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		if (empty($errors)) {
 			if ($method === 'paystack') {
-				// initialize Paystack
-				$secret = $cfg['paystack']['secret'] ?? '';
-				$payload = json_encode([ 'email' => $email, 'amount' => intval($amount * 100), 'reference' => $reference, 'callback_url' => (getenv('APP_URL') ?: '') . '/public/payments_callback.php' ]);
-				$ch = curl_init('https://api.paystack.co/transaction/initialize');
-				curl_setopt($ch, CURLOPT_HTTPHEADER, [ 'Authorization: Bearer ' . $secret, 'Content-Type: application/json' ]);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-				$res = curl_exec($ch);
-				curl_close($ch);
-				$data = json_decode($res, true);
-				if (!empty($data['status']) && $data['status'] && !empty($data['data']['authorization_url'])) {
-					header('Location: ' . $data['data']['authorization_url']);
-					exit;
-				} else {
+				try {
+					require_once __DIR__ . '/../vendor/autoload.php';
+					$cfgGlobal = require __DIR__ . '/../config/payments.php';
+					$paymentsHelper = new \Src\Helpers\Payments($cfgGlobal);
+					$init = $paymentsHelper->initializePaystack([
+						'email' => $email,
+						'amount' => intval($amount * 100),
+						'reference' => $reference,
+						'callback_url' => (getenv('APP_URL') ?: '') . '/public/payments_callback.php'
+					]);
+					if (!empty($init['status']) && $init['status'] && !empty($init['data']['authorization_url'])) {
+						header('Location: ' . $init['data']['authorization_url']); exit;
+					}
 					$errors[] = 'Failed to initialize payment gateway. Please try bank transfer.';
+				} catch (Exception $e) {
+					$errors[] = 'Payment gateway error: ' . $e->getMessage();
 				}
 			}
 
