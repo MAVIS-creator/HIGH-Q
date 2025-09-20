@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <title><?= isset($pageTitle) ? $pageTitle : 'Admin Panel'; ?> - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
@@ -107,23 +108,74 @@
     }
     ?>
     <main class="admin-main">
+        <style>
+        /* Minimal header dropdown styles (kept inline for reliability) */
+        .notif-dropdown{position:relative;display:inline-block}
+        .notif-panel{position:absolute;right:0;top:40px;width:360px;max-height:420px;overflow:auto;background:#fff;border:1px solid #e6e6e6;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none;z-index:1000}
+        .notif-item{padding:10px;border-bottom:1px solid #f1f1f1}
+        .notif-item:last-child{border-bottom:none}
+        .notif-empty{padding:20px;text-align:center;color:#666}
+        </style>
         <script>
-        // Poll admin threads API for unread counts and update header badge
         (function(){
-            async function fetchNotif(){
+            const btn = document.getElementById('notifBtn');
+            if(!btn) return;
+            // create dropdown container
+            const wrap = document.createElement('div'); wrap.className='notif-dropdown';
+            const panel = document.createElement('div'); panel.className='notif-panel'; panel.id='notifPanel';
+            wrap.appendChild(btn.cloneNode(true)); // clone the button into wrapper
+            wrap.appendChild(panel);
+            // replace original button with wrapper
+            const orig = btn.parentNode; orig.replaceChild(wrap, btn);
+
+            const badge = wrap.querySelector('#notifBadge');
+
+            async function loadNotifications(){
                 try{
-                    const res = await fetch('/HIGH-Q/admin/api/threads.php');
+                    const res = await fetch('/HIGH-Q/admin/api/notifications.php');
                     if(!res.ok) return;
                     const j = await res.json();
-                    const b = document.getElementById('notifBadge');
-                    if(!b) return;
-                    const n = j.unread_total || 0;
-                    if(n>0){ b.style.display='inline-block'; b.textContent = n; }
-                    else { b.style.display='none'; }
+                    const list = j.notifications || [];
+                    // update badge
+                    if(list.length>0){ badge.style.display='inline-block'; badge.textContent = list.length; }
+                    else { badge.style.display='none'; }
+                    // render
+                    panel.innerHTML = '';
+                    if(list.length===0){ panel.innerHTML = '<div class="notif-empty">No notifications</div>'; return; }
+                    list.forEach(n=>{
+                        const it = document.createElement('div'); it.className='notif-item';
+                        const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = n.title || '';
+                        const msg = document.createElement('div'); msg.style.fontSize='0.95rem'; msg.style.color='#333'; msg.textContent = n.message || '';
+                        const time = document.createElement('div'); time.style.fontSize='0.8rem'; time.style.color='#888'; time.textContent = n.created_at || '';
+                        it.appendChild(title); it.appendChild(msg); it.appendChild(time);
+                        it.addEventListener('click', ()=>{
+                            // navigate on click depending on type
+                            if(n.type==='chat') window.location = '/HIGH-Q/admin/index.php?pages=chat&thread_id=' + (n.meta.thread_id || n.id);
+                            else if(n.type==='comment') window.location = '/HIGH-Q/admin/index.php?pages=comments&highlight=' + (n.id);
+                            else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
+                            else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
+                        });
+                        panel.appendChild(it);
+                    });
                 }catch(e){ /* ignore */ }
             }
-            fetchNotif(); setInterval(fetchNotif,5000);
-            // Clicking the badge opens the chat page
-            document.addEventListener('click', function(e){ if(e.target && (e.target.id==='notifBtn' || e.target.closest('#notifBtn'))){ window.location='/HIGH-Q/admin/index.php?pages=chat'; } });
+
+            // toggle panel
+            wrap.querySelector('button').addEventListener('click', function(e){
+                e.stopPropagation(); panel.style.display = panel.style.display==='block' ? 'none' : 'block';
+                if(panel.style.display==='block') loadNotifications();
+            });
+
+            // close on outside click
+            document.addEventListener('click', function(e){ if(!wrap.contains(e.target)) panel.style.display='none'; });
+
+            // poll badge count in background
+            async function pollCount(){
+                try{
+                    const res = await fetch('/HIGH-Q/admin/api/notifications.php'); if(!res.ok) return;
+                    const j = await res.json(); const c = j.count || 0; if(c>0) badge.style.display='inline-block', badge.textContent=c; else badge.style.display='none';
+                }catch(e){}
+            }
+            pollCount(); setInterval(pollCount,5000);
         })();
         </script>
