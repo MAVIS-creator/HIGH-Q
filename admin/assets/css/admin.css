@@ -76,28 +76,32 @@ body{
 /* FOOTER */
 .admin-footer{
   position:fixed;
-  /* lift footer slightly off the ground */
-  bottom:12px;
-  /* start exactly at the sidebar edge so footer never overlaps it */
+  /* align footer to the top of the main area so it sits flush beside the sidebar */
+  top: calc(var(--header-height) + 12px);
+  /* remove bottom positioning (we want it near the header area) */
+  bottom: auto;
+  /* start at the sidebar edge so the footer never overlaps it */
   left: var(--sidebar-width);
-  /* pin to the right edge so the footer can expand fully */
-  right: 0;
+  /* leave a small gap on the right to avoid pixel overflow at zoom */
+  right: var(--footer-right-offset);
   display:flex;
   align-items:center;
   justify-content:center;
   padding:0 12px;
-  /* make sure sidebar (z-index:1000) stays above the footer */
+  /* ensure sidebar (z-index:1000) stays above the footer */
   z-index:700;
   background:transparent;
+  transition: left .25s ease, right .25s ease, top .18s ease, width .25s ease;
 }
 .admin-footer > .footer-card{
   box-sizing:border-box;
-  /* compute width exactly to prevent accidental overlap under the sidebar */
-  /* tighten width calc by subtracting small padding buffer to prevent overflow at non-integer zoom */
-  width: calc(100vw - var(--sidebar-width) - var(--footer-right-offset) - 8px);
+  /* let the footer container compute available width (parent left/right)
+     and fill it. This prevents overflow and adapts to sidebar collapse. */
+  width: 100%;
   max-width: none; /* allow expansion to the extreme right */
   margin: 0;
   box-shadow: 0 14px 36px rgba(11,37,64,0.14);
+  transition: width .25s ease, transform .18s ease;
 }
 
 /* MAIN CONTENT - reserve space for header and footer */
@@ -115,7 +119,9 @@ body{
 
 /* Collapsed sidebar state - toggle class on body */
 body.sidebar-collapsed .admin-sidebar{transform:translateX(-100%)}
+/* when sidebar is collapsed, allow header/footer to expand into the freed space */
 body.sidebar-collapsed .admin-header, body.sidebar-collapsed .admin-footer{left:0}
+body.sidebar-collapsed .admin-footer{right:var(--footer-right-offset)}
 body.sidebar-collapsed .admin-main{margin-left:0}
 
 /* Responsive adjustments */
@@ -531,6 +537,5 @@ body.sidebar-collapsed .roles-page { padding-left: 1rem; padding-right: 1rem; }
 /* small visual niceties for switches (works with native checkboxes) */
 input[type="checkbox"] { width:18px; height:18px; accent-color: #ffd600; cursor:pointer; }
 
-/* footer spacing fix */
-.admin-footer { left: 0; }
+/* footer spacing fix - removed forced left:0 to keep footer beside sidebar by default */
 
