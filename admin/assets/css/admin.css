@@ -130,6 +130,22 @@ h1{font-size:2rem;margin-bottom:1rem;color:var(--hq-black)}
   border-bottom: none;
 }
 
+/* Summary cards (users page) */
+.summary-cards{display:flex;gap:12px;align-items:stretch;margin-bottom:18px}
+.summary-cards .card{flex:1;display:flex;gap:14px;align-items:center;padding:18px}
+.summary-cards .card h3{margin:0;font-size:1.6rem}
+.summary-cards .card p{margin:0;color:#666}
+.summary-cards .icon{font-size:1.8rem;color:var(--hq-yellow);width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#fff3cf}
+
+/* Footer card style matching screenshot */
+.footer-card{background:linear-gradient(180deg,var(--hq-yellow-light),var(--hq-yellow));padding:18px;border-radius:8px;display:flex;align-items:center;gap:18px;max-width:1200px;margin:0 auto}
+.footer-icon{width:56px;height:56px;border-radius:50%;background:#0b2540;display:flex;align-items:center;justify-content:center;color:var(--hq-yellow);font-size:1.4rem}
+.footer-card-body{flex:1}
+.footer-title{font-weight:800;color:#0b2540}
+.footer-sub{color:#0b2540;opacity:0.9}
+.footer-desc{color:#0b2540;opacity:0.8;font-size:0.95rem;margin-top:6px}
+.footer-card-right{color:#0b2540;font-size:0.95rem}
+
 .role-badge {
   display: inline-block;
   padding: 0.3rem 0.6rem;
