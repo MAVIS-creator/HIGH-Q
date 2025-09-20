@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="100%" height="100%" fill="#ffd600"/>
-  <g transform="translate(80,120)">
-    <text x="0" y="160" font-family="Arial, Helvetica, sans-serif" font-size="220" font-weight="700" fill="#000">HQ</text>
-    <circle cx="340" cy="120" r="40" fill="#000"/>
-    <polygon points="340,105 348,122 366,125 352,137 355,155 340,145 325,155 328,137 314,125 332,122" fill="#ffd600"/>
-  </g>
-</svg>
