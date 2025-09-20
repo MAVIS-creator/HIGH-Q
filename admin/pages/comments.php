@@ -32,6 +32,22 @@ $perPage = 30; $page = max(1,(int)($_GET['page']??1)); $offset = ($page-1)*$perP
 $stmt = $pdo->prepare('SELECT * FROM comments ORDER BY created_at DESC LIMIT ? OFFSET ?'); $stmt->bindValue(1, $perPage, PDO::PARAM_INT); $stmt->bindValue(2, $offset, PDO::PARAM_INT); $stmt->execute();
 $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// If requested via AJAX fragment (polling), return only the tbody rows
+if (!empty($_GET['ajax'])) {
+  foreach($comments as $c){
+    echo "<tr>";
+    echo "<td>".htmlspecialchars($c['id'])."</td>";
+    echo "<td>".htmlspecialchars($c['post_id'])."</td>";
+    echo "<td>".htmlspecialchars(($c['name']?:'').' / '.($c['email']?:''))."</td>";
+    echo "<td>".htmlspecialchars(mb_strimwidth($c['content'],0,180,'...'))."</td>";
+    echo "<td>".htmlspecialchars($c['status'])."</td>";
+    echo "<td>".htmlspecialchars($c['created_at'])."</td>";
+    echo "<td>".($c['status']==='pending'?"<button class='btn' onclick='doAction(\'approve\',{$c['id']})'>Approve</button> <button class='btn' onclick='doAction(\'reject\',{$c['id']})'>Delete</button>":'&mdash;')."</td>";
+    echo "</tr>";
+  }
+  exit;
+}
+
 ?>
 <div class="roles-page">
   <div class="page-header"><h1><i class="bx bxs-comment-detail"></i> Comments</h1></div>
