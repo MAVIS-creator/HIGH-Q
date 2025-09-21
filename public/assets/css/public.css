@@ -380,3 +380,14 @@ nav a.active {
     width: 100%;
   }
 }
+.brand-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  background: var(--hq-yellow);
+  padding: 6px;
+  border-radius: 8px;
+  display: block;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px;
+}
