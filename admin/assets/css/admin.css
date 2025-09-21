@@ -491,6 +491,11 @@ h1 {
 }
 
 .footer-desc {
+  color: #0b2540;
+  opacity: 0.8;
+  font-size: 0.95rem;
+  margin-top: 6px;
+}
 
 .footer-card-right {
   color: #0b2540;
