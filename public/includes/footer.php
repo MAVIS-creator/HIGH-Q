@@ -1,33 +1,79 @@
-<?php
-// public/includes/footer.php
-?>
-	</main>
+<!-- ===== FOOTER START ===== -->
+<footer class="site-footer">
+  <div class="container footer-grid">
 
-	<footer class="site-footer">
-		<div class="site-footer-inner">
-			<div class="footer-col brand">
-				<div class="logo-small">HQ</div>
-				<p>Nigeria's premier tutorial academy committed to academic excellence and student success since 2018.</p>
-			</div>
-			<div class="footer-col links">
-				<h4>Quick Links</h4>
-				<ul>
-					<li><a href="/">Home</a></li>
-					<li><a href="programs.php">Programs</a></li>
-					<li><a href="admission.php">Admission</a></li>
-					<li><a href="contact.php">Contact</a></li>
-				</ul>
-			</div>
-			<div class="footer-col contact">
-				<h4>Contact Information</h4>
-				<p>📍 8 Pineapple Avenue, Aiyetoro Ikorodu North LCDA, Lagos</p>
-				<p>☎️ 0807 208 8794</p>
-				<p>✉️ info@hqacademy.com</p>
-			</div>
-		</div>
-		<div class="site-footer-bottom">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</div>
-	</footer>
+    <!-- Logo & About -->
+    <div class="footer-about">
+      <div class="logo">
+        <img src="images/hq-logo.png" alt="HQ Logo">
+        <div>
+          <h2>HIGH Q SOLID ACADEMY</h2>
+          <small>Limited</small>
+        </div>
+      </div>
+      <p>
+        Nigeria’s premier tutorial academy committed to academic excellence and 
+        student success since 2018.
+      </p>
+      <p class="motto">"<span>Always Ahead of Others</span>"</p>
+      <div class="socials">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
 
-</body>
+    <!-- Quick Links -->
+    <div class="footer-links">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Programs</a></li>
+        <li><a href="#">Admission</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
 
-</html>
+    <!-- Programs -->
+    <div class="footer-programs">
+      <h3>Our Programs</h3>
+      <ul>
+        <li><a href="#">JAMB/Post-UTME</a></li>
+        <li><a href="#">WAEC/NECO</a></li>
+        <li><a href="#">Digital Skills Training</a></li>
+        <li><a href="#">CBT Preparation</a></li>
+        <li><a href="#">Tutorial Classes</a></li>
+        <li><a href="#">Educational Consultancy</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-contact">
+      <h3>Contact Information</h3>
+      <div class="address-box">
+        <strong>📍 Tutorial Address</strong>
+        <p>8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA, Maya, Ikorodu</p>
+      </div>
+      <div class="address-box">
+        <strong>🏢 Area Office</strong>
+        <p>Shop 18, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
+      </div>
+      <p>📞 0807 208 8794</p>
+      <p>✉️ info@hqacademy.com</p>
+      <p>🕒 Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+    </div>
+
+  </div>
+
+  <!-- Bottom -->
+  <div class="footer-bottom">
+    <p>© 2024 High Q Solid Academy Limited. All rights reserved.</p>
+    <div class="links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+<!-- ===== FOOTER END ===== -->
+</main>
