@@ -381,7 +381,8 @@ h1 {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: 1rem
+  /* Add a small left offset so content doesn't sit flush against the fixed sidebar */
+  padding: 1rem 1rem 1rem calc(var(--sidebar-width) * 0.08 + 1rem);
 }
 
 .roles-table {
@@ -392,6 +393,9 @@ h1 {
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08)
 }
+
+/* Ensure the table has breathing room from the left edge of the content area */
+.roles-table { margin-left: 6px; margin-right: 12px; }
 
 .roles-table th {
   background: var(--hq-black);
