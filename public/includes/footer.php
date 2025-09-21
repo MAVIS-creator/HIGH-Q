@@ -68,10 +68,10 @@
 
   <!-- Bottom -->
   <div class="footer-bottom">
-    <p>© 2024 High Q Solid Academy Limited. All rights reserved.</p>
+    <p>© <?= date('Y') ?> High Q Solid Academy Limited. All rights reserved.</p>
     <div class="links">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
+      <a href="privacy.php">Privacy Policy</a>
+      <a href="terms.php">Terms of Service</a>
     </div>
   </div>
 </footer>
