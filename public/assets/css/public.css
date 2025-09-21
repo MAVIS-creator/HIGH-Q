@@ -243,7 +243,7 @@ nav a.active {
   gap: 40px;
   padding: 80px 20px;
   background: var(--hq-yellow);
-  border-radius: 12px;
+  /* border-radius: 12px; */
 }
 
 /* Left Side */
@@ -256,7 +256,7 @@ nav a.active {
   gap: 6px;
   background: var(--hq-yellow-light);
   padding: 6px 14px;
-  /* border-radius: 20px; */
+  border-radius: 20px;
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 20px;
