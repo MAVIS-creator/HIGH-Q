@@ -68,8 +68,17 @@ if (!empty($_GET['ajax'])) {
     echo "<td>".htmlspecialchars(mb_strimwidth($c['content'],0,180,'...'))."</td>";
     echo "<td>".htmlspecialchars($c['status'])."</td>";
     echo "<td>".htmlspecialchars($c['created_at'])."</td>";
-    echo "<td>".($c['status']==='pending'?"<button class='btn' onclick='doAction(\'approve\',{$c['id']})'>Approve</button> <button class='btn' onclick='doAction(\'reject\',{$c['id']})'>Delete</button> <button class='btn' onclick='openReply(\"{$c['id']}\", \"".htmlspecialchars(addslashes(mb_strimwidth($c['content'],0,120,'...')))."\")'>Reply</button>":"<button class='btn' onclick='openReply(\"{$c['id']}\", \"".htmlspecialchars(addslashes(mb_strimwidth($c['content'],0,120,'...')))."\")'>Reply</button>
-    )."</td>";
+
+    // build action buttons safely using json_encode for the preview string
+    $preview = json_encode(mb_strimwidth($c['content'],0,120,'...'));
+    $replyBtn = "<button class='btn' onclick='openReply({$c['id']}, {$preview})'>Reply</button>";
+    if ($c['status'] === 'pending') {
+      $actions = "<button class='btn' onclick=\"doAction('approve',{$c['id']})\">Approve</button> <button class='btn' onclick=\"doAction('reject',{$c['id']})\">Delete</button> " . $replyBtn;
+    } else {
+      $actions = $replyBtn;
+    }
+
+    echo "<td>" . $actions . "</td>";
     echo "</tr>";
 
     // print any replies for this comment
@@ -145,6 +154,57 @@ setInterval(function(){
   xhr.onload = function(){ if (xhr.status !== 200) return; document.querySelector('table.roles-table tbody').innerHTML = xhr.responseText; };
   xhr.send();
 }, 5000);
+</script>
+
+<!-- Reply modal -->
+<div id="replyModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" id="replyModalClose"><i class='bx bx-x'></i></span>
+    <h3>Reply to comment</h3>
+    <p id="replyPreview" class="muted"></p>
+    <textarea id="replyContent" rows="5" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;"></textarea>
+    <div style="margin-top:8px;text-align:right;">
+      <button id="replySend" class="btn-approve">Send Reply</button>
+    </div>
+  </div>
+</div>
+<div id="replyOverlay"></div>
+
+<style>
+.reply-row td { padding-left: 36px; background: #fbfbfb; }
+.modal { display:none; position:fixed; inset:0; z-index:1200; align-items:center; justify-content:center; }
+.modal.open { display:flex; }
+.modal .modal-content { background:#fff; padding:18px; border-radius:8px; width:720px; max-width:92%; box-shadow:0 6px 30px rgba(0,0,0,.12);} 
+#replyOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1199; }
+#replyOverlay.open { display:block; }
+</style>
+
+<script>
+var currentReplyParent = null;
+function openReply(id, preview) {
+  currentReplyParent = id;
+  document.getElementById('replyPreview').textContent = preview || '';
+  document.getElementById('replyContent').value = '';
+  document.getElementById('replyModal').classList.add('open');
+  document.getElementById('replyOverlay').classList.add('open');
+}
+document.getElementById('replyModalClose').addEventListener('click', function(){ document.getElementById('replyModal').classList.remove('open'); document.getElementById('replyOverlay').classList.remove('open'); });
+document.getElementById('replyOverlay').addEventListener('click', function(){ document.getElementById('replyModal').classList.remove('open'); document.getElementById('replyOverlay').classList.remove('open'); });
+
+document.getElementById('replySend').addEventListener('click', function(){
+  var content = document.getElementById('replyContent').value.trim();
+  if (!content) { alert('Please enter a reply'); return; }
+  var fd = new FormData();
+  fd.append('action','reply');
+  fd.append('id', currentReplyParent);
+  fd.append('content', content);
+  fd.append('_csrf', '<?= generateToken('comments_form') ?>');
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', location.href, true);
+  xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ alert('Error'); return; } if (r.status==='ok') { location.reload(); } else { alert('Failed to send reply'); } };
+  xhr.send(fd);
+});
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
