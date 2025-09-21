@@ -9,7 +9,7 @@ $pageTitle = 'Courses';
 $pageSubtitle = 'Manage courses and programs offered on the site';
 
 // Only Admin & Sub-Admin can manage courses
-requirePermission('roles'); // where 'roles' matches the menu slug
+requirePermission('courses'); // where 'roles' matches the menu slug
 
 $csrf    = generateToken();
 $errors  = [];
