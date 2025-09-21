@@ -384,7 +384,6 @@ nav a.active {
   width: 56px;
   height: 56px;
   object-fit: contain;
-  background: var(--hq-yellow);
   padding: 6px;
   border-radius: 8px;
   display: block;
