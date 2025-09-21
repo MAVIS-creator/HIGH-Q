@@ -97,7 +97,7 @@ nav a.active {
 /* Footer */
 .site-footer {
   background: var(--hq-black);
-  color: var(--hq-gray);
+  color: #fff;
   padding: 40px 20px 20px;
   font-size: 14px;
 }
@@ -139,7 +139,7 @@ nav a.active {
   margin-top: 10px;
 }
 .socials a {
-  color: var(--hq-gray);
+  color: #fff;
   margin-right: 10px;
   font-size: 16px;
   transition: color 0.3s;
