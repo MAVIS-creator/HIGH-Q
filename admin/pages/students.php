@@ -5,12 +5,7 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 
-// Only Admins & Sub-Admins
-if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
-    header("Location: index.php");
-    exit;
-}
-
+requirePermission('students'); // where 'students' matches the menu slug
 // Generate CSRF token
 $csrf = generateToken('students_form');
 
