@@ -5,7 +5,7 @@
     <!-- Logo & About -->
     <div class="footer-about">
       <div class="logo">
-        <img src="../assets/images/hq-logo.jpeg" alt="HQ Logo">
+        <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo">
         <div>
           <h2>HIGH Q SOLID ACADEMY</h2>
           <small>Limited</small>
