@@ -234,9 +234,18 @@ nav a.active {
   justify-content: space-between;
   align-items: flex-start;
   gap: 40px;
-  padding: 80px 20px;
+  padding: 80px 0;        /* remove side padding */
   background: var(--hq-yellow);
-  /* border-radius: 12px; */
+}
+
+.hero .container {
+  width: 100%;
+  max-width: 1200px;      /* keeps it neat on big screens */
+  margin: 0 auto;         /* center container */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
 }
 
 /* Left Side */
