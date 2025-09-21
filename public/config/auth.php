@@ -3,7 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function requirePermission(string $menuSlug) {
+function requirePermission($menuSlug) {
+    // Accept string or array
     global $pdo;
 
     $userId = $_SESSION['user']['id'] ?? null;
@@ -21,10 +22,16 @@ function requirePermission(string $menuSlug) {
         die("Access denied: no role assigned.");
     }
 
-    // Check permission
-    $stmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=?");
-    $stmt->execute([$roleId, $menuSlug]);
-    if (!$stmt->fetch()) {
-        die("Access denied: insufficient permission.");
+    if (is_array($menuSlug)) {
+        $placeholders = implode(',', array_fill(0, count($menuSlug), '?'));
+        $params = array_merge([$roleId], $menuSlug);
+        $sql = "SELECT 1 FROM role_permissions WHERE role_id = ? AND menu_slug IN ($placeholders) LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        if (!$stmt->fetch()) die("Access denied: insufficient permission.");
+    } else {
+        $stmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=?");
+        $stmt->execute([$roleId, $menuSlug]);
+        if (!$stmt->fetch()) die("Access denied: insufficient permission.");
     }
 }

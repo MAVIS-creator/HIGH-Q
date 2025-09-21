@@ -2,7 +2,7 @@
 require '../includes/auth.php';
 require '../includes/db.php';
 require '../includes/csrf.php';
-requirePermission(['roles']);
+requirePermission('roles');
 
 $csrf = generateToken();
 $id   = (int)($_GET['id'] ?? 0);
