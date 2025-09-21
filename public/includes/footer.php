@@ -39,12 +39,12 @@
     <div class="footer-programs">
       <h3>Our Programs</h3>
       <ul>
-        <li><a href="#">JAMB/Post-UTME</a></li>
-        <li><a href="#">WAEC/NECO</a></li>
-        <li><a href="#">Digital Skills Training</a></li>
-        <li><a href="#">CBT Preparation</a></li>
-        <li><a href="#">Tutorial Classes</a></li>
-        <li><a href="#">Educational Consultancy</a></li>
+        <li><a href="programs.php">JAMB/Post-UTME</a></li>
+        <li><a href="programs.php">WAEC/NECO</a></li>
+        <li><a href="programs.php">Digital Skills Training</a></li>
+        <li><a href="programs.php">CBT Preparation</a></li>
+        <li><a href="programs.php">Tutorial Classes</a></li>
+        <li><a href="programs.php">Educational Consultancy</a></li>
       </ul>
     </div>
 
