@@ -31,7 +31,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 </head>
 
 <body>
- <!-- ===== HEADER START ===== -->
 <header>
   <!-- Top bar -->
   <div class="top-bar">
@@ -68,6 +67,5 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     </div>
   </div>
 </header>
-<!-- ===== HEADER END ===== -->
 
     <main class="public-main">
