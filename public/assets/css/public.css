@@ -203,7 +203,7 @@ nav a.active {
   font-size: 12px;
 }
 .footer-bottom a {
-  color: #fff;
+  color: var(--hq-gray);
   text-decoration: none;
   margin-left: 15px;
   transition: color 0.3s;
