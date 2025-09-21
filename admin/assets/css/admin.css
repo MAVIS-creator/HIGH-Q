@@ -406,7 +406,7 @@ h1 {
 }
 
 .roles-table td {
-  padding: .4rem .6rem; /* reduced padding to shorten rows */
+  padding: .4rem .6rem; reduced padding to shorten rows
   border-bottom: 1px solid #eee;
 }
 
