@@ -57,7 +57,7 @@
       </div>
       <div class="address-box">
         <strong><i class="fas fa-building"></i> Area Office</strong>
-        <p>Shop 18, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
+        <p>Shop 3, 18, 19, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
       </div>
       <p><i class="fas fa-phone"></i> 0807 208 8794</p>
       <p><i class="fas fa-envelope"></i> info@hqacademy.com</p>
