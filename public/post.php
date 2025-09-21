@@ -34,13 +34,13 @@ require_once __DIR__ . '/includes/header.php';
     <div id="commentsList">
       <?php foreach($comments as $c): ?>
         <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="comment-header">
             <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
             <div>
               <button class="btn-reply small" data-id="<?= $c['id'] ?>">Reply</button>
             </div>
           </div>
-          <div style="margin-top:8px;"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+          <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
 
           <?php
             // fetch replies for this comment
@@ -49,9 +49,9 @@ require_once __DIR__ . '/includes/header.php';
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
             foreach($replies as $rep):
           ?>
-            <div class="comment reply" style="margin-left:22px;margin-top:10px;padding:8px;background:#fbfbfb;border-radius:6px;">
+            <div class="comment reply">
               <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
-              <div style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+              <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
             </div>
           <?php endforeach; ?>
 
