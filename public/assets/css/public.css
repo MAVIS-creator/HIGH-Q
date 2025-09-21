@@ -385,9 +385,8 @@ nav a.active {
   height: 40px;
   object-fit: contain;
   background: var(--hq-yellow);
-  padding: 6px;
   border-radius: 8px;
   display: block;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 5px rgba(0, 0, 0, 0.15);
   margin-bottom: 10px;
 }
