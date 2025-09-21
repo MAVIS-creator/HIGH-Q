@@ -66,7 +66,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         </nav>
 
         <!-- Button -->
-        <a href="#" class="btn">Register Now</a>
+        <a href="register.php" class="btn">Register Now</a>
       </div>
     </div>
   </header>
