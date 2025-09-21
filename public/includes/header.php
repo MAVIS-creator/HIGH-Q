@@ -55,7 +55,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
       <!-- Navigation -->
       <nav>
-        <a href="/HIGH-Q/" class="active">Home</a>
+        <a href="home.php" class="active">Home</a>
         <a href="about.php">About Us</a>
         <a href="programs.php">Programs</a>
         <a href="register.php">Admission</a>
