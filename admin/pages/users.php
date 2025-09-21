@@ -5,7 +5,12 @@ require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 
-requirePermission(['roles']);
+// Only Admins & Sub-Admins
+if (!in_array($_SESSION['user']['role_slug'], ['admin','sub-admin'])) {
+    header("Location: index.php");
+    exit;
+}
+
 // Generate CSRF token
 $csrf = generateToken('users_form');
 
