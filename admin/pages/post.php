@@ -9,7 +9,7 @@ $pageTitle = 'News & Blog';
 $pageSubtitle = 'Create and manage news articles and blog posts';
 
 // Only Admin / Sub-Admin / Moderator
-requirePermission('roles'); // where 'roles' matches the menu slug
+requirePermission('posts'); // where 'roles' matches the menu slug
 
 $csrf     = generateToken();
 $errors   = [];
