@@ -378,15 +378,18 @@ h1 {
 }
 
 .roles-table {
-  /* Fill the available content area but keep a fixed horizontal gap from the content edges */
+  /* Make the roles table visually wide but keep a gap from the fixed sidebar.
+     The table fills the `.roles-page` container and is capped with a comfortable
+     max-width for readability on very large screens. Center the table within
+     the page container so it appears wide without touching the sidebar. */
   width: 100%;
-  max-width: none; /* allow full expansion within the admin content area */
+  max-width: 1200px; /* expand up to this width on wide viewports */
+  margin: 0 auto; /* center in the roles-page container */
   border-collapse: collapse;
   background: #fff;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  margin: 0; /* table will use the roles-page margin to keep gap from sidebar */
 }
 
 /* Keep a small visual gap so the table panel never sits flush to the sidebar */
@@ -395,13 +398,13 @@ h1 {
 .roles-table th {
   background: var(--hq-black);
   color: #fff;
-  padding: .45rem .6rem; /* reduced vertical padding */
+  padding: .35rem .6rem; /* slightly more compact vertical padding */
   text-align: left;
-  font-weight: 600
+  font-weight: 600;
 }
 
 .roles-table td {
-  padding: .4rem .6rem;
+  padding: .35rem .6rem; /* match compact header spacing */
   border-bottom: 1px solid #eee;
 }
 
