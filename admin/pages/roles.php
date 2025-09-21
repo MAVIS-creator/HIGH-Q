@@ -125,6 +125,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   <title>Roles Management - HIGH Q SOLID ACADEMY</title>
   <link rel="stylesheet" href="./assets/css/admin.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <style>
+    /* Roles table responsive tweaks to avoid pushing into the sidebar */
+    .roles-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+    .roles-table th, .roles-table td { padding: 10px; vertical-align: middle; text-overflow: ellipsis; overflow: hidden; }
+    .roles-table th { background: #111; color: #fff; }
+    .role-badge { display:inline-block; margin:2px 4px; padding:4px 8px; background:#ffefc4; border-radius:14px; font-size:13px; max-width:12ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    td.menus-col { max-width: 28ch; }
+    td.actions-col { width:1%; white-space:nowrap; }
+    @media (max-width: 900px) { td.menus-col { max-width: 40ch; } .role-badge { max-width: 8rem; } }
+  </style>
 </head>
 <body>
 
@@ -174,7 +184,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <td><?= htmlspecialchars($r['name']) ?></td>
         <td><?= htmlspecialchars($r['slug']) ?></td>
         <td><?= $r['max_count'] ?? '∞' ?></td>
-        <td>
+  <td class="menus-col">
           <?php
             $roleMenus = $permissionsByRole[$r['id']] ?? [];
             foreach ($roleMenus as $menu) {
@@ -182,7 +192,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             }
           ?>
         </td>
-        <td>
+  <td class="actions-col">
           <button class="btn-editRole"
                   data-id="<?= $r['id'] ?>"
                   data-name="<?= htmlspecialchars($r['name']) ?>"
