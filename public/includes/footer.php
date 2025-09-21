@@ -52,16 +52,16 @@
     <div class="footer-contact">
       <h3>Contact Information</h3>
       <div class="address-box">
-        <strong>📍 Tutorial Address</strong>
+        <strong><i class="fas fa-map-marker-alt"></i> Tutorial Address</strong>
         <p>8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA, Maya, Ikorodu</p>
       </div>
       <div class="address-box">
-        <strong>🏢 Area Office</strong>
+        <strong><i class="fas fa-building"></i> Area Office</strong>
         <p>Shop 18, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
       </div>
-  <p>📞 0807 208 8794</p>
-  <p>✉️ info@hqacademy.com</p>
-      <p>🕒 Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+      <p><i class="fas fa-phone"></i> 0807 208 8794</p>
+      <p><i class="fas fa-envelope"></i> info@hqacademy.com</p>
+      <p><i class="fas fa-clock"></i> Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
     </div>
 
   </div>
