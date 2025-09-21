@@ -27,11 +27,11 @@
     <div class="footer-links">
       <h3>Quick Links</h3>
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Programs</a></li>
-        <li><a href="#">Admission</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="/HIGH-Q/">Home</a></li>
+        <li><a href="about.php">About Us</a></li>
+        <li><a href="programs.php">Programs</a></li>
+        <li><a href="register.php">Admission</a></li>
+        <li><a href="about.php#contact">Contact</a></li>
       </ul>
     </div>
 
@@ -59,8 +59,8 @@
         <strong>🏢 Area Office</strong>
         <p>Shop 18, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
       </div>
-      <p>📞 0807 208 8794</p>
-      <p>✉️ info@hqacademy.com</p>
+  <p>📞 0807 208 8794</p>
+  <p>✉️ info@hqacademy.com</p>
       <p>🕒 Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
     </div>
 

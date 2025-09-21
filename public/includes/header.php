@@ -35,7 +35,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <!-- Top bar -->
   <div class="top-bar">
     <div class="container">
-      <span>📞 0807 208 8794</span>
+      <span>📞 <?= htmlentities($contact_phone) ?></span>
       <span>✉️ info@hqacademy.com</span>
       <span class="motto">"Always Ahead of Others"</span>
     </div>
@@ -55,11 +55,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
       <!-- Navigation -->
       <nav>
-        <a href="#" class="active">Home</a>
-        <a href="#">About Us</a>
-        <a href="#">Programs</a>
-        <a href="#">Admission</a>
-        <a href="#">Contact</a>
+        <a href="/HIGH-Q/" class="active">Home</a>
+        <a href="about.php">About Us</a>
+        <a href="programs.php">Programs</a>
+        <a href="register.php">Admission</a>
+        <a href="about.php#contact">Contact</a>
       </nav>
 
       <!-- Button -->
