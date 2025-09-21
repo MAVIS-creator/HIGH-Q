@@ -4,9 +4,16 @@
 
 /* Color Variables */
 :root {
-  --primary-red: #d62828;
-  --accent-yellow: #fcbf49;
-  --dark-black: #000;
+  /* Shared root colors to match admin theme */
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  /* legacy aliases used earlier in this file */
+  --primary-red: var(--hq-red);
+  --accent-yellow: var(--hq-yellow);
+  --dark-black: var(--hq-black);
   --pure-white: #fff;
   --success-green: #28a745;
   --error-red: #842029;
