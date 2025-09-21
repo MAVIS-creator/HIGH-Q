@@ -1,5 +1,4 @@
 <?php
-// public/home.php - homepage content
 ?>
 
 <section class="hero">
