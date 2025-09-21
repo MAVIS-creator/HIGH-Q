@@ -381,8 +381,8 @@ h1 {
   width: 100%;
   max-width: none;
   margin: 0;
-  /* Add a small left offset so content doesn't sit flush against the fixed sidebar */
-  padding: 1rem 1rem 1rem calc(var(--sidebar-width) * 0.08 + 1rem);
+  /* Increase left offset so roles page content sits comfortably away from the sidebar */
+  padding: 1.25rem 1.25rem 1.25rem calc(var(--sidebar-width) * 0.18 + 1.25rem);
 }
 
 .roles-table {
@@ -395,7 +395,7 @@ h1 {
 }
 
 /* Ensure the table has breathing room from the left edge of the content area */
-.roles-table { margin-left: 6px; margin-right: 12px; }
+.roles-table { margin-left: 18px; margin-right: 18px; }
 
 .roles-table th {
   background: var(--hq-black);
