@@ -8,7 +8,7 @@ $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
 
 // Only Admin & Sub-Admin
-requirePermission('roles'); // where 'roles' matches the menu slug
+requirePermission('tutors'); // where 'roles' matches the menu slug
 
 $csrf     = generateToken();
 $errors   = [];
