@@ -14,16 +14,27 @@
 </head>
 
 <body>
-    <header class="site-header" style="background:#fff;border-bottom:1px solid #eee;padding:0.6rem 1rem;">
-        <div style="display:flex;align-items:center;gap:1rem;">
-            <a href="/" class="site-logo" style="font-weight:700;color:#d62828;text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
-                <img src="/HIGH-Q/admin/assets/img/hq%20logo.jpeg" alt="HIGH Q" style="height:36px;object-fit:cover;border-radius:6px;">
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="contact-left">📞 0807 208 8794 &nbsp; | &nbsp; ✉️ info@hqacademy.com</div>
+            <div class="tagline">"Always Ahead of Others"</div>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="/" class="site-logo">
+                <img src="/HIGH-Q/admin/assets/img/hq%20logo.jpeg" alt="HIGH Q" />
+                <span class="site-name">HIGH Q SOLID ACADEMY</span>
             </a>
-            <nav style="margin-left:1rem;">
-                <a href="/" style="margin-right:0.6rem;color:#333;text-decoration:none;">Home</a>
-                <a href="programs.php" style="margin-right:0.6rem;color:#333;text-decoration:none;">Programs</a>
-                <a href="tutors.php" style="color:#333;text-decoration:none;">Tutors</a>
+
+            <nav class="main-nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="programs.php" class="nav-link">About Us</a>
+                <a href="programs.php" class="nav-link">Programs</a>
+                <a href="register.php" class="nav-link cta">Register Now</a>
             </nav>
         </div>
     </header>
+
     <main class="public-main">
