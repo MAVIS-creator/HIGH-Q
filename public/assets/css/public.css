@@ -169,7 +169,7 @@ nav a.active {
 }
 .footer-links a,
 .footer-programs a {
-  color: var(--hq-gray);
+  color: #fff;
   text-decoration: none;
   transition: color 0.3s;
 }
