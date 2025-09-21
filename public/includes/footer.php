@@ -31,7 +31,7 @@
         <li><a href="about.php">About Us</a></li>
         <li><a href="programs.php">Programs</a></li>
         <li><a href="register.php">Admission</a></li>
-        <li><a href="abcontact">Contact</a></li>
+        <li><a href="contact.php">Contact</a></li>
       </ul>
     </div>
 

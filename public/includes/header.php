@@ -59,7 +59,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         <a href="about.php">About Us</a>
         <a href="programs.php">Programs</a>
         <a href="register.php">Admission</a>
-        <a href="about.php#contact">Contact</a>
+        <a href="contact">Contact</a>
       </nav>
 
       <!-- Button -->
