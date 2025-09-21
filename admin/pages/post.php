@@ -275,6 +275,28 @@ const overlay     = document.getElementById('modalOverlay');
 const editModal   = document.getElementById('editPostModal');
 const editContent = document.getElementById('editPostModalContent');
 
+// Add Article modal wiring
+const postModal = document.getElementById('postModal');
+const newPostBtn = document.getElementById('newPostBtn');
+const postForm = document.getElementById('postForm');
+const postModalClose = document.getElementById('postModalClose');
+
+function openPostModal() {
+    overlay.classList.add('open');
+    postModal.classList.add('open');
+    // Ensure form posts to create action
+    postForm.action = 'index.php?pages=posts&action=create';
+}
+
+function closePostModal() {
+    overlay.classList.remove('open');
+    postModal.classList.remove('open');
+}
+
+if (newPostBtn) newPostBtn.addEventListener('click', openPostModal);
+if (postModalClose) postModalClose.addEventListener('click', closePostModal);
+overlay.addEventListener('click', () => { closePostModal(); closeEditModal(); });
+
 // Open modal and load form
 document.querySelectorAll('.edit-link').forEach(link => {
   link.addEventListener('click', e => {
