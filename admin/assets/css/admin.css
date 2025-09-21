@@ -377,16 +377,17 @@ h1 {
   font-weight: 500
 }
 
-.roles-page {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  /* Add a small left offset so content doesn't sit flush against the fixed sidebar */
-  padding: 1rem 1rem 1rem calc(var(--sidebar-width) * 0.08 + 1rem);
-}
 .roles-table {
-  width: 100%;
-  max-width: 1050px; /* increase table width */
+  /* Make the table fill most of the content area but leave a 28px gap on each side */
+  width: calc(100% - 56px);
+  max-width: 1200px; /* allow it to expand on wide screens */
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin: 0 auto; /* center table within roles-page */
+}
   border-collapse: collapse;
   background: #fff;
   border-radius: var(--radius);
@@ -412,6 +413,11 @@ h1 {
 
 .roles-table tr:last-child td {
   border-bottom: none;
+}
+
+@media (max-width: 1100px) {
+  /* On narrower screens make table occupy the full content width but keep small side padding */
+  .roles-table { width: calc(100% - 32px); max-width: 100%; }
 }
 
 /* Summary cards (users page) */
@@ -491,11 +497,6 @@ h1 {
 }
 
 .footer-desc {
-  color: #0b2540;
-  opacity: 0.8;
-  font-size: 0.95rem;
-  margin-top: 6px
-}
 
 .footer-card-right {
   color: #0b2540;
