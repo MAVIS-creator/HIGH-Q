@@ -379,14 +379,14 @@ h1 {
 
 .roles-table {
   /* Fill the available content area but keep a fixed horizontal gap from the content edges */
-  width: calc(100% - 48px); /* leave 24px on each side */
+  width: 100%;
   max-width: none; /* allow full expansion within the admin content area */
   border-collapse: collapse;
   background: #fff;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  margin: 0 24px; /* ensures a visible gap from the left (sidebar) and right edges */
+  margin: 0; /* table will use the roles-page margin to keep gap from sidebar */
 }
 
 /* Keep a small visual gap so the table panel never sits flush to the sidebar */
@@ -982,8 +982,8 @@ h1 {
 }
 
 .roles-page {
-  max-width: var(--max-width);
-  margin: 0 auto;
+  max-width: none; /* allow full-width content area */
+  margin: 0 24px;   /* keep a 24px gap from left (sidebar) and right edge */
   padding: 1rem 1.25rem 3rem;
 }
 
