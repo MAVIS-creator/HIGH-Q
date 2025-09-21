@@ -164,7 +164,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
-</div>
+
 
   <table class="roles-table">
     <thead>
