@@ -26,7 +26,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="assets/css/public.css">
+    <link rel="stylesheet" href="../assets/css/public.css">
     <link rel="shortcut icon" href="../assets/images/favicon.ico" type="image/x-icon">
 </head>
 
