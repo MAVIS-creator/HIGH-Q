@@ -390,10 +390,28 @@ nav a.active {
   box-shadow: 0 6px 5px rgba(0, 0, 0, 0.15);
   margin-bottom: 10px;
 }
-/* CEO Section */
 .ceo-hero {
   padding: 80px 0;
   background: var(--hq-white);
+}
+
+.ceo-heading {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ceo-heading h2 {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.ceo-heading .highlight {
+  color: var(--hq-red);
+}
+
+.ceo-heading p {
+  color: var(--hq-gray);
+  margin-top: 10px;
 }
 
 .ceo-grid {
@@ -401,6 +419,7 @@ nav a.active {
   grid-template-columns: 1fr 2fr;
   gap: 40px;
   align-items: start;
+  margin-bottom: 40px;
 }
 
 .ceo-card {
@@ -431,23 +450,50 @@ nav a.active {
   color: var(--hq-gray-dark);
 }
 
-.ceo-content h2 {
-  font-size: 28px;
+.ceo-content h3 {
+  font-size: 22px;
   font-weight: bold;
+  margin-bottom: 15px;
+  color: var(--hq-black);
+}
+
+.ceo-content p {
+  color: var(--hq-gray-dark);
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.ceo-quote {
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  max-width: 800px;
+  text-align: center;
+}
+
+.ceo-quote i {
+  color: var(--hq-yellow);
+  font-size: 22px;
   margin-bottom: 10px;
 }
 
-.ceo-content .highlight {
-  color: var(--hq-red);
+.ceo-quote p {
+  font-style: italic;
+  color: var(--hq-black);
 }
 
-.ceo-content .subtitle {
-  color: var(--hq-gray);
-  margin-bottom: 20px;
+.ceo-quote span {
+  display: block;
+  margin-top: 8px;
+  font-weight: bold;
+  color: var(--hq-red);
 }
 
 .ceo-stats {
   display: flex;
+  justify-content: center;
   gap: 20px;
   margin: 30px 0;
 }
@@ -459,6 +505,7 @@ nav a.active {
   border-radius: 8px;
   background: var(--hq-white);
   border: 1px solid #ddd;
+  max-width: 200px;
 }
 
 .stat i {
@@ -494,7 +541,11 @@ nav a.active {
 }
 
 .stat.gray {
-  background: var(--hq-gray-light, #f3f3f3);
+  background: #f3f3f3;
+}
+
+.ceo-btn {
+  text-align: center;
 }
 
 .btn-dark {
@@ -509,35 +560,4 @@ nav a.active {
 
 .btn-dark:hover {
   background: var(--hq-red);
-}
-
-/* Quote */
-.ceo-quote {
-  margin-top: 40px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background: #fff;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-.ceo-quote i {
-  color: var(--hq-yellow);
-  font-size: 22px;
-  margin-bottom: 10px;
-}
-
-.ceo-quote p {
-  font-style: italic;
-  color: var(--hq-black);
-}
-
-.ceo-quote span {
-  display: block;
-  margin-top: 8px;
-  font-weight: bold;
-  color: var(--hq-red);
 }
