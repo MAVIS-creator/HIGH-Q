@@ -46,7 +46,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <div class="container">
       <!-- Logo + Name -->
       <div class="logo">
-        <img src="images/hq-logo.png" alt="HQ Logo">
+        <img src="../assets/img/" alt="HQ Logo">
         <div>
           <h1>HIGH Q SOLID ACADEMY</h1>
           <small>Limited</small>
