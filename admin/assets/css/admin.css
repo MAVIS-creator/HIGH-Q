@@ -384,30 +384,31 @@ h1 {
   /* Add a small left offset so content doesn't sit flush against the fixed sidebar */
   padding: 1rem 1rem 1rem calc(var(--sidebar-width) * 0.08 + 1rem);
 }
-
 .roles-table {
   width: 100%;
+  max-width: 1050px; /* increase table width */
   border-collapse: collapse;
   background: #fff;
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08)
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin: 0 auto; /* center table within roles-page */
 }
 
-/* Ensure the table has breathing room from the left edge of the content area */
-.roles-table { margin-left: 6px; margin-right: 12px; }
+/* Keep a small visual gap so the table panel never sits flush to the sidebar */
+.roles-page .roles-table { transform: translateX(0); }
 
 .roles-table th {
   background: var(--hq-black);
   color: #fff;
-  padding: .75rem;
+  padding: .45rem .6rem; /* reduced vertical padding */
   text-align: left;
   font-weight: 600
 }
 
 .roles-table td {
-  padding: .75rem;
-  border-bottom: 1px solid #eee
+  padding: .4rem .6rem; /* reduced padding to shorten rows */
+  border-bottom: 1px solid #eee;
 }
 
 .roles-table tr:last-child td {
