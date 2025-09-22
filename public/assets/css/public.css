@@ -246,7 +246,7 @@ nav a.active {
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 420px;
   gap: 3rem;
   align-items: center;
 }
