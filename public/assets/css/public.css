@@ -244,6 +244,14 @@ nav a.active {
   padding: 4rem 2rem;
 }
 
+/* Keep hero content side-by-side; left flexible, right fixed */
+.hero > .container {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 3rem;
+  align-items: center;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 420px;
