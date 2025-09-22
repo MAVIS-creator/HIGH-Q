@@ -1,11 +1,11 @@
 :root {
   --hq-yellow:#f5b904;
-  --hq-yellow-light: #ffe566;
+  --hq-yellow-light:#ffe566;
   --hq-red:#ed2c2c;
-  --hq-black: #171716;
-  --hq-gray: #818181;
-  --hq-white: #f8f5ed;
-  --hq-gray-dark: #171717;
+  --hq-black:#171716;
+  --hq-gray:#818181;
+  --hq-white:#f8f5ed;
+  --hq-gray-dark:#171717;
 }
 /* General */
 body {
@@ -227,116 +227,142 @@ nav a.active {
     gap: 10px;
   }
 }
-/* Hero Section */
+/* HERO SECTION */
 .hero {
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-  padding: 48px 24px;
-  background: linear-gradient(180deg, #f6b72d 0%, #e7a800 100%);
-  color: #111;
+  background: var(--hq-yellow);
+  padding: 4rem 2rem;
+  font-family: "Poppins", sans-serif;
 }
 
 .hero .container {
-  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
   align-items: center;
-  gap: 2rem;
 }
 
-.hero-left {
-  flex: 1;
-  max-width: 620px;
-}
-
+/* LEFT SIDE */
 .hero-badge {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(0,0,0,0.1);
+  padding: .4rem 1rem;
   border-radius: 20px;
-  font-weight: 600;
-  margin-bottom: 12px;
+  font-size: .9rem;
+  font-weight: 500;
 }
 
-.hero h1 {
-  font-size: 48px;
-  margin: 0 0 12px 0;
-  line-height: 1;
+.hero-left h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 1rem 0;
+  color: var(--hq-black);
 }
 
-.hero h1 .accent {
-  color: #d62828;
+.hero-left h1 .accent {
+  color: var(--hq-red);
 }
 
-.hero .lead {
-  max-width: 520px;
-  color: rgba(0, 0, 0, 0.75);
+.hero-left .lead {
+  font-size: 1rem;
+  color: var(--hq-black);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
+/* BUTTONS */
 .hero-ctas {
-  margin-top: 18px;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .btn-primary {
-  background: #d62828;
+  background: var(--hq-red);
   color: #fff;
-  padding: 10px 18px;
+  padding: .8rem 1.5rem;
   border-radius: 8px;
-  border: none;
-  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
 }
+
+.btn-primary:hover { background: #c81f1f; }
 
 .btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  padding: 10px 18px;
+  background: #fff;
+  border: 1px solid var(--hq-black);
+  padding: .8rem 1.5rem;
   border-radius: 8px;
-  margin-left: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--hq-black);
+  transition: all 0.3s;
 }
 
-/* Stats */
+.btn-ghost:hover { background: var(--hq-yellow-light); }
+
+/* STATS */
 .hero-stats {
   display: flex;
-  gap: 36px;
-  margin-top: 36px;
-  color: #111;
-}
-.hero-stats div { text-align: center; }
-.hero-stats strong { font-size: 22px; display:block; }
-
-.hero-right {
-  width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  gap: 2rem;
+  font-size: .95rem;
+  margin-top: 1.5rem;
 }
 
+.hero-stats strong {
+  font-size: 1.5rem;
+  display: block;
+  color: var(--hq-black);
+}
+
+/* RIGHT SIDE FEATURE CARDS */
 .feature-card {
-  background: #fff;
-  padding: 16px;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
+  gap: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .feature-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: linear-gradient(45deg, #ffd166, #ffb703);
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  color: #fff;
+  font-size: 1.4rem;
 }
 
-.feature-body h5 { margin: 0 0 6px 0; }
-.feature-body p { margin: 0; color: #666; font-size: 0.95rem; }
+/* ICON COLORS */
+.feature-icon.yellow {
+  background: linear-gradient(135deg, var(--hq-yellow), var(--hq-yellow-light));
+}
+
+.feature-icon.red {
+  background: linear-gradient(135deg, #ff5f5f, var(--hq-red));
+}
+
+.feature-body h5 {
+  font-size: 1.1rem;
+  margin-bottom: .3rem;
+  font-weight: 600;
+  color: var(--hq-black);
+}
+
+.feature-body p {
+  font-size: .9rem;
+  color: var(--hq-gray-dark);
+  line-height: 1.5;
+}
 
 /* Responsive */
 @media (max-width: 900px) {
