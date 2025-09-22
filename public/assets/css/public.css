@@ -598,6 +598,7 @@ nav a.active {
 
 .stat.gray {
   background: #f3f3f3;
+  border-color: var();
 }
 
 .ceo-btn {
