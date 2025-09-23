@@ -1161,6 +1161,25 @@ nav a.active::after { background: var(--hq-yellow); }
 .next-stat strong { margin:0; font-size:16px; color:var(--hq-black); }
 .next-stat span { color:var(--hq-gray); font-size:13px; line-height:1.45; }
 
+/* Contact page specific aside cards (larger, padded, icon left) */
+.contact-layout .register-sidebar { gap:18px; }
+.contact-layout .sidebar-card { padding:20px 22px; border-radius:10px; min-height:100px; }
+.contact-layout .sidebar-card h4 { margin:0 0 8px; }
+.contact-layout .sidebar-card::before {
+  content: '';
+  display: inline-block;
+  width:44px; height:44px; border-radius:8px; margin-right:12px; vertical-align:top; background:var(--hq-yellow);
+  background-position:center; background-repeat:no-repeat; background-size:22px 22px;
+}
+.contact-layout .sidebar-card[data-icon="tutor"]::before { background-image: url('../images/icons/book-open.svg'); }
+.contact-layout .sidebar-card[data-icon="office"]::before { background-image: url('../images/icons/target.svg'); }
+.contact-layout .sidebar-card[data-icon="contact"]::before { background-image: url('../images/icons/phone.svg'); }
+.contact-layout .sidebar-card p { color:var(--hq-gray); margin:0; }
+
+@media (min-width: 1100px) {
+  .contact-layout .register-sidebar { width:380px; }
+}
+
 .achievement {
   padding: 12px 8px;
 }
