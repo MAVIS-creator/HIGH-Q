@@ -88,29 +88,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Render a simple form when GET or on errors
 $csrf = generateToken('signup_form');
 ?>
-<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Register & Pay</title></head>
-<body>
-<?php if (!empty($errors)): ?>
-	<?php foreach($errors as $e): ?>
-		<div style="color:red"><?php echo htmlspecialchars($e) ?></div>
-	<?php endforeach; ?>
-<?php endif; ?>
-<?php if ($success): ?>
-	<div style="color:green"><?php echo htmlspecialchars($success) ?></div>
-<?php endif; ?>
-<form method="post">
-	<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-	<label>Name</label><input name="name" required>
-	<label>Email</label><input name="email" type="email" required>
-	<label>Password</label><input name="password" type="password" required>
-	<label>Amount</label><input name="amount" type="number" step="0.01" value="1000" required>
-	<label>Method</label>
-	<select name="method"><option value="bank">Bank Transfer</option><option value="paystack">Card (Paystack)</option></select>
-	<button type="submit">Register & Pay</button>
-	<p>Already registered? <a href="login.php">Login</a></p>
-</form>
-</body>
-</html>
+<?php include __DIR__ . '/includes/header.php'; ?>
+
+<!-- Hero (reuse about-hero styling used across the site) -->
+<section class="about-hero">
+	<div class="about-hero-overlay"></div>
+	<div class="container about-hero-inner">
+		<h1>Register with HIGH Q Academy</h1>
+		<p class="lead">Start your journey towards academic excellence. Create an account and secure your spot in our programs.</p>
+	</div>
+</section>
+
+<section class="programs-content">
+	<div class="container">
+		<?php if (!empty($errors)): ?>
+			<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
+				<?php foreach($errors as $e): ?>
+					<div><?php echo htmlspecialchars($e) ?></div>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+
+		<?php if ($success): ?>
+			<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
+				<?php echo htmlspecialchars($success) ?>
+			</div>
+		<?php endif; ?>
+
+		<div class="register-grid" style="max-width:720px;margin:0 auto;padding:24px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(11,37,64,0.06);">
+			<form method="post">
+				<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+				<div style="display:flex;gap:12px;margin-bottom:12px;">
+					<input name="name" required placeholder="Full name" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;">
+					<input name="phone" placeholder="Phone (optional)" style="width:180px;padding:10px;border:1px solid #ddd;border-radius:6px;">
+				</div>
+				<div style="display:flex;gap:12px;margin-bottom:12px;">
+					<input name="email" type="email" required placeholder="Email address" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;">
+					<input name="password" type="password" required placeholder="Password" style="width:220px;padding:10px;border:1px solid #ddd;border-radius:6px;">
+				</div>
+				<div style="display:flex;gap:12px;margin-bottom:12px;align-items:center;">
+					<input name="amount" type="number" step="0.01" value="1000" required style="width:160px;padding:10px;border:1px solid #ddd;border-radius:6px;">
+					<select name="method" style="padding:10px;border:1px solid #ddd;border-radius:6px;">
+						<option value="bank">Bank Transfer</option>
+						<option value="paystack">Card (Paystack)</option>
+					</select>
+					<button type="submit" class="btn-primary" style="margin-left:auto;">Register & Pay</button>
+				</div>
+				<p style="margin-top:8px">Already registered? <a href="login.php">Login</a></p>
+			</form>
+		</div>
+	</div>
+</section>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
 
