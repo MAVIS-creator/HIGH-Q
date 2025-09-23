@@ -98,48 +98,6 @@ $csrf = generateToken('signup_form');
 		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
 	</div>
 </section>
-
-
-
-			<div class="register-layout">
-				<div class="register-main">
-					<div class="card">
-						<form method="post">
-							<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-							<div class="form-row">
-								<input name="name" required placeholder="Full name">
-							</div>
-							<div class="form-row">
-								<input name="phone" placeholder="Phone (optional)">
-							</div>
-							<div class="form-row">
-								<input name="email" type="email" required placeholder="Email address">
-							</div>
-							<div class="form-row">
-								<input name="password" type="password" required placeholder="Password">
-							</div>
-							<div class="form-row form-inline">
-								<input name="amount" type="number" step="0.01" value="1000" required>
-								<select name="method">
-									<option value="bank">Bank Transfer</option>
-									<option value="paystack">Card (Paystack)</option>
-								</select>
-								<button type="submit" class="btn-primary">Register & Pay</button>
-							</div>
-							<p class="muted" style="margin-top:10px">Already registered? <a href="login.php">Login</a></p>
-						</form>
-					</div>
-				</div>
-
-					<?php
-						// load site settings (structured table) for contact and bank details
-						$siteSettings = [];
-						try {
-							$s = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
-							$siteSettings = $s->fetch(PDO::FETCH_ASSOC) ?: [];
-						} catch (Throwable $e) { $siteSettings = []; }
-					?>
-
 					<aside class="register-sidebar">
 					<div class="sidebar-card admission-box">
 						<h4>Admission Requirements</h4>
