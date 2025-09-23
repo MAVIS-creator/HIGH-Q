@@ -10,10 +10,26 @@
   </div>
 </section>
 
-<section class="about-content">
-  <div class="container">
-    <h2>Building Excellence in Education Through Dedication and Innovation</h2>
-    <p>High Q Solid Academy is committed to delivering a supportive and results-driven learning environment. Our tutors combine subject mastery with modern teaching techniques to help each student reach their potential.</p>
+<section class="history-section">
+  <div class="container history-grid">
+    <div class="history-content">
+      <h3>History About High Q Solid Academy</h3>
+      <p>High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
+
+      <p>Following Mr. Ibrahim's departure for overseas opportunities, Mr. Adebule Quam assumed sole leadership, steering the tutorial toward remarkable success. Under Mr. Adebule Quam's guidance, High Q Tutorial has blossomed into a hub of academic excellence and technological proficiency.</p>
+
+      <p>Beyond conventional tutorial work, it serves as a catalyst for holistic development. Through meticulous instruction, students have sharpened their academic prowess, achieving commendable results in examinations such as JAMB, WAEC, and NECO since 2018.</p>
+
+      <p>High Q Tutorial’s impact transcends the classroom, enriching lives and fostering digital literacy essential for navigating the complexities of the modern world. By equipping learners with practical skills in Microsoft Word, Excel, graphic design, and programming, the tutorial prepares students for both academic success and real-world challenges.</p>
+
+      <p>The tutorial’s unwavering dedication to educational enrichment has solidified its position as a cornerstone of the community.</p>
+    </div>
+
+    <div class="history-logo">
+      <div class="logo-card">
+        <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo">
+      </div>
+    </div>
   </div>
 </section>
 
