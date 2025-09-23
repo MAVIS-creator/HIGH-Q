@@ -141,7 +141,71 @@ $csrf = generateToken('signup_form');
 		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
 	</div>
 </section>
-					<aside class="register-sidebar">
+										<?php
+										// load available programs from courses table
+										try {
+												$courses = $pdo->query("SELECT id,title,price,duration FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC);
+										} catch (Throwable $e) { $courses = []; }
+										?>
+
+										<main class="register-main">
+											<div class="card">
+												<h3>Student Registration Form</h3>
+												<?php if (!empty($errors)): ?>
+													<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
+														<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+													</div>
+												<?php endif; ?>
+												<?php if ($success): ?>
+													<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
+														<?= htmlspecialchars($success) ?>
+													</div>
+												<?php endif; ?>
+
+												<form method="post">
+													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<div class="form-row"><label>First Name *</label><input name="first_name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
+													<div class="form-row"><label>Last Name *</label><input name="last_name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
+													<div class="form-row"><label>Email Address *</label><input name="email" type="email" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
+													<div class="form-row"><label>Phone Number</label><input name="phone" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div>
+													<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
+													<div class="form-row"><label>Home Address</label><textarea name="home_address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
+
+													<h4>Program Selection</h4>
+													<div class="programs-grid">
+														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
+														<?php foreach ($courses as $c): ?>
+															<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
+																<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(₦<?= number_format($c['price'],2) ?>)</small>
+																<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
+															</label>
+														<?php endforeach; ?>
+													</div>
+
+													<div class="form-row"><label>Previous Education</label><textarea name="previous_education"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
+													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
+
+													<h4>Emergency Contact</h4>
+													<div class="form-row"><label>Parent/Guardian Name</label><input name="emergency_name" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Phone</label><input name="emergency_phone" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
+													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
+
+													<h4>Account</h4>
+													<div class="form-row"><label>Password *</label><input name="password" type="password" required></div>
+													<div class="form-row"><label><input type="checkbox" name="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?>> I agree to the terms and conditions</label></div>
+
+													<h4>Payment Option</h4>
+													<div class="form-row">
+														<label><input type="radio" name="method" value="bank" checked> Bank Transfer</label>
+														<label style="margin-left:12px;"><input type="radio" name="method" value="paystack"> Card (Paystack)</label>
+													</div>
+
+													<div style="margin-top:12px;"><button class="btn-primary" type="submit">Register & Continue</button></div>
+												</form>
+											</div>
+										</main>
+
+										<aside class="register-sidebar">
 					<div class="sidebar-card admission-box">
 						<h4>Admission Requirements</h4>
 						<ul>
