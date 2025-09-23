@@ -56,28 +56,23 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           </div>
         </div>
 
+
         <!-- Navigation -->
         <nav>
           <a href="index.php" class="active">Home</a>
           <a href="about.php">About Us</a>
-          <div class="nav-item-with-dropdown">
-            <a href="programs.php">Programs</a>
-            <div class="nav-dropdown">
-              <a href="#" class="drop-toggle">News</a>
-              <div class="nav-dropdown-content">
-                <a href="news.php">News / Blog</a>
-              </div>
+
+          <!-- Combined dropdown: a single, general label that reveals Programs and News on click -->
+          <div class="nav-dropdown">
+            <a href="#" class="drop-toggle">Programs & News</a>
+            <div class="nav-dropdown-content">
+              <a href="programs.php">Programs</a>
+              <a href="news.php">News</a>
             </div>
           </div>
+
           <a href="register.php">Admission</a>
           <a href="contact.php">Contact</a>
-
-          <div class="nav-dropdown">
-            <a href="#" class="drop-toggle">News</a>
-            <div class="nav-dropdown-content">
-              <a href="news.php">News / Blog</a>
-            </div>
-          </div>
         </nav>
 
         <!-- Button -->
@@ -85,5 +80,30 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       </div>
     </div>
   </header>
+
+  <script>
+    // Toggle nav dropdown open/close on click and close when clicking outside
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        var dropToggles = document.querySelectorAll('.nav-dropdown .drop-toggle');
+        dropToggles.forEach(function(toggle){
+          toggle.addEventListener('click', function(e){
+            e.preventDefault();
+            var parent = toggle.closest('.nav-dropdown');
+            // toggle open on this parent, close others
+            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ if(n !== parent) n.classList.remove('open'); });
+            parent.classList.toggle('open');
+          });
+        });
+
+        // close dropdowns on outside click
+        document.addEventListener('click', function(e){
+          if (!e.target.closest('.nav-dropdown')) {
+            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ n.classList.remove('open'); });
+          }
+        });
+      });
+    })();
+  </script>
 
   <main class="public-main">

@@ -108,6 +108,8 @@ nav {
 }
 .nav-dropdown .drop-toggle {
   cursor: pointer;
+  position: relative;
+  padding-bottom: 6px;
 }
 .nav-dropdown-content {
   position: absolute;
@@ -116,7 +118,7 @@ nav {
   background: #fff;
   border: 1px solid rgba(0,0,0,0.06);
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-  display: none;
+  display: none; /* only show when .open is added by JS */
   min-width: 180px;
   z-index: 40;
 }
@@ -127,7 +129,8 @@ nav {
   text-decoration: none;
 }
 .nav-dropdown-content a:hover { background: var(--hq-yellow-light); color: var(--hq-black); }
-.nav-dropdown:hover .nav-dropdown-content { display: block; }
+/* open when .open class is present (we'll toggle via JS on click) */
+.nav-dropdown.open .nav-dropdown-content { display: block; }
 
 nav a {
   color: var(--hq-black);
