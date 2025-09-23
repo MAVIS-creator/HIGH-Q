@@ -102,6 +102,33 @@ nav {
   /* center the nav in the header grid */
 }
 
+/* Nav dropdown for News/Blog */
+.nav-dropdown {
+  position: relative;
+}
+.nav-dropdown .drop-toggle {
+  cursor: pointer;
+}
+.nav-dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  display: none;
+  min-width: 180px;
+  z-index: 40;
+}
+.nav-dropdown-content a {
+  display: block;
+  padding: 10px 14px;
+  color: var(--hq-gray);
+  text-decoration: none;
+}
+.nav-dropdown-content a:hover { background: var(--hq-yellow-light); color: var(--hq-black); }
+.nav-dropdown:hover .nav-dropdown-content { display: block; }
+
 nav a:hover,
 nav a.active {
   color: var(--hq-yellow);
