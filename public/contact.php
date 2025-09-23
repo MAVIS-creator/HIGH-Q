@@ -104,21 +104,21 @@ include __DIR__ . '/includes/header.php';
 				<div class="sidebar-card" data-icon="tutor">
 					<img class="card-icon" src="assets/images/icons/book-open.svg" alt="Tutorial Center icon">
 					<h4>Tutorial Center</h4>
-					<p style="color:var(--hq-gray);">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
+					<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
 				</div>
 
 				<div class="sidebar-card" data-icon="office">
 					<img class="card-icon" src="assets/images/icons/target.svg" alt="Area Office icon">
 					<h4>Area Office</h4>
-					<p style="color:var(--hq-gray);">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
+					<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
 				</div>
 
 				<div class="sidebar-card" data-icon="contact">
 					<img class="card-icon" src="assets/images/icons/phone.svg" alt="Contact icon">
 					<h4>Contact Information</h4>
-					<p style="color:var(--hq-gray);"><strong>Phone</strong><br>0807 208 8794</p>
-					<p style="color:var(--hq-gray);"><strong>Email</strong><br>info@hqacademy.com</p>
-					<p style="color:var(--hq-gray);"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+					<p class="sidebar-text"><strong>Phone</strong><br>0807 208 8794</p>
+					<p class="sidebar-text"><strong>Email</strong><br>info@hqacademy.com</p>
+					<p class="sidebar-text"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
 				</div>
 
 				<div class="quick-actions">

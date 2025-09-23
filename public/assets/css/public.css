@@ -865,6 +865,8 @@ nav a.active::after { background: var(--hq-yellow); }
 /* Sidebar cards */
 .register-sidebar { display:flex; flex-direction:column; gap:18px; }
 .sidebar-card { background:#fff; padding:18px; border-radius:12px; box-shadow:0 12px 34px rgba(11,37,64,0.06); border:1px solid rgba(0,0,0,0.05); width:100%; }
+.sidebar-card .card-icon { width:40px; height:40px; display:block; margin-bottom:10px; }
+.sidebar-text { color:var(--hq-gray); margin:6px 0; line-height:1.45; }
 .sidebar-card h4 { margin:0 0 8px; font-size:16px; }
 .admission-box { border-left:4px solid var(--hq-yellow); }
 .admission-box {
