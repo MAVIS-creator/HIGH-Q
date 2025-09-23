@@ -196,9 +196,7 @@
 	</div>
 </section>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
 
-<!-- Call to Action: Ready to Excel -->
 <section class="cta-section">
 	<div class="container">
 		<h2>Ready to Excel?</h2>
@@ -206,3 +204,7 @@
 		<a href="register.php" class="btn-enroll">Enroll Now</a>
 	</div>
 </section>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
+
+<!-- Call to Action: Ready to Excel -->
