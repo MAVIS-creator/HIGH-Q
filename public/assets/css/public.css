@@ -534,6 +534,7 @@ nav a.active::after { background: var(--hq-yellow); }
 
 /* Calendar modal (simple) */
 .modal-backdrop { position:fixed; left:0; right:0; top:0; bottom:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:10000; }
+.modal-backdrop.open { display:flex; }
 .modal { background:#fff; padding:18px; border-radius:10px; width:380px; max-width:92%; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
 .modal h3 { margin:0 0 12px; }
 .modal .field { margin-bottom:10px; }
