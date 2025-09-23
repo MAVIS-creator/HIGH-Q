@@ -121,7 +121,7 @@ include __DIR__ . '/includes/header.php';
 					<p style="color:var(--hq-gray);"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
 				</div>
 
-				<div class="quick-actions" style="margin-top:18px;">
+				<div class="quick-actions">
 					<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit">
 						<i class="bx bx-calendar"></i>
 						<div>Schedule Visit</div>
