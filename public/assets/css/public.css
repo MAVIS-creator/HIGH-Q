@@ -752,7 +752,7 @@ nav a.active::after { background: var(--hq-yellow); }
 .register-main h3 { font-size: 20px; margin: 0 0 12px; color: var(--hq-black); }
 .card-desc { margin:8px 0 18px; color:var(--hq-gray); }
 .register-main .form-row label { display:block; font-weight:700; margin-bottom:6px; color:var(--hq-black); }
-.register-main input, .register-main textarea { background: #fff; border:1px solid #eee; padding:12px; border-radius:8px; }
+.register-main input, .register-main textarea { background: #fff; border:1px solid #eee; padding:12px; border-radius:8px; box-sizing: border-box; }
 .register-main input::placeholder, .register-main textarea::placeholder { color: #9a9a9a; }
 .programs-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:12px; }
 .programs-grid label { display:block; background:#fff; border:1px solid #f0f0f0; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(11,37,64,0.04); }
