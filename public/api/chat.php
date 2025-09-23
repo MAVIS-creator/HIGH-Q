@@ -20,9 +20,12 @@ if ($action === 'send_message') {
             $ins->execute([$visitor_name, $visitor_email]);
             $thread_id = (int)$pdo->lastInsertId();
         }
-        $ins2 = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, NULL, ?, ?, 0, NOW())');
-        $ins2->execute([$thread_id, $visitor_name, $message]);
-        echo json_encode(['status'=>'ok','thread_id'=>$thread_id]);
+    $ins2 = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, NULL, ?, ?, 0, NOW())');
+    $ins2->execute([$thread_id, $visitor_name, $message]);
+    // Update thread last_activity so admin list shows latest activity
+    $upd = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?');
+    $upd->execute([$thread_id]);
+    echo json_encode(['status'=>'ok','thread_id'=>$thread_id]);
     } catch (Exception $e) { http_response_code(500); echo json_encode(['status'=>'error','message'=>'DB error']); }
     exit;
 }
