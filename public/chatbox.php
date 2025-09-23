@@ -164,3 +164,57 @@ $(".modal-close-button").on("click" , function(){
 	$(".modal").toggleClass("show-modal");
 })
     </script>
+	<script>
+	(function(){
+		function setCookie(name,value,days){ var d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie = name+"="+encodeURIComponent(value)+";path=/;expires="+d.toUTCString(); }
+		function getCookie(name){ var m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m? decodeURIComponent(m[2]) : null; }
+
+		var openBtn = document.getElementById('hqOpenButton');
+		var chatBox = document.getElementById('hqChatBox');
+		var closeBtn = document.getElementById('closeChat');
+		var sendBtn = document.getElementById('chatSend');
+		var addExtra = document.getElementById('addExtra');
+		var fileInput = document.getElementById('chatFile');
+		var emojiBtn = document.getElementById('emojiBtn');
+		var messagesEl = document.getElementById('hqMessages');
+		var input = document.getElementById('chatInput');
+		var nameInput = document.getElementById('chatName');
+		var emailInput = document.getElementById('chatEmail');
+
+		var pollTimer = null;
+
+		openBtn.addEventListener('click', function(){ openBtn.classList.add('hidden'); chatBox.classList.remove('hidden'); });
+		closeBtn.addEventListener('click', function(){ openBtn.classList.remove('hidden'); chatBox.classList.add('hidden'); });
+
+		// file attachment
+		addExtra.addEventListener('click', function(){ fileInput.click(); });
+		fileInput.addEventListener('change', function(){ if(fileInput.files && fileInput.files[0]){ var p = document.createElement('div'); p.className='bubble user'; p.textContent = 'Attachment ready: ' + fileInput.files[0].name; messagesEl.appendChild(p); messagesEl.scrollTop = messagesEl.scrollHeight; } });
+
+		// emoji quick insert
+		emojiBtn.addEventListener('click', function(){ input.value = input.value + ' 😊'; input.focus(); });
+
+		async function sendMessage(){ var name = nameInput.value.trim() || 'Guest'; var email = emailInput.value.trim() || ''; var msg = input.value.trim(); if(!msg && !(fileInput.files && fileInput.files[0])){ alert('Please enter a message or attach an image'); return; }
+			var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', msg);
+			if(fileInput.files && fileInput.files[0]) fd.append('attachment', fileInput.files[0]);
+			try{
+				var res = await fetch(window.location.pathname + '?action=send_message', { method: 'POST', body: fd });
+				var j = await res.json(); if(j.status==='ok'){ setCookie('hq_thread_id', j.thread_id, 7); renderUserMessage(msg, fileInput.files && fileInput.files[0]); input.value=''; fileInput.value=''; if(!pollTimer) startPolling(j.thread_id); }
+			}catch(e){ console.error(e); alert('Failed to send'); }
+		}
+
+		sendBtn.addEventListener('click', sendMessage);
+
+		function renderUserMessage(text, hasFile){ var b = document.createElement('div'); b.className='bubble user'; if(text) b.textContent = text; if(hasFile){ var hint = document.createElement('div'); hint.className='chat-attachment'; hint.textContent = 'Image attached'; b.appendChild(hint); } messagesEl.appendChild(b); messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+		function renderMessages(list){ messagesEl.innerHTML = ''; list.forEach(function(m){ var d = document.createElement('div'); d.className = 'bubble ' + (m.is_from_staff==1 ? 'admin' : 'user'); d.innerHTML = m.message + '<span class="time">' + m.created_at + '</span>'; messagesEl.appendChild(d); }); messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+		async function fetchMessages(threadId){ try{ var r = await fetch(window.location.pathname + '?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await r.json(); if(j.status==='ok'){ renderMessages(j.messages); } }catch(e){}
+		}
+
+		function startPolling(threadId){ if(pollTimer) return; pollTimer = setInterval(function(){ fetchMessages(threadId); }, 2500); fetchMessages(threadId); }
+
+		// start if existing thread
+		var existing = getCookie('hq_thread_id'); if(existing){ startPolling(existing); }
+
+	})();
+	</script>
