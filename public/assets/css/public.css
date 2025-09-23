@@ -832,10 +832,13 @@ nav a.active::after { background: var(--hq-yellow); }
 .help-box p strong { display:block; color: var(--hq-yellow); font-weight:700; margin-bottom:6px; }
 .help-box p small, .help-box p span { color: #fff; }
 .help-box a { color: var(--hq-yellow); text-decoration: none; }
-.why-box { background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%); }
-.why-stats { display:flex; gap:12px; margin-top:8px; }
-.why-stats .stat { text-align:center; padding:8px; }
-.why-stats .stat strong { display:block; font-size:18px; }
+.why-box { background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%); padding:18px; border-radius:10px; }
+.why-box h4 { margin:0 0 8px; }
+.why-stats { display:flex; flex-direction:column; gap:14px; margin-top:8px; }
+.why-stats .stat { display:flex; gap:12px; align-items:center; padding:0; background:transparent; box-shadow:none; border-radius:0; }
+.why-stats .stat .icon { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--hq-red); color:var(--hq-red); background: rgba(255,255,255,0.8); flex:0 0 44px; }
+.why-stats .stat strong { font-size:18px; display:block; color:var(--hq-black); margin:0; }
+.why-stats .stat span { display:block; font-size:13px; color:var(--hq-gray-dark); }
 
 /* Payment method icons (decorative) */
 .payment-box {
