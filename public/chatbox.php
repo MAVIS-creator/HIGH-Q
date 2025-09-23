@@ -2,251 +2,33 @@
 // public/chatbox.php - self-contained chat widget + lightweight backend
 require_once __DIR__ . '/config/db.php';
 header_remove();
-
-// Simple API: POST to this file with action=send_message, or GET action=get_messages
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$action = $_GET['action'] ?? $_POST['action'] ?? 'send_message';
-	header('Content-Type: application/json; charset=utf-8');
-	try {
-		if ($action === 'send_message') {
-			$thread_id = !empty($_POST['thread_id']) ? intval($_POST['thread_id']) : null;
-			$visitor_name = trim($_POST['name'] ?? 'Guest');
-			$visitor_email = trim($_POST['email'] ?? '');
-			$message = trim($_POST['message'] ?? '');
-
-			if ($message === '' && empty($_FILES['attachment'])) {
-				echo json_encode(['status'=>'error','message'=>'Empty message']); exit;
-			}
-
-			// handle attachment upload (optional)
-			$attachmentHtml = '';
-			if (!empty($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-				$up = $_FILES['attachment'];
-				$ext = pathinfo($up['name'], PATHINFO_EXTENSION);
-				$allowed = ['jpg','jpeg','png','gif','webp'];
-				if (!in_array(strtolower($ext), $allowed)) {
-					echo json_encode(['status'=>'error','message'=>'File type not allowed']); exit;
-				}
-				$destDir = __DIR__ . '/uploads/chat';
-				if (!is_dir($destDir)) mkdir($destDir, 0755, true);
-				$basename = bin2hex(random_bytes(8)) . '.' . $ext;
-				$dest = $destDir . '/' . $basename;
-				if (move_uploaded_file($up['tmp_name'], $dest)) {
-					// relative web path
-					$webPath = str_replace('\\','/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $dest));
-					// fallback if DOCUMENT_ROOT not matching - use relative path
-					if (empty($webPath) || $webPath === $dest) {
-						$webPath = '/HIGH-Q/public/uploads/chat/' . $basename;
-					}
-					$attachmentHtml = '<div class="chat-attachment"><img src="' . htmlspecialchars($webPath) . '" alt="attachment"/></div>';
-				}
-			}
-
-			// create thread if needed
-			if (!$thread_id) {
-				$ins = $pdo->prepare('INSERT INTO chat_threads (visitor_name, visitor_email, created_at) VALUES (?, ?, NOW())');
-				$ins->execute([$visitor_name, $visitor_email]);
-				$thread_id = (int)$pdo->lastInsertId();
-			}
-
-			$finalMessage = $message . $attachmentHtml;
-			$ins2 = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, NULL, ?, ?, 0, NOW())');
-			$ins2->execute([$thread_id, $visitor_name, $finalMessage]);
-			$upd = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?');
-			$upd->execute([$thread_id]);
-			echo json_encode(['status'=>'ok','thread_id'=>$thread_id]); exit;
-		}
-	} catch (Throwable $e) {
-		http_response_code(500);
-		echo json_encode(['status'=>'error','message'=>'Server error']); exit;
-	}
-}
-
-// GET handlers for fetching messages
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['action']) && $_GET['action'] === 'get_messages')) {
-	header('Content-Type: application/json; charset=utf-8');
-	$thread_id = intval($_GET['thread_id'] ?? 0);
-	if (!$thread_id) { echo json_encode(['status'=>'error','message'=>'Missing thread']); exit; }
-	$stmt = $pdo->prepare('SELECT * FROM chat_messages WHERE thread_id = ? ORDER BY created_at ASC');
-	$stmt->execute([$thread_id]);
-	$msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	echo json_encode(['status'=>'ok','messages'=>$msgs]); exit;
-}
-
-?>
-
-<div  class="chat-box" id="hqChatBox">
-    <div class="chat-box-header">
-            <div class="chat-header-left">
-                <div class="chat-avatar"></div>
-                <div>
-                    <h3>Chat with Support</h3>
-                    <small class="chat-status">We are online</small>
-                </div>
-            </div>
-            <div class="chat-header-right"><button id="closeChat" aria-label="Close chat">✕</button></div>
-    </div>
-    <div class="chat-box-body" id="hqChatBody">
-        <div id="hqMessages" class="hq-messages"></div>
-    </div>
-    <div class="chat-box-footer">
-            <button id="addExtra" class="btn-ghost" title="Add attachment">📎</button>
-            <button id="emojiBtn" class="btn-ghost" title="Emoji">😊</button>
-            <input id="chatName" placeholder="Your name" type="text" class="chat-meta">
-            <input id="chatEmail" placeholder="Your email (optional)" type="email" class="chat-meta">
-            <textarea id="chatInput" placeholder="Type a message" rows="2"></textarea>
-            <input type="file" id="chatFile" accept="image/*" style="display:none">
-            <button id="chatSend" class="btn-primary">Send</button>
-    </div>
-</div>
-
-<div class="chat-button" id="hqOpenButton">
-    <span>Message Us</span>
-</div>
-
-
-<div class="modal">
-        <div class="modal-content">
-            <span class="modal-close-button">&times;</span>
-            <h1>Add What you want here.</h1>
-        </div>
-    </div>
-
-
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Raleway|Ubuntu&display=swap');
-body{
-	background: #E8EBF5;
-	padding: 0;
-	margin: 0;
-	font-family: Raleway;
-}
-
-.chat-box{
-		height: 90%;
-    width: 400px;
-    position: absolute;
-    margin: 0 auto;
-    overflow: hidden;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-	
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    z-index: 15;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.005);
-    right: 0;
-    bottom: 0;
-    margin: 15px;
-		background: #fff;
-		border-radius: 15px;
-  
-visibility: hidden;
-	
-		&-header{
-			height: 8%;
-			border-top-left-radius: 15px;
-			border-top-right-radius: 15px;
-			display: flex;
-			font-size: 14px;
-			padding: .5em 0;
-    	box-shadow: 0 0 3px rgba(0,0,0,.2);
-    	box-shadow:0 0 3px rgba(0,0,0,.2), 0 -1px 10px 				rgba(172, 54, 195, 0.3);
-			box-shadow: 0 1px 10px rgba(0,0,0,0.025);
-			& h3{
-				font-family: ubuntu;
-				font-weight: 400;
-				float: left;
-   		 	position: absolute;
-    		left: 25px;
-			}
-			
-			& p{
-		    float: right;
-    position: absolute;
-    right: 16px;
-    cursor: pointer;
-    height: 50px;
-    width: 50px;
-    text-align: center;
-    line-height: 3.25;
-				margin: 0;
-			}
-		}
-		&-body{
-			height: 75%;
-			background: #f8f8f8;
-			overflow-y: scroll;
-			padding: 12px;
-			
-			&-send{
-			width: 250px;
-    	float: right;
-    	background: white;
-    	padding: 10px 20px;
-			border-radius: 5px;
-			box-shadow: 0 0 10px rgba(0,0,0,.015);
-			margin-bottom: 14px;
-				& p{
-					margin: 0;
-					color: #444;
-					font-size: 14px;
-					margin-bottom: .25rem;
-				}
-				& span{
-				float: right;
-    		color: #777;
-    		font-size: 10px;
-				}
-			}
-			&-receive{
-			width: 250px;
-    	float: left;
-    	background: white;
-    	padding: 10px 20px;
-			border-radius: 5px;
-			box-shadow: 0 0 10px rgba(0,0,0,.015);
-			margin-bottom: 14px;
-				& p{
-					margin: 0;
-					color: #444;
-					font-size: 14px;
-					margin-bottom: .25rem;
-				}
-				& span{
-				float: right;
-    		color: #777;
-    		font-size: 10px;
-				}
-			}
-			&::-webkit-scrollbar {
-  			 width: 5px;
-				opacity: 0;
-			}
-		}
-	&-footer{
-		position: relative;
-		display: flex;
-		
-		& button{
-		border: none;
-    padding: 16px;
-    font-size: 14px;
-    background: white;
-    cursor: pointer;
-			&:focus{
-				outline:none;
-			}
-		}
-		& input{
-    padding: 10px;
-    border: none;
-    -webkit-appearance: none;
-    border-radius: 50px;
-    background: whitesmoke;
+		@import url('https://fonts.googleapis.com/css?family=Raleway|Ubuntu&display=swap');
+		:root{ --hq-yellow:#f5b904; --hq-dark:#171716; --hq-gray:#818181; }
+		*{box-sizing:border-box}
+		body{font-family: 'Raleway', system-ui;}
+		.chat-box{ position:fixed; right:20px; bottom:20px; width:360px; max-width:92%; height:520px; border-radius:14px; background:#fff; box-shadow:0 30px 80px rgba(11,37,64,0.12); overflow:hidden; z-index:1200; display:flex; flex-direction:column; }
+		.chat-box-header{ padding:14px 16px; background:linear-gradient(90deg,var(--hq-yellow),#d99a00); color:var(--hq-dark); display:flex; justify-content:space-between; align-items:center; }
+		.chat-header-left{ display:flex; gap:12px; align-items:center; }
+		.chat-avatar{ width:44px; height:44px; border-radius:50%; background:linear-gradient(90deg,#ffdd66,#ffc107); box-shadow:0 6px 22px rgba(0,0,0,0.08) }
+		.chat-header-left h3{ margin:0; font-size:16px }
+		.chat-status{ display:block; font-size:12px; color:#222 }
+		.chat-header-right button{ background:transparent;border:none;font-size:18px;cursor:pointer }
+		.chat-box-body{ flex:1; padding:14px; background:linear-gradient(180deg,#fff,#fbfbfb); overflow:auto }
+		.hq-messages{ display:flex; flex-direction:column; gap:12px }
+		.bubble{ max-width:78%; padding:12px 14px; border-radius:16px; font-size:14px; line-height:1.4 }
+		.bubble.user{ background:linear-gradient(90deg,var(--hq-yellow),#d99a00); color:#111; align-self:flex-end; border-bottom-right-radius:6px }
+		.bubble.admin{ background:#f1f6ff; color:#08204a; align-self:flex-start; border-bottom-left-radius:6px }
+		.bubble .time{ display:block; font-size:11px; color:var(--hq-gray); margin-top:6px }
+		.chat-attachment img{ max-width:200px; border-radius:8px; display:block; margin-top:8px }
+		.chat-box-footer{ padding:12px; display:flex; gap:8px; align-items:flex-end; border-top:1px solid rgba(0,0,0,0.04) }
+		.chat-meta{ padding:8px 10px; border-radius:10px; border:1px solid #eee; font-size:13px }
+		#chatInput{ flex:1; padding:10px; border-radius:10px; border:1px solid #eee; resize:vertical; min-height:44px }
+		.btn-primary{ background:var(--hq-dark); color:#fff; border:none; padding:10px 14px; border-radius:10px; cursor:pointer }
+		.btn-ghost{ background:#fff; border:1px solid rgba(0,0,0,0.06); padding:8px 10px; border-radius:8px; cursor:pointer }
+		.chat-button{ position:fixed; right:24px; bottom:24px; background:var(--hq-yellow); color:var(--hq-dark); padding:12px 18px; border-radius:999px; box-shadow:0 18px 40px rgba(217,154,0,0.18); cursor:pointer; z-index:1199 }
+		.hidden{ display:none }
+		@media (max-width:600px){ .chat-box{ width:100%; right:0; bottom:0; border-radius:0; height:70vh } .chat-meta{ display:none } }
+	</style>
     margin: 10px;
     font-family: ubuntu;
     font-weight: 600;
