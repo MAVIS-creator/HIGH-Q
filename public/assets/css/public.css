@@ -40,6 +40,8 @@ body {
   padding: 5px 0;
 }
 .top-bar .container {
+  display: flex;
+  align-items: center;
   justify-content: flex-start;
   gap: 20px;
 }
@@ -54,6 +56,12 @@ body {
   background: #fff;
   border-bottom: 2px solid var(--hq-yellow);
   padding: 10px 0;
+}
+.main-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 .logo {
   display: flex;
