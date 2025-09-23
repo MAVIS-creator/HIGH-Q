@@ -238,12 +238,63 @@ include __DIR__ . '/includes/header.php';
 // If user came via the floating chat link (contact.php#livechat), focus the message field and scroll into view
 document.addEventListener('DOMContentLoaded', function(){
 	try{
-		if(window.location.hash === '#livechat'){
-			var ta = document.getElementById('contact_message');
-			if(ta){ ta.focus(); ta.scrollIntoView({behavior:'smooth', block:'center'}); }
-		}
+				if(window.location.hash === '#livechat'){
+						var ta = document.getElementById('contact_message');
+						if(ta){ ta.focus(); ta.scrollIntoView({behavior:'smooth', block:'center'}); }
+						// also open mini chat if present
+						var mc = document.getElementById('miniChat'); if(mc) mc.classList.add('open');
+				}
 	}catch(e){/* ignore */}
 });
+</script>
+
+<script>
+// Quick Actions: modal calendar and mini chat
+(function(){
+	function setCookie(name,value,days){ var d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie = name+"="+encodeURIComponent(value)+";path=/;expires="+d.toUTCString(); }
+	function getCookie(name){ var m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m? decodeURIComponent(m[2]) : null; }
+
+	var openSchedule = document.getElementById('openSchedule');
+	var modal = document.getElementById('modalBackdrop');
+	var cancel = document.getElementById('cancelSchedule');
+	var confirm = document.getElementById('confirmSchedule');
+	if(openSchedule && modal){ openSchedule.addEventListener('click', function(){ modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); }); openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter') openSchedule.click(); }); }
+	if(cancel){ cancel.addEventListener('click', function(){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }); }
+	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ alert('Please pick a date'); return; } alert('Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'); modal.style.display='none'; }); }
+
+	// Mini chat open
+	var openLive = document.getElementById('openLiveChat');
+	var mini = document.getElementById('miniChat');
+	var closeMini = document.getElementById('closeMini');
+	var miniSend = document.getElementById('miniSend');
+	var miniBody = document.getElementById('miniBody');
+	var miniName = document.getElementById('miniName');
+
+	function updateFloatingBadge(){ try{ var badge = document.querySelector('.floating-chat .badge'); var thread = getCookie('hq_thread_id'); if(thread){ if(!badge){ var n=document.createElement('span'); n.className='badge'; n.textContent='1'; document.querySelector('.floating-chat').appendChild(n); } } else { if(badge) badge.remove(); } }catch(e){}
+	updateFloatingBadge();
+
+	if(openLive && mini){ openLive.addEventListener('click', function(){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }); openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); }); }
+	if(closeMini && mini){ closeMini.addEventListener('click', function(){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }); }
+
+	// Send mini-chat message: create thread via API and store thread_id cookie
+	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var msg = document.getElementById('contact_message') ? document.getElementById('contact_message').value.trim() : ''; // fallback to main message
+		if(!msg){ msg = prompt('Message:'); if(!msg) return; }
+		try{
+			var fd = new FormData(); fd.append('name', name); fd.append('email', ''); fd.append('message', msg);
+			var res = await fetch('/HIGH-Q/public/api/chat.php?action=send_message', { method: 'POST', body: fd });
+			var j = await res.json(); if(j.status==='ok'){ setCookie('hq_thread_id', j.thread_id, 7); updateFloatingBadge(); miniBody.innerHTML = '<div style="color:#0a0;font-size:13px">Message sent. An admin will reply soon.</div>'; miniName.value = ''; // clear
+				// append to main contact textarea if present
+				var ta = document.getElementById('contact_message'); if(ta) ta.value = '';
+			} else { alert('Failed to send.'); }
+		}catch(e){ alert('Error sending message'); }
+	}); }
+
+	// clicking floating chat also opens contact page or mini chat
+	var floatBtn = document.querySelector('.floating-chat');
+	if(floatBtn){ floatBtn.addEventListener('click', function(e){ e.preventDefault(); // open contact in same tab, but with hash to open mini chat
+		location.href = 'contact.php#livechat'; }); }
+
+})();
 </script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
