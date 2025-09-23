@@ -4,7 +4,7 @@
   --hq-red: #ed2c2c;
   --hq-black: #171716;
   --hq-gray: #818181;
-  --hq-white: #f8f5ed;
+  --hq-white: #e9e8e5;
   --hq-gray-dark: #171717;
   --hq-blue-white:  #575897;
 }
@@ -803,7 +803,7 @@ nav a.active {
    (previously only defined inside a small-screen media query) */
 .achievements {
   padding: 64px 0;
-  background: var(--hq-gray);
+  background: var(--hq-white);
 }
 
 .achievements .ceo-heading {
