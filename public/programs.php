@@ -196,14 +196,4 @@
 	</div>
 </section>
 
-<!-- Latest News & Updates -->
-<section class="news-section">
-	<div class="container">
-		<div class="ceo-heading">
-			<h2>Latest <span class="highlight">News & Updates</span></h2>
-		</div>
-		<p class="muted" style="text-align:center">No news posts available at the moment. Check back later for updates!</p>
-	</div>
-</section>
-
 <?php include __DIR__ . '/includes/footer.php'; ?>
