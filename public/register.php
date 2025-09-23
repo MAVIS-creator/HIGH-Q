@@ -99,21 +99,7 @@ $csrf = generateToken('signup_form');
 	</div>
 </section>
 
-<section class="programs-content">
-	<div class="container">
-		<?php if (!empty($errors)): ?>
-			<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
-				<?php foreach($errors as $e): ?>
-					<div><?php echo htmlspecialchars($e) ?></div>
-				<?php endforeach; ?>
-			</div>
-		<?php endif; ?>
 
-		<?php if ($success): ?>
-			<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
-				<?php echo htmlspecialchars($success) ?>
-			</div>
-		<?php endif; ?>
 
 			<div class="register-layout">
 				<div class="register-main">
