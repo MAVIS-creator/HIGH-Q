@@ -79,6 +79,14 @@ body {
 nav {
   display: flex;
   gap: 20px;
+}
+nav a:hover,
+nav a.active {
+  color: var(--hq-yellow);
+  border-bottom: 2px solid var(--hq-yellow);
+}
+
+/* CEO grid (outside nav) */
 .ceo-grid {
   display: grid;
   grid-template-columns: 520px 1fr; /* wider left card like reference */
@@ -97,7 +105,6 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
 }
 nav a:hover,
 nav a.active {
