@@ -721,12 +721,15 @@ nav a.active::after { background: var(--hq-yellow); }
 /* Register two-column layout */
 .register-layout {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 360px;
   gap: 28px;
   align-items: start;
-  margin: 24px 0 48px;
+  margin: 24px auto 48px;
+  max-width: 1160px; /* wider so form sits comfortably centered */
+  padding-left: 28px; /* shift slightly from page edge */
+  padding-right: 28px;
 }
-.register-layout .register-main { justify-self: center; max-width: 760px; }
+.register-layout .register-main { justify-self: center; max-width: 820px; }
 .register-layout .register-sidebar { align-self: start; }
 
 .form-section { margin-bottom:18px; }
