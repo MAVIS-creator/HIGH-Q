@@ -106,11 +106,6 @@ nav a.active {
   flex-direction: column;
   gap: 1.25rem;
 }
-nav a:hover,
-nav a.active {
-  color: var(--hq-yellow);
-  border-bottom: 2px solid var(--hq-yellow);
-}
 
 /* Button */
 .btn {
