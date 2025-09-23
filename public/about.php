@@ -26,9 +26,20 @@
     </div>
 
     <div class="history-logo">
-      <div class="logo-card">
-        <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo">
-      </div>
+      <?php
+        $groupPath = __DIR__ . '/assets/images/group.jpg';
+        $groupWeb  = './assets/images/group.jpg';
+        $logoWeb   = './assets/images/hq-logo.jpeg';
+      ?>
+      <?php if (file_exists($groupPath)): ?>
+        <div class="photo-card">
+          <img src="<?= $groupWeb ?>" alt="High Q students">
+        </div>
+      <?php else: ?>
+        <div class="logo-card">
+          <img src="<?= $logoWeb ?>" alt="HQ Logo">
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 </section>
