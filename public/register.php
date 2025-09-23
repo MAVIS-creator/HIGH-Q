@@ -166,6 +166,7 @@ $csrf = generateToken('signup_form');
 										<main class="register-main">
 											<div class="card">
 												<h3>Student Registration Form</h3>
+												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
 												<?php if (!empty($errors)): ?>
 													<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
 														<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
@@ -181,32 +182,32 @@ $csrf = generateToken('signup_form');
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
-													<div class="form-row"><label>First Name *</label><input name="first_name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
-													<div class="form-row"><label>Last Name *</label><input name="last_name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
-													<div class="form-row"><label>Email Address *</label><input name="email" type="email" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
-													<div class="form-row"><label>Phone Number</label><input name="phone" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div>
-													<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
-													<div class="form-row"><label>Home Address</label><textarea name="home_address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
+																										<div class="form-row"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
+																									<div class="form-row"><label>Last Name *</label><input name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
+																									<div class="form-row"><label>Email Address *</label><input name="email" type="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
+																									<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div>
+																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
+																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
 
 													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
 													<div class="programs-grid">
 														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
 														<?php foreach ($courses as $c): ?>
-															<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
-																<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(₦<?= number_format($c['price'],2) ?>)</small>
-																<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
-															</label>
-														<?php endforeach; ?>
+																<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
+																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(₦<?= number_format($c['price'],2) ?>)</small>
+																	<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
+																</label>
+															<?php endforeach; ?>
 													</div>
 
-													<div class="form-row"><label>Previous Education</label><textarea name="previous_education"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
-													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
+													<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
+													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
 
 													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
 													<div class="section-body">
-													<div class="form-row"><label>Parent/Guardian Name</label><input name="emergency_name" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
-													<div class="form-row"><label>Parent/Guardian Phone</label><input name="emergency_phone" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
-													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Name</label><input name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Phone</label><input name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
+													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" placeholder="Relationship to student" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
 													</div>
 
 													<div class="form-row"><label><input type="checkbox" name="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?>> I agree to the terms and conditions</label></div>
