@@ -60,67 +60,70 @@
       </p>
     </div>
 
-    <!-- Two Column Layout -->
+    <!-- Two Column Layout: left column holds card + quote, right column holds content + stats + button -->
     <div class="ceo-grid">
-      
-      <!-- Left Card -->
-      <div class="ceo-card">
-        <div class="ceo-photo">
-          <img src="./assets/images/adebule-quam.jpg" alt="Master Adebule Quam">
+      <div class="ceo-left-column">
+        <!-- Left Card -->
+        <div class="ceo-card">
+          <div class="ceo-photo">
+            <img src="./assets/images/adebule-quam.jpg" alt="Master Adebule Quam">
+          </div>
+          <h3>Master Adebule Quam</h3>
+          <p class="role">CEO & Lead Tutor</p>
         </div>
-        <h3>Master Adebule Quam</h3>
-        <p class="role">CEO & Lead Tutor</p>
+
+        <!-- Quote Box (moved under left card) -->
+        <div class="ceo-quote">
+          <i class="fas fa-quote-left"></i>
+          <p>
+            "Education is the force to push one ahead of others. Our unwavering
+            commitment is to ensure every student achieves academic excellence and
+            develops the confidence to face real-world challenges."
+          </p>
+          <span>- Master Adebule Quam</span>
+        </div>
       </div>
 
-      <!-- Right Content -->
-      <div class="ceo-content">
-        <h3>Seasoned Educator & Mentor</h3>
-        <p>
-          Master Adebule Quam is a seasoned tutor versed in the teaching profession.
-          Over the years, he has produced students who have achieved breathtaking
-          academic excellence and excelled in various examinations including GCE,
-          WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
-        </p>
-        <p>
-          He believes in the school of thought that education is the force to push
-          one ahead of others. Under his guidance, High Q Academy has blossomed into
-          a hub of academic excellence and technological proficiency.
-        </p>
-      </div>
-    </div>
+      <div class="ceo-right-column">
+        <!-- Right Content -->
+        <div class="ceo-content">
+          <h3>Seasoned Educator & Mentor</h3>
+          <p>
+            Master Adebule Quam is a seasoned tutor versed in the teaching profession.
+            Over the years, he has produced students who have achieved breathtaking
+            academic excellence and excelled in various examinations including GCE,
+            WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
+          </p>
+          <p>
+            He believes in the school of thought that education is the force to push
+            one ahead of others. Under his guidance, High Q Academy has blossomed into
+            a hub of academic excellence and technological proficiency.
+          </p>
+        </div>
 
-    <!-- Quote Box -->
-    <div class="ceo-quote">
-      <i class="fas fa-quote-left"></i>
-      <p>
-        "Education is the force to push one ahead of others. Our unwavering
-        commitment is to ensure every student achieves academic excellence and
-        develops the confidence to face real-world challenges."
-      </p>
-      <span>- Master Adebule Quam</span>
-    </div>
+        <!-- Stats Row (moved under right content) -->
+        <div class="ceo-stats">
+          <div class="stat yellow">
+            <i class="fas fa-trophy"></i>
+            <strong>292</strong>
+            <span>Highest JAMB Score</span>
+          </div>
+          <div class="stat red">
+            <i class="fas fa-users"></i>
+            <strong>1000+</strong>
+            <span>Students Mentored</span>
+          </div>
+          <div class="stat gray">
+            <i class="fas fa-user-tie"></i>
+            <strong>6+</strong>
+            <span>Years Leading</span>
+          </div>
+        </div>
 
-    <!-- Stats Row -->
-    <div class="ceo-stats">
-      <div class="stat yellow">
-        <i class="fas fa-trophy"></i>
-        <strong>292</strong>
-        <span>Highest JAMB Score</span>
+        <div class="ceo-btn">
+          <a href="about.php" class="btn-dark">Learn More About Our Story</a>
+        </div>
       </div>
-      <div class="stat red">
-        <i class="fas fa-users"></i>
-        <strong>1000+</strong>
-        <span>Students Mentored</span>
-      </div>
-      <div class="stat gray">
-        <i class="fas fa-user-tie"></i>
-        <strong>6+</strong>
-        <span>Years Leading</span>
-      </div>
-    </div>
-
-    <div class="ceo-btn">
-      <a href="about.php" class="btn-dark">Learn More About Our Story</a>
     </div>
   </div>
 </section>
