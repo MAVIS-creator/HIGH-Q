@@ -7,10 +7,23 @@
   --hq-white: #f8f5ed;
   --hq-gray-dark: #171717;
 }
+/*
+  Soel Sans Theory: prefer the locally-installed font if available.
+  To self-host, add the font files (woff/woff2) to a `public/assets/fonts/` folder
+  and replace the src: local(...) fallback with: src: url('/assets/fonts/SoelSansTheory-Regular.woff2') format('woff2'), url('/assets/fonts/SoelSansTheory-Regular.woff') format('woff');
+*/
+@font-face {
+  font-family: 'Soel Sans Theory';
+  /* prefer a locally installed copy first */
+  src: local('Soel Sans Theory'), local('SoelSansTheory');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 /* General */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Soel Sans Theory', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 .container {
   max-width: 1200px;
