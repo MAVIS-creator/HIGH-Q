@@ -295,22 +295,28 @@ document.addEventListener('DOMContentLoaded', function(){
 	// if there's an existing thread for this visitor, start polling so replies appear
 	try{ var existingThread = getCookie('hq_thread_id'); if(existingThread){ startChatPolling(existingThread); } }catch(e){}
 
-	if(openLive){
-		openLive.addEventListener('click', function(){
-			// prefer served iframe modal; fallback to inline mini chat
-			var chatModal = document.getElementById('chatIframeModal');
-			if(chatModal){ chatModal.style.display = 'flex'; chatModal.setAttribute('aria-hidden','false');
-				// focus the iframe's input if it supports postMessage
-				var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
-			} else if(mini){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }
-		});
-		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
-	}
+			if(openLive){
+				openLive.addEventListener('click', function(){
+					// prefer served iframe modal; fallback to inline mini chat
+					var chatModal = document.getElementById('chatIframeModal');
+					if(chatModal){
+						chatModal.style.display = 'block';
+						chatModal.setAttribute('aria-hidden','false');
+						// hide inline mini chat to avoid duplicate widgets
+						if(mini){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }
+						// focus the iframe's input if it supports postMessage
+						var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
+					} else if(mini){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }
+				});
+				openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
+			}
 	if(closeMini && mini){ closeMini.addEventListener('click', function(){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }); }
 
 	// chat iframe modal close button
 	var closeChatModal = document.getElementById('closeChatModal');
-	if(closeChatModal){ closeChatModal.addEventListener('click', function(){ var chatModal = document.getElementById('chatIframeModal'); if(chatModal){ chatModal.style.display='none'; chatModal.setAttribute('aria-hidden','true'); var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); } }); }
+	if(closeChatModal){ closeChatModal.addEventListener('click', function(){ var chatModal = document.getElementById('chatIframeModal'); if(chatModal){ chatModal.style.display='none'; chatModal.setAttribute('aria-hidden','true'); var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); // restore mini chat visibility
+					if(mini){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); }
+				} }); }
 
 	// listen for messages from iframe (chatbox) to allow it to request close
 	window.addEventListener('message', function(ev){ try{ if(ev.data && ev.data.hq_chat_action === 'close'){ var m = document.getElementById('chatIframeModal'); if(m) m.style.display='none'; } }catch(e){} });
