@@ -665,3 +665,14 @@ nav a.active {
   .about-hero { min-height: 220px; }
   .about-hero h1 { font-size: 28px; }
 }
+
+/* History two-column layout */
+.history-section { padding: 48px 0; background: #fff; }
+.history-grid { display: grid; grid-template-columns: 1fr 380px; gap: 36px; align-items: start; }
+.history-content h3 { color: var(--hq-black); font-size: 20px; margin-bottom: 10px; }
+.history-content p { color: var(--hq-gray); line-height: 1.8; margin-bottom: 16px; }
+.history-logo { display:flex; justify-content:center; align-items:flex-start; }
+.logo-card { background:#fff; border-radius:16px; padding:28px; box-shadow: 0 18px 48px rgba(11,37,64,0.08); display:flex; align-items:center; justify-content:center; }
+.logo-card img { max-width: 220px; height: auto; display:block; }
+
+@media (max-width: 900px) { .history-grid { grid-template-columns: 1fr; } .logo-card { margin-top: 18px; } }
