@@ -66,12 +66,25 @@ body {
 nav {
   display: flex;
   gap: 20px;
+.ceo-grid {
+  display: grid;
+  grid-template-columns: 520px 1fr; /* wider left card like reference */
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 30px;
 }
-nav a {
-  text-decoration: none;
-  color: var(--hq-black);
-  font-size: 15px;
-  transition: color 0.3s, border-bottom 0.3s;
+
+.ceo-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ceo-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
 }
 nav a:hover,
 nav a.active {
@@ -444,6 +457,8 @@ nav a.active {
   background: #fff;
   max-width: 100%;
   box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  /* make the quote width align with the left card content */
+  align-self: stretch;
 }
 
 .ceo-quote i { color: var(--hq-yellow); font-size: 20px; margin-bottom: 8px; display:block; }
