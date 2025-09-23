@@ -93,7 +93,7 @@ include __DIR__ . '/includes/header.php';
 					</select>
 				</div>
 
-				<div class="form-row"><label>Message</label><textarea name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
+				<div class="form-row"><label>Message</label><textarea id="contact_message" name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
 
 				<div style="margin-top:12px;"><button class="btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
 			</form>
@@ -187,5 +187,17 @@ include __DIR__ . '/includes/header.php';
 		</div>
 	</div>
 </section>
+
+<script>
+// If user came via the floating chat link (contact.php#livechat), focus the message field and scroll into view
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		if(window.location.hash === '#livechat'){
+			var ta = document.getElementById('contact_message');
+			if(ta){ ta.focus(); ta.scrollIntoView({behavior:'smooth', block:'center'}); }
+		}
+	}catch(e){/* ignore */}
+});
+</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
