@@ -176,7 +176,7 @@ include __DIR__ . '/includes/header.php';
 		<h2 style="margin:0 0 10px;font-size:28px;">Ready to Start Your Success Journey?</h2>
 		<p style="margin:0 0 18px;color:#ddd;">Don't wait any longer. Contact us today and take the first step towards achieving your academic goals.</p>
 
-		<div style="display:inline-flex;gap:12px;align-items:center;margin-top:18px;">
+		<div style="display:inline-flex;gap:12px;align-items:center;margin-top:18px; background-color:var(--hq-black)">
 			<a class="btn-primary" href="tel:+2348072088794" style="display:inline-block;padding:12px 22px;border-radius:6px;background:#e23b3b;color:#fff;text-decoration:none;box-shadow:0 18px 40px rgba(226,59,59,0.18);">
 				<i class="bx bx-phone"></i>&nbsp; Call Now: 0807 208 8794
 			</a>
