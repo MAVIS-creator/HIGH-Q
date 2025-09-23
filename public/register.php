@@ -194,9 +194,18 @@ $csrf = generateToken('signup_form');
 					<div class="sidebar-card why-box">
 						<h4>Why Choose Us?</h4>
 						<div class="why-stats">
-							<div class="stat"><strong>292</strong><span>Highest JAMB Score 2024</span></div>
-							<div class="stat"><strong>1000+</strong><span>Students Trained</span></div>
-							<div class="stat"><strong>99%</strong><span>Success Rate</span></div>
+							<div class="stat">
+								<div class="icon"><img src="assets/images/icons/trophy.svg" alt="trophy"></div>
+								<div class="stat-body"><strong>292</strong><span>Highest JAMB Score 2024</span></div>
+							</div>
+							<div class="stat">
+								<div class="icon"><img src="assets/images/icons/users.svg" alt="students"></div>
+								<div class="stat-body"><strong>1000+</strong><span>Students Trained</span></div>
+							</div>
+							<div class="stat">
+								<div class="icon"><img src="assets/images/icons/results.svg" alt="results"></div>
+								<div class="stat-body"><strong>99%</strong><span>Success Rate</span></div>
+							</div>
 						</div>
 					</div>
 				</aside>
