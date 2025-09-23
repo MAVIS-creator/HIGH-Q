@@ -145,7 +145,16 @@ $csrf = generateToken('signup_form');
 					</div>
 				</div>
 
-				<aside class="register-sidebar">
+					<?php
+						// load site settings (structured table) for contact and bank details
+						$siteSettings = [];
+						try {
+							$s = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
+							$siteSettings = $s->fetch(PDO::FETCH_ASSOC) ?: [];
+						} catch (Throwable $e) { $siteSettings = []; }
+					?>
+
+					<aside class="register-sidebar">
 					<div class="sidebar-card admission-box">
 						<h4>Admission Requirements</h4>
 						<ul>
@@ -157,11 +166,13 @@ $csrf = generateToken('signup_form');
 						</ul>
 					</div>
 
-					<div class="sidebar-card payment-box">
+							<div class="sidebar-card payment-box">
 						<h4>Payment Options</h4>
 						<div class="payment-method">
 							<strong>Bank Transfer</strong>
-							<p>Account Name: High Q Solid Academy Limited<br>Bank: [Bank Name]<br>Account Number: [Account Number]</p>
+									<p>Account Name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
+									Bank: <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
+									Account Number: <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
 						</div>
 						<div class="payment-method">
 							<strong>Cash Payment</strong>
@@ -173,11 +184,11 @@ $csrf = generateToken('signup_form');
 						</div>
 					</div>
 
-					<div class="sidebar-card help-box">
+							<div class="sidebar-card help-box">
 						<h4>Need Help?</h4>
-						<p><strong>Call Us</strong><br>0807 208 8794</p>
-						<p><strong>Email Us</strong><br>info@hqacademy.com</p>
-						<p><strong>Visit Us</strong><br>8 Pineapple Avenue, Aiyetoro<br>Maya, Ikorodu</p>
+								<p><strong>Call Us</strong><br><?= htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794') ?></p>
+								<p><strong>Email Us</strong><br><?= htmlspecialchars($siteSettings['contact_email'] ?? 'info@hqacademy.com') ?></p>
+								<p><strong>Visit Us</strong><br><?= nl2br(htmlspecialchars($siteSettings['contact_address'] ?? "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu")) ?></p>
 					</div>
 
 					<div class="sidebar-card why-box">
