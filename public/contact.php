@@ -220,6 +220,14 @@ include __DIR__ . '/includes/header.php';
 	</div>
 </div>
 
+<!-- Chat iframe modal (loads chatbox.php) -->
+<div id="chatIframeModal" style="display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1200;align-items:center;justify-content:center;">
+	<div style="width:380px;max-width:92%;height:560px;background:#fff;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+		<button id="closeChatModal" aria-label="Close chat" style="position:absolute;right:8px;top:8px;border:none;background:#f1f1f1;padding:6px 8px;border-radius:6px;cursor:pointer;z-index:2;">✕</button>
+		<iframe id="chatIframe" src="chatbox.php" style="width:100%;height:100%;border:0;" title="Live Chat"></iframe>
+	</div>
+</div>
+
 <!-- Mini chat panel -->
 <div class="mini-chat" id="miniChat" aria-hidden="true">
 	<div class="mini-header">
@@ -287,8 +295,25 @@ document.addEventListener('DOMContentLoaded', function(){
 	// if there's an existing thread for this visitor, start polling so replies appear
 	try{ var existingThread = getCookie('hq_thread_id'); if(existingThread){ startChatPolling(existingThread); } }catch(e){}
 
-	if(openLive && mini){ openLive.addEventListener('click', function(){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }); openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); }); }
+	if(openLive){
+		openLive.addEventListener('click', function(){
+			// prefer served iframe modal; fallback to inline mini chat
+			var chatModal = document.getElementById('chatIframeModal');
+			if(chatModal){ chatModal.style.display = 'flex'; chatModal.setAttribute('aria-hidden','false');
+				// focus the iframe's input if it supports postMessage
+				var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
+			} else if(mini){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }
+		});
+		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
+	}
 	if(closeMini && mini){ closeMini.addEventListener('click', function(){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }); }
+
+	// chat iframe modal close button
+	var closeChatModal = document.getElementById('closeChatModal');
+	if(closeChatModal){ closeChatModal.addEventListener('click', function(){ var chatModal = document.getElementById('chatIframeModal'); if(chatModal){ chatModal.style.display='none'; chatModal.setAttribute('aria-hidden','true'); var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); } }); }
+
+	// listen for messages from iframe (chatbox) to allow it to request close
+	window.addEventListener('message', function(ev){ try{ if(ev.data && ev.data.hq_chat_action === 'close'){ var m = document.getElementById('chatIframeModal'); if(m) m.style.display='none'; } }catch(e){} });
 
 	// Send mini-chat message: create thread via API and store thread_id cookie
 	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var email = miniEmail.value.trim() || ''; var msg = miniMessage ? miniMessage.value.trim() : ''; if(!msg){ alert('Please enter a message'); return; }
