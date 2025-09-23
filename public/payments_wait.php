@@ -27,9 +27,9 @@ include __DIR__ . '/includes/header.php';
 
         <p>After making the transfer, click "I have sent the money" and provide your transfer details. An admin will verify within 10 minutes. If confirmation takes longer, an agent will contact you.</p>
 
-        <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">10:00</div>
+  <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">10:00</div>
 
-        <form method="post" action="register.php">
+        <form method="post" action="register.php" id="payer-form">
           <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
           <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
           <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
@@ -42,12 +42,21 @@ include __DIR__ . '/includes/header.php';
       </div>
 
       <script>
-        // simple 10 minute countdown
+        // simple 10 minute countdown + polling for status
         (function(){
           var total = 10*60; // seconds
           var el = document.getElementById('countdown');
           function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
           var iv = setInterval(function(){ total--; if (total<0){ clearInterval(iv); el.textContent = 'Time elapsed — confirmation may take longer. A tutor will contact you.'; return; } el.textContent = fmt(total); }, 1000);
+
+          // polling
+          var ref = <?= json_encode($payment['reference'] ?? '') ?>;
+          function check(){
+            var xhr = new XMLHttpRequest(); xhr.open('GET', '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
+            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = '/public/' + r.payment.receipt_path; } else { location.reload(); } } }catch(e){} }};
+            xhr.send();
+          }
+          var poll = setInterval(check, 10000);
         })();
       </script>
 
