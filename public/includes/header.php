@@ -63,6 +63,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           <a href="programs.php">Programs</a>
           <a href="register.php">Admission</a>
           <a href="contact.php">Contact</a>
+
+          <div class="nav-dropdown">
+            <a href="#" class="drop-toggle">News</a>
+            <div class="nav-dropdown-content">
+              <a href="news.php">News / Blog</a>
+            </div>
+          </div>
         </nav>
 
         <!-- Button -->
