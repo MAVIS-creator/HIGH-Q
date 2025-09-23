@@ -182,7 +182,7 @@ $csrf = generateToken('signup_form');
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
-																										<div class="form-row"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
+																									<div class="form-row"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
 																									<div class="form-row"><label>Last Name *</label><input name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
 																									<div class="form-row"><label>Email Address *</label><input name="email" type="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
 																									<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div>
