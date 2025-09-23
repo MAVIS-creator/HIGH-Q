@@ -98,4 +98,8 @@
   </div>
 </section>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php
+// Include tutors partial (keeps heavy markup in a separate file)
+include __DIR__ . '/tutors.php';
+
+include __DIR__ . '/includes/footer.php'; ?>
