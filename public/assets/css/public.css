@@ -676,3 +676,13 @@ nav a.active {
 .logo-card img { max-width: 220px; height: auto; display:block; }
 
 @media (max-width: 900px) { .history-grid { grid-template-columns: 1fr; } .logo-card { margin-top: 18px; } }
+
+/* Vision & Mission cards */
+.values-section { padding: 40px 0; background: #f1f1f1; }
+.values-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+.value-card { background: #fff; border-radius: 10px; padding: 22px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.04); }
+.value-icon { width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:var(--hq-yellow); color:var(--hq-black); font-size:20px; margin-bottom:12px; }
+.value-card h4 { margin: 0 0 8px; color: var(--hq-yellow); }
+.value-card p { margin:0; color:var(--hq-gray); line-height:1.7; }
+
+@media (max-width: 900px) { .values-grid { grid-template-columns: 1fr; } }
