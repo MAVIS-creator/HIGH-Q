@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$name = trim($_POST['name'] ?? '');
 	$email = trim($_POST['email'] ?? '');
 	$password = $_POST['password'] ?? '';
+	$programs = $_POST['programs'] ?? []; // array of course_id
+
 	// compute amount server-side from selected programs to prevent tampering
 	$amount = 0.0;
 	if (!empty($programs) && is_array($programs)) {
@@ -37,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Registration form fields
 	$first_name = trim($_POST['first_name'] ?? '');
 	$last_name = trim($_POST['last_name'] ?? '');
+	// derive display name if simple name field not provided
+	if (empty($name)) { $name = trim($first_name . ' ' . $last_name); }
 	$date_of_birth = trim($_POST['date_of_birth'] ?? '') ?: null;
 	$home_address = trim($_POST['home_address'] ?? '') ?: null;
 	$previous_education = trim($_POST['previous_education'] ?? '') ?: null;
@@ -44,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$emergency_name = trim($_POST['emergency_name'] ?? '') ?: null;
 	$emergency_phone = trim($_POST['emergency_phone'] ?? '') ?: null;
 	$emergency_relationship = trim($_POST['emergency_relationship'] ?? '') ?: null;
-	$programs = $_POST['programs'] ?? []; // array of course_id
+	// $programs already read above
 	$agreed_terms = isset($_POST['agreed_terms']) ? 1 : 0;
 
 	if (!$name || !$email || !$password) { $errors[] = 'Name, email and password are required.'; }
