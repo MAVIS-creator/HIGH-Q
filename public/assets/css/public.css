@@ -779,6 +779,17 @@ nav a.active::after { background: var(--hq-yellow); }
 .register-main .form-inline select { width: 160px; }
 .register-main .btn-primary { margin-left:auto; }
 
+/* Ensure inputs inside inline form rows expand to fill available space
+   so short fields (e.g. first/last name) match the width of full-width fields like email */
+.register-main .form-inline input,
+.register-main .form-inline textarea,
+.register-main .form-inline select {
+  flex: 1 1 auto;
+  min-width: 0; /* allow flex items to shrink properly */
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Sidebar cards */
 .register-sidebar { display:flex; flex-direction:column; gap:10px; }
 .sidebar-card { background:#fff; padding:16px; border-radius:8px; box-shadow:0 8px 24px rgba(11,37,64,0.04); border:1px solid rgba(0,0,0,0.04); }
