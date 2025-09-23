@@ -53,6 +53,16 @@ include __DIR__ . '/includes/header.php';
 </section>
 
 <div class="container register-layout contact-layout" style="margin-top:28px;">
+	<div class="quick-actions">
+		<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit"> 
+			<i class="bx bx-calendar"></i>
+			<div>Schedule Visit</div>
+		</div>
+		<div class="quick-action livechat" role="button" tabindex="0" id="openLiveChat" aria-label="Live Chat"> 
+			<i class="bx bx-chat"></i>
+			<div>Live Chat</div>
+		</div>
+	</div>
 	<main class="register-main">
 		<div class="card">
 			<h3>Send Us a <span style="color:var(--hq-yellow);">Message</span></h3>
