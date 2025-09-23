@@ -276,30 +276,30 @@ $csrf = generateToken('signup_form');
 </section>
 
 <!-- What Happens Next? -->
-<section class="ceo-hero" style="background: #faf7f6; padding-top:40px; padding-bottom:48px;">
+<section class="next-section">
 	<div class="container">
-		<div class="ceo-heading" style="text-align:center; margin-bottom:18px;">
+		<div class="ceo-heading" style="text-align:center;">
 			<h2>What Happens <span class="highlight">Next?</span></h2>
 			<p style="color:var(--hq-gray); margin-top:8px;">After submitting your registration, here's what you can expect from us.</p>
 		</div>
 
-		<div class="achievements-grid" style="grid-template-columns: repeat(3, 1fr); gap:20px;">
-			<div class="stat yellow">
-				<i><img src="assets/images/icons/mail.svg" alt="mail" style="width:34px;height:34px;border-radius:50%;background:var(--hq-yellow);padding:8px;"/></i>
+		<div class="achievements-grid">
+			<div class="next-stat yellow">
+				<div class="next-icon"><img src="assets/images/icons/payment.svg" alt="confirmation"></div>
 				<strong>1. Confirmation</strong>
-				<span style="font-size:13px;color:var(--hq-gray);">You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
+				<span>You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
 			</div>
 
-			<div class="stat yellow">
-				<i><img src="assets/images/icons/calendar.svg" alt="calendar" style="width:34px;height:34px;border-radius:50%;background:var(--hq-yellow);padding:8px;"/></i>
+			<div class="next-stat yellow">
+				<div class="next-icon"><img src="assets/images/icons/book-open.svg" alt="assessment"></div>
 				<strong>2. Assessment</strong>
-				<span style="font-size:13px;color:var(--hq-gray);">We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
+				<span>We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
 			</div>
 
-			<div class="stat red">
-				<i><img src="assets/images/icons/graduation.svg" alt="learning" style="width:34px;height:34px;border-radius:50%;background:var(--hq-red);padding:8px;"/></i>
+			<div class="next-stat red">
+				<div class="next-icon"><img src="assets/images/icons/trophy.svg" alt="learning"></div>
 				<strong>3. Start Learning</strong>
-				<span style="font-size:13px;color:var(--hq-gray);">Begin your journey with our expert tutors and join the ranks of our successful students.</span>
+				<span>Begin your journey with our expert tutors and join the ranks of our successful students.</span>
 			</div>
 		</div>
 	</div>
