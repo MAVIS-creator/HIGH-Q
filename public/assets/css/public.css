@@ -753,9 +753,58 @@ nav a.active::after { background: var(--hq-yellow); }
 .sidebar-card { background:#fff; padding:16px; border-radius:8px; box-shadow:0 8px 24px rgba(11,37,64,0.04); border:1px solid rgba(0,0,0,0.04); }
 .sidebar-card h4 { margin:0 0 8px; font-size:16px; }
 .admission-box { border-left:4px solid var(--hq-yellow); }
-.admission-box ul { margin:0; padding-left:18px; }
-.admission-box ul li { margin-bottom:6px; position:relative; padding-left:22px; }
-.admission-box ul li::before { content: '\2713'; /* check mark */ position:absolute; left:0; top:0; color:var(--hq-yellow); font-weight:700; }
+.admission-box {
+  border-left: 4px solid var(--hq-yellow);
+  background: #fff6db; /* soft pale yellow */
+  border: 1px solid rgba(245,185,4,0.25);
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(11,37,64,0.03);
+}
+.admission-box h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--hq-black);
+  position: relative;
+  padding-left: 40px;
+}
+.admission-box h4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 34px;
+  height: 34px;
+  background-image: url('../images/icons/doc.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+}
+.admission-box ul { margin: 8px 0 0; padding: 0; list-style: none; }
+.admission-box ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--hq-gray-dark);
+  font-size: 14px;
+}
+.admission-box ul li::before {
+  content: '\2713';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--hq-yellow);
+  color: var(--hq-yellow);
+  font-size: 12px;
+  flex: 0 0 auto;
+  background: #fff;
+  margin-top: 2px;
+}
 .payment-box .payment-method { border-left:4px solid var(--hq-yellow); padding-left:10px; margin-bottom:10px; }
 .help-box { background:#111; color:#fff; }
 .help-box a { color: var(--hq-yellow); }
