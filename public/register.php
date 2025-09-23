@@ -119,7 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if ($method === 'bank' || !empty($errors)) {
 				$bank = $cfg['bank'];
 				// display instructions (render minimal HTML below)
-				$success = "Please transfer " . number_format($amount,2) . " to account {$bank['account_number']} ({$bank['bank_name']}). Use reference: $reference. After payment, upload your receipt on your profile or contact support.";
+				$success = "Please transfer " . number_format($amount,2) . " to account {$bank['account_number']} ({$bank['bank_name']}). Use reference: $reference. After payment, click the \"I have sent the money\" button and provide your transfer details.";
+				// Keep payment id & reference in session for follow-up (short-lived)
+				$_SESSION['last_payment_id'] = $paymentId;
+				$_SESSION['last_payment_reference'] = $reference;
 			}
 		}
 	}
@@ -198,4 +201,23 @@ $csrf = generateToken('signup_form');
 </section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
+
+<?php
+// If the user clicked "I have sent the money" on the bank instructions, handle update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_sent']) && !empty($_POST['payment_id'])) {
+	$payId = (int)$_POST['payment_id'];
+	$payer_name = trim($_POST['payer_name'] ?? '');
+	$payer_number = trim($_POST['payer_number'] ?? '');
+	$payer_bank = trim($_POST['payer_bank'] ?? '');
+	// basic CSRF
+	$token2 = $_POST['_csrf_token'] ?? '';
+	if (!verifyToken('signup_form', $token2)) { /* ignore silently */ }
+	else {
+		$upd = $pdo->prepare('UPDATE payments SET payer_account_name = ?, payer_account_number = ?, payer_bank_name = ?, status = ?, updated_at = NOW() WHERE id = ?');
+		$upd->execute([$payer_name, $payer_number, $payer_bank, 'sent', $payId]);
+		// redirect to a waiting page where the user can poll or be informed
+		header('Location: payments_wait.php?ref=' . urlencode($_SESSION['last_payment_reference'] ?? '')); exit;
+	}
+}
+?>
 
