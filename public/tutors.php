@@ -51,3 +51,59 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <?php endif; ?>
   </div>
 </section>
+
+<!-- Achievements -->
+<section class="achievements">
+  <div class="container">
+    <div class="ceo-heading">
+      <h2>Our <span class="highlight">Achievements</span></h2>
+    </div>
+    <div class="achievements-grid">
+      <div class="achievement">
+        <strong>500+</strong>
+        <span>Students Graduated</span>
+      </div>
+      <div class="achievement">
+        <strong>98%</strong>
+        <span>Success Rate</span>
+      </div>
+      <div class="achievement">
+        <strong>15+</strong>
+        <span>Expert Tutors</span>
+      </div>
+      <div class="achievement">
+        <strong>5+</strong>
+        <span>Years Experience</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials / What Our Students Say -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="ceo-heading">
+      <h2>What Our <span class="highlight">Students Say</span></h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <article class="testimonial-card">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"HQ Academy transformed my understanding of mathematics. The tutors are incredibly patient and explain concepts so clearly!"</p>
+        <p class="attribution"><strong>Adunni Olatunji</strong><br><small>JAMB 2023 - Score: 287</small></p>
+      </article>
+
+      <article class="testimonial-card">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"Thanks to HQ Academy, I passed my WAEC with flying colors. The personalized attention made all the difference!"</p>
+        <p class="attribution"><strong>Chidi Okwu</strong><br><small>WAEC 2023 - 8 A's</small></p>
+      </article>
+
+      <article class="testimonial-card">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"The best decision I made was joining HQ Academy. Their Post-UTME preparation got me into my dream university!"</p>
+        <p class="attribution"><strong>Fatima Hassan</strong><br><small>University of Lagos 2023</small></p>
+      </article>
+    </div>
+  </div>
+</section>
