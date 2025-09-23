@@ -233,7 +233,19 @@ include __DIR__ . '/includes/header.php';
 		<div class="chat-form">
 			<input type="text" id="miniName" placeholder="Your name" class="chat-input">
 			<input type="email" id="miniEmail" placeholder="Your email (optional)" class="chat-input">
+			<div class="attach-row">
+				<label class="attach-btn" title="Attach image">
+					📎<input type="file" id="miniAttach" accept="image/*" style="display:none">
+				</label>
+				<select id="emojiSelect" class="emoji-select">
+					<option value="">😀</option>
+					<option value="😊">😊</option>
+					<option value="👍">👍</option>
+					<option value="🎉">🎉</option>
+				</select>
+			</div>
 			<textarea id="miniMessage" placeholder="Enter your message..." class="chat-textarea"></textarea>
+			<div class="chat-preview" id="chatPreview"></div>
 			<div class="chat-actions"><button class="btn-ghost" id="miniClear">Clear</button><button class="btn-primary" id="miniSend">Send</button></div>
 		</div>
 	</div>
