@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 // Quick Actions: modal calendar and mini chat
-(function(){
+document.addEventListener('DOMContentLoaded', function(){
 	function setCookie(name,value,days){ var d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie = name+"="+encodeURIComponent(value)+";path=/;expires="+d.toUTCString(); }
 	function getCookie(name){ var m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m? decodeURIComponent(m[2]) : null; }
 
@@ -259,9 +259,9 @@ document.addEventListener('DOMContentLoaded', function(){
 	var modal = document.getElementById('modalBackdrop');
 	var cancel = document.getElementById('cancelSchedule');
 	var confirm = document.getElementById('confirmSchedule');
-	if(openSchedule && modal){ openSchedule.addEventListener('click', function(){ modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); }); openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter') openSchedule.click(); }); }
-	if(cancel){ cancel.addEventListener('click', function(){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }); }
-	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ alert('Please pick a date'); return; } alert('Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'); modal.style.display='none'; }); }
+	if(openSchedule && modal){ openSchedule.addEventListener('click', function(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }); openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter') openSchedule.click(); }); }
+	if(cancel){ cancel.addEventListener('click', function(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }); }
+	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ alert('Please pick a date'); return; } alert('Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'); modal.classList.remove('open'); }); }
 
 	// Mini chat open
 	var openLive = document.getElementById('openLiveChat');
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		if(!msg){ msg = prompt('Message:'); if(!msg) return; }
 		try{
 			var fd = new FormData(); fd.append('name', name); fd.append('email', ''); fd.append('message', msg);
-			var res = await fetch('/HIGH-Q/public/api/chat.php?action=send_message', { method: 'POST', body: fd });
+			var res = await fetch('api/chat.php?action=send_message', { method: 'POST', body: fd });
 			var j = await res.json(); if(j.status==='ok'){ setCookie('hq_thread_id', j.thread_id, 7); updateFloatingBadge(); miniBody.innerHTML = '<div style="color:#0a0;font-size:13px">Message sent. An admin will reply soon.</div>'; miniName.value = ''; // clear
 				// append to main contact textarea if present
 				var ta = document.getElementById('contact_message'); if(ta) ta.value = '';
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	if(floatBtn){ floatBtn.addEventListener('click', function(e){ e.preventDefault(); // open contact in same tab, but with hash to open mini chat
 		location.href = 'contact.php#livechat'; }); }
 
-})();
+});
 </script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
