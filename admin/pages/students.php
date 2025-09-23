@@ -81,18 +81,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
   }
 }
 
-// Fetch students (users with role slug 'student' or where role is null)
-$stmt = $pdo->prepare("SELECT u.*, r.name AS role_name, r.slug AS role_slug FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE r.slug = 'student' OR u.role_id IS NULL ORDER BY u.created_at DESC");
-$stmt->execute();
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Prefer to show structured student registrations if the table exists
+$hasRegistrations = false;
+try {
+  $check = $pdo->query("SHOW TABLES LIKE 'student_registrations'")->fetch();
+  $hasRegistrations = !empty($check);
+} catch (Throwable $e) { $hasRegistrations = false; }
 
-// Counts
-$total = count($students);
-$active = 0; $pending = 0; $banned = 0;
-foreach ($students as $s) {
+if ($hasRegistrations) {
+  // simple pagination
+  $perPage = 12;
+  $page = max(1, (int)($_GET['page'] ?? 1));
+  $offset = ($page - 1) * $perPage;
+
+  $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
+  $countStmt->execute();
+  $total = (int)$countStmt->fetchColumn();
+
+  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
+  $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+  $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+  $stmt->execute();
+  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} else {
+  // Fetch students (users with role slug 'student' or where role is null)
+  $stmt = $pdo->prepare("SELECT u.*, r.name AS role_name, r.slug AS role_slug FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE r.slug = 'student' OR u.role_id IS NULL ORDER BY u.created_at DESC");
+  $stmt->execute();
+  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Counts for legacy users list
+  $total = count($students);
+  $active = 0; $pending = 0; $banned = 0;
+  foreach ($students as $s) {
     if ($s['is_active']==1) $active++;
     elseif ($s['is_active']==0) $pending++;
     elseif ($s['is_active']==2) $banned++;
+  }
 }
 ?>
 
