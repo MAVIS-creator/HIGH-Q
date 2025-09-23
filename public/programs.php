@@ -126,4 +126,84 @@
 	</div>
 </section>
 
+<!-- Why Choose Our Programs -->
+<section class="why-programs">
+	<div class="container">
+		<div class="ceo-heading">
+			<h2>Why Choose <span class="highlight">Our Programs</span></h2>
+		</div>
+
+		<div class="core-grid">
+			<article class="value-card">
+				<div class="value-icon"><img src="./assets/images/icons/teacher.svg" alt="Expert Tutors"></div>
+				<h4>Expert Tutors</h4>
+				<p>Experienced and qualified tutors with proven track records</p>
+			</article>
+
+			<article class="value-card">
+				<div class="value-icon"><img src="./assets/images/icons/results.svg" alt="Proven Results"></div>
+				<h4>Proven Results</h4>
+				<p>Consistent high performance and success rates across all programs</p>
+			</article>
+
+			<article class="value-card">
+				<div class="value-icon"><img src="./assets/images/icons/target.svg" alt="Personalized"></div>
+				<h4>Personalized Learning</h4>
+				<p>Tailored approach to meet individual student needs and goals</p>
+			</article>
+
+			<article class="value-card">
+				<div class="value-icon"><img src="./assets/images/icons/laptop.svg" alt="Facilities"></div>
+				<h4>Modern Facilities</h4>
+				<p>State-of-the-art equipment and learning resources</p>
+			</article>
+		</div>
+	</div>
+</section>
+
+<!-- Track record / stats -->
+<section class="track-record">
+	<div class="container">
+		<div class="ceo-heading">
+			<h2>Our <span class="highlight">Track Record</span></h2>
+		</div>
+
+		<div class="ceo-stats">
+			<div class="stat yellow">
+				<i class="bx bx-bar-chart"></i>
+				<strong>292</strong>
+				<span>Highest JAMB Score 2024</span>
+			</div>
+
+			<div class="stat red">
+				<i class="bx bx-award"></i>
+				<strong>98%</strong>
+				<span>WAEC Success Rate</span>
+			</div>
+
+			<div class="stat gray">
+				<i class="bx bx-users"></i>
+				<strong>500+</strong>
+				<span>Students Trained</span>
+			</div>
+
+			<div class="stat">
+				<i class="bx bx-calendar"></i>
+				<strong>6+</strong>
+				<span>Years of Excellence</span>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Latest News & Updates -->
+<section class="news-section">
+	<div class="container">
+		<div class="ceo-heading">
+			<h2>Latest <span class="highlight">News & Updates</span></h2>
+		</div>
+		<p class="muted" style="text-align:center">No news posts available at the moment. Check back later for updates!</p>
+	</div>
+</section>
+
 <?php include __DIR__ . '/includes/footer.php'; ?>
