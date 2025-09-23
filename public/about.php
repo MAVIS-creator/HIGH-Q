@@ -10,25 +10,6 @@
   </div>
 </section>
 
-<!-- Vision & Mission -->
-<section class="values-section">
-  <div class="container">
-    <div class="values-grid">
-      <article class="value-card">
-        <div class="value-icon"><i class='bx bxs-bullseye'></i></div>
-        <h4>Our Vision</h4>
-        <p>To be the leading tutorial academy that transforms students into confident, well-prepared individuals ready to excel in their academic pursuits and achieve their educational goals with excellence.</p>
-      </article>
-
-      <article class="value-card">
-        <div class="value-icon"><i class='bx bxs-rocket'></i></div>
-        <h4>Our Mission</h4>
-        <p>To provide high-quality, personalized education that empowers students to achieve academic excellence through innovative teaching methods, experienced tutors, and comprehensive exam preparation programs.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
 <section class="history-section">
   <div class="container history-grid">
     <div class="history-content">
@@ -48,6 +29,26 @@
       <div class="logo-card">
         <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo">
       </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Vision & Mission -->
+<section class="values-section">
+  <div class="container">
+    <div class="values-grid">
+      <article class="value-card">
+        <div class="value-icon"><i class='bx bxs-bullseye'></i></div>
+        <h4>Our Vision</h4>
+        <p>To be the leading tutorial academy that transforms students into confident, well-prepared individuals ready to excel in their academic pursuits and achieve their educational goals with excellence.</p>
+      </article>
+
+      <article class="value-card">
+        <div class="value-icon"><i class='bx bxs-rocket'></i></div>
+        <h4>Our Mission</h4>
+        <p>To provide high-quality, personalized education that empowers students to achieve academic excellence through innovative teaching methods, experienced tutors, and comprehensive exam preparation programs.</p>
+      </article>
     </div>
   </div>
 </section>
