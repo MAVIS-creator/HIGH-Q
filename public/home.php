@@ -70,6 +70,51 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </section>
 
+<?php
+// Latest News & Updates: fetch up to 4 published posts
+$latestPosts = [];
+if (isset($pdo) && $pdo instanceof PDO) {
+  try {
+    $stmt = $pdo->prepare("SELECT id, title, slug, excerpt, created_at, featured_image FROM posts WHERE status='published' ORDER BY created_at DESC LIMIT 4");
+    $stmt->execute();
+    $latestPosts = $stmt->fetchAll();
+  } catch (Throwable $e) {
+    $latestPosts = [];
+  }
+}
+?>
+
+<section class="news-section">
+  <div class="container">
+    <div class="ceo-heading">
+      <h2>Latest <span class="highlight">News & Updates</span></h2>
+      <p class="muted">Stay informed with our latest announcements and blog posts.</p>
+    </div>
+
+    <?php if (empty($latestPosts)): ?>
+      <p class="no-posts">No news posts available at the moment. Check back later for updates!</p>
+    <?php else: ?>
+      <div class="news-grid">
+        <?php foreach ($latestPosts as $post): ?>
+          <article class="news-card">
+            <?php if (!empty($post['featured_image'])): ?>
+              <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
+            <?php endif; ?>
+            <div class="news-body">
+              <h4><a href="post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
+              <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? ''))>180?substr($post['excerpt'],0,177).'...':($post['excerpt']??''))) ?></p>
+              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time></div>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </div>
+      <div class="news-cta" style="text-align:center;margin-top:18px;">
+        <a href="news.php" class="btn-ghost">View All News</a>
+      </div>
+    <?php endif; ?>
+  </div>
+</section>
+
 
 
 <section class="ceo-hero">
