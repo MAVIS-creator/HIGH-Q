@@ -292,11 +292,6 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 +
 +
 +
-+
-+
-+
-+
-+ 
 <?php
 // public/chatbox.php - lightweight chat API (send/get) and an embeddable widget when used without action params.
 require_once __DIR__ . '/config/db.php';
