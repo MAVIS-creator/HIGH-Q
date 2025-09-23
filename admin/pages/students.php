@@ -153,51 +153,94 @@ if ($hasRegistrations) {
   </div>
 
   <div class="users-list" id="studentsList">
-    <?php foreach ($students as $s):
-      $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
-      $roleClass = 'role-student';
-    ?>
-    <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
-      <div class="card-left">
-        <img src="<?= $s['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
-        <div class="card-meta">
-          <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
-          <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
-          <div class="card-badges">
-            <span class="role-badge <?= $roleClass ?>">Student</span>
-            <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
+    <?php if (!empty($hasRegistrations)): ?>
+      <?php foreach ($students as $s): ?>
+        <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>">
+          <div class="card-left">
+            <img src="<?= '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+            <div class="card-meta">
+              <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
+              <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
+              <div class="card-badges">
+                <span class="role-badge role-student">Student</span>
+                <span class="status-badge <?= ($s['status']==='paid' || $s['status']==='confirmed') ? 'status-active' : 'status-pending' ?>"><?= htmlspecialchars(ucfirst($s['status'])) ?></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-actions">
+              <button class="btn-view" data-user-id="<?= $s['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this registration?');">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-banish">Delete</button>
+              </form>
+            </div>
+            <div class="card-details" style="margin-top:10px;padding:12px;border-radius:6px;background:#fff;">
+              <div><strong>DOB:</strong> <?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
+              <div><strong>Address:</strong> <?= htmlspecialchars(strlen($s['home_address']??'')>80 ? substr($s['home_address'],0,80).'...' : ($s['home_address']??'-')) ?></div>
+              <div><strong>Emergency:</strong> <?= htmlspecialchars(($s['emergency_contact_name'] ?? '-') . ' / ' . ($s['emergency_contact_phone'] ?? '-')) ?></div>
+              <div style="margin-top:8px;"><a href="index.php?pages=students&action=view&id=<?= $s['id'] ?>">View full registration</a></div>
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+
+      <!-- Pagination -->
+      <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
+        <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
+          <?php for ($p=1;$p<=$pages;$p++): ?>
+            <a href="index.php?pages=students&page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+          <?php endfor; ?>
+        </div>
+      <?php endif; ?>
+
+    <?php else: ?>
+      <?php foreach ($students as $s):
+        $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
+        $roleClass = 'role-student';
+      ?>
+      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
+        <div class="card-left">
+          <img src="<?= $s['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+          <div class="card-meta">
+            <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
+            <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
+            <div class="card-badges">
+              <span class="role-badge <?= $roleClass ?>">Student</span>
+              <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
+            </div>
+          </div>
+        </div>
+        <div class="card-right">
+          <div class="card-actions">
+            <button class="btn-view" data-user-id="<?= $s['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+            <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
+              <?php if ($s['is_active'] == 1): ?>
+                <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-banish">Deactivate</button>
+                </form>
+              <?php elseif ($s['is_active'] == 0): ?>
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-approve">Activate</button>
+                </form>
+              <?php else: ?>
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-approve">Reactivate</button>
+                </form>
+              <?php endif; ?>
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this student? This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-banish">Delete</button>
+              </form>
+            <?php endif; ?>
           </div>
         </div>
       </div>
-      <div class="card-right">
-        <div class="card-actions">
-          <button class="btn-view" data-user-id="<?= $s['id'] ?>" title="View"><i class='bx bx-show'></i></button>
-          <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
-            <?php if ($s['is_active'] == 1): ?>
-              <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-banish">Deactivate</button>
-              </form>
-            <?php elseif ($s['is_active'] == 0): ?>
-              <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-approve">Activate</button>
-              </form>
-            <?php else: ?>
-              <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-approve">Reactivate</button>
-              </form>
-            <?php endif; ?>
-            <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this student? This cannot be undone.');">
-              <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-              <button type="submit" class="btn-banish">Delete</button>
-            </form>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-    <?php endforeach; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
   </div>
 
 </div>
