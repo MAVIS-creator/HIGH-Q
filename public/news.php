@@ -42,8 +42,7 @@ $countStmt = $pdo->prepare($countSql);
 $countStmt->execute($params);
 $total = (int)$countStmt->fetchColumn();
 
-// fetch page of posts
-$sql = "SELECT id, title, slug, excerpt, featured_image, created_at FROM posts " . $where . " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+$sql = "SELECT id, title, slug, excerpt, created_at, tags FROM posts " . $where . " ORDER BY created_at DESC LIMIT ? OFFSET ?";
 $pageParams = $params;
 $pageParams[] = $perPage;
 $pageParams[] = $offset;
@@ -85,7 +84,7 @@ require_once __DIR__ . '/includes/header.php';
       <div class="posts-grid">
         <?php foreach ($posts as $p): ?>
           <article class="post-card">
-            <?php if (!empty($p['featured_image'])): ?>
+            <?php if (!empty($p['featured_image'] ?? '')): ?>
               <img src="<?= htmlspecialchars($p['featured_image']) ?>" alt="" class="thumb">
             <?php endif; ?>
             <h3><a href="post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
