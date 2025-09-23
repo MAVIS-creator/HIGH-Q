@@ -60,7 +60,15 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         <nav>
           <a href="index.php" class="active">Home</a>
           <a href="about.php">About Us</a>
-          <a href="programs.php">Programs</a>
+          <div class="nav-item-with-dropdown">
+            <a href="programs.php">Programs</a>
+            <div class="nav-dropdown">
+              <a href="#" class="drop-toggle">News</a>
+              <div class="nav-dropdown-content">
+                <a href="news.php">News / Blog</a>
+              </div>
+            </div>
+          </div>
           <a href="register.php">Admission</a>
           <a href="contact.php">Contact</a>
 
