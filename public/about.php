@@ -12,49 +12,7 @@
 
 <!-- Core Values -->
 <section class="core-values">
-  <div class="container">
-    <div class="ceo-heading">
-      <h2>Our Core <span class="highlight">Values</span></h2>
-    </div>
-
-    <div class="core-grid">
-      <div class="core-value-card">
-        <div class="core-icon"><i class='bx bxs-award'></i></div>
-        <h5>Excellence</h5>
-        <p>We strive for the highest standards in everything we do</p>
-      </div>
-
-      <div class="core-value-card">
-        <div class="core-icon"><i class='bx bxs-shield'></i></div>
-        <h5>Integrity</h5>
-        <p>Building trust through honesty and transparent communication</p>
-      </div>
-
-      <div class="core-value-card">
-        <div class="core-icon"><i class='bx bxs-rocket'></i></div>
-        <h5>Innovation</h5>
-        <p>Embracing new methods and technologies for better learning</p>
-      </div>
-
-      <div class="core-value-card">
-        <div class="core-icon"><i class='bx bxs-hand'></i></div>
-        <h5>Dedication</h5>
-        <p>Committed to our students' success and growth</p>
-      </div>
-
-      <div class="core-value-card">
-        <div class="core-icon"><i class='bx bxs-star'></i></div>
-        <h5>Quality</h5>
-        <p>Delivering superior educational experiences consistently</p>
-      </div>
-
-      <div class="core-value-card">
-        <div class="core-icon"><i class='bx bxs-heart'></i></div>
-        <h5>Care</h5>
-        <p>Nurturing every student with personalized attention</p>
-      </div>
-    </div>
-  </div>
+  
 </section>
 
 <section class="history-section">

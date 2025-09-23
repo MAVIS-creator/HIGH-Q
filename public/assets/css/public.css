@@ -686,3 +686,14 @@ nav a.active {
 .value-card p { margin:0; color:var(--hq-gray); line-height:1.7; }
 
 @media (max-width: 900px) { .values-grid { grid-template-columns: 1fr; } }
+
+/* Core Values */
+.core-values { padding: 48px 0; background: #f1f1f1; }
+.core-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 18px; }
+.core-value-card { background:#fff; border-radius:10px; padding:22px; text-align:center; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border:1px solid rgba(0,0,0,0.04); }
+.core-icon { width:44px; height:44px; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; background: #fff6df; border-radius: 8px; color:var(--hq-yellow); font-size:20px; }
+.core-value-card h5 { margin: 8px 0 6px; font-weight:700; }
+.core-value-card p { margin:0; color:var(--hq-gray); font-size:14px; }
+
+@media (max-width: 1100px) { .core-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 700px) { .core-grid { grid-template-columns: 1fr; } }
