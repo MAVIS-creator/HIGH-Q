@@ -729,7 +729,7 @@ nav a.active::after { background: var(--hq-yellow); }
   padding-left: 28px; /* shift slightly from page edge */
   padding-right: 28px;
 }
-.register-layout .register-main { justify-self: center; max-width: none; width: 100%; }
+.register-layout .register-main { justify-self: center; max-width: 820px; width: 100%; }
 .register-layout .register-sidebar { align-self: start; }
 
 .form-section { margin-bottom:18px; }
@@ -743,9 +743,9 @@ nav a.active::after { background: var(--hq-yellow); }
 }
 .register-main .card {
   background: #fff;
-  padding: 18px; /* slightly reduced so inputs reach closer to the card edge visually */
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(11,37,64,0.06);
+  padding: 28px; /* increased padding for a larger contact form */
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(11,37,64,0.08);
 }
 /* Enhanced registration form styles to match the attachments */
 .register-main .card { padding: 18px; border-radius: 14px; }
