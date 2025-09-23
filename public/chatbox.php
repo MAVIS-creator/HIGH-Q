@@ -3,65 +3,6 @@
 require_once __DIR__ . '/config/db.php';
 
 // Utility to send JSON responses and exit
-function jsonResponse($data){ header('Content-Type: application/json; charset=utf-8'); echo json_encode($data); exit; }
-+
-
-// Handle API requests before emitting HTML/CSS/JS
-$action = $_REQUEST['action'] ?? '';
-+
-if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? 'Guest');
-    $email = trim($_POST['email'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    $thread_id = isset($_POST['thread_id']) && is_numeric($_POST['thread_id']) ? (int)$_POST['thread_id'] : null;
-
-    try {
-        // create thread if needed
-        if (!$thread_id) {
-            $stmt = $pdo->prepare('INSERT INTO chat_threads (visitor_name, visitor_email, created_at, last_activity) VALUES (:name, :email, NOW(), NOW())');
-            $stmt->execute([':name' => $name, ':email' => $email]);
-            $thread_id = (int)$pdo->lastInsertId();
-        }
-
-        // handle optional attachment (image)
-        $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        if (!empty($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-            $f = $_FILES['attachment'];
-+            $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
-+            if (in_array($f['type'], $allowed)) {
-+                $uploadDir = __DIR__ . '/uploads/chat/';
-+                if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-+                $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
-+                $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
-+                $dest = $uploadDir . $nameSafe;
-+                if (move_uploaded_file($f['tmp_name'], $dest)) {
-+                    // accessible URL relative to public pages
-+                    $url = 'uploads/chat/' . $nameSafe;
-+                    $messageHtml .= '<br><img src="' . htmlspecialchars($url) . '" alt="attachment">';
-+                }
-+            }
-+        }
-+
-        $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
-+        $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
-+
-+        // update thread last_activity so admins see recent activity
-+        $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = :id');
-+        $u->execute([':id' => $thread_id]);
-+
-+        jsonResponse(['status' => 'ok', 'thread_id' => $thread_id]);
-+    } catch (Throwable $e) {
-+        jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
-+    }
-+
-+}
-+
-+
-<?php
-// public/chatbox.php - lightweight chat API (send/get) and an embeddable widget when used without action params.
-require_once __DIR__ . '/config/db.php';
-
-// Utility to send JSON responses and exit
 function jsonResponse($data)
 {
     header('Content-Type: application/json; charset=utf-8');
