@@ -129,10 +129,18 @@ nav {
 .nav-dropdown-content a:hover { background: var(--hq-yellow-light); color: var(--hq-black); }
 .nav-dropdown:hover .nav-dropdown-content { display: block; }
 
-nav a:hover,
+nav a {
+  color: var(--hq-black);
+  text-decoration: none;
+  padding-bottom: 6px;
+}
+
+nav a:hover { color: var(--hq-black); opacity: 0.9; }
+
 nav a.active {
   color: var(--hq-yellow);
-  border-bottom: 2px solid var(--hq-yellow);
+  border-bottom: 3px solid var(--hq-yellow);
+  border-radius: 4px 4px 0 0;
 }
 
 /* CEO grid (outside nav) */
@@ -997,6 +1005,13 @@ nav a.active {
   gap: 24px;
   margin-top: 18px;
 }
+
+/* Section backgrounds to create separation like the reference */
+.programs-content { padding: 40px 0; background: #fbfbfb; }
+.why-programs { padding: 36px 0; background: #fff; }
+.track-record { padding: 48px 0; background: #fbfbfb; }
+
+.ceo-heading { text-align:center; margin-bottom:18px; }
 
 .program-card {
   background: #fff;
