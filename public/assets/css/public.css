@@ -1554,3 +1554,89 @@ nav a.active {
     grid-template-columns: 1fr;
   }
 }
+
+/* Programs cards (static, not from SQL) */
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 18px;
+}
+
+.program-card {
+  background: linear-gradient(180deg, #fff, #fbfaf8);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.program-card-head {
+  padding: 18px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.program-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(245,185,4,0.12), #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.program-icon img {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.program-card-body {
+  padding: 14px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+
+.program-card-body h4 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--hq-black);
+  font-weight: 800;
+}
+
+.program-card .muted {
+  color: var(--hq-gray);
+  font-size: 13px;
+}
+
+.program-card .duration {
+  color: var(--hq-gray);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.program-card .btn-primary {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+@media (max-width: 1100px) {
+  .programs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .programs-grid { grid-template-columns: 1fr; }
+}
