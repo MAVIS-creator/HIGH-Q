@@ -59,6 +59,9 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'site_name' => $site['name'] ?? null,
         'tagline' => $site['tagline'] ?? null,
         'logo_url' => $site['logo'] ?? null,
+        'bank_name' => $site['bank_name'] ?? null,
+        'bank_account_name' => $site['bank_account_name'] ?? null,
+        'bank_account_number' => $site['bank_account_number'] ?? null,
         'vision' => $site['vision'] ?? null,
         'about' => $site['about'] ?? null,
         'contact_phone' => $contact['phone'] ?? null,
@@ -83,6 +86,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
     if ($id) {
         $sql = "UPDATE site_settings SET
             site_name = :site_name, tagline = :tagline, logo_url = :logo_url,
+            bank_name = :bank_name, bank_account_name = :bank_account_name, bank_account_number = :bank_account_number,
             vision = :vision, about = :about,
             contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
             contact_facebook = :contact_facebook, contact_twitter = :contact_twitter, contact_instagram = :contact_instagram,
@@ -95,11 +99,13 @@ function upsertSiteSettings(PDO $pdo, array $data) {
     } else {
         $sql = "INSERT INTO site_settings
             (site_name, tagline, logo_url, vision, about,
+             bank_name, bank_account_name, bank_account_number,
              contact_phone, contact_email, contact_address,
              contact_facebook, contact_twitter, contact_instagram,
              maintenance, registration, email_verification, two_factor, comment_moderation)
             VALUES
             (:site_name, :tagline, :logo_url, :vision, :about,
+             :bank_name, :bank_account_name, :bank_account_number,
              :contact_phone, :contact_email, :contact_address,
              :contact_facebook, :contact_twitter, :contact_instagram,
              :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
@@ -446,6 +452,12 @@ $csrf = generateToken('settings_form');
                     <input name="settings[site][tagline]" placeholder="Excellence in Education" value="<?= htmlspecialchars($current['site']['tagline']) ?>" class="input">
                     <label>Logo URL</label>
                     <input name="settings[site][logo]" placeholder="https://example.com/logo.png" value="<?= htmlspecialchars($current['site']['logo']) ?>" class="input">
+                    <label>Bank Name</label>
+                    <input name="settings[site][bank_name]" placeholder="Bank Name" value="<?= htmlspecialchars($current['site']['bank_name'] ?? '') ?>" class="input">
+                    <label>Account Name</label>
+                    <input name="settings[site][bank_account_name]" placeholder="Account Name" value="<?= htmlspecialchars($current['site']['bank_account_name'] ?? '') ?>" class="input">
+                    <label>Account Number</label>
+                    <input name="settings[site][bank_account_number]" placeholder="Account Number" value="<?= htmlspecialchars($current['site']['bank_account_number'] ?? '') ?>" class="input">
                     <label>Vision Statement</label>
                     <textarea name="settings[site][vision]" placeholder="To be the leading educational institution in our region" class="input" rows="3"><?= htmlspecialchars($current['site']['vision']) ?></textarea>
                     <label>About Description</label>
