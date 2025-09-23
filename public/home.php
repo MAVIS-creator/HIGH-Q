@@ -70,6 +70,20 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </section>
 
+<!-- CTA Banner under Programs -->
+<section class="programs-cta">
+  <div class="container">
+    <div class="programs-cta-inner">
+      <h3>Ready to Start Your Success Journey?</h3>
+      <p>Join our proven programs and take the first step towards academic excellence. Our expert tutors are ready to guide you to success.</p>
+      <div class="programs-cta-actions">
+        <a href="register.php" class="btn-primary">Register for Programs</a>
+        <a href="programs.php" class="btn-ghost">View All Programs</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <section class="ceo-hero">
   <div class="container">
@@ -156,7 +170,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <section class="programs-section">
   <div class="container">
     <div class="ceo-heading">
-      <h2>Our <span class="highlight">Programs & Services</span></h2>
+      <h2>Our <span class="high">Programs & Services</span></h2>
       <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
