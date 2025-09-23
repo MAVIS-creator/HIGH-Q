@@ -227,11 +227,15 @@ include __DIR__ . '/includes/header.php';
 		<button id="closeMini" aria-label="Close chat" class="btn-ghost">✕</button>
 	</div>
 	<div class="mini-body" id="miniBody">
-		<div style="color:#666;font-size:13px">Start a conversation — our admin will reply shortly.</div>
-	</div>
-	<div class="mini-footer">
-		<input type="text" id="miniName" placeholder="Your name" style="flex:1;padding:8px;border:1px solid #eee;border-radius:6px">
-		<button class="btn-primary" id="miniSend">Send</button>
+		<div class="chat-messages" id="chatMessages">
+			<div class="chat-system">Start a conversation — our admin will reply shortly.</div>
+		</div>
+		<div class="chat-form">
+			<input type="text" id="miniName" placeholder="Your name" class="chat-input">
+			<input type="email" id="miniEmail" placeholder="Your email (optional)" class="chat-input">
+			<textarea id="miniMessage" placeholder="Enter your message..." class="chat-textarea"></textarea>
+			<div class="chat-actions"><button class="btn-ghost" id="miniClear">Clear</button><button class="btn-primary" id="miniSend">Send</button></div>
+		</div>
 	</div>
 </div>
 
