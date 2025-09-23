@@ -4,8 +4,22 @@ require __DIR__ . '/../../vendor/autoload.php'; // adjust path if needed
 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+// Attempt to load .env from project root (two levels up from public/config)
+$rootDir = dirname(__DIR__, 2); // HIGH-Q root
+$publicDir = dirname(__DIR__); // public
+
+// Prefer root .env, fallback to public/.env; if none present, skip loading to avoid fatal errors
+try {
+    if (file_exists($rootDir . '/.env')) {
+        Dotenv::createImmutable($rootDir)->safeLoad();
+    } elseif (file_exists($publicDir . '/.env')) {
+        Dotenv::createImmutable($publicDir)->safeLoad();
+    } else {
+        // no .env file found; continue — environment variables may be provided by server
+    }
+} catch (Throwable $e) {
+    // If Dotenv throws unexpectedly, suppress to avoid fatal error in environments without .env
+}
 
 // Fetch env vars
 $host    = $_ENV['DB_HOST'];
