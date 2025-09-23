@@ -558,6 +558,12 @@ nav a.active::after { background: var(--hq-yellow); }
 .chat-input { padding:8px 10px; border-radius:8px; border:1px solid #eee; }
 .chat-textarea { min-height:72px; padding:10px; border-radius:8px; border:1px solid #eee; resize:vertical; }
 .chat-actions { display:flex; gap:8px; justify-content:flex-end; }
+.attach-row { display:flex; gap:8px; align-items:center; }
+.attach-btn { display:inline-flex; align-items:center; justify-content:center; padding:6px 8px; background:#f7f7f7; border-radius:8px; cursor:pointer; border:1px solid rgba(0,0,0,0.06); }
+.emoji-select { padding:6px; border-radius:8px; border:1px solid #eee; }
+.chat-preview { display:flex; gap:8px; flex-wrap:wrap; }
+.chat-preview img { max-width:100px; max-height:80px; border-radius:8px; border:1px solid #eee; }
+.chat-bubble.user img, .chat-bubble.admin img { max-width:200px; max-height:160px; display:block; border-radius:8px; }
 
 /* Unread badge on floating chat */
 .floating-chat .badge { position:absolute; top:-6px; right:-6px; background:#e23b3b; color:#fff; font-size:11px; padding:3px 6px; border-radius:999px; box-shadow:0 6px 16px rgba(0,0,0,0.2); }
