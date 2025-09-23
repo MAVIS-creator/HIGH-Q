@@ -25,272 +25,17 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($data);
             exit;
     }
-
-    $action = $_REQUEST['action'] ?? '';
-
-    if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = trim($_POST['name'] ?? 'Guest');
-            $email = trim($_POST['email'] ?? '');
-            $message = trim($_POST['message'] ?? '');
-            $thread_id = isset($_POST['thread_id']) && is_numeric($_POST['thread_id']) ? (int)$_POST['thread_id'] : null;
-
-            try {
-                    if (!$thread_id) {
-                            $stmt = $pdo->prepare('INSERT INTO chat_threads (visitor_name, visitor_email, created_at, last_activity) VALUES (:name, :email, NOW(), NOW())');
-                            $stmt->execute([':name' => $name, ':email' => $email]);
-                            $thread_id = (int)$pdo->lastInsertId();
-                    }
-
-                    $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-                    if (!empty($_FILES['attachment']) && ($_FILES['attachment']['error'] ?? 1) === UPLOAD_ERR_OK) {
-                            $f = $_FILES['attachment'];
-                            $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                            if (in_array($f['type'], $allowed)) {
-                                    $uploadDir = __DIR__ . '/uploads/chat/';
-                                    if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-                                    $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
-                                    $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
-                                    $dest = $uploadDir . $nameSafe;
-                                    if (move_uploaded_file($f['tmp_name'], $dest)) {
-                                            $url = 'uploads/chat/' . $nameSafe;
-                                            $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" alt="attachment">';
-                                    }
-                            }
-                    }
-
-                    $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
-                    $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
-
-                    $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = :id');
-                    $u->execute([':id' => $thread_id]);
-
-                    jsonResponse(['status' => 'ok', 'thread_id' => $thread_id]);
-            } catch (Throwable $e) {
-                    jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-    }
-
-    if ($action === 'get_messages' && isset($_GET['thread_id'])) {
-            $thread_id = (int)$_GET['thread_id'];
-            try {
-                    $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id = :tid ORDER BY created_at ASC');
-                    $stmt->execute([':tid' => $thread_id]);
-                    $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    jsonResponse(['status' => 'ok', 'messages' => $msgs]);
-            } catch (Throwable $e) {
-                    jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-    }
-
-    ?>
-    <!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Live Chat</title>
-        <style>
-            body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0}
-            #hqMessages{padding:12px;height:360px;overflow:auto}
-            #chatInput{width:100%;min-height:60px}
-            .msg{padding:6px 0}
-            .bubble.user{background:#ffeaa7;padding:8px;border-radius:8px;text-align:right}
-            .bubble.admin{background:#eef6ff;padding:8px;border-radius:8px;text-align:left}
-        </style>
-    </head>
-    <body>
-        <div style="width:360px;max-width:100%">
-            <div id="hqMessages"><div class="msg">Welcome — please tell us how we can help.</div></div>
-            <div style="display:flex;gap:8px;margin-top:6px">
-                <input id="chatName" placeholder="Your name" style="flex:1;padding:8px" />
-                <input id="chatEmail" placeholder="Email (optional)" style="flex:1;padding:8px" />
-            </div>
-            <textarea id="chatInput" placeholder="Type a message..." style="margin-top:6px;padding:8px"></textarea>
-            <div style="display:flex;gap:8px;padding:8px">
-                <input type="file" id="chatFile" accept="image/*" />
-                <button id="chatSend">Send</button>
-            </div>
-        </div>
-
-        <script>
-        (function(){
-            function qs(id){return document.getElementById(id)}
-            var send = qs('chatSend'), input = qs('chatInput'), nameEl = qs('chatName'), emailEl = qs('chatEmail'), fileEl = qs('chatFile'), msgs = qs('hqMessages');
-
-            async function sendMessage(){ var name = nameEl.value.trim()||'Guest'; var email = emailEl.value.trim()||''; var message = input.value.trim(); if(!message && (!fileEl.files || !fileEl.files[0])){ alert('Enter a message or attach a file'); return }
-                var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', message); if(fileEl.files[0]) fd.append('attachment', fileEl.files[0]);
-                var res = await fetch('?action=send_message', {method:'POST', body:fd}); var j = await res.json(); if(j.status==='ok'){ localStorage.setItem('hq_thread_id', j.thread_id); input.value=''; fileEl.value=''; startPolling(j.thread_id) } else { alert('Send failed') }
-            }
-
-            send.addEventListener('click', sendMessage);
-
-            var poll=null;
-            async function fetchMessages(threadId){ try{ var r = await fetch('?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await r.json(); if(j.status==='ok'){ msgs.innerHTML=''; j.messages.forEach(function(m){ var d=document.createElement('div'); d.className = (m.is_from_staff==1? 'bubble admin' : 'bubble user'); d.innerHTML = '<span style="font-weight:600">'+m.sender_name+'</span>: ' + m.message + '<div style="font-size:11px;color:#666">'+m.created_at+'</div>'; msgs.appendChild(d)}); msgs.scrollTop = msgs.scrollHeight } }catch(e){} }
-
-            function startPolling(threadId){ if(poll) return; fetchMessages(threadId); poll = setInterval(function(){ fetchMessages(threadId) }, 3000) }
-
-            var existing = localStorage.getItem('hq_thread_id'); if(existing) startPolling(existing);
-        })();
-        </script>
-    </body>
-    </html>
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode($data);
-            exit;
-        }
-
-        $action = $_REQUEST['action'] ?? '';
-
-        if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = trim($_POST['name'] ?? 'Guest');
-            $email = trim($_POST['email'] ?? '');
-            $message = trim($_POST['message'] ?? '');
-            $thread_id = isset($_POST['thread_id']) && is_numeric($_POST['thread_id']) ? (int)$_POST['thread_id'] : null;
-
-            try {
-                if (!$thread_id) {
-                    $stmt = $pdo->prepare('INSERT INTO chat_threads (visitor_name, visitor_email, created_at, last_activity) VALUES (:name, :email, NOW(), NOW())');
-                    $stmt->execute([':name' => $name, ':email' => $email]);
-                    $thread_id = (int)$pdo->lastInsertId();
-                }
-
-                $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-                if (!empty($_FILES['attachment']) && ($_FILES['attachment']['error'] ?? 1) === UPLOAD_ERR_OK) {
-                    $f = $_FILES['attachment'];
-                    $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                    if (in_array($f['type'], $allowed)) {
-                        $uploadDir = __DIR__ . '/uploads/chat/';
-                        if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-                        $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
-                        $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
-                        $dest = $uploadDir . $nameSafe;
-                        if (move_uploaded_file($f['tmp_name'], $dest)) {
-                            $url = 'uploads/chat/' . $nameSafe;
-                            $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" alt="attachment">';
-                        }
-                    }
-                }
-
-                $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
-                $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
-
-                $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = :id');
-                $u->execute([':id' => $thread_id]);
-
-                jsonResponse(['status' => 'ok', 'thread_id' => $thread_id]);
-            } catch (Throwable $e) {
-                jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-
-        }
-
-        if ($action === 'get_messages' && isset($_GET['thread_id'])) {
-            $thread_id = (int)$_GET['thread_id'];
-            try {
-                $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id = :tid ORDER BY created_at ASC');
-                $stmt->execute([':tid' => $thread_id]);
-                $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                jsonResponse(['status' => 'ok', 'messages' => $msgs]);
-            } catch (Throwable $e) {
-                jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-        }
-
-        ?>
-        <!doctype html>
-        <html lang="en">
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width,initial-scale=1">
-          <title>Live Chat</title>
-          <style>body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0}#hqMessages{padding:12px;height:360px;overflow:auto}#chatInput{width:100%;min-height:60px}</style>
-        </head>
-        <body>
-          <div style="width:360px;max-width:100%">
-            <div id="hqMessages"><div class="msg">Welcome — please tell us how we can help.</div></div>
-            <input id="chatName" placeholder="Your name" style="width:49%;margin:6px 1% 0 0;padding:8px" />
-            <input id="chatEmail" placeholder="Email (optional)" style="width:49%;margin:6px 0 0 0;padding:8px" />
-            <textarea id="chatInput" placeholder="Type a message..."></textarea>
-            <div style="display:flex;gap:8px;padding:8px">
-              <input type="file" id="chatFile" accept="image/*" />
-              <button id="chatSend">Send</button>
-            </div>
-          </div>
-
-          <script>
-          (function(){
-            function qs(id){return document.getElementById(id)}
-            var send = qs('chatSend'), input = qs('chatInput'), nameEl = qs('chatName'), emailEl = qs('chatEmail'), fileEl = qs('chatFile'), msgs = qs('hqMessages');
-
-            function render(list){ msgs.innerHTML = ''; list.forEach(function(m){ var d = document.createElement('div'); d.innerHTML = (m.is_from_staff==1?'<b>Staff</b>: '<!---->') + m.sender_name + ': ' + m.message + '<div style="font-size:11px;color:#666">'+m.created_at+'</div>'; msgs.appendChild(d)}); msgs.scrollTop = msgs.scrollHeight }
-
-            async function sendMessage(){ var name = nameEl.value.trim()||'Guest'; var email = emailEl.value.trim()||''; var message = input.value.trim(); if(!message && (!fileEl.files || !fileEl.files[0])){ alert('Enter a message or attach a file'); return }
-              var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', message); if(fileEl.files[0]) fd.append('attachment', fileEl.files[0]);
-              var res = await fetch('?action=send_message', {method:'POST', body:fd}); var j = await res.json(); if(j.status==='ok'){ localStorage.setItem('hq_thread_id', j.thread_id); input.value=''; fileEl.value=''; startPolling(j.thread_id) } else { alert('Send failed') }
-            }
-
-            send.addEventListener('click', sendMessage);
-
-            var poll=null;
-            async function fetchMessages(threadId){ try{ var r = await fetch('?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await r.json(); if(j.status==='ok'){ msgs.innerHTML=''; j.messages.forEach(function(m){ var d=document.createElement('div'); d.style.padding='6px 0'; d.innerHTML = (m.is_from_staff==1?'<strong>Staff</strong>: '') + '<span style="font-weight:600">'+m.sender_name+'</span>: ' + m.message + '<div style="font-size:11px;color:#666">'+m.created_at+'</div>'; msgs.appendChild(d)}); msgs.scrollTop = msgs.scrollHeight } }catch(e){} }
-
-            function startPolling(threadId){ if(poll) return; fetchMessages(threadId); poll = setInterval(function(){ fetchMessages(threadId) }, 3000) }
-
-            var existing = localStorage.getItem('hq_thread_id'); if(existing) startPolling(existing);
-          })();
-          </script>
-        </body>
-        </html>
-
-        // handle optional attachment (image)
-+        $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        if (!empty($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-            $f = $_FILES['attachment'];
-+            $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
-+            if (in_array($f['type'], $allowed)) {
-+                $uploadDir = __DIR__ . '/uploads/chat/';
-+                if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-+                $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
-+                $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
-+                $dest = $uploadDir . $nameSafe;
-+                if (move_uploaded_file($f['tmp_name'], $dest)) {
-+                    // accessible URL relative to public pages
-+                    $url = 'uploads/chat/' . $nameSafe;
-+                    $messageHtml .= '<br><img src="' . htmlspecialchars($url) . '" alt="attachment">';
-+                }
-+            }
-+        }
-+
-        $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
-+        $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
-+
-+        // update thread last_activity so admins see recent activity
-+        $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = :id');
-+        $u->execute([':id' => $thread_id]);
-+
-+        jsonResponse(['status' => 'ok', 'thread_id' => $thread_id]);
-+    } catch (Throwable $e) {
-+        jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
-+    }
-+
-+}
-+
-+
 <?php
-// public/chatbox.php - lightweight chat API (send/get) and an embeddable widget when used without action params.
+// public/chatbox.php - clean chat API + embeddable widget
 require_once __DIR__ . '/config/db.php';
 
-// Utility to send JSON responses and exit
-function jsonResponse($data)
+function jsonResponse(array $data)
 {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data);
     exit;
 }
 
-// Handle API requests before emitting HTML/CSS/JS
 $action = $_REQUEST['action'] ?? '';
 
 if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -300,26 +45,24 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $thread_id = isset($_POST['thread_id']) && is_numeric($_POST['thread_id']) ? (int)$_POST['thread_id'] : null;
 
     try {
-        // create thread if needed
         if (!$thread_id) {
             $stmt = $pdo->prepare('INSERT INTO chat_threads (visitor_name, visitor_email, created_at, last_activity) VALUES (:name, :email, NOW(), NOW())');
             $stmt->execute([':name' => $name, ':email' => $email]);
             $thread_id = (int)$pdo->lastInsertId();
         }
 
-        // handle optional attachment (image)
         $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        if (!empty($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+
+        if (!empty($_FILES['attachment']) && ($_FILES['attachment']['error'] ?? 1) === UPLOAD_ERR_OK) {
             $f = $_FILES['attachment'];
             $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (in_array($f['type'], $allowed)) {
+            if (in_array($f['type'], $allowed, true)) {
                 $uploadDir = __DIR__ . '/uploads/chat/';
                 if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
                 $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
                 $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
                 $dest = $uploadDir . $nameSafe;
                 if (move_uploaded_file($f['tmp_name'], $dest)) {
-                    // accessible URL relative to public pages
                     $url = 'uploads/chat/' . $nameSafe;
                     $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" alt="attachment">';
                 }
@@ -329,7 +72,6 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
         $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
 
-        // update thread last_activity so admins see recent activity
         $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = :id');
         $u->execute([':id' => $thread_id]);
 
@@ -337,9 +79,72 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
     }
-
 }
 
+if ($action === 'get_messages' && isset($_GET['thread_id'])) {
+    $thread_id = (int)$_GET['thread_id'];
+    try {
+        $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id = :tid ORDER BY created_at ASC');
+        $stmt->execute([':tid' => $thread_id]);
+        $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        jsonResponse(['status' => 'ok', 'messages' => $msgs]);
+    } catch (Throwable $e) {
+        jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+}
+
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Live Chat</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0}
+    #hqMessages{padding:12px;height:360px;overflow:auto}
+    #chatInput{width:100%;min-height:60px}
+    .msg{padding:6px 0}
+    .bubble.user{background:#ffeaa7;padding:8px;border-radius:8px;text-align:right}
+    .bubble.admin{background:#eef6ff;padding:8px;border-radius:8px;text-align:left}
+  </style>
+</head>
+<body>
+  <div style="width:360px;max-width:100%">
+    <div id="hqMessages"><div class="msg">Welcome — please tell us how we can help.</div></div>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <input id="chatName" placeholder="Your name" style="flex:1;padding:8px" />
+      <input id="chatEmail" placeholder="Email (optional)" style="flex:1;padding:8px" />
+    </div>
+    <textarea id="chatInput" placeholder="Type a message..." style="margin-top:6px;padding:8px"></textarea>
+    <div style="display:flex;gap:8px;padding:8px">
+      <input type="file" id="chatFile" accept="image/*" />
+      <button id="chatSend">Send</button>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    function qs(id){return document.getElementById(id)}
+    var send = qs('chatSend'), input = qs('chatInput'), nameEl = qs('chatName'), emailEl = qs('chatEmail'), fileEl = qs('chatFile'), msgs = qs('hqMessages');
+
+    async function sendMessage(){ var name = nameEl.value.trim()||'Guest'; var email = emailEl.value.trim()||''; var message = input.value.trim(); if(!message && (!fileEl.files || !fileEl.files[0])){ alert('Enter a message or attach a file'); return }
+      var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', message); if(fileEl.files[0]) fd.append('attachment', fileEl.files[0]);
+      var res = await fetch('?action=send_message', {method:'POST', body:fd}); var j = await res.json(); if(j.status==='ok'){ localStorage.setItem('hq_thread_id', j.thread_id); input.value=''; fileEl.value=''; startPolling(j.thread_id) } else { alert('Send failed') }
+    }
+
+    send.addEventListener('click', sendMessage);
+
+    var poll=null;
+    async function fetchMessages(threadId){ try{ var r = await fetch('?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await r.json(); if(j.status==='ok'){ msgs.innerHTML=''; j.messages.forEach(function(m){ var d=document.createElement('div'); d.className = (m.is_from_staff==1? 'bubble admin' : 'bubble user'); d.innerHTML = '<span style="font-weight:600">'+m.sender_name+'</span>: ' + m.message + '<div style="font-size:11px;color:#666">'+m.created_at+'</div>'; msgs.appendChild(d)}); msgs.scrollTop = msgs.scrollHeight } }catch(e){} }
+
+    function startPolling(threadId){ if(poll) return; fetchMessages(threadId); poll = setInterval(function(){ fetchMessages(threadId) }, 3000) }
+
+    var existing = localStorage.getItem('hq_thread_id'); if(existing) startPolling(existing);
+  })();
+  </script>
+</body>
+</html>
 
 if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     $thread_id = (int)$_GET['thread_id'];
