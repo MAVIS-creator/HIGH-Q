@@ -27,7 +27,7 @@
     <div class="footer-links">
       <h3>Quick Links</h3>
       <ul>
-        <li><a href="">Home</a></li>
+        <li><a href="index.php">Home</a></li>
         <li><a href="about.php">About Us</a></li>
         <li><a href="programs.php">Programs</a></li>
         <li><a href="register.php">Admission</a></li>
