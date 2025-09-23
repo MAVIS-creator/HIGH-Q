@@ -77,3 +77,8 @@
 </footer>
 <!-- ===== FOOTER END ===== -->
 </main>
+
+<!-- Floating Live Chat Button -->
+<a href="contact.php#livechat" class="floating-chat" aria-label="Live Chat with us">
+  <i class="bx bx-chat"></i>
+</a>
