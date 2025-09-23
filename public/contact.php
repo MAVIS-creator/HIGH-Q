@@ -53,16 +53,6 @@ include __DIR__ . '/includes/header.php';
 </section>
 
 <div class="container register-layout contact-layout" style="margin-top:28px;">
-	<div class="quick-actions">
-		<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit"> 
-			<i class="bx bx-calendar"></i>
-			<div>Schedule Visit</div>
-		</div>
-		<div class="quick-action livechat" role="button" tabindex="0" id="openLiveChat" aria-label="Live Chat"> 
-			<i class="bx bx-chat"></i>
-			<div>Live Chat</div>
-		</div>
-	</div>
 	<main class="register-main">
 		<div class="card">
 			<h3>Send Us a <span style="color:var(--hq-yellow);">Message</span></h3>
@@ -129,6 +119,17 @@ include __DIR__ . '/includes/header.php';
 					<p style="color:var(--hq-gray);"><strong>Phone</strong><br>0807 208 8794</p>
 					<p style="color:var(--hq-gray);"><strong>Email</strong><br>info@hqacademy.com</p>
 					<p style="color:var(--hq-gray);"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+				</div>
+
+				<div class="quick-actions" style="margin-top:18px;">
+					<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit">
+						<i class="bx bx-calendar"></i>
+						<div>Schedule Visit</div>
+					</div>
+					<div class="quick-action livechat" role="button" tabindex="0" id="openLiveChat" aria-label="Live Chat">
+						<i class="bx bx-chat"></i>
+						<div>Live Chat</div>
+					</div>
 				</div>
 	</aside>
 </div>
