@@ -1165,11 +1165,12 @@ nav a.active::after { background: var(--hq-yellow); }
 .contact-layout .register-sidebar { gap:18px; }
 .contact-layout .sidebar-card { padding:20px 22px; border-radius:10px; min-height:100px; }
 .contact-layout .sidebar-card h4 { margin:0 0 8px; }
-.contact-layout .sidebar-card img.card-icon { width:44px; height:44px; border-radius:8px; margin-right:12px; vertical-align:top; background:var(--hq-yellow); padding:8px; box-sizing:border-box; }
+.contact-layout .sidebar-card img.card-icon { width:48px; height:48px; border-radius:8px; margin-right:14px; vertical-align:top; background:var(--hq-yellow); padding:8px; box-sizing:border-box; }
 .contact-layout .sidebar-card p { color:var(--hq-gray); margin:0; }
 
 @media (min-width: 1100px) {
-  .contact-layout .register-sidebar { width:380px; }
+  .contact-layout .register-sidebar { width:420px; }
+  .register-layout .register-main { max-width:920px; }
 }
 
 .achievement {
