@@ -272,6 +272,9 @@ document.addEventListener('DOMContentLoaded', function(){
 	var miniName = document.getElementById('miniName');
 
 	function updateFloatingBadge(){ try{ var badge = document.querySelector('.floating-chat .badge'); var thread = getCookie('hq_thread_id'); if(thread){ if(!badge){ var n=document.createElement('span'); n.className='badge'; n.textContent='1'; document.querySelector('.floating-chat').appendChild(n); } } else { if(badge) badge.remove(); } }catch(e){}
+	}
+
+	// call once on load to sync badge state
 	updateFloatingBadge();
 
 	if(openLive && mini){ openLive.addEventListener('click', function(){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }); openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); }); }
