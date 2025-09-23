@@ -11,9 +11,6 @@
 </section>
 
 <!-- Core Values -->
-<section class="core-values">
-  
-</section>
 
 <section class="history-section">
   <div class="container history-grid">
@@ -56,6 +53,7 @@
       </article>
     </div>
   </div>
+  
 </section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
