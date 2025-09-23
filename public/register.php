@@ -95,7 +95,7 @@ $csrf = generateToken('signup_form');
 	<div class="about-hero-overlay"></div>
 	<div class="container about-hero-inner">
 		<h1>Register with HIGH Q Academy</h1>
-		<p class="lead">Start your journey towards academic excellence. Create an account and secure your spot in our programs.</p>
+		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
 	</div>
 </section>
 
@@ -115,28 +115,81 @@ $csrf = generateToken('signup_form');
 			</div>
 		<?php endif; ?>
 
-		<div class="register-grid" style="max-width:720px;margin:0 auto;padding:24px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(11,37,64,0.06);">
-			<form method="post">
-				<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-				<div style="display:flex;gap:12px;margin-bottom:12px;">
-					<input name="name" required placeholder="Full name" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;">
-					<input name="phone" placeholder="Phone (optional)" style="width:180px;padding:10px;border:1px solid #ddd;border-radius:6px;">
+			<div class="register-layout">
+				<div class="register-main">
+					<div class="card">
+						<form method="post">
+							<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+							<div class="form-row">
+								<input name="name" required placeholder="Full name">
+							</div>
+							<div class="form-row">
+								<input name="phone" placeholder="Phone (optional)">
+							</div>
+							<div class="form-row">
+								<input name="email" type="email" required placeholder="Email address">
+							</div>
+							<div class="form-row">
+								<input name="password" type="password" required placeholder="Password">
+							</div>
+							<div class="form-row form-inline">
+								<input name="amount" type="number" step="0.01" value="1000" required>
+								<select name="method">
+									<option value="bank">Bank Transfer</option>
+									<option value="paystack">Card (Paystack)</option>
+								</select>
+								<button type="submit" class="btn-primary">Register & Pay</button>
+							</div>
+							<p class="muted" style="margin-top:10px">Already registered? <a href="login.php">Login</a></p>
+						</form>
+					</div>
 				</div>
-				<div style="display:flex;gap:12px;margin-bottom:12px;">
-					<input name="email" type="email" required placeholder="Email address" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;">
-					<input name="password" type="password" required placeholder="Password" style="width:220px;padding:10px;border:1px solid #ddd;border-radius:6px;">
-				</div>
-				<div style="display:flex;gap:12px;margin-bottom:12px;align-items:center;">
-					<input name="amount" type="number" step="0.01" value="1000" required style="width:160px;padding:10px;border:1px solid #ddd;border-radius:6px;">
-					<select name="method" style="padding:10px;border:1px solid #ddd;border-radius:6px;">
-						<option value="bank">Bank Transfer</option>
-						<option value="paystack">Card (Paystack)</option>
-					</select>
-					<button type="submit" class="btn-primary" style="margin-left:auto;">Register & Pay</button>
-				</div>
-				<p style="margin-top:8px">Already registered? <a href="login.php">Login</a></p>
-			</form>
-		</div>
+
+				<aside class="register-sidebar">
+					<div class="sidebar-card admission-box">
+						<h4>Admission Requirements</h4>
+						<ul>
+							<li>Completed O'Level certificate (for JAMB/Post-UTME)</li>
+							<li>Valid identification document</li>
+							<li>Passport photograph (2 copies)</li>
+							<li>Registration fee payment</li>
+							<li>Commitment to academic excellence</li>
+						</ul>
+					</div>
+
+					<div class="sidebar-card payment-box">
+						<h4>Payment Options</h4>
+						<div class="payment-method">
+							<strong>Bank Transfer</strong>
+							<p>Account Name: High Q Solid Academy Limited<br>Bank: [Bank Name]<br>Account Number: [Account Number]</p>
+						</div>
+						<div class="payment-method">
+							<strong>Cash Payment</strong>
+							<p>Visit our office locations<br>8 Pineapple Avenue, Aiyetoro, Maya<br>Shop 18, World Star Complex, Aiyetoro</p>
+						</div>
+						<div class="payment-method">
+							<strong>Online Payment</strong>
+							<p>Secure online payment portal. Credit/Debit card accepted.</p>
+						</div>
+					</div>
+
+					<div class="sidebar-card help-box">
+						<h4>Need Help?</h4>
+						<p><strong>Call Us</strong><br>0807 208 8794</p>
+						<p><strong>Email Us</strong><br>info@hqacademy.com</p>
+						<p><strong>Visit Us</strong><br>8 Pineapple Avenue, Aiyetoro<br>Maya, Ikorodu</p>
+					</div>
+
+					<div class="sidebar-card why-box">
+						<h4>Why Choose Us?</h4>
+						<div class="why-stats">
+							<div class="stat"><strong>292</strong><span>Highest JAMB Score 2024</span></div>
+							<div class="stat"><strong>1000+</strong><span>Students Trained</span></div>
+							<div class="stat"><strong>99%</strong><span>Success Rate</span></div>
+						</div>
+					</div>
+				</aside>
+			</div>
 	</div>
 </section>
 
