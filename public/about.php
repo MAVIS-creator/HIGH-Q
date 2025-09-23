@@ -52,7 +52,7 @@
         <p>To provide high-quality, personalized education that empowers students to achieve academic excellence through innovative teaching methods, experienced tutors, and comprehensive exam preparation programs.</p>
       </article>
     </div>
-  </div>
+  </div><br><br>
   <div class="container">
     <div class="ceo-heading">
       <h2>Our Core <span class="highlight">Values</span></h2>
