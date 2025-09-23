@@ -199,7 +199,7 @@ $csrf = generateToken('signup_form');
 								<div class="stat-body"><strong>292</strong><span>Highest JAMB Score 2024</span></div>
 							</div>
 							<div class="stat">
-								<div class="icon"><img src="assets/images/icons/users.svg" alt="students"></div>
+								<div class="icon"><img src="assets/images/icons/teacher.svg" alt="students"></div>
 								<div class="stat-body"><strong>1000+</strong><span>Students Trained</span></div>
 							</div>
 							<div class="stat">
