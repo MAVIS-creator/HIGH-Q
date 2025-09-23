@@ -1,32 +1,5 @@
 <?php
-// public/chatbox.php - lightweight chat API (send/get) and an embeddable widget when used without action params.
-require_once __DIR__ . '/config/db.php';
-
-// Utility to send JSON responses and exit
-function jsonResponse($data)
-{
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($data);
-    exit;
-}
-
-// Handle API requests before emitting HTML/CSS/JS
-$action = $_REQUEST['action'] ?? '';
-
-if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? 'Guest');
-    $email = trim($_POST['email'] ?? '');
-    // public/chatbox.php - clean chat API + embeddable widget
-    require_once __DIR__ . '/config/db.php';
-
-    function jsonResponse($data)
-    {
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode($data);
-            exit;
-    }
-<?php
-// public/chatbox.php - single clean API + widget
+// Clean single-file chatbox: API handlers (send/get) + embeddable widget
 require_once __DIR__ . '/config/db.php';
 
 function jsonResponse(array $data)
