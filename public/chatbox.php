@@ -76,58 +76,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['action']) && $_GET['ac
 ?>
 
 <div  class="chat-box" id="hqChatBox">
-	<div class="chat-box-header">
-		 	<h3>Message Us</h3>
-			<p>
-				<i class="fa fa-times"></i>	
-			</p>
-	</div>
-	<div class="chat-box-body">
-		<div class="chat-box-body-send">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-receive">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-receive">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-send">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-send">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-receive">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-receive">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-		<div class="chat-box-body-send">
-			<p>This is my message.</p>
-			<span>12:00</span>
-		</div>
-	</div>
-	<div class="chat-box-footer">
-			<button id="addExtra">
-				<i class="fa fa-plus"></i>	
-			</button>
-			<input placeholder="Enter Your Message" type="text">
-			<i class="send far fa-paper-plane"></i>
-	</div>
+    <div class="chat-box-header">
+            <div class="chat-header-left">
+                <div class="chat-avatar"></div>
+                <div>
+                    <h3>Chat with Support</h3>
+                    <small class="chat-status">We are online</small>
+                </div>
+            </div>
+            <div class="chat-header-right"><button id="closeChat" aria-label="Close chat">✕</button></div>
+    </div>
+    <div class="chat-box-body" id="hqChatBody">
+        <div id="hqMessages" class="hq-messages"></div>
+    </div>
+    <div class="chat-box-footer">
+            <button id="addExtra" class="btn-ghost" title="Add attachment">📎</button>
+            <button id="emojiBtn" class="btn-ghost" title="Emoji">😊</button>
+            <input id="chatName" placeholder="Your name" type="text" class="chat-meta">
+            <input id="chatEmail" placeholder="Your email (optional)" type="email" class="chat-meta">
+            <textarea id="chatInput" placeholder="Type a message" rows="2"></textarea>
+            <input type="file" id="chatFile" accept="image/*" style="display:none">
+            <button id="chatSend" class="btn-primary">Send</button>
+    </div>
 </div>
 
-
-<div class="chat-button">
-	<span></span>
+<div class="chat-button" id="hqOpenButton">
+    <span>Message Us</span>
 </div>
 
 
