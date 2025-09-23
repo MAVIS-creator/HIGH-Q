@@ -52,14 +52,6 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   </div>
 </section>
 
-<!-- CTA Banner -->
-<section class="cta-join">
-  <div class="container">
-    <h2>Ready to Start Your Journey?</h2>
-    <p>Join hundreds of students who have achieved their academic goals with us</p>
-    <a href="register.php" class="btn-dark cta-btn">Register Now</a>
-  </div>
-</section>
 
 <!-- Achievements -->
 <section class="achievements">
@@ -114,5 +106,14 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         <p class="attribution"><strong>Fatima Hassan</strong><br><small>University of Lagos 2023</small></p>
       </article>
     </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-join">
+  <div class="container">
+    <h2>Ready to Start Your Journey?</h2>
+    <p>Join hundreds of students who have achieved their academic goals with us</p>
+    <a href="register.php" class="btn-dark cta-btn">Register Now</a>
   </div>
 </section>
