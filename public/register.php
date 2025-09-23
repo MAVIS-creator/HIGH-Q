@@ -21,7 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$name = trim($_POST['name'] ?? '');
 	$email = trim($_POST['email'] ?? '');
 	$password = $_POST['password'] ?? '';
-	$amount = floatval($_POST['amount'] ?? 0);
+	// compute amount server-side from selected programs to prevent tampering
+	$amount = 0.0;
+	if (!empty($programs) && is_array($programs)) {
+		$placeholders = implode(',', array_fill(0, count($programs), '?'));
+		$stmt = $pdo->prepare("SELECT id,price FROM courses WHERE id IN ($placeholders)");
+		foreach ($programs as $i => $pid) { $stmt->bindValue($i+1, $pid, PDO::PARAM_INT); }
+		$stmt->execute();
+		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($rows as $r) { $amount += floatval($r['price']); }
+	}
+	$amount = round($amount, 2);
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
 
 	// Registration form fields
@@ -83,9 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 
 			$reference = generatePaymentReference('REG');
-			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, gateway, created_at) VALUES (?, ?, ?, ?, "pending", ?, NOW())');
+			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
 			$gateway = $method === 'paystack' ? 'paystack' : 'bank_transfer';
-			$stmt->execute([$userId, $amount, $method, $reference, $gateway]);
+			$stmt->execute([$userId, $amount, $method, $reference]);
 			$paymentId = $pdo->lastInsertId();
 
 			$pdo->commit();
