@@ -1,4 +1,15 @@
 <?php
+// Load DB connection so we can pull active courses for the Programs section
+require_once __DIR__ . '/config/db.php';
+
+// Fetch up to 6 active courses added by the admin
+try {
+  $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, price FROM courses WHERE is_active = 1 ORDER BY created_at DESC LIMIT 6");
+  $stmt->execute();
+  $programs = $stmt->fetchAll();
+} catch (Exception $e) {
+  $programs = [];
+}
 ?>
 
 <section class="hero">
@@ -124,6 +135,65 @@
           <a href="about.php" class="btn-dark">Learn More About Our Story</a>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Programs & Services: pull from courses table (admin manages these in admin/pages/courses.php) -->
+<section class="programs-section">
+  <div class="container">
+    <div class="ceo-heading">
+      <h2>Our <span class="highlight">Programs & Services</span></h2>
+      <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
+    </div>
+
+    <div class="programs-grid">
+      <?php if (empty($programs)): ?>
+        <p>No programs have been published yet. Check back later.</p>
+      <?php else: ?>
+        <?php foreach ($programs as $p): ?>
+          <?php
+            $title = htmlspecialchars($p['title']);
+            $slug  = htmlspecialchars($p['slug']);
+            $desc  = trim($p['description'] ?? '');
+            // If description contains multiple lines, treat each line as a bullet
+            $lines = preg_split('/\r?\n/', $desc);
+            $hasList = count($lines) > 1;
+            // fallback short summary
+            $summary = $hasList ? null : (strlen($desc) > 220 ? substr($desc,0,217).'...' : $desc);
+          ?>
+
+          <article class="program-card">
+            <div class="program-card-inner">
+              <div class="program-icon"><i class='bx bxs-book-open'></i></div>
+              <div class="program-body">
+                <h4><a href="programs.php?slug=<?= $slug ?>"><?= $title ?></a></h4>
+                <?php if ($hasList): ?>
+                  <ul class="program-features">
+                    <?php foreach (array_slice($lines,0,5) as $line): ?>
+                      <?php $li = trim($line); if ($li==='') continue; ?>
+                      <li><?= htmlspecialchars($li) ?></li>
+                    <?php endforeach; ?>
+                  </ul>
+                <?php else: ?>
+                  <p class="program-summary"><?= htmlspecialchars($summary) ?></p>
+                <?php endif; ?>
+              </div>
+            </div>
+
+            <div class="program-card-footer">
+              <?php if (!empty($p['duration'])): ?>
+                <span class="badge"><i class='bx bx-time'></i> <?= htmlspecialchars($p['duration']) ?></span>
+              <?php elseif (!empty($p['price']) && $p['price'] > 0): ?>
+                <span class="badge">₦<?= number_format($p['price'],0) ?></span>
+              <?php else: ?>
+                <span class="badge">Learn More</span>
+              <?php endif; ?>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
 </section>
