@@ -204,17 +204,8 @@ $csrf = generateToken('signup_form');
 													<div class="form-row"><label>Parent/Guardian Phone</label><input name="emergency_phone" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
 													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
 
-													<h4>Account</h4>
-													<div class="form-row"><label>Password *</label><input name="password" type="password" required></div>
 													<div class="form-row"><label><input type="checkbox" name="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?>> I agree to the terms and conditions</label></div>
-
-													<h4>Payment Option</h4>
-													<div class="form-row">
-														<label><input type="radio" name="method" value="bank" checked> Bank Transfer</label>
-														<label style="margin-left:12px;"><input type="radio" name="method" value="paystack"> Card (Paystack)</label>
-													</div>
-
-													<div style="margin-top:12px;"><button class="btn-primary" type="submit">Register & Continue</button></div>
+													<div style="margin-top:12px;"><button class="btn-primary" type="submit">Submit Registration</button></div>
 												</form>
 											</div>
 										</main>
