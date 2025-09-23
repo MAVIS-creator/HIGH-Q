@@ -285,17 +285,23 @@ document.addEventListener('DOMContentLoaded', function(){
 	if(closeMini && mini){ closeMini.addEventListener('click', function(){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }); }
 
 	// Send mini-chat message: create thread via API and store thread_id cookie
-	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var msg = document.getElementById('contact_message') ? document.getElementById('contact_message').value.trim() : ''; // fallback to main message
-		if(!msg){ msg = prompt('Message:'); if(!msg) return; }
+	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var email = miniEmail.value.trim() || ''; var msg = document.getElementById('miniMessage') ? document.getElementById('miniMessage').value.trim() : ''; if(!msg){ alert('Please enter a message'); return; }
 		try{
-			var fd = new FormData(); fd.append('name', name); fd.append('email', ''); fd.append('message', msg);
+			// show pending/queue system bubble
+			var cm = document.getElementById('chatMessages'); var q = document.createElement('div'); q.className='chat-system'; q.textContent = 'Message sent. You are in the queue — please wait for an admin to reply.'; cm.appendChild(q); cm.scrollTop = cm.scrollHeight;
+			var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', msg);
 			var res = await fetch('api/chat.php?action=send_message', { method: 'POST', body: fd });
-			var j = await res.json(); if(j.status==='ok'){ setCookie('hq_thread_id', j.thread_id, 7); updateFloatingBadge(); miniBody.innerHTML = '<div style="color:#0a0;font-size:13px">Message sent. An admin will reply soon.</div>'; miniName.value = ''; // clear
-				// append to main contact textarea if present
-				var ta = document.getElementById('contact_message'); if(ta) ta.value = '';
+			var j = await res.json(); if(j.status==='ok'){ setCookie('hq_thread_id', j.thread_id, 7); updateFloatingBadge(); document.getElementById('miniMessage').value = ''; // clear
+				// append user bubble
+				var b = document.createElement('div'); b.className='chat-bubble user'; b.textContent = msg; cm.appendChild(b); cm.scrollTop = cm.scrollHeight;
+				// start polling for admin replies
+				startChatPolling(j.thread_id);
 			} else { alert('Failed to send.'); }
 		}catch(e){ alert('Error sending message'); }
 	}); }
+
+	var chatPollTimer = null;
+	function startChatPolling(threadId){ if(chatPollTimer) return; chatPollTimer = setInterval(async function(){ try{ var resp = await fetch('api/chat.php?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await resp.json(); if(j.status==='ok'){ var list = j.messages; var cm = document.getElementById('chatMessages'); cm.innerHTML = ''; for(var i=0;i<list.length;i++){ var m = list[i]; var d = document.createElement('div'); d.className = 'chat-bubble ' + (m.is_from_staff=='1' || m.is_from_staff==1 ? 'admin' : 'user'); d.textContent = m.message; cm.appendChild(d); } cm.scrollTop = cm.scrollHeight; } }catch(e){} }, 3000); }
 
 	// clicking floating chat also opens contact page or mini chat
 	var floatBtn = document.querySelector('.floating-chat');
