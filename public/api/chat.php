@@ -20,8 +20,33 @@ if ($action === 'send_message') {
             $ins->execute([$visitor_name, $visitor_email]);
             $thread_id = (int)$pdo->lastInsertId();
         }
-    $ins2 = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, NULL, ?, ?, 0, NOW())');
-    $ins2->execute([$thread_id, $visitor_name, $message]);
+        // handle optional file upload (image)
+        $uploadedPath = '';
+        if (!empty($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+            $u = $_FILES['attachment'];
+            $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
+            if (in_array($u['type'], $allowed)) {
+                $uploadDir = __DIR__ . '/../uploads/chat/';
+                if (!is_dir($uploadDir)) { mkdir($uploadDir, 0755, true); }
+                $ext = pathinfo($u['name'], PATHINFO_EXTENSION);
+                $fname = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+                $dest = $uploadDir . $fname;
+                if (move_uploaded_file($u['tmp_name'], $dest)) {
+                    // store web-accessible path
+                    $uploadedPath = 'uploads/chat/' . $fname;
+                }
+            }
+        }
+
+        // If an image was uploaded, we encode message to a marker so frontend can render it as an <img>
+        if ($uploadedPath) {
+            $finalMessage = '[file]' . $uploadedPath;
+        } else {
+            $finalMessage = $message;
+        }
+
+        $ins2 = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, NULL, ?, ?, 0, NOW())');
+        $ins2->execute([$thread_id, $visitor_name, $finalMessage]);
     // Update thread last_activity so admin list shows latest activity
     $upd = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?');
     $upd->execute([$thread_id]);
