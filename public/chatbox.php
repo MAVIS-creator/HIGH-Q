@@ -1,4 +1,81 @@
-<div  class="chat-box">
+<?php
+// public/chatbox.php - self-contained chat widget + lightweight backend
+require_once __DIR__ . '/config/db.php';
+header_remove();
+
+// Simple API: POST to this file with action=send_message, or GET action=get_messages
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$action = $_GET['action'] ?? $_POST['action'] ?? 'send_message';
+	header('Content-Type: application/json; charset=utf-8');
+	try {
+		if ($action === 'send_message') {
+			$thread_id = !empty($_POST['thread_id']) ? intval($_POST['thread_id']) : null;
+			$visitor_name = trim($_POST['name'] ?? 'Guest');
+			$visitor_email = trim($_POST['email'] ?? '');
+			$message = trim($_POST['message'] ?? '');
+
+			if ($message === '' && empty($_FILES['attachment'])) {
+				echo json_encode(['status'=>'error','message'=>'Empty message']); exit;
+			}
+
+			// handle attachment upload (optional)
+			$attachmentHtml = '';
+			if (!empty($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+				$up = $_FILES['attachment'];
+				$ext = pathinfo($up['name'], PATHINFO_EXTENSION);
+				$allowed = ['jpg','jpeg','png','gif','webp'];
+				if (!in_array(strtolower($ext), $allowed)) {
+					echo json_encode(['status'=>'error','message'=>'File type not allowed']); exit;
+				}
+				$destDir = __DIR__ . '/uploads/chat';
+				if (!is_dir($destDir)) mkdir($destDir, 0755, true);
+				$basename = bin2hex(random_bytes(8)) . '.' . $ext;
+				$dest = $destDir . '/' . $basename;
+				if (move_uploaded_file($up['tmp_name'], $dest)) {
+					// relative web path
+					$webPath = str_replace('\\','/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $dest));
+					// fallback if DOCUMENT_ROOT not matching - use relative path
+					if (empty($webPath) || $webPath === $dest) {
+						$webPath = '/HIGH-Q/public/uploads/chat/' . $basename;
+					}
+					$attachmentHtml = '<div class="chat-attachment"><img src="' . htmlspecialchars($webPath) . '" alt="attachment"/></div>';
+				}
+			}
+
+			// create thread if needed
+			if (!$thread_id) {
+				$ins = $pdo->prepare('INSERT INTO chat_threads (visitor_name, visitor_email, created_at) VALUES (?, ?, NOW())');
+				$ins->execute([$visitor_name, $visitor_email]);
+				$thread_id = (int)$pdo->lastInsertId();
+			}
+
+			$finalMessage = $message . $attachmentHtml;
+			$ins2 = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, NULL, ?, ?, 0, NOW())');
+			$ins2->execute([$thread_id, $visitor_name, $finalMessage]);
+			$upd = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?');
+			$upd->execute([$thread_id]);
+			echo json_encode(['status'=>'ok','thread_id'=>$thread_id]); exit;
+		}
+	} catch (Throwable $e) {
+		http_response_code(500);
+		echo json_encode(['status'=>'error','message'=>'Server error']); exit;
+	}
+}
+
+// GET handlers for fetching messages
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['action']) && $_GET['action'] === 'get_messages')) {
+	header('Content-Type: application/json; charset=utf-8');
+	$thread_id = intval($_GET['thread_id'] ?? 0);
+	if (!$thread_id) { echo json_encode(['status'=>'error','message'=>'Missing thread']); exit; }
+	$stmt = $pdo->prepare('SELECT * FROM chat_messages WHERE thread_id = ? ORDER BY created_at ASC');
+	$stmt->execute([$thread_id]);
+	$msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	echo json_encode(['status'=>'ok','messages'=>$msgs]); exit;
+}
+
+?>
+
+<div  class="chat-box" id="hqChatBox">
 	<div class="chat-box-header">
 		 	<h3>Message Us</h3>
 			<p>
