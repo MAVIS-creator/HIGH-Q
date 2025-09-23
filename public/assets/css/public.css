@@ -803,7 +803,7 @@ nav a.active {
    (previously only defined inside a small-screen media query) */
 .achievements {
   padding: 64px 0;
-  background: #fff;
+  background: var(--hq-gray);
 }
 
 .achievements .ceo-heading {
