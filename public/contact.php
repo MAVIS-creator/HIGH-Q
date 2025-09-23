@@ -123,4 +123,69 @@ include __DIR__ . '/includes/header.php';
 	</aside>
 </div>
 
+<!-- Frequently Asked Questions (row 1) -->
+<section class="faq-section" style="margin-top:48px;padding:48px 0;background:#fbf9f7;">
+	<div class="container">
+		<h2 class="section-title">Frequently Asked <span style="color:var(--hq-yellow);">Questions</span></h2>
+		<p class="lead">Find answers to common questions about our programs and services.</p>
+
+		<div class="faq-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:28px;">
+			<div class="card" style="padding:20px;border-radius:8px;">
+				<h4>What programs do you offer?</h4>
+				<p style="color:var(--hq-gray);">We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
+			</div>
+
+			<div class="card" style="padding:20px;border-radius:8px;">
+				<h4>How much do your programs cost?</h4>
+				<p style="color:var(--hq-gray);">Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Frequently Asked Questions (row 2) -->
+<section class="faq-section" style="padding:36px 0;background:#fff;">
+	<div class="container">
+		<div class="faq-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:8px;">
+			<div class="card" style="padding:20px;border-radius:8px;">
+				<h4>What is your success rate?</h4>
+				<p style="color:var(--hq-gray);">We maintain a 99% pass rate in WAEC/NECO examinations and our highest JAMB score in 2024 was 292, with the student now studying Medicine at LAUTECH.</p>
+			</div>
+
+			<div class="card" style="padding:20px;border-radius:8px;">
+				<h4>Do you offer online classes?</h4>
+				<p style="color:var(--hq-gray);">Yes, we offer both in-person and online classes to accommodate different learning preferences and schedules. Our CBT training is particularly effective online.</p>
+			</div>
+
+			<div class="card" style="padding:20px;border-radius:8px;">
+				<h4>How can I register for a program?</h4>
+				<p style="color:var(--hq-gray);">You can register by visiting our offices, calling 0807 208 8794, or filling out our online registration form. We also offer consultation to help you choose the right program.</p>
+			</div>
+
+			<div class="card" style="padding:20px;border-radius:8px;">
+				<h4>What makes High Q Academy different?</h4>
+				<p style="color:var(--hq-gray);">Our experienced tutors, proven track record, personalized attention, and comprehensive approach to both academic and digital skills development set us apart.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Dark CTA -->
+<section class="site-cta dark-cta" style="background:#111;padding:48px 0;margin-top:24px;color:#fff;">
+	<div class="container" style="text-align:center;">
+		<h2 style="margin:0 0 10px;font-size:28px;">Ready to Start Your Success Journey?</h2>
+		<p style="margin:0 0 18px;color:#ddd;">Don't wait any longer. Contact us today and take the first step towards achieving your academic goals.</p>
+
+		<div style="display:inline-flex;gap:12px;align-items:center;margin-top:18px;">
+			<a class="btn-primary" href="tel:+2348072088794" style="display:inline-block;padding:12px 22px;border-radius:6px;background:#e23b3b;color:#fff;text-decoration:none;box-shadow:0 18px 40px rgba(226,59,59,0.18);">
+				<i class="bx bx-phone"></i>&nbsp; Call Now: 0807 208 8794
+			</a>
+
+			<a class="btn-secondary" href="about.php" style="display:inline-block;padding:12px 22px;border-radius:6px;background:linear-gradient(90deg,#f2b400,#d99a00);color:#000;text-decoration:none;">
+				<i class="bx bx-map"></i>&nbsp; Visit Our Center
+			</a>
+		</div>
+	</div>
+</section>
+
 <?php include __DIR__ . '/includes/footer.php'; ?>
