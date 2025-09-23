@@ -754,6 +754,8 @@ nav a.active::after { background: var(--hq-yellow); }
 .sidebar-card h4 { margin:0 0 8px; font-size:16px; }
 .admission-box { border-left:4px solid var(--hq-yellow); }
 .admission-box ul { margin:0; padding-left:18px; }
+.admission-box ul li { margin-bottom:6px; position:relative; padding-left:22px; }
+.admission-box ul li::before { content: '\2713'; /* check mark */ position:absolute; left:0; top:0; color:var(--hq-yellow); font-weight:700; }
 .payment-box .payment-method { border-left:4px solid var(--hq-yellow); padding-left:10px; margin-bottom:10px; }
 .help-box { background:#111; color:#fff; }
 .help-box a { color: var(--hq-yellow); }
@@ -761,6 +763,16 @@ nav a.active::after { background: var(--hq-yellow); }
 .why-stats { display:flex; gap:12px; margin-top:8px; }
 .why-stats .stat { text-align:center; padding:8px; }
 .why-stats .stat strong { display:block; font-size:18px; }
+
+/* Payment method icons (decorative) */
+.payment-box .payment-method strong { display:block; margin-bottom:6px; position:relative; padding-left:22px; }
+.payment-box .payment-method strong::before { content: ''; width:16px; height:16px; display:inline-block; position:absolute; left:0; top:2px; background-size:16px 16px; }
+.payment-box .payment-method:nth-of-type(1) strong::before { background-image: url('../images/icons/bank.svg'); }
+.payment-box .payment-method:nth-of-type(2) strong::before { background-image: url('../images/icons/cash.svg'); }
+.payment-box .payment-method:nth-of-type(3) strong::before { background-image: url('../images/icons/online.svg'); }
+
+/* Rounded stat pills in Why Choose box */
+.why-stats .stat { background: rgba(255,255,255,0.85); border-radius:10px; padding:12px 18px; min-width:100px; }
 
 @media (max-width: 900px) {
   .register-layout { grid-template-columns: 1fr; }
