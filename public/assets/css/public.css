@@ -508,6 +508,50 @@ nav a.active::after { background: var(--hq-yellow); }
   .floating-chat { right: 12px; bottom: 18px; width: 50px; height: 50px; }
 }
 
+/* FAQ and CTA standardized styles */
+.faq-section { padding: 48px 0; }
+.faq-section.alt { background: #fff; padding:36px 0; }
+.faq-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:28px; }
+.faq-card { background:#fff; padding:20px; border-radius:8px; box-shadow:0 8px 24px rgba(11,37,64,0.04); border:1px solid rgba(0,0,0,0.04); }
+.faq-card h4 { margin:0 0 8px; }
+.faq-card p { color:var(--hq-gray); margin:0; }
+
+.site-cta.dark-cta { background:#111; color:#fff; padding:48px 0; margin-top:24px; }
+.site-cta.dark-cta .container { text-align:center; }
+.site-cta.dark-cta h2 { margin:0 0 10px; font-size:28px; }
+.site-cta.dark-cta p { margin:0 0 18px; color:#ddd; }
+.cta-actions { display:inline-flex; gap:12px; align-items:center; margin-top:18px; }
+.cta-call { display:inline-block; padding:12px 22px; border-radius:6px; background:#e23b3b; color:#fff; text-decoration:none; box-shadow:0 18px 40px rgba(226,59,59,0.18); }
+.cta-visit { display:inline-block; padding:12px 22px; border-radius:6px; background:linear-gradient(90deg,#f2b400,#d99a00); color:#000; text-decoration:none; }
+
+/* Quick actions area */
+.quick-actions { display:flex; gap:18px; align-items:center; margin:28px 0; }
+.quick-action { flex:1; display:flex; align-items:center; justify-content:center; gap:12px; padding:18px; border-radius:8px; background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 12px 30px rgba(11,37,64,0.04); cursor:pointer; }
+.quick-action.schedule { border-radius:10px; }
+.quick-action.livechat { background:linear-gradient(90deg,#f2b400,#d99a00); color:#111; }
+.quick-action i { font-size:18px; }
+
+/* Calendar modal (simple) */
+.modal-backdrop { position:fixed; left:0; right:0; top:0; bottom:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:10000; }
+.modal { background:#fff; padding:18px; border-radius:10px; width:380px; max-width:92%; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+.modal h3 { margin:0 0 12px; }
+.modal .field { margin-bottom:10px; }
+.modal .actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+
+/* Mini chat slide-up panel */
+.mini-chat { position:fixed; right:20px; bottom:96px; width:320px; max-width:calc(100% - 40px); background:#fff; border-radius:12px; box-shadow:0 28px 80px rgba(11,37,64,0.24); overflow:hidden; transform:translateY(20px); opacity:0; visibility:hidden; transition:transform 0.28s ease, opacity 0.18s ease; z-index:10001; }
+.mini-chat.open { transform:translateY(0); opacity:1; visibility:visible; }
+.mini-chat .mini-header { background:linear-gradient(90deg,#f2b400,#d99a00); padding:12px; color:#111; display:flex; align-items:center; justify-content:space-between; }
+.mini-chat .mini-body { padding:12px; max-height:260px; overflow:auto; }
+.mini-chat textarea { width:100%; min-height:64px; padding:8px; border-radius:8px; border:1px solid #eee; box-sizing:border-box; }
+.mini-chat .mini-footer { padding:10px; display:flex; gap:8px; align-items:center; }
+
+/* Unread badge on floating chat */
+.floating-chat .badge { position:absolute; top:-6px; right:-6px; background:#e23b3b; color:#fff; font-size:11px; padding:3px 6px; border-radius:999px; box-shadow:0 6px 16px rgba(0,0,0,0.2); }
+
+/* Accessibility focus styles */
+.floating-chat:focus, .quick-action:focus, .cta-call:focus, .cta-visit:focus { outline:3px solid rgba(245,185,4,0.25); outline-offset:3px; }
+
 @media (max-width: 600px) {
   .footer-grid {
     grid-template-columns: 1fr;
