@@ -806,8 +806,32 @@ nav a.active::after { background: var(--hq-yellow); }
   margin-top: 2px;
 }
 .payment-box .payment-method { border-left:4px solid var(--hq-yellow); padding-left:10px; margin-bottom:10px; }
-.help-box { background:#111; color:#fff; }
-.help-box a { color: var(--hq-yellow); }
+.help-box {
+  background: #0f0f0f;
+  color: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(11,37,64,0.12);
+  border: 1px solid rgba(255,255,255,0.04);
+  position: relative;
+}
+.help-box h4 {
+  margin: 0 0 10px;
+  padding-left: 40px;
+  font-size: 16px;
+}
+.help-box h4::before {
+  content: '';
+  position: absolute;
+  left: 14px; top: 10px;
+  width: 20px; height: 20px;
+  background-image: url('../images/icons/phone.svg');
+  background-repeat: no-repeat; background-position: center; background-size: 16px 16px;
+}
+.help-box p { margin: 8px 0; line-height: 1.4; }
+.help-box p strong { display:block; color: var(--hq-yellow); font-weight:700; margin-bottom:6px; }
+.help-box p small, .help-box p span { color: #fff; }
+.help-box a { color: var(--hq-yellow); text-decoration: none; }
 .why-box { background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%); }
 .why-stats { display:flex; gap:12px; margin-top:8px; }
 .why-stats .stat { text-align:center; padding:8px; }
