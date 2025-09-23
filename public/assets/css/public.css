@@ -922,18 +922,6 @@ nav a.active::after { background: var(--hq-yellow); }
   background: var(--hq-white);
 }
 
-/* Contact page hero (large yellow banner with centered title) */
-.contact-hero {
-  background: linear-gradient(180deg, var(--hq-yellow) 0%, #d99a00 100%);
-  padding: 46px 0 46px;
-  border-bottom: 2px solid rgba(0,0,0,0.06);
-  text-align: center;
-}
-.contact-hero .container { max-width: 1200px; margin: 0 auto; }
-.contact-hero h1 { font-size: 40px; margin: 0; font-weight: 800; color: var(--hq-black); }
-.contact-hero h1 .highlight { color: var(--hq-red); }
-.contact-hero p { margin: 10px auto 0; color: rgba(23,23,23,0.85); max-width: 760px; }
-
 /* Ensure the CEO hero's inner container flows vertically (not the global flex) */
 .ceo-hero>.container {
   display: block;
