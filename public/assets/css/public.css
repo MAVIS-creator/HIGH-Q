@@ -525,11 +525,12 @@ nav a.active::after { background: var(--hq-yellow); }
 .cta-visit { display:inline-block; padding:12px 22px; border-radius:6px; background:linear-gradient(90deg,#f2b400,#d99a00); color:#000; text-decoration:none; }
 
 /* Quick actions area */
-.quick-actions { display:flex; gap:14px; align-items:center; margin-top:18px; }
-.quick-action { flex:1; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:10px; padding:14px 16px; border-radius:10px; background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 10px 28px rgba(11,37,64,0.04); cursor:pointer; min-height:56px; }
+.quick-actions { display:flex; flex-direction:column; gap:12px; align-items:stretch; margin-top:18px; }
+.quick-action { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:12px; padding:14px 16px; border-radius:10px; background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 10px 28px rgba(11,37,64,0.04); cursor:pointer; min-height:56px; width:100%; }
 .quick-action.schedule { background:#fff; color:var(--hq-black); }
 .quick-action.livechat { background:linear-gradient(90deg,#f2b400,#d99a00); color:#111; }
-.quick-action i { font-size:16px; }
+.quick-action i { font-size:18px; display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center; }
+.quick-action > div { flex:1; text-align:left; font-weight:700; }
 
 /* Calendar modal (simple) */
 .modal-backdrop { position:fixed; left:0; right:0; top:0; bottom:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:10000; }
@@ -800,7 +801,7 @@ nav a.active::after { background: var(--hq-yellow); }
   padding-left: 20px;
   padding-right: 20px;
 }
-.register-layout .register-main { justify-self: start; max-width: 760px; width: 100%; }
+.register-layout .register-main { justify-self: start; max-width: 880px; width: 100%; }
 .register-layout .register-sidebar { align-self: start; }
 
 .form-section { margin-bottom:18px; }
