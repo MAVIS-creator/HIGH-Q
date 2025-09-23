@@ -1,14 +1,26 @@
 <?php
-// Load DB connection so we can pull active courses for the Programs section
-require_once __DIR__ . '/config/db.php';
+// Ensure we have a PDO connection available. Header may already include DB; try loading it if not.
+$programs = [];
+if (!isset($pdo) || !$pdo) {
+  $dbPath = __DIR__ . '/config/db.php';
+  if (file_exists($dbPath)) {
+    try {
+      require_once $dbPath;
+    } catch (Throwable $e) {
+      // ignore - we'll gracefully fall back to empty programs
+    }
+  }
+}
 
-// Fetch up to 6 active courses added by the admin
-try {
-  $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, price FROM courses WHERE is_active = 1 ORDER BY created_at DESC LIMIT 6");
-  $stmt->execute();
-  $programs = $stmt->fetchAll();
-} catch (Exception $e) {
-  $programs = [];
+// Fetch up to 6 active courses added by the admin (only if $pdo is available)
+if (isset($pdo) && $pdo instanceof PDO) {
+  try {
+    $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, price FROM courses WHERE is_active = 1 ORDER BY created_at DESC LIMIT 6");
+    $stmt->execute();
+    $programs = $stmt->fetchAll();
+  } catch (Throwable $e) {
+    $programs = [];
+  }
 }
 ?>
 
