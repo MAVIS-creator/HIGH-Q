@@ -14,7 +14,7 @@
 <section class="programs-content">
 	<div class="container">
 		<div class="ceo-heading">
-			<h2>Explore Our <span class="highlight">Programs</span></h2>
+			<h2>Explore Our <span class="high">Programs</span></h2>
 			<p class="lead">Choose a course tailored to your needs — from exam prep to digital skills.</p>
 		</div>
 			<!-- Static program cards (not pulled from SQL) -->
