@@ -17,17 +17,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$token = $_POST['_csrf_token'] ?? '';
 	if (!verifyToken('signup_form', $token)) { $errors[] = 'Invalid CSRF token.'; }
 
+	// Basic account fields
 	$name = trim($_POST['name'] ?? '');
 	$email = trim($_POST['email'] ?? '');
 	$password = $_POST['password'] ?? '';
 	$amount = floatval($_POST['amount'] ?? 0);
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
 
+	// Registration form fields
+	$first_name = trim($_POST['first_name'] ?? '');
+	$last_name = trim($_POST['last_name'] ?? '');
+	$date_of_birth = trim($_POST['date_of_birth'] ?? '') ?: null;
+	$home_address = trim($_POST['home_address'] ?? '') ?: null;
+	$previous_education = trim($_POST['previous_education'] ?? '') ?: null;
+	$academic_goals = trim($_POST['academic_goals'] ?? '') ?: null;
+	$emergency_name = trim($_POST['emergency_name'] ?? '') ?: null;
+	$emergency_phone = trim($_POST['emergency_phone'] ?? '') ?: null;
+	$emergency_relationship = trim($_POST['emergency_relationship'] ?? '') ?: null;
+	$programs = $_POST['programs'] ?? []; // array of course_id
+	$agreed_terms = isset($_POST['agreed_terms']) ? 1 : 0;
+
 	if (!$name || !$email || !$password) { $errors[] = 'Name, email and password are required.'; }
 	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = 'Invalid email.'; }
 
 	if (empty($errors)) {
-		// create pending user and payment record (transaction)
+		// create pending user, registration and payment record
 		try {
 			$pdo->beginTransaction();
 
@@ -41,6 +55,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$ins = $pdo->prepare('INSERT INTO users (role_id,name,phone,email,password,avatar,is_active,created_at) VALUES (?, ?, ?, ?, ?, NULL, ?, NOW())');
 			$ins->execute([$role_id, $name, $_POST['phone'] ?? null, $email, $hashed, $is_active]);
 			$userId = $pdo->lastInsertId();
+
+			// insert registration
+			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+			$reg->execute([
+				$userId,
+				$first_name ?: $name,
+				$last_name,
+				$date_of_birth,
+				$home_address,
+				$previous_education,
+				$academic_goals,
+				$emergency_name,
+				$emergency_phone,
+				$emergency_relationship,
+				$agreed_terms ? '1' : '0',
+				'pending'
+			]);
+			$registrationId = $pdo->lastInsertId();
+
+			// associate selected programs
+			if (!empty($programs) && is_array($programs)) {
+				$sp = $pdo->prepare('INSERT INTO student_programs (registration_id, course_id) VALUES (?, ?)');
+				foreach ($programs as $cid) {
+					$sp->execute([$registrationId, (int)$cid]);
+				}
+			}
 
 			$reference = generatePaymentReference('REG');
 			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, gateway, created_at) VALUES (?, ?, ?, ?, "pending", ?, NOW())');
