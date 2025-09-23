@@ -5,8 +5,8 @@
 <section class="about-hero">
   <div class="about-hero-overlay"></div>
   <div class="container about-hero-inner">
-    <h1>About Us</h1>
-    <p class="lead">Inspiring Brilliance. Building Futures. Shaping Changes.</p>
+    <h1>About HQ Academy</h1>
+    <p class="lead">Building Excellence in Education Through Dedication and Innovation</p>
   </div>
 </section>
 
