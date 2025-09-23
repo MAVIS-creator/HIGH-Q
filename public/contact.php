@@ -52,7 +52,7 @@ include __DIR__ . '/includes/header.php';
 	</div>
 </section>
 
-<div class="container register-layout" style="margin-top:28px;">
+<div class="container register-layout contact-layout" style="margin-top:28px;">
 	<main class="register-main">
 		<div class="card">
 			<h3>Send Us a <span style="color:var(--hq-yellow);">Message</span></h3>
@@ -101,17 +101,17 @@ include __DIR__ . '/includes/header.php';
 	</main>
 
 	<aside class="register-sidebar">
-		<div class="sidebar-card">
+			<div class="sidebar-card" data-icon="tutor">
 			<h4>Tutorial Center</h4>
 			<p style="color:var(--hq-gray);">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
 		</div>
 
-		<div class="sidebar-card">
+			<div class="sidebar-card" data-icon="office">
 			<h4>Area Office</h4>
 			<p style="color:var(--hq-gray);">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
 		</div>
 
-		<div class="sidebar-card">
+			<div class="sidebar-card" data-icon="contact">
 			<h4>Contact Information</h4>
 			<p style="color:var(--hq-gray);"><strong>Phone</strong><br>0807 208 8794</p>
 			<p style="color:var(--hq-gray);"><strong>Email</strong><br>info@hqacademy.com</p>
