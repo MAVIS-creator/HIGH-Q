@@ -726,6 +726,18 @@ nav a.active::after { background: var(--hq-yellow); }
   align-items: start;
   margin: 24px 0 48px;
 }
+.register-layout .register-main { justify-self: center; max-width: 760px; }
+.register-layout .register-sidebar { align-self: start; }
+
+.form-section { margin-bottom:18px; }
+.section-title { font-size:16px; margin:0 0 10px; padding-bottom:10px; border-bottom:3px solid var(--hq-yellow); color:var(--hq-black); display:flex; align-items:center; gap:8px; }
+.section-title i { color:var(--hq-yellow); font-size:18px; }
+.section-body { padding-top:12px; }
+
+/* Make sidebar cards sticky for large screens */
+@media (min-width: 1000px) {
+  .register-sidebar { position: sticky; top: 96px; }
+}
 .register-main .card {
   background: #fff;
   padding: 20px;

@@ -162,6 +162,7 @@ $csrf = generateToken('signup_form');
 										} catch (Throwable $e) { $courses = []; }
 										?>
 
+										<div class="container register-layout">
 										<main class="register-main">
 											<div class="card">
 												<h3>Student Registration Form</h3>
@@ -178,6 +179,8 @@ $csrf = generateToken('signup_form');
 
 												<form method="post">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
+													<div class="section-body">
 													<div class="form-row"><label>First Name *</label><input name="first_name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
 													<div class="form-row"><label>Last Name *</label><input name="last_name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
 													<div class="form-row"><label>Email Address *</label><input name="email" type="email" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
@@ -185,7 +188,7 @@ $csrf = generateToken('signup_form');
 													<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
 													<div class="form-row"><label>Home Address</label><textarea name="home_address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
 
-													<h4>Program Selection</h4>
+													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
 													<div class="programs-grid">
 														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
 														<?php foreach ($courses as $c): ?>
@@ -199,10 +202,12 @@ $csrf = generateToken('signup_form');
 													<div class="form-row"><label>Previous Education</label><textarea name="previous_education"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
 													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
 
-													<h4>Emergency Contact</h4>
+													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
+													<div class="section-body">
 													<div class="form-row"><label>Parent/Guardian Name</label><input name="emergency_name" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
 													<div class="form-row"><label>Parent/Guardian Phone</label><input name="emergency_phone" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
 													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
+													</div>
 
 													<div class="form-row"><label><input type="checkbox" name="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?>> I agree to the terms and conditions</label></div>
 													<div style="margin-top:12px;"><button class="btn-primary" type="submit">Submit Registration</button></div>
