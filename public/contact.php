@@ -233,19 +233,7 @@ include __DIR__ . '/includes/header.php';
 		<div class="chat-form">
 			<input type="text" id="miniName" placeholder="Your name" class="chat-input">
 			<input type="email" id="miniEmail" placeholder="Your email (optional)" class="chat-input">
-			<div class="attach-row">
-				<label class="attach-btn" title="Attach image">
-					📎<input type="file" id="miniAttach" accept="image/*" style="display:none">
-				</label>
-				<select id="emojiSelect" class="emoji-select">
-					<option value="">😀</option>
-					<option value="😊">😊</option>
-					<option value="👍">👍</option>
-					<option value="🎉">🎉</option>
-				</select>
-			</div>
 			<textarea id="miniMessage" placeholder="Enter your message..." class="chat-textarea"></textarea>
-			<div class="chat-preview" id="chatPreview"></div>
 			<div class="chat-actions"><button class="btn-ghost" id="miniClear">Clear</button><button class="btn-primary" id="miniSend">Send</button></div>
 		</div>
 	</div>
@@ -303,22 +291,11 @@ document.addEventListener('DOMContentLoaded', function(){
 	if(closeMini && mini){ closeMini.addEventListener('click', function(){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }); }
 
 	// Send mini-chat message: create thread via API and store thread_id cookie
-	var miniAttach = document.getElementById('miniAttach');
-	var chatPreview = document.getElementById('chatPreview');
-	var emojiSelect = document.getElementById('emojiSelect');
-
-	// show preview for attachment
-	if(miniAttach){ miniAttach.addEventListener('change', function(e){ chatPreview.innerHTML = ''; var f = this.files[0]; if(!f) return; var url = URL.createObjectURL(f); var img = document.createElement('img'); img.src = url; chatPreview.appendChild(img); }); }
-
-	// emoji insertion
-	if(emojiSelect){ emojiSelect.addEventListener('change', function(){ if(this.value){ if(miniMessage){ miniMessage.value = (miniMessage.value ? miniMessage.value + ' ' : '') + this.value; } this.value = ''; } }); }
-
-	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var email = miniEmail.value.trim() || ''; var msg = miniMessage ? miniMessage.value.trim() : ''; if(!msg && (!miniAttach || !miniAttach.files.length)){ alert('Please enter a message or attach an image'); return; }
+	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var email = miniEmail.value.trim() || ''; var msg = miniMessage ? miniMessage.value.trim() : ''; if(!msg){ alert('Please enter a message'); return; }
 		try{
 			// show pending/queue system bubble
 			var cm = document.getElementById('chatMessages'); var q = document.createElement('div'); q.className='chat-system'; q.textContent = 'Message sent. You are in the queue — please wait for an admin to reply.'; cm.appendChild(q); cm.scrollTop = cm.scrollHeight;
 			var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', msg);
-			if(miniAttach && miniAttach.files.length){ fd.append('attachment', miniAttach.files[0]); }
 			var res = await fetch('api/chat.php?action=send_message', { method: 'POST', body: fd });
 			var j = await res.json(); if(j.status==='ok'){ setCookie('hq_thread_id', j.thread_id, 7); updateFloatingBadge(); document.getElementById('miniMessage').value = ''; // clear
 				// append user bubble
