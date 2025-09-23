@@ -16,7 +16,6 @@ $action = $_REQUEST['action'] ?? '';
 if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? 'Guest');
     $email = trim($_POST['email'] ?? '');
-    <?php
     // public/chatbox.php - clean chat API + embeddable widget
     require_once __DIR__ . '/config/db.php';
 
