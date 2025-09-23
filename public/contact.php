@@ -274,6 +274,9 @@ document.addEventListener('DOMContentLoaded', function(){
 	var miniSend = document.getElementById('miniSend');
 	var miniBody = document.getElementById('miniBody');
 	var miniName = document.getElementById('miniName');
+	var miniEmail = document.getElementById('miniEmail');
+	var miniMessage = document.getElementById('miniMessage');
+	var miniClear = document.getElementById('miniClear');
 
 	function updateFloatingBadge(){ try{ var badge = document.querySelector('.floating-chat .badge'); var thread = getCookie('hq_thread_id'); if(thread){ if(!badge){ var n=document.createElement('span'); n.className='badge'; n.textContent='1'; document.querySelector('.floating-chat').appendChild(n); } } else { if(badge) badge.remove(); } }catch(e){}
 	}
@@ -281,11 +284,14 @@ document.addEventListener('DOMContentLoaded', function(){
 	// call once on load to sync badge state
 	updateFloatingBadge();
 
+	// if there's an existing thread for this visitor, start polling so replies appear
+	try{ var existingThread = getCookie('hq_thread_id'); if(existingThread){ startChatPolling(existingThread); } }catch(e){}
+
 	if(openLive && mini){ openLive.addEventListener('click', function(){ mini.classList.add('open'); mini.setAttribute('aria-hidden','false'); document.getElementById('miniName').focus(); }); openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); }); }
 	if(closeMini && mini){ closeMini.addEventListener('click', function(){ mini.classList.remove('open'); mini.setAttribute('aria-hidden','true'); }); }
 
 	// Send mini-chat message: create thread via API and store thread_id cookie
-	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var email = miniEmail.value.trim() || ''; var msg = document.getElementById('miniMessage') ? document.getElementById('miniMessage').value.trim() : ''; if(!msg){ alert('Please enter a message'); return; }
+	if(miniSend){ miniSend.addEventListener('click', async function(){ var name = miniName.value.trim() || 'Guest'; var email = miniEmail.value.trim() || ''; var msg = miniMessage ? miniMessage.value.trim() : ''; if(!msg){ alert('Please enter a message'); return; }
 		try{
 			// show pending/queue system bubble
 			var cm = document.getElementById('chatMessages'); var q = document.createElement('div'); q.className='chat-system'; q.textContent = 'Message sent. You are in the queue — please wait for an admin to reply.'; cm.appendChild(q); cm.scrollTop = cm.scrollHeight;
@@ -302,6 +308,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
 	var chatPollTimer = null;
 	function startChatPolling(threadId){ if(chatPollTimer) return; chatPollTimer = setInterval(async function(){ try{ var resp = await fetch('api/chat.php?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await resp.json(); if(j.status==='ok'){ var list = j.messages; var cm = document.getElementById('chatMessages'); cm.innerHTML = ''; for(var i=0;i<list.length;i++){ var m = list[i]; var d = document.createElement('div'); d.className = 'chat-bubble ' + (m.is_from_staff=='1' || m.is_from_staff==1 ? 'admin' : 'user'); d.textContent = m.message; cm.appendChild(d); } cm.scrollTop = cm.scrollHeight; } }catch(e){} }, 3000); }
+
+	// clear chat form and messages
+	if(miniClear){ miniClear.addEventListener('click', function(){ if(miniName) miniName.value=''; if(miniEmail) miniEmail.value=''; if(miniMessage) miniMessage.value=''; var cm = document.getElementById('chatMessages'); if(cm) cm.innerHTML = ''; }); }
 
 	// clicking floating chat also opens contact page or mini chat
 	var floatBtn = document.querySelector('.floating-chat');
