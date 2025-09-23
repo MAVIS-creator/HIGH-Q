@@ -18,6 +18,16 @@ try {
   $categories = [];
 }
 
+// detect whether posts table has a 'tags' column (some installs don't)
+$hasTags = false;
+try {
+  $colStmt = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts' AND COLUMN_NAME = 'tags'");
+  $colStmt->execute();
+  $hasTags = (bool)$colStmt->fetchColumn();
+} catch (Throwable $e) {
+  $hasTags = false;
+}
+
 // Build where clauses
 $where = "WHERE status='published'";
 $params = [];
@@ -26,10 +36,15 @@ if ($selectedCategory) {
   $params[] = $selectedCategory;
 }
 if ($selectedTag !== '') {
-  // match tag in comma-separated tags or as substring
-  $where .= " AND (FIND_IN_SET(?, tags) OR tags LIKE ? )";
-  $params[] = $selectedTag;
-  $params[] = "%" . $selectedTag . "%";
+  if ($hasTags) {
+    // match tag in comma-separated tags or as substring
+    $where .= " AND (FIND_IN_SET(?, tags) OR tags LIKE ? )";
+    $params[] = $selectedTag;
+    $params[] = "%" . $selectedTag . "%";
+  } else {
+    // tags column not present: ignore tag filter to avoid SQL errors
+    $selectedTag = '';
+  }
 }
 if ($q !== '') {
   $where .= " AND title LIKE ?";
@@ -42,7 +57,7 @@ $countStmt = $pdo->prepare($countSql);
 $countStmt->execute($params);
 $total = (int)$countStmt->fetchColumn();
 
-$sql = "SELECT id, title, slug, excerpt, created_at, tags FROM posts " . $where . " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+$sql = "SELECT id, title, slug, excerpt, created_at FROM posts " . $where . " ORDER BY created_at DESC LIMIT ? OFFSET ?";
 $pageParams = $params;
 $pageParams[] = $perPage;
 $pageParams[] = $offset;
@@ -90,6 +105,7 @@ require_once __DIR__ . '/includes/header.php';
             <h3><a href="post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
             <p class="muted"><?= htmlspecialchars($p['created_at']) ?></p>
             <p><?= htmlspecialchars($p['excerpt']) ?></p>
+            <?php if ($hasTags): ?>
             <p>
               <?php
                 // show tags as links (comma separated)
@@ -99,6 +115,7 @@ require_once __DIR__ . '/includes/header.php';
                 }
               ?>
             </p>
+            <?php endif; ?>
             <a href="post.php?id=<?= $p['id'] ?>" class="btn-ghost">Read More</a>
           </article>
         <?php endforeach; ?>
