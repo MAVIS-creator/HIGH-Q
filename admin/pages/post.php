@@ -182,6 +182,19 @@ $posts = $stmt->fetchAll();
         </div>
 
         <?php if ($posts): ?>
+            <?php
+                $missing = [];
+                foreach ($posts as $pp) {
+                    if ($pp['status'] === 'published' && (empty($pp['excerpt']) || empty($pp['featured_image']))) {
+                        $missing[] = $pp;
+                    }
+                }
+            ?>
+            <?php if (!empty($missing)): ?>
+                <div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;">
+                    <strong>Notice:</strong> <?= count($missing) ?> published post(s) are missing an excerpt or featured image. It's recommended to add an excerpt and/or featured image for better listings and sharing.
+                </div>
+            <?php endif; ?>
             <div class="posts-grid">
                 <?php foreach ($posts as $p): ?>
                     <div class="post-card" id="post-row-<?= $p['id'] ?>">
@@ -191,6 +204,9 @@ $posts = $stmt->fetchAll();
                         <div class="meta">
                             <strong><?= htmlspecialchars($p['title']) ?></strong>
                             <div class="info"><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?> • <?= htmlspecialchars($p['author'] ?? '') ?></div>
+                            <?php if ($p['status'] === 'published' && (empty($p['excerpt']) || empty($p['featured_image']))): ?>
+                                <span title="Missing excerpt or image" style="color:var(--hq-yellow);margin-left:8px">⚠</span>
+                            <?php endif; ?>
                         </div>
                         <div class="excerpt"><?= nl2br(htmlspecialchars($p['excerpt'] ?: '')) ?></div>
                         <div class="actions">
