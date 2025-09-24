@@ -77,99 +77,67 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Live Chat</title>
+    <title>Start Chat</title>
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600&display=swap" rel="stylesheet">
     <style>
-        :root{ --hq-yellow:#f5b904; --hq-dark:#171716; --hq-gray:#818181; }
+        :root{ --hq-pink-1:#b243d6; --hq-pink-2:#ff5fa2; --hq-muted:#f4f4f6; }
         *{box-sizing:border-box}
-        body{font-family: 'Raleway', system-ui; margin:0; background:transparent}
-        .chat-box{ width:360px; max-width:100%; height:520px; border-radius:12px; background:#fff; box-shadow:0 18px 50px rgba(11,37,64,0.12); overflow:hidden; display:flex; flex-direction:column }
-        .chat-box-header{ padding:12px 14px; background:linear-gradient(90deg,var(--hq-yellow),#d99a00); color:var(--hq-dark); display:flex; justify-content:space-between; align-items:center }
-        .chat-header-left{ display:flex; gap:10px; align-items:center }
-        .chat-avatar{ width:40px; height:40px; border-radius:50%; background:linear-gradient(90deg,#ffdd66,#ffc107); }
-        .chat-box-body{ flex:1; padding:12px; background:linear-gradient(180deg,#fff,#fbfbfb); overflow:auto }
-        .hq-messages{ display:flex; flex-direction:column; gap:10px }
-        .bubble{ max-width:78%; padding:10px 12px; border-radius:14px; font-size:14px; line-height:1.4 }
-        .bubble.user{ background:linear-gradient(90deg,var(--hq-yellow),#d99a00); color:#111; align-self:flex-end; border-bottom-right-radius:6px }
-        .bubble.admin{ background:#f1f6ff; color:#08204a; align-self:flex-start; border-bottom-left-radius:6px }
-        .bubble .time{ display:block; font-size:11px; color:var(--hq-gray); margin-top:6px }
-        .chat-attachment img{ max-width:200px; border-radius:8px; display:block; margin-top:8px }
-        .chat-box-footer{ padding:10px; display:flex; gap:8px; align-items:flex-end; border-top:1px solid rgba(0,0,0,0.06) }
-        #chatInput{ flex:1; padding:10px; border-radius:10px; border:1px solid #eee; resize:vertical; min-height:44px }
-        .btn-primary{ background:var(--hq-dark); color:#fff; border:none; padding:10px 14px; border-radius:10px; cursor:pointer }
-        .btn-ghost{ background:#fff; border:1px solid rgba(0,0,0,0.06); padding:8px 10px; border-radius:8px; cursor:pointer }
-        .small{ font-size:12px; color:var(--hq-gray) }
-        @media (max-width:420px){ .chat-box{ width:100%; height:70vh; border-radius:0 } }
+        body{font-family: 'Raleway', system-ui; margin:0; background:transparent; display:flex; align-items:center; justify-content:center; height:100vh}
+        .card{ width:320px; max-width:94%; background:#fff; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.12); overflow:hidden }
+        .card-header{ padding:18px 20px; background:linear-gradient(90deg,var(--hq-pink-1),var(--hq-pink-2)); color:#fff }
+        .card-header h3{ margin:0; font-size:18px }
+        .card-body{ padding:18px }
+        .field{ margin-bottom:12px }
+        input[type=text], input[type=email], textarea{ width:100%; padding:14px; border-radius:30px; border:1px solid #eee; background:var(--hq-muted); font-size:14px; outline:none }
+        textarea{ min-height:100px; resize:vertical }
+        .btn-start{ display:block; width:100%; padding:14px; border-radius:30px; border:none; color:#fff; font-weight:600; background:linear-gradient(90deg,var(--hq-pink-1),var(--hq-pink-2)); cursor:pointer }
+        .note{ font-size:13px; color:#666; margin-bottom:8px }
+        .success{ padding:12px; background:#e6fff6; border-left:4px solid #39a37a; color:#064; border-radius:8px; margin-top:12px }
+        @media (max-width:420px){ body{height:100vh} .card{ width:92% } }
     </style>
 </head>
 <body>
-
-<div class="chat-box" id="hqChatBox" role="dialog" aria-label="Live chat">
-    <div class="chat-box-header">
-        <div class="chat-header-left">
-            <div class="chat-avatar" aria-hidden="true"></div>
-            <div>
-                <div style="font-weight:600">Chat with Support</div>
-                <div class="small">Typically replies within a few minutes</div>
-            </div>
+    <div class="card" role="dialog" aria-label="Start chat">
+        <div class="card-header">
+            <h3>Let's chat? — Online</h3>
         </div>
-        <div><button id="closeChat" aria-label="Close chat" class="btn-ghost">✕</button></div>
-    </div>
-    <div class="chat-box-body">
-        <div class="hq-messages" id="hqMessages">
-            <div class="bubble admin">Welcome! Please tell us your name and how we can help. <span class="time">just now</span></div>
+        <div class="card-body">
+            <p class="note">Please fill out the form below to start chatting with the next available agent.</p>
+            <form id="startChatForm">
+                <div class="field"><input type="text" id="c_name" name="name" placeholder="Your Name" required></div>
+                <div class="field"><input type="email" id="c_email" name="email" placeholder="Email Address"></div>
+                <div class="field"><textarea id="c_message" name="message" placeholder="Explain your queries.." required></textarea></div>
+                <button class="btn-start" id="startBtn" type="submit">Start Chat</button>
+            </form>
+            <div id="result"></div>
         </div>
     </div>
-    <div class="chat-box-footer">
-        <input id="chatName" placeholder="Your name" class="chat-meta" />
-        <input id="chatEmail" placeholder="Email (optional)" class="chat-meta" />
-    </div>
-    <div style="padding:10px;border-top:1px solid #f1f1f1;display:flex;gap:8px;align-items:flex-end">
-        <textarea id="chatInput" placeholder="Type a message..."></textarea>
-        <input type="file" id="chatFile" accept="image/*" class="hidden" />
-        <button id="attachBtn" class="btn-ghost" title="Attach image">📎</button>
-        <button id="emojiBtn" class="btn-ghost" title="Emoji">😊</button>
-        <button id="chatSend" class="btn-primary">Send</button>
-    </div>
-</div>
 
-<script>
-    (function(){
-        function setCookie(name,value,days){ var d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie = name+"="+encodeURIComponent(value)+";path=/;expires="+d.toUTCString(); }
-        function getCookie(name){ var m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m? decodeURIComponent(m[2]) : null; }
+    <script>
+        (function(){
+            var form = document.getElementById('startChatForm');
+            var startBtn = document.getElementById('startBtn');
+            var result = document.getElementById('result');
 
-        var closeBtn = document.getElementById('closeChat');
-        var sendBtn = document.getElementById('chatSend');
-        var attachBtn = document.getElementById('attachBtn');
-        var fileInput = document.getElementById('chatFile');
-        var emojiBtn = document.getElementById('emojiBtn');
-        var messagesEl = document.getElementById('hqMessages');
-        var input = document.getElementById('chatInput');
-        var nameInput = document.getElementById('chatName');
-        var emailInput = document.getElementById('chatEmail');
-        var pollTimer = null;
-
-        closeBtn.addEventListener('click', function(){ if(window.top !== window.self && parent && parent.postMessage){ parent.postMessage({hq_chat_action:'close'}, '*'); } else { window.close && window.close(); } });
-
-        attachBtn.addEventListener('click', function(){ fileInput.click(); });
-        fileInput.addEventListener('change', function(){ if(fileInput.files && fileInput.files[0]){ var p = document.createElement('div'); p.className='bubble user'; p.textContent = 'Attachment ready: ' + fileInput.files[0].name; messagesEl.appendChild(p); messagesEl.scrollTop = messagesEl.scrollHeight; } });
-        emojiBtn.addEventListener('click', function(){ input.value = input.value + ' 😊'; input.focus(); });
-
-        async function sendMessage(){ var name = nameInput.value.trim() || 'Guest'; var email = emailInput.value.trim() || ''; var msg = input.value.trim(); if(!msg && !(fileInput.files && fileInput.files[0])){ alert('Please enter a message or attach an image'); return; }
-            var fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', msg); if(fileInput.files[0]) fd.append('attachment', fileInput.files[0]); var thread = localStorage.getItem('hq_thread_id'); if(thread) fd.append('thread_id', thread);
-            try{ var res = await fetch('?action=send_message', { method:'POST', body:fd }); var j = await res.json(); if(j.status === 'ok'){ localStorage.setItem('hq_thread_id', j.thread_id); input.value=''; fileInput.value=''; startPolling(j.thread_id); } else { alert('Send failed: '+(j.message||'unknown')) } }catch(e){ alert('Send failed'); }
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-
-        var poll = null;
-        async function fetchMessages(threadId){ try{ var r = await fetch('?action=get_messages&thread_id='+encodeURIComponent(threadId)); var j = await r.json(); if(j.status==='ok'){ messagesEl.innerHTML=''; j.messages.forEach(function(m){ var d=document.createElement('div'); d.className = (m.is_from_staff==1? 'bubble admin' : 'bubble user'); d.innerHTML = '<div style="font-weight:600">'+(m.sender_name||'')+'</div>' + m.message + '<span class="time">'+m.created_at+'</span>'; messagesEl.appendChild(d); }); messagesEl.scrollTop = messagesEl.scrollHeight } }catch(e){}
-        }
-
-        function startPolling(threadId){ if(poll) return; fetchMessages(threadId); poll = setInterval(function(){ fetchMessages(threadId) }, 3000); }
-
-        var existing = localStorage.getItem('hq_thread_id'); if(existing) startPolling(existing);
-    })();
-</script>
+            form.addEventListener('submit', async function(e){
+                e.preventDefault();
+                startBtn.disabled = true; startBtn.textContent = 'Starting...'; result.innerHTML = '';
+                var fd = new FormData(form);
+                try{
+                    var res = await fetch('?action=send_message', { method: 'POST', body: fd });
+                    var j = await res.json();
+                    if(j.status === 'ok'){
+                        // store thread id for later
+                        try{ localStorage.setItem('hq_thread_id', j.thread_id); }catch(e){}
+                        result.innerHTML = '<div class="success">Chat started. An agent will be with you shortly.</div>';
+                        startBtn.textContent = 'Started';
+                    } else {
+                        result.innerHTML = '<div class="note">Failed to start chat: ' + (j.message||'Unknown error') + '</div>';
+                        startBtn.disabled = false; startBtn.textContent = 'Start Chat';
+                    }
+                }catch(err){ console.error(err); result.innerHTML = '<div class="note">Network error. Please try again.</div>'; startBtn.disabled = false; startBtn.textContent = 'Start Chat'; }
+            });
+        })();
+    </script>
 </body>
 </html>
