@@ -220,11 +220,13 @@ include __DIR__ . '/includes/header.php';
 	</div>
 </div>
 
-<!-- Chat iframe modal (loads chatbox.php) - pinned to bottom-right so it appears where the chat icon is -->
-<div id="chatIframeModal" style="display:none;position:fixed;bottom:24px;right:24px;z-index:1200;">
-	<div style="width:380px;max-width:92%;height:560px;background:#fff;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
-		<button id="closeChatModal" aria-label="Close chat" style="position:absolute;right:8px;top:8px;border:none;background:#f1f1f1;padding:6px 8px;border-radius:6px;cursor:pointer;z-index:2;">✕</button>
-		<iframe id="chatIframe" src="chatbox.php" style="width:100%;height:100%;border:0;border-radius:12px;" title="Live Chat"></iframe>
+<!-- Chat iframe modal (loads chatbox.php). Fullscreen dimmed overlay to cover page behind -->
+<div id="chatIframeModal" style="display:none;position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,0.45);backdrop-filter:blur(2px);">
+	<div style="width:380px;max-width:92%;height:560px;background:transparent;border-radius:12px;overflow:visible;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 30px 80px rgba(0,0,0,0.4);">
+		<div style="width:100%;height:100%;background:#fff;border-radius:12px;overflow:hidden;position:relative;">
+			<button id="closeChatModal" aria-label="Close chat" style="position:absolute;right:8px;top:8px;border:none;background:#fff;padding:6px 8px;border-radius:6px;cursor:pointer;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,0.12)">✕</button>
+			<iframe id="chatIframe" src="chatbox.php" style="width:100%;height:100%;border:0;border-radius:12px;display:block;" title="Live Chat"></iframe>
+		</div>
 	</div>
 </div>
 
