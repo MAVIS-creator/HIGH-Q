@@ -65,8 +65,23 @@ if (!in_array('dashboard', $allowed_pages)) {
     $allowed_pages[] = 'dashboard';
 }
 
-// Security: if page not allowed, fallback to dashboard
-if (!in_array($page, $allowed_pages)) {
+// Security: allow exact matches or logical subpages (e.g. 'chat_view') if base permission exists.
+$pageAllowed = false;
+if (in_array($page, $allowed_pages)) {
+    $pageAllowed = true;
+} else {
+    // allow pages that start with an allowed slug + separator (underscore or dash)
+    foreach ($allowed_pages as $ap) {
+        if ($ap === '') continue;
+        if (stripos($page, $ap . '_') === 0 || stripos($page, $ap . '-') === 0) {
+            $pageAllowed = true;
+            break;
+        }
+    }
+}
+
+if (!$pageAllowed) {
+    // fallback to dashboard
     $page = 'dashboard';
     $pageTitle = 'Dashboard';
 }
