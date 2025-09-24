@@ -3,7 +3,8 @@
 // Run this script from the command line (php migrate_course_features.php)
 // It will move newline-separated features stored in courses.features into course_features rows.
 
-require_once __DIR__ . '/../includes/db.php';
+// Use the admin includes DB file which bootstraps PDO via .env
+require_once __DIR__ . '/../admin/includes/db.php';
 
 echo "Starting course features migration...\n";
 
