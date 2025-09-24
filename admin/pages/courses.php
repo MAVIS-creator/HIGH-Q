@@ -16,7 +16,7 @@ $errors  = [];
 $success = [];
 
 // Ensure per-page CSS for courses modal if not already set
-$pageCss = '<link rel="stylesheet" href="../assets/css/courses.css">';
+$pageCss = '<link rel="stylesheet" href="/HIGH-Q/admin/assets/css/courses.css">';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
@@ -154,13 +154,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
 ?>
 
+<div class="courses-page">
+
   <?php if ($errors): ?>
    <div class="alert error">
         <?php foreach ($errors as $err): ?><p><?= htmlspecialchars($err) ?></p><?php endforeach; ?>
       </div>
   <?php endif; ?>
   <?php if ($success): ?>
-   <div class="alert success">
+   <div class="alert success server-success">
         <?php foreach ($success as $s): ?><p><?= htmlspecialchars($s) ?></p><?php endforeach; ?>
       </div>
   <?php endif; ?>
@@ -312,7 +314,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   </div>
   <div id="modalOverlay"></div>
 
+  
+  <!-- SweetAlert2 for toast notifications -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    (function(){
+      try {
+        var successMsgs = <?php echo json_encode(array_values($success)); ?> || [];
+        if (successMsgs.length > 0 && typeof Swal !== 'undefined') {
+          // hide server banner if present
+          var banner = document.querySelector('.server-success'); if (banner) banner.style.display = 'none';
+          successMsgs.forEach(function(msg, idx){
+            setTimeout(function(){
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2200,
+                timerProgressBar: true,
+                icon: 'success',
+                title: msg
+              });
+            }, idx * 250);
+          });
+        }
+      } catch(e){ console.error(e); }
+    })();
+  </script>
+
   <?php include '../includes/footer.php'; ?>
+
+</div>
 
   <style>
     .compact-row {
