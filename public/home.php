@@ -15,7 +15,8 @@ if (!isset($pdo) || !$pdo) {
 // Fetch up to 6 active courses added by the admin (only if $pdo is available)
 if (isset($pdo) && $pdo instanceof PDO) {
   try {
-    $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, price FROM courses WHERE is_active = 1 ORDER BY created_at DESC LIMIT 6");
+    // include icon column so we can render icon thumbnails on the public site
+    $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, price, icon FROM courses WHERE is_active = 1 ORDER BY created_at DESC LIMIT 6");
     $stmt->execute();
     $programs = $stmt->fetchAll();
   } catch (Throwable $e) {
@@ -169,6 +170,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
             $title = htmlspecialchars($p['title']);
             $slug  = htmlspecialchars($p['slug']);
             $desc  = trim($p['description'] ?? '');
+            $icon  = trim($p['icon'] ?? '');
             // If description contains multiple lines, treat each line as a bullet
             $lines = preg_split('/\r?\n/', $desc);
             $hasList = count($lines) > 1;
@@ -178,7 +180,26 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
           <article class="program-card">
             <div class="program-card-inner">
-              <div class="program-icon"><i class='bx bxs-book-open'></i></div>
+              <div class="program-icon">
+                <?php
+                  // Prefer Boxicons class stored in `icon`, otherwise try image filename under assets/images/icons
+                  if ($icon !== '') {
+                    if (strpos($icon, 'bx') !== false) {
+                      echo "<i class=\'" . htmlspecialchars($icon) . "\' aria-hidden=\'true\'></i>";
+                    } else {
+                      $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
+                      if (is_readable($iconPath)) {
+                        echo "<img src=\"assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+                      } else {
+                        // fallback default icon
+                        echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                      }
+                    }
+                  } else {
+                    echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                  }
+                ?>
+              </div>
               <div class="program-body">
                 <h4><a href="programs.php?slug=<?= $slug ?>"><?= $title ?></a></h4>
                 <?php if ($hasList): ?>
