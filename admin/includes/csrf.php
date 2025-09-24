@@ -28,3 +28,11 @@ function verifyToken(string $id, string $token): bool {
     global $csrfTokenManager;
     return $csrfTokenManager->isTokenValid(new CsrfToken($id, $token));
 }
+
+/**
+ * Backwards-compatible wrapper used by some older pages.
+ * Accepts just the token and uses the default form id.
+ */
+function verifyCsrfToken(string $token, string $id = 'default_form'): bool {
+    return verifyToken($id, $token);
+}
