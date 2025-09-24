@@ -122,6 +122,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $success[] = "Course '{$title}' updated.";
             }
         }
+    // Delete action
+    if ($act === 'delete' && $id) {
+      // remove course features and course row
+      try {
+        $pdo->prepare('DELETE FROM course_features WHERE course_id = ?')->execute([$id]);
+        $pdo->prepare('DELETE FROM courses WHERE id = ?')->execute([$id]);
+        logAction($pdo, $_SESSION['user']['id'], 'course_deleted', ['course_id'=>$id]);
+        $success[] = "Course deleted.";
+      } catch (\Exception $e) {
+        $errors[] = "Failed to delete course: " . $e->getMessage();
+      }
+    }
   }
 
 }
@@ -333,7 +345,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   const courseModal    = document.getElementById('courseModal');
   const overlay        = document.getElementById('modalOverlay');
   const closeCourseBtn = document.getElementById('courseModalClose');
-  const newCourseBtn   = document.getElementById('newCourseBtn');
+  const newCourseBtn   = document.getElementById('newCourseBtn'); // may be absent in some layouts
   const courseForm     = document.getElementById('courseForm');
   const modalTitle     = document.getElementById('courseModalTitle');
 
@@ -404,9 +416,9 @@ function escapeHtml(s){
     courseModal.classList.remove('open');
   }
 
-  newCourseBtn.addEventListener('click', () => openCourseModal('create'));
-  closeCourseBtn.addEventListener('click', closeCourseModal);
-  overlay.addEventListener('click', closeCourseModal);
+  if (newCourseBtn) newCourseBtn.addEventListener('click', () => openCourseModal('create'));
+  if (closeCourseBtn) closeCourseBtn.addEventListener('click', closeCourseModal);
+  if (overlay) overlay.addEventListener('click', closeCourseModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCourseModal(); });
 
   document.querySelectorAll('.btn-editCourse').forEach(btn => {
@@ -419,8 +431,20 @@ function escapeHtml(s){
         duration: btn.dataset.duration,
         price: btn.dataset.price,
         tutor_id: btn.dataset.tutor,
-        is_active: btn.dataset.active
+        is_active: btn.dataset.active,
+        icon: btn.dataset.icon || '',
+        features: btn.dataset.features || '',
+        badge: btn.dataset.badge || ''
       });
+    });
+  });
+
+  // Attach confirmation to delete forms
+  document.querySelectorAll('form.delete-form').forEach(f => {
+    f.addEventListener('submit', function(e){
+      if (!confirm('Delete this course? This action cannot be undone.')) {
+        e.preventDefault();
+      }
     });
   });
   </script>
