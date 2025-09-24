@@ -73,4 +73,9 @@
 }
 .course-title h3 { margin: 0; }
 
+.course-features { list-style: disc; margin: 8px 0 0 18px; padding: 0; }
+.course-features li { margin: 2px 0; font-size: 0.95rem; }
+.course-highlight { display: inline-block; margin-top: 8px; padding: 4px 8px; background: #ffe9b3; color: #6a4b00; border-radius: 4px; font-size: 0.85rem; }
+.course-icon img { width:48px; height:48px; object-fit:contain; }
+
 
