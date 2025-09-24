@@ -123,28 +123,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-        if ($act === 'delete' && $id) {
-            $pdo->prepare("DELETE FROM courses WHERE id=?")->execute([$id]);
-            logAction($pdo, $_SESSION['user']['id'], 'course_deleted', ['course_id'=>$id]);
-            $success[] = "Course deleted.";
-        }
-    }
-
-    // avoid form resubmission
-    header("Location: index.php?pages=courses");
-    exit;
-}
-
-// Fetch all courses for listing and tutor dropdown
-$courses = $pdo->query(
-    "SELECT c.*, u.name AS tutor_name,
-      (SELECT GROUP_CONCAT(cf.feature_text SEPARATOR '\\n') FROM course_features cf WHERE cf.course_id = c.id ORDER BY cf.position ASC) AS features_list
-    FROM courses c
-    LEFT JOIN users u ON u.id = c.tutor_id
-    ORDER BY created_at DESC"
-)->fetchAll();
-
-// $tutors removed
+        if ($act === 'create') {
+            if (!$title || !$slug) {
+                $errors[] = "Title and slug are required.";
+            } else {
+                // ensure slug is unique
+                $chk = $pdo->prepare("SELECT id FROM courses WHERE slug = ? LIMIT 1");
+                $chk->execute([$slug]);
+                if ($chk->fetch()) {
+                    $errors[] = "A course with that slug already exists. Choose a different slug.";
+                } else {
+                    $stmt = $pdo->prepare(
+                      "INSERT INTO courses
+                        (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, highlight_badge)
+                      VALUES (?,?,?,?,?,?,?,?,?,?)"
+                    );
+                    $stmt->execute([
+                      $title,
+                      $slug,
+                      $desc,
+                      $dur,
+                      $price,
+                      null,
+                      $_SESSION['user']['id'],
+                      $active,
+                      $icon ?: null,
+                      $highlight_badge ?: null
+                    ]);
+                    $newCourseId = $pdo->lastInsertId();
 
 // Load available icons (with class) from icons table (if exists)
 try {
@@ -156,6 +162,7 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+                }
 <head>
   <meta charset="UTF-8">
   <title>Courses Management - HIGH Q SOLID ACADEMY</title>
@@ -386,27 +393,34 @@ try {
     overlay.classList.add('open');
     courseModal.classList.add('open');
 
-    if (mode === 'edit') {
-      modalTitle.textContent = 'Edit Course';
-      courseForm.action = `index.php?pages=courses&action=edit&id=${data.id}`;
-      fTitle.value    = data.title;
-      fSlug.value     = data.slug;
-      fDesc.value     = data.desc;
-      fDuration.value = data.duration;
-      fPrice.value    = data.price;
-  // Tutor removed
-      fActive.checked = data.is_active == 1;
-  fIcon.value     = data.icon || '';
-  // features may come as joined string in data.features or data.features_list
-  fFeatures.value = data.features || data.features_list || '';
-  fBadge.value    = data.badge || '';
-    } else {
-      modalTitle.textContent = 'New Course';
-      courseForm.action = 'index.php?pages=courses&action=create';
-      fTitle.value = fSlug.value = fDesc.value = fDuration.value = fPrice.value = '';
-  // Tutor removed
-      fActive.checked = true;
-  if (fIcon) fIcon.value = '';
+    if ($act === 'edit' && $id) {
+      if (!$title || !$slug) {
+        $errors[] = "Title and slug are required.";
+      } else {
+        // ensure slug is unique (allow same slug for this id)
+        $chk = $pdo->prepare("SELECT id FROM courses WHERE slug = ? LIMIT 1");
+        $chk->execute([$slug]);
+        $existing = $chk->fetch(PDO::FETCH_ASSOC);
+        if ($existing && (int)$existing['id'] !== (int)$id) {
+          $errors[] = "Another course is using that slug. Pick a different slug.";
+        } else {
+          $stmt = $pdo->prepare(
+            "UPDATE courses
+            SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, highlight_badge=?, updated_at=NOW()
+            WHERE id=?"
+          );
+          $stmt->execute([
+            $title,
+            $slug,
+            $desc,
+            $dur,
+            $price,
+            null,
+            $active,
+            $icon ?: null,
+            $highlight_badge ?: null,
+            $id
+          ]);
   if (fFeatures) fFeatures.value = '';
   if (fBadge) fBadge.value = '';
       if (iconPreview) iconPreview.innerHTML = '';
@@ -419,6 +433,7 @@ function updateIconPreview() {
   const v = fIcon.value;
   if (!v) { iconPreview.innerHTML = ''; return; }
   if (v.indexOf('bx') !== -1) {
+        }
     iconPreview.innerHTML = `<i class="${escapeHtml(v)}" style="font-size:20px"></i>`;
   } else {
     // assume filename
