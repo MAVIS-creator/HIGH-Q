@@ -50,7 +50,8 @@ require_once __DIR__ . '/../includes/header.php';
 document.getElementById('replyForm').addEventListener('submit', function(e){
   e.preventDefault();
   var fd=new FormData(this); fd.append('action','reply'); fd.append('thread_id','<?= $threadId ?>');
-  var xhr=new XMLHttpRequest(); xhr.open('POST',location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>',true);
+  var csrfEl = document.querySelector('input[name="_csrf"]'); if (csrfEl) fd.append('_csrf', csrfEl.value);
+  var xhr=new XMLHttpRequest(); xhr.open('POST', '/HIGH-Q/admin/pages/chat.php',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ location.reload(); } else alert('Failed'); };
   xhr.send(fd);
