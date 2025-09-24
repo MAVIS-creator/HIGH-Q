@@ -25,13 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     } else {
         $act    = $_GET['action'];
         $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
-        $title  = trim($_POST['title'] ?? '');
-        $slug   = trim($_POST['slug'] ?? '');
-        $desc   = trim($_POST['description'] ?? '');
-        $dur    = trim($_POST['duration'] ?? '');
-        $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
-        $tutor  = (int)($_POST['tutor_id'] ?? 0);
-        $active = isset($_POST['is_active']) ? 1 : 0;
+  $title  = trim($_POST['title'] ?? '');
+  $slug   = trim($_POST['slug'] ?? '');
+  $desc   = trim($_POST['description'] ?? '');
+  $dur    = trim($_POST['duration'] ?? '');
+  $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
+  $tutor  = (int)($_POST['tutor_id'] ?? 0);
+  $active = isset($_POST['is_active']) ? 1 : 0;
+  // new metadata fields
+  $icon = trim($_POST['icon'] ?? 'bxs-graduation');
+  $features = trim($_POST['features'] ?? ''); // one-per-line
+  $highlight_badge = trim($_POST['highlight_badge'] ?? '');
 
         if ($act === 'create') {
             if (!$title || !$slug) {
@@ -39,14 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             } else {
                 $stmt = $pdo->prepare("
                   INSERT INTO courses
-                    (title, slug, description, duration, price, tutor_id, created_by, is_active)
-                  VALUES (?,?,?,?,?,?,?,?)
-                ");
+                    (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, features, highlight_badge)
+                  VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                """);
                 $stmt->execute([
                   $title, $slug, $desc, $dur, $price,
                   $tutor ?: null,
                   $_SESSION['user']['id'],
-                  $active
+                  $active,
+                  $icon,
+                  $features,
+                  $highlight_badge
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'course_created', ['slug'=>$slug]);
                 $success[] = "Course '{$title}' created.";
@@ -59,13 +66,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             } else {
                 $stmt = $pdo->prepare("
                   UPDATE courses
-                  SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, updated_at=NOW()
+                  SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, features=?, highlight_badge=?, updated_at=NOW()
                   WHERE id=?
-                ");
+                """);
                 $stmt->execute([
                   $title, $slug, $desc, $dur, $price,
                   $tutor ?: null,
                   $active,
+                  $icon,
+                  $features,
+                  $highlight_badge,
                   $id
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'course_updated', ['course_id'=>$id]);
