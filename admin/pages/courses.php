@@ -109,6 +109,13 @@ $tutors = $pdo->query("
     ORDER BY name
 ")->fetchAll();
 
+// Load available icons from icons table (if exists)
+try {
+  $icons = $pdo->query("SELECT id,name,filename FROM icons ORDER BY name")->fetchAll();
+} catch (\Exception $e) {
+  $icons = [];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -130,9 +137,14 @@ $tutors = $pdo->query("
     </button>
   </div>
 
-  <?php if ($success): ?>
+  <?php if ($errors): ?>
    <div class="alert error">
         <?php foreach ($errors as $err): ?><p><?= htmlspecialchars($err) ?></p><?php endforeach; ?>
+      </div>
+  <?php endif; ?>
+  <?php if ($success): ?>
+   <div class="alert success">
+        <?php foreach ($success as $s): ?><p><?= htmlspecialchars($s) ?></p><?php endforeach; ?>
       </div>
   <?php endif; ?>
 
@@ -147,7 +159,13 @@ $tutors = $pdo->query("
   <?php foreach ($courses as $c): ?>
     <div class="course-card">
       <div class="course-header">
-        <div class="course-icon"><i class='bx bxs-graduation'></i></div>
+        <div class="course-icon">
+          <?php if (!empty($c['icon'])): ?>
+            <img src="../public/assets/images/icons/<?= htmlspecialchars($c['icon']) ?>" alt="<?= htmlspecialchars($c['title']) ?>">
+          <?php else: ?>
+            <i class='bx bxs-graduation'></i>
+          <?php endif; ?>
+        </div>
         <div class="course-title">
           <h3><?= htmlspecialchars($c['title']) ?></h3>
           <small><?= htmlspecialchars($c['duration'] ?: 'Flexible') ?></small>
@@ -159,6 +177,18 @@ $tutors = $pdo->query("
       </div>
 
       <p class="course-desc"><?= nl2br(htmlspecialchars($c['description'])) ?></p>
+
+      <?php if (!empty($c['features'])): ?>
+        <ul class="course-features">
+          <?php foreach (explode("\n", $c['features']) as $f): if (trim($f) === '') continue; ?>
+            <li><?= htmlspecialchars(trim($f)) ?></li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+
+      <?php if (!empty($c['highlight_badge'])): ?>
+        <div class="course-highlight"><?= htmlspecialchars($c['highlight_badge']) ?></div>
+      <?php endif; ?>
 
       <div class="course-meta">
         <span class="price">₦<?= number_format($c['price'],0) ?></span>
@@ -178,6 +208,9 @@ $tutors = $pdo->query("
           data-price="<?= $c['price'] ?>"
           data-tutor="<?= $c['tutor_id'] ?>"
           data-active="<?= $c['is_active'] ?>"
+          data-icon="<?= htmlspecialchars($c['icon'] ?? '') ?>"
+          data-features="<?= htmlspecialchars($c['features'] ?? '') ?>"
+          data-badge="<?= htmlspecialchars($c['highlight_badge'] ?? '') ?>"
         ><i class='bx bx-edit'></i> Edit</button>
       </div>
     </div>
