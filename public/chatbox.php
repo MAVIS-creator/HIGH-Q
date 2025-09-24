@@ -64,7 +64,9 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id = :tid ORDER BY created_at ASC');
         $stmt->execute([':tid' => $thread_id]);
         $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        jsonResponse(['status' => 'ok', 'messages' => $msgs]);
+        // also return the thread status so clients can clear stored IDs when closed
+        $t = $pdo->prepare('SELECT status FROM chat_threads WHERE id = ? LIMIT 1'); $t->execute([$thread_id]); $threadStatus = $t->fetchColumn() ?: 'open';
+        jsonResponse(['status' => 'ok', 'messages' => $msgs, 'thread_status' => $threadStatus]);
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
     }
