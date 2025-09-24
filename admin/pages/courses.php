@@ -268,67 +268,37 @@ try {
       <form id="courseForm" method="post">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
-        <div class="form-row">
-          <label>Title</label>
-          <input type="text" name="title" id="fTitle" required>
-        </div>
-
-        <div class="form-row">
-          <label>Slug</label>
-          <input type="text" name="slug" id="fSlug" required>
-        </div>
-
-        <div class="form-row">
-          <label>Description</label>
-          <textarea name="description" id="fDesc" rows="3"></textarea>
-        </div>
-
-        <div class="form-row">
-          <label>Duration</label>
-          <input type="text" name="duration" id="fDuration">
-        </div>
-
-        <div class="form-row">
-          <label>Price (₦)</label>
-          <input type="number" name="price" id="fPrice" step="0.01" min="0">
-        </div>
-
-        <div class="form-row">
-          <label>Tutor</label>
-          <select name="tutor_id" id="fTutor">
-            <option value="">— None —</option>
-            <?php foreach($tutors as $t): ?>
-              <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['name']) ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label>Icon</label>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select name="icon" id="fIcon">
-              <option value="">— Default —</option>
-              <?php foreach($icons as $ic): ?>
-                <?php $val = $ic['class'] ?: $ic['filename']; ?>
-                <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
-              <?php endforeach; ?>
-            </select>
-            <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+        <div class="form-grid">
+          <div class="col">
+            <div class="form-row"><label>Program Title</label><input type="text" name="title" id="fTitle" required></div>
+            <div class="form-row"><label>Slug</label><input type="text" name="slug" id="fSlug" required></div>
+            <div class="form-row"><label>Description</label><textarea name="description" id="fDesc" rows="4"></textarea></div>
           </div>
-        </div>
+          <div class="col">
+            <div class="form-row"><label>Icon</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <select name="icon" id="fIcon" class="styled-select">
+                  <option value="">— Default —</option>
+                  <?php foreach($icons as $ic): ?>
+                    <?php $val = $ic['class'] ?: $ic['filename']; ?>
+                    <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+              </div>
+            </div>
 
-        <div class="form-row">
-          <label>Features (one per line)</label>
-          <textarea name="features" id="fFeatures" rows="4" placeholder="Benefit 1\nBenefit 2\nBenefit 3"></textarea>
-        </div>
+            <div class="form-row"><label>Features (one per line)</label><textarea name="features" id="fFeatures" rows="6" placeholder="Enter each feature on a new line"></textarea></div>
 
-        <div class="form-row">
-          <label>Highlight badge (short text)</label>
-          <input type="text" name="highlight_badge" id="fBadge">
-        </div>
+            <div class="form-row"><label>Highlight Badge</label><input type="text" name="highlight_badge" id="fBadge" placeholder="e.g., 95% pass rate"></div>
 
-        <div class="form-row">
-          <label><input type="checkbox" name="is_active" id="fActive" checked> Active</label>
+            <div class="form-row twin">
+              <div><label>Duration (optional)</label><input type="text" name="duration" id="fDuration" placeholder="e.g., 6-12 months"></div>
+              <div><label>Price (optional)</label><input type="text" name="price" id="fPrice" placeholder="e.g., ₦50,000"></div>
+            </div>
+
+            <div class="form-row"><label><input type="checkbox" name="is_active" id="fActive" checked> Active</label></div>
+          </div>
         </div>
 
         <div class="form-actions">
