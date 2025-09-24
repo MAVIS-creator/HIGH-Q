@@ -309,12 +309,16 @@ try {
 
         <div class="form-row">
           <label>Icon</label>
-          <select name="icon" id="fIcon">
-            <option value="">— Default —</option>
-            <?php foreach($icons as $ic): ?>
-              <option value="<?= htmlspecialchars($ic['filename']) ?>"><?= htmlspecialchars($ic['name']) ?></option>
-            <?php endforeach; ?>
-          </select>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select name="icon" id="fIcon">
+              <option value="">— Default —</option>
+              <?php foreach($icons as $ic): ?>
+                <?php $val = $ic['class'] ?: $ic['filename']; ?>
+                <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
+              <?php endforeach; ?>
+            </select>
+            <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+          </div>
         </div>
 
         <div class="form-row">
@@ -361,6 +365,7 @@ try {
   const fIcon     = document.getElementById('fIcon');
   const fFeatures = document.getElementById('fFeatures');
   const fBadge    = document.getElementById('fBadge');
+  const iconPreview = document.getElementById('iconPreview');
 
   function openCourseModal(mode, data = {}) {
     overlay.classList.add('open');
@@ -377,7 +382,8 @@ try {
       fTutor.value    = data.tutor_id;
       fActive.checked = data.is_active == 1;
   fIcon.value     = data.icon || '';
-  fFeatures.value = data.features || '';
+  // features may come as joined string in data.features or data.features_list
+  fFeatures.value = data.features || data.features_list || '';
   fBadge.value    = data.badge || '';
     } else {
       modalTitle.textContent = 'New Course';
@@ -388,8 +394,29 @@ try {
   if (fIcon) fIcon.value = '';
   if (fFeatures) fFeatures.value = '';
   if (fBadge) fBadge.value = '';
+      if (iconPreview) iconPreview.innerHTML = '';
     }
   }
+
+// Update icon preview live
+function updateIconPreview() {
+  if (!iconPreview || !fIcon) return;
+  const v = fIcon.value;
+  if (!v) { iconPreview.innerHTML = ''; return; }
+  if (v.indexOf('bx') !== -1) {
+    iconPreview.innerHTML = `<i class="${escapeHtml(v)}" style="font-size:20px"></i>`;
+  } else {
+    // assume filename
+    iconPreview.innerHTML = `<img src="../public/assets/images/icons/${escapeHtml(v)}" style="width:28px;height:28px;object-fit:contain">`;
+  }
+}
+
+fIcon && fIcon.addEventListener('change', updateIconPreview);
+
+// helper to escape (very small helper for insertion into HTML)
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
   function closeCourseModal() {
     overlay.classList.remove('open');
