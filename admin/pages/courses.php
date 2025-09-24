@@ -122,8 +122,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $success[] = "Course '{$title}' updated.";
             }
         }
+    }
 
-        }
+    // Load available icons (with class) from icons table (if exists)
+    try {
+      $icons = $pdo->query("SELECT id,name,filename,`class` FROM icons ORDER BY name")->fetchAll();
+    } catch (\Exception $e) {
+      $icons = [];
+    }
+
+    // Load courses with concatenated features
+    try {
+      $courses = $pdo->query("SELECT c.*, GROUP_CONCAT(cf.feature_text SEPARATOR '\\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id GROUP BY c.id ORDER BY c.title")->fetchAll(PDO::FETCH_ASSOC);
+    } catch (\Exception $e) {
+      $courses = [];
+    }
+
+?>
 
   <?php if ($errors): ?>
    <div class="alert error">
