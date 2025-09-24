@@ -262,6 +262,26 @@ try {
         </div>
 
         <div class="form-row">
+          <label>Icon</label>
+          <select name="icon" id="fIcon">
+            <option value="">— Default —</option>
+            <?php foreach($icons as $ic): ?>
+              <option value="<?= htmlspecialchars($ic['filename']) ?>"><?= htmlspecialchars($ic['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Features (one per line)</label>
+          <textarea name="features" id="fFeatures" rows="4" placeholder="Benefit 1\nBenefit 2\nBenefit 3"></textarea>
+        </div>
+
+        <div class="form-row">
+          <label>Highlight badge (short text)</label>
+          <input type="text" name="highlight_badge" id="fBadge">
+        </div>
+
+        <div class="form-row">
           <label><input type="checkbox" name="is_active" id="fActive" checked> Active</label>
         </div>
 
@@ -292,6 +312,9 @@ try {
   const fPrice    = document.getElementById('fPrice');
   const fTutor    = document.getElementById('fTutor');
   const fActive   = document.getElementById('fActive');
+  const fIcon     = document.getElementById('fIcon');
+  const fFeatures = document.getElementById('fFeatures');
+  const fBadge    = document.getElementById('fBadge');
 
   function openCourseModal(mode, data = {}) {
     overlay.classList.add('open');
@@ -307,12 +330,18 @@ try {
       fPrice.value    = data.price;
       fTutor.value    = data.tutor_id;
       fActive.checked = data.is_active == 1;
+  fIcon.value     = data.icon || '';
+  fFeatures.value = data.features || '';
+  fBadge.value    = data.badge || '';
     } else {
       modalTitle.textContent = 'New Course';
       courseForm.action = 'index.php?pages=courses&action=create';
       fTitle.value = fSlug.value = fDesc.value = fDuration.value = fPrice.value = '';
       fTutor.value = '';
       fActive.checked = true;
+  if (fIcon) fIcon.value = '';
+  if (fFeatures) fFeatures.value = '';
+  if (fBadge) fBadge.value = '';
     }
   }
 
