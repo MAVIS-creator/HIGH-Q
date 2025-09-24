@@ -1,10 +1,18 @@
 -- Migration: convert icons table to include Boxicons classes and create normalized course_features table
--- Add a 'class' column to icons for storing boxicons class names
-ALTER TABLE IF EXISTS icons
-  ADD COLUMN `class` VARCHAR(255) DEFAULT NULL;
+
+-- Create `icons` table if it doesn't exist. We include a UNIQUE index on filename so
+-- INSERT ... ON DUPLICATE KEY UPDATE works when seeding.
+CREATE TABLE IF NOT EXISTS icons (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  `class` VARCHAR(255) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_filename (filename)
+);
 
 -- Seed/update icons with boxicons class names (adjust as needed)
-INSERT INTO icons (name, filename, class) VALUES
+INSERT INTO icons (name, filename, `class`) VALUES
   ('Target', 'target.svg', 'bx bxs-bullseye'),
   ('Book Stack', 'book-stack.svg', 'bx bxs-book-bookmark'),
   ('Book Open', 'book-open.svg', 'bx bxs-book-open'),
@@ -14,7 +22,7 @@ INSERT INTO icons (name, filename, class) VALUES
   ('Teacher', 'teacher.svg', 'bx bxs-user'),
   ('Results', 'results.svg', 'bx bxs-bar-chart-alt-2'),
   ('Graduation', 'graduation.svg', 'bx bxs-graduation')
-ON DUPLICATE KEY UPDATE `class` = VALUES(`class`);
+ON DUPLICATE KEY UPDATE `class` = VALUES(`class`), name = VALUES(name);
 
 -- Create normalized features table
 CREATE TABLE IF NOT EXISTS course_features (
