@@ -123,63 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-        if ($act === 'create') {
-            if (!$title || !$slug) {
-                $errors[] = "Title and slug are required.";
-            } else {
-                // ensure slug is unique
-                $chk = $pdo->prepare("SELECT id FROM courses WHERE slug = ? LIMIT 1");
-                $chk->execute([$slug]);
-                if ($chk->fetch()) {
-                    $errors[] = "A course with that slug already exists. Choose a different slug.";
-                } else {
-                    $stmt = $pdo->prepare(
-                      "INSERT INTO courses
-                        (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, highlight_badge)
-                      VALUES (?,?,?,?,?,?,?,?,?,?)"
-                    );
-                    $stmt->execute([
-                      $title,
-                      $slug,
-                      $desc,
-                      $dur,
-                      $price,
-                      null,
-                      $_SESSION['user']['id'],
-                      $active,
-                      $icon ?: null,
-                      $highlight_badge ?: null
-                    ]);
-                    $newCourseId = $pdo->lastInsertId();
-
-// Load available icons (with class) from icons table (if exists)
-try {
-  $icons = $pdo->query("SELECT id,name,filename,`class` FROM icons ORDER BY name")->fetchAll();
-} catch (\Exception $e) {
-  $icons = [];
-}
-
-?>
-<!DOCTYPE html>
-<html lang="en">
-                }
-<head>
-  <meta charset="UTF-8">
-  <title>Courses Management - HIGH Q SOLID ACADEMY</title>
-  <!-- admin.css & per-page CSS are injected by header.php -->
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
-<body>
-  <?php include '../includes/header.php'; ?>
-  <?php include '../includes/sidebar.php'; ?>
-
- <div class="courses-page">
-  <div class="page-header">
-    <h2>Courses / Programs</h2>
-    <button id="newCourseBtn" class="btn-add">
-      <i class='bx bx-plus'></i> New Course
-    </button>
-  </div>
+        }
 
   <?php if ($errors): ?>
    <div class="alert error">
