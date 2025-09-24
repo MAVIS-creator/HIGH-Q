@@ -221,6 +221,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
                 <?php else: ?>
                   <p class="program-summary"><?= htmlspecialchars($summary) ?></p>
                 <?php endif; ?>
+
+                <?php if ($highlight_badge !== ''): ?>
+                  <div class="program-highlight"><i class='bx bx-star'></i> <?= htmlspecialchars($highlight_badge) ?></div>
+                <?php endif; ?>
               </div>
             </div>
 
