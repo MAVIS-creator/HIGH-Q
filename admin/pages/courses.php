@@ -136,12 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 }
 
 // Fetch all courses for listing and tutor dropdown
-$courses = $pdo->query("
-    SELECT c.*, u.name AS tutor_name
+$courses = $pdo->query(
+    "SELECT c.*, u.name AS tutor_name,
+      (SELECT GROUP_CONCAT(cf.feature_text SEPARATOR '\\n') FROM course_features cf WHERE cf.course_id = c.id ORDER BY cf.position ASC) AS features_list
     FROM courses c
     LEFT JOIN users u ON u.id = c.tutor_id
-    ORDER BY created_at DESC
-")->fetchAll();
+    ORDER BY created_at DESC"
+)->fetchAll();
 
 $tutors = $pdo->query("
     SELECT id,name FROM users
@@ -202,7 +203,11 @@ try {
       <div class="course-header">
         <div class="course-icon">
           <?php if (!empty($c['icon'])): ?>
-            <img src="../public/assets/images/icons/<?= htmlspecialchars($c['icon']) ?>" alt="<?= htmlspecialchars($c['title']) ?>">
+            <?php if (strpos($c['icon'], 'bx') !== false): // icon stored as boxicons class ?>
+              <i class="<?= htmlspecialchars($c['icon']) ?>" style="font-size:28px"></i>
+            <?php else: ?>
+              <img src="../public/assets/images/icons/<?= htmlspecialchars($c['icon']) ?>" alt="<?= htmlspecialchars($c['title']) ?>">
+            <?php endif; ?>
           <?php else: ?>
             <i class='bx bxs-graduation'></i>
           <?php endif; ?>
@@ -219,9 +224,9 @@ try {
 
       <p class="course-desc"><?= nl2br(htmlspecialchars($c['description'])) ?></p>
 
-      <?php if (!empty($c['features'])): ?>
+      <?php if (!empty($c['features_list'])): ?>
         <ul class="course-features">
-          <?php foreach (explode("\n", $c['features']) as $f): if (trim($f) === '') continue; ?>
+          <?php foreach (explode("\n", $c['features_list']) as $f): if (trim($f) === '') continue; ?>
             <li><?= htmlspecialchars(trim($f)) ?></li>
           <?php endforeach; ?>
         </ul>
