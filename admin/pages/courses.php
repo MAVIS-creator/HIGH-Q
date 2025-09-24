@@ -166,7 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <?php endif; ?>
 
 
- <div class="courses-grid">
+  <div class="page-actions" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+    <button id="newCourseBtn" class="header-cta">New Course</button>
+  </div>
+
+   <div class="courses-grid">
   <?php if (empty($courses)): ?>
     <div class="course-card empty-state">
       <h3>No programs yet</h3>
