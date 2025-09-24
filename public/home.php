@@ -157,8 +157,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <section class="programs-section py-5 bg-light" id="programs">
   <div class="container">
     <div class="section-title text-center mb-5">
-      <h2>Our Programs</h2>
-      <p>Explore our wide range of educational programs designed for every learner.</p>
+     <h2>Our <span class="high">Programs & Services</span></h2> <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
     <div class="row">
       <?php foreach ($programs as $program): ?>
