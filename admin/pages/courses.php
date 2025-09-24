@@ -399,10 +399,12 @@ function escapeHtml(s){
         title: btn.dataset.title,
         slug: btn.dataset.slug,
         desc: btn.dataset.desc,
-        duration: btn.dataset.duration,
-        price: btn.dataset.price,
-        tutor_id: btn.dataset.tutor,
-        is_active: btn.dataset.active
+  duration: btn.dataset.duration,
+  price: btn.dataset.price,
+  is_active: btn.dataset.active,
+  icon: btn.dataset.icon || '',
+  features_list: btn.dataset.features || '',
+  badge: btn.dataset.badge || ''
       });
     });
   });
