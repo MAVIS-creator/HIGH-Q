@@ -92,14 +92,19 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             box-sizing: border-box
         }
 
+        /* ensure the document root is transparent for iframes */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: transparent !important;
+        }
+
         body {
             font-family: 'Raleway', system-ui;
-            margin: 0;
-            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh
+            min-height: 100vh;
         }
 
         .card {
