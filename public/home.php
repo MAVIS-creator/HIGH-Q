@@ -153,93 +153,75 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<!-- Programs & Services: pull from courses table (admin manages these in admin/pages/courses.php) -->
-<section class="programs-section">
+<!-- Programs Section -->
+<section class="programs-section py-5 bg-light" id="programs">
   <div class="container">
-    <div class="ceo-heading">
-      <h2>Our <span class="high">Programs & Services</span></h2>
-      <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
+    <div class="section-title text-center mb-5">
+      <h2>Our Programs</h2>
+      <p>Explore our wide range of educational programs designed for every learner.</p>
     </div>
+    <div class="row">
+      <?php foreach ($programs as $program): ?>
+        <?php
+          $title       = htmlspecialchars($program['title']);
+          $slug        = htmlspecialchars($program['slug']);
+          $icon        = htmlspecialchars($program['icon'] ?? 'fas fa-book');
+          $featuresRaw = $program['features_list'] ?? '';
 
-    <div class="programs-grid">
-      <?php if (empty($programs)): ?>
-        <p>No programs have been published yet. Check back later.</p>
-      <?php else: ?>
-        <?php foreach ($programs as $p): ?>
-          <?php
-            $title = htmlspecialchars($p['title']);
-            $slug  = htmlspecialchars($p['slug']);
-            $desc  = trim($p['description'] ?? '');
-            $icon  = trim($p['icon'] ?? '');
-            $features_list = trim($p['features_list'] ?? '');
-            $highlight_badge = trim($p['highlight_badge'] ?? '');
-            // If description contains multiple lines, treat each line as a bullet
-            $lines = preg_split('/\r?\n/', $desc);
-            $hasList = count($lines) > 1;
-            // prefer features_list from normalized table
-            $features_lines = $features_list !== '' ? preg_split('/\r?\n/', $features_list) : ($hasList ? $lines : []);
-            // fallback short summary
-            $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc,0,217).'...' : $desc) : null;
-          ?>
+          // Convert features into array if present
+          $features = $featuresRaw !== '' ? explode("\n", $featuresRaw) : [];
 
-          <article class="program-card">
-            <div class="program-card-inner">
-              <div class="program-icon">
-                <?php
-                  // Prefer Boxicons class stored in `icon`, otherwise try image filename under assets/images/icons
-                  if ($icon !== '') {
-                    if (strpos($icon, 'bx') !== false) {
-                      echo "<i class=\'" . htmlspecialchars($icon) . "\' aria-hidden=\'true\'></i>";
-                    } else {
-                      $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                      if (is_readable($iconPath)) {
-                        echo "<img src=\"assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
-                      } else {
-                        // fallback default icon
-                        echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                      }
-                    }
-                  } else {
-                    echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                  }
-                ?>
+          // Description fallback chain
+          $desc = trim($program['description'] ?? '');
+          if ($desc === '' && count($features) > 0) {
+              $desc = implode(', ', $features);
+          }
+          if ($desc === '' && !empty($program['summary'])) {
+              $desc = $program['summary'];
+          }
+
+          // Duration & Price
+          $duration = $program['duration'] ?? '';
+          $price    = $program['price'] ?? '';
+        ?>
+        <div class="col-md-4 mb-4">
+          <div class="card program-card h-100 shadow-sm">
+            <div class="card-body text-center">
+              <!-- Program Icon -->
+              <div class="program-icon mb-3">
+                <i class="<?= $icon ?>" aria-hidden="true"></i>
               </div>
-              <div class="program-body">
-                <h4>
-                  <a href="programs.php?slug=<?= $slug ?>"><?= $title ?></a>
-                  <?php if ($highlight_badge !== ''): ?>
-                    <span class="program-badge"><?= htmlspecialchars($highlight_badge) ?></span>
-                  <?php endif; ?>
-                </h4>
-                <?php if (!empty($features_lines)): ?>
-                  <ul class="program-features">
-                    <?php foreach (array_slice($features_lines,0,5) as $line): ?>
-                      <?php $li = trim($line); if ($li==='') continue; ?>
-                      <li><?= htmlspecialchars($li) ?></li>
-                    <?php endforeach; ?>
-                  </ul>
-                <?php else: ?>
-                  <p class="program-summary"><?= htmlspecialchars($summary) ?></p>
-                <?php endif; ?>
 
-                <?php if ($highlight_badge !== ''): ?>
-                  <div class="program-highlight"><i class='bx bx-star'></i> <?= htmlspecialchars($highlight_badge) ?></div>
-                <?php endif; ?>
-              </div>
-            </div>
+              <!-- Program Title -->
+              <h5 class="card-title"><?= $title ?></h5>
 
-            <div class="program-card-footer">
-              <?php if (!empty($p['duration'])): ?>
-                <span class="badge"><i class='bx bx-time'></i> <?= htmlspecialchars($p['duration']) ?></span>
-              <?php elseif (!empty($p['price']) && $p['price'] > 0): ?>
-                <span class="badge">₦<?= number_format($p['price'],0) ?></span>
-              <?php else: ?>
-                <span class="badge">Learn More</span>
+              <!-- Description -->
+              <p class="card-text"><?= htmlspecialchars($desc) ?></p>
+
+              <!-- Features (if available) -->
+              <?php if (count($features) > 0): ?>
+                <ul class="list-unstyled text-start mt-3">
+                  <?php foreach ($features as $f): ?>
+                    <?php if (trim($f) !== ''): ?>
+                      <li><i class="fas fa-check text-success me-2"></i><?= htmlspecialchars($f) ?></li>
+                    <?php endif; ?>
+                  <?php endforeach; ?>
+                </ul>
               <?php endif; ?>
             </div>
-          </article>
-        <?php endforeach; ?>
-      <?php endif; ?>
+
+            <!-- Footer with duration & price -->
+            <div class="card-footer text-center">
+              <?php if ($duration !== ''): ?>
+                <span class="badge bg-info text-dark"><?= htmlspecialchars($duration) ?></span>
+              <?php endif; ?>
+              <?php if ($price !== ''): ?>
+                <span class="badge bg-success ms-2"><?= htmlspecialchars($price) ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
