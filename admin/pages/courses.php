@@ -394,7 +394,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     } else {
       courseForm.action = 'index.php?pages=courses&action=create';
     }
-
+  }
 // Update icon preview live
 function updateIconPreview() {
   if (!iconPreview || !fIcon) return;
