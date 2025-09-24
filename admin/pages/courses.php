@@ -352,47 +352,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     overlay.classList.add('open');
     courseModal.classList.add('open');
 
-    if ($act === 'edit' && $id) {
-      if (!$title || !$slug) {
-        $errors[] = "Title and slug are required.";
-      } else {
-        // ensure slug is unique (allow same slug for this id)
-        $chk = $pdo->prepare("SELECT id FROM courses WHERE slug = ? LIMIT 1");
-        $chk->execute([$slug]);
-        $existing = $chk->fetch(PDO::FETCH_ASSOC);
-        if ($existing && (int)$existing['id'] !== (int)$id) {
-          $errors[] = "Another course is using that slug. Pick a different slug.";
-        } else {
-          $stmt = $pdo->prepare(
-            "UPDATE courses
-            SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, highlight_badge=?, updated_at=NOW()
-            WHERE id=?"
-          );
-          $stmt->execute([
-            $title,
-            $slug,
-            $desc,
-            $dur,
-            $price,
-            null,
-            $active,
-            $icon ?: null,
-            $highlight_badge ?: null,
-            $id
-          ]);
-  if (fFeatures) fFeatures.value = '';
-  if (fBadge) fBadge.value = '';
-      if (iconPreview) iconPreview.innerHTML = '';
+    modalTitle.textContent = mode === 'edit' ? 'Edit Course' : 'New Course';
+
+    // reset form
+    courseForm.reset();
+    if (fFeatures) fFeatures.value = '';
+    if (fBadge) fBadge.value = '';
+    if (iconPreview) iconPreview.innerHTML = '';
+
+    if (mode === 'edit' && data && data.id) {
+      // populate fields
+      fTitle.value = data.title || '';
+      fSlug.value = data.slug || '';
+      fDesc.value = data.desc || '';
+      fDuration.value = data.duration || '';
+      fPrice.value = data.price || '';
+      fActive.checked = data.is_active == '1' || data.is_active == 1 || data.is_active === true;
+      fIcon.value = data.icon || '';
+      if (fFeatures) fFeatures.value = data.features || '';
+      if (fBadge) fBadge.value = data.badge || '';
+      updateIconPreview();
+      courseForm.action = `index.php?pages=courses&action=edit&id=${data.id}`;
+    } else {
+      courseForm.action = 'index.php?pages=courses&action=create';
     }
-  }
 
 // Update icon preview live
 function updateIconPreview() {
   if (!iconPreview || !fIcon) return;
-  const v = fIcon.value;
+  const v = fIcon.value || '';
   if (!v) { iconPreview.innerHTML = ''; return; }
   if (v.indexOf('bx') !== -1) {
-        }
     iconPreview.innerHTML = `<i class="${escapeHtml(v)}" style="font-size:20px"></i>`;
   } else {
     // assume filename
