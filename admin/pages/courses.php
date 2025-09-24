@@ -36,14 +36,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $features = trim($_POST['features'] ?? '');
     $highlight_badge = trim($_POST['highlight_badge'] ?? '');
 
+    // Validation & sanitization
+    if (mb_strlen($title) > 255) $title = mb_substr($title, 0, 255);
+    if (mb_strlen($slug) > 255) $slug = mb_substr($slug, 0, 255);
+    if (mb_strlen($dur) > 100) $dur = mb_substr($dur, 0, 100);
+    if (mb_strlen($highlight_badge) > 100) $highlight_badge = mb_substr($highlight_badge, 0, 100);
+    // features: limit each line to 500 chars and total concatenated length to 4000
+    $features_lines = [];
+    if ($features !== '') {
+      foreach (preg_split('/\r?\n/', $features) as $line) {
+        $line = trim($line);
+        if ($line === '') continue;
+        if (mb_strlen($line) > 500) $line = mb_substr($line, 0, 500);
+        $features_lines[] = $line;
+        if (strlen(implode('\n', $features_lines)) > 4000) break;
+      }
+    }
+
         if ($act === 'create') {
             if (!$title || !$slug) {
                 $errors[] = "Title and slug are required.";
             } else {
                 $stmt = $pdo->prepare(
                   "INSERT INTO courses
-                    (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, features, highlight_badge)
-                  VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+                    (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, highlight_badge)
+                  VALUES (?,?,?,?,?,?,?,?,?,?)"
                 );
                 $stmt->execute([
                   $title,
@@ -55,9 +72,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $_SESSION['user']['id'],
                   $active,
                   $icon ?: null,
-                  $features ?: null,
                   $highlight_badge ?: null
                 ]);
+                $newCourseId = $pdo->lastInsertId();
+                // Insert normalized features rows
+                if (!empty($features_lines)) {
+                    $pos = 0;
+                    $ins = $pdo->prepare("INSERT INTO course_features (course_id, feature_text, position) VALUES (?, ?, ?)");
+                    foreach ($features_lines as $line) {
+                        $ins->execute([$newCourseId, $line, $pos++]);
+                    }
+                }
                 logAction($pdo, $_SESSION['user']['id'], 'course_created', ['slug'=>$slug]);
                 $success[] = "Course '{$title}' created.";
             }
@@ -69,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             } else {
                 $stmt = $pdo->prepare(
                   "UPDATE courses
-                  SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, features=?, highlight_badge=?, updated_at=NOW()
+                  SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, highlight_badge=?, updated_at=NOW()
                   WHERE id=?"
                 );
                 $stmt->execute([
@@ -81,10 +106,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $tutor ?: null,
                   $active,
                   $icon ?: null,
-                  $features ?: null,
                   $highlight_badge ?: null,
                   $id
                 ]);
+                // Normalize features: delete old features rows and insert new ones
+                $pdo->prepare("DELETE FROM course_features WHERE course_id = ?")->execute([$id]);
+                if (!empty($features_lines)) {
+                    $pos = 0;
+                    $ins = $pdo->prepare("INSERT INTO course_features (course_id, feature_text, position) VALUES (?, ?, ?)");
+                    foreach ($features_lines as $line) {
+                        $ins->execute([$id, $line, $pos++]);
+                    }
+                }
                 logAction($pdo, $_SESSION['user']['id'], 'course_updated', ['course_id'=>$id]);
                 $success[] = "Course '{$title}' updated.";
             }
@@ -117,9 +150,9 @@ $tutors = $pdo->query("
     ORDER BY name
 ")->fetchAll();
 
-// Load available icons from icons table (if exists)
+// Load available icons (with class) from icons table (if exists)
 try {
-  $icons = $pdo->query("SELECT id,name,filename FROM icons ORDER BY name")->fetchAll();
+  $icons = $pdo->query("SELECT id,name,filename,`class` FROM icons ORDER BY name")->fetchAll();
 } catch (\Exception $e) {
   $icons = [];
 }
