@@ -266,63 +266,61 @@ try {
 
       <form id="courseForm" method="post">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-
-        <div class="form-row">
-          <label>Title</label>
-          <input type="text" name="title" id="fTitle" required>
-        </div>
-
-        <div class="form-row">
-          <label>Slug</label>
-          <input type="text" name="slug" id="fSlug" required>
-        </div>
-
-        <div class="form-row">
-          <label>Description</label>
-          <textarea name="description" id="fDesc" rows="3"></textarea>
-        </div>
-
-        <div class="form-row">
-          <label>Duration</label>
-          <input type="text" name="duration" id="fDuration">
-        </div>
-
-        <div class="form-row">
-          <label>Price (₦)</label>
-          <input type="number" name="price" id="fPrice" step="0.01" min="0">
-        </div>
-
-        <!-- Tutor selection removed -->
-
-        <div class="form-row">
-          <label>Icon</label>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select name="icon" id="fIcon">
-              <option value="">— Default —</option>
-              <?php foreach($icons as $ic): ?>
-                <?php $val = $ic['class'] ?: $ic['filename']; ?>
-                <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
-              <?php endforeach; ?>
-            </select>
-            <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fTitle">Title</label>
+            <input type="text" name="title" id="fTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="fSlug">Slug</label>
+            <input type="text" name="slug" id="fSlug" required>
           </div>
         </div>
-
-        <div class="form-row">
-          <label>Features (one per line)</label>
-          <textarea name="features" id="fFeatures" rows="4" placeholder="Benefit 1\nBenefit 2\nBenefit 3"></textarea>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fDuration">Duration</label>
+            <input type="text" name="duration" id="fDuration">
+          </div>
+          <div class="form-group">
+            <label for="fPrice">Price (₦)</label>
+            <input type="number" name="price" id="fPrice" step="0.01" min="0">
+          </div>
         </div>
-
-        <div class="form-row">
-          <label>Highlight badge (short text)</label>
-          <input type="text" name="highlight_badge" id="fBadge">
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fIcon">Icon</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select name="icon" id="fIcon" class="styled-select">
+                <option value="">— Default —</option>
+                <?php foreach($icons as $ic): ?>
+                  <?php $val = $ic['class'] ?: $ic['filename']; ?>
+                  <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+              <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="fBadge">Highlight badge (short text)</label>
+            <input type="text" name="highlight_badge" id="fBadge">
+          </div>
         </div>
-
-        <div class="form-row">
-          <label><input type="checkbox" name="is_active" id="fActive" checked> Active</label>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fFeatures">Features (one per line)</label>
+            <textarea name="features" id="fFeatures" rows="4" placeholder="Benefit 1\nBenefit 2\nBenefit 3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fDesc">Description</label>
+            <textarea name="description" id="fDesc" rows="3"></textarea>
+          </div>
         </div>
-
-        <div class="form-actions">
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label><input type="checkbox" name="is_active" id="fActive" checked> Active</label>
+          </div>
+        </div>
+        <div class="form-actions" style="justify-content:flex-end">
           <button type="submit" class="btn-approve">Save Course</button>
         </div>
       </form>
@@ -332,6 +330,36 @@ try {
 
   <?php include '../includes/footer.php'; ?>
 
+  <style>
+    .compact-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1.5em;
+    }
+    .form-group {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .styled-select {
+      background: #f8f8f8;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      padding: 0.5em 2em 0.5em 0.5em;
+      font-size: 1em;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 0.5em center;
+      background-size: 1.2em;
+    }
+    .styled-select:focus {
+      border-color: #888;
+      outline: none;
+    }
+  </style>
   <script>
   // Modal logic
   const courseModal    = document.getElementById('courseModal');
