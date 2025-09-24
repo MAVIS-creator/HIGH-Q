@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $desc   = trim($_POST['description'] ?? '');
         $dur    = trim($_POST['duration'] ?? '');
         $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
-        $tutor  = (int)($_POST['tutor_id'] ?? 0);
+  // $tutor removed
         $active = isset($_POST['is_active']) ? 1 : 0;
     $icon   = trim($_POST['icon'] ?? '');
     $features = trim($_POST['features'] ?? '');
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $desc,
                   $dur,
                   $price,
-                  $tutor ?: null,
+                  null,
                   $_SESSION['user']['id'],
                   $active,
                   $icon ?: null,
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $desc,
                   $dur,
                   $price,
-                  $tutor ?: null,
+                  null,
                   $active,
                   $icon ?: null,
                   $highlight_badge ?: null,
@@ -144,12 +144,7 @@ $courses = $pdo->query(
     ORDER BY created_at DESC"
 )->fetchAll();
 
-$tutors = $pdo->query("
-    SELECT id,name FROM users
-    WHERE role_id = (SELECT id FROM roles WHERE slug='tutor')
-      AND is_active=1
-    ORDER BY name
-")->fetchAll();
+// $tutors removed
 
 // Load available icons (with class) from icons table (if exists)
 try {
@@ -238,7 +233,7 @@ try {
 
       <div class="course-meta">
         <span class="price">₦<?= number_format($c['price'],0) ?></span>
-        <span class="tutor"><?= htmlspecialchars($c['tutor_name'] ?? 'No Tutor') ?></span>
+  <!-- Tutor removed from display -->
         <span class="status-badge <?= $c['is_active']?'status-active':'status-banned' ?>">
           <?= $c['is_active'] ? 'Active' : 'Inactive' ?>
         </span>
@@ -297,15 +292,7 @@ try {
           <input type="number" name="price" id="fPrice" step="0.01" min="0">
         </div>
 
-        <div class="form-row">
-          <label>Tutor</label>
-          <select name="tutor_id" id="fTutor">
-            <option value="">— None —</option>
-            <?php foreach($tutors as $t): ?>
-              <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['name']) ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
+        <!-- Tutor selection removed -->
 
         <div class="form-row">
           <label>Icon</label>
@@ -360,7 +347,7 @@ try {
   const fDesc     = document.getElementById('fDesc');
   const fDuration = document.getElementById('fDuration');
   const fPrice    = document.getElementById('fPrice');
-  const fTutor    = document.getElementById('fTutor');
+  // Tutor removed
   const fActive   = document.getElementById('fActive');
   const fIcon     = document.getElementById('fIcon');
   const fFeatures = document.getElementById('fFeatures');
@@ -379,7 +366,7 @@ try {
       fDesc.value     = data.desc;
       fDuration.value = data.duration;
       fPrice.value    = data.price;
-      fTutor.value    = data.tutor_id;
+  // Tutor removed
       fActive.checked = data.is_active == 1;
   fIcon.value     = data.icon || '';
   // features may come as joined string in data.features or data.features_list
@@ -389,7 +376,7 @@ try {
       modalTitle.textContent = 'New Course';
       courseForm.action = 'index.php?pages=courses&action=create';
       fTitle.value = fSlug.value = fDesc.value = fDuration.value = fPrice.value = '';
-      fTutor.value = '';
+  // Tutor removed
       fActive.checked = true;
   if (fIcon) fIcon.value = '';
   if (fFeatures) fFeatures.value = '';
