@@ -7,38 +7,40 @@ require_once __DIR__ . '/../includes/db.php';
 // include public helper functions for logging
 require_once __DIR__ . '/../../public/config/functions.php';
 
-$pageTitle = 'Chat Support';
-require_once __DIR__ . '/../includes/header.php';
-
-// Claim thread (AJAX): first admin to call 'claim' will set assigned_admin_id if null
+// Claim thread (AJAX): handle XHR POSTs before any HTML header is output so we can return pure JSON
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-    $token = $_POST['_csrf'] ?? ''; if (!verifyToken('chat_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
-    $action = $_POST['action'] ?? ''; $threadId = intval($_POST['thread_id'] ?? 0);
-    if ($action === 'claim' && $threadId) {
-        // attempt to set assigned_admin_id where null
-        $stmt = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND assigned_admin_id IS NULL');
-        $ok = $stmt->execute([$_SESSION['user']['id'], $threadId]);
+  $token = $_POST['_csrf'] ?? '';
+  if (!verifyToken('chat_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
+  $action = $_POST['action'] ?? '';
+  $threadId = intval($_POST['thread_id'] ?? 0);
+  if ($action === 'claim' && $threadId) {
+    // attempt to set assigned_admin_id where null
+    $stmt = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND assigned_admin_id IS NULL');
+    $ok = $stmt->execute([$_SESSION['user']['id'], $threadId]);
     if ($stmt->rowCount() > 0) {
       // audit log: admin claimed thread
       logAction($pdo, $_SESSION['user']['id'], 'chat_claimed', ['thread_id' => $threadId]);
       echo json_encode(['status'=>'ok','message'=>'Claimed']);
     } else {
       // already claimed, return current assignment and admin name
-      $q = $pdo->prepare('SELECT assigned_admin_id, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id WHERE ct.id = ? LIMIT 1'); $q->execute([$threadId]); $row = $q->fetch(PDO::FETCH_ASSOC);
+      $q = $pdo->prepare('SELECT assigned_admin_id, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id WHERE ct.id = ? LIMIT 1');
+      $q->execute([$threadId]);
+      $row = $q->fetch(PDO::FETCH_ASSOC);
       echo json_encode(['status'=>'taken','assigned_admin_id'=>$row['assigned_admin_id'] ?? null, 'assigned_admin_name' => $row['assigned_admin_name'] ?? null]);
     }
-        exit;
-    }
-    if ($action === 'reply' && $threadId) {
-        $msg = trim($_POST['message'] ?? ''); if ($msg === '') { echo json_encode(['status'=>'error','message'=>'Empty']); exit; }
-        $ins = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, ?, ?, ?, 1, NOW())');
-        $ins->execute([$threadId, $_SESSION['user']['id'], $_SESSION['user']['name'], $msg]);
-        // update thread last_activity
-        $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?'); $u->execute([$threadId]);
+    exit;
+  }
+  if ($action === 'reply' && $threadId) {
+    $msg = trim($_POST['message'] ?? '');
+    if ($msg === '') { echo json_encode(['status'=>'error','message'=>'Empty']); exit; }
+    $ins = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, ?, ?, ?, 1, NOW())');
+    $ins->execute([$threadId, $_SESSION['user']['id'], $_SESSION['user']['name'], $msg]);
+    // update thread last_activity
+    $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?'); $u->execute([$threadId]);
     // audit log: admin replied
     logAction($pdo, $_SESSION['user']['id'], 'chat_reply', ['thread_id' => $threadId, 'message_preview' => mb_substr($msg,0,120)]);
     echo json_encode(['status'=>'ok']); exit;
-    }
+  }
   // Close thread (AJAX)
   if ($action === 'close' && $threadId) {
     $upd = $pdo->prepare("UPDATE chat_threads SET status = 'closed', last_activity = NOW() WHERE id = ?");
@@ -46,8 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     logAction($pdo, $_SESSION['user']['id'], 'chat_closed', ['thread_id' => $threadId]);
     echo json_encode(['status'=>'ok']); exit;
   }
-    echo json_encode(['status'=>'error']); exit;
+  echo json_encode(['status'=>'error']); exit;
 }
+
+$pageTitle = 'Chat Support';
+require_once __DIR__ . '/../includes/header.php';
 
 // Load threads for admin view
 $threads = $pdo->query('SELECT ct.*, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id ORDER BY ct.last_activity DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
