@@ -74,6 +74,9 @@ setInterval(function(){
 document.getElementById('closeThreadBtn').addEventListener('click', function(){
   if(!confirm('Close this thread? This will mark it closed and hide it from open lists.')) return;
   var fd = new FormData(); fd.append('action','close'); fd.append('thread_id','<?= $threadId ?>');
+  // include CSRF token expected by the server
+  var csrfEl = document.querySelector('input[name="_csrf"]');
+  if (csrfEl) fd.append('_csrf', csrfEl.value);
   var xhr = new XMLHttpRequest(); xhr.open('POST', '/HIGH-Q/admin/pages/chat.php', true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); }catch(e){ alert('Error'); return; } if(r.status==='ok'){ alert('Thread closed'); } else alert('Failed to close'); };
   xhr.send(fd);
