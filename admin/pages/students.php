@@ -88,6 +88,9 @@ try {
   $hasRegistrations = !empty($check);
 } catch (Throwable $e) { $hasRegistrations = false; }
 
+// ensure counters exist regardless of which data path is used
+$active = 0; $pending = 0; $banned = 0; $total = 0;
+
 if ($hasRegistrations) {
   // simple pagination
   $perPage = 12;
