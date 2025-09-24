@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $desc   = trim($_POST['description'] ?? '');
         $dur    = trim($_POST['duration'] ?? '');
         $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
-        $tutor  = (int)($_POST['tutor_id'] ?? 0);
+  // tutor selection removed - keep tutor as null on create; edits will not change tutor
+  $tutor  = null;
         $active = isset($_POST['is_active']) ? 1 : 0;
     $icon   = trim($_POST['icon'] ?? '');
     $features = trim($_POST['features'] ?? '');
@@ -144,12 +145,7 @@ $courses = $pdo->query(
     ORDER BY created_at DESC"
 )->fetchAll();
 
-$tutors = $pdo->query("
-    SELECT id,name FROM users
-    WHERE role_id = (SELECT id FROM roles WHERE slug='tutor')
-      AND is_active=1
-    ORDER BY name
-")->fetchAll();
+        // ... tutors selection intentionally removed
 
 // Load available icons (with class) from icons table (if exists)
 try {
