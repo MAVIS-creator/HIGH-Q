@@ -248,10 +248,9 @@ try {
           data-desc="<?= htmlspecialchars($c['description']) ?>"
           data-duration="<?= htmlspecialchars($c['duration']) ?>"
           data-price="<?= $c['price'] ?>"
-          data-tutor="<?= $c['tutor_id'] ?>"
           data-active="<?= $c['is_active'] ?>"
           data-icon="<?= htmlspecialchars($c['icon'] ?? '') ?>"
-          data-features="<?= htmlspecialchars($c['features'] ?? '') ?>"
+          data-features="<?= htmlspecialchars($c['features_list'] ?? '') ?>"
           data-badge="<?= htmlspecialchars($c['highlight_badge'] ?? '') ?>"
         ><i class='bx bx-edit'></i> Edit</button>
       </div>
@@ -326,7 +325,6 @@ try {
   const fDesc     = document.getElementById('fDesc');
   const fDuration = document.getElementById('fDuration');
   const fPrice    = document.getElementById('fPrice');
-  const fTutor    = document.getElementById('fTutor');
   const fActive   = document.getElementById('fActive');
   const fIcon     = document.getElementById('fIcon');
   const fFeatures = document.getElementById('fFeatures');
@@ -345,17 +343,17 @@ try {
       fDesc.value     = data.desc;
       fDuration.value = data.duration;
       fPrice.value    = data.price;
-      fTutor.value    = data.tutor_id;
       fActive.checked = data.is_active == 1;
-  fIcon.value     = data.icon || '';
-  // features may come as joined string in data.features or data.features_list
-  fFeatures.value = data.features || data.features_list || '';
-  fBadge.value    = data.badge || '';
+      fIcon.value     = data.icon || '';
+      // features may come as joined string in data.features or data.features_list
+      fFeatures.value = data.features || data.features_list || '';
+      fBadge.value    = data.badge || '';
+      updateIconPreview();
     } else {
       modalTitle.textContent = 'New Course';
       courseForm.action = 'index.php?pages=courses&action=create';
       fTitle.value = fSlug.value = fDesc.value = fDuration.value = fPrice.value = '';
-      fTutor.value = '';
+  // tutor field removed; nothing to clear
       fActive.checked = true;
   if (fIcon) fIcon.value = '';
   if (fFeatures) fFeatures.value = '';
