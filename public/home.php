@@ -179,10 +179,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
           if ($desc === '' && !empty($program['summary'])) {
               $desc = $program['summary'];
           }
-
-          // Duration & Price
-          $duration = $program['duration'] ?? '';
-          $price    = $program['price'] ?? '';
         ?>
         <div class="col-md-4 mb-4">
           <div class="card program-card h-100 shadow-sm">
