@@ -122,9 +122,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $success[] = "Course '{$title}' updated.";
             }
         }
-    }
+  }
 
-    // Load available icons (with class) from icons table (if exists)
+}
+
+  // Load available icons (with class) from icons table (if exists)
     try {
       $icons = $pdo->query("SELECT id,name,filename,`class` FROM icons ORDER BY name")->fetchAll();
     } catch (\Exception $e) {
