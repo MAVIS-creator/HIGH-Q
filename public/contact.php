@@ -228,24 +228,7 @@ include __DIR__ . '/includes/header.php';
 	</div>
 </div>
 
-<!-- Mini chat panel -->
-<div class="mini-chat" id="miniChat" aria-hidden="true">
-	<div class="mini-header">
-		<div>Live Chat</div>
-		<button id="closeMini" aria-label="Close chat" class="btn-ghost">✕</button>
-	</div>
-	<div class="mini-body" id="miniBody">
-		<div class="chat-messages" id="chatMessages">
-			<div class="chat-system">Start a conversation — our admin will reply shortly.</div>
-		</div>
-		<div class="chat-form">
-			<input type="text" id="miniName" placeholder="Your name" class="chat-input">
-			<input type="email" id="miniEmail" placeholder="Your email (optional)" class="chat-input">
-			<textarea id="miniMessage" placeholder="Enter your message..." class="chat-textarea"></textarea>
-			<div class="chat-actions"><button class="btn-ghost" id="miniClear">Clear</button><button class="btn-primary" id="miniSend">Send</button></div>
-		</div>
-	</div>
-</div>
+<!-- Inline mini chat removed to avoid duplicate chat widget; iframe modal remains -->
 
 <script>
 // If user came via the floating chat link (contact.php#livechat), focus the message field and scroll into view
