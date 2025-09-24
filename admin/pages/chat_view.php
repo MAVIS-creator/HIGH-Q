@@ -40,6 +40,9 @@ require_once __DIR__ . '/../includes/header.php';
       <div style="text-align:right;margin-top:8px"><button class="btn" type="submit">Send</button></div>
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars(generateToken('chat_form')) ?>">
     </form>
+    <div style="text-align:right;margin-top:8px">
+      <button id="closeThreadBtn" class="btn" style="background:#f44336;color:#fff;border:none;padding:8px 12px;border-radius:6px;">Close Thread</button>
+    </div>
   </div>
 </div>
 
@@ -66,6 +69,15 @@ setInterval(function(){
   };
   xhr.send();
 }, 5000);
+
+// Close thread via AJAX
+document.getElementById('closeThreadBtn').addEventListener('click', function(){
+  if(!confirm('Close this thread? This will mark it closed and hide it from open lists.')) return;
+  var fd = new FormData(); fd.append('action','close'); fd.append('thread_id','<?= $threadId ?>');
+  var xhr = new XMLHttpRequest(); xhr.open('POST', '/HIGH-Q/admin/pages/chat.php', true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); }catch(e){ alert('Error'); return; } if(r.status==='ok'){ alert('Thread closed'); } else alert('Failed to close'); };
+  xhr.send(fd);
+});
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
