@@ -217,6 +217,19 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             var startBtn = document.getElementById('startBtn');
             var result = document.getElementById('result');
 
+            function setThreadId(id){
+                try{ localStorage.setItem('hq_thread_id', id); }catch(e){}
+                try{
+                    var d = new Date(); d.setTime(d.getTime() + (30*24*60*60*1000)); // 30 days
+                    document.cookie = 'hq_thread_id=' + encodeURIComponent(id) + '; path=/; expires=' + d.toUTCString();
+                }catch(e){}
+            }
+
+            function clearThreadId(){
+                try{ localStorage.removeItem('hq_thread_id'); }catch(e){}
+                try{ document.cookie = 'hq_thread_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'; }catch(e){}
+            }
+
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 startBtn.disabled = true;
@@ -230,15 +243,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     });
                     var j = await res.json();
                     if (j.status === 'ok') {
-                        // store thread id for later
-                                try{ localStorage.setItem('hq_thread_id', j.thread_id); }catch(e){}
-                                // also set a cookie so parent pages (non-iframe) can read it
-                                try{
-                                    var d = new Date(); d.setTime(d.getTime() + (30*24*60*60*1000)); // 30 days
-                                    document.cookie = 'hq_thread_id=' + encodeURIComponent(j.thread_id) + '; path=/; expires=' + d.toUTCString();
-                                }catch(e){}
-                            localStorage.setItem('hq_thread_id', j.thread_id);
-                        } catch (e) {}
+                        setThreadId(j.thread_id);
                         result.innerHTML = '<div class="success">Chat started. An agent will be with you shortly.</div>';
                         startBtn.textContent = 'Started';
                     } else {
@@ -253,6 +258,30 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     startBtn.textContent = 'Start Chat';
                 }
             });
+
+            // If thread id stored, poll thread status and clear if closed
+            async function checkThreadStatus(){
+                try{
+                    var tid = null;
+                    try{ tid = localStorage.getItem('hq_thread_id'); }catch(e){}
+                    if(!tid){ // try cookie
+                        var m = document.cookie.match(/(?:^|; )hq_thread_id=([^;]+)/);
+                        if(m) tid = decodeURIComponent(m[1]);
+                    }
+                    if(!tid) return;
+                    var res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
+                    if(!res.ok) return;
+                    var j = await res.json();
+                    if(j.thread_status && (j.thread_status === 'closed' || j.thread_status === 'archived')){
+                        clearThreadId();
+                        // notify parent frame to close if embedded
+                        try{ parent.postMessage && parent.postMessage({hq_chat_action:'close_by_admin', thread_id: tid}, '*'); }catch(e){}
+                    }
+                }catch(e){/* ignore */}
+            }
+            // check on load and then periodically
+            checkThreadStatus(); setInterval(checkThreadStatus, 15000);
+
         })();
     </script>
 </body>
