@@ -74,28 +74,119 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Start Chat</title>
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600&display=swap" rel="stylesheet">
     <style>
-        :root{ --hq-yellow:#f5b904; --hq-yellow-2:#d99a00; --hq-dark:#171716; --hq-muted:#f4f4f6; }
-        *{box-sizing:border-box}
-        body{font-family: 'Raleway', system-ui; margin:0; background:transparent; display:flex; align-items:center; justify-content:center; height:100vh}
-    .card{ width:320px; max-width:94%; background:transparent; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.12); overflow:hidden }
-    .card-header{ padding:18px 20px; background:linear-gradient(90deg,var(--hq-yellow),var(--hq-yellow-2)); color:var(--hq-dark) }
-        .card-header h3{ margin:0; font-size:18px }
-        .card-body{ padding:18px }
-        .field{ margin-bottom:12px }
-    input[type=text], input[type=email], textarea{ width:100%; padding:14px; border-radius:30px; border:1px solid rgba(0,0,0,0.08); background:transparent; font-size:14px; outline:none; color:inherit }
-        textarea{ min-height:100px; resize:vertical }
-    .btn-start{ display:block; width:100%; padding:14px; border-radius:30px; border:none; color:#111; font-weight:600; background:linear-gradient(90deg,var(--hq-yellow),var(--hq-yellow-2)); cursor:pointer }
-        .note{ font-size:13px; color:#666; margin-bottom:8px }
-        .success{ padding:12px; background:#e6fff6; border-left:4px solid #39a37a; color:#064; border-radius:8px; margin-top:12px }
-        @media (max-width:420px){ body{height:100vh} .card{ width:92% } }
+        :root {
+            --hq-yellow: #f5b904;
+            --hq-yellow-2: #d99a00;
+            --hq-dark: #171716;
+            --hq-muted: #f4f4f6;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Raleway', system-ui;
+            margin: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh
+        }
+
+        .card {
+            width: 320px;
+            max-width: 94%;
+            background: transparent;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            overflow: hidden
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
+            color: var(--hq-dark)
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px
+        }
+
+        .card-body {
+            padding: 18px
+        }
+
+        .field {
+            margin-bottom: 12px
+        }
+
+        input[type=text],
+        input[type=email],
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+            color: inherit
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical
+        }
+
+        .btn-start {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            color: #111;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
+            cursor: pointer
+        }
+
+        .note {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px
+        }
+
+        .success {
+            padding: 12px;
+            background: #e6fff6;
+            border-left: 4px solid #39a37a;
+            color: #064;
+            border-radius: 8px;
+            margin-top: 12px
+        }
+
+        @media (max-width:420px) {
+            body {
+                height: 100vh
+            }
+
+            .card {
+                width: 92%
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="card" role="dialog" aria-label="Start chat">
         <div class="card-header">
@@ -114,30 +205,44 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     </div>
 
     <script>
-        (function(){
+        (function() {
             var form = document.getElementById('startChatForm');
             var startBtn = document.getElementById('startBtn');
             var result = document.getElementById('result');
 
-            form.addEventListener('submit', async function(e){
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                startBtn.disabled = true; startBtn.textContent = 'Starting...'; result.innerHTML = '';
+                startBtn.disabled = true;
+                startBtn.textContent = 'Starting...';
+                result.innerHTML = '';
                 var fd = new FormData(form);
-                try{
-                    var res = await fetch('?action=send_message', { method: 'POST', body: fd });
+                try {
+                    var res = await fetch('?action=send_message', {
+                        method: 'POST',
+                        body: fd
+                    });
                     var j = await res.json();
-                    if(j.status === 'ok'){
+                    if (j.status === 'ok') {
                         // store thread id for later
-                        try{ localStorage.setItem('hq_thread_id', j.thread_id); }catch(e){}
+                        try {
+                            localStorage.setItem('hq_thread_id', j.thread_id);
+                        } catch (e) {}
                         result.innerHTML = '<div class="success">Chat started. An agent will be with you shortly.</div>';
                         startBtn.textContent = 'Started';
                     } else {
-                        result.innerHTML = '<div class="note">Failed to start chat: ' + (j.message||'Unknown error') + '</div>';
-                        startBtn.disabled = false; startBtn.textContent = 'Start Chat';
+                        result.innerHTML = '<div class="note">Failed to start chat: ' + (j.message || 'Unknown error') + '</div>';
+                        startBtn.disabled = false;
+                        startBtn.textContent = 'Start Chat';
                     }
-                }catch(err){ console.error(err); result.innerHTML = '<div class="note">Network error. Please try again.</div>'; startBtn.disabled = false; startBtn.textContent = 'Start Chat'; }
+                } catch (err) {
+                    console.error(err);
+                    result.innerHTML = '<div class="note">Network error. Please try again.</div>';
+                    startBtn.disabled = false;
+                    startBtn.textContent = 'Start Chat';
+                }
             });
         })();
     </script>
 </body>
+
 </html>
