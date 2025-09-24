@@ -39,6 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     logAction($pdo, $_SESSION['user']['id'], 'chat_reply', ['thread_id' => $threadId, 'message_preview' => mb_substr($msg,0,120)]);
     echo json_encode(['status'=>'ok']); exit;
     }
+  // Close thread (AJAX)
+  if ($action === 'close' && $threadId) {
+    $upd = $pdo->prepare("UPDATE chat_threads SET status = 'closed', last_activity = NOW() WHERE id = ?");
+    $upd->execute([$threadId]);
+    logAction($pdo, $_SESSION['user']['id'], 'chat_closed', ['thread_id' => $threadId]);
+    echo json_encode(['status'=>'ok']); exit;
+  }
     echo json_encode(['status'=>'error']); exit;
 }
 
