@@ -15,10 +15,10 @@ if (!isset($pdo) || !$pdo) {
 // Fetch up to 6 active courses added by the admin (only if $pdo is available)
 if (isset($pdo) && $pdo instanceof PDO) {
   try {
-    // include icon column so we can render icon thumbnails on the public site
-    $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, price, icon FROM courses WHERE is_active = 1 ORDER BY created_at DESC LIMIT 6");
+    // include icon, highlight_badge and aggregated features so we can render icons and feature lists
+    $stmt = $pdo->prepare("SELECT c.id, c.title, c.slug, c.description, c.duration, c.price, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.created_at DESC LIMIT 6");
     $stmt->execute();
-    $programs = $stmt->fetchAll();
+    $programs = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } catch (Throwable $e) {
     $programs = [];
   }
@@ -171,11 +171,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
             $slug  = htmlspecialchars($p['slug']);
             $desc  = trim($p['description'] ?? '');
             $icon  = trim($p['icon'] ?? '');
+            $features_list = trim($p['features_list'] ?? '');
+            $highlight_badge = trim($p['highlight_badge'] ?? '');
             // If description contains multiple lines, treat each line as a bullet
             $lines = preg_split('/\r?\n/', $desc);
             $hasList = count($lines) > 1;
+            // prefer features_list from normalized table
+            $features_lines = $features_list !== '' ? preg_split('/\r?\n/', $features_list) : ($hasList ? $lines : []);
             // fallback short summary
-            $summary = $hasList ? null : (strlen($desc) > 220 ? substr($desc,0,217).'...' : $desc);
+            $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc,0,217).'...' : $desc) : null;
           ?>
 
           <article class="program-card">
@@ -201,10 +205,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
                 ?>
               </div>
               <div class="program-body">
-                <h4><a href="programs.php?slug=<?= $slug ?>"><?= $title ?></a></h4>
-                <?php if ($hasList): ?>
+                <h4>
+                  <a href="programs.php?slug=<?= $slug ?>"><?= $title ?></a>
+                  <?php if ($highlight_badge !== ''): ?>
+                    <span class="program-badge"><?= htmlspecialchars($highlight_badge) ?></span>
+                  <?php endif; ?>
+                </h4>
+                <?php if (!empty($features_lines)): ?>
                   <ul class="program-features">
-                    <?php foreach (array_slice($lines,0,5) as $line): ?>
+                    <?php foreach (array_slice($features_lines,0,5) as $line): ?>
                       <?php $li = trim($line); if ($li==='') continue; ?>
                       <li><?= htmlspecialchars($li) ?></li>
                     <?php endforeach; ?>
