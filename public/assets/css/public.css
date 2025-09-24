@@ -2109,3 +2109,28 @@ nav a.active::after { background: var(--hq-yellow); }
 @media (max-width: 700px) {
   .programs-grid { grid-template-columns: 1fr; }
 }
+
+/* Additional program card refinements to match design */
+.program-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid rgba(11,37,64,0.04);
+  box-shadow: 0 10px 30px rgba(11,37,64,0.06);
+}
+.program-card-inner { display:flex; gap:14px; align-items:flex-start }
+.program-body { flex:1 }
+.program-icon {
+  width:48px; height:48px; min-width:48px; display:flex; align-items:center; justify-content:center;
+  border-radius:10px; background:#fff3cf; color:#6a4b00; box-shadow:0 6px 18px rgba(11,37,64,0.04);
+}
+.program-icon i { font-size:20px }
+.program-icon img { width:28px; height:28px; object-fit:contain }
+.program-body h4 { display:flex; align-items:center; gap:10px; margin:0 0 8px 0 }
+.program-badge { display:block; background:#fff3cf; color:#6a4b00; padding:8px 12px; border-radius:10px; font-weight:700; margin-top:10px }
+.program-features { list-style:none; padding:0; margin:8px 0 0 0 }
+.program-features li { margin:8px 0; padding-left:18px; position:relative; color:#333 }
+.program-features li:before { content: ''; position:absolute; left:0; top:10px; width:8px; height:8px; background:var(--hq-yellow); border-radius:999px }
+.program-summary { color:#444; margin:0 }
+.program-card-footer { margin-top:12px }
+.program-card-footer .badge { background:#f6f6f6; padding:6px 10px; border-radius:8px; font-weight:700 }
