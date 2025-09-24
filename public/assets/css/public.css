@@ -7,6 +7,7 @@
   --hq-white: #e9e8e5;
   --hq-gray-dark: #171717;
   --hq-blue-white:  #575897;
+  --hq-yellow-pale: #FFF6D9;
 }
 
 /*
@@ -2099,7 +2100,6 @@ nav a.active::after { background: var(--hq-yellow); }
   text-align: center;
   display: inline-block;
   font-weight: 700;
-  margin-top: 6px;
 }
 
 @media (max-width: 1100px) {
