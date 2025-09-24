@@ -32,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
         $tutor  = (int)($_POST['tutor_id'] ?? 0);
         $active = isset($_POST['is_active']) ? 1 : 0;
+    $icon   = trim($_POST['icon'] ?? '');
+    $features = trim($_POST['features'] ?? '');
+    $highlight_badge = trim($_POST['highlight_badge'] ?? '');
 
         if ($act === 'create') {
             if (!$title || !$slug) {
@@ -47,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $tutor ?: null,
                   $_SESSION['user']['id'],
                   $active
+                    $icon ?: null,
+                    $features ?: null,
+                    $highlight_badge ?: null
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'course_created', ['slug'=>$slug]);
                 $success[] = "Course '{$title}' created.";
@@ -66,6 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $title, $slug, $desc, $dur, $price,
                   $tutor ?: null,
                   $active,
+                    $icon ?: null,
+                    $features ?: null,
+                    $highlight_badge ?: null,
                   $id
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'course_updated', ['course_id'=>$id]);
