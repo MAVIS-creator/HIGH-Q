@@ -1,5 +1,9 @@
 <?php
 // admin/includes/header.php
+// Start output buffering so downstream header() calls succeed even if this file emits HTML
+if (!headers_sent()) {
+    ob_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
