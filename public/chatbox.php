@@ -83,12 +83,12 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         :root{ --hq-yellow:#f5b904; --hq-yellow-2:#d99a00; --hq-dark:#171716; --hq-muted:#f4f4f6; }
         *{box-sizing:border-box}
         body{font-family: 'Raleway', system-ui; margin:0; background:transparent; display:flex; align-items:center; justify-content:center; height:100vh}
-        .card{ width:320px; max-width:94%; background:#fff; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.12); overflow:hidden }
+    .card{ width:320px; max-width:94%; background:transparent; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.12); overflow:hidden }
     .card-header{ padding:18px 20px; background:linear-gradient(90deg,var(--hq-yellow),var(--hq-yellow-2)); color:var(--hq-dark) }
         .card-header h3{ margin:0; font-size:18px }
         .card-body{ padding:18px }
         .field{ margin-bottom:12px }
-        input[type=text], input[type=email], textarea{ width:100%; padding:14px; border-radius:30px; border:1px solid #eee; background:var(--hq-muted); font-size:14px; outline:none }
+    input[type=text], input[type=email], textarea{ width:100%; padding:14px; border-radius:30px; border:1px solid rgba(0,0,0,0.08); background:transparent; font-size:14px; outline:none; color:inherit }
         textarea{ min-height:100px; resize:vertical }
     .btn-start{ display:block; width:100%; padding:14px; border-radius:30px; border:none; color:#111; font-weight:600; background:linear-gradient(90deg,var(--hq-yellow),var(--hq-yellow-2)); cursor:pointer }
         .note{ font-size:13px; color:#666; margin-bottom:8px }
