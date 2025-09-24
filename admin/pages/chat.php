@@ -23,10 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
       logAction($pdo, $_SESSION['user']['id'], 'chat_claimed', ['thread_id' => $threadId]);
       echo json_encode(['status'=>'ok','message'=>'Claimed']);
     } else {
-            // already claimed, return current assignment
-            $q = $pdo->prepare('SELECT assigned_admin_id FROM chat_threads WHERE id = ? LIMIT 1'); $q->execute([$threadId]); $aid = $q->fetchColumn();
-            echo json_encode(['status'=>'taken','assigned_admin_id'=>$aid]);
-        }
+      // already claimed, return current assignment and admin name
+      $q = $pdo->prepare('SELECT assigned_admin_id, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id WHERE ct.id = ? LIMIT 1'); $q->execute([$threadId]); $row = $q->fetch(PDO::FETCH_ASSOC);
+      echo json_encode(['status'=>'taken','assigned_admin_id'=>$row['assigned_admin_id'] ?? null, 'assigned_admin_name' => $row['assigned_admin_name'] ?? null]);
+    }
         exit;
     }
     if ($action === 'reply' && $threadId) {
@@ -95,6 +95,17 @@ async function pollThreads(){
   }catch(e){ /* ignore */ }
 }
 pollThreads(); setInterval(pollThreads, 5000);
+// Replace inline claim function with a friendlier AJAX flow
+</script>
+<script>
+function claim(id){ if(!confirm('Take this thread?')) return; var fd=new FormData(); fd.append('action','claim'); fd.append('thread_id',id); fd.append('_csrf','<?= generateToken('chat_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{ var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ // update button to Open
+      const li = document.querySelector('li[data-thread="'+id+'"]'); if(li){ const right = li.querySelector('div:last-child'); right.innerHTML = '<a class="btn" href="?pages=chat_view&thread_id='+id+'">Open</a>'; }
+    } else if(r.status==='taken'){
+      alert('This thread was taken by ' + (r.assigned_admin_name || 'another admin'));
+      // update UI to show Open link
+      const li = document.querySelector('li[data-thread="'+id+'"]'); if(li){ const right = li.querySelector('div:last-child'); right.innerHTML = '<a class="btn" href="?pages=chat_view&thread_id='+id+'">Open</a>'; }
+    } else alert('Taken'); };
+  xhr.send(fd); }
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php';

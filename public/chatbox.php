@@ -229,7 +229,12 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     var j = await res.json();
                     if (j.status === 'ok') {
                         // store thread id for later
-                        try {
+                                try{ localStorage.setItem('hq_thread_id', j.thread_id); }catch(e){}
+                                // also set a cookie so parent pages (non-iframe) can read it
+                                try{
+                                    var d = new Date(); d.setTime(d.getTime() + (30*24*60*60*1000)); // 30 days
+                                    document.cookie = 'hq_thread_id=' + encodeURIComponent(j.thread_id) + '; path=/; expires=' + d.toUTCString();
+                                }catch(e){}
                             localStorage.setItem('hq_thread_id', j.thread_id);
                         } catch (e) {}
                         result.innerHTML = '<div class="success">Chat started. An agent will be with you shortly.</div>';
