@@ -40,19 +40,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             if (!$title || !$slug) {
                 $errors[] = "Title and slug are required.";
             } else {
-                $stmt = $pdo->prepare("
-                  INSERT INTO courses
-                    (title, slug, description, duration, price, tutor_id, created_by, is_active)
-                  VALUES (?,?,?,?,?,?,?,?)
-                ");
+                $stmt = $pdo->prepare(
+                  "INSERT INTO courses
+                    (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, features, highlight_badge)
+                  VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+                );
                 $stmt->execute([
-                  $title, $slug, $desc, $dur, $price,
+                  $title,
+                  $slug,
+                  $desc,
+                  $dur,
+                  $price,
                   $tutor ?: null,
                   $_SESSION['user']['id'],
-                  $active
-                    $icon ?: null,
-                    $features ?: null,
-                    $highlight_badge ?: null
+                  $active,
+                  $icon ?: null,
+                  $features ?: null,
+                  $highlight_badge ?: null
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'course_created', ['slug'=>$slug]);
                 $success[] = "Course '{$title}' created.";
@@ -63,18 +67,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             if (!$title || !$slug) {
                 $errors[] = "Title and slug are required.";
             } else {
-                $stmt = $pdo->prepare("
-                  UPDATE courses
-                  SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, updated_at=NOW()
-                  WHERE id=?
-                ");
+                $stmt = $pdo->prepare(
+                  "UPDATE courses
+                  SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, features=?, highlight_badge=?, updated_at=NOW()
+                  WHERE id=?"
+                );
                 $stmt->execute([
-                  $title, $slug, $desc, $dur, $price,
+                  $title,
+                  $slug,
+                  $desc,
+                  $dur,
+                  $price,
                   $tutor ?: null,
                   $active,
-                    $icon ?: null,
-                    $features ?: null,
-                    $highlight_badge ?: null,
+                  $icon ?: null,
+                  $features ?: null,
+                  $highlight_badge ?: null,
                   $id
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'course_updated', ['course_id'=>$id]);
