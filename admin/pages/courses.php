@@ -30,8 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $desc   = trim($_POST['description'] ?? '');
         $dur    = trim($_POST['duration'] ?? '');
         $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
-  // tutor selection removed - keep tutor as null on create; edits will not change tutor
-  $tutor  = null;
+        $tutor  = (int)($_POST['tutor_id'] ?? 0);
         $active = isset($_POST['is_active']) ? 1 : 0;
     $icon   = trim($_POST['icon'] ?? '');
     $features = trim($_POST['features'] ?? '');
@@ -145,7 +144,12 @@ $courses = $pdo->query(
     ORDER BY created_at DESC"
 )->fetchAll();
 
-        // ... tutors selection intentionally removed
+$tutors = $pdo->query("
+    SELECT id,name FROM users
+    WHERE role_id = (SELECT id FROM roles WHERE slug='tutor')
+      AND is_active=1
+    ORDER BY name
+")->fetchAll();
 
 // Load available icons (with class) from icons table (if exists)
 try {
@@ -248,9 +252,10 @@ try {
           data-desc="<?= htmlspecialchars($c['description']) ?>"
           data-duration="<?= htmlspecialchars($c['duration']) ?>"
           data-price="<?= $c['price'] ?>"
+          data-tutor="<?= $c['tutor_id'] ?>"
           data-active="<?= $c['is_active'] ?>"
           data-icon="<?= htmlspecialchars($c['icon'] ?? '') ?>"
-          data-features="<?= htmlspecialchars($c['features_list'] ?? '') ?>"
+          data-features="<?= htmlspecialchars($c['features'] ?? '') ?>"
           data-badge="<?= htmlspecialchars($c['highlight_badge'] ?? '') ?>"
         ><i class='bx bx-edit'></i> Edit</button>
       </div>
@@ -267,37 +272,67 @@ try {
       <form id="courseForm" method="post">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
-        <div class="form-grid">
-          <div class="col">
-            <div class="form-row"><label>Program Title</label><input type="text" name="title" id="fTitle" required></div>
-            <div class="form-row"><label>Slug</label><input type="text" name="slug" id="fSlug" required></div>
-            <div class="form-row"><label>Description</label><textarea name="description" id="fDesc" rows="4"></textarea></div>
+        <div class="form-row">
+          <label>Title</label>
+          <input type="text" name="title" id="fTitle" required>
+        </div>
+
+        <div class="form-row">
+          <label>Slug</label>
+          <input type="text" name="slug" id="fSlug" required>
+        </div>
+
+        <div class="form-row">
+          <label>Description</label>
+          <textarea name="description" id="fDesc" rows="3"></textarea>
+        </div>
+
+        <div class="form-row">
+          <label>Duration</label>
+          <input type="text" name="duration" id="fDuration">
+        </div>
+
+        <div class="form-row">
+          <label>Price (₦)</label>
+          <input type="number" name="price" id="fPrice" step="0.01" min="0">
+        </div>
+
+        <div class="form-row">
+          <label>Tutor</label>
+          <select name="tutor_id" id="fTutor">
+            <option value="">— None —</option>
+            <?php foreach($tutors as $t): ?>
+              <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Icon</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select name="icon" id="fIcon">
+              <option value="">— Default —</option>
+              <?php foreach($icons as $ic): ?>
+                <?php $val = $ic['class'] ?: $ic['filename']; ?>
+                <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
+              <?php endforeach; ?>
+            </select>
+            <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
           </div>
-          <div class="col">
-            <div class="form-row"><label>Icon</label>
-              <div style="display:flex;gap:8px;align-items:center">
-                <select name="icon" id="fIcon" class="styled-select">
-                  <option value="">— Default —</option>
-                  <?php foreach($icons as $ic): ?>
-                    <?php $val = $ic['class'] ?: $ic['filename']; ?>
-                    <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
-                  <?php endforeach; ?>
-                </select>
-                <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
-              </div>
-            </div>
+        </div>
 
-            <div class="form-row"><label>Features (one per line)</label><textarea name="features" id="fFeatures" rows="6" placeholder="Enter each feature on a new line"></textarea></div>
+        <div class="form-row">
+          <label>Features (one per line)</label>
+          <textarea name="features" id="fFeatures" rows="4" placeholder="Benefit 1\nBenefit 2\nBenefit 3"></textarea>
+        </div>
 
-            <div class="form-row"><label>Highlight Badge</label><input type="text" name="highlight_badge" id="fBadge" placeholder="e.g., 95% pass rate"></div>
+        <div class="form-row">
+          <label>Highlight badge (short text)</label>
+          <input type="text" name="highlight_badge" id="fBadge">
+        </div>
 
-            <div class="form-row twin">
-              <div><label>Duration (optional)</label><input type="text" name="duration" id="fDuration" placeholder="e.g., 6-12 months"></div>
-              <div><label>Price (optional)</label><input type="text" name="price" id="fPrice" placeholder="e.g., ₦50,000"></div>
-            </div>
-
-            <div class="form-row"><label><input type="checkbox" name="is_active" id="fActive" checked> Active</label></div>
-          </div>
+        <div class="form-row">
+          <label><input type="checkbox" name="is_active" id="fActive" checked> Active</label>
         </div>
 
         <div class="form-actions">
@@ -325,6 +360,7 @@ try {
   const fDesc     = document.getElementById('fDesc');
   const fDuration = document.getElementById('fDuration');
   const fPrice    = document.getElementById('fPrice');
+  const fTutor    = document.getElementById('fTutor');
   const fActive   = document.getElementById('fActive');
   const fIcon     = document.getElementById('fIcon');
   const fFeatures = document.getElementById('fFeatures');
@@ -343,17 +379,17 @@ try {
       fDesc.value     = data.desc;
       fDuration.value = data.duration;
       fPrice.value    = data.price;
+      fTutor.value    = data.tutor_id;
       fActive.checked = data.is_active == 1;
-      fIcon.value     = data.icon || '';
-      // features may come as joined string in data.features or data.features_list
-      fFeatures.value = data.features || data.features_list || '';
-      fBadge.value    = data.badge || '';
-      updateIconPreview();
+  fIcon.value     = data.icon || '';
+  // features may come as joined string in data.features or data.features_list
+  fFeatures.value = data.features || data.features_list || '';
+  fBadge.value    = data.badge || '';
     } else {
       modalTitle.textContent = 'New Course';
       courseForm.action = 'index.php?pages=courses&action=create';
       fTitle.value = fSlug.value = fDesc.value = fDuration.value = fPrice.value = '';
-  // tutor field removed; nothing to clear
+      fTutor.value = '';
       fActive.checked = true;
   if (fIcon) fIcon.value = '';
   if (fFeatures) fFeatures.value = '';
@@ -399,12 +435,10 @@ function escapeHtml(s){
         title: btn.dataset.title,
         slug: btn.dataset.slug,
         desc: btn.dataset.desc,
-  duration: btn.dataset.duration,
-  price: btn.dataset.price,
-  is_active: btn.dataset.active,
-  icon: btn.dataset.icon || '',
-  features_list: btn.dataset.features || '',
-  badge: btn.dataset.badge || ''
+        duration: btn.dataset.duration,
+        price: btn.dataset.price,
+        tutor_id: btn.dataset.tutor,
+        is_active: btn.dataset.active
       });
     });
   });
