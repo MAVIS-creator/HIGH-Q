@@ -1,5 +1,4 @@
 <?php
-// Single-file chatbox: API handlers (send/get) + embeddable widget
 require_once __DIR__ . '/config/db.php';
 
 function jsonResponse(array $data)
@@ -11,7 +10,7 @@ function jsonResponse(array $data)
 
 $action = $_REQUEST['action'] ?? '';
 
-// Handle send_message (creates thread if needed, saves message, optional image upload)
+// Send message
 if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? 'Guest');
     $email = trim($_POST['email'] ?? '');
@@ -27,7 +26,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        // Handle optional image upload
+        // Handle attachment
         if (!empty($_FILES['attachment']) && ($_FILES['attachment']['error'] ?? 1) === UPLOAD_ERR_OK) {
             $f = $_FILES['attachment'];
             $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -39,7 +38,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $dest = $uploadDir . $nameSafe;
                 if (move_uploaded_file($f['tmp_name'], $dest)) {
                     $url = 'uploads/chat/' . $nameSafe;
-                    $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" alt="attachment">';
+                    $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="max-width:100%;border-radius:8px">';
                 }
             }
         }
@@ -47,8 +46,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
         $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
 
-        // Update last_activity for admin visibility
-        $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = :id');
+        $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id=:id');
         $u->execute([':id' => $thread_id]);
 
         jsonResponse(['status' => 'ok', 'thread_id' => $thread_id]);
@@ -57,22 +55,22 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Handle fetching messages for a thread
+// Get messages
 if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     $thread_id = (int)$_GET['thread_id'];
     try {
-        $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id = :tid ORDER BY created_at ASC');
+        $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id=:tid ORDER BY created_at ASC');
         $stmt->execute([':tid' => $thread_id]);
         $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // also return the thread status so clients can clear stored IDs when closed
-        $t = $pdo->prepare('SELECT status FROM chat_threads WHERE id = ? LIMIT 1'); $t->execute([$thread_id]); $threadStatus = $t->fetchColumn() ?: 'open';
+        $t = $pdo->prepare('SELECT status FROM chat_threads WHERE id=? LIMIT 1');
+        $t->execute([$thread_id]);
+        $threadStatus = $t->fetchColumn() ?: 'open';
         jsonResponse(['status' => 'ok', 'messages' => $msgs, 'thread_status' => $threadStatus]);
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
     }
 }
 
-// If no API action, render the embeddable widget (when opened directly or via iframe)
 ?>
 <!doctype html>
 <html lang="en">
@@ -80,22 +78,21 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Start Chat</title>
+    <title>Live Chat</title>
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600&display=swap" rel="stylesheet">
     <style>
         :root {
             --hq-yellow: #f5b904;
             --hq-yellow-2: #d99a00;
             --hq-dark: #171716;
-            --hq-muted: #f4f4f6;
         }
 
         * {
-            box-sizing: border-box
+            box-sizing: border-box;
         }
 
-        /* ensure the document root is transparent for iframes */
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             background: transparent !important;
@@ -110,226 +107,204 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         }
 
         .card {
-            width: 320px;
+            width: 350px;
             max-width: 94%;
-            background: transparent;
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-            overflow: hidden
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .12);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .card-header {
             padding: 18px 20px;
             background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
-            color: var(--hq-dark)
+            color: var(--hq-dark);
         }
 
         .card-header h3 {
             margin: 0;
-            font-size: 18px
+            font-size: 18px;
         }
 
         .card-body {
-            padding: 18px
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        .field {
-            margin-bottom: 12px
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            padding: 6px;
+        }
+
+        #chatMessages .visitor {
+            color: #111;
+            margin-bottom: 6px;
+            text-align: left;
+        }
+
+        #chatMessages .staff {
+            color: #d99a00;
+            margin-bottom: 6px;
+            text-align: right;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         input[type=text],
-        input[type=email],
         textarea {
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
             width: 100%;
-            padding: 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: transparent;
-            font-size: 14px;
             outline: none;
-            color: inherit
         }
 
         textarea {
-            min-height: 100px;
-            resize: vertical
+            resize: none;
         }
 
-        .btn-start {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            border-radius: 30px;
+        input[type=file] {
+            margin-top: 4px;
+        }
+
+        button {
+            padding: 10px;
             border: none;
+            border-radius: 20px;
+            background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
             color: #111;
             font-weight: 600;
-            background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
-            cursor: pointer
+            cursor: pointer;
         }
 
-        .note {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 8px
+        .emoji-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 4px;
         }
 
-        .success {
-            padding: 12px;
-            background: #e6fff6;
-            border-left: 4px solid #39a37a;
-            color: #064;
-            border-radius: 8px;
-            margin-top: 12px
+        .emoji-picker span {
+            cursor: pointer;
+            font-size: 18px;
         }
 
         @media (max-width:420px) {
-            body {
-                height: 100vh
-            }
-
             .card {
-                width: 92%
+                width: 92%;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="card" role="dialog" aria-label="Start chat">
+    <div class="card">
         <div class="card-header">
-            <h3>Let's chat? — Online</h3>
+            <h3>Live Chat — Online</h3>
         </div>
         <div class="card-body">
-            <p class="note">Please fill out the form below to start chatting with the next available agent.</p>
+            <div id="chatMessages"></div>
             <form id="startChatForm">
-                <div class="field"><input type="text" id="c_name" name="name" placeholder="Your Name" required></div>
-                <div class="field"><input type="email" id="c_email" name="email" placeholder="Email Address"></div>
-                <div class="field"><textarea id="c_message" name="message" placeholder="Explain your queries.." required></textarea></div>
-                <button class="btn-start" id="startBtn" type="submit">Start Chat</button>
+                <input type="text" id="c_name" name="name" placeholder="Your Name" required>
+                <textarea id="c_message" name="message" placeholder="Type a message..." required></textarea>
+                <input type="file" name="attachment" id="attachment">
+                <div class="emoji-picker" id="emojiPicker">
+                    <span>😀</span><span>😂</span><span>😍</span><span>👍</span><span>🙌</span><span>😎</span><span>🤔</span><span>🥳</span>
+                </div>
+                <button type="submit" id="startBtn">Send</button>
             </form>
-            <div id="result"></div>
         </div>
     </div>
 
     <script>
         (function() {
-            var form = document.getElementById('startChatForm');
-            var startBtn = document.getElementById('startBtn');
-            var result = document.getElementById('result');
+            const form = document.getElementById('startChatForm');
+            const startBtn = document.getElementById('startBtn');
+            const chatDiv = document.getElementById('chatMessages');
+            const emojiPicker = document.getElementById('emojiPicker');
 
-            function setThreadId(id){
-                try{ localStorage.setItem('hq_thread_id', id); }catch(e){}
-                try{
-                    var d = new Date(); d.setTime(d.getTime() + (30*24*60*60*1000)); // 30 days
-                    document.cookie = 'hq_thread_id=' + encodeURIComponent(id) + '; path=/; expires=' + d.toUTCString();
-                }catch(e){}
+            function setThreadId(id) {
+                try {
+                    localStorage.setItem('hq_thread_id', id);
+                } catch (e) {}
             }
 
-            function clearThreadId(){
-                try{ localStorage.removeItem('hq_thread_id'); }catch(e){}
-                try{ document.cookie = 'hq_thread_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'; }catch(e){}
+            function getThreadId() {
+                return localStorage.getItem('hq_thread_id') || null;
             }
 
-            form.addEventListener('submit', async function(e) {
+            function appendMessage(sender, msg, is_staff = false) {
+                const div = document.createElement('div');
+                div.className = is_staff ? 'staff' : 'visitor';
+                div.innerHTML = `<strong>${sender}:</strong> ${msg}`;
+                chatDiv.appendChild(div);
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+            }
+
+            // Click emoji to insert
+            emojiPicker.querySelectorAll('span').forEach(e => {
+                e.addEventListener('click', () => {
+                    form.c_message.value += e.textContent;
+                });
+            });
+
+            async function getMessages() {
+                const tid = getThreadId();
+                if (!tid) return;
+                try {
+                    const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
+                    if (!res.ok) return;
+                    const j = await res.json();
+                    if (j.status !== 'ok') return;
+                    chatDiv.innerHTML = '';
+                    j.messages.forEach(m => {
+                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1);
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+            setInterval(getMessages, 3000);
+
+            form.addEventListener('submit', async e => {
                 e.preventDefault();
                 startBtn.disabled = true;
-                startBtn.textContent = 'Starting...';
-                result.innerHTML = '';
-                var fd = new FormData(form);
+                startBtn.textContent = 'Sending...';
+
+                const fd = new FormData(form);
+                const tid = getThreadId();
+                if (tid) fd.append('thread_id', tid);
+
                 try {
-                    var res = await fetch('?action=send_message', {
+                    const res = await fetch('?action=send_message', {
                         method: 'POST',
                         body: fd
                     });
-                    var j = await res.json();
+                    const j = await res.json();
                     if (j.status === 'ok') {
                         setThreadId(j.thread_id);
-                        result.innerHTML = '<div class="success">Chat started. An agent will be with you shortly.</div>';
-                        startBtn.textContent = 'Started';
+                        appendMessage(fd.get('name'), fd.get('message'), false);
+                        form.c_message.value = '';
                     } else {
-                        result.innerHTML = '<div class="note">Failed to start chat: ' + (j.message || 'Unknown error') + '</div>';
-                        startBtn.disabled = false;
-                        startBtn.textContent = 'Start Chat';
+                        alert('Error: ' + (j.message || 'Unknown'));
                     }
                 } catch (err) {
                     console.error(err);
-                    result.innerHTML = '<div class="note">Network error. Please try again.</div>';
-                    startBtn.disabled = false;
-                    startBtn.textContent = 'Start Chat';
                 }
+                startBtn.disabled = false;
+                startBtn.textContent = 'Send';
             });
-
-            // If thread id stored, poll thread status and clear if closed
-            async function checkThreadStatus(){
-                try{
-                    var tid = null;
-                    try{ tid = localStorage.getItem('hq_thread_id'); }catch(e){}
-                    if(!tid){ // try cookie
-                        var m = document.cookie.match(/(?:^|; )hq_thread_id=([^;]+)/);
-                        if(m) tid = decodeURIComponent(m[1]);
-                    }
-                    if(!tid) return;
-                    var res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
-                    if(!res.ok) return;
-                    var j = await res.json();
-                    if(j.thread_status && (j.thread_status === 'closed' || j.thread_status === 'archived')){
-                        clearThreadId();
-                        // notify parent frame to close if embedded
-                        try{ parent.postMessage && parent.postMessage({hq_chat_action:'close_by_admin', thread_id: tid}, '*'); }catch(e){}
-                    }
-                }catch(e){/* ignore */}
-            }
-            // check on load and then periodically
-            checkThreadStatus(); setInterval(checkThreadStatus, 15000);
-
         })();
-        async function getMessages() {
-    try {
-        var tid = null;
-        try { tid = localStorage.getItem('hq_thread_id'); } catch(e){}
-
-        if (!tid) {
-            var m = document.cookie.match(/(?:^|; )hq_thread_id=([^;]+)/);
-            if (m) tid = decodeURIComponent(m[1]);
-        }
-        if (!tid) return;
-
-        var res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
-        if (!res.ok) return;
-        var j = await res.json();
-        if (j.status !== 'ok') return;
-
-        // Display messages in a simple chat window
-        var chatDiv = document.getElementById('chatMessages');
-        if (!chatDiv) {
-            chatDiv = document.createElement('div');
-            chatDiv.id = 'chatMessages';
-            chatDiv.style.maxHeight = '200px';
-            chatDiv.style.overflowY = 'auto';
-            chatDiv.style.marginTop = '12px';
-            document.getElementById('startChatForm').after(chatDiv);
-        }
-
-        chatDiv.innerHTML = j.messages.map(m => {
-            var cls = m.is_from_staff ? 'staff' : 'visitor';
-            return `<div class="${cls}"><strong>${m.sender_name}:</strong> ${m.message}</div>`;
-        }).join('');
-
-        // Auto scroll
-        chatDiv.scrollTop = chatDiv.scrollHeight;
-
-        // Clear thread if closed
-        if (j.thread_status && (j.thread_status === 'closed' || j.thread_status === 'archived')) {
-            try { parent.postMessage && parent.postMessage({hq_chat_action:'close_by_admin', thread_id: tid}, '*'); } catch(e){}
-            localStorage.removeItem('hq_thread_id');
-            document.cookie = 'hq_thread_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        }
-    } catch(e){ console.error(e); }
-}
-
-// Poll every 3 seconds
-setInterval(getMessages, 3000);
-
     </script>
 </body>
 
