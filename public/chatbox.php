@@ -72,190 +72,305 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 }
 
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Chat</title>
-    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --hq-yellow: #f5b904;
             --hq-yellow-2: #d99a00;
             --hq-dark: #171716;
+            --hq-muted: #f4f4f6;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
         body {
-            height: 100%;
             margin: 0;
-            background: transparent !important;
+            font-family: 'Inter', sans-serif;
+            background: transparent;
         }
 
-        body {
-            font-family: 'Raleway', system-ui;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .card {
-            width: 350px;
-            max-width: 94%;
+        .chat-card {
+            width: 360px;
+            max-width: 95%;
+            height: 500px;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .12);
-            overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
         }
 
-        .card-header {
-            padding: 18px 20px;
-            background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
+        .chat-header {
+            padding: 15px;
+            background: var(--hq-yellow);
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            gap: 6px;
+            background: var(--hq-muted);
+        }
+
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 75%;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            display: inline-block;
+        }
+
+        .chat-message.visitor {
+            margin-left: auto;
+            background: var(--hq-yellow-2);
             color: var(--hq-dark);
         }
 
-        .card-header h3 {
-            margin: 0;
-            font-size: 18px;
+        .chat-message.staff {
+            margin-right: auto;
+            background: var(--hq-muted);
+            color: var(--hq-dark);
         }
 
-        .card-body {
-            padding: 12px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #chatMessages {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 8px;
-            padding: 6px;
-        }
-
-        #chatMessages .visitor {
-            color: #111;
-            margin-bottom: 6px;
-            text-align: left;
-        }
-
-        #chatMessages .staff {
-            color: #d99a00;
-            margin-bottom: 6px;
-            text-align: right;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        input[type=text],
-        textarea {
-            padding: 10px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            width: 100%;
-            outline: none;
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        input[type=file] {
+        .chat-message img.chat-image {
+            max-width: 150px;
+            border-radius: 8px;
             margin-top: 4px;
         }
 
-        button {
-            padding: 10px;
-            border: none;
-            border-radius: 20px;
-            background: linear-gradient(90deg, var(--hq-yellow), var(--hq-yellow-2));
+        .chat-footer {
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-top: 1px solid #ddd;
+            position: relative;
+        }
+
+        .chat-footer input[type=text],
+        .chat-footer textarea {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 18px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+        }
+
+        .chat-footer button {
+            background: var(--hq-yellow);
             color: #111;
-            font-weight: 600;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 18px;
             cursor: pointer;
         }
 
-        .emoji-picker {
+        .btn-attachment,
+        .btn-emoji {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .emoji-panel {
+            position: absolute;
+            bottom: 50px;
+            left: 10px;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 6px;
+            border-radius: 8px;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            flex-wrap: wrap;
+            width: 280px;
+        }
+
+        .emoji-panel span {
+            cursor: pointer;
+            font-size: 20px;
+            margin: 2px;
+        }
+
+        .attachment-preview {
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            margin-bottom: 4px;
+            margin-top: 4px;
         }
 
-        .emoji-picker span {
+        .attachment-preview img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .options-container {
+            margin-top: 4px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .options-container button {
+            padding: 4px 8px;
+            border-radius: 12px;
+            border: none;
             cursor: pointer;
-            font-size: 18px;
-        }
-
-        @media (max-width:420px) {
-            .card {
-                width: 92%;
-            }
+            background: var(--hq-yellow-2);
+            color: var(--hq-dark);
         }
     </style>
 </head>
 
 <body>
-    <div class="card">
-        <div class="card-header">
-            <h3>Live Chat — Online</h3>
+    <div class="chat-card">
+        <div class="chat-header">Live Chat — Online</div>
+        <div class="chat-body" id="chatMessages"></div>
+        <div class="chat-footer">
+            <button type="button" class="btn-attachment" id="attachBtn">➕</button>
+            <input type="file" id="attachment" style="display:none;" multiple>
+            <button type="button" class="btn-emoji" id="emojiBtn">😊</button>
+            <input type="text" id="c_name" placeholder="Your Name">
+            <textarea id="c_message" rows="1" placeholder="Type a message..."></textarea>
+            <button id="sendBtn">Send</button>
+            <div class="attachment-preview" id="attachmentPreview"></div>
+            <div class="options-container">
+                <button data-option="one">One</button>
+                <button data-option="two">Two</button>
+                <button data-option="three">Three</button>
+            </div>
         </div>
-        <div class="card-body">
-            <div id="chatMessages"></div>
-            <form id="startChatForm">
-                <input type="text" id="c_name" name="name" placeholder="Your Name" required>
-                <textarea id="c_message" name="message" placeholder="Type a message..." required></textarea>
-                <input type="file" name="attachment" id="attachment">
-                <div class="emoji-picker" id="emojiPicker">
-                    <span>😀</span><span>😂</span><span>😍</span><span>👍</span><span>🙌</span><span>😎</span><span>🤔</span><span>🥳</span>
-                </div>
-                <button type="submit" id="startBtn">Send</button>
-            </form>
+        <div class="emoji-panel" id="emojiPanel">
+            <!-- emojis dynamically generated -->
         </div>
     </div>
 
     <script>
-        (function() {
-            const form = document.getElementById('startChatForm');
-            const startBtn = document.getElementById('startBtn');
-            const chatDiv = document.getElementById('chatMessages');
-            const emojiPicker = document.getElementById('emojiPicker');
+        // Emoji list (can be expanded)
+        const emojis = ["😀", "😂", "😍", "👍", "🙌", "😎", "🤔", "🥳", "😢", "😭", "😡", "🤯", "😴", "🤩", "😇", "🤪", "😐", "😶", "😏", "🤤"];
+        const emojiPanel = document.getElementById('emojiPanel');
+        emojis.forEach(e => {
+            const span = document.createElement('span');
+            span.textContent = e;
+            emojiPanel.appendChild(span);
+        });
 
-            function setThreadId(id) {
-                try {
-                    localStorage.setItem('hq_thread_id', id);
-                } catch (e) {}
-            }
+        (function() {
+            const sendBtn = document.getElementById('sendBtn');
+            const msgInput = document.getElementById('c_message');
+            const nameInput = document.getElementById('c_name');
+            const chatDiv = document.getElementById('chatMessages');
+            const attachmentInput = document.getElementById('attachment');
+            const attachBtn = document.getElementById('attachBtn');
+            const attachmentPreview = document.getElementById('attachmentPreview');
+            const emojiBtn = document.getElementById('emojiBtn');
 
             function getThreadId() {
                 return localStorage.getItem('hq_thread_id') || null;
             }
 
-            function appendMessage(sender, msg, is_staff = false) {
+            function setThreadId(id) {
+                localStorage.setItem('hq_thread_id', id);
+            }
+
+            function appendMessage(sender, msg, is_staff = false, attachments = []) {
                 const div = document.createElement('div');
-                div.className = is_staff ? 'staff' : 'visitor';
-                div.innerHTML = `<strong>${sender}:</strong> ${msg}`;
+                div.className = 'chat-message ' + (is_staff ? 'staff' : 'visitor');
+                div.innerHTML = '<strong>' + sender + ':</strong> ' + msg;
+                attachments.forEach(a => {
+                    const img = document.createElement('img');
+                    img.src = a;
+                    img.className = 'chat-image';
+                    div.appendChild(img);
+                });
                 chatDiv.appendChild(div);
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }
 
-            // Click emoji to insert
-            emojiPicker.querySelectorAll('span').forEach(e => {
+            // Emoji toggle
+            emojiBtn.addEventListener('click', () => {
+                emojiPanel.style.display = emojiPanel.style.display === 'none' ? 'flex' : 'none';
+            });
+            emojiPanel.querySelectorAll('span').forEach(e => {
                 e.addEventListener('click', () => {
-                    form.c_message.value += e.textContent;
+                    msgInput.value += e.textContent;
                 });
+            });
+
+            // Attachment handling with preview
+            attachBtn.addEventListener('click', () => {
+                attachmentInput.click();
+            });
+            attachmentInput.addEventListener('change', () => {
+                attachmentPreview.innerHTML = '';
+                Array.from(attachmentInput.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        attachmentPreview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Auto-resize textarea
+            msgInput.addEventListener('input', () => {
+                msgInput.style.height = 'auto';
+                msgInput.style.height = (msgInput.scrollHeight) + 'px';
+            });
+
+            async function sendMessage() {
+                const fd = new FormData();
+                fd.append('name', nameInput.value);
+                fd.append('message', msgInput.value);
+                const tid = getThreadId();
+                if (tid) fd.append('thread_id', tid);
+                Array.from(attachmentInput.files).forEach(f => fd.append('attachment', f));
+
+                try {
+                    const res = await fetch('?action=send_message', {
+                        method: 'POST',
+                        body: fd
+                    });
+                    const j = await res.json();
+                    if (j.status === 'ok') {
+                        setThreadId(j.thread_id);
+                        const attachedFiles = Array.from(attachmentInput.files).map(f => URL.createObjectURL(f));
+                        appendMessage(nameInput.value, msgInput.value, false, attachedFiles);
+                        msgInput.value = '';
+                        msgInput.style.height = 'auto';
+                        attachmentInput.value = '';
+                        attachmentPreview.innerHTML = '';
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            msgInput.addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
             });
 
             async function getMessages() {
@@ -263,7 +378,6 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 if (!tid) return;
                 try {
                     const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
-                    if (!res.ok) return;
                     const j = await res.json();
                     if (j.status !== 'ok') return;
                     chatDiv.innerHTML = '';
@@ -274,35 +388,14 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     console.error(e);
                 }
             }
-            setInterval(getMessages, 3000);
+            setInterval(getMessages, 2000);
 
-            form.addEventListener('submit', async e => {
-                e.preventDefault();
-                startBtn.disabled = true;
-                startBtn.textContent = 'Sending...';
-
-                const fd = new FormData(form);
-                const tid = getThreadId();
-                if (tid) fd.append('thread_id', tid);
-
-                try {
-                    const res = await fetch('?action=send_message', {
-                        method: 'POST',
-                        body: fd
-                    });
-                    const j = await res.json();
-                    if (j.status === 'ok') {
-                        setThreadId(j.thread_id);
-                        appendMessage(fd.get('name'), fd.get('message'), false);
-                        form.c_message.value = '';
-                    } else {
-                        alert('Error: ' + (j.message || 'Unknown'));
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
-                startBtn.disabled = false;
-                startBtn.textContent = 'Send';
+            // Option buttons
+            document.querySelectorAll('.options-container button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    msgInput.value += btn.dataset.option + ' ';
+                    msgInput.dispatchEvent(new Event('input'));
+                });
             });
         })();
     </script>
