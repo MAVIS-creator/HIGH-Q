@@ -28,6 +28,26 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Initialize variables
+$csrf = generateToken();
+$errors = [];
+$success = [];
+$q = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+// Fetch tutors with search filter if provided
+$query = "SELECT * FROM tutors";
+$params = [];
+if ($q) {
+    $query .= " WHERE name LIKE ? OR subjects LIKE ? OR qualifications LIKE ?";
+    $searchTerm = "%{$q}%";
+    $params = [$searchTerm, $searchTerm, $searchTerm];
+}
+$query .= " ORDER BY created_at DESC";
+
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
