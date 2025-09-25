@@ -216,7 +216,7 @@ try {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-      <form id="tutorForm" method="post">
+  <form id="tutorForm" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -249,8 +249,9 @@ try {
         </div>
 
         <div class="form-row">
-          <label>Image URL</label>
-          <input type="text" name="image_url" id="tImageUrl" placeholder="https://... or /uploads/tutors/abc.jpg">
+          <label>Photo</label>
+          <input type="file" name="image_file" id="tImageFile" accept="image/*">
+          <div class="image-preview" id="tImagePreview" style="margin-top:8px"></div>
         </div>
 
         <div class="form-actions">
