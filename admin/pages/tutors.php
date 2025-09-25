@@ -66,13 +66,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $nameSafe = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
         $dest = $uploadDir . $nameSafe;
         if (move_uploaded_file($f['tmp_name'], $dest)) {
+          // Resize image to max 1200x1200 to save space and ensure consistent display
+          list($w,$h) = @getimagesize($dest) ?: [0,0];
+          $max = 1200;
+          if ($w>0 && ($w > $max || $h > $max) && function_exists('imagecreatetruecolor')) {
+            $ratio = min($max/$w, $max/$h);
+            $nw = (int)round($w * $ratio);
+            $nh = (int)round($h * $ratio);
+            $dst = imagecreatetruecolor($nw, $nh);
+            $mime = mime_content_type($dest);
+            try {
+              if ($mime === 'image/jpeg') $src = imagecreatefromjpeg($dest);
+              elseif ($mime === 'image/png') $src = imagecreatefrompng($dest);
+              elseif ($mime === 'image/gif') $src = imagecreatefromgif($dest);
+              elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) $src = imagecreatefromwebp($dest);
+              else $src = null;
+              if ($src) {
+                // preserve PNG alpha
+                if ($mime === 'image/png') {
+                  imagealphablending($dst, false);
+                  imagesavealpha($dst, true);
+                }
+                imagecopyresampled($dst, $src, 0,0,0,0, $nw, $nh, $w, $h);
+                if ($mime === 'image/jpeg') imagejpeg($dst, $dest, 86);
+                elseif ($mime === 'image/png') imagepng($dst, $dest);
+                elseif ($mime === 'image/gif') imagegif($dst, $dest);
+                elseif ($mime === 'image/webp' && function_exists('imagewebp')) imagewebp($dst, $dest);
+                imagedestroy($src);
+                imagedestroy($dst);
+              }
+            } catch (Throwable $e) {
+              // ignore resize failures, keep original
+            }
+          }
           $uploadedPath = 'uploads/tutors/' . $nameSafe;
         }
       }
     }
 
     if (empty($errors)) {
-      $photo = $uploadedPath ?: ($imageUrl ?: null);
+      // Build public URL for saved image if APP_URL is set (so admin subdomain can render images from public domain)
+      $publicBase = rtrim(getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? ''), '/');
+      if ($uploadedPath) {
+        $photo = $publicBase ? ($publicBase . '/' . $uploadedPath) : $uploadedPath;
+      } else {
+        // If user provided an image URL, use it as-is; otherwise null
+        $photo = $imageUrl ?: null;
+      }
 
       if ($action === 'create') {
         $stmt = $pdo->prepare("INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())");
