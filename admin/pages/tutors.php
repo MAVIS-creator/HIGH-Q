@@ -42,71 +42,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $subjects = json_encode($subs, JSON_UNESCAPED_UNICODE);
         $email   = trim($_POST['email'] ?? '');
         $phone   = trim($_POST['phone'] ?? '');
-        $imageUrl = trim($_POST['image_url'] ?? '');
+    $imageUrl = trim($_POST['image_url'] ?? '');
 
-        // simple slugify helper (ASCII-safe)
-        $slugify = function($text){
-          $text = mb_strtolower(trim($text));
-          // replace non letter or digits by -
-          $text = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $text);
-          $text = trim($text, '-');
-          return $text ?: substr(sha1($text.time()),0,8);
-        };
-
-        if ($name && empty($slug)) {
-          $slug = $slugify($name);
+    // Handle uploaded image (prefer file upload over URL)
+    $uploadedPath = null;
+    if (!empty($_FILES['image_file']) && ($_FILES['image_file']['error'] ?? 1) === UPLOAD_ERR_OK) {
+      $f = $_FILES['image_file'];
+      $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
+      if (in_array($f['type'], $allowed, true)) {
+        if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+        $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
+        $nameSafe = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+        $dest = $uploadDir . $nameSafe;
+        if (move_uploaded_file($f['tmp_name'], $dest)) {
+          // web path relative to project public
+          $uploadedPath = 'uploads/tutors/' . $nameSafe;
         }
-
-        // Validation: require name only — allow partial saves so admin can complete later
-        if (!$name) {
-          $errors[] = "Name is required.";
-        }
-
+      }
+    }
         if (empty($errors)) {
+            // Use uploaded file if present, otherwise fallback to image URL
+            $photo = $uploadedPath ?: ($imageUrl ?: null);
+
             if ($action === 'create') {
-                $stmt = $pdo->prepare("
-                  INSERT INTO tutors
-                    (name, slug, photo, short_bio, long_bio, qualifications,
-                     subjects, contact_email, phone, rating, is_featured)
-                  VALUES (?,?,?,?,?,?,?,?,?,?,?)
-                ");
+                $stmt = $pdo->prepare("INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())");
                 $stmt->execute([
-                  $name, $slug,
-                  $photoPath ?: null,
-                  $short, $long, $quals,
-                  $subjects, $email, $phone,
-                  $rating, $feat
+                  $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                  $subjects, $email ?: null, $phone ?: null, null, 0
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
                 $success[] = "Tutor '{$name}' created.";
-            }
-
-            if ($action === 'edit' && $id) {
-                // If no new upload, keep existing
-                if ($action === 'create') {
-                    // store image URL directly into photo
-                    $photo = $imageUrl ?: null;
-                    $stmt = $pdo->prepare(
-                      "INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
-                    );
-                    $stmt->execute([
-                      $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                      $subjects, $email ?: null, $phone ?: null, null, 0
-                    ]);
-                    logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
-                    $success[] = "Tutor '{$name}' created.";
+            } elseif ($action === 'edit' && $id) {
+                // keep existing photo if none uploaded/provided
+                if (empty($photo)) {
+                    $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
+                    $old->execute([$id]);
+                    $photo = $old->fetchColumn();
                 }
-
-                if ($action === 'edit' && $id) {
-                    // keep existing photo if image_url not provided
-                    if (empty($imageUrl)) {
-                        $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
-                        $old->execute([$id]);
-                        $photo = $old->fetchColumn();
-                    } else {
-                        $photo = $imageUrl;
-                    }
-                    $stmt = $pdo->prepare(
+                $stmt = $pdo->prepare("UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?");
+                $stmt->execute([
+                  $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                  $subjects, $email ?: null, $phone ?: null, null, 0, $id
+                ]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
+                $success[] = "Tutor '{$name}' updated.";
+            } elseif ($action === 'delete' && $id) {
+                $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
+                $success[] = "Tutor deleted.";
+            }
+        }
+    }
+  }
+}
                       "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
                     );
                     $stmt->execute([
