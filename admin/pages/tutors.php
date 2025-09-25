@@ -340,9 +340,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         }
     }
 ?>
+<!DOCTYPE html>
+<html>
+<head>
   <title>Tutors Management — Admin</title>
   <link rel="stylesheet" href="../public/assets/css/admin.css">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <?= $pageCss ?>
+  <?= $pageJs ?>
 </head>
 <body>
   <?php include '../includes/header.php'; ?>
@@ -558,3 +563,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <?php include '../includes/footer.php'; ?>
 </body>
 </html>
+<?php } // close the main PHP block ?>
