@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
 require_once __DIR__ . '/../includes/db.php';
 // include public helper functions for logging
-require_once __DIR__ . '/../../public/config/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 // Claim thread (AJAX): handle XHR POSTs before any HTML header is output so we can return pure JSON
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
