@@ -211,10 +211,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <div class="program-body">
                 <h4>
                   <a href="programs.php?slug=<?= $slug ?>"><?= $title ?></a>
-                  <?php if ($highlight_badge !== ''): ?>
-                    <span class="program-badge"><?= htmlspecialchars($highlight_badge) ?></span>
-                  <?php endif; ?>
                 </h4>
+
+                <?php if (!empty($desc)): ?>
+                  <p class="program-summary"><?= htmlspecialchars($desc) ?></p>
+                <?php endif; ?>
 
                 <?php if (!empty($features_lines)): ?>
                   <ul class="program-features">
@@ -223,21 +224,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       <li><?= htmlspecialchars($li) ?></li>
                     <?php endforeach; ?>
                   </ul>
-                <?php else: ?>
-                  <p class="program-summary"><?= htmlspecialchars($summary) ?></p>
                 <?php endif; ?>
 
-                <?php if ($highlight_badge !== ''): ?>
-                  <div class="program-highlight"><i class='bx bx-star'></i> <?= htmlspecialchars($highlight_badge) ?></div>
-                <?php endif; ?>
               </div>
             </div>
 
             <div class="program-card-footer">
-              <?php if (!empty($p['duration'])): ?>
-                <span class="badge"><i class='bx bx-time'></i> <?= htmlspecialchars($p['duration']) ?></span>
-              <?php elseif (!empty($p['price']) && $p['price'] > 0): ?>
-                <span class="badge">₦<?= number_format($p['price'],0) ?></span>
+              <?php if ($highlight_badge !== ''): ?>
+                <div class="program-highlight"><span class="highlight-icon">✺</span> <?= htmlspecialchars($highlight_badge) ?></div>
               <?php else: ?>
                 <span class="badge">Learn More</span>
               <?php endif; ?>
