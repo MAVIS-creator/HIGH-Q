@@ -13,15 +13,17 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
 <style>
 .tutors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1.5rem;
     padding: 1rem;
 }
 .tutor-card {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
     position: relative;
 }
 .tutor-card .status {
@@ -33,71 +35,85 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
     font-size: 12px;
 }
 .tutor-card .status.active {
-    background: #ffd700;
+    background: #FFD700;
     color: #000;
 }
 .tutor-card .status.normal {
-    background: #e0e0e0;
+    background: #E8E8E8;
     color: #333;
 }
-.tutor-card .date {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    font-size: 12px;
-    color: #666;
-}
 .tutor-photo {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
 }
 .tutor-photo img {
     width: 100%;
     height: 100%;
+    border-radius: 10px;
     object-fit: cover;
 }
 .tutor-info {
-    padding: 1rem;
+    flex: 1;
+    min-width: 0;
 }
 .tutor-info h3 {
     margin: 0 0 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    color: #000;
 }
 .tutor-info .role {
     color: #666;
-    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
 }
 .tutor-info .subjects {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin: 0.5rem 0;
 }
 .tutor-info .subjects span {
-    background: #f0f0f0;
+    background: #F0F0F0;
+    color: #333;
     padding: 2px 8px;
     border-radius: 12px;
+    font-size: 0.85rem;
+}
+.tutor-experience {
+    color: #666;
     font-size: 0.9rem;
+    margin: 0.5rem 0;
 }
 .tutor-actions {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 .tutor-actions button {
-    padding: 5px 10px;
+    padding: 5px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 .tutor-actions .edit-btn {
-    background: #3085d6;
+    background: #2196F3;
     color: white;
 }
 .tutor-actions .delete-btn {
-    background: #d33;
+    background: #dc3545;
     color: white;
+}
+.date {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    color: #666;
 }
 </style>';
 $pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -338,7 +354,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             
             <div class="tutor-info">
               <h3><?= htmlspecialchars($t['name']) ?></h3>
-              <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
+              <div class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></div>
+              
               <div class="subjects">
                 <?php 
                 $subjects = json_decode($t['subjects'] ?? '[]', true);
@@ -352,6 +369,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 ?>
               </div>
               
+              <?php if (!empty($t['short_bio'])): ?>
+              <div class="tutor-experience"><?= htmlspecialchars($t['short_bio']) ?></div>
+              <?php endif; ?>
+              
               <div class="tutor-actions">
                 <button type="button" class="edit-btn" onclick="editTutor(<?= $t['id'] ?>)">
                   <i class="bx bx-edit"></i> Edit
@@ -362,9 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               </div>
             </div>
             
-            <span class="date">
-              Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
-            </span>
+            <span class="date">Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?></span>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
