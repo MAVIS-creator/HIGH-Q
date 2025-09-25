@@ -361,18 +361,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         }
     }
 ?>
+
+// Process form submissions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $errors[] = "Invalid CSRF token.";
+    } else {
+        $action = $_GET['action'];
+        $id = (int)($_GET['id'] ?? 0);
+        
+        // Handle form submission
+        // ... (your existing form processing code)
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tutors Management — Admin</title>
-  <link rel="stylesheet" href="../assets/css/admin.css">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <?= $pageCss ?>
-  <?= $pageJs ?>
+    <title>Tutors Management — Admin</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <?= $pageCss ?>
+    <?= $pageJs ?>
 </head>
 <body>
-<?php
   <?php include '../includes/header.php'; ?>
   <?php include '../includes/sidebar.php'; ?>
 
