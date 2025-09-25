@@ -133,3 +133,20 @@ include __DIR__ . '/includes/header.php';
 </nav>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
+<style>
+    .back-link {
+  color: var(--hq-gray);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--hq-yellow);
+  text-decoration: underline;
+}
+
+</style>
