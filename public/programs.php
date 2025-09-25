@@ -33,7 +33,7 @@
 							<span class="tag">Arts</span>
 						</div>
 						<p class="duration">Duration: 4-6 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+						<a href="program.php?slug=jamb-preparation" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 
@@ -50,7 +50,7 @@
 							<span class="tag">Practicals</span>
 						</div>
 						<p class="duration">Duration: 6-12 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+						<a href="program.php?slug=waec-preparation" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 
@@ -67,7 +67,7 @@
 							<span class="tag">Study Materials</span>
 						</div>
 						<p class="duration">Duration: 6-12 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+						<a href="program.php?slug=neco-preparation" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 
@@ -84,7 +84,7 @@
 							<span class="tag">Interview Prep</span>
 						</div>
 						<p class="duration">Duration: 2-4 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+						<a href="program.php?slug=post-utme" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 
@@ -101,7 +101,7 @@
 							<span class="tag">Subject Focus</span>
 						</div>
 						<p class="duration">Duration: Flexible</p>
-						<a href="#" class="btn-primary">Learn More</a>
+						<a href="program.php?slug=special-tutorials" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 
@@ -118,7 +118,7 @@
 							<span class="tag">Programming</span>
 						</div>
 						<p class="duration">Duration: 3-6 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+						<a href="program.php?slug=computer-training" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 
