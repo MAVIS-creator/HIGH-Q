@@ -1,12 +1,11 @@
 <?php
 // admin/pages/chat.php
-require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';      // Load DB connection first
+require_once __DIR__ . '/../includes/auth.php';    // Then auth
 require_once __DIR__ . '/../includes/csrf.php';
-requirePermission('chat');
-require_once __DIR__ . '/../includes/db.php';
-// include public helper functions for logging
 require_once __DIR__ . '/../includes/functions.php';
 
+requirePermission('chat');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
