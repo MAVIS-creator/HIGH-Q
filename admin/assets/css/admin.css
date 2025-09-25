@@ -1298,3 +1298,150 @@ input[type="checkbox"] {
 }
 
 /* footer spacing fix - removed forced left:0 to keep footer beside sidebar by default */
+
+/* Tutors cards (admin) */
+.admin-main .tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+:root {
+  /* keep the existing root variables, don't redefine colors here */
+}
+
+.admin-main .tutor-card {
+  background: #fff;
+  border: 1px solid var(--hq-gray);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.admin-main .tutor-card:hover {
+  transform: translateY(-3px);
+}
+
+.admin-main .tutor-card .status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.admin-main .tutor-card .status.active {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+.admin-main .tutor-card .status.normal {
+  background: var(--hq-gray);
+  color: #555;
+}
+
+.admin-main .tutor-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--hq-black);
+}
+
+.admin-main .tutor-info .role {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 2px 0 6px;
+}
+
+.admin-main .tutor-info .subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.admin-main .tutor-info .subjects span {
+  background: var(--hq-gray);
+  color: var(--hq-black);
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.admin-main .tutor-experience {
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.admin-main .tutor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.admin-main .tutor-actions button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+
+.admin-main .tutor-actions .edit-btn {
+  background: var(--hq-gray);
+  color: var(--hq-black);
+}
+
+.admin-main .tutor-actions .edit-btn:hover {
+  background: #e1e2e6;
+}
+
+.admin-main .tutor-actions .delete-btn {
+  background: var(--hq-red);
+  color: #fff;
+}
+
+.admin-main .tutor-actions .delete-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-main .date {
+  font-size: 0.75rem;
+  color: #888;
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+}
+
+.admin-main .tutor-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--hq-gray);
+}
+
+.admin-main .tutor-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
