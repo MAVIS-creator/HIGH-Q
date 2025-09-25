@@ -848,7 +848,7 @@ nav a.active::after { background: var(--hq-yellow); }
 .programs-grid small { display:block; color:var(--hq-gray); margin-top:6px; }
 .register-main .btn-primary { background:var(--hq-red); color:#fff; padding:12px 18px; border-radius:10px; font-weight:700; border:none; }
 .register-main .card { border:1px solid rgba(0,0,0,0.04); }
-.register-main .form-row { margin-bottom:14px; }
+.register-main .form-row { margin-bottom:14
 .register-main textarea { min-height:84px; padding:8px 10px; box-sizing:border-box; }
 .register-main .form-row { margin-bottom: 12px; }
 .register-main input[type="text"],
