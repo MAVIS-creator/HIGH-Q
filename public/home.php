@@ -210,7 +210,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
               <div class="program-body">
                 <h4>
-                  <a href="programs.php?slug=<?= $slug ?>"><?= $title style="text-decoration:none; color:var(--hq-black);" ?></a>
+                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
+  <?= $title ?>
+</a>
+
                 </h4>
 
                 <?php if (!empty($desc)): ?>
