@@ -58,7 +58,15 @@ $pageTitle = 'Chat Support';
 require_once __DIR__ . '/../includes/header.php';
 
 // Load threads for admin view
-$threads = $pdo->query('SELECT ct.*, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id ORDER BY ct.last_activity DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
+$threads = $pdo->query(
+  "SELECT ct.*, u.name as assigned_admin_name
+   FROM chat_threads ct
+   LEFT JOIN users u ON ct.assigned_admin_id = u.id
+   WHERE ct.status != 'closed'
+   ORDER BY ct.last_activity DESC
+   LIMIT 100"
+)->fetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 <div class="roles-page">
