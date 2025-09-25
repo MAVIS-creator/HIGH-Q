@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="tutors-grid">
       <?php if (!empty($tutors)): ?>
         <?php foreach($tutors as $t): ?>
-          <div class="tutor-card">
+          <div class="tutor-card" data-id="<?= $t['id'] ?>" data-name="<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>" data-title="<?= htmlspecialchars($t['qualifications'] ?? '', ENT_QUOTES) ?>" data-subjects="<?= htmlspecialchars(implode(', ', json_decode($t['subjects'] ?? '[]', true)), ENT_QUOTES) ?>" data-years="<?= htmlspecialchars($t['short_bio'] ?? '', ENT_QUOTES) ?>" data-bio="<?= htmlspecialchars($t['long_bio'] ?? '', ENT_QUOTES) ?>" data-image="<?= htmlspecialchars($t['photo'] ?? '', ENT_QUOTES) ?>" data-email="<?= htmlspecialchars($t['contact_email'] ?? '', ENT_QUOTES) ?>" data-phone="<?= htmlspecialchars($t['phone'] ?? '', ENT_QUOTES) ?>">
             <span class="status <?= $t['is_featured'] ? 'active' : 'normal' ?>">
               <?= $t['is_featured'] ? 'Active' : 'Normal' ?>
             </span>
@@ -426,7 +426,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   }
 
   function editTutor(id) {
-    window.location.href = `index.php?pages=tutors&action=edit&id=${id}&csrf_token=<?= $csrf ?>`;
+    // find the tutor card by ID
+    const card = document.querySelector(`.tutor-card[data-id='${id}']`);
+    if (!card) return;
+
+    // grab info from dataset
+    const name  = card.dataset.name || '';
+    const title = card.dataset.title || '';
+    const subs  = card.dataset.subjects || '';
+    const years = card.dataset.years || '';
+    const bio   = card.dataset.bio || '';
+    const image = card.dataset.image || '';
+
+    // open modal and fill values
+    document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
+    const form = document.getElementById('tutorForm');
+    form.action = `index.php?pages=tutors&action=edit&id=${id}`;
+    document.getElementById('tName').value = name;
+    document.getElementById('tTitle').value = title;
+    document.getElementById('tSubjects').value = subs;
+    document.getElementById('tYears').value = years;
+    document.getElementById('tBio').value = bio;
+    document.getElementById('tImageUrl').value = image;
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.getElementById('tutorModal').classList.add('open');
   }
   </script>
 </body>
