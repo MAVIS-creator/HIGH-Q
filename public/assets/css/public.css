@@ -8,6 +8,9 @@
   --hq-gray-dark: #171717;
   --hq-blue-white:  #575897;
   --hq-yellow-pale: #FFF6D9;
+  /* subtle rgba variants derived from --hq-black for borders/shadows */
+  --hq-black-04: rgba(23,23,22,0.04);
+  --hq-black-06: rgba(23,23,22,0.06);
 }
 
 /*
@@ -1423,14 +1426,14 @@ nav a.active::after { background: var(--hq-yellow); }
   background: var(--hq-white);
   border-radius: 12px;
   padding: 18px;
-  border: 1px solid rgba(23,23,22,0.04); /* subtle border based on --hq-black */
-  box-shadow: 0 10px 30px rgba(23,23,22,0.06);
+  border: 1px solid var(--hq-black-04); /* subtle border based on --hq-black */
+  box-shadow: 0 10px 30px var(--hq-black-06);
 }
 .program-card-inner { display:flex; gap:14px; align-items:flex-start }
 .program-body { flex:1 }
 .program-icon {
   width:48px; height:48px; min-width:48px; display:flex; align-items:center; justify-content:center;
-  border-radius:10px; background:var(--hq-yellow); color:var(--hq-black); box-shadow:0 6px 18px rgba(23,23,22,0.04);
+  border-radius:10px; background:var(--hq-yellow); color:var(--hq-black); box-shadow:0 6px 18px var(--hq-black-04);
 }
 .program-icon i { font-size:20px }
 .program-icon img { width:28px; height:28px; object-fit:contain }
@@ -1441,7 +1444,7 @@ nav a.active::after { background: var(--hq-yellow); }
 .program-features li:before { content: ''; position:absolute; left:0; top:10px; width:8px; height:8px; background:var(--hq-yellow); border-radius:999px }
 .program-summary { color:var(--hq-gray); margin:0 }
 .program-card-footer { margin-top:12px }
-.program-card-footer .badge { background:var(--hq-white); padding:6px 10px; border-radius:8px; font-weight:700; color:var(--hq-black); border:1px solid rgba(23,23,22,0.06) }
+.program-card-footer .badge { background:var(--hq-white); padding:6px 10px; border-radius:8px; font-weight:700; color:var(--hq-black); border:1px solid var(--hq-black-06) }
 
 .program-highlight { margin-top:12px; background:var(--hq-yellow-pale); padding:12px; border-radius:10px; color:var(--hq-black); display:flex; gap:10px; align-items:center; font-weight:700 }
 .program-highlight i { background:var(--hq-white); padding:6px; border-radius:8px; display:inline-flex }
