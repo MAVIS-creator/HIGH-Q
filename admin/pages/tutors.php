@@ -178,16 +178,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             class="btn-editTutor"
             data-id="<?= $t['id'] ?>"
             data-name="<?= htmlspecialchars($t['name']) ?>"
-            data-slug="<?= htmlspecialchars($t['slug']) ?>"
-            data-photo="<?= htmlspecialchars($t['photo']) ?>"
-            data-short="<?= htmlspecialchars($t['short_bio']) ?>"
-            data-long="<?= htmlspecialchars($t['long_bio']) ?>"
-            data-quals="<?= htmlspecialchars($t['qualifications']) ?>"
+            data-title="<?= htmlspecialchars($t['qualifications']) ?>"
+            data-image="<?= htmlspecialchars($t['photo']) ?>"
+            data-years="<?= htmlspecialchars($t['short_bio']) ?>"
+            data-bio="<?= htmlspecialchars($t['long_bio']) ?>"
             data-subjects="<?= htmlspecialchars(implode(', ', json_decode($t['subjects'] ?? '[]', true))) ?>"
             data-email="<?= htmlspecialchars($t['contact_email']) ?>"
             data-phone="<?= htmlspecialchars($t['phone']) ?>"
-            data-rating="<?= htmlspecialchars($t['rating']) ?>"
-            data-featured="<?= (int)$t['is_featured'] ?>"
           >
             <i class="bx bx-edit"></i> Edit
           </button>
