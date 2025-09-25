@@ -361,16 +361,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         }
     }
 ?>
+?>
 <!DOCTYPE html>
 <html>
 <head>
   <title>Tutors Management — Admin</title>
-  <link rel="stylesheet" href="../public/assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <?= $pageCss ?>
   <?= $pageJs ?>
 </head>
 <body>
+<?php
+  <?php include '../includes/header.php'; ?>
+  <?php include '../includes/sidebar.php'; ?>
+
   <?php include '../includes/header.php'; ?>
   <?php include '../includes/sidebar.php'; ?>
 
@@ -406,6 +411,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
           confirmButtonColor: '#d33'
         });
+        <?php endif; ?>
+      });
+    </script>
+    <?php endif; ?>
+
+    <?php if (!empty($success) || !empty($errors)): ?>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        <?php if (!empty($success)): ?>
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
+            confirmButtonColor: '#3085d6'
+          });
+        <?php endif; ?>
+        <?php if (!empty($errors)): ?>
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
+            confirmButtonColor: '#d33'
+          });
         <?php endif; ?>
       });
     </script>
