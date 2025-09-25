@@ -9,8 +9,115 @@ $pageSubtitle = 'Manage tutor profiles and listings';
 
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
-$pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<style>
+.tutors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+.tutor-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+}
+.tutor-card .status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.tutor-card .status.active {
+    background: #ffd700;
+    color: #000;
+}
+.tutor-card .status.normal {
+    background: #e0e0e0;
+    color: #333;
+}
+.tutor-card .date {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #666;
+}
+.tutor-photo {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+.tutor-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.tutor-info {
+    padding: 1rem;
+}
+.tutor-info h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+}
+.tutor-info .role {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+.tutor-info .subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.tutor-info .subjects span {
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+.tutor-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.tutor-actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.tutor-actions .edit-btn {
+    background: #3085d6;
+    color: white;
+}
+.tutor-actions .delete-btn {
+    background: #d33;
+    color: white;
+}
+</style>';
+$pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function deleteTutor(id, name) {
+    Swal.fire({
+        title: "Delete Tutor?",
+        text: `Are you sure you want to delete ${name}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `index.php?pages=tutors&action=delete&id=${id}&csrf_token=<?= $csrf ?>`;
+        }
+    });
+}
+</script>';
 
 // Only Admin & Sub-Admin
 requirePermission('tutors'); // where 'roles' matches the menu slug
@@ -202,16 +309,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="tutors-grid">
       <?php foreach($tutors as $t): ?>
       <div class="tutor-card">
+        <span class="status <?= $t['is_featured'] ? 'active' : 'normal' ?>">
+          <?= $t['is_featured'] ? 'Active' : 'Normal' ?>
+        </span>
+        
         <div class="tutor-photo">
-          <img src="../<?= htmlspecialchars($t['photo'] ?: 'assets/images/avatar-placeholder.png') ?>"
-               alt="<?= htmlspecialchars($t['name']) ?>">
+          <?php
+            $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '../../public/assets/images/avatar-placeholder.png';
+          ?>
+          <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
         </div>
+        
         <div class="tutor-info">
           <h3><?= htmlspecialchars($t['name']) ?></h3>
-          <p class="role"><?= htmlspecialchars($t['qualifications']) ?></p>
-          <p class="subjects">
-            <?= implode(', ', json_decode($t['subjects'] ?? '[]', true)) ?>
-          </p>
+          <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
+          <div class="subjects">
+            <?php foreach(json_decode($t['subjects'] ?? '[]', true) as $subject): ?>
+              <span><?= htmlspecialchars($subject) ?></span>
+            <?php endforeach; ?>
+          </div>
+          
+          <div class="tutor-actions">
+            <button onclick="window.location.href='index.php?pages=tutors&action=edit&id=<?= $t['id'] ?>'" class="edit-btn">
+              <i class="bx bx-edit"></i> Edit
+            </button>
+            <button onclick="deleteTutor(<?= $t['id'] ?>, '<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>')" class="delete-btn">
+              <i class="bx bx-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+        
+        <span class="date">
+          Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
+        </span>
+      </div>
+      <?php endforeach; ?>          </p>
           <div class="tutor-meta">
             <span class="status-badge <?= $t['is_featured'] ? 'status-active' : 'status-banned' ?>">
               <?= $t['is_featured'] ? 'Featured' : 'Normal' ?>
