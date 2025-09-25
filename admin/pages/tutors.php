@@ -198,15 +198,31 @@ try {
       <?php foreach($tutors as $t): ?>
       <div class="tutor-card">
         <div class="tutor-photo">
-          <img src="../<?= htmlspecialchars($t['photo'] ?: 'assets/images/avatar-placeholder.png') ?>"
-               alt="<?= htmlspecialchars($t['name']) ?>">
+          <?php
+            $photo = $t['photo'] ?? '';
+            // If stored photo is a full URL, use as-is; otherwise, try to build absolute URL from APP_URL
+            if ($photo && (strpos($photo, 'http://') === 0 || strpos($photo, 'https://') === 0)) {
+              $photoUrl = $photo;
+            } elseif ($photo) {
+              $base = rtrim(getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? ''), '/');
+              $photoUrl = $base ? ($base . '/' . ltrim($photo, '/')) : '../' . ltrim($photo, '/');
+            } else {
+              $photoUrl = '../assets/images/avatar-placeholder.png';
+            }
+          ?>
+          <img src="<?= htmlspecialchars($photoUrl) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
         </div>
         <div class="tutor-info">
           <h3><?= htmlspecialchars($t['name']) ?></h3>
           <p class="role"><?= htmlspecialchars($t['qualifications']) ?></p>
           <p class="subjects">
-            <?= implode(', ', json_decode($t['subjects'] ?? '[]', true)) ?>
+            <?php foreach(json_decode($t['subjects'] ?? '[]', true) as $sub): ?>
+              <span class="sub-pill"><?= htmlspecialchars($sub) ?></span>
+            <?php endforeach; ?>
           </p>
+          <?php if(!empty($t['short_bio'])): ?>
+            <p class="years"><?= htmlspecialchars($t['short_bio']) ?> years of experience</p>
+          <?php endif; ?>
           <div class="tutor-meta">
             <span class="status-badge <?= $t['is_featured'] ? 'status-active' : 'status-banned' ?>">
               <?= $t['is_featured'] ? 'Featured' : 'Normal' ?>
