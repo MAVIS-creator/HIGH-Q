@@ -95,25 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
   }
 }
-                      "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
-                    );
-                    $stmt->execute([
-                      $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                      $subjects, $email ?: null, $phone ?: null, null, 0, $id
-                    ]);
-                    logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
-                    $success[] = "Tutor '{$name}' updated.";
-                }
-
-        if ($action === 'delete' && $id) {
-          $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
-          logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
-          $success[] = "Tutor deleted.";
-        }
-      }
-    }
-  }
-}
 ?>
 <?php
 // Load tutors for listing (safe when there are none)
