@@ -167,7 +167,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <?php else: ?>
         <?php foreach ($programs as $p): ?>
           <?php
-            $title = htmlspecialchars($p['title']);<br>
+            $title = htmlspecialchars($p['title']);
             $slug = htmlspecialchars($p['slug']);
             $desc = trim($p['description'] ?? '');
             $icon = trim($p['icon'] ?? '');
