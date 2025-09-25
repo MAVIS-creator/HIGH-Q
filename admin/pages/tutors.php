@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           $slug = $slugify($name);
         }
 
-        // Validation: require name, title and subjects
-        if (!$name || !$title || empty($subs)) {
-          $errors[] = "Name, Title and Subjects are required.";
+        // Validation: require name only — allow partial saves so admin can complete later
+        if (!$name) {
+          $errors[] = "Name is required.";
         }
 
         if (empty($errors)) {
