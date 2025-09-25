@@ -113,9 +113,24 @@ function deleteTutor(id, name) {
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location.href = `index.php?pages=tutors&action=delete&id=${id}&csrf_token=<?= $csrf ?>`;
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = `index.php?pages=tutors&action=delete&id=${id}`;
+            
+            const csrfInput = document.createElement("input");
+            csrfInput.type = "hidden";
+            csrfInput.name = "csrf_token";
+            csrfInput.value = "<?= $csrf ?>";
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
         }
     });
+}
+
+function editTutor(id) {
+    window.location.href = `index.php?pages=tutors&action=edit&id=${id}&csrf_token=<?= $csrf ?>`;
 }
 </script>';
 
@@ -338,10 +353,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               </div>
               
               <div class="tutor-actions">
-                <button onclick="window.location.href='index.php?pages=tutors&action=edit&id=<?= $t['id'] ?>'" class="edit-btn">
+                <button type="button" class="edit-btn" onclick="editTutor(<?= $t['id'] ?>)">
                   <i class="bx bx-edit"></i> Edit
                 </button>
-                <button onclick="deleteTutor(<?= $t['id'] ?>, '<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>')" class="delete-btn">
+                <button type="button" class="delete-btn" onclick="deleteTutor(<?= $t['id'] ?>, '<?= htmlspecialchars(addslashes($t['name']), ENT_QUOTES) ?>')">
                   <i class="bx bx-trash"></i> Delete
                 </button>
               </div>
@@ -363,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-      <form id="tutorForm" method="post">
+      <form id="tutorForm" method="post" action="">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -412,12 +427,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
   <script>
   // Modal logic
-  const tutorModal    = document.getElementById('tutorModal');
-  const overlay       = document.getElementById('modalOverlay');
-  const closeBtn      = document.getElementById('tutorModalClose');
-  const newBtn        = document.getElementById('newTutorBtn');
-  const tutorForm     = document.getElementById('tutorForm');
-  const modalTitle    = document.getElementById('tutorModalTitle');
+  document.addEventListener('DOMContentLoaded', function() {
+    const tutorModal    = document.getElementById('tutorModal');
+    const overlay       = document.getElementById('modalOverlay');
+    const closeBtn      = document.getElementById('tutorModalClose');
+    const newBtn        = document.getElementById('newTutorBtn');
+    const tutorForm     = document.getElementById('tutorForm');
+    const modalTitle    = document.getElementById('tutorModalTitle');
 
   const fields = {
     name:   document.getElementById('tName'),
