@@ -16,7 +16,7 @@ $errors  = [];
 $success = [];
 
 // Ensure per-page CSS for courses modal if not already set
-$pageCss = '<link rel="stylesheet" href="/HIGH-Q/admin/assets/css/courses.css">';
+$pageCss = '<link rel="stylesheet" href="../assets/css/courses.css">';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
