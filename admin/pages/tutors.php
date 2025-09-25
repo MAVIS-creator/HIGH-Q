@@ -4,49 +4,8 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
-
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
-
-// Initialize variables
-$csrf = generateToken();
-$errors = [];
-$success = [];
-$q = isset($_GET['q']) ? trim($_GET['q']) : '';
-
-// Fetch tutors with search filter if provided
-$query = "SELECT * FROM tutors";
-$params = [];
-if ($q) {
-    $query .= " WHERE name LIKE ? OR subjects LIKE ? OR qualifications LIKE ?";
-    $searchTerm = "%{$q}%";
-    $params = [$searchTerm, $searchTerm, $searchTerm];
-}
-$query .= " ORDER BY created_at DESC";
-
-$stmt = $pdo->prepare($query);
-$stmt->execute($params);
-$tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Initialize variables
-$csrf = generateToken();
-$errors = [];
-$success = [];
-$q = isset($_GET['q']) ? trim($_GET['q']) : '';
-
-// Fetch tutors with search filter if provided
-$query = "SELECT * FROM tutors";
-$params = [];
-if ($q) {
-    $query .= " WHERE name LIKE ? OR subjects LIKE ? OR qualifications LIKE ?";
-    $searchTerm = "%{$q}%";
-    $params = [$searchTerm, $searchTerm, $searchTerm];
-}
-$query .= " ORDER BY created_at DESC";
-
-$stmt = $pdo->prepare($query);
-$stmt->execute($params);
-$tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
@@ -54,17 +13,15 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
 <style>
 .tutors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     padding: 1rem;
 }
 .tutor-card {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    padding: 1rem;
-    display: flex;
-    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
     position: relative;
 }
 .tutor-card .status {
@@ -76,85 +33,71 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
     font-size: 12px;
 }
 .tutor-card .status.active {
-    background: #FFD700;
+    background: #ffd700;
     color: #000;
 }
 .tutor-card .status.normal {
-    background: #E8E8E8;
+    background: #e0e0e0;
     color: #333;
 }
+.tutor-card .date {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #666;
+}
 .tutor-photo {
-    width: 80px;
-    height: 80px;
-    flex-shrink: 0;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
 }
 .tutor-photo img {
     width: 100%;
     height: 100%;
-    border-radius: 10px;
     object-fit: cover;
 }
 .tutor-info {
-    flex: 1;
-    min-width: 0;
+    padding: 1rem;
 }
 .tutor-info h3 {
     margin: 0 0 0.5rem;
-    font-size: 1.1rem;
-    color: #000;
+    font-size: 1.2rem;
 }
 .tutor-info .role {
     color: #666;
-    font-size: 0.9rem;
-    margin: 0.25rem 0;
+    margin-bottom: 0.5rem;
 }
 .tutor-info .subjects {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin: 0.5rem 0;
+    margin-bottom: 1rem;
 }
 .tutor-info .subjects span {
-    background: #F0F0F0;
-    color: #333;
+    background: #f0f0f0;
     padding: 2px 8px;
     border-radius: 12px;
-    font-size: 0.85rem;
-}
-.tutor-experience {
-    color: #666;
     font-size: 0.9rem;
-    margin: 0.5rem 0;
 }
 .tutor-actions {
     display: flex;
     gap: 0.5rem;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
 }
 .tutor-actions button {
-    padding: 5px 15px;
+    padding: 5px 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
 }
 .tutor-actions .edit-btn {
-    background: #2196F3;
+    background: #3085d6;
     color: white;
 }
 .tutor-actions .delete-btn {
-    background: #dc3545;
+    background: #d33;
     color: white;
-}
-.date {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    font-size: 0.8rem;
-    color: #666;
 }
 </style>';
 $pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -228,8 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $action = $_GET['action'];
         $id     = (int)($_GET['id'] ?? 0);
 
-        // Gather & sanitize inputs
+        // Gather & sanitize (only the fields we keep in the modal)
         $name    = trim($_POST['name'] ?? '');
+        // auto-generate slug from name when not provided
+        $slug    = '';
         $title   = trim($_POST['title'] ?? ''); // maps to qualifications
         $years   = trim($_POST['years_experience'] ?? ''); // maps to short_bio
         $long    = trim($_POST['bio'] ?? ''); // long_bio
@@ -286,24 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
 
             if ($action === 'edit' && $id) {
-                // keep existing photo if image_url not provided
-                if (empty($imageUrl)) {
-                    $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
-                    $old->execute([$id]);
-                    $photo = $old->fetchColumn();
-                } else {
-                    $photo = $imageUrl;
-                }
-                $stmt = $pdo->prepare(
-                  "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
-                );
-                $stmt->execute([
-                  $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                  $subjects, $email ?: null, $phone ?: null, null, 0, $id
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
-                $success[] = "Tutor '{$name}' updated.";
-            }
+                // If no new upload, keep existing
+                if ($action === 'create') {
                     // store image URL directly into photo
                     $photo = $imageUrl ?: null;
                     $stmt = $pdo->prepare(
@@ -317,97 +246,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $success[] = "Tutor '{$name}' created.";
                 }
 
-        // Slugify the name
-        $slugify = function($text) {
-            $text = mb_strtolower(trim($text));
-            $text = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $text);
-            return trim($text, '-') ?: substr(sha1($text.time()), 0, 8);
-        };
-        $slug = $slugify($name);
-
-        // Validation
-        if (!$name) {
-            $errors[] = "Name is required.";
-        }
-
-        // Check for duplicate slug
-        if (empty($errors)) {
-            $checkSlug = $pdo->prepare("SELECT id FROM tutors WHERE slug = ? AND id != ?");
-            $checkSlug->execute([$slug, $id ?? 0]);
-            if ($checkSlug->fetch()) {
-                $errors[] = "A tutor with this name already exists. Please use a different name.";
-            }
-        }
-
-        if (empty($errors)) {
-            if ($action === 'create') {
-                $photo = $imageUrl ?: null;
-                $stmt = $pdo->prepare(
-                    "INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications,
-                                       subjects, contact_email, phone, rating, is_featured)
-                     VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-                $stmt->execute([
-                    $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                    $subjects, $email ?: null, $phone ?: null, null, 0
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
-                $success[] = "Tutor '{$name}' created.";
-            }
-            elseif ($action === 'edit' && $id) {
-                $photo = empty($imageUrl) ? null : $imageUrl;
-                if (!$photo) {
-                    $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
-                    $old->execute([$id]);
-                    $photo = $old->fetchColumn();
+                if ($action === 'edit' && $id) {
+                    // keep existing photo if image_url not provided
+                    if (empty($imageUrl)) {
+                        $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
+                        $old->execute([$id]);
+                        $photo = $old->fetchColumn();
+                    } else {
+                        $photo = $imageUrl;
+                    }
+                    $stmt = $pdo->prepare(
+                      "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
+                    );
+                    $stmt->execute([
+                      $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                      $subjects, $email ?: null, $phone ?: null, null, 0, $id
+                    ]);
+                    logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
+                    $success[] = "Tutor '{$name}' updated.";
                 }
-                
-                $stmt = $pdo->prepare(
-                    "UPDATE tutors 
-                     SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?,
-                         subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW()
-                     WHERE id=?");
-                $stmt->execute([
-                    $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                    $subjects, $email ?: null, $phone ?: null, null, 0, $id
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
-                $success[] = "Tutor '{$name}' updated.";
-            }
-            elseif ($action === 'delete' && $id) {
-                $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
-                $success[] = "Tutor deleted.";
-            }
-        }
-    }
-?>
 
-// Process form submissions
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-        $errors[] = "Invalid CSRF token.";
-    } else {
-        $action = $_GET['action'];
-        $id = (int)($_GET['id'] ?? 0);
-        
-        // Handle form submission
-        // ... (your existing form processing code)
+        if ($action === 'delete' && $id) {
+          $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
+          logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
+          $success[] = "Tutor deleted.";
+        }
+      }
     }
+  }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tutors Management — Admin</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <?= $pageCss ?>
-    <?= $pageJs ?>
+  <title>Tutors Management — Admin</title>
+  <link rel="stylesheet" href="../public/assets/css/admin.css">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-  <?php include '../includes/header.php'; ?>
-  <?php include '../includes/sidebar.php'; ?>
-
   <?php include '../includes/header.php'; ?>
   <?php include '../includes/sidebar.php'; ?>
 
@@ -448,29 +321,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     </script>
     <?php endif; ?>
 
-    <?php if (!empty($success) || !empty($errors)): ?>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        <?php if (!empty($success)): ?>
-          Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
-            confirmButtonColor: '#3085d6'
-          });
-        <?php endif; ?>
-        <?php if (!empty($errors)): ?>
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
-            confirmButtonColor: '#d33'
-          });
-        <?php endif; ?>
-      });
-    </script>
-    <?php endif; ?>
-
     <div class="tutors-grid">
       <?php if (!empty($tutors)): ?>
         <?php foreach($tutors as $t): ?>
@@ -488,8 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             
             <div class="tutor-info">
               <h3><?= htmlspecialchars($t['name']) ?></h3>
-              <div class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></div>
-              
+              <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
               <div class="subjects">
                 <?php 
                 $subjects = json_decode($t['subjects'] ?? '[]', true);
@@ -503,10 +352,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 ?>
               </div>
               
-              <?php if (!empty($t['short_bio'])): ?>
-              <div class="tutor-experience"><?= htmlspecialchars($t['short_bio']) ?></div>
-              <?php endif; ?>
-              
               <div class="tutor-actions">
                 <button type="button" class="edit-btn" onclick="editTutor(<?= $t['id'] ?>)">
                   <i class="bx bx-edit"></i> Edit
@@ -517,14 +362,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               </div>
             </div>
             
-            <span class="date">Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?></span>
+            <span class="date">
+              Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
+            </span>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
         <p>No tutors found.</p>
       <?php endif; ?>
     </div>
-  </div> <!-- end container -->
+  </div>
 
   <!-- Tutor Modal (single instance) -->
   <div class="modal" id="tutorModal">
@@ -641,6 +488,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     });
   });
   </script>
-  <?php include '../includes/footer.php'; ?>
 </body>
 </html>
