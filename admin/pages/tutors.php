@@ -355,37 +355,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <?php else: ?>
         <p>No tutors found.</p>
       <?php endif; ?>
-    </div>          </p>
-          <div class="tutor-meta">
-            <span class="status-badge <?= $t['is_featured'] ? 'status-active' : 'status-banned' ?>">
-              <?= $t['is_featured'] ? 'Featured' : 'Normal' ?>
-            </span>
-            <span class="date"><?= date('d/m/Y', strtotime($t['created_at'])) ?></span>
-          </div>
-          <button
-            class="btn-editTutor"
-            data-id="<?= $t['id'] ?>"
-            data-name="<?= htmlspecialchars($t['name']) ?>"
-            data-title="<?= htmlspecialchars($t['qualifications']) ?>"
-            data-image="<?= htmlspecialchars($t['photo']) ?>"
-            data-years="<?= htmlspecialchars($t['short_bio']) ?>"
-            data-bio="<?= htmlspecialchars($t['long_bio']) ?>"
-            data-subjects="<?= htmlspecialchars(implode(', ', json_decode($t['subjects'] ?? '[]', true))) ?>"
-            data-email="<?= htmlspecialchars($t['contact_email']) ?>"
-            data-phone="<?= htmlspecialchars($t['phone']) ?>"
-          >
-            <i class="bx bx-edit"></i> Edit
-          </button>
-          <form method="post" action="index.php?pages=tutors&action=delete&id=<?= $t['id'] ?>"
-                style="display:inline">
-            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-            <button type="submit" class="btn-banish">
-              <i class="bx bx-trash"></i>
-            </button>
-          </form>
-        </div>
-      </div>
-      <?php endforeach; ?>
     </div>
   </div>
 
