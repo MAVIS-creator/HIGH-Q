@@ -7,6 +7,11 @@ require_once '../includes/csrf.php';
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
 
+// Add SweetAlert2 assets
+$pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
+$pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+
 // Only Admin & Sub-Admin
 requirePermission('tutors'); // where 'roles' matches the menu slug
 
@@ -160,30 +165,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       </div>
     </div>
 
-    <?php if(!empty($success)): ?>
+    <?php if (!empty($success) || !empty($errors)): ?>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        <?php if (!empty($success)): ?>
         Swal.fire({
           icon: 'success',
           title: 'Success',
           html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
           confirmButtonColor: '#3085d6'
         });
-      });
-    </script>
-    <?php endif; ?>
-    <?php if(!empty($errors)): ?>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
+        <?php endif; ?>
+        <?php if (!empty($errors)): ?>
         Swal.fire({
           icon: 'error',
           title: 'Error',
           html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
           confirmButtonColor: '#d33'
         });
+        <?php endif; ?>
       });
     </script>
-    <?php endif; ?>
     <?php endif; ?>
 
     <div class="tutors-grid">
