@@ -295,8 +295,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             <input type="text" name="name" id="tName" required>
           </div>
           <div>
-            <label>Title *</label>
-            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher" required>
+            <label>Title</label>
+            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher">
           </div>
         </div>
 
@@ -304,8 +304,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         <div class="form-row split-2">
           <div>
-            <label>Subjects (comma-separated) *</label>
-            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry" required>
+            <label>Subjects (comma-separated)</label>
+            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry">
           </div>
           <div>
             <label>Years of Experience</label>
@@ -324,6 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         </div>
 
         <div class="form-actions">
+          <button type="button" id="tutorCancel" class="btn-cancel">Cancel</button>
           <button type="submit" class="btn-approve">Save Tutor</button>
         </div>
       </form>
