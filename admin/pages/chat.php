@@ -84,44 +84,6 @@ $threads = $pdo->query('SELECT ct.*, u.name as assigned_admin_name FROM chat_thr
     </ul>
   </div>
 </div>
-
-<script>
-function claim(id){ if(!confirm('Take this thread?')) return; var fd=new FormData(); fd.append('action','claim'); fd.append('thread_id',id); fd.append('_csrf','<?= generateToken('chat_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{ var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok') location.reload(); else alert('Taken'); }; xhr.send(fd); }
-
-// Polling: use lightweight JSON API every 5 seconds
-async function pollThreads(){
-  try{
-    const res = await fetch('/HIGH-Q/admin/api/threads.php');
-    if(!res.ok) return;
-    const j = await res.json();
-    if(!j.threads) return;
-    const ul = document.getElementById('threadList');
-    if(!ul) return;
-    // Rebuild list
-    ul.innerHTML = '';
-    j.threads.forEach(t=>{
-      const li = document.createElement('li'); li.dataset.thread = t.id; li.style.padding='12px'; li.style.borderBottom='1px solid #eee'; li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center';
-      const left = document.createElement('div'); left.innerHTML = `<strong>#${t.id}</strong> ${t.visitor_name}<div style="font-size:0.9rem;color:#666">Last: ${t.last_activity} Assigned: ${t.assigned_admin_id? t.assigned_admin_id : '—'}</div>`;
-      const right = document.createElement('div');
-      if(!t.assigned_admin_id){ const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Claim'; btn.onclick = ()=>{ claim(t.id); }; right.appendChild(btn); }
-      else { const a = document.createElement('a'); a.className='btn'; a.href = `?pages=chat_view&thread_id=${t.id}`; a.textContent='Open'; right.appendChild(a); }
-      li.appendChild(left); li.appendChild(right); ul.appendChild(li);
-    });
-  }catch(e){ /* ignore */ }
-}
-pollThreads(); setInterval(pollThreads, 5000);
-// Replace inline claim function with a friendlier AJAX flow
-</script>
-<script>
-function claim(id){ if(!confirm('Take this thread?')) return; var fd=new FormData(); fd.append('action','claim'); fd.append('thread_id',id); fd.append('_csrf','<?= generateToken('chat_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{ var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ // update button to Open
-      const li = document.querySelector('li[data-thread="'+id+'"]'); if(li){ const right = li.querySelector('div:last-child'); right.innerHTML = '<a class="btn" href="?pages=chat_view&thread_id='+id+'">Open</a>'; }
-    } else if(r.status==='taken'){
-      alert('This thread was taken by ' + (r.assigned_admin_name || 'another admin'));
-      // update UI to show Open link
-      const li = document.querySelector('li[data-thread="'+id+'"]'); if(li){ const right = li.querySelector('div:last-child'); right.innerHTML = '<a class="btn" href="?pages=chat_view&thread_id='+id+'">Open</a>'; }
-    } else alert('Taken'); };
-  xhr.send(fd); }
-</script>
 <!-- Include SweetAlert2 once -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
