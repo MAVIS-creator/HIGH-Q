@@ -247,8 +247,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
 
             if ($action === 'edit' && $id) {
-                // If no new upload, keep existing
-                if (!empty($imageUrl)) {
+                // keep existing photo if image_url not provided
+                if (empty($imageUrl)) {
+                    $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
+                    $old->execute([$id]);
+                    $photo = $old->fetchColumn();
+                } else {
+                    $photo = $imageUrl;
+                }
+                $stmt = $pdo->prepare(
+                  "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
+                );
+                $stmt->execute([
+                  $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                  $subjects, $email ?: null, $phone ?: null, null, 0, $id
+                ]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
+                $success[] = "Tutor '{$name}' updated.";
+            }
                     // store image URL directly into photo
                     $photo = $imageUrl ?: null;
                     $stmt = $pdo->prepare(
@@ -390,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         <p>No tutors found.</p>
       <?php endif; ?>
     </div>
-  </div>
+  </div> <!-- end container -->
 
   <!-- Tutor Modal (single instance) -->
   <div class="modal" id="tutorModal">
