@@ -187,10 +187,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $action = $_GET['action'];
         $id     = (int)($_GET['id'] ?? 0);
 
-        // Gather & sanitize (only the fields we keep in the modal)
+        // Gather & sanitize inputs
         $name    = trim($_POST['name'] ?? '');
-        // auto-generate slug from name when not provided
-        $slug    = '';
         $title   = trim($_POST['title'] ?? ''); // maps to qualifications
         $years   = trim($_POST['years_experience'] ?? ''); // maps to short_bio
         $long    = trim($_POST['bio'] ?? ''); // long_bio
@@ -278,35 +276,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $success[] = "Tutor '{$name}' created.";
                 }
 
-                if ($action === 'edit' && $id) {
-                    // keep existing photo if image_url not provided
-                    if (empty($imageUrl)) {
-                        $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
-                        $old->execute([$id]);
-                        $photo = $old->fetchColumn();
-                    } else {
-                        $photo = $imageUrl;
-                    }
-                    $stmt = $pdo->prepare(
-                      "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
-                    );
-                    $stmt->execute([
-                      $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                      $subjects, $email ?: null, $phone ?: null, null, 0, $id
-                    ]);
-                    logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
-                    $success[] = "Tutor '{$name}' updated.";
-                }
+        // Slugify the name
+        $slugify = function($text) {
+            $text = mb_strtolower(trim($text));
+            $text = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $text);
+            return trim($text, '-') ?: substr(sha1($text.time()), 0, 8);
+        };
+        $slug = $slugify($name);
 
-        if ($action === 'delete' && $id) {
-          $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
-          logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
-          $success[] = "Tutor deleted.";
+        // Validation
+        if (!$name) {
+            $errors[] = "Name is required.";
         }
-      }
+
+        // Check for duplicate slug
+        if (empty($errors)) {
+            $checkSlug = $pdo->prepare("SELECT id FROM tutors WHERE slug = ? AND id != ?");
+            $checkSlug->execute([$slug, $id ?? 0]);
+            if ($checkSlug->fetch()) {
+                $errors[] = "A tutor with this name already exists. Please use a different name.";
+            }
+        }
+
+        if (empty($errors)) {
+            if ($action === 'create') {
+                $photo = $imageUrl ?: null;
+                $stmt = $pdo->prepare(
+                    "INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications,
+                                       subjects, contact_email, phone, rating, is_featured)
+                     VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+                $stmt->execute([
+                    $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                    $subjects, $email ?: null, $phone ?: null, null, 0
+                ]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
+                $success[] = "Tutor '{$name}' created.";
+            }
+            elseif ($action === 'edit' && $id) {
+                $photo = empty($imageUrl) ? null : $imageUrl;
+                if (!$photo) {
+                    $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
+                    $old->execute([$id]);
+                    $photo = $old->fetchColumn();
+                }
+                
+                $stmt = $pdo->prepare(
+                    "UPDATE tutors 
+                     SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?,
+                         subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW()
+                     WHERE id=?");
+                $stmt->execute([
+                    $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                    $subjects, $email ?: null, $phone ?: null, null, 0, $id
+                ]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
+                $success[] = "Tutor '{$name}' updated.";
+            }
+            elseif ($action === 'delete' && $id) {
+                $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
+                $success[] = "Tutor deleted.";
+            }
+        }
     }
-  }
-}
 ?>
   <title>Tutors Management — Admin</title>
   <link rel="stylesheet" href="../public/assets/css/admin.css">
