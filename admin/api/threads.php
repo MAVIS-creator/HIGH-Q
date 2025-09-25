@@ -20,7 +20,6 @@ $threads = $pdo->prepare(
    ORDER BY last_activity DESC
    LIMIT ?'
 );
-
 $threads->bindValue(1, $limit, PDO::PARAM_INT); $threads->execute();
 $rows = $threads->fetchAll(PDO::FETCH_ASSOC);
 
