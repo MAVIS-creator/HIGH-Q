@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
             if ($action === 'edit' && $id) {
                 // If no new upload, keep existing
-                if ($action === 'create') {
+                if (!empty($imageUrl)) {
                     // store image URL directly into photo
                     $photo = $imageUrl ?: null;
                     $stmt = $pdo->prepare(
@@ -391,7 +391,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <?php endif; ?>
     </div>
   </div>
-  </div> <!-- Close container -->
 
   <!-- Tutor Modal (single instance) -->
   <div class="modal" id="tutorModal">
@@ -508,12 +507,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     });
   });
   </script>
-<?php
-  // Include the footer
-  include '../includes/footer.php';
-?>
+  <?php include '../includes/footer.php'; ?>
 </body>
 </html>
-<?php
-// Close any remaining PHP blocks
-}
