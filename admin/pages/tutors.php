@@ -624,4 +624,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <?php include '../includes/footer.php'; ?>
 </body>
 </html>
-<?php } // close the main PHP block ?>
