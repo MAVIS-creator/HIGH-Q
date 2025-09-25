@@ -99,7 +99,9 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
     background: #d33;
     color: white;
 }
-</style>
+
+// Only Admin & Sub-Admin
+</style>';
 
 // Only Admin & Sub-Admin
 requirePermission('tutors'); // where 'roles' matches the menu slug
@@ -454,6 +456,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       });
     });
   });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+  function deleteTutor(id, name) {
+    Swal.fire({
+      title: "Delete Tutor?",
+      text: "Are you sure you want to delete " + name + "?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = `index.php?pages=tutors&action=delete&id=${id}`;
+
+        const csrfInput = document.createElement("input");
+        csrfInput.type = "hidden";
+        csrfInput.name = "csrf_token";
+        csrfInput.value = "<?= $csrf ?>";
+        form.appendChild(csrfInput);
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+    });
+  }
+
+  function editTutor(id) {
+    window.location.href = `index.php?pages=tutors&action=edit&id=${id}&csrf_token=<?= $csrf ?>`;
+  }
   </script>
 </body>
 </html>
