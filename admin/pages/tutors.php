@@ -225,16 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           </div>
         </div>
 
-        <div class="form-row split-2">
-          <div>
-            <label>Email</label>
-            <input type="email" name="email" id="tEmail">
-          </div>
-          <div>
-            <label>Phone</label>
-            <input type="text" name="phone" id="tPhone">
-          </div>
-        </div>
+        <!-- email & phone removed to keep modal minimal; can be edited later -->
 
         <div class="form-row split-2">
           <div>
@@ -279,8 +270,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   const fields = {
     name:   document.getElementById('tName'),
     title:  document.getElementById('tTitle'),
-    email:  document.getElementById('tEmail'),
-    phone:  document.getElementById('tPhone'),
     subs:   document.getElementById('tSubjects'),
     years:  document.getElementById('tYears'),
     bio:    document.getElementById('tBio'),
@@ -295,8 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       tutorForm.action = `index.php?pages=tutors&action=edit&id=${data.id}`;
       fields.name.value  = data.name || '';
       fields.title.value = data.title || '';
-      fields.email.value = data.email || '';
-      fields.phone.value = data.phone || '';
+  // email/phone removed from modal; keep them server-side untouched
       fields.subs.value  = data.subjects || '';
       fields.years.value = data.years || '';
       fields.bio.value   = data.bio || '';
@@ -327,9 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         image:     btn.dataset.image,
         years:     btn.dataset.years,
         bio:       btn.dataset.bio,
-        subjects:  btn.dataset.subjects,
-        email:     btn.dataset.email,
-        phone:     btn.dataset.phone
+        subjects:  btn.dataset.subjects
       });
     });
   });
