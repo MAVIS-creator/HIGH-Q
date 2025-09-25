@@ -7,6 +7,9 @@ require_once __DIR__ . '/../includes/db.php';
 // include public helper functions for logging
 require_once __DIR__ . '/../includes/functions.php';
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // Claim thread (AJAX): handle XHR POSTs before any HTML header is output so we can return pure JSON
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
   $token = $_POST['_csrf'] ?? '';
