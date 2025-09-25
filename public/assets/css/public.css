@@ -2101,7 +2101,15 @@ nav a.active::after { background: var(--hq-yellow); }
   display: inline-block;
   font-weight: 700;
 }
+m-features { list-style:none; padding:0; margin:8px 0 0 0 }
+.program-features li { margin:8px 0; padding-left:18px; position:relative; color:#333 }
+.program-features li:before { content: ''; position:absolute; left:0; top:10px; width:8px; height:8px; background:var(--hq-yellow); border-radius:999px }
+.program-summary { color:#444; margin:0 }
+.program-card-footer { margin-top:12px }
+.program-card-footer .badge { background:#f6f6f6; padding:6px 10px; border-radius:8px; font-weight:700 }
 
+.program-highlight { margin-top:12px; background:#fff3cf; padding:12px; border-radius:10px; color:#6a4b00; display:flex; gap:10px; align-items:center; font-weight:700 }
+.program-highlight i { background:#fff; padding:6px; border-radius:8px; display:inline-flex }
 @media (max-width: 1100px) {
   .programs-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -2128,12 +2136,4 @@ nav a.active::after { background: var(--hq-yellow); }
 .program-icon img { width:28px; height:28px; object-fit:contain }
 .program-body h4 { display:flex; align-items:center; gap:10px; margin:0 0 8px 0 }
 .program-badge { display:block; background:#fff3cf; color:#6a4b00; padding:8px 12px; border-radius:10px; font-weight:700; margin-top:10px }
-.program-features { list-style:none; padding:0; margin:8px 0 0 0 }
-.program-features li { margin:8px 0; padding-left:18px; position:relative; color:#333 }
-.program-features li:before { content: ''; position:absolute; left:0; top:10px; width:8px; height:8px; background:var(--hq-yellow); border-radius:999px }
-.program-summary { color:#444; margin:0 }
-.program-card-footer { margin-top:12px }
-.program-card-footer .badge { background:#f6f6f6; padding:6px 10px; border-radius:8px; font-weight:700 }
-
-.program-highlight { margin-top:12px; background:#fff3cf; padding:12px; border-radius:10px; color:#6a4b00; display:flex; gap:10px; align-items:center; font-weight:700 }
-.program-highlight i { background:#fff; padding:6px; border-radius:8px; display:inline-flex }
+.progra
