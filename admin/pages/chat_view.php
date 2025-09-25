@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
 require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../../public/config/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $threadId = intval($_GET['thread_id'] ?? 0);
 if (!$threadId) { header('Location: ?pages=chat'); exit; }
@@ -22,6 +22,8 @@ $messages = $pdo->prepare('SELECT * FROM chat_messages WHERE thread_id = ? ORDER
 
 $pageTitle = 'Chat Thread #' . $threadId;
 require_once __DIR__ . '/../includes/header.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 ?>
 <div class="roles-page">
