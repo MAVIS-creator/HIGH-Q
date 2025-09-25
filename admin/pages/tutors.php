@@ -353,6 +353,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     image:  document.getElementById('tImageUrl')
   };
 
+  // Cancel button inside modal
+  const tutorCancel = document.getElementById('tutorCancel');
+  if (tutorCancel) tutorCancel.addEventListener('click', closeModal);
+
   function openModal(mode, data={}) {
     overlay.classList.add('open');
     tutorModal.classList.add('open');
