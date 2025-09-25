@@ -127,6 +127,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   }
 }
 ?>
+<?php
+// Load tutors for listing (safe when there are none)
+$q = trim($_GET['q'] ?? '');
+try {
+  if ($q !== '') {
+    $stmt = $pdo->prepare("SELECT * FROM tutors WHERE name LIKE ? OR qualifications LIKE ? ORDER BY created_at DESC");
+    $like = "%{$q}%";
+    $stmt->execute([$like, $like]);
+  } else {
+    $stmt = $pdo->query("SELECT * FROM tutors ORDER BY created_at DESC");
+  }
+  $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) {
+  $tutors = [];
+  $errors[] = 'Could not load tutors: ' . $e->getMessage();
+}
+?>
   <title>Tutors Management — Admin</title>
   <link rel="stylesheet" href="../public/assets/css/admin.css">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
