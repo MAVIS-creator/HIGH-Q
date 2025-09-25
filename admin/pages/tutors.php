@@ -205,52 +205,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <div class="modal" id="tutorModal">
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
-      <h3 id="tutorModalTitle">Add Tutor</h3>
-      <form id="tutorForm" method="post" enctype="multipart/form-data">
+      <h3 id="tutorModalTitle">Add New Tutor</h3>
+      <form id="tutorForm" method="post">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
-        <div class="form-row">
-          <label>Name</label>
-          <input type="text" name="name" id="tName" required>
+        <div class="form-row split-2">
+          <div>
+            <label>Full Name *</label>
+            <input type="text" name="name" id="tName" required>
+          </div>
+          <div>
+            <label>Title *</label>
+            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher" required>
+          </div>
         </div>
-        <div class="form-row">
-          <label>Slug</label>
-          <input type="text" name="slug" id="tSlug" required>
+
+        <div class="form-row split-2">
+          <div>
+            <label>Email</label>
+            <input type="email" name="email" id="tEmail">
+          </div>
+          <div>
+            <label>Phone</label>
+            <input type="text" name="phone" id="tPhone">
+          </div>
         </div>
-        <div class="form-row">
-          <label>Photo Upload</label>
-          <input type="file" name="photo" id="tPhoto" accept="image/*">
+
+        <div class="form-row split-2">
+          <div>
+            <label>Subjects (comma-separated) *</label>
+            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry" required>
+          </div>
+          <div>
+            <label>Years of Experience</label>
+            <input type="text" name="years_experience" id="tYears">
+          </div>
         </div>
+
         <div class="form-row">
-          <label>Short Bio</label>
-          <textarea name="short_bio" id="tShort" rows="2"></textarea>
+          <label>Bio</label>
+          <textarea name="bio" id="tBio" rows="4"></textarea>
         </div>
+
         <div class="form-row">
-          <label>Long Bio</label>
-          <textarea name="long_bio" id="tLong" rows="4"></textarea>
-        </div>
-        <div class="form-row">
-          <label>Qualifications</label>
-          <textarea name="qualifications" id="tQuals" rows="2"></textarea>
-        </div>
-        <div class="form-row">
-          <label>Subjects (comma-separated)</label>
-          <input type="text" name="subjects" id="tSubjects">
-        </div>
-        <div class="form-row">
-          <label>Contact Email</label>
-          <input type="email" name="contact_email" id="tEmail">
-        </div>
-        <div class="form-row">
-          <label>Phone</label>
-          <input type="text" name="phone" id="tPhone">
-        </div>
-        <div class="form-row">
-          <label>Rating (0–5)</label>
-          <input type="number" name="rating" id="tRating" min="0" max="5" step="0.01">
-        </div>
-        <div class="form-row">
-          <label><input type="checkbox" name="is_featured" id="tFeatured"> Featured</label>
+          <label>Image URL</label>
+          <input type="text" name="image_url" id="tImageUrl" placeholder="https://... or /uploads/tutors/abc.jpg">
         </div>
 
         <div class="form-actions">
