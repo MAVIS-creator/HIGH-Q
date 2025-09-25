@@ -62,6 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           $errors[] = "Name is required.";
         }
 
+        // Check for duplicate slug
+        if ($action === 'create' || ($action === 'edit' && $id)) {
+            $checkSlug = $pdo->prepare("SELECT id FROM tutors WHERE slug = ? AND id != ?");
+            $checkSlug->execute([$slug, $id ?? 0]);
+            if ($checkSlug->fetch()) {
+                $errors[] = "A tutor with the URL '{$slug}' already exists. Please use a different name.";
+            }
+        }
+
         if (empty($errors)) {
             if ($action === 'create') {
                 $stmt = $pdo->prepare("
