@@ -1306,9 +1306,7 @@ input[type="checkbox"] {
   gap: 1rem;
 }
 
-:root {
-  /* keep the existing root variables, don't redefine colors here */
-}
+
 
 .admin-main .tutor-card {
   background: #fff;
