@@ -117,11 +117,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $success[] = "Tutor '{$name}' updated.";
                 }
 
-                if ($action === 'delete' && $id) {
-                    $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
-                    logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
-                    $success[] = "Tutor deleted.";
-                }
+        if ($action === 'delete' && $id) {
+          $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
+          logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
+          $success[] = "Tutor deleted.";
+        }
+      }
+    }
+  }
+}
+?>
   <title>Tutors Management — Admin</title>
   <link rel="stylesheet" href="../public/assets/css/admin.css">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
@@ -272,17 +277,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   const modalTitle    = document.getElementById('tutorModalTitle');
 
   const fields = {
-    name:     document.getElementById('tName'),
-    slug:     document.getElementById('tSlug'),
-    photo:    document.getElementById('tPhoto'),
-    short:    document.getElementById('tShort'),
-    long:     document.getElementById('tLong'),
-    quals:    document.getElementById('tQuals'),
-    subs:     document.getElementById('tSubjects'),
-    email:    document.getElementById('tEmail'),
-    phone:    document.getElementById('tPhone'),
-    rating:   document.getElementById('tRating'),
-    featured: document.getElementById('tFeatured'),
+    name:   document.getElementById('tName'),
+    title:  document.getElementById('tTitle'),
+    email:  document.getElementById('tEmail'),
+    phone:  document.getElementById('tPhone'),
+    subs:   document.getElementById('tSubjects'),
+    years:  document.getElementById('tYears'),
+    bio:    document.getElementById('tBio'),
+    image:  document.getElementById('tImageUrl')
   };
 
   function openModal(mode, data={}) {
@@ -291,20 +293,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     if (mode === 'edit') {
       modalTitle.textContent = 'Edit Tutor';
       tutorForm.action = `index.php?pages=tutors&action=edit&id=${data.id}`;
-      Object.keys(fields).forEach(key => {
-        if (key === 'featured') {
-          fields[key].checked = data.featured == 1;
-        } else if (key !== 'photo') {
-          fields[key].value = data[key] || '';
-        }
-      });
+      fields.name.value  = data.name || '';
+      fields.title.value = data.title || '';
+      fields.email.value = data.email || '';
+      fields.phone.value = data.phone || '';
+      fields.subs.value  = data.subjects || '';
+      fields.years.value = data.years || '';
+      fields.bio.value   = data.bio || '';
+      fields.image.value = data.image || '';
     } else {
       modalTitle.textContent = 'Add Tutor';
-  tutorForm.action = 'index.php?pages=tutors&action=create';
-      Object.values(fields).forEach(f => {
-        if (f.type === 'checkbox') f.checked = false;
-        else f.value = '';
-      });
+      tutorForm.action = 'index.php?pages=tutors&action=create';
+      Object.values(fields).forEach(f => f.value = '');
     }
   }
 
@@ -323,15 +323,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       openModal('edit', {
         id:        btn.dataset.id,
         name:      btn.dataset.name,
-        slug:      btn.dataset.slug,
-        short:     btn.dataset.short,
-        long:      btn.dataset.long,
-        quals:     btn.dataset.quals,
+        title:     btn.dataset.title,
+        image:     btn.dataset.image,
+        years:     btn.dataset.years,
+        bio:       btn.dataset.bio,
         subjects:  btn.dataset.subjects,
         email:     btn.dataset.email,
-        phone:     btn.dataset.phone,
-        rating:    btn.dataset.rating,
-        featured:  btn.dataset.featured
+        phone:     btn.dataset.phone
       });
     });
   });
