@@ -52,6 +52,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     };
     if ($name && empty($slug)) $slug = $slugify($name);
 
+    // Ensure slug is unique (append -2, -3... if needed)
+    $ensureUniqueSlug = function($pdo, $baseSlug, $excludeId = null) {
+      $slug = $baseSlug;
+      $i = 1;
+      while (true) {
+        if ($excludeId) {
+          $stmt = $pdo->prepare('SELECT COUNT(*) FROM tutors WHERE slug = ? AND id <> ?');
+          $stmt->execute([$slug, $excludeId]);
+        } else {
+          $stmt = $pdo->prepare('SELECT COUNT(*) FROM tutors WHERE slug = ?');
+          $stmt->execute([$slug]);
+        }
+        $cnt = (int)$stmt->fetchColumn();
+        if ($cnt === 0) return $slug;
+        $i++;
+        $slug = $baseSlug . '-' . $i;
+      }
+    };
+    $slug = $ensureUniqueSlug($pdo, $slug, ($action==='edit' && $id ? $id : null));
+
     // Minimal validation: name only
     if (!$name) $errors[] = 'Name is required.';
 
