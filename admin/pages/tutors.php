@@ -237,8 +237,8 @@ try {
             <input type="text" name="name" id="tName" required>
           </div>
           <div>
-            <label>Title *</label>
-            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher" required>
+            <label>Title</label>
+            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher">
           </div>
         </div>
 
@@ -246,8 +246,8 @@ try {
 
         <div class="form-row split-2">
           <div>
-            <label>Subjects (comma-separated) *</label>
-            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry" required>
+            <label>Subjects (comma-separated)</label>
+            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry">
           </div>
           <div>
             <label>Years of Experience</label>
