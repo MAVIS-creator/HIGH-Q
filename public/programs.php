@@ -32,8 +32,17 @@
 							<span class="tag">Sciences</span>
 							<span class="tag">Arts</span>
 						</div>
-						<p class="duration">Duration: 4-6 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+												<p class="duration">Duration: 4-6 months</p>
+												<div class="learn-more-wrap">
+													<ul class="learn-more">
+														<li><a href="program.php?slug=jamb-preparation#overview">What this program covers</a></li>
+														<li><a href="program.php?slug=jamb-preparation#curriculum">Curriculum / Modules</a></li>
+														<li><a href="program.php?slug=jamb-preparation#who">Who it's for</a></li>
+														<li><a href="program.php?slug=jamb-preparation#fees">Duration &amp; Fees</a></li>
+														<li><a href="register.php?ref=jamb-preparation">How to register</a></li>
+													</ul>
+													<a href="program.php?slug=jamb-preparation" class="btn-primary">More details</a>
+												</div>
 					</div>
 				</article>
 
@@ -49,8 +58,17 @@
 							<span class="tag">Electives</span>
 							<span class="tag">Practicals</span>
 						</div>
-						<p class="duration">Duration: 6-12 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+												<p class="duration">Duration: 6-12 months</p>
+												<div class="learn-more-wrap">
+													<ul class="learn-more">
+														<li><a href="program.php?slug=waec-preparation#overview">What this program covers</a></li>
+														<li><a href="program.php?slug=waec-preparation#curriculum">Curriculum / Modules</a></li>
+														<li><a href="program.php?slug=waec-preparation#who">Who it's for</a></li>
+														<li><a href="program.php?slug=waec-preparation#fees">Duration &amp; Fees</a></li>
+														<li><a href="register.php?ref=waec-preparation">How to register</a></li>
+													</ul>
+													<a href="program.php?slug=waec-preparation" class="btn-primary">More details</a>
+												</div>
 					</div>
 				</article>
 
@@ -66,8 +84,17 @@
 							<span class="tag">Mock Exams</span>
 							<span class="tag">Study Materials</span>
 						</div>
-						<p class="duration">Duration: 6-12 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+												<p class="duration">Duration: 6-12 months</p>
+												<div class="learn-more-wrap">
+													<ul class="learn-more">
+														<li><a href="program.php?slug=neco-preparation#overview">What this program covers</a></li>
+														<li><a href="program.php?slug=neco-preparation#curriculum">Curriculum / Modules</a></li>
+														<li><a href="program.php?slug=neco-preparation#who">Who it's for</a></li>
+														<li><a href="program.php?slug=neco-preparation#fees">Duration &amp; Fees</a></li>
+														<li><a href="register.php?ref=neco-preparation">How to register</a></li>
+													</ul>
+													<a href="program.php?slug=neco-preparation" class="btn-primary">More details</a>
+												</div>
 					</div>
 				</article>
 
@@ -83,8 +110,17 @@
 							<span class="tag">Practice Tests</span>
 							<span class="tag">Interview Prep</span>
 						</div>
-						<p class="duration">Duration: 2-4 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+												<p class="duration">Duration: 2-4 months</p>
+												<div class="learn-more-wrap">
+													<ul class="learn-more">
+														<li><a href="program.php?slug=post-utme#overview">What this program covers</a></li>
+														<li><a href="program.php?slug=post-utme#curriculum">Curriculum / Modules</a></li>
+														<li><a href="program.php?slug=post-utme#who">Who it's for</a></li>
+														<li><a href="program.php?slug=post-utme#fees">Duration &amp; Fees</a></li>
+														<li><a href="register.php?ref=post-utme">How to register</a></li>
+													</ul>
+													<a href="program.php?slug=post-utme" class="btn-primary">More details</a>
+												</div>
 					</div>
 				</article>
 
@@ -100,8 +136,17 @@
 							<span class="tag">Flexible Schedule</span>
 							<span class="tag">Subject Focus</span>
 						</div>
-						<p class="duration">Duration: Flexible</p>
-						<a href="#" class="btn-primary">Learn More</a>
+												<p class="duration">Duration: Flexible</p>
+												<div class="learn-more-wrap">
+													<ul class="learn-more">
+														<li><a href="program.php?slug=special-tutorials#overview">What this program covers</a></li>
+														<li><a href="program.php?slug=special-tutorials#curriculum">Curriculum / Modules</a></li>
+														<li><a href="program.php?slug=special-tutorials#who">Who it's for</a></li>
+														<li><a href="program.php?slug=special-tutorials#fees">Duration &amp; Fees</a></li>
+														<li><a href="register.php?ref=special-tutorials">How to register</a></li>
+													</ul>
+													<a href="program.php?slug=special-tutorials" class="btn-primary">More details</a>
+												</div>
 					</div>
 				</article>
 
@@ -117,8 +162,17 @@
 							<span class="tag">Internet Skills</span>
 							<span class="tag">Programming</span>
 						</div>
-						<p class="duration">Duration: 3-6 months</p>
-						<a href="#" class="btn-primary">Learn More</a>
+												<p class="duration">Duration: 3-6 months</p>
+												<div class="learn-more-wrap">
+													<ul class="learn-more">
+														<li><a href="program.php?slug=computer-training#overview">What this program covers</a></li>
+														<li><a href="program.php?slug=computer-training#curriculum">Curriculum / Modules</a></li>
+														<li><a href="program.php?slug=computer-training#who">Who it's for</a></li>
+														<li><a href="program.php?slug=computer-training#fees">Duration &amp; Fees</a></li>
+														<li><a href="register.php?ref=computer-training">How to register</a></li>
+													</ul>
+													<a href="program.php?slug=computer-training" class="btn-primary">More details</a>
+												</div>
 					</div>
 				</article>
 
