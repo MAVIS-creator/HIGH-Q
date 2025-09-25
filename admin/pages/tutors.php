@@ -14,8 +14,10 @@ $csrf     = generateToken();
 $errors   = [];
 $success  = [];
 
-// Per-page CSS
-$pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">';
+// Per-page CSS and JS
+$pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
+$pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
 
 // Directory for photo uploads
 $uploadDir = __DIR__ . '/../../public/uploads/tutors/';
@@ -158,15 +160,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       </div>
     </div>
 
-    <?php if($success): ?>
-      <div class="alert success">
-        <?php foreach($success as $msg) echo "<p>{$msg}</p>"; ?>
-      </div>
+    <?php if(!empty($success)): ?>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
+          confirmButtonColor: '#3085d6'
+        });
+      });
+    </script>
     <?php endif; ?>
-    <?php if($errors): ?>
-      <div class="alert error">
-        <?php foreach($errors as $err) echo "<p>{$err}</p>"; ?>
-      </div>
+    <?php if(!empty($errors)): ?>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
+          confirmButtonColor: '#d33'
+        });
+      });
+    </script>
+    <?php endif; ?>
     <?php endif; ?>
 
     <div class="tutors-grid">
