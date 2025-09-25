@@ -31,7 +31,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
-        At High Q Solid Academy, we are committed to making our students excel academically and mentally. 
+        At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
       <div class="hero-ctas">
@@ -39,9 +39,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <a href="programs.php" class="btn-ghost">See Our Programs</a>
       </div>
       <div class="hero-stats">
-        <div><strong>6+</strong><div>Years Experience</div></div>
-        <div><strong>1000+</strong><div>Students Trained</div></div>
-        <div><strong>292</strong><div>Highest JAMB Score</div></div>
+        <div><strong>6+</strong>
+          <div>Years Experience</div>
+        </div>
+        <div><strong>1000+</strong>
+          <div>Students Trained</div>
+        </div>
+        <div><strong>292</strong>
+          <div>Highest JAMB Score</div>
+        </div>
       </div>
     </div>
 
@@ -167,52 +173,52 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <?php else: ?>
         <?php foreach ($programs as $p): ?>
           <?php
-            $title = htmlspecialchars($p['title']);
-            $slug = htmlspecialchars($p['slug']);
-            $desc = trim($p['description'] ?? '');
-            $icon = trim($p['icon'] ?? '');
-            $features_list = trim($p['features_list'] ?? '');
-            $highlight_badge = trim($p['highlight_badge'] ?? '');
+          $title = htmlspecialchars($p['title']);
+          $slug = htmlspecialchars($p['slug']);
+          $desc = trim($p['description'] ?? '');
+          $icon = trim($p['icon'] ?? '');
+          $features_list = trim($p['features_list'] ?? '');
+          $highlight_badge = trim($p['highlight_badge'] ?? '');
 
-            // If description contains multiple lines, treat each line as a bullet
-            $lines = preg_split('/\r?\n/', $desc);
-            $hasList = count($lines) > 1;
+          // If description contains multiple lines, treat each line as a bullet
+          $lines = preg_split('/\r?\n/', $desc);
+          $hasList = count($lines) > 1;
 
-            // prefer features_list from normalized table
-            $features_lines = $features_list !== '' ? preg_split('/\r?\n/', $features_list) : ($hasList ? $lines : []);
+          // prefer features_list from normalized table
+          $features_lines = $features_list !== '' ? preg_split('/\r?\n/', $features_list) : ($hasList ? $lines : []);
 
-            // fallback short summary
-            $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc,0,217).'...' : $desc) : null;
+          // fallback short summary
+          $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
           <article class="program-card">
             <div class="program-card-inner">
               <div class="program-icon">
                 <?php
-                  // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
-                  if ($icon !== '') {
-                    if (strpos($icon, 'bx') !== false) {
-                      echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
-                    } else {
-                      $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                      if (is_readable($iconPath)) {
-                        echo "<img src=\"assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
-                      } else {
-                        // fallback default icon
-                        echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                      }
-                    }
+                // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
+                if ($icon !== '') {
+                  if (strpos($icon, 'bx') !== false) {
+                    echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
                   } else {
-                    echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                    $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
+                    if (is_readable($iconPath)) {
+                      echo "<img src=\"assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+                    } else {
+                      // fallback default icon
+                      echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                    }
                   }
+                } else {
+                  echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                }
                 ?>
               </div>
 
               <div class="program-body">
                 <h4>
                   <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
-  <?= $title ?>
-</a>
+                    <?= $title ?>
+                  </a>
 
                 </h4>
 
@@ -222,8 +228,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
                 <?php if (!empty($features_lines)): ?>
                   <ul class="program-features">
-                    <?php foreach (array_slice($features_lines,0,5) as $line): ?>
-                      <?php $li = trim($line); if ($li==='') continue; ?>
+                    <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
+                      <?php $li = trim($line);
+                      if ($li === '') continue; ?>
                       <li><?= htmlspecialchars($li) ?></li>
                     <?php endforeach; ?>
                   </ul>
@@ -293,7 +300,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
             <?php endif; ?>
             <div class="news-body">
               <h4><a href="post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
-              <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? ''))>180?substr($post['excerpt'],0,177).'...':($post['excerpt']??''))) ?></p>
+              <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? '')) > 180 ? substr($post['excerpt'], 0, 177) . '...' : ($post['excerpt'] ?? ''))) ?></p>
               <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time></div>
             </div>
           </article>
@@ -305,5 +312,3 @@ if (isset($pdo) && $pdo instanceof PDO) {
     <?php endif; ?>
   </div>
 </section>
-
-

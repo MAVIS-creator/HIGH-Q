@@ -2030,5 +2030,17 @@ nav a.active::after { background: var(--hq-yellow); }
     grid-template-columns: 1fr;
   }
 }
+.program-title-link {
+  text-decoration: none;
+  color: var(--hq-black);
+  font-weight: 800;
+  transition: all 0.25s ease-in-out;
+}
+
+.program-title-link:hover {
+  color: var(--hq-yellow);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
 /* Duplicate program styles removed to avoid conflicts; consolidated rules are defined earlier */
