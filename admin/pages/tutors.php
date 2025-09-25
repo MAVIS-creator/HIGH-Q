@@ -7,7 +7,7 @@ require_once '../includes/csrf.php';
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
 
-// Add SweetAlert2 assets
+// Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
 $pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
@@ -15,14 +15,25 @@ $pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
 // Only Admin & Sub-Admin
 requirePermission('tutors'); // where 'roles' matches the menu slug
 
-$csrf     = generateToken();
-$errors   = [];
-$success  = [];
+// Initialize variables
+$csrf = generateToken();
+$errors = [];
+$success = [];
+$q = isset($_GET['q']) ? trim($_GET['q']) : '';
 
-// Per-page CSS and JS
-$pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
-$pageJs = '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+// Fetch tutors with search filter if provided
+$query = "SELECT * FROM tutors";
+$params = [];
+if ($q) {
+    $query .= " WHERE name LIKE ? OR subjects LIKE ? OR qualifications LIKE ?";
+    $searchTerm = "%{$q}%";
+    $params = [$searchTerm, $searchTerm, $searchTerm];
+}
+$query .= " ORDER BY created_at DESC";
+
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Directory for photo uploads
 $uploadDir = __DIR__ . '/../../public/uploads/tutors/';
