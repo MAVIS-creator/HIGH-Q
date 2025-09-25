@@ -283,6 +283,53 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             checkThreadStatus(); setInterval(checkThreadStatus, 15000);
 
         })();
+        async function getMessages() {
+    try {
+        var tid = null;
+        try { tid = localStorage.getItem('hq_thread_id'); } catch(e){}
+
+        if (!tid) {
+            var m = document.cookie.match(/(?:^|; )hq_thread_id=([^;]+)/);
+            if (m) tid = decodeURIComponent(m[1]);
+        }
+        if (!tid) return;
+
+        var res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
+        if (!res.ok) return;
+        var j = await res.json();
+        if (j.status !== 'ok') return;
+
+        // Display messages in a simple chat window
+        var chatDiv = document.getElementById('chatMessages');
+        if (!chatDiv) {
+            chatDiv = document.createElement('div');
+            chatDiv.id = 'chatMessages';
+            chatDiv.style.maxHeight = '200px';
+            chatDiv.style.overflowY = 'auto';
+            chatDiv.style.marginTop = '12px';
+            document.getElementById('startChatForm').after(chatDiv);
+        }
+
+        chatDiv.innerHTML = j.messages.map(m => {
+            var cls = m.is_from_staff ? 'staff' : 'visitor';
+            return `<div class="${cls}"><strong>${m.sender_name}:</strong> ${m.message}</div>`;
+        }).join('');
+
+        // Auto scroll
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+
+        // Clear thread if closed
+        if (j.thread_status && (j.thread_status === 'closed' || j.thread_status === 'archived')) {
+            try { parent.postMessage && parent.postMessage({hq_chat_action:'close_by_admin', thread_id: tid}, '*'); } catch(e){}
+            localStorage.removeItem('hq_thread_id');
+            document.cookie = 'hq_thread_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+    } catch(e){ console.error(e); }
+}
+
+// Poll every 3 seconds
+setInterval(getMessages, 3000);
+
     </script>
 </body>
 
