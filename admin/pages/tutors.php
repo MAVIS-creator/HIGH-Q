@@ -307,43 +307,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <?php endif; ?>
 
     <div class="tutors-grid">
-      <?php foreach($tutors as $t): ?>
-      <div class="tutor-card">
-        <span class="status <?= $t['is_featured'] ? 'active' : 'normal' ?>">
-          <?= $t['is_featured'] ? 'Active' : 'Normal' ?>
-        </span>
-        
-        <div class="tutor-photo">
-          <?php
-            $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '../../public/assets/images/avatar-placeholder.png';
-          ?>
-          <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
-        </div>
-        
-        <div class="tutor-info">
-          <h3><?= htmlspecialchars($t['name']) ?></h3>
-          <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
-          <div class="subjects">
-            <?php foreach(json_decode($t['subjects'] ?? '[]', true) as $subject): ?>
-              <span><?= htmlspecialchars($subject) ?></span>
-            <?php endforeach; ?>
+      <?php if (!empty($tutors)): ?>
+        <?php foreach($tutors as $t): ?>
+          <div class="tutor-card">
+            <span class="status <?= $t['is_featured'] ? 'active' : 'normal' ?>">
+              <?= $t['is_featured'] ? 'Active' : 'Normal' ?>
+            </span>
+            
+            <div class="tutor-photo">
+              <?php
+                $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '../../public/assets/images/avatar-placeholder.png';
+              ?>
+              <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+            </div>
+            
+            <div class="tutor-info">
+              <h3><?= htmlspecialchars($t['name']) ?></h3>
+              <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
+              <div class="subjects">
+                <?php 
+                $subjects = json_decode($t['subjects'] ?? '[]', true);
+                if (!empty($subjects)): 
+                  foreach($subjects as $subject): 
+                ?>
+                  <span><?= htmlspecialchars($subject) ?></span>
+                <?php 
+                  endforeach;
+                endif;
+                ?>
+              </div>
+              
+              <div class="tutor-actions">
+                <button onclick="window.location.href='index.php?pages=tutors&action=edit&id=<?= $t['id'] ?>'" class="edit-btn">
+                  <i class="bx bx-edit"></i> Edit
+                </button>
+                <button onclick="deleteTutor(<?= $t['id'] ?>, '<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>')" class="delete-btn">
+                  <i class="bx bx-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+            
+            <span class="date">
+              Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
+            </span>
           </div>
-          
-          <div class="tutor-actions">
-            <button onclick="window.location.href='index.php?pages=tutors&action=edit&id=<?= $t['id'] ?>'" class="edit-btn">
-              <i class="bx bx-edit"></i> Edit
-            </button>
-            <button onclick="deleteTutor(<?= $t['id'] ?>, '<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>')" class="delete-btn">
-              <i class="bx bx-trash"></i> Delete
-            </button>
-          </div>
-        </div>
-        
-        <span class="date">
-          Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
-        </span>
-      </div>
-      <?php endforeach; ?>          </p>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p>No tutors found.</p>
+      <?php endif; ?>
+    </div>          </p>
           <div class="tutor-meta">
             <span class="status-badge <?= $t['is_featured'] ? 'status-active' : 'status-banned' ?>">
               <?= $t['is_featured'] ? 'Featured' : 'Normal' ?>
