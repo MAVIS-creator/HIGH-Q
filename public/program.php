@@ -126,5 +126,10 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 </section>
+ <nav class="back-nav" style="margin-bottom: 24px;">
+  <a href="programs.php" class="back-link">
+    <i class='bx bx-arrow-back'></i> Back to Programs
+  </a>
+</nav>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
