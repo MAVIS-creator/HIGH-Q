@@ -25,26 +25,37 @@ if (!is_dir($uploadDir)) {
 
 // HANDLE CREATE / EDIT / DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-        $errors[] = "Invalid CSRF token.";
-    } else {
-        $action = $_GET['action'];
-        $id     = (int)($_GET['id'] ?? 0);
+  if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $errors[] = "Invalid CSRF token.";
+  } else {
+    $action = $_GET['action'];
+    $id     = (int)($_GET['id'] ?? 0);
 
-        // Gather & sanitize (only the fields we keep in the modal)
-        $name    = trim($_POST['name'] ?? '');
-        // auto-generate slug from name when not provided
-        $slug    = '';
-        $title   = trim($_POST['title'] ?? ''); // maps to qualifications
-        $years   = trim($_POST['years_experience'] ?? ''); // maps to short_bio
-        $long    = trim($_POST['bio'] ?? ''); // long_bio
-        $subs    = array_filter(array_map('trim', explode(',', $_POST['subjects'] ?? '')));
-        $subjects = json_encode($subs, JSON_UNESCAPED_UNICODE);
-        $email   = trim($_POST['email'] ?? '');
-        $phone   = trim($_POST['phone'] ?? '');
+    // Gather & sanitize fields
+    $name    = trim($_POST['name'] ?? '');
+    $slug    = '';
+    $title   = trim($_POST['title'] ?? '');
+    $years   = trim($_POST['years_experience'] ?? '');
+    $long    = trim($_POST['bio'] ?? '');
+    $subs    = array_filter(array_map('trim', explode(',', $_POST['subjects'] ?? '')));
+    $subjects = json_encode($subs, JSON_UNESCAPED_UNICODE);
+    $email   = trim($_POST['email'] ?? '');
+    $phone   = trim($_POST['phone'] ?? '');
     $imageUrl = trim($_POST['image_url'] ?? '');
 
-    // Handle uploaded image (prefer file upload over URL)
+    // slug helper
+    $slugify = function($text){
+      $text = mb_strtolower(trim($text));
+      $text = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $text);
+      $text = trim($text, '-');
+      return $text ?: substr(sha1($text.time()),0,8);
+    };
+    if ($name && empty($slug)) $slug = $slugify($name);
+
+    // Minimal validation: name only
+    if (!$name) $errors[] = 'Name is required.';
+
+    // Handle upload
     $uploadedPath = null;
     if (!empty($_FILES['image_file']) && ($_FILES['image_file']['error'] ?? 1) === UPLOAD_ERR_OK) {
       $f = $_FILES['image_file'];
@@ -55,43 +66,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $nameSafe = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
         $dest = $uploadDir . $nameSafe;
         if (move_uploaded_file($f['tmp_name'], $dest)) {
-          // web path relative to project public
           $uploadedPath = 'uploads/tutors/' . $nameSafe;
         }
       }
     }
-        if (empty($errors)) {
-            // Use uploaded file if present, otherwise fallback to image URL
-            $photo = $uploadedPath ?: ($imageUrl ?: null);
 
-            if ($action === 'create') {
-                $stmt = $pdo->prepare("INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())");
-                $stmt->execute([
-                  $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                  $subjects, $email ?: null, $phone ?: null, null, 0
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
-                $success[] = "Tutor '{$name}' created.";
-            } elseif ($action === 'edit' && $id) {
-                // keep existing photo if none uploaded/provided
-                if (empty($photo)) {
-                    $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
-                    $old->execute([$id]);
-                    $photo = $old->fetchColumn();
-                }
-                $stmt = $pdo->prepare("UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?");
-                $stmt->execute([
-                  $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-                  $subjects, $email ?: null, $phone ?: null, null, 0, $id
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
-                $success[] = "Tutor '{$name}' updated.";
-            } elseif ($action === 'delete' && $id) {
-                $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
-                logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
-                $success[] = "Tutor deleted.";
-            }
+    if (empty($errors)) {
+      $photo = $uploadedPath ?: ($imageUrl ?: null);
+
+      if ($action === 'create') {
+        $stmt = $pdo->prepare("INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())");
+        $stmt->execute([
+          $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+          $subjects, $email ?: null, $phone ?: null, null, 0
+        ]);
+        logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
+        $success[] = "Tutor '{$name}' created.";
+      } elseif ($action === 'edit' && $id) {
+        if (empty($photo)) {
+          $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
+          $old->execute([$id]);
+          $photo = $old->fetchColumn();
         }
+        $stmt = $pdo->prepare("UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?");
+        $stmt->execute([
+          $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+          $subjects, $email ?: null, $phone ?: null, null, 0, $id
+        ]);
+        logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
+        $success[] = "Tutor '{$name}' updated.";
+      } elseif ($action === 'delete' && $id) {
+        $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
+        logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
+        $success[] = "Tutor deleted.";
+      }
     }
   }
 }
