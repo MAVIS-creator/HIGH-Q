@@ -25,160 +25,106 @@ if (!is_dir($uploadDir)) {
 
 // HANDLE CREATE / EDIT / DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
-  if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-    $errors[] = "Invalid CSRF token.";
-  } else {
-    $action = $_GET['action'];
-    $id     = (int)($_GET['id'] ?? 0);
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $errors[] = "Invalid CSRF token.";
+    } else {
+        $action = $_GET['action'];
+        $id     = (int)($_GET['id'] ?? 0);
 
-    // Gather & sanitize fields
-    $name    = trim($_POST['name'] ?? '');
-    $slug    = '';
-    $title   = trim($_POST['title'] ?? '');
-    $years   = trim($_POST['years_experience'] ?? '');
-    $long    = trim($_POST['bio'] ?? '');
-    $subs    = array_filter(array_map('trim', explode(',', $_POST['subjects'] ?? '')));
-    $subjects = json_encode($subs, JSON_UNESCAPED_UNICODE);
-    $email   = trim($_POST['email'] ?? '');
-    $phone   = trim($_POST['phone'] ?? '');
-    $imageUrl = trim($_POST['image_url'] ?? '');
+        // Gather & sanitize (only the fields we keep in the modal)
+        $name    = trim($_POST['name'] ?? '');
+        // auto-generate slug from name when not provided
+        $slug    = '';
+        $title   = trim($_POST['title'] ?? ''); // maps to qualifications
+        $years   = trim($_POST['years_experience'] ?? ''); // maps to short_bio
+        $long    = trim($_POST['bio'] ?? ''); // long_bio
+        $subs    = array_filter(array_map('trim', explode(',', $_POST['subjects'] ?? '')));
+        $subjects = json_encode($subs, JSON_UNESCAPED_UNICODE);
+        $email   = trim($_POST['email'] ?? '');
+        $phone   = trim($_POST['phone'] ?? '');
+        $imageUrl = trim($_POST['image_url'] ?? '');
 
-    // slug helper
-    $slugify = function($text){
-      $text = mb_strtolower(trim($text));
-      $text = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $text);
-      $text = trim($text, '-');
-      return $text ?: substr(sha1($text.time()),0,8);
-    };
-    if ($name && empty($slug)) $slug = $slugify($name);
+        // simple slugify helper (ASCII-safe)
+        $slugify = function($text){
+          $text = mb_strtolower(trim($text));
+          // replace non letter or digits by -
+          $text = preg_replace('/[^\p{L}\p{Nd}]+/u', '-', $text);
+          $text = trim($text, '-');
+          return $text ?: substr(sha1($text.time()),0,8);
+        };
 
-    // Ensure slug is unique (append -2, -3... if needed)
-    $ensureUniqueSlug = function($pdo, $baseSlug, $excludeId = null) {
-      $slug = $baseSlug;
-      $i = 1;
-      while (true) {
-        if ($excludeId) {
-          $stmt = $pdo->prepare('SELECT COUNT(*) FROM tutors WHERE slug = ? AND id <> ?');
-          $stmt->execute([$slug, $excludeId]);
-        } else {
-          $stmt = $pdo->prepare('SELECT COUNT(*) FROM tutors WHERE slug = ?');
-          $stmt->execute([$slug]);
+        if ($name && empty($slug)) {
+          $slug = $slugify($name);
         }
-        $cnt = (int)$stmt->fetchColumn();
-        if ($cnt === 0) return $slug;
-        $i++;
-        $slug = $baseSlug . '-' . $i;
-      }
-    };
-    $slug = $ensureUniqueSlug($pdo, $slug, ($action==='edit' && $id ? $id : null));
 
-    // Minimal validation: name only
-    if (!$name) $errors[] = 'Name is required.';
+        // Validation: require name only — allow partial saves so admin can complete later
+        if (!$name) {
+          $errors[] = "Name is required.";
+        }
 
-    // Handle upload
-    $uploadedPath = null;
-    if (!empty($_FILES['image_file']) && ($_FILES['image_file']['error'] ?? 1) === UPLOAD_ERR_OK) {
-      $f = $_FILES['image_file'];
-      $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
-      if (in_array($f['type'], $allowed, true)) {
-        if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-        $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
-        $nameSafe = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-        $dest = $uploadDir . $nameSafe;
-        if (move_uploaded_file($f['tmp_name'], $dest)) {
-          // Resize image to max 1200x1200 to save space and ensure consistent display
-          list($w,$h) = @getimagesize($dest) ?: [0,0];
-          $max = 1200;
-          if ($w>0 && ($w > $max || $h > $max) && function_exists('imagecreatetruecolor')) {
-            $ratio = min($max/$w, $max/$h);
-            $nw = (int)round($w * $ratio);
-            $nh = (int)round($h * $ratio);
-            $dst = imagecreatetruecolor($nw, $nh);
-            $mime = mime_content_type($dest);
-            try {
-              if ($mime === 'image/jpeg') $src = imagecreatefromjpeg($dest);
-              elseif ($mime === 'image/png') $src = imagecreatefrompng($dest);
-              elseif ($mime === 'image/gif') $src = imagecreatefromgif($dest);
-              elseif ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) $src = imagecreatefromwebp($dest);
-              else $src = null;
-              if ($src) {
-                // preserve PNG alpha
-                if ($mime === 'image/png') {
-                  imagealphablending($dst, false);
-                  imagesavealpha($dst, true);
-                }
-                imagecopyresampled($dst, $src, 0,0,0,0, $nw, $nh, $w, $h);
-                if ($mime === 'image/jpeg') imagejpeg($dst, $dest, 86);
-                elseif ($mime === 'image/png') imagepng($dst, $dest);
-                elseif ($mime === 'image/gif') imagegif($dst, $dest);
-                elseif ($mime === 'image/webp' && function_exists('imagewebp')) imagewebp($dst, $dest);
-                imagedestroy($src);
-                imagedestroy($dst);
-              }
-            } catch (Throwable $e) {
-              // ignore resize failures, keep original
+        if (empty($errors)) {
+            if ($action === 'create') {
+                $stmt = $pdo->prepare("
+                  INSERT INTO tutors
+                    (name, slug, photo, short_bio, long_bio, qualifications,
+                     subjects, contact_email, phone, rating, is_featured)
+                  VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                ");
+                $stmt->execute([
+                  $name, $slug,
+                  $photoPath ?: null,
+                  $short, $long, $quals,
+                  $subjects, $email, $phone,
+                  $rating, $feat
+                ]);
+                logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
+                $success[] = "Tutor '{$name}' created.";
             }
-          }
-          $uploadedPath = 'uploads/tutors/' . $nameSafe;
+
+            if ($action === 'edit' && $id) {
+                // If no new upload, keep existing
+                if ($action === 'create') {
+                    // store image URL directly into photo
+                    $photo = $imageUrl ?: null;
+                    $stmt = $pdo->prepare(
+                      "INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+                    );
+                    $stmt->execute([
+                      $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                      $subjects, $email ?: null, $phone ?: null, null, 0
+                    ]);
+                    logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
+                    $success[] = "Tutor '{$name}' created.";
+                }
+
+                if ($action === 'edit' && $id) {
+                    // keep existing photo if image_url not provided
+                    if (empty($imageUrl)) {
+                        $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
+                        $old->execute([$id]);
+                        $photo = $old->fetchColumn();
+                    } else {
+                        $photo = $imageUrl;
+                    }
+                    $stmt = $pdo->prepare(
+                      "UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?"
+                    );
+                    $stmt->execute([
+                      $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
+                      $subjects, $email ?: null, $phone ?: null, null, 0, $id
+                    ]);
+                    logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
+                    $success[] = "Tutor '{$name}' updated.";
+                }
+
+        if ($action === 'delete' && $id) {
+          $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
+          logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
+          $success[] = "Tutor deleted.";
         }
       }
     }
-
-    if (empty($errors)) {
-      // Build public URL for saved image if APP_URL is set (so admin subdomain can render images from public domain)
-      $publicBase = rtrim(getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? ''), '/');
-      if ($uploadedPath) {
-        $photo = $publicBase ? ($publicBase . '/' . $uploadedPath) : $uploadedPath;
-      } else {
-        // If user provided an image URL, use it as-is; otherwise null
-        $photo = $imageUrl ?: null;
-      }
-
-      if ($action === 'create') {
-        $stmt = $pdo->prepare("INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, rating, is_featured, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())");
-        $stmt->execute([
-          $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-          $subjects, $email ?: null, $phone ?: null, null, 0
-        ]);
-        logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug'=>$slug]);
-        $success[] = "Tutor '{$name}' created.";
-      } elseif ($action === 'edit' && $id) {
-        if (empty($photo)) {
-          $old = $pdo->prepare("SELECT photo FROM tutors WHERE id=?");
-          $old->execute([$id]);
-          $photo = $old->fetchColumn();
-        }
-        $stmt = $pdo->prepare("UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?");
-        $stmt->execute([
-          $name, $slug, $photo, $years ?: null, $long ?: null, $title ?: null,
-          $subjects, $email ?: null, $phone ?: null, null, 0, $id
-        ]);
-        logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id'=>$id]);
-        $success[] = "Tutor '{$name}' updated.";
-      } elseif ($action === 'delete' && $id) {
-        $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
-        logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id'=>$id]);
-        $success[] = "Tutor deleted.";
-      }
-    }
   }
-}
-?>
-<?php
-// Load tutors for listing (safe when there are none)
-$q = trim($_GET['q'] ?? '');
-try {
-  if ($q !== '') {
-    $stmt = $pdo->prepare("SELECT * FROM tutors WHERE name LIKE ? OR qualifications LIKE ? ORDER BY created_at DESC");
-    $like = "%{$q}%";
-    $stmt->execute([$like, $like]);
-  } else {
-    $stmt = $pdo->query("SELECT * FROM tutors ORDER BY created_at DESC");
-  }
-  $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-} catch (Throwable $e) {
-  $tutors = [];
-  $errors[] = 'Could not load tutors: ' . $e->getMessage();
 }
 ?>
   <title>Tutors Management — Admin</title>
@@ -218,31 +164,15 @@ try {
       <?php foreach($tutors as $t): ?>
       <div class="tutor-card">
         <div class="tutor-photo">
-          <?php
-            $photo = $t['photo'] ?? '';
-            // If stored photo is a full URL, use as-is; otherwise, try to build absolute URL from APP_URL
-            if ($photo && (strpos($photo, 'http://') === 0 || strpos($photo, 'https://') === 0)) {
-              $photoUrl = $photo;
-            } elseif ($photo) {
-              $base = rtrim(getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? ''), '/');
-              $photoUrl = $base ? ($base . '/' . ltrim($photo, '/')) : '../' . ltrim($photo, '/');
-            } else {
-              $photoUrl = '../assets/images/avatar-placeholder.png';
-            }
-          ?>
-          <img src="<?= htmlspecialchars($photoUrl) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+          <img src="../<?= htmlspecialchars($t['photo'] ?: 'assets/images/avatar-placeholder.png') ?>"
+               alt="<?= htmlspecialchars($t['name']) ?>">
         </div>
         <div class="tutor-info">
           <h3><?= htmlspecialchars($t['name']) ?></h3>
           <p class="role"><?= htmlspecialchars($t['qualifications']) ?></p>
           <p class="subjects">
-            <?php foreach(json_decode($t['subjects'] ?? '[]', true) as $sub): ?>
-              <span class="sub-pill"><?= htmlspecialchars($sub) ?></span>
-            <?php endforeach; ?>
+            <?= implode(', ', json_decode($t['subjects'] ?? '[]', true)) ?>
           </p>
-          <?php if(!empty($t['short_bio'])): ?>
-            <p class="years"><?= htmlspecialchars($t['short_bio']) ?> years of experience</p>
-          <?php endif; ?>
           <div class="tutor-meta">
             <span class="status-badge <?= $t['is_featured'] ? 'status-active' : 'status-banned' ?>">
               <?= $t['is_featured'] ? 'Featured' : 'Normal' ?>
@@ -281,7 +211,7 @@ try {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-  <form id="tutorForm" method="post" enctype="multipart/form-data">
+      <form id="tutorForm" method="post">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -290,8 +220,8 @@ try {
             <input type="text" name="name" id="tName" required>
           </div>
           <div>
-            <label>Title</label>
-            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher">
+            <label>Title *</label>
+            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher" required>
           </div>
         </div>
 
@@ -299,8 +229,8 @@ try {
 
         <div class="form-row split-2">
           <div>
-            <label>Subjects (comma-separated)</label>
-            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry">
+            <label>Subjects (comma-separated) *</label>
+            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry" required>
           </div>
           <div>
             <label>Years of Experience</label>
@@ -314,9 +244,8 @@ try {
         </div>
 
         <div class="form-row">
-          <label>Photo</label>
-          <input type="file" name="image_file" id="tImageFile" accept="image/*">
-          <div class="image-preview" id="tImagePreview" style="margin-top:8px"></div>
+          <label>Image URL</label>
+          <input type="text" name="image_url" id="tImageUrl" placeholder="https://... or /uploads/tutors/abc.jpg">
         </div>
 
         <div class="form-actions">
@@ -344,7 +273,7 @@ try {
     subs:   document.getElementById('tSubjects'),
     years:  document.getElementById('tYears'),
     bio:    document.getElementById('tBio'),
-    imageFile: document.getElementById('tImageFile')
+    image:  document.getElementById('tImageUrl')
   };
 
   function openModal(mode, data={}) {
@@ -359,22 +288,11 @@ try {
       fields.subs.value  = data.subjects || '';
       fields.years.value = data.years || '';
       fields.bio.value   = data.bio || '';
-      // show preview if image exists
-      const preview = document.getElementById('tImagePreview');
-      preview.innerHTML = '';
-      if (data.image) {
-        const img = document.createElement('img');
-        img.src = '../' + data.image;
-        img.style.maxWidth = '120px';
-        img.style.borderRadius = '8px';
-        preview.appendChild(img);
-      }
+      fields.image.value = data.image || '';
     } else {
       modalTitle.textContent = 'Add Tutor';
       tutorForm.action = 'index.php?pages=tutors&action=create';
-  Object.values(fields).forEach(f => { if (f.type === 'file') f.value = ''; else f.value = ''; });
-  // clear preview
-  document.getElementById('tImagePreview').innerHTML = '';
+      Object.values(fields).forEach(f => f.value = '');
     }
   }
 

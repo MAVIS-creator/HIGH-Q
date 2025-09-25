@@ -19,16 +19,9 @@
 	align-items:flex-start;
 	box-shadow: 0 6px 18px rgba(0,0,0,0.04);
 }
-.tutor-card .tutor-photo img, .tutor-card .avatar{ width:96px; height:96px; border-radius:999px; object-fit:cover; background:#f7f7f7; display:block }
-.tutor-card .tutor-photo{ flex:0 0 96px }
+.tutor-card .tutor-photo img, .tutor-card .avatar{ width:72px; height:72px; border-radius:8px; object-fit:cover }
 .tutor-card .tutor-info{ flex:1 }
 .tutor-card .actions{ display:flex; gap:8px }
-
-.tutor-card h3{ margin:0; font-size:1.05rem }
-.tutor-card .role{ margin:6px 0 8px; color:#666; font-size:0.9rem }
-.subjects{ display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 }
-.sub-pill{ background:#fff; border:1px solid #e6e9ee; padding:6px 10px; border-radius:999px; font-size:0.82rem }
-.years{ color:#888; font-size:0.86rem; margin-top:6px }
 
 /* Keep tutors grid centered inside admin-main like roles page */
 .admin-main .tutors-grid { margin-left: 0 }
@@ -57,9 +50,5 @@
 .modal .note { font-size:0.85rem; color:var(--hq-gray,#7a7a7a); margin-bottom:8px }
 
 @media(max-width:640px){ .modal-content{ padding:14px } .form-row.split-2{ grid-template-columns:1fr } }
-
-/* file input styling */
-.form-row input[type=file] { padding:8px; border-radius:8px; border:1px solid #e6e9ee; background:#fff }
-.image-preview img { max-width:180px; height:auto; border-radius:8px; display:block }
 
 
