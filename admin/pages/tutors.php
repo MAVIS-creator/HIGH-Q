@@ -4,8 +4,29 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
+
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
+
+// Initialize variables
+$csrf = generateToken();
+$errors = [];
+$success = [];
+$q = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+// Fetch tutors with search filter if provided
+$query = "SELECT * FROM tutors";
+$params = [];
+if ($q) {
+    $query .= " WHERE name LIKE ? OR subjects LIKE ? OR qualifications LIKE ?";
+    $searchTerm = "%{$q}%";
+    $params = [$searchTerm, $searchTerm, $searchTerm];
+}
+$query .= " ORDER BY created_at DESC";
+
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
