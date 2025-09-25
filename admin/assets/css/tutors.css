@@ -51,4 +51,8 @@
 
 @media(max-width:640px){ .modal-content{ padding:14px } .form-row.split-2{ grid-template-columns:1fr } }
 
+/* file input styling */
+.form-row input[type=file] { padding:8px; border-radius:8px; border:1px solid #e6e9ee; background:#fff }
+.image-preview img { max-width:180px; height:auto; border-radius:8px; display:block }
+
 

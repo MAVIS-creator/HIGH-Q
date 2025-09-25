@@ -279,7 +279,7 @@ try {
     subs:   document.getElementById('tSubjects'),
     years:  document.getElementById('tYears'),
     bio:    document.getElementById('tBio'),
-    image:  document.getElementById('tImageUrl')
+    imageFile: document.getElementById('tImageFile')
   };
 
   function openModal(mode, data={}) {
@@ -294,11 +294,22 @@ try {
       fields.subs.value  = data.subjects || '';
       fields.years.value = data.years || '';
       fields.bio.value   = data.bio || '';
-      fields.image.value = data.image || '';
+      // show preview if image exists
+      const preview = document.getElementById('tImagePreview');
+      preview.innerHTML = '';
+      if (data.image) {
+        const img = document.createElement('img');
+        img.src = '../' + data.image;
+        img.style.maxWidth = '120px';
+        img.style.borderRadius = '8px';
+        preview.appendChild(img);
+      }
     } else {
       modalTitle.textContent = 'Add Tutor';
       tutorForm.action = 'index.php?pages=tutors&action=create';
-      Object.values(fields).forEach(f => f.value = '');
+  Object.values(fields).forEach(f => { if (f.type === 'file') f.value = ''; else f.value = ''; });
+  // clear preview
+  document.getElementById('tImagePreview').innerHTML = '';
     }
   }
 
