@@ -1315,7 +1315,7 @@ nav a.active::after { background: var(--hq-yellow); }
   margin-bottom: 12px;
 }
 
-.testimonial-card .attribution strong {
+.testimonial-card .attribution strong
   font-weight: 700;
   color: var(--hq-black);
 }
