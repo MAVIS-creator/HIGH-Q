@@ -100,6 +100,19 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
     color: white;
 }
 
+.btn-cancel {
+  background: #e0e0e0;
+  color: #333;
+  margin-left: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.btn-cancel:hover {
+  background: #ccc;
+}
+
 // Only Admin & Sub-Admin
 </style>';
 
@@ -295,8 +308,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             <input type="text" name="name" id="tName" required>
           </div>
           <div>
-            <label>Title *</label>
-            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher" required>
+            <label>Title</label>
+            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher">
           </div>
         </div>
 
@@ -304,8 +317,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         <div class="form-row split-2">
           <div>
-            <label>Subjects (comma-separated) *</label>
-            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry" required>
+            <label>Subjects (comma-separated)</label>
+            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry">
           </div>
           <div>
             <label>Years of Experience</label>
@@ -325,6 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         <div class="form-actions">
           <button type="submit" class="btn-approve">Save Tutor</button>
+          <button type="reset" class="btn-cancel">Clear</button>
         </div>
       </form>
     </div>
@@ -376,6 +390,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     overlay.classList.remove('open');
     tutorModal.classList.remove('open');
   }
+
+  // X closes modal
+  closeBtn.addEventListener('click', closeModal);
+
+  // Overlay click also closes modal
+  overlay.addEventListener('click', closeModal);
+
+  // Escape key closes modal
+  document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
 
   newBtn.addEventListener('click', () => openModal('create'));
   closeBtn.addEventListener('click', closeModal);
