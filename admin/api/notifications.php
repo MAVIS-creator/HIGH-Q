@@ -15,17 +15,22 @@ $notifications = [];
 $debug = []; // collect debug info
 
 // 1) Pending comments
-$cstmt = $pdo->prepare("SELECT id, post_id, name, email, content, created_at FROM comments WHERE is_approved = 0 ORDER BY created_at DESC LIMIT 5");
+$cstmt = $pdo->prepare("SELECT id, post_id, content, status, created_at 
+                        FROM comments 
+                        WHERE status = 'pending' 
+                        ORDER BY created_at DESC 
+                        LIMIT 5");
 $cstmt->execute();
-$rows = $cstmt->fetchAll(PDO::FETCH_ASSOC);
-$debug['comments_found'] = count($rows);
-foreach ($rows as $row) {
+while ($row = $cstmt->fetch(PDO::FETCH_ASSOC)) {
     $notifications[] = [
         'type' => 'comment',
         'id' => (int)$row['id'],
-        'title' => 'Pending comment',
-        'message' => substr(strip_tags($row['content']),0,120),
-        'meta' => ['post_id'=>(int)$row['post_id'],'author'=>$row['name']],
+        'title' => 'New Comment',
+        'message' => substr($row['content'], 0, 50) . (strlen($row['content']) > 50 ? '...' : ''),
+        'meta' => [
+            'post_id' => (int)$row['post_id'],
+            'status' => $row['status']
+        ],
         'created_at' => $row['created_at']
     ];
 }
