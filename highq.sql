@@ -168,6 +168,7 @@ CREATE TABLE `comments` (
 
 -- --------------------------------------------------------
 
+
 --
 -- Table structure for table `courses`
 --
