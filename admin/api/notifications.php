@@ -100,6 +100,25 @@ foreach ($chatThreads as $r) {
 }
 $debug['chat_unread_found'] = $chatUnread;
 
+// 5) New User Registrations
+$ustmt = $pdo->prepare("SELECT id, name, email, created_at 
+                        FROM users 
+                        ORDER BY created_at DESC 
+                        LIMIT 5");
+$ustmt->execute();
+while ($row = $ustmt->fetch(PDO::FETCH_ASSOC)) {
+    $notifications[] = [
+        'type' => 'user',
+        'id' => (int)$row['id'],
+        'title' => 'New User Registered',
+        'message' => $row['name'] . ' (' . $row['email'] . ')',
+        'meta' => [
+            'email' => $row['email']
+        ],
+        'created_at' => $row['created_at']
+    ];
+}
+
 // sort notifications by created_at desc
 usort($notifications, function($a,$b){ return strcmp($b['created_at'],$a['created_at']); });
 
