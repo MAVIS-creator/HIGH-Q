@@ -258,7 +258,7 @@ $csrf = generateToken('signup_form');
 						<div class="why-stats">
 							<div class="stat">
 								<div class="icon"><img src="assets/images/icons/trophy.svg" alt="trophy"></div>
-								<div class="stat-body"><strong>292</strong><span>Highest JAMB Score 2024</span></div>
+								<div class="stat-body"><strong>305</strong><span>Highest JAMB Score 2025</span></div>
 							</div>
 							<div class="stat">
 								<div class="icon"><img src="assets/images/icons/teacher.svg" alt="students"></div>
