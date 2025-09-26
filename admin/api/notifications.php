@@ -47,17 +47,22 @@ foreach ($rows as $row) {
 }
 
 // 3) Payments
-$pstmt = $pdo->prepare("SELECT id, user_id, method, amount, status, created_at FROM payments WHERE status IN ('pending','uploaded') ORDER BY created_at DESC LIMIT 5");
+$pstmt = $pdo->prepare("SELECT id, student_id, payment_method, amount, status, created_at 
+                        FROM payments 
+                        WHERE status IN ('pending','confirmed') 
+                        ORDER BY created_at DESC 
+                        LIMIT 5");
 $pstmt->execute();
-$rows = $pstmt->fetchAll(PDO::FETCH_ASSOC);
-$debug['payments_found'] = count($rows);
-foreach ($rows as $row) {
+while ($row = $pstmt->fetch(PDO::FETCH_ASSOC)) {
     $notifications[] = [
         'type' => 'payment',
         'id' => (int)$row['id'],
         'title' => 'Payment update',
-        'message' => strtoupper($row['method']) . ' - ' . number_format((float)$row['amount'],2),
-        'meta' => ['status'=>$row['status'],'user_id'=>(int)$row['user_id']],
+        'message' => strtoupper($row['payment_method']) . ' - ' . number_format((float)$row['amount'], 2),
+        'meta' => [
+            'status' => $row['status'],
+            'student_id' => (int)$row['student_id']
+        ],
         'created_at' => $row['created_at']
     ];
 }
