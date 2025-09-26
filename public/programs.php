@@ -171,8 +171,8 @@
 		<div class="ceo-stats">
 			<div class="stat yellow">
 				<i class="bx bx-bar-chart"></i>
-				<strong>292</strong>
-				<span>Highest JAMB Score 2024</span>
+				<strong>305</strong>
+				<span>Highest JAMB Score 2025</span>
 			</div>
 
 			<div class="stat red">
