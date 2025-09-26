@@ -135,7 +135,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <div class="ceo-stats">
           <div class="stat yellow">
             <i class="fas fa-trophy"></i>
-            <strong>292</strong>
+            <strong>305</strong>
             <span>Highest JAMB Score</span>
           </div>
           <div class="stat red">
