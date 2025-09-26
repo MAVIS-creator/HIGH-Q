@@ -428,8 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           closeBtn.addEventListener('click', closeModal);
           overlay.addEventListener('click', closeModal);
           document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
-</script>
-<script>
+
           document.querySelectorAll('.btn-editTutor').forEach(btn => {
             btn.addEventListener('click', () => {
               openModal('edit', {
