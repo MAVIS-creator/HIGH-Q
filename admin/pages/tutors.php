@@ -429,19 +429,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           overlay.addEventListener('click', closeModal);
           document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
 
-          document.querySelectorAll('.btn-editTutor').forEach(btn => {
-            btn.addEventListener('click', () => {
-              openModal('edit', {
-                id: btn.dataset.id,
-                name: btn.dataset.name,
-                title: btn.dataset.title,
-                image: btn.dataset.image,
-                years: btn.dataset.years,
-                bio: btn.dataset.bio,
-                subjects: btn.dataset.subjects
-              });
-            });
-          });
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    openModal('edit', {
+      id:        btn.dataset.id,
+      name:      btn.dataset.name,
+      title:     btn.dataset.title,
+      image:     btn.dataset.image,
+      years:     btn.dataset.years,
+      bio:       btn.dataset.bio,
+      subjects:  btn.dataset.subjects
+    });
+  });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
