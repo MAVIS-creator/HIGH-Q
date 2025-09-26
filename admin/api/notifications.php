@@ -125,8 +125,30 @@ usort($notifications, function($a,$b){ return strcmp($b['created_at'],$a['create
 // Trim to top 10
 $notifications = array_slice($notifications,0,10);
 
+// Check read status for all notifications
+foreach ($notifications as &$notification) {
+    $readStmt = $pdo->prepare("
+        SELECT is_read 
+        FROM notifications 
+        WHERE user_id = ? AND type = ? AND reference_id = ?
+    ");
+    $readStmt->execute([$_SESSION['user']['id'], $notification['type'], $notification['id']]);
+    $notification['is_read'] = (bool)$readStmt->fetchColumn();
+}
+unset($notification); // Break reference
+
 // ✅ Normal mode
-$response = ['notifications'=>$notifications, 'count'=>count($notifications)];
+$response = [
+    'notifications' => $notifications,
+    'count' => count($notifications),
+    'urls' => [
+        'comment' => 'pages/comments.php?id=',
+        'payment' => 'pages/payments.php?id=',
+        'student_application' => 'pages/students.php?id=',
+        'chat' => 'pages/chat.php?thread=',
+        'user' => 'pages/users.php?id='
+    ]
+];
 
 // ✅ Debug mode toggle via ?debug=1
 if (!empty($_GET['debug'])) {
