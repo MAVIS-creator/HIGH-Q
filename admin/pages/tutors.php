@@ -304,19 +304,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         <div class="form-row split-2">
           <div>
-            <label>Full Name *</label>
-            <input type="text" name="name" id="tName" required>
-          </div>
-          <div>
-            <label>Title</label>
-            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher">
-          </div>
-        </div>
-
-        <div class="form-row split-2">
-          <div>
-            <label>Subjects (comma-separated)</label>
-            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry">
+            <label>Subjects (comma-separated) *</label>
+            <input type="text" name="subjects" id="tSubjects" placeholder="Mathematics, Physics, Chemistry" required>
           </div>
           <div>
             <label>Years of Experience</label>
@@ -336,7 +325,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         <div class="form-actions">
           <button type="submit" class="btn-approve">Save Tutor</button>
-          <button type="button" class="btn-cancel" id="modalCancel">Cancel</button>
         </div>
       </form>
     </div>
@@ -391,8 +379,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
   newBtn.addEventListener('click', () => openModal('create'));
   closeBtn.addEventListener('click', closeModal);
-  const modalCancelBtn = document.getElementById('modalCancel');
-  if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeModal);
   overlay.addEventListener('click', closeModal);
   document.addEventListener('keydown', e => e.key==='Escape' && closeModal());
 
