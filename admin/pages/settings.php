@@ -261,8 +261,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $saved = false;
     try {
         $saved = saveSettingsToDb($pdo, $next);
+        if (!$saved) {
+            throw new Exception('Failed to save settings to database');
+        }
     } catch (Exception $e) {
         $saved = false;
+        error_log('Settings save error: ' . $e->getMessage());
     }
 
     if ($saved) {
