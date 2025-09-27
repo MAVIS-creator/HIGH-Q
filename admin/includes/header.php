@@ -149,14 +149,15 @@ if (!headers_sent()) {
                     panel.innerHTML = '';
                     if(list.length===0){ panel.innerHTML = '<div class="notif-empty">No notifications</div>'; return; }
                     list.forEach(n=>{
-                        const it = document.createElement('div'); it.className='notif-item';
-                        const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = n.title || '';
-                        const msg = document.createElement('div'); msg.style.fontSize='0.95rem'; msg.style.color='#333'; msg.textContent = n.message || '';
-                        const time = document.createElement('div'); time.style.fontSize='0.8rem'; time.style.color='#888'; time.textContent = n.created_at || '';
-                        it.appendChild(title); it.appendChild(msg); it.appendChild(time);
-                        it.addEventListener('click', ()=>{
-                            // navigate on click depending on type
-                            if(n.type==='chat') window.location = '/HIGH-Q/admin/index.php?pages=chat&thread_id=' + (n.meta.thread_id || n.id);
+                        const it = document.createElement('a'); 
+                        it.className = 'notification-item ' + (n.is_read ? 'read' : '');
+                        it.setAttribute('data-notification-id', n.id);
+                        it.setAttribute('data-notification-type', n.type);
+                        
+                        // Set the href based on notification type
+                        const baseUrl = '/HIGH-Q/admin/index.php?pages=';
+                        let href = '';
+                        if(n.type === 'chat') href = baseUrl + 'chat&thread_id=' + (n.meta.thread_id || n.id);
                             else if(n.type==='comment') window.location = '/HIGH-Q/admin/index.php?pages=comments&highlight=' + (n.id);
                             else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
                             else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
