@@ -123,16 +123,25 @@ if (!headers_sent()) {
         .notif-empty{padding:20px;text-align:center;color:#666}
         </style>
         <script>
-        (function(){
+        (function initNotifications(){
             const btn = document.getElementById('notifBtn');
-            if(!btn) return;
-            // create dropdown container
-            const wrap = document.createElement('div'); wrap.className='notif-dropdown';
-            const panel = document.createElement('div'); panel.className='notif-panel'; panel.id='notifPanel';
-            wrap.appendChild(btn.cloneNode(true)); // clone the button into wrapper
+            if (!btn) return;
+
+            // Create dropdown container
+            const wrap = document.createElement('div');
+            wrap.className = 'notif-dropdown';
+            
+            const panel = document.createElement('div');
+            panel.className = 'notif-panel notification-list';
+            panel.id = 'notifPanel';
+            
+            // Clone button and add to wrapper
+            wrap.appendChild(btn.cloneNode(true));
             wrap.appendChild(panel);
-            // replace original button with wrapper
-            const orig = btn.parentNode; orig.replaceChild(wrap, btn);
+            
+            // Replace original button with wrapper
+            const orig = btn.parentNode;
+            orig.replaceChild(wrap, btn);
 
             const badge = wrap.querySelector('#notifBadge');
 
