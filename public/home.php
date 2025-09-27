@@ -45,7 +45,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <div><strong>1000+</strong>
           <div>Students Trained</div>
         </div>
-        <div><strong>292</strong>
+        <div><strong>305</strong>
           <div>Highest JAMB Score</div>
         </div>
       </div>
