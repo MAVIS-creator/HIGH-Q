@@ -630,6 +630,7 @@ $csrf = generateToken('settings_form');
         </div>
     </form>
 
+    <script src="../assets/js/settings.js"></script>
     <script>
     (function(){
         // Tabs
@@ -647,16 +648,47 @@ $csrf = generateToken('settings_form');
         var form = document.getElementById('settingsForm');
         form.addEventListener('submit', function(e){
             e.preventDefault();
+            
+            Swal.fire({
+                title: 'Saving...',
+                text: 'Please wait while we save your settings',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
             var data = new FormData(form);
-            // mark as ajax
             var xhr = new XMLHttpRequest();
             xhr.open('POST', location.href, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            
             xhr.onload = function(){
-                try { var res = JSON.parse(xhr.responseText); } catch(e){ alert('Unexpected response'); return; }
-                if (res.status === 'ok') { alert(res.message || 'Saved'); location.reload(); }
-                else alert(res.message || 'Save failed');
+                try { 
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'ok') {
+                        Swal.fire({
+                            title: 'Success',
+                            text: response.message || 'Settings saved successfully',
+                            icon: 'success',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        throw new Error(response.message || 'Failed to save settings');
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'An unexpected error occurred',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
             };
+            
             xhr.send(data);
         });
 
