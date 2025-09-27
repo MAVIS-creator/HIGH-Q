@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
     xhr.send(data);
 });
 
-// Action handlers
-function doAction(action) {
+    // Action handlers
+    function doAction(action) {
     var fd = new FormData();
     fd.append('action', action);
     fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
@@ -130,10 +130,11 @@ function doAction(action) {
     };
     
     xhr.send(fd);
-}
+    }
 
-// Action button handlers
-document.getElementById('runScan').addEventListener('click', function() {
+    // Action button handlers (guard nulls)
+    var runScanBtn = document.getElementById('runScan');
+    if (runScanBtn) runScanBtn.addEventListener('click', function() {
     Swal.fire({
         title: 'Start Security Scan?',
         text: 'This will scan your system for potential security issues.',
@@ -145,9 +146,10 @@ document.getElementById('runScan').addEventListener('click', function() {
     }).then((result) => {
         if (result.isConfirmed) doAction('runScan');
     });
-});
+    });
 
-document.getElementById('clearIPs').addEventListener('click', function() {
+    var clearIPsBtn = document.getElementById('clearIPs');
+    if (clearIPsBtn) clearIPsBtn.addEventListener('click', function() {
     Swal.fire({
         title: 'Clear Blocked IPs?',
         text: 'This will remove all IP addresses from the block list.',
@@ -159,9 +161,10 @@ document.getElementById('clearIPs').addEventListener('click', function() {
     }).then((result) => {
         if (result.isConfirmed) doAction('clearIPs');
     });
-});
+    });
 
-document.getElementById('clearLogs').addEventListener('click', function() {
+    var clearLogsBtn = document.getElementById('clearLogs');
+    if (clearLogsBtn) clearLogsBtn.addEventListener('click', function() {
     Swal.fire({
         title: 'Clear Audit Logs?',
         text: 'This will clear all audit logs except seed data. This action cannot be undone.',
@@ -173,4 +176,5 @@ document.getElementById('clearLogs').addEventListener('click', function() {
     }).then((result) => {
         if (result.isConfirmed) doAction('clearLogs');
     });
+    }
 });
