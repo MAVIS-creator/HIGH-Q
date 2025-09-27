@@ -1,6 +1,22 @@
 // Settings form submission handler
-document.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('settingsForm');
+    if (!form) return;
+
+    // Tabs initialization (if present)
+    document.querySelectorAll('.tab-btn').forEach(function(b){
+        b.addEventListener('click', function(){
+            document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(x=>x.style.display='none');
+            b.classList.add('active');
+            var t = b.getAttribute('data-tab');
+            var panel = document.querySelector('.tab-panel[data-panel="'+t+'"]');
+            if (panel) panel.style.display='block';
+        });
+    });
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
     
     // Show loading state
     Swal.fire({
