@@ -134,47 +134,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Action button handlers (guard nulls)
     var runScanBtn = document.getElementById('runScan');
-    if (runScanBtn) runScanBtn.addEventListener('click', function() {
-    Swal.fire({
-        title: 'Start Security Scan?',
-        text: 'This will scan your system for potential security issues.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, start scan'
-    }).then((result) => {
-        if (result.isConfirmed) doAction('runScan');
-    });
-    });
+    if (runScanBtn) {
+        runScanBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Start Security Scan?',
+                text: 'This will scan your system for potential security issues.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, start scan'
+            }).then((result) => {
+                if (result.isConfirmed) doAction('runScan');
+            });
+        });
+    }
 
     var clearIPsBtn = document.getElementById('clearIPs');
-    if (clearIPsBtn) clearIPsBtn.addEventListener('click', function() {
-    Swal.fire({
-        title: 'Clear Blocked IPs?',
-        text: 'This will remove all IP addresses from the block list.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, clear IPs'
-    }).then((result) => {
-        if (result.isConfirmed) doAction('clearIPs');
-    });
-    });
+    if (clearIPsBtn) {
+        clearIPsBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Clear Blocked IPs?',
+                text: 'This will remove all IP addresses from the block list.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, clear IPs'
+            }).then((result) => {
+                if (result.isConfirmed) doAction('clearIPs');
+            });
+        });
+    }
 
     var clearLogsBtn = document.getElementById('clearLogs');
-    if (clearLogsBtn) clearLogsBtn.addEventListener('click', function() {
-    Swal.fire({
-        title: 'Clear Audit Logs?',
-        text: 'This will clear all audit logs except seed data. This action cannot be undone.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, clear logs'
-    }).then((result) => {
-        if (result.isConfirmed) doAction('clearLogs');
-    });
+    if (clearLogsBtn) {
+        clearLogsBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Clear Audit Logs?',
+                text: 'This will clear all audit logs except seed data. This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, clear logs'
+            }).then((result) => {
+                if (result.isConfirmed) doAction('clearLogs');
+            });
+        });
     }
+
 });
