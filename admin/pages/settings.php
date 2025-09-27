@@ -250,14 +250,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             // Set error reporting to catch any database errors
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            upsertSiteSettings($pdo, $next);
+            if (!upsertSiteSettings($pdo, $next)) {
+                throw new Exception('Failed to update site settings');
+            }
         } catch (Exception $e) {
-            // non-fatal; we'll continue but log an audit entry
+            // Log error and treat as fatal
             try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'site_settings_upsert_failed', ['error'=>$e->getMessage()]); } catch (Exception $ee) {}
+            $saved = false;
         }
 
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            echo json_encode(['status' => 'ok', 'message' => 'Settings saved.']);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'ok', 'message' => 'Settings saved successfully.']);
             exit;
         }
         setFlash('success', 'Settings saved.');
@@ -267,7 +271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Save failed
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to save settings. Check DB permissions.']);
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to save settings. Please try again.']);
         exit;
     }
     setFlash('error', 'Failed to save settings. Check DB permissions.');
