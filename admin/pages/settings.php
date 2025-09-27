@@ -662,20 +662,78 @@ $csrf = generateToken('settings_form');
             xhr.open('POST', location.href, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.onload = function(){
-                try { var res = JSON.parse(xhr.responseText); } catch(e) { alert('Unexpected response'); return; }
-                if (res.status === 'ok') {
-                    alert(res.message || 'Done');
-                    if (action === 'clearIPs' || action === 'clearLogs') location.reload();
-                } else {
-                    alert(res.message || 'Action failed');
+                try { 
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.status === 'ok') {
+                        Swal.fire({
+                            title: 'Success',
+                            text: res.message || 'Changes saved successfully',
+                            icon: 'success',
+                            confirmButtonColor: '#3085d6'
+                        }).then((result) => {
+                            if (action === 'clearIPs' || action === 'clearLogs') location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: res.message || 'Action failed',
+                            icon: 'error',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                } catch(e) { 
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Unexpected server response',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
                 }
             };
             xhr.send(fd);
         }
 
-        document.getElementById('runScan').addEventListener('click', function(){ if (confirm('Start security scan?')) doAction('runScan'); });
-        document.getElementById('clearIPs').addEventListener('click', function(){ if (confirm('Clear blocked IPs?')) doAction('clearIPs'); });
-        document.getElementById('clearLogs').addEventListener('click', function(){ if (confirm('Clear audit logs (except seed)?')) doAction('clearLogs'); });
+        document.getElementById('runScan').addEventListener('click', function(){
+            Swal.fire({
+                title: 'Start Security Scan?',
+                text: 'This will scan your system for potential security issues.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, start scan'
+            }).then((result) => {
+                if (result.isConfirmed) doAction('runScan');
+            });
+        });
+
+        document.getElementById('clearIPs').addEventListener('click', function(){
+            Swal.fire({
+                title: 'Clear Blocked IPs?',
+                text: 'This will remove all IP addresses from the block list.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, clear IPs'
+            }).then((result) => {
+                if (result.isConfirmed) doAction('clearIPs');
+            });
+        });
+
+        document.getElementById('clearLogs').addEventListener('click', function(){
+            Swal.fire({
+                title: 'Clear Audit Logs?',
+                text: 'This will clear all audit logs except seed data. This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, clear logs'
+            }).then((result) => {
+                if (result.isConfirmed) doAction('clearLogs');
+            });
+        });
         document.getElementById('downloadLogs').addEventListener('click', function(){
             // open download endpoint in new tab to stream CSV
             var token = document.querySelector('input[name="_csrf"]').value;
