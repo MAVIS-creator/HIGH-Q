@@ -248,6 +248,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($saved) {
         // Also upsert into the structured site_settings table for client-side SQL reads
         try {
+            // Set error reporting to catch any database errors
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             upsertSiteSettings($pdo, $next);
         } catch (Exception $e) {
             // non-fatal; we'll continue but log an audit entry
