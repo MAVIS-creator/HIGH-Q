@@ -137,18 +137,28 @@ if (!headers_sent()) {
             const badge = wrap.querySelector('#notifBadge');
 
             async function loadNotifications(){
-                try{
+                try {
                     const res = await fetch('/HIGH-Q/admin/api/notifications.php');
                     if(!res.ok) return;
                     const j = await res.json();
                     const list = j.notifications || [];
-                    // update badge
-                    if(list.length>0){ badge.style.display='inline-block'; badge.textContent = list.length; }
-                    else { badge.style.display='none'; }
-                    // render
+                    
+                    // Update badge
+                    if(list.length>0) { 
+                        badge.style.display = 'inline-block'; 
+                        badge.textContent = list.length; 
+                    } else { 
+                        badge.style.display = 'none'; 
+                    }
+                    
+                    // Clear and render notifications
                     panel.innerHTML = '';
-                    if(list.length===0){ panel.innerHTML = '<div class="notif-empty">No notifications</div>'; return; }
-                    list.forEach(n=>{
+                    if(list.length === 0) {
+                        panel.innerHTML = '<div class="notif-empty">No notifications</div>';
+                        return;
+                    }
+                    
+                    list.forEach(n => {
                         const it = document.createElement('a'); 
                         it.className = 'notification-item ' + (n.is_read ? 'read' : '');
                         it.setAttribute('data-notification-id', n.id);
