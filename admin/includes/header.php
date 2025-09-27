@@ -190,7 +190,7 @@ if (!headers_sent()) {
                             else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
                             else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
                         });
-                        panel.appendChild(it);
+                        // Panel append is now handled in the forEach loop
                     });
                 }catch(e){ /* ignore */ }
             }
