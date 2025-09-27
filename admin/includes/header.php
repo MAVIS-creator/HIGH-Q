@@ -122,8 +122,9 @@ if (!headers_sent()) {
         .notif-item:last-child{border-bottom:none}
         .notif-empty{padding:20px;text-align:center;color:#666}
         </style>
+        <!-- Initialize notifications -->
         <script>
-        (function initNotifications(){
+        document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('notifBtn');
             if (!btn) return;
 
