@@ -145,12 +145,7 @@ if (!headers_sent()) {
 
             const badge = wrap.querySelector('#notifBadge');
 
-            // Handle click outside to close panel
-            document.addEventListener('click', function(e) {
-                if (!wrap.contains(e.target)) {
-                    panel.style.display = 'none';
-                }
-            });
+            // Notifications are now handled by header-notifications.js
 
             // Toggle panel on button click
             wrap.querySelector('button').addEventListener('click', function(e) {
