@@ -213,9 +213,27 @@ if (!headers_sent()) {
                         it.appendChild(msg);
                         it.appendChild(time);
                         
-                        // Add to notification panel
                         panel.appendChild(it);
                     });
+                } catch(e) {
+                    console.error('Error loading notifications:', e);
+                }
+            }
+
+            // Poll badge count in background
+            setInterval(async () => {
+                try {
+                    const res = await fetch('/HIGH-Q/admin/api/notifications.php');
+                    if (!res.ok) return;
+                    const j = await res.json();
+                    const count = j.notifications?.length || 0;
+                    badge.style.display = count > 0 ? 'inline-block' : 'none';
+                    badge.textContent = count;
+                } catch(e) {
+                    console.error('Error polling notifications:', e);
+                }
+            }, 60000); // Poll every minute
+        })();
                             else if(n.type==='comment') window.location = '/HIGH-Q/admin/index.php?pages=comments&highlight=' + (n.id);
                             else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
                             else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
