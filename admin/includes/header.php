@@ -14,6 +14,8 @@ if (!headers_sent()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/notifications.css">
+    <script src="../assets/js/notifications.js"></script>
     <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
