@@ -145,15 +145,29 @@ if (!headers_sent()) {
 
             const badge = wrap.querySelector('#notifBadge');
 
-            async function loadNotifications(){
+            // Handle click outside to close panel
+            document.addEventListener('click', function(e) {
+                if (!wrap.contains(e.target)) {
+                    panel.style.display = 'none';
+                }
+            });
+
+            // Toggle panel on button click
+            wrap.querySelector('button').addEventListener('click', function(e) {
+                e.stopPropagation();
+                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+                if (panel.style.display === 'block') loadNotifications();
+            });
+
+            async function loadNotifications() {
                 try {
                     const res = await fetch('/HIGH-Q/admin/api/notifications.php');
-                    if(!res.ok) return;
+                    if (!res.ok) return;
                     const j = await res.json();
                     const list = j.notifications || [];
                     
                     // Update badge
-                    if(list.length>0) { 
+                    if (list.length > 0) { 
                         badge.style.display = 'inline-block'; 
                         badge.textContent = list.length; 
                     } else { 
@@ -162,7 +176,7 @@ if (!headers_sent()) {
                     
                     // Clear and render notifications
                     panel.innerHTML = '';
-                    if(list.length === 0) {
+                    if (list.length === 0) {
                         panel.innerHTML = '<div class="notif-empty">No notifications</div>';
                         return;
                     }
@@ -199,12 +213,9 @@ if (!headers_sent()) {
                         it.appendChild(msg);
                         it.appendChild(time);
                         
-                        it.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            panel.style.display = 'none';
-                            // The click handler is now in notifications.js
-                        });
+                        // Add to notification panel
+                        panel.appendChild(it);
+                    });
                             else if(n.type==='comment') window.location = '/HIGH-Q/admin/index.php?pages=comments&highlight=' + (n.id);
                             else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
                             else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
