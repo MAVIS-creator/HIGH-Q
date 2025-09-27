@@ -285,7 +285,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             header('Content-Type: application/json');
-            echo json_encode(['status' => 'ok', 'message' => 'Settings saved successfully.']);
+            echo json_encode([
+                'status' => 'ok',
+                'message' => 'Settings saved successfully',
+                'icon' => 'success',
+                'title' => 'Success'
+            ]);
             exit;
         }
         setFlash('success', 'Settings saved.');
