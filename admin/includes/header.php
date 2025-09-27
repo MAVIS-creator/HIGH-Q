@@ -221,44 +221,71 @@ if (!headers_sent()) {
             }
 
             // Poll badge count in background
-            setInterval(async () => {
+            async function pollNotifications() {
                 try {
                     const res = await fetch('/HIGH-Q/admin/api/notifications.php');
                     if (!res.ok) return;
-                    const j = await res.json();
-                    const count = j.notifications?.length || 0;
+                    const data = await res.json();
+                    const count = data.notifications?.length || 0;
                     badge.style.display = count > 0 ? 'inline-block' : 'none';
                     badge.textContent = count;
+                    return data;
                 } catch(e) {
                     console.error('Error polling notifications:', e);
+                    return null;
                 }
-            }, 60000); // Poll every minute
-        })();
-                            else if(n.type==='comment') window.location = '/HIGH-Q/admin/index.php?pages=comments&highlight=' + (n.id);
-                            else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
-                            else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
-                        });
-                        // Panel append is now handled in the forEach loop
-                    });
-                }catch(e){ /* ignore */ }
             }
 
-            // toggle panel
-            wrap.querySelector('button').addEventListener('click', function(e){
-                e.stopPropagation(); panel.style.display = panel.style.display==='block' ? 'none' : 'block';
-                if(panel.style.display==='block') loadNotifications();
+            // Toggle panel and load notifications
+            wrap.querySelector('button').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isVisible = panel.style.display === 'block';
+                panel.style.display = isVisible ? 'none' : 'block';
+                if (!isVisible) {
+                    pollNotifications().then(data => {
+                        if (!data?.notifications) return;
+                        panel.innerHTML = '';
+                        if (data.notifications.length === 0) {
+                            panel.innerHTML = '<div class="notif-empty">No notifications</div>';
+                            return;
+                        }
+                        data.notifications.forEach(n => {
+                            const item = document.createElement('a');
+                            item.className = 'notification-item ' + (n.is_read ? 'read' : '');
+                            item.setAttribute('data-notification-id', n.id);
+                            item.setAttribute('data-notification-type', n.type);
+                            item.href = '#';
+
+                            const title = document.createElement('div');
+                            title.className = 'notification-title';
+                            title.textContent = n.title || '';
+
+                            const message = document.createElement('div');
+                            message.className = 'notification-message';
+                            message.textContent = n.message || '';
+
+                            const time = document.createElement('div');
+                            time.className = 'notification-time';
+                            time.textContent = n.created_at || '';
+
+                            item.appendChild(title);
+                            item.appendChild(message);
+                            item.appendChild(time);
+                            panel.appendChild(item);
+                        });
+                    });
+                }
             });
 
-            // close on outside click
-            document.addEventListener('click', function(e){ if(!wrap.contains(e.target)) panel.style.display='none'; });
+            // Close on outside click
+            document.addEventListener('click', function(e) {
+                if (!wrap.contains(e.target)) {
+                    panel.style.display = 'none';
+                }
+            });
 
-            // poll badge count in background
-            async function pollCount(){
-                try{
-                    const res = await fetch('/HIGH-Q/admin/api/notifications.php'); if(!res.ok) return;
-                    const j = await res.json(); const c = j.count || 0; if(c>0) badge.style.display='inline-block', badge.textContent=c; else badge.style.display='none';
-                }catch(e){}
-            }
-            pollCount(); setInterval(pollCount,5000);
+            // Initial poll and set interval
+            pollNotifications();
+            setInterval(pollNotifications, 60000); // Poll every minute
         })();
         </script>
