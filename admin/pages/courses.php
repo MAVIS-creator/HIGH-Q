@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           </div>
           <div class="form-group">
             <label for="fPrice">Price (₦)</label>
-            <input type="text, number" name="price" id="fPrice">
+            <input type="text, number" name="price" id="fPrice" step="0.01" min="0">
           </div>
         </div>
         <div class="form-row compact-row">
