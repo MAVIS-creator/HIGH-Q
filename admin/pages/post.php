@@ -210,7 +210,7 @@ $posts = $stmt->fetchAll();
                         </div>
                         <div class="excerpt"><?= nl2br(htmlspecialchars($p['excerpt'] ?: '')) ?></div>
                         <div class="actions">
-                            <a href="post_edit.php?id=<?= $p['id'] ?>" class="btn">Edit</a>
+                            <a href="post_edit.php?id=<?= $p['id'] ?>" class="btn edit-link" data-id="<?= $p['id'] ?>">Edit</a>
                             <form method="post" action="index.php?action=delete&amp;id=<?= $p['id'] ?>&amp;pages=posts" style="display:inline">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                                 <button class="btn btn-danger" type="submit">Delete</button>

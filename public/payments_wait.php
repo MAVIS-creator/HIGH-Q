@@ -52,13 +52,39 @@ $csrf = generateToken('signup_form');
 
   <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">10:00</div>
 
-  <form method="post" action="register.php" id="payer-form">
-          <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+  <form method="post" action="#" id="payer-form">
+          <!-- mark_sent API expects _csrf and payment_id fields -->
+          <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
           <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
           <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-    <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-          <div style="margin-top:12px;"><button class="btn-primary" name="mark_sent" type="submit">I have sent the money</button></div>
+          <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
+          <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
+          <div style="margin-top:12px;"><button class="btn-primary" id="markSentBtn" type="submit">I have sent the money</button></div>
         </form>
+
+        <script>
+          // submit mark-sent via fetch to API endpoint and handle response
+          (function(){
+            var form = document.getElementById('payer-form');
+            var btn = document.getElementById('markSentBtn');
+            form.addEventListener('submit', function(e){
+              e.preventDefault();
+              btn.disabled = true; btn.textContent = 'Recording...';
+              var fd = new FormData(form);
+              fetch('api/mark_sent.php', { method: 'POST', body: fd, credentials: 'same-origin' })
+                .then(function(r){ return r.json(); })
+                .then(function(j){
+                  if (j.status === 'ok') {
+                    // show success and let polling detect confirmation
+                    btn.textContent = 'Recorded — awaiting admin verification';
+                  } else {
+                    alert(j.message || 'Failed to record transfer.');
+                    btn.disabled = false; btn.textContent = 'I have sent the money';
+                  }
+                }).catch(function(){ alert('Network error'); btn.disabled = false; btn.textContent = 'I have sent the money'; });
+            });
+          })();
+        </script>
 
         <p style="margin-top:12px;color:#666;">Reference: <?= htmlspecialchars($payment['reference'] ?? '') ?></p>
       </div>
