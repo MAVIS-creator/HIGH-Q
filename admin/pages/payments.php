@@ -24,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     $action = $_POST['action'] ?? '';
     $id = intval($_POST['id'] ?? 0);
     if ($action === 'confirm') {
+        // ensure idempotent: only confirm if not already confirmed
+        $cur = $pdo->prepare('SELECT status FROM payments WHERE id = ? LIMIT 1'); $cur->execute([$id]); $curS = $cur->fetchColumn();
+        if ($curS === 'confirmed') { echo json_encode(['status'=>'ok','message'=>'Already confirmed']); exit; }
         // mark payment confirmed
         $upd = $pdo->prepare('UPDATE payments SET status = "confirmed", confirmed_at = NOW(), updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
@@ -173,11 +176,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         exit;
     }
     if ($action === 'reject') {
+        $reason = trim($_POST['reason'] ?? '');
         $upd = $pdo->prepare('UPDATE payments SET status = "failed", updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
         if ($ok) {
             // log action: admin rejected payment
-            try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'reject_payment', ['payment_id'=>$id]); } catch(Throwable $e){}
+            try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'reject_payment', ['payment_id'=>$id,'reason'=>$reason]); } catch(Throwable $e){}
             // notify user of rejection
             $stmt = $pdo->prepare('SELECT student_id, reference FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
             if ($p && !empty($p['student_id'])) { $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
