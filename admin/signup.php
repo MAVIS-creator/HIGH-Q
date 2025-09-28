@@ -157,9 +157,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Insert user
-        $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, avatar, is_active)
-                               VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active]);
+        $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, avatar, is_active, email_verification_token, email_verified_at)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+        // For non-first users we will generate a verification token and set is_active to 0
+        $verificationToken = null;
+        $verifiedAt = null;
+        if (!$is_active) {
+            // generate a secure token
+            $verificationToken = bin2hex(random_bytes(32));
+        } else {
+            $verifiedAt = date('Y-m-d H:i:s');
+        }
+
+        $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
 
         // Send email notification
         if ($is_active) {
@@ -167,18 +178,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $html = "<p>Hello $name,</p>
                      <p>Your account has been created with Main Admin privileges.</p>
                      <p>You can now log in to the admin panel.</p>";
+            sendEmail($email, $subject, $html);
+            $success = "Account created successfully! You can now log in.";
         } else {
-            $subject = "Account Pending Approval";
+            // Send verification email with link to public/verify_email.php
+            $verifyUrl = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http'))
+                . '://' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']) . dirname($_SERVER['REQUEST_URI']) . '/../public/verify_email.php?token=' . urlencode($verificationToken);
+
+            $subject = "Verify your email for HIGH Q SOLID ACADEMY";
             $html = "<p>Hello $name,</p>
                      <p>Thanks for registering with HIGH Q SOLID ACADEMY.</p>
-                     <p>Your account is pending admin approval. You’ll receive an email when approved.</p>";
+                     <p>Please verify your email address by clicking the link below:</p>
+                     <p><a href=\"{$verifyUrl}\">Verify my email</a></p>
+                     <p>If you did not create this account, ignore this email.</p>";
+
+            // Send verification email (do not block signup on failure)
+            @sendEmail($email, $subject, $html);
+
+            $success = "Account created successfully! Please check your email to verify your account.";
         }
-
-        sendEmail($email, $subject, $html);
-
-        $success = $is_active
-            ? "Account created successfully! You can now log in."
-            : "Account created successfully! Pending admin approval.";
     }
 }
 
