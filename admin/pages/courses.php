@@ -25,18 +25,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     } else {
         $act    = $_GET['action'];
         $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
-        $title  = trim($_POST['title'] ?? '');
-        $slug   = trim($_POST['slug'] ?? '');
-        $desc   = trim($_POST['description'] ?? '');
-        $dur    = trim($_POST['duration'] ?? '');
-        $price  = number_format((float)($_POST['price'] ?? 0), 2, '.', '');
+    $title  = trim($_POST['title'] ?? '');
+    $slug   = trim($_POST['slug'] ?? '');
+    $desc   = trim($_POST['description'] ?? '');
+    $dur    = trim($_POST['duration'] ?? '');
+    // Allow empty price which indicates "Varies". Store as NULL in DB when left blank.
+    $priceRaw = trim($_POST['price'] ?? '');
+    if ($priceRaw === '') {
+      $price = null;
+    } else {
+      // strip common formatting (commas, currency symbols) and keep numbers/dot
+      $priceClean = preg_replace('/[^0-9.]/', '', $priceRaw);
+      $price = number_format((float)$priceClean, 2, '.', '');
+    }
   // $tutor removed
         $active = isset($_POST['is_active']) ? 1 : 0;
     $icon   = trim($_POST['icon'] ?? '');
     $features = trim($_POST['features'] ?? '');
     $highlight_badge = trim($_POST['highlight_badge'] ?? '');
 
-    // Validation & sanitization
+  // Validation & sanitization
     if (mb_strlen($title) > 255) $title = mb_substr($title, 0, 255);
     if (mb_strlen($slug) > 255) $slug = mb_substr($slug, 0, 255);
     if (mb_strlen($dur) > 100) $dur = mb_substr($dur, 0, 100);
@@ -53,9 +61,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       }
     }
 
+        // Auto-generate slug from title when missing
+        if (!$slug && $title) {
+            $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
+            $slug = trim($slug, '-');
+        }
+
         if ($act === 'create') {
-            if (!$title || !$slug) {
-                $errors[] = "Title and slug are required.";
+            if (!$title) {
+                $errors[] = "Title is required.";
+            } elseif (!$slug) {
+                $errors[] = "Could not generate a slug from the title. Please enter a slug.";
             } else {
                 $stmt = $pdo->prepare(
                   "INSERT INTO courses
@@ -88,10 +104,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-        if ($act === 'edit' && $id) {
-            if (!$title || !$slug) {
-                $errors[] = "Title and slug are required.";
-            } else {
+    if ($act === 'edit' && $id) {
+      // Auto-generate slug if missing when editing
+      if (!$slug && $title) {
+        $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
+        $slug = trim($slug, '-');
+      }
+      if (!$title) {
+        $errors[] = "Title is required.";
+      } elseif (!$slug) {
+        $errors[] = "Could not generate a slug from the title. Please enter a slug.";
+      } else {
                 $stmt = $pdo->prepare(
                   "UPDATE courses
                   SET title=?, slug=?, description=?, duration=?, price=?, tutor_id=?, is_active=?, icon=?, highlight_badge=?, updated_at=NOW()
@@ -102,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   $slug,
                   $desc,
                   $dur,
-                  $price,
+          $price,
                   null,
                   $active,
                   $icon ?: null,
