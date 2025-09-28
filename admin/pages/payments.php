@@ -269,6 +269,9 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                 <td>
+                    <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
+                </td>
+                <td>
                     <?php if ($p['status'] === 'pending'): ?>
                         <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
                         <button class="btn" onclick="doAction('reject',<?= $p['id'] ?>)">Reject</button>
