@@ -198,7 +198,7 @@ if ($hasRegistrations) {
           </div>
           <div class="card-right">
             <div class="card-actions">
-              <button class="btn-view" data-user-id="<?= $s['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+              <!-- view icon removed as requested -->
               <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this registration?');">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
@@ -242,7 +242,7 @@ if ($hasRegistrations) {
         </div>
         <div class="card-right">
           <div class="card-actions">
-            <button class="btn-view" data-user-id="<?= $s['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+            <!-- view icon removed as requested -->
             <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
                 <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
