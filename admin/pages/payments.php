@@ -10,6 +10,8 @@ require_once __DIR__ . '/../includes/header.php';
 
 // handle ajax actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+    // Always respond with JSON for AJAX
+    header('Content-Type: application/json');
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('payments_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
     $action = $_POST['action'] ?? '';
@@ -202,6 +204,19 @@ $totalPages = (int)ceil($total / $perPage);
 ?>
 <div class="roles-page">
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
+    <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
+        <form method="get" style="margin:0;display:flex;gap:8px;align-items:center;">
+            <label for="statusFilter">Status:</label>
+            <select id="statusFilter" name="status">
+                <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
+                <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
+                <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
+                <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
+            </select>
+            <button class="btn" type="submit">Filter</button>
+        </form>
+        <div style="margin-left:auto;color:#666;font-size:13px;">Search: <em><?= htmlspecialchars($search) ?></em></div>
+    </div>
     <table class="roles-table">
         <thead><tr><th>ID</th><th>Reference</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
