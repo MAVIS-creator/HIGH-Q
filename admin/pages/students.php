@@ -480,12 +480,27 @@ async function postAction(url, formData){
 }
 
 // Confirm (modal) handler
-regConfirmForm.addEventListener('submit', function(e){
+regConfirmForm.addEventListener('submit', async function(e){
   e.preventDefault();
   const id = regModal.dataset.regId;
   if (!id) return Swal.fire('Error','No registration selected','error');
-  const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>');
-  postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error'));
+  const choice = await Swal.fire({ title: 'Confirm registration?', text: 'Create payment reference to send to registrant?', icon:'question', showDenyButton:true, showCancelButton:true, confirmButtonText:'Confirm only', denyButtonText:'Create payment & confirm' });
+  if (choice.isConfirmed) {
+    const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error'));
+  } else if (choice.isDenied) {
+    const { value: formValues } = await Swal.fire({
+      title: 'Create payment',
+      html: '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
+            '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
+      focusConfirm: false,
+      preConfirm: () => ({ amount: document.getElementById('swal-amount').value, method: document.getElementById('swal-method').value })
+    });
+    if (!formValues) return;
+    const amt = parseFloat(formValues.amount || 0);
+    if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
+    const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
+    postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed','error'));
+  }
 });
 
 // Reject (modal) via SweetAlert2 textarea
