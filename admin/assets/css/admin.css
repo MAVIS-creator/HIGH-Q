@@ -642,7 +642,18 @@ h1 {
 }
 
 .toggle input {
-  display: none
+  /* keep the native checkbox available for accessibility and keyboard users
+     but visually hide it so the custom track/thumb is shown. Using opacity
+     and absolute positioning keeps it focusable/tabbable while removed
+     from the visual flow. */
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  left: -9999px; /* further remove from layout while keeping focusability
+                    (some UA treat off-screen equally but opacity keeps it tabbable) */
 }
 
 .toggle .track {
@@ -698,7 +709,14 @@ h1 {
 }
 
 .toggle input {
-  display: none
+  /* see earlier comment: keep checkbox accessible but visually hidden */
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  left: -9999px;
 }
 
 .toggle .track {
