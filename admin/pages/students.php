@@ -436,27 +436,67 @@ regClose.addEventListener('click', ()=> regModal.style.display='none');
 regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.style.display='none'; });
 
 // When confirm form is submitted, POST to confirm_registration
+// Helper to POST action and reload
+async function postAction(url, formData){
+  const res = await fetch(url, { method: 'POST', body: formData });
+  if (!res.ok) throw new Error('Server error');
+  window.location = 'index.php?pages=students';
+}
+
+// Confirm (modal) handler
 regConfirmForm.addEventListener('submit', function(e){
   e.preventDefault();
   const id = regModal.dataset.regId;
-  if (!id) return alert('No registration selected');
-  // create form data
+  if (!id) return Swal.fire('Error','No registration selected','error');
   const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>');
-  fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd })
-    .then(()=> { window.location = 'index.php?pages=students'; })
-    .catch(()=> { alert('Failed to confirm'); });
+  postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error'));
 });
 
-// Reject flow: prompt for reason, then POST
+// Reject (modal) via SweetAlert2 textarea
 regRejectBtn.addEventListener('click', ()=>{
   const id = regModal.dataset.regId;
-  if (!id) return alert('No registration selected');
-  const reason = prompt('Enter reason for rejection (optional):');
-  if (reason === null) return; // cancelled
-  const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', reason);
-  fetch(`index.php?pages=students&action=reject_registration&id=${id}`, { method: 'POST', body: fd })
-    .then(()=> { window.location = 'index.php?pages=students'; })
-    .catch(()=> { alert('Failed to reject'); });
+  if (!id) return Swal.fire('Error','No registration selected','error');
+  Swal.fire({
+    title: 'Reject registration',
+    input: 'textarea',
+    inputLabel: 'Reason (optional)',
+    inputPlaceholder: 'Enter a reason for rejection',
+    showCancelButton: true,
+    confirmButtonText: 'Reject',
+    cancelButtonText: 'Cancel',
+    inputAttributes: { 'aria-label': 'Rejection reason' }
+  }).then(result=>{
+    if (result.isConfirmed) {
+      const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
+      postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error'));
+    }
+  });
+});
+
+// Delegated inline Confirm/Reject handlers
+document.addEventListener('click', function(e){
+  const t = e.target.closest('.inline-confirm');
+  if (t) {
+    const id = t.dataset.id;
+    if (!id) return Swal.fire('Error','No registration id','error');
+    Swal.fire({title:'Confirm registration?',icon:'question',showCancelButton:true,confirmButtonText:'Yes, confirm'})
+      .then(res=>{ if (res.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error')); } });
+    return;
+  }
+  const r = e.target.closest('.inline-reject');
+  if (r) {
+    const id = r.dataset.id;
+    if (!id) return Swal.fire('Error','No registration id','error');
+    Swal.fire({
+      title: 'Reject registration',
+      input: 'textarea',
+      inputLabel: 'Reason (optional)',
+      inputPlaceholder: 'Reason for rejection',
+      showCancelButton: true,
+      confirmButtonText: 'Reject'
+    }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+    return;
+  }
 });
 </script>
 
