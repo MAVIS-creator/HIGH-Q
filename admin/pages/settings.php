@@ -605,6 +605,11 @@ $csrf = generateToken('settings_form');
                             </div>
                         </div>
                     <?php } ?>
+                        <div style="margin-top:12px;">
+                            <label>Maintenance allowed IPs (comma-separated)</label>
+                            <textarea name="settings[security][maintenance_allowed_ips]" placeholder="e.g. 203.0.113.5, 198.51.100.0" class="input" rows="2"><?= htmlspecialchars($current['security']['maintenance_allowed_ips'] ?? '') ?></textarea>
+                            <div class="muted">Enter IP addresses that may bypass maintenance mode. Separate with commas. CIDR not currently supported.</div>
+                        </div>
                 </div>
             </div>
 
