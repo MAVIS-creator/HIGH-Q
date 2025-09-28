@@ -13,6 +13,12 @@ require_once __DIR__ . '/../includes/header.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     // Always respond with JSON for AJAX
     header('Content-Type: application/json');
+    // Simple rate limiter: max 6 actions per 30 seconds per session
+    if (!isset($_SESSION['payments_rate'])) $_SESSION['payments_rate'] = ['count'=>0,'time'=>time()];
+    $rate = &$_SESSION['payments_rate'];
+    if (time() - $rate['time'] > 30) { $rate['count'] = 0; $rate['time'] = time(); }
+    $rate['count']++;
+    if ($rate['count'] > 6) { echo json_encode(['status'=>'error','message'=>'Rate limit exceeded, try again later']); exit; }
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('payments_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
     $action = $_POST['action'] ?? '';
@@ -25,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             // log action: admin confirmed payment
             try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'confirm_payment', ['payment_id'=>$id]); } catch(Throwable $e){}
             // fetch payment details
+                // include receipt download link in admin email log (if any)
             $stmt = $pdo->prepare('SELECT p.*, u.email, u.name, u.id as user_id FROM payments p LEFT JOIN users u ON u.id = p.student_id WHERE p.id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
             // update latest registration for this user to confirmed
             if ($p && !empty($p['user_id'])) {
