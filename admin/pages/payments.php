@@ -384,9 +384,9 @@ function doAction(action,id){
             confirmButtonText: 'Reject',
             preConfirm: (reason) => {
                 var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF); fd.append('reason', reason || '');
-                return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
-                    .then(res => res.text())
-                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
+                return fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}, credentials:'same-origin'})
+                    .then(res => res.json())
+                    .catch(err => { throw new Error('Failed to parse server response: ' + (err && err.message ? err.message : String(err))); });
             }
         }).then((res) => {
             if (res.isConfirmed) {
@@ -408,9 +408,9 @@ function doAction(action,id){
             confirmButtonText: textAction,
             preConfirm: () => {
                 var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF);
-                return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
-                    .then(res => res.text())
-                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
+                return fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}, credentials:'same-origin'})
+                    .then(res => res.json())
+                    .catch(err => { throw new Error('Failed to parse server response: ' + (err && err.message ? err.message : String(err))); });
             }
         }).then((res) => {
             if (res.isConfirmed) {
