@@ -261,17 +261,17 @@ $totalPages = (int)ceil($total / $perPage);
         <form method="get" action="index.php" class="filter-form">
             <input type="hidden" name="pages" value="payments">
             <label for="statusFilter">Status:</label>
-            <select id="statusFilter" name="status">
+            <select id="statusFilter" name="status" class="small">
                 <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
                 <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
                 <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
                 <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
             </select>
-            <label>From: <input type="date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>"></label>
-            <label>To: <input type="date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>"></label>
-            <label>Gateway: <input type="text" name="gateway" placeholder="gateway" value="<?= htmlspecialchars($_GET['gateway'] ?? '') ?>" style="width:120px"></label>
-            <label>Reference: <input type="text" name="ref" placeholder="reference" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>" style="width:160px"></label>
-            <label>Email/User: <input type="text" name="user_email" placeholder="email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>" style="width:160px"></label>
+            <label>From: <input class="small" type="date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>"></label>
+            <label>To: <input class="small" type="date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>"></label>
+            <label>Gateway: <input class="small" type="text" name="gateway" placeholder="gateway" value="<?= htmlspecialchars($_GET['gateway'] ?? '') ?>"></label>
+            <label>Reference: <input class="medium" type="text" name="ref" placeholder="reference" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>"></label>
+            <label>Email/User: <input class="medium" type="text" name="user_email" placeholder="email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>"></label>
             <button class="btn" type="submit">Filter</button>
         </form>
         <div style="margin-left:auto;color:#666;font-size:13px;">Search: <em><?= htmlspecialchars($search) ?></em></div>
