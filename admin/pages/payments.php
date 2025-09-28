@@ -322,15 +322,22 @@ function doAction(action,id){
     // fetch row data from the table to show payer details in the confirmation modal
     var row = document.querySelector('tr td:first-child + td + td + td + td + td + td + td + td + td + td button[onclick]') // not reliable fallback
     // better: find the row by data-id attribute if present
-    var tr = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]').closest('tr');
-    var payer = tr.querySelector('td:nth-child(7)') ? tr.querySelector('td:nth-child(7)').textContent.trim() : '';
-    var payerAcc = tr.querySelector('td:nth-child(8)') ? tr.querySelector('td:nth-child(8)').textContent.trim() : '';
-    var payerBank = tr.querySelector('td:nth-child(9)') ? tr.querySelector('td:nth-child(9)').textContent.trim() : '';
+    var btn = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]');
+    var tr = btn ? btn.closest('tr') : null;
+    var payer = tr ? (tr.getAttribute('data-payer-name') || '') : '';
+    var payerAcc = tr ? (tr.getAttribute('data-payer-account') || '') : '';
+    var payerBank = tr ? (tr.getAttribute('data-payer-bank') || '') : '';
+    var ref = tr ? (tr.getAttribute('data-reference') || '') : '';
+    var email = tr ? (tr.getAttribute('data-email') || '') : '';
+    var amt = tr ? (tr.getAttribute('data-amount') || '') : '';
 
     var confirmHtml = '<div style="text-align:left">';
+    confirmHtml += '<p><strong>Reference:</strong> ' + Swal.escapeHtml(ref || '-') + '</p>';
+    confirmHtml += '<p><strong>Amount:</strong> ' + Swal.escapeHtml(amt || '-') + '</p>';
     confirmHtml += '<p><strong>Payer:</strong> ' + Swal.escapeHtml(payer || '-') + '</p>';
     confirmHtml += '<p><strong>Account:</strong> ' + Swal.escapeHtml(payerAcc || '-') + '</p>';
     confirmHtml += '<p><strong>Bank:</strong> ' + Swal.escapeHtml(payerBank || '-') + '</p>';
+    confirmHtml += '<p><strong>User Email:</strong> ' + Swal.escapeHtml(email || '-') + '</p>';
     confirmHtml += '</div>';
 
     var textAction = action === 'confirm' ? 'Confirm' : 'Reject';
