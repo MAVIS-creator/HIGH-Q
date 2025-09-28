@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Registration form fields
 	$first_name = trim($_POST['first_name'] ?? '');
 	$last_name = trim($_POST['last_name'] ?? '');
+	$email_contact = trim($_POST['email_contact'] ?? '');
 	$date_of_birth = trim($_POST['date_of_birth'] ?? '') ?: null;
 	$home_address = trim($_POST['home_address'] ?? '') ?: null;
 	$previous_education = trim($_POST['previous_education'] ?? '') ?: null;
@@ -49,15 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Terms must be accepted
 	if (!$agreed_terms) { $errors[] = 'You must accept the terms and conditions to proceed.'; }
 
+	// Validate contact email if provided
+	if ($email_contact !== '' && !filter_var($email_contact, FILTER_VALIDATE_EMAIL)) {
+		$errors[] = 'Provide a valid contact email address.';
+	}
+
 	if (empty($errors)) {
 		// create registration record without creating a site user account
 		try {
 			$pdo->beginTransaction();
 
-			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, email, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
 			$reg->execute([
 				$first_name ?: null,
 				$last_name ?: null,
+				$email_contact ?: null,
 				$date_of_birth,
 				$home_address,
 				$previous_education,
