@@ -314,16 +314,33 @@ function filterStudents(){
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
 
-// View button behavior (reuse users.php modal if present)
-document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click', e=>{
+// View registration link behavior: fetch registration JSON and show modal with Confirm/Reject
+const __students_csrf = '<?= $csrf ?>';
+document.querySelectorAll('.view-registration').forEach(link=>link.addEventListener('click', async (e)=>{
   e.preventDefault();
-  const id = btn.dataset.userId;
-  // If users modal exists in DOM (users.php), call its loader; otherwise open a simple window
-  if (typeof loadUser === 'function') {
-    loadUser(id,'view');
-  } else {
-    window.location = `index.php?pages=users&action=view&id=${id}`;
-  }
+  const id = link.dataset.id;
+  try {
+    const res = await fetch(`index.php?pages=students&action=view&id=${id}`);
+    const data = await res.json();
+    if (!data || data.error) { alert('Registration not found'); return; }
+    // populate modal
+    const content = document.getElementById('registrationContent');
+    content.innerHTML = `
+      <div style="max-height:480px;overflow:auto;">
+        <h4>${(data.first_name||'') + ' ' + (data.last_name||'')}</h4>
+        <div><strong>Email:</strong> ${data.email||''}</div>
+        <div><strong>Phone:</strong> ${data.phone||data.phone_number||''}</div>
+        <div><strong>DOB:</strong> ${data.date_of_birth||data.dob||''}</div>
+        <div><strong>Address:</strong> ${data.home_address||data.address||''}</div>
+        <div><strong>Emergency:</strong> ${(data.emergency_contact_name||'') + ' / ' + (data.emergency_contact_phone||'')}</div>
+        ${data.notes?`<div style="margin-top:8px;"><strong>Notes:</strong><div>${data.notes}</div></div>`:''}
+      </div>
+    `;
+    // store id on modal for actions
+    const modal = document.getElementById('registrationViewModal');
+    modal.dataset.regId = id;
+    modal.style.display = 'flex';
+  } catch (err) { console.error(err); alert('Failed to load registration'); }
 }));
 </script>
 
@@ -374,6 +391,57 @@ document.querySelectorAll('.user-card .btn-view').forEach(btn=>{
 
 // Close modal when clicking outside content
 modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
+</script>
+
+<!-- Registration View & Approve/Reject Modal -->
+<div id="registrationViewModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+  <div class="modal-content" style="background:#fff;padding:18px;border-radius:8px;max-width:780px;width:96%;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+    <h3 id="regModalTitle">Registration</h3>
+    <div id="registrationContent" style="margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button id="regClose" type="button" class="btn">Close</button>
+      <form id="regConfirmForm" method="post" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+        <button type="submit" class="btn btn-approve">Confirm</button>
+      </form>
+      <button id="regRejectBtn" class="btn btn-banish">Reject</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Registration modal handlers
+const regModal = document.getElementById('registrationViewModal');
+const regClose = document.getElementById('regClose');
+const regConfirmForm = document.getElementById('regConfirmForm');
+const regRejectBtn = document.getElementById('regRejectBtn');
+
+regClose.addEventListener('click', ()=> regModal.style.display='none');
+regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.style.display='none'; });
+
+// When confirm form is submitted, POST to confirm_registration
+regConfirmForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  const id = regModal.dataset.regId;
+  if (!id) return alert('No registration selected');
+  // create form data
+  const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>');
+  fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd })
+    .then(()=> { window.location = 'index.php?pages=students'; })
+    .catch(()=> { alert('Failed to confirm'); });
+});
+
+// Reject flow: prompt for reason, then POST
+regRejectBtn.addEventListener('click', ()=>{
+  const id = regModal.dataset.regId;
+  if (!id) return alert('No registration selected');
+  const reason = prompt('Enter reason for rejection (optional):');
+  if (reason === null) return; // cancelled
+  const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', reason);
+  fetch(`index.php?pages=students&action=reject_registration&id=${id}`, { method: 'POST', body: fd })
+    .then(()=> { window.location = 'index.php?pages=students'; })
+    .catch(()=> { alert('Failed to reject'); });
+});
 </script>
 
 </body>
