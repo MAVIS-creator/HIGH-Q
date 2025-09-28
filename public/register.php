@@ -128,11 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				error_log('Registration notification error: ' . $e->getMessage());
 			}
 
-			// bank transfer: redirect to dedicated waiting page with instructions
+			// bank transfer: redirect to dedicated waiting page with instructions (use relative path)
 			if ($method === 'bank') {
 				$_SESSION['last_payment_id'] = $paymentId;
 				$_SESSION['last_payment_reference'] = $reference;
-				header('Location: /payments_wait.php?ref=' . urlencode($reference));
+				header('Location: payments_wait.php?ref=' . urlencode($reference));
 				exit;
 			}
 
@@ -318,14 +318,13 @@ $csrf = generateToken('signup_form');
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_sent']) && !empty($_POST['payment_id'])) {
 	$payId = (int)$_POST['payment_id'];
 	$payer_name = trim($_POST['payer_name'] ?? '');
-	$payer_number = trim($_POST['payer_number'] ?? '');
 	$payer_bank = trim($_POST['payer_bank'] ?? '');
 	// basic CSRF
 	$token2 = $_POST['_csrf_token'] ?? '';
 	if (!verifyToken('signup_form', $token2)) { /* ignore silently */ }
 	else {
-		$upd = $pdo->prepare('UPDATE payments SET payer_account_name = ?, payer_account_number = ?, payer_bank_name = ?, status = ?, updated_at = NOW() WHERE id = ?');
-		$upd->execute([$payer_name, $payer_number, $payer_bank, 'sent', $payId]);
+		$upd = $pdo->prepare('UPDATE payments SET payer_account_name = ?, payer_bank_name = ?, status = ?, updated_at = NOW() WHERE id = ?');
+		$upd->execute([$payer_name, $payer_bank, 'sent', $payId]);
 		// redirect to a waiting page where the user can poll or be informed
 		header('Location: payments_wait.php?ref=' . urlencode($_SESSION['last_payment_reference'] ?? '')); exit;
 	}
