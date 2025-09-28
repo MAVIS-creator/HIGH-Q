@@ -274,7 +274,7 @@ $users = $pdo->query("
           <button class="btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
           <button class="btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
-            <?php if($u['is_active']===0): ?>
+              <?php if($u['is_active']===0): ?>
               <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <select name="role_id" required>
@@ -284,6 +284,10 @@ $users = $pdo->query("
                   <?php endforeach; ?>
                 </select>
                 <button type="submit" class="btn-approve">Approve</button>
+              </form>
+              <form method="post" action="index.php?pages=users&action=resend_verification&id=<?= $u['id'] ?>" class="inline-form">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn">Resend Verification</button>
               </form>
               <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
               <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
