@@ -642,17 +642,7 @@ h1 {
 }
 
 .toggle input {
-  /* keep the native checkbox accessible: make it cover the control but invisible
-     so it remains keyboard-focusable and clickable while allowing custom visuals */
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
+  display: none
 }
 
 .toggle .track {
@@ -696,24 +686,6 @@ h1 {
   pointer-events: none;
 }
 
-/* Focus / hover / active improvements for accessibility */
-.toggle input:focus + .track {
-  /* visible focus ring using the pale yellow variable */
-  box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.12), 0 4px 14px rgba(0,0,0,0.06);
-}
-
-.toggle:hover .track {
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
-
-.toggle input:active + .track .thumb {
-  transform: translateY(-50%) translateX(calc(var(--w) - var(--h) - 4px)) scale(0.98);
-}
-
-.toggle input:checked:focus + .track {
-  box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.18), 0 6px 20px rgba(255, 214, 0, 0.12);
-}
-
 .toggle {
   --w: 56px;
   --h: 30px;
@@ -726,17 +698,7 @@ h1 {
 }
 
 .toggle input {
-  /* keep the native checkbox accessible: make it cover the control but invisible
-     so it remains keyboard-focusable and clickable while allowing custom visuals */
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
+  display: none
 }
 
 .toggle .track {
