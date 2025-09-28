@@ -33,35 +33,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     }
                 } catch (Throwable $e) { /* ignore if table missing */ }
 
-                // generate a simple HTML receipt and save to uploads/receipts
+                // generate a receipt (prefer PDF if Dompdf is available), save to uploads/receipts
                 $receiptPath = '';
                 try {
                     $uploads = __DIR__ . '/../../public/uploads/receipts/';
                     if (!is_dir($uploads)) mkdir($uploads, 0755, true);
+
+                    // fetch latest registration row for this user (if any) to get address/email and programs
+                    $reg = null;
+                    try {
+                        $r = $pdo->prepare('SELECT * FROM student_registrations WHERE user_id = ? ORDER BY created_at DESC LIMIT 1');
+                        $r->execute([$p['user_id']]);
+                        $reg = $r->fetch(PDO::FETCH_ASSOC);
+                    } catch (Throwable $ex) { $reg = null; }
+
                     // gather programs for the registration if available
                     $progHtml = '';
                     try {
-                        $ps = $pdo->prepare('SELECT c.title, c.price FROM student_programs sp JOIN courses c ON c.id = sp.course_id WHERE sp.registration_id = ?');
-                        if (!empty($reg['id'])) { $ps->execute([$reg['id']]); $rows = $ps->fetchAll(PDO::FETCH_ASSOC); foreach ($rows as $row) { $progHtml .= '<li>' . htmlspecialchars($row['title']) . ' - ₦' . number_format($row['price'],2) . '</li>'; } }
+                        if (!empty($reg['id'])) {
+                            $ps = $pdo->prepare('SELECT c.title, c.price FROM student_programs sp JOIN courses c ON c.id = sp.course_id WHERE sp.registration_id = ?');
+                            $ps->execute([$reg['id']]);
+                            $rows = $ps->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($rows as $row) { $progHtml .= '<li>' . htmlspecialchars($row['title']) . ' - ₦' . number_format($row['price'],2) . '</li>'; }
+                        }
                     } catch (Throwable $ex) { /* ignore */ }
 
-                    $html = '<!doctype html><html><head><meta charset="utf-8"><title>Receipt ' . htmlspecialchars($p['reference']) . '</title></head><body>';
+                    $payerName = $reg['first_name'] . ' ' . $reg['last_name'];
+                    $payerEmail = $reg['email'] ?? $p['email'] ?? '';
+                    $payerAddress = $reg['home_address'] ?? '';
+
+                    $html = '<!doctype html><html><head><meta charset="utf-8"><title>Receipt ' . htmlspecialchars($p['reference']) . '</title>';
+                    $html .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#222} .container{max-width:700px;margin:0 auto;padding:24px} h2{color:#111} .meta{margin:12px 0;color:#444}</style>';
+                    $html .= '</head><body><div class="container">';
                     $html .= '<h2>Payment Receipt</h2>';
-                    $html .= '<p><strong>Reference:</strong> ' . htmlspecialchars($p['reference']) . '</p>';
-                    $html .= '<p><strong>Name:</strong> ' . htmlspecialchars($p['name'] ?? '') . '</p>';
-                    $html .= '<p><strong>Email:</strong> ' . htmlspecialchars($p['email'] ?? '') . '</p>';
-                    $html .= '<p><strong>Amount:</strong> ₦' . number_format($p['amount'],2) . '</p>';
-                    if ($progHtml) $html .= '<p><strong>Programs:</strong><ul>' . $progHtml . '</ul></p>';
+                    $html .= '<div class="meta"><strong>Reference:</strong> ' . htmlspecialchars($p['reference']) . '</div>';
+                    $html .= '<div class="meta"><strong>Name:</strong> ' . htmlspecialchars(trim($payerName)) . '</div>';
+                    $html .= '<div class="meta"><strong>Email:</strong> ' . htmlspecialchars($payerEmail) . '</div>';
+                    if ($payerAddress) $html .= '<div class="meta"><strong>Address:</strong> ' . nl2br(htmlspecialchars($payerAddress)) . '</div>';
+                    $html .= '<div class="meta"><strong>Amount:</strong> ₦' . number_format($p['amount'],2) . '</div>';
+                    if ($progHtml) $html .= '<div class="meta"><strong>Programs:</strong><ul>' . $progHtml . '</ul></div>';
                     $html .= '<p>Thank you for registering with HIGH Q Solid Academy.</p>';
-                    $html .= '</body></html>';
-                    $fn = 'receipt-' . preg_replace('/[^A-Za-z0-9\-]/','', $p['reference']) . '.html';
-                    $fp = $uploads . $fn;
-                    file_put_contents($fp, $html);
-                    $receiptPath = 'uploads/receipts/' . $fn;
+                    $html .= '</div></body></html>';
+
+                    // prefer PDF if library available
+                    $fn = 'receipt-' . preg_replace('/[^A-Za-z0-9\-]/','', $p['reference']);
+                    if (class_exists('\Dompdf\Dompdf')) {
+                        // generate PDF
+                        try {
+                            $dompdf = new \Dompdf\Dompdf();
+                            $dompdf->loadHtml($html);
+                            $dompdf->setPaper('A4', 'portrait');
+                            $dompdf->render();
+                            $output = $dompdf->output();
+                            $fn = $fn . '.pdf';
+                            $fp = $uploads . $fn;
+                            file_put_contents($fp, $output);
+                            $receiptPath = 'uploads/receipts/' . $fn;
+                        } catch (Throwable $e) {
+                            // fallback to html
+                            $fn = $fn . '.html';
+                            $fp = $uploads . $fn;
+                            file_put_contents($fp, $html);
+                            $receiptPath = 'uploads/receipts/' . $fn;
+                        }
+                    } else {
+                        // no dompdf installed - save HTML receipt as fallback
+                        $fn = $fn . '.html';
+                        $fp = $uploads . $fn;
+                        file_put_contents($fp, $html);
+                        $receiptPath = 'uploads/receipts/' . $fn;
+                    }
+
                     // update payments with receipt_path and confirmed_at
                     $upd2 = $pdo->prepare('UPDATE payments SET receipt_path = ?, confirmed_at = NOW() WHERE id = ?');
                     $upd2->execute([$receiptPath, $id]);
                 } catch (Throwable $e) { /* ignore save errors */ }
+
+                // send confirmation email to user (attach receipt if available) and to admin
+                try {
+                    // user
+                    if (!empty($p['email'])) {
+                        $subject = 'Payment Confirmed — HIGH Q SOLID ACADEMY';
+                        $htmlMail = "<p>Hi " . htmlspecialchars($p['name']) . ",</p><p>Your payment (reference: " . htmlspecialchars($p['reference']) . ") has been confirmed. Your account is now active.</p>";
+                        $attachments = [];
+                        if (!empty($receiptPath)) {
+                            $full = __DIR__ . '/../../public/' . ltrim($receiptPath, '/');
+                            if (is_readable($full)) $attachments[] = $full;
+                        }
+                        @sendEmail($p['email'], $subject, $htmlMail, $attachments);
+                    }
+
+                    // admin
+                    $adminEmail = null;
+                    try {
+                        $r = $pdo->query("SELECT contact_email FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+                        if (!empty($r['contact_email'])) $adminEmail = $r['contact_email'];
+                    } catch (Throwable $ex) { $adminEmail = null; }
+                    if (!empty($adminEmail)) {
+                        $subject = 'Payment Confirmed: ' . htmlspecialchars($p['reference']);
+                        $htmlMail = "<p>A payment has been confirmed.</p><p><strong>Reference:</strong> " . htmlspecialchars($p['reference']) . "</p>";
+                        if (!empty($receiptPath)) {
+                            $full = __DIR__ . '/../../public/' . ltrim($receiptPath, '/');
+                            $attachments = is_readable($full) ? [$full] : [];
+                        } else $attachments = [];
+                        @sendEmail($adminEmail, $subject, $htmlMail, $attachments);
+                    }
+                } catch (Throwable $e) { /* ignore email errors */ }
 
                 // activate user
                 $act = $pdo->prepare('UPDATE users SET is_active = 1 WHERE id = ?'); $act->execute([$p['user_id']]);
