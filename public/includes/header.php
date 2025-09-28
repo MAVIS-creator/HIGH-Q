@@ -53,7 +53,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           // ignore and use defaults
         }
       }
-      // If maintenance mode is enabled, and visitor is not an admin, show maintenance page
+      // If maintenance mode is enabled, and visitor is not an admin or allowlisted IP, show maintenance page
       try {
         $maintenance = false;
         // Prefer structured site_settings row if available
@@ -65,9 +65,53 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           $j = $val ? json_decode($val, true) : [];
           if (!empty($j['security']['maintenance'])) $maintenance = (bool)$j['security']['maintenance'];
         }
-        // Allow access for logged-in admin pages (admin area), check cookie/session
-        $isAdminArea = (strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || strpos($_SERVER['REQUEST_URI'], 'admin') !== false);
-        if ($maintenance && !$isAdminArea) {
+
+        // Build allowlist of IPs from structured row or legacy settings (comma-separated)
+        $allowedIps = [];
+        if (!empty($row) && !empty($row['maintenance_allowed_ips'])) {
+          $allowedIps = array_filter(array_map('trim', explode(',', $row['maintenance_allowed_ips'])));
+        } else {
+          $ipCandidates = $j['security']['maintenance_allowed_ips'] ?? ($j['security']['allowed_ips'] ?? null);
+          if (!empty($ipCandidates)) {
+            if (is_array($ipCandidates)) $allowedIps = $ipCandidates;
+            else $allowedIps = array_filter(array_map('trim', explode(',', $ipCandidates)));
+          }
+        }
+
+        // Decide whether the visitor is a logged-in admin via flexible session checks
+        $isAdminBySession = false;
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        if (!empty($_SESSION['user']) && is_array($_SESSION['user'])) {
+          $u = $_SESSION['user'];
+          // Common shapes: ['role'] => 'admin', ['role_slug'] => 'admin', ['is_admin'] => true, ['role_id'] => 1
+          if (!empty($u['is_admin'])) $isAdminBySession = true;
+          if (!empty($u['role']) && strtolower($u['role']) === 'admin') $isAdminBySession = true;
+          if (!empty($u['role_slug']) && strtolower($u['role_slug']) === 'admin') $isAdminBySession = true;
+          if (!empty($u['role_id']) && intval($u['role_id']) === 1) $isAdminBySession = true;
+        }
+
+        // Allow a small set of admin pages (login/reset) to be accessible so an admin can sign in during maintenance
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        $isAdminArea = (strpos($requestUri, '/admin') !== false);
+        $isAdminAuthPage = (stripos($requestUri, '/admin/login') !== false || stripos($requestUri, '/admin/forgot') !== false || stripos($requestUri, '/admin/reset') !== false || stripos($requestUri, '/admin/signup') !== false);
+
+        // Check IP allowlist
+        $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+        $ipAllowed = false;
+        if ($remoteIp && !empty($allowedIps)) {
+          foreach ($allowedIps as $candidate) {
+            if ($candidate === $remoteIp) { $ipAllowed = true; break; }
+            // allow CIDR or prefix matches (simple startsWith) for convenience
+            if (strpos($candidate, '/') !== false) {
+              // skip complex CIDR handling here; exact match required for safety
+            } elseif ($candidate !== '' && strpos($remoteIp, $candidate) === 0) {
+              $ipAllowed = true; break;
+            }
+          }
+        }
+
+        // If maintenance is on, block public pages unless requester is admin by session, from allowed IP, or visiting an auth page
+        if ($maintenance && !($isAdminBySession || $ipAllowed || $isAdminAuthPage)) {
           // Render a simple maintenance notice and exit
           http_response_code(503);
           ?>
