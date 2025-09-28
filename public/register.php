@@ -93,12 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$pdo->commit();
 
-			// bank transfer: show instructions and reference
+			// bank transfer: redirect to dedicated waiting page with instructions
 			if ($method === 'bank') {
-				$bank = $cfg['bank'];
-				$success = "Please transfer " . number_format($amount,2) . " to account {$bank['account_number']} ({$bank['bank_name']}). Use reference: $reference. After payment, click the \"I have sent the money\" button and provide your transfer details.";
 				$_SESSION['last_payment_id'] = $paymentId;
 				$_SESSION['last_payment_reference'] = $reference;
+				header('Location: payments_wait.php?ref=' . urlencode($reference));
+				exit;
 			}
 
 		} catch (Exception $e) {
