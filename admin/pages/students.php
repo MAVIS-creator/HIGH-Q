@@ -105,6 +105,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     }
     header('Location: index.php?pages=students'); exit;
   }
+
+  // Reject registration with optional reason
+  if ($action === 'reject_registration') {
+    $reason = trim($_POST['reason'] ?? '');
+    $stmt = $pdo->prepare('SELECT * FROM student_registrations WHERE id = ? LIMIT 1'); $stmt->execute([$id]); $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($reg) {
+      $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['rejected', $id]);
+      logAction($pdo, $currentUserId, 'reject_registration', ['registration_id'=>$id, 'reason'=>$reason]);
+      if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
+        $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] . ' ' . ($reg['last_name'] ?? '')) . ',</p><p>Your registration has been rejected.' . ($reason ? '<br><strong>Reason:</strong> ' . htmlspecialchars($reason) : '') . '</p>';
+        @sendEmail($reg['email'], $subject, $body);
+      }
+    }
+    header('Location: index.php?pages=students'); exit;
+  }
 }
 
 // Prefer to show structured student registrations if the table exists
