@@ -184,10 +184,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'reject_payment', ['payment_id'=>$id,'reason'=>$reason]); } catch(Throwable $e){}
             // notify user of rejection
             $stmt = $pdo->prepare('SELECT student_id, reference FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
-            if ($p && !empty($p['student_id'])) { $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
+                if ($p && !empty($p['student_id'])) { $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
                 if ($user && !empty($user['email'])) {
                     $subject = 'Payment Not Accepted — HIGH Q SOLID ACADEMY';
                     $html = "<p>Hi " . htmlspecialchars($user['name']) . ",</p><p>We could not accept your payment (reference: " . htmlspecialchars($p['reference']) . "). Please review and contact support.</p>";
+                    if (!empty($reason)) $html .= '<p><strong>Reason:</strong> ' . htmlspecialchars($reason) . '</p>';
                     @sendEmail($user['email'], $subject, $html);
                 }
             }
