@@ -710,7 +710,24 @@ $csrf = generateToken('settings_form');
         var form = document.getElementById('settingsForm');
         form.addEventListener('submit', function(e){
             e.preventDefault();
-            
+
+            // Ensure we explicitly submit falsey values for unchecked checkboxes.
+            // PHP will otherwise not receive the key and may leave the previous
+            // value unchanged. We add hidden inputs with the same name and value
+            // '0' for every unchecked checkbox before building FormData.
+            // Remove any previously-added helpers first to avoid duplicates.
+            form.querySelectorAll('input.auto-zero').forEach(function(n){ n.remove(); });
+            form.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+                if (!cb.checked) {
+                    var hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = cb.name;
+                    hidden.value = '0';
+                    hidden.className = 'auto-zero';
+                    form.appendChild(hidden);
+                }
+            });
+
             Swal.fire({
                 title: 'Saving...',
                 text: 'Please wait while we save your settings',
@@ -720,12 +737,12 @@ $csrf = generateToken('settings_form');
                     Swal.showLoading();
                 }
             });
-            
+
             var data = new FormData(form);
             var xhr = new XMLHttpRequest();
             xhr.open('POST', location.href, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            
+
             xhr.onload = function(){
                 try { 
                     var response = JSON.parse(xhr.responseText);
@@ -750,7 +767,7 @@ $csrf = generateToken('settings_form');
                     });
                 }
             };
-            
+
             xhr.send(data);
         });
 
