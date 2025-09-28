@@ -86,10 +86,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 
 			// create a payment placeholder (student_id left NULL since no user)
-			$reference = generatePaymentReference('REG');
-			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
-			$stmt->execute([$amount, $method, $reference]);
-			$paymentId = $pdo->lastInsertId();
+			// Decide whether to auto-create payment or wait for admin verification
+			$verifyBeforePayment = false;
+			try {
+				$st = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+				$st->execute(['system_settings']);
+				$val = $st->fetchColumn();
+				if ($val) {
+					$j = json_decode($val, true);
+					if (is_array($j) && isset($j['security']) && isset($j['security']['verify_registration_before_payment'])) {
+						$verifyBeforePayment = (bool)$j['security']['verify_registration_before_payment'];
+					}
+				}
+			} catch (Throwable $e) { /* ignore */ }
+
+			$reference = null; $paymentId = null;
+			if (!$verifyBeforePayment) {
+				$reference = generatePaymentReference('REG');
+				$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+				$stmt->execute([$amount, $method, $reference]);
+				$paymentId = $pdo->lastInsertId();
+			}
 
 			$pdo->commit();
 
@@ -110,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				// Insert notification
 				$insNotif = $pdo->prepare('INSERT INTO notifications (user_id, title, body, type, metadata, is_read, created_at) VALUES (NULL, ?, ?, ?, ?, 0, NOW())');
 				$title = 'New student registration';
-				$body = "$first_name $last_name registered for programs. Reference: $reference";
+				$body = "$first_name $last_name registered for programs." . ($reference ? " Reference: $reference" : "");
 				$meta = json_encode(['registration_id'=>$registrationId,'email'=>$email_contact,'programs'=>$programs], JSON_UNESCAPED_SLASHES);
 				$insNotif->execute([$title, $body, 'registration', $meta]);
 
