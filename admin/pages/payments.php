@@ -228,13 +228,6 @@ $totalPages = (int)ceil($total / $perPage);
 <div class="roles-page">
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
     <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
-        <style>
-            /* Simple filter form styling to match admin UI */
-            .filter-form { margin:0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-            .filter-form label { font-size:13px; color:#333; }
-            .filter-form input[type="text"], .filter-form input[type="date"], .filter-form select { padding:6px 8px; border:1px solid #ddd; border-radius:4px; }
-            .filter-form button { padding:6px 10px; }
-        </style>
         <form method="get" class="filter-form">
             <label for="statusFilter">Status:</label>
             <select id="statusFilter" name="status">
@@ -253,7 +246,7 @@ $totalPages = (int)ceil($total / $perPage);
         <div style="margin-left:auto;color:#666;font-size:13px;">Search: <em><?= htmlspecialchars($search) ?></em></div>
     </div>
     <table class="roles-table">
-        <thead><tr><th>ID</th><th>Reference</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
+    <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
         <?php foreach($payments as $p): ?>
             <?php
@@ -268,11 +261,10 @@ $totalPages = (int)ceil($total / $perPage);
             <tr <?= $dataAttrs ?> >
                 <td><?= htmlspecialchars($p['id']) ?></td>
                 <td><?= htmlspecialchars($p['reference']) ?></td>
-                <td><?= htmlspecialchars($p['name'] . ' <' . $p['email'] . '>') ?></td>
+                <td><?= htmlspecialchars($p['payer_account_name'] ?? ($p['name'] ?? '')) ?></td>
                 <td><?= htmlspecialchars(number_format($p['amount'],2)) ?></td>
                 <td><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
                 <td><?= htmlspecialchars($p['status']) ?></td>
-                <td><?= htmlspecialchars($p['payer_account_name'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['payer_account_number'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
