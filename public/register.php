@@ -17,10 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$token = $_POST['_csrf_token'] ?? '';
 	if (!verifyToken('signup_form', $token)) { $errors[] = 'Invalid CSRF token.'; }
 
-	// Basic account fields
-	$name = trim($_POST['name'] ?? '');
-	$email = trim($_POST['email'] ?? '');
-	$password = $_POST['password'] ?? '';
+	// Registration inputs (no site account required here)
 	$programs = $_POST['programs'] ?? []; // array of course_id
 
 	// compute amount server-side from selected programs to prevent tampering
@@ -39,8 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Registration form fields
 	$first_name = trim($_POST['first_name'] ?? '');
 	$last_name = trim($_POST['last_name'] ?? '');
-	// derive display name if simple name field not provided
-	if (empty($name)) { $name = trim($first_name . ' ' . $last_name); }
 	$date_of_birth = trim($_POST['date_of_birth'] ?? '') ?: null;
 	$home_address = trim($_POST['home_address'] ?? '') ?: null;
 	$previous_education = trim($_POST['previous_education'] ?? '') ?: null;
@@ -51,31 +46,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// $programs already read above
 	$agreed_terms = isset($_POST['agreed_terms']) ? 1 : 0;
 
-	if (!$name || !$email || !$password) { $errors[] = 'Name, email and password are required.'; }
-	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = 'Invalid email.'; }
+	// Terms must be accepted
+	if (!$agreed_terms) { $errors[] = 'You must accept the terms and conditions to proceed.'; }
 
 	if (empty($errors)) {
-		// create pending user, registration and payment record
+		// create registration record without creating a site user account
 		try {
 			$pdo->beginTransaction();
 
-			$hashed = password_hash($password, PASSWORD_DEFAULT);
-			// check email exists
-			$s = $pdo->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
-			$s->execute([$email]);
-			if ($s->fetch()) { throw new Exception('Email already exists'); }
-
-			$role_id = null; $is_active = 0;
-			$ins = $pdo->prepare('INSERT INTO users (role_id,name,phone,email,password,avatar,is_active,created_at) VALUES (?, ?, ?, ?, ?, NULL, ?, NOW())');
-			$ins->execute([$role_id, $name, $_POST['phone'] ?? null, $email, $hashed, $is_active]);
-			$userId = $pdo->lastInsertId();
-
-			// insert registration
-			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
 			$reg->execute([
-				$userId,
-				$first_name ?: $name,
-				$last_name,
+				$first_name ?: null,
+				$last_name ?: null,
 				$date_of_birth,
 				$home_address,
 				$previous_education,
@@ -96,48 +78,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				}
 			}
 
+			// create a payment placeholder (student_id left NULL since no user)
 			$reference = generatePaymentReference('REG');
-			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
-			$gateway = $method === 'paystack' ? 'paystack' : 'bank_transfer';
-			$stmt->execute([$userId, $amount, $method, $reference]);
+			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+			$stmt->execute([$amount, $method, $reference]);
 			$paymentId = $pdo->lastInsertId();
 
 			$pdo->commit();
-		} catch (Exception $e) {
-			$pdo->rollBack();
-			$errors[] = 'Failed to register: ' . $e->getMessage();
-		}
 
-		if (empty($errors)) {
-			if ($method === 'paystack') {
-				try {
-					require_once __DIR__ . '/../vendor/autoload.php';
-					$cfgGlobal = require __DIR__ . '/../config/payments.php';
-					$paymentsHelper = new \Src\Helpers\Payments($cfgGlobal);
-					$init = $paymentsHelper->initializePaystack([
-						'email' => $email,
-						'amount' => intval($amount * 100),
-						'reference' => $reference,
-						'callback_url' => (getenv('APP_URL') ?: '') . '/public/payments_callback.php'
-					]);
-					if (!empty($init['status']) && $init['status'] && !empty($init['data']['authorization_url'])) {
-						header('Location: ' . $init['data']['authorization_url']); exit;
-					}
-					$errors[] = 'Failed to initialize payment gateway. Please try bank transfer.';
-				} catch (Exception $e) {
-					$errors[] = 'Payment gateway error: ' . $e->getMessage();
-				}
-			}
-
-			// bank transfer fallback: show instructions and reference
-			if ($method === 'bank' || !empty($errors)) {
+			// bank transfer: show instructions and reference
+			if ($method === 'bank') {
 				$bank = $cfg['bank'];
-				// display instructions (render minimal HTML below)
 				$success = "Please transfer " . number_format($amount,2) . " to account {$bank['account_number']} ({$bank['bank_name']}). Use reference: $reference. After payment, click the \"I have sent the money\" button and provide your transfer details.";
-				// Keep payment id & reference in session for follow-up (short-lived)
 				$_SESSION['last_payment_id'] = $paymentId;
 				$_SESSION['last_payment_reference'] = $reference;
 			}
+
+		} catch (Exception $e) {
+			$pdo->rollBack();
+			$errors[] = 'Failed to register: ' . $e->getMessage();
 		}
 	}
 }
