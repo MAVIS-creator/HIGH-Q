@@ -27,3 +27,8 @@
     font-size: 0.8em;
     color: #999;
 }
+
+/* Panel header for notifications dropdown */
+.notif-panel-header { border-bottom: 1px solid #eee; }
+.notif-panel-header .mark-all { font-size: 0.9rem; color: #007bff; background: none; border: none; padding: 6px 8px; cursor: pointer; }
+.notif-panel-header .mark-all:disabled { opacity: 0.6; cursor: default; }
