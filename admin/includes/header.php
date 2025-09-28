@@ -125,5 +125,4 @@ if (!headers_sent()) {
         .notif-item{padding:10px;border-bottom:1px solid #f1f1f1}
         .notif-item:last-child{border-bottom:none}
         .notif-empty{padding:20px;text-align:center;color:#666}
-        </style>
-        <!-- Notifications are handled by ../assets/js/header-notifications.js -->
+    </style>
