@@ -83,11 +83,25 @@ $csrf = generateToken('signup_form');
                   }
                 }).catch(function(){ alert('Network error'); btn.disabled = false; btn.textContent = 'I have sent the money'; });
             });
+            // display recorded payer details
+            var info = document.getElementById('payerRecordedInfo');
+            if (info) {
+              var pay = j.payment || {};
+              info.innerHTML = '<h4>Recorded transfer details</h4>'+
+                '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>'+
+                '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>'+
+                '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
+              info.style.border = '1px dashed #ccc';
+              info.style.padding = '10px';
+              info.style.marginTop = '12px';
+            }
           })();
         </script>
 
         <p style="margin-top:12px;color:#666;">Reference: <?= htmlspecialchars($payment['reference'] ?? '') ?></p>
       </div>
+
+      <div id="payerRecordedInfo" style="display:none;"></div>
 
       <script>
         // simple 10 minute countdown + polling for status
