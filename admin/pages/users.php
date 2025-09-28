@@ -52,6 +52,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         // Role is full
         header('Location: index.php?pages=users'); exit;
       }
+
+        if ($action === 'resend_verification') {
+          // Resend verification email to user (admin action)
+          $u = $pdo->prepare('SELECT id, email, name, is_active, email_verification_sent_at FROM users WHERE id = ? LIMIT 1');
+          $u->execute([$id]); $usr = $u->fetch(PDO::FETCH_ASSOC);
+          if (!$usr) { header('Location: index.php?pages=users'); exit; }
+
+          // Only resend if user is not active
+          if ((int)$usr['is_active'] === 0) {
+            // Rate limit: allow resend every 10 minutes by default (env override)
+            $wait = getenv('VERIFICATION_RESEND_WAIT_MIN') ? intval(getenv('VERIFICATION_RESEND_WAIT_MIN')) : 10;
+            $canSend = true;
+            if (!empty($usr['email_verification_sent_at'])) {
+              $sentTs = strtotime($usr['email_verification_sent_at']);
+              if ($sentTs !== false && (time() - $sentTs) < ($wait * 60)) $canSend = false;
+            }
+
+            if ($canSend) {
+              // generate new token
+              $token = bin2hex(random_bytes(32));
+              $upd = $pdo->prepare('UPDATE users SET email_verification_token = ?, email_verification_sent_at = NOW() WHERE id = ?');
+              $upd->execute([$token, $id]);
+
+              $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+              if ($appUrl) $verifyUrl = rtrim($appUrl, '/') . '/admin/verify_email.php?token=' . urlencode($token);
+              else $verifyUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']) . '/admin/verify_email.php?token=' . urlencode($token);
+
+              $subject = 'Please verify your email';
+              $html = '<p>Hi ' . htmlspecialchars($usr['name'] ?? '') . ',</p>' .
+                      '<p>Please verify your email by clicking <a href="' . htmlspecialchars($verifyUrl) . '">this link</a>.</p>';
+              @sendEmail($usr['email'], $subject, $html);
+              logAction($pdo, $_SESSION['user']['id'], 'resend_verification', ['user_id'=>$id]);
+            }
+          }
+
+          header('Location: index.php?pages=users'); exit;
+        }
     }
 
     $stmt = $pdo->prepare('UPDATE users SET role_id = ?, is_active = 1, updated_at = NOW() WHERE id = ?');

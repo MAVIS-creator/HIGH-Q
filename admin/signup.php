@@ -166,29 +166,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$is_active) {
             // generate a secure token
             $verificationToken = bin2hex(random_bytes(32));
+            $sentAt = date('Y-m-d H:i:s');
         } else {
             $verifiedAt = date('Y-m-d H:i:s');
+            $sentAt = null;
         }
 
         $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
 
-        // Send email notification
-        if ($is_active) {
-            $subject = "Welcome to HIGH Q SOLID ACADEMY";
-            $html = "<p>Hello $name,</p>
-                     <p>Your account has been created with Main Admin privileges.</p>
-                     <p>You can now log in to the admin panel.</p>";
-            sendEmail($email, $subject, $html);
-            $success = "Account created successfully! You can now log in.";
-        } else {
-            // Send verification email with link to public/verify_email.php
-            $verifyUrl = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] ? 'https' : 'http'))
-                . '://' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']) . dirname($_SERVER['REQUEST_URI']) . '/../public/verify_email.php?token=' . urlencode($verificationToken);
+        // If non-active account, store sent timestamp and send verification email
+        if (!$is_active) {
+            try {
+                // Update sent timestamp
+                $uid = $pdo->lastInsertId();
+                $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
+                $uupd->execute([$sentAt, $uid]);
+            } catch (Throwable $e) { error_log('signup: failed to update sent_at: ' . $e->getMessage()); }
+
+            // Build verification URL using APP_URL if available
+            $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+            if ($appUrl) {
+                $verifyUrl = rtrim($appUrl, '/') . '/admin/verify_email.php?token=' . urlencode($verificationToken);
+            } else {
+                $verifyUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://';
+                $verifyUrl .= ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']) . '/admin/verify_email.php?token=' . urlencode($verificationToken);
+            }
 
             $subject = "Verify your email for HIGH Q SOLID ACADEMY";
             $html = "<p>Hello $name,</p>
                      <p>Thanks for registering with HIGH Q SOLID ACADEMY.</p>
-                     <p>Please verify your email address by clicking the link below:</p>
+                     <p>Please verify your email address by clicking the link below (link expires in 72 hours):</p>
                      <p><a href=\"{$verifyUrl}\">Verify my email</a></p>
                      <p>If you did not create this account, ignore this email.</p>";
 
@@ -196,6 +203,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             @sendEmail($email, $subject, $html);
 
             $success = "Account created successfully! Please check your email to verify your account.";
+        } else {
+            $subject = "Welcome to HIGH Q SOLID ACADEMY";
+            $html = "<p>Hello $name,</p>
+                     <p>Your account has been created with Main Admin privileges.</p>
+                     <p>You can now log in to the admin panel.</p>";
+            sendEmail($email, $subject, $html);
+            $success = "Account created successfully! You can now log in.";
         }
     }
 }
