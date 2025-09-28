@@ -119,7 +119,9 @@
             });
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', location.href, true);
+            // For runScan use the dedicated JSON-only endpoint to avoid HTML output from page includes
+            var endpoint = (action === 'runScan') ? '/HIGH-Q/admin/api/run-scan.php' : location.href;
+            xhr.open('POST', endpoint, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
             xhr.onload = function() {
