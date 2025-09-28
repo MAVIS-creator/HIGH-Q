@@ -21,12 +21,12 @@ try {
     // If Dotenv throws unexpectedly, suppress to avoid fatal error in environments without .env
 }
 
-// Fetch env vars
-$host    = $_ENV['DB_HOST'];
-$db      = $_ENV['DB_NAME'];
-$user    = $_ENV['DB_USER'];
-$pass    = $_ENV['DB_PASS'];
-$charset = $_ENV['DB_CHARSET'] ?? 'utf8mb4';
+// Fetch env vars (fall back to getenv and sensible defaults to avoid warnings)
+$host    = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: '127.0.0.1';
+$db      = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: 'highq';
+$user    = $_ENV['DB_USER'] ?? getenv('DB_USER') ?: 'root';
+$pass    = $_ENV['DB_PASS'] ?? getenv('DB_PASS') ?: '';
+$charset = $_ENV['DB_CHARSET'] ?? getenv('DB_CHARSET') ?: 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
@@ -38,5 +38,7 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    // Provide a user-friendly error that suggests checking .env or config
+    $hint = "Please ensure your database credentials are set in the environment or a .env file.";
+    die("Database connection failed: " . $e->getMessage() . "\n" . $hint);
 }
