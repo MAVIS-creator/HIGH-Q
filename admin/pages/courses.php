@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <?php endif; ?>
 
       <div class="course-meta">
-        <span class="price">₦<?= number_format($c['price'],0) ?></span>
+        <span class="price"><?php if ($c['price'] === null || $c['price'] === '' ) { echo 'Varies'; } else { echo '₦' . number_format($c['price'],0); } ?></span>
   <!-- Tutor removed from display -->
         <span class="status-badge <?= $c['is_active']?'status-active':'status-banned' ?>">
           <?= $c['is_active'] ? 'Active' : 'Inactive' ?>
@@ -255,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           data-slug="<?= htmlspecialchars($c['slug']) ?>"
           data-desc="<?= htmlspecialchars($c['description']) ?>"
           data-duration="<?= htmlspecialchars($c['duration']) ?>"
-          data-price="<?= $c['price'] ?>"
+          data-price="<?= $c['price'] === null ? '' : $c['price'] ?>"
           data-tutor="<?= $c['tutor_id'] ?>"
           data-active="<?= $c['is_active'] ?>"
           data-icon="<?= htmlspecialchars($c['icon'] ?? '') ?>"
@@ -291,8 +291,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             <input type="text" name="duration" id="fDuration">
           </div>
           <div class="form-group">
-            <label for="fPrice">Price (₦)</label>
-            <input type="text, number" name="price" id="fPrice" step="0.01" min="0">
+            <label for="fPrice">Price (₦) <small style="color:#666;font-weight:400">leave blank for "Varies"</small></label>
+            <input type="text" name="price" id="fPrice" placeholder="Varies">
           </div>
         </div>
         <div class="form-row compact-row">
@@ -439,7 +439,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       fSlug.value = data.slug || '';
       fDesc.value = data.desc || '';
       fDuration.value = data.duration || '';
-      fPrice.value = data.price || '';
+  // populate price (may be empty meaning 'Varies')
+  fPrice.value = (data.price === null || typeof data.price === 'undefined' || data.price === '') ? '' : data.price;
       fActive.checked = data.is_active == '1' || data.is_active == 1 || data.is_active === true;
       fIcon.value = data.icon || '';
       if (fFeatures) fFeatures.value = data.features || '';
@@ -450,6 +451,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       courseForm.action = 'index.php?pages=courses&action=create';
     }
   }
+  // Auto-generate slug client-side as user types title when slug is empty
+  fTitle && fTitle.addEventListener('input', function(){
+    try {
+      if (!fSlug) return;
+      if (fSlug.value && fSlug.value.trim() !== '') return; // don't overwrite if user provided
+      var v = String(fTitle.value || '').toLowerCase();
+      v = v.replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      fSlug.value = v;
+    } catch(e){console.error(e)}
+  });
 // Update icon preview live
 function updateIconPreview() {
   if (!iconPreview || !fIcon) return;
