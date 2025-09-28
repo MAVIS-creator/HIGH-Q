@@ -10,6 +10,16 @@ requirePermission('students'); // where 'students' matches the menu slug
 $csrf = generateToken('students_form');
 
 // Handle POST actions (activate/deactivate/delete)
+// Handle AJAX GET view of a registration
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
+  $id = (int)$_GET['id'];
+  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+  $stmt->execute([$id]); $s = $stmt->fetch(PDO::FETCH_ASSOC);
+  header('Content-Type: application/json');
+  if (!$s) { echo json_encode(['error'=>'Not found']); exit; }
+  echo json_encode($s); exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'];
     $id = (int)$_GET['id'];
@@ -75,6 +85,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $subject = 'Message from HIGH Q admin';
         $body = "Hello " . htmlspecialchars($student['name']) . ",\n\n" . $message . "\n\nRegards,\nHIGH Q Team";
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
+      }
+    }
+    header('Location: index.php?pages=students'); exit;
+  }
+
+  // Confirm registration (admin) - send notification
+  if ($action === 'confirm_registration') {
+    $stmt = $pdo->prepare('SELECT * FROM student_registrations WHERE id = ? LIMIT 1'); $stmt->execute([$id]); $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($reg) {
+      $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['confirmed', $id]);
+      logAction($pdo, $currentUserId, 'confirm_registration', ['registration_id'=>$id]);
+      // send email to student if email present
+      if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $subject = 'Registration Confirmed — HIGH Q SOLID ACADEMY';
+        $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] . ' ' . ($reg['last_name'] ?? '')) . ',</p><p>Your registration has been confirmed. We will contact you with the next steps.</p>';
+        @sendEmail($reg['email'], $subject, $body);
       }
     }
     header('Location: index.php?pages=students'); exit;
