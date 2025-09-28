@@ -19,7 +19,7 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Receipt - <?= htmlspecialchars($siteName) ?></title>
-  <link rel="stylesheet" href="/assets/css/public.css">
+  <link rel="stylesheet" href="assets/css/public.css">
   <style>
     .receipt-card{max-width:800px;margin:24px auto;padding:24px;border:1px solid #eee;border-radius:8px;background:#fff}
     .receipt-header{display:flex;align-items:center;gap:12px}
@@ -40,17 +40,18 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
     <hr>
     <div>
       <strong>Reference:</strong> <?= htmlspecialchars($p['reference']) ?> <br>
-      <strong>Amount:</strong> ₦<?= number_format($p['amount'],2) ?> <br>
-      <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?> <br>
-      <strong>Payer Name:</strong> <?= htmlspecialchars($p['payer_account_name'] ?? $p['payer_name'] ?? '') ?> <br>
-      <strong>Payer Number:</strong> <?= htmlspecialchars($p['payer_account_number'] ?? '') ?> <br>
-      <div class="receipt-meta">Payment recorded at: <?= htmlspecialchars($p['created_at'] ?? '') ?></div>
+  <strong>Amount:</strong> ₦<?= number_format($p['amount'],2) ?> <br>
+  <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?> <br>
+  <strong>Name:</strong> <?= htmlspecialchars($p['payer_account_name'] ?? $p['payer_name'] ?? '') ?> <br>
+  <strong>Email:</strong> <?= htmlspecialchars($p['payer_email'] ?? $p['email'] ?? '') ?> <br>
+  <strong>Address:</strong> <?= nl2br(htmlspecialchars($p['payer_address'] ?? '')) ?> <br>
+  <div class="receipt-meta">Payment recorded at: <?= htmlspecialchars($p['created_at'] ?? '') ?></div>
     </div>
 
     <div class="actions">
-      <button onclick="window.print();" class="btn-primary">Print / Download</button>
-      <a href="/contact.php" class="btn" style="margin-left:8px;">Contact Support</a>
-      <a href="/contact.php#livechat" class="btn" style="margin-left:8px;">Open Live Chat</a>
+  <button onclick="window.print();" class="btn-primary">Print / Download</button>
+  <a href="contact.php" class="btn" style="margin-left:8px;">Contact Support</a>
+  <a href="contact.php#livechat" class="btn" style="margin-left:8px;">Open Live Chat</a>
     </div>
 
     <div style="margin-top:18px;color:#333">
