@@ -53,6 +53,39 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           // ignore and use defaults
         }
       }
+      // If maintenance mode is enabled, and visitor is not an admin, show maintenance page
+      try {
+        $maintenance = false;
+        // Prefer structured site_settings row if available
+        if (!empty($row) && isset($row['maintenance'])) $maintenance = (bool)$row['maintenance'];
+        else {
+          $stmt2 = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+          $stmt2->execute(['system_settings']);
+          $val = $stmt2->fetchColumn();
+          $j = $val ? json_decode($val, true) : [];
+          if (!empty($j['security']['maintenance'])) $maintenance = (bool)$j['security']['maintenance'];
+        }
+        // Allow access for logged-in admin pages (admin area), check cookie/session
+        $isAdminArea = (strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || strpos($_SERVER['REQUEST_URI'], 'admin') !== false);
+        if ($maintenance && !$isAdminArea) {
+          // Render a simple maintenance notice and exit
+          http_response_code(503);
+          ?>
+          <!doctype html>
+          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/public/assets/css/public.css"></head><body>
+          <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
+            <div style="max-width:640px;border:1px solid #eee;padding:28px;border-radius:8px;background:#fff;">
+              <h1>We'll be back soon</h1>
+              <p>Our site is currently undergoing scheduled maintenance. Please check back shortly.</p>
+            </div>
+          </main>
+          </body></html>
+          <?php
+          exit;
+        }
+      } catch (Throwable $e) {
+        // If anything goes wrong here, fall back to normal header rendering
+      }
     }
   } catch (Throwable $e) {
     // ignore DB errors and fall back to default
