@@ -512,11 +512,45 @@ regRejectBtn.addEventListener('click', ()=>{
 // Delegated inline Confirm/Reject handlers
 document.addEventListener('click', function(e){
   const t = e.target.closest('.inline-confirm');
-  if (t) {
+    if (t) {
     const id = t.dataset.id;
     if (!id) return Swal.fire('Error','No registration id','error');
-    Swal.fire({title:'Confirm registration?',icon:'question',showCancelButton:true,confirmButtonText:'Yes, confirm'})
-      .then(res=>{ if (res.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error')); } });
+    // Ask if admin wants to create a payment right away
+    Swal.fire({
+      title: 'Confirm registration?',
+      text: 'Do you want to create a payment reference to send to the registrant now?',
+      icon: 'question',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Confirm only',
+      denyButtonText: 'Create payment & confirm'
+    }).then(async res=>{
+      if (res.isConfirmed) {
+        const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
+        // add header so server returns JSON
+        try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
+      } else if (res.isDenied) {
+        // Prompt for amount and method
+        const { value: formValues } = await Swal.fire({
+          title: 'Create payment',
+          html:
+            '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
+            '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
+          focusConfirm: false,
+          preConfirm: () => {
+            return {
+              amount: document.getElementById('swal-amount').value,
+              method: document.getElementById('swal-method').value
+            }
+          }
+        });
+        if (!formValues) return;
+        const amt = parseFloat(formValues.amount || 0);
+        if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
+        const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
+        try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
+      }
+    });
     return;
   }
   const r = e.target.closest('.inline-reject');
