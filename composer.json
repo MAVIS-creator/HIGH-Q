@@ -9,7 +9,7 @@
         "monolog/monolog": "^3.9",
         "respect/validation": "^2.4",
     "nesbot/carbon": "^3.10",
-    "dompdf/dompdf": "^2.2"
+    "dompdf/dompdf": "2"
     },
     "require-dev": {
         "phpstan/phpstan": "1.10"
