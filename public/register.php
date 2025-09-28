@@ -143,7 +143,7 @@ $csrf = generateToken('signup_form');
 													<div class="section-body">
 																									<div class="form-row"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
 																									<div class="form-row"><label>Last Name *</label><input name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
-																									<div class="form-row"><label>Email Address *</label><input name="email" type="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
+																									<!-- Email removed from registration form per site requirements: contact email is collected elsewhere -->
 																									<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
