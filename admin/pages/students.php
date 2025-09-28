@@ -104,17 +104,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
   // Confirm registration (admin) - send notification
   if ($action === 'confirm_registration') {
     $stmt = $pdo->prepare('SELECT * FROM student_registrations WHERE id = ? LIMIT 1'); $stmt->execute([$id]); $reg = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($reg) {
-      $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['confirmed', $id]);
-      logAction($pdo, $currentUserId, 'confirm_registration', ['registration_id'=>$id]);
-      // send email to student if email present
-      if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
-        $subject = 'Registration Confirmed — HIGH Q SOLID ACADEMY';
-        $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] . ' ' . ($reg['last_name'] ?? '')) . ',</p><p>Your registration has been confirmed. We will contact you with the next steps.</p>';
-        @sendEmail($reg['email'], $subject, $body);
-      }
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+    if (!$reg) {
+      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
+      header('Location: index.php?pages=students'); exit;
     }
-    header('Location: index.php?pages=students'); exit;
+
+    // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
+    if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
+      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
+      setFlash('error','Registration already confirmed'); header('Location: index.php?pages=students'); exit;
+    }
+
+    // Transaction: mark confirmed and optionally create payment and send reference
+    try {
+      $pdo->beginTransaction();
+      $upd = $pdo->prepare('UPDATE student_registrations SET status = ?, updated_at = NOW() WHERE id = ?'); $upd->execute(['confirmed', $id]);
+      logAction($pdo, $currentUserId, 'confirm_registration', ['registration_id'=>$id]);
+
+      // Optional payment creation: admin may include create_payment=1 and amount in POST (AJAX)
+      if (!empty($_POST['create_payment']) && !empty($_POST['amount'])) {
+        $amount = floatval($_POST['amount']);
+        $method = $_POST['method'] ?? 'bank';
+        // create payment placeholder and send reference to registrant email
+        $ref = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
+        $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+        $ins->execute([$amount, $method, $ref]);
+        $paymentId = $pdo->lastInsertId();
+        logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
+
+        // send email to registrant with link to payments_wait (if email present)
+        if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+          $subject = 'Payment instructions for your registration';
+          $link = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? '') . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+          $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] . ' ' . ($reg['last_name'] ?? '')) . ',</p>';
+          $body .= '<p>Please complete your payment using this reference: <strong>' . htmlspecialchars($ref) . '</strong></p>';
+          $body .= '<p><a href="' . htmlspecialchars($link) . '">Click here to complete payment</a></p>';
+          @sendEmail($reg['email'], $subject, $body);
+        }
+      }
+
+      $pdo->commit();
+      if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Confirmed']); exit; }
+      header('Location: index.php?pages=students'); exit;
+    } catch (Exception $e) {
+      if ($pdo->inTransaction()) $pdo->rollBack();
+      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
+      setFlash('error','Failed to confirm registration'); header('Location: index.php?pages=students'); exit;
+    }
   }
 
   // Reject registration with optional reason
