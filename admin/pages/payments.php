@@ -241,7 +241,16 @@ $totalPages = (int)ceil($total / $perPage);
         <thead><tr><th>ID</th><th>Reference</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
         <?php foreach($payments as $p): ?>
-            <tr>
+            <?php
+                $dataAttrs = 'data-payment-id="' . htmlspecialchars($p['id']) . '"'
+                    . ' data-payer-name="' . htmlspecialchars($p['payer_account_name'] ?? '') . '"'
+                    . ' data-payer-account="' . htmlspecialchars($p['payer_account_number'] ?? '') . '"'
+                    . ' data-payer-bank="' . htmlspecialchars($p['payer_bank_name'] ?? '') . '"'
+                    . ' data-reference="' . htmlspecialchars($p['reference'] ?? '') . '"'
+                    . ' data-email="' . htmlspecialchars($p['email'] ?? '') . '"'
+                    . ' data-amount="' . htmlspecialchars(number_format($p['amount'],2)) . '"';
+            ?>
+            <tr <?= $dataAttrs ?> >
                 <td><?= htmlspecialchars($p['id']) ?></td>
                 <td><?= htmlspecialchars($p['reference']) ?></td>
                 <td><?= htmlspecialchars($p['name'] . ' <' . $p['email'] . '>') ?></td>
@@ -264,6 +273,23 @@ $totalPages = (int)ceil($total / $perPage);
         <?php endforeach; ?>
         </tbody>
     </table>
+    <!-- Pagination -->
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+        <?php
+            // build base query preserving filters
+            $qp = $_GET; // current query params
+            $makeLink = function($pnum) use ($qp) {
+                $qp['page'] = $pnum; return '?' . http_build_query($qp);
+            };
+        ?>
+        <?php if ($page > 1): ?>
+            <a class="btn" href="<?= $makeLink($page-1) ?>">&laquo; Prev</a>
+        <?php endif; ?>
+        <div style="margin:0 8px;color:#666;">Page <?= $page ?> of <?= $totalPages ?></div>
+        <?php if ($page < $totalPages): ?>
+            <a class="btn" href="<?= $makeLink($page+1) ?>">Next &raquo;</a>
+        <?php endif; ?>
+    </div>
 </div>
 
 <script>
