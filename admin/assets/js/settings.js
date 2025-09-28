@@ -57,6 +57,21 @@
                 }
             });
 
+            // Before building FormData, add explicit zero values for unchecked checkboxes
+            // so that the server receives falsey values for toggles that are off.
+            // Remove any previous helpers first.
+            this.querySelectorAll('input.auto-zero').forEach(function(n){ n.remove(); });
+            this.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+                if (!cb.checked) {
+                    var hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = cb.name;
+                    hidden.value = '0';
+                    hidden.className = 'auto-zero';
+                    cb.closest('form').appendChild(hidden);
+                }
+            });
+
             var data = new FormData(this);
             var xhr = new XMLHttpRequest();
             // Submit settings to the dedicated JSON endpoint to ensure JSON-only responses
