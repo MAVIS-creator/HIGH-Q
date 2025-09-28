@@ -648,7 +648,8 @@ h1 {
 .toggle .track {
   width: 100%;
   height: 100%;
-  background: #e6e6e6;
+  /* off state: white track for clearer contrast */
+  background: #ffffff;
   border-radius: 999px;
   transition: background .2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -664,11 +665,14 @@ h1 {
   height: calc(var(--h) - 4px);
   background: #fff;
   border-radius: 50%;
+  /* subtle border so the thumb is visible on white track */
+  border: 1px solid rgba(0,0,0,0.06);
   transition: transform .18s cubic-bezier(.4, 0, .2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
 }
 
 .toggle input:checked+.track {
+  /* on state: use the site yellow */
   background: var(--hq-yellow);
   box-shadow: 0 2px 8px rgba(255, 214, 0, 0.12);
 }
@@ -700,7 +704,8 @@ h1 {
 .toggle .track {
   width: 100%;
   height: 100%;
-  background: #e9e9e9;
+  /* off state: white track for clearer contrast */
+  background: #ffffff;
   border-radius: 999px;
   transition: background .18s ease, box-shadow .18s ease;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
@@ -717,12 +722,15 @@ h1 {
   height: calc(var(--h) - 8px);
   background: #fff;
   border-radius: 50%;
+  /* subtle border so the thumb is visible on white track */
+  border: 1px solid rgba(0,0,0,0.06);
   transition: transform .18s cubic-bezier(.4, 0, .2, 1), box-shadow .12s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .toggle input:checked+.track {
-  background: var(--hq-primary);
+  /* on state: use the site yellow */
+  background: var(--hq-yellow);
   box-shadow: 0 6px 20px rgba(255, 214, 0, 0.12);
 }
 
