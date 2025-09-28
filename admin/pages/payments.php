@@ -285,4 +285,58 @@ function doAction(action,id){
 }
 </script>
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function showToast(type, title){
+    Swal.fire({toast:true,position:'top-end',icon:type,title:title,showConfirmButton:false,timer:3000});
+}
+
+function doAction(action,id){
+    // fetch row data from the table to show payer details in the confirmation modal
+    var row = document.querySelector('tr td:first-child + td + td + td + td + td + td + td + td + td + td button[onclick]') // not reliable fallback
+    // better: find the row by data-id attribute if present
+    var tr = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]').closest('tr');
+    var payer = tr.querySelector('td:nth-child(7)') ? tr.querySelector('td:nth-child(7)').textContent.trim() : '';
+    var payerAcc = tr.querySelector('td:nth-child(8)') ? tr.querySelector('td:nth-child(8)').textContent.trim() : '';
+    var payerBank = tr.querySelector('td:nth-child(9)') ? tr.querySelector('td:nth-child(9)').textContent.trim() : '';
+
+    var confirmHtml = '<div style="text-align:left">';
+    confirmHtml += '<p><strong>Payer:</strong> ' + Swal.escapeHtml(payer || '-') + '</p>';
+    confirmHtml += '<p><strong>Account:</strong> ' + Swal.escapeHtml(payerAcc || '-') + '</p>';
+    confirmHtml += '<p><strong>Bank:</strong> ' + Swal.escapeHtml(payerBank || '-') + '</p>';
+    confirmHtml += '</div>';
+
+    var textAction = action === 'confirm' ? 'Confirm' : 'Reject';
+    Swal.fire({
+        title: textAction + ' payment?',
+        html: confirmHtml,
+        icon: action === 'confirm' ? 'question' : 'warning',
+        showCancelButton: true,
+        confirmButtonText: textAction,
+        preConfirm: () => {
+            var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>');
+            return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
+                .then(res => res.text())
+                .then(text => {
+                    try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); }
+                })
+                .catch(err => { throw err; });
+        }
+    }).then((res) => {
+        if (res.isConfirmed) {
+            var data = res.value;
+            if (data && data.status === 'ok') {
+                showToast('success', data.message || 'Done');
+                setTimeout(function(){ location.reload(); }, 800);
+            } else {
+                showToast('error', data && data.message ? data.message : 'Error');
+            }
+        }
+    }).catch(err => {
+        Swal.fire({icon:'error',title:'Server Error',html:Swal.escapeHtml(err.message || String(err))});
+    });
+}
+</script>
+
 <?php require_once __DIR__ . '/../includes/footer.php';
