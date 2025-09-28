@@ -1,16 +1,52 @@
 <?php
 // public/includes/header.php - lightweight public header
-// Attempt to load site settings (contact phone) from database
+// Attempt to load site settings (contact phone, bank details, etc.) from database
 $contact_phone = '0807 208 8794';
+$siteSettings = [
+  'site' => ['name' => 'HIGH Q SOLID ACADEMY', 'bank_name' => '', 'bank_account_name' => '', 'bank_account_number' => ''],
+  'contact' => ['phone' => $contact_phone, 'email' => 'info@hqacademy.com', 'address' => "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu"]
+];
 // include DB connection if available
 if (file_exists(__DIR__ . '/../config/db.php')) {
   try {
     require_once __DIR__ . '/../config/db.php';
     if (isset($pdo)) {
-      $stmt = $pdo->query("SELECT contact_phone FROM site_settings LIMIT 1");
-      $row = $stmt->fetch();
-      if ($row && !empty($row['contact_phone'])) {
-        $contact_phone = $row['contact_phone'];
+      // Try to fetch the structured site_settings row first
+      try {
+        $stmt = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+          // populate contact phone if available
+          if (!empty($row['contact_phone'])) $contact_phone = $row['contact_phone'];
+          $siteSettings['site']['name'] = $row['site_name'] ?? $siteSettings['site']['name'];
+          $siteSettings['site']['bank_name'] = $row['bank_name'] ?? '';
+          $siteSettings['site']['bank_account_name'] = $row['bank_account_name'] ?? '';
+          $siteSettings['site']['bank_account_number'] = $row['bank_account_number'] ?? '';
+          $siteSettings['contact']['phone'] = $row['contact_phone'] ?? $siteSettings['contact']['phone'];
+          $siteSettings['contact']['email'] = $row['contact_email'] ?? $siteSettings['contact']['email'];
+          $siteSettings['contact']['address'] = $row['contact_address'] ?? $siteSettings['contact']['address'];
+        }
+      } catch (Throwable $e) {
+        // fall back to the legacy settings table if site_settings not present
+        try {
+          $stmt2 = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+          $stmt2->execute(['system_settings']);
+          $val = $stmt2->fetchColumn();
+          if (!$val) {
+            $stmt2 = $pdo->query("SELECT value FROM settings LIMIT 1");
+            $val = $stmt2->fetchColumn();
+          }
+          $data = $val ? json_decode($val, true) : [];
+          if (is_array($data)) {
+            $siteSettings = array_merge($siteSettings, $data);
+            if (!empty($data['site']['bank_name'])) $siteSettings['site']['bank_name'] = $data['site']['bank_name'];
+            if (!empty($data['site']['bank_account_name'])) $siteSettings['site']['bank_account_name'] = $data['site']['bank_account_name'];
+            if (!empty($data['site']['bank_account_number'])) $siteSettings['site']['bank_account_number'] = $data['site']['bank_account_number'];
+            if (!empty($data['contact']['phone'])) $contact_phone = $data['contact']['phone'];
+          }
+        } catch (Throwable $e2) {
+          // ignore and use defaults
+        }
       }
     }
   } catch (Throwable $e) {
