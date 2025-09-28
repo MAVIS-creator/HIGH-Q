@@ -212,7 +212,7 @@ $csrf = generateToken('signup_form');
 														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
 														<?php foreach ($courses as $c): ?>
 																<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
-																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(₦<?= number_format($c['price'],2) ?>)</small>
+																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
 																	<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
 																</label>
 															<?php endforeach; ?>
