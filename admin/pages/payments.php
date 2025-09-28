@@ -385,19 +385,8 @@ function doAction(action,id){
             preConfirm: (reason) => {
                 var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF); fd.append('reason', reason || '');
                 return fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}, credentials:'same-origin'})
-                    .then(async (res) => {
-                        // if server returned an object already (json parsed), pass through
-                        return res;
-                    })
-                    .catch(async (err) => {
-                        // try to fetch text for debugging
-                        try {
-                            const fallback = await fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'text/plain'}, credentials:'same-origin'}).then(r=>r.text());
-                            throw new Error('Server response error: ' + fallback);
-                        } catch (e2) {
-                            throw new Error('Failed to parse server response: ' + (err && err.message ? err.message : String(err)));
-                        }
-                    });
+                    .then(res => res.text())
+                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
             }
         }).then((res) => {
             if (res.isConfirmed) {
@@ -420,8 +409,8 @@ function doAction(action,id){
             preConfirm: () => {
                 var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF);
                 return fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}, credentials:'same-origin'})
-                    .then(res => res.json())
-                    .catch(err => { throw new Error('Failed to parse server response: ' + (err && err.message ? err.message : String(err))); });
+                    .then(res => res.text())
+                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
             }
         }).then((res) => {
             if (res.isConfirmed) {
