@@ -90,9 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     // prefer PDF if library available
                     $fn = 'receipt-' . preg_replace('/[^A-Za-z0-9\-]/','', $p['reference']);
                     if (class_exists('\Dompdf\Dompdf')) {
-                        // generate PDF
+                        // generate PDF using Dompdf if available
                         try {
-                            $dompdf = new \Dompdf\Dompdf();
+                            $dompdfClass = '\\Dompdf\\Dompdf';
+                            $dompdf = new $dompdfClass();
                             $dompdf->loadHtml($html);
                             $dompdf->setPaper('A4', 'portrait');
                             $dompdf->render();
