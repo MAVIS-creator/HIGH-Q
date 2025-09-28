@@ -256,6 +256,7 @@ $totalPages = (int)ceil($total / $perPage);
 ?>
 <div class="roles-page">
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
+    <script>window.__PAYMENTS_CSRF = '<?= generateToken('payments_form') ?>';</script>
     <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
         <form method="get" action="index.php" class="filter-form">
             <input type="hidden" name="pages" value="payments">
@@ -353,16 +354,15 @@ function showToast(type, title){
 
 function doAction(action,id){
     // fetch row data from the table to show payer details in the confirmation modal
-    var row = document.querySelector('tr td:first-child + td + td + td + td + td + td + td + td + td + td button[onclick]') // not reliable fallback
-    // better: find the row by data-id attribute if present
+    // find the button that triggered this action and its row
     var btn = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]');
-    var tr = btn ? btn.closest('tr') : null;
+    var tr = btn ? btn.closest('tr') : document.querySelector('tr[data-payment-id="'+id+'"]');
     var payer = tr ? (tr.getAttribute('data-payer-name') || '') : '';
     var payerAcc = tr ? (tr.getAttribute('data-payer-account') || '') : '';
     var payerBank = tr ? (tr.getAttribute('data-payer-bank') || '') : '';
     var ref = tr ? (tr.getAttribute('data-reference') || '') : '';
     var email = tr ? (tr.getAttribute('data-email') || '') : '';
-    var amt = tr ? (tr.getAttribute('data-amount') || '') : '';
+    var amt = tr ? (tr.getAttribute('data-amount') || tr.querySelector('td:nth-child(4)')?.textContent || '') : '';
 
     var confirmHtml = '<div style="text-align:left">';
     confirmHtml += '<p><strong>Reference:</strong> ' + Swal.escapeHtml(ref || '-') + '</p>';
@@ -383,12 +383,10 @@ function doAction(action,id){
             showCancelButton: true,
             confirmButtonText: 'Reject',
             preConfirm: (reason) => {
-                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>'); fd.append('reason', reason || '');
+                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF); fd.append('reason', reason || '');
                 return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
                     .then(res => res.text())
-                    .then(text => {
-                        try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); }
-                    });
+                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
             }
         }).then((res) => {
             if (res.isConfirmed) {
@@ -409,7 +407,7 @@ function doAction(action,id){
             showCancelButton: true,
             confirmButtonText: textAction,
             preConfirm: () => {
-                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>');
+                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF);
                 return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
                     .then(res => res.text())
                     .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
