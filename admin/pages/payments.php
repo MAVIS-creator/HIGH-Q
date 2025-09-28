@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('payments');
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $pageTitle = 'Payments';
 require_once __DIR__ . '/../includes/header.php';
@@ -21,6 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $upd = $pdo->prepare('UPDATE payments SET status = "confirmed", confirmed_at = NOW(), updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
         if ($ok) {
+            // log action: admin confirmed payment
+            try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'confirm_payment', ['payment_id'=>$id]); } catch(Throwable $e){}
             // fetch payment details
             $stmt = $pdo->prepare('SELECT p.*, u.email, u.name, u.id as user_id FROM payments p LEFT JOIN users u ON u.id = p.student_id WHERE p.id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
             // update latest registration for this user to confirmed
@@ -165,6 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $upd = $pdo->prepare('UPDATE payments SET status = "failed", updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
         if ($ok) {
+            // log action: admin rejected payment
+            try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'reject_payment', ['payment_id'=>$id]); } catch(Throwable $e){}
             // notify user of rejection
             $stmt = $pdo->prepare('SELECT student_id, reference FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
             if ($p && !empty($p['student_id'])) { $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
@@ -186,10 +191,20 @@ $perPage = 20;
 $page = max(1, (int)($_GET['page'] ?? 1));
 $statusFilter = $_GET['status'] ?? '';
 $search = trim($_GET['q'] ?? '');
+$fromDate = $_GET['from_date'] ?? '';
+$toDate = $_GET['to_date'] ?? '';
+$gateway = trim($_GET['gateway'] ?? '');
+$refFilter = trim($_GET['ref'] ?? '');
+$userEmail = trim($_GET['user_email'] ?? '');
 $params = [];
 $where = [];
 if ($statusFilter !== '') { $where[] = 'p.status = ?'; $params[] = $statusFilter; }
 if ($search !== '') { $where[] = '(p.reference LIKE ? OR u.email LIKE ? OR u.name LIKE ?)'; $params[] = "%{$search}%"; $params[] = "%{$search}%"; $params[] = "%{$search}%"; }
+if ($fromDate !== '') { $where[] = 'p.created_at >= ?'; $params[] = $fromDate . ' 00:00:00'; }
+if ($toDate !== '') { $where[] = 'p.created_at <= ?'; $params[] = $toDate . ' 23:59:59'; }
+if ($gateway !== '') { $where[] = 'p.gateway LIKE ?'; $params[] = "%{$gateway}%"; }
+if ($refFilter !== '') { $where[] = 'p.reference LIKE ?'; $params[] = "%{$refFilter}%"; }
+if ($userEmail !== '') { $where[] = 'u.email LIKE ?'; $params[] = "%{$userEmail}%"; }
 $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 $countStmt = $pdo->prepare("SELECT COUNT(*) FROM payments p LEFT JOIN users u ON p.student_id = u.id {$whereSql}");
 $countStmt->execute($params);
@@ -205,7 +220,7 @@ $totalPages = (int)ceil($total / $perPage);
 <div class="roles-page">
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
     <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
-        <form method="get" style="margin:0;display:flex;gap:8px;align-items:center;">
+        <form method="get" style="margin:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <label for="statusFilter">Status:</label>
             <select id="statusFilter" name="status">
                 <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
@@ -213,6 +228,11 @@ $totalPages = (int)ceil($total / $perPage);
                 <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
                 <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
             </select>
+            <label>From: <input type="date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>"></label>
+            <label>To: <input type="date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>"></label>
+            <label>Gateway: <input type="text" name="gateway" placeholder="gateway" value="<?= htmlspecialchars($_GET['gateway'] ?? '') ?>" style="width:120px"></label>
+            <label>Reference: <input type="text" name="ref" placeholder="reference" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>" style="width:160px"></label>
+            <label>Email/User: <input type="text" name="user_email" placeholder="email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>" style="width:160px"></label>
             <button class="btn" type="submit">Filter</button>
         </form>
         <div style="margin-left:auto;color:#666;font-size:13px;">Search: <em><?= htmlspecialchars($search) ?></em></div>
