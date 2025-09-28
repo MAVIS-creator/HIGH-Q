@@ -49,20 +49,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         header('Location: index.php?pages=students'); exit;
     }
 
-    if ($action === 'delete') {
-        // Soft-delete: set is_active = 3 (deleted) if schema supports, else remove
-        try {
-            $stmt = $pdo->prepare('UPDATE users SET is_active = 3, updated_at = NOW() WHERE id = ?');
-            $stmt->execute([$id]);
-            logAction($pdo, $currentUserId, 'student_delete', ['student_id'=>$id]);
-        } catch (Exception $e) {
-            // Fallback to hard delete
-            $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
-            $stmt->execute([$id]);
-            logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
-        }
-        header('Location: index.php?pages=students'); exit;
+  if ($action === 'delete') {
+    // If this id exists in student_registrations, delete that registration. Otherwise treat as users delete.
+    $checkReg = $pdo->prepare('SELECT id FROM student_registrations WHERE id = ? LIMIT 1');
+    $checkReg->execute([$id]);
+    $regFound = $checkReg->fetch(PDO::FETCH_ASSOC);
+    if ($regFound) {
+      $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
+      $del->execute([$id]);
+      logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
+      header('Location: index.php?pages=students'); exit;
     }
+
+    // Fallback: Soft-delete user record (legacy path)
+    try {
+      $stmt = $pdo->prepare('UPDATE users SET is_active = 3, updated_at = NOW() WHERE id = ?');
+      $stmt->execute([$id]);
+      logAction($pdo, $currentUserId, 'student_delete', ['student_id'=>$id]);
+    } catch (Exception $e) {
+      // Fallback to hard delete
+      $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
+      $stmt->execute([$id]);
+      logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
+    }
+    header('Location: index.php?pages=students'); exit;
+  }
 
   // Custom: send message/approve flow from modal
   if ($action === 'send_message') {
