@@ -23,22 +23,43 @@ if (!verifyToken('settings_form', $token)) {
 }
 
 // Parse settings payload: accept either a JSON string in 'settings' or form fields prefixed with settings[...] via PHP's form parsing
+// Build $posted from either a JSON payload or nested form fields (settings[...] )
 $posted = [];
 if (isset($_POST['settings'])) {
-    // Could be JSON or PHP serialized form; try JSON decode first
-    $raw = $_POST['settings'];
-    $decoded = json_decode($raw, true);
-    if (is_array($decoded)) {
-        $posted = $decoded;
+    // If PHP parsed settings[...] into an array, use it directly
+    if (is_array($_POST['settings'])) {
+        $posted = $_POST['settings'];
+    } else {
+        // Could be JSON string
+        $raw = $_POST['settings'];
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            $posted = $decoded;
+        }
     }
 }
 
-// If posted is empty, attempt to extract nested fields from POST (settings[site][name], etc.)
+// Fallback: if form fields were sent as flat keys like 'settings[notifications][email]'
+// they may not be present as a nested array (some clients or servers differ). Parse
+// those keys into a nested $posted array so we can save correctly.
 if (empty($posted)) {
     foreach ($_POST as $k => $v) {
         if (strpos($k, 'settings[') === 0) {
-            // Let PHP handle this normally if PHP created nested arrays; fallback ignored here
-            // We'll read $_POST['settings'] if available; otherwise ignore shallow fallback
+            // Parse key like settings[security][two_factor]
+            // Extract parts between brackets
+            $parts = preg_split('/\[|\]/', $k, -1, PREG_SPLIT_NO_EMPTY);
+            // parts[0] should be 'settings'
+            if (count($parts) > 1 && $parts[0] === 'settings') {
+                $path = array_slice($parts, 1);
+                $ptr = &$posted;
+                foreach ($path as $p) {
+                    if ($p === '') continue;
+                    if (!isset($ptr[$p]) || !is_array($ptr[$p])) $ptr[$p] = [];
+                    $ptr = &$ptr[$p];
+                }
+                $ptr = $v;
+                unset($ptr);
+            }
         }
     }
 }
