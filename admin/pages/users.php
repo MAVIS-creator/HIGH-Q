@@ -57,6 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $stmt = $pdo->prepare('UPDATE users SET role_id = ?, is_active = 1, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$role_id, $id]);
     logAction($pdo, $currentUserId, 'approve_user', ['user_id' => $id, 'role_id' => $role_id]);
+    // Send approval email to the user if email present
+    try {
+      $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$id]); $usr = $u->fetch(PDO::FETCH_ASSOC);
+      if ($usr && filter_var($usr['email'] ?? '', FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $sub = 'Your account has been approved';
+        $body = '<p>Hi ' . htmlspecialchars($usr['name'] ?? '') . ',</p><p>Your account has been approved and activated. You can now login.</p>';
+        @sendEmail($usr['email'], $sub, $body);
+      }
+    } catch(Throwable $e){}
     header('Location: index.php?pages=users'); exit;
   }
 
@@ -98,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
   $id = (int)$_GET['id'];
   $stmt = $pdo->prepare('SELECT u.*, r.name AS role_name, r.slug AS role_slug,
-    (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS posts_count,
+  (SELECT COUNT(*) FROM posts WHERE author_id = u.id) AS posts_count,
     (SELECT COUNT(*) FROM comments WHERE user_id = u.id) AS comments_count
     FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?');
   $stmt->execute([$id]);
