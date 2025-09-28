@@ -227,7 +227,14 @@ $totalPages = (int)ceil($total / $perPage);
 <div class="roles-page">
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
     <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
-        <form method="get" style="margin:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <style>
+            /* Simple filter form styling to match admin UI */
+            .filter-form { margin:0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+            .filter-form label { font-size:13px; color:#333; }
+            .filter-form input[type="text"], .filter-form input[type="date"], .filter-form select { padding:6px 8px; border:1px solid #ddd; border-radius:4px; }
+            .filter-form button { padding:6px 10px; }
+        </style>
+        <form method="get" class="filter-form">
             <label for="statusFilter">Status:</label>
             <select id="statusFilter" name="status">
                 <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
@@ -270,35 +277,45 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                 <td>
                     <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
-                </td>
-                <td>
                     <?php if ($p['status'] === 'pending'): ?>
-                        <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
-                        <button class="btn" onclick="doAction('reject',<?= $p['id'] ?>)">Reject</button>
+                        <div style="margin-top:6px;">
+                            <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
+                            <button class="btn" onclick="doAction('reject',<?= $p['id'] ?>)">Reject</button>
+                        </div>
                     <?php else: ?>
-                        &mdash;
+                        <!-- no actions -->
                     <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
-    <!-- Pagination -->
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+    <!-- Pagination (numbered) -->
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <?php
             // build base query preserving filters
             $qp = $_GET; // current query params
             $makeLink = function($pnum) use ($qp) {
                 $qp['page'] = $pnum; return '?' . http_build_query($qp);
             };
+            echo '<nav aria-label="Pages">';
+            // if many pages, show a sliding window around current page
+            $window = 3; // pages before/after
+            $start = max(1, $page - $window);
+            $end = min($totalPages, $page + $window);
+            if ($start > 1) {
+                echo '<a class="btn" href="' . $makeLink(1) . '">1</a>';
+                if ($start > 2) echo '<span style="padding:6px 8px;color:#666">&hellip;</span>';
+            }
+            for ($i = $start; $i <= $end; $i++) {
+                if ($i == $page) echo '<span style="padding:6px 10px;background:#111;color:#fff;border-radius:4px">' . $i . '</span>'; else echo '<a class="btn" href="' . $makeLink($i) . '">' . $i . '</a>';
+            }
+            if ($end < $totalPages) {
+                if ($end < $totalPages - 1) echo '<span style="padding:6px 8px;color:#666">&hellip;</span>';
+                echo '<a class="btn" href="' . $makeLink($totalPages) . '">' . $totalPages . '</a>';
+            }
+            echo '</nav>';
         ?>
-        <?php if ($page > 1): ?>
-            <a class="btn" href="<?= $makeLink($page-1) ?>">&laquo; Prev</a>
-        <?php endif; ?>
-        <div style="margin:0 8px;color:#666;">Page <?= $page ?> of <?= $totalPages ?></div>
-        <?php if ($page < $totalPages): ?>
-            <a class="btn" href="<?= $makeLink($page+1) ?>">Next &raquo;</a>
-        <?php endif; ?>
     </div>
 </div>
 
