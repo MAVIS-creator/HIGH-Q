@@ -206,7 +206,7 @@ $refFilter = trim($_GET['ref'] ?? '');
 $userEmail = trim($_GET['user_email'] ?? '');
 $params = [];
 $where = [];
-if ($statusFilter !== '') { $where[] = 'p.status = ?'; $params[] = $statusFilter; }
+if ($statusFilter !== '') { $where[] = 'LOWER(p.status) = ?'; $params[] = strtolower($statusFilter); }
 if ($search !== '') { $where[] = '(p.reference LIKE ? OR u.email LIKE ? OR u.name LIKE ?)'; $params[] = "%{$search}%"; $params[] = "%{$search}%"; $params[] = "%{$search}%"; }
 if ($fromDate !== '') { $where[] = 'p.created_at >= ?'; $params[] = $fromDate . ' 00:00:00'; }
 if ($toDate !== '') { $where[] = 'p.created_at <= ?'; $params[] = $toDate . ' 23:59:59'; }
@@ -214,11 +214,11 @@ if ($gateway !== '') { $where[] = 'p.gateway LIKE ?'; $params[] = "%{$gateway}%"
 if ($refFilter !== '') { $where[] = 'p.reference LIKE ?'; $params[] = "%{$refFilter}%"; }
 if ($userEmail !== '') { $where[] = 'u.email LIKE ?'; $params[] = "%{$userEmail}%"; }
 $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
-$countStmt = $pdo->prepare("SELECT COUNT(*) FROM payments p LEFT JOIN users u ON p.student_id = u.id {$whereSql}");
+$countStmt = $pdo->prepare("SELECT COUNT(*) FROM payments p {$whereSql}");
 $countStmt->execute($params);
 $total = (int)$countStmt->fetchColumn();
 $offset = ($page - 1) * $perPage;
-$sql = "SELECT p.*, u.email, u.name FROM payments p LEFT JOIN users u ON p.student_id = u.id {$whereSql} ORDER BY p.created_at DESC LIMIT {$perPage} OFFSET {$offset}";
+$sql = "SELECT p.* FROM payments p {$whereSql} ORDER BY p.created_at DESC LIMIT {$perPage} OFFSET {$offset}";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);

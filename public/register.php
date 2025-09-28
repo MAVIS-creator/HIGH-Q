@@ -314,20 +314,5 @@ $csrf = generateToken('signup_form');
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
 <?php
-// If the user clicked "I have sent the money" on the bank instructions, handle update
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_sent']) && !empty($_POST['payment_id'])) {
-	$payId = (int)$_POST['payment_id'];
-	$payer_name = trim($_POST['payer_name'] ?? '');
-	$payer_bank = trim($_POST['payer_bank'] ?? '');
-	// basic CSRF
-	$token2 = $_POST['_csrf_token'] ?? '';
-	if (!verifyToken('signup_form', $token2)) { /* ignore silently */ }
-	else {
-		$upd = $pdo->prepare('UPDATE payments SET payer_account_name = ?, payer_bank_name = ?, status = ?, updated_at = NOW() WHERE id = ?');
-		$upd->execute([$payer_name, $payer_bank, 'sent', $payId]);
-		// redirect to a waiting page where the user can poll or be informed
-		header('Location: payments_wait.php?ref=' . urlencode($_SESSION['last_payment_reference'] ?? '')); exit;
-	}
-}
 ?>
 
