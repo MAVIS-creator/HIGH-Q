@@ -218,7 +218,7 @@ $totalPages = (int)ceil($total / $perPage);
         <div style="margin-left:auto;color:#666;font-size:13px;">Search: <em><?= htmlspecialchars($search) ?></em></div>
     </div>
     <table class="roles-table">
-        <thead><tr><th>ID</th><th>Reference</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+        <thead><tr><th>ID</th><th>Reference</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
         <?php foreach($payments as $p): ?>
             <tr>
@@ -228,6 +228,9 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars(number_format($p['amount'],2)) ?></td>
                 <td><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
                 <td><?= htmlspecialchars($p['status']) ?></td>
+                <td><?= htmlspecialchars($p['payer_account_name'] ?? '') ?></td>
+                <td><?= htmlspecialchars($p['payer_account_number'] ?? '') ?></td>
+                <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                 <td>
                     <?php if ($p['status'] === 'pending'): ?>
@@ -248,7 +251,16 @@ function doAction(action,id){
     if (!confirm('Are you sure?')) return;
     var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>');
     var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    xhr.onload = function(){ try { var res = JSON.parse(xhr.responseText); } catch(e){ alert('Unexpected'); return; } if (res.status==='ok') location.reload(); else alert(res.message||'Error'); };
+    xhr.onload = function(){
+        var text = xhr.responseText || '';
+        try {
+            var res = JSON.parse(text);
+            if (res.status === 'ok') location.reload(); else alert(res.message || 'Error');
+        } catch (e) {
+            // Not JSON — show raw response for debugging
+            alert('Unexpected response from server:\n' + text);
+        }
+    };
     xhr.send(fd);
 }
 </script>
