@@ -320,24 +320,7 @@ $totalPages = (int)ceil($total / $perPage);
     </div>
 </div>
 
-<script>
-function doAction(action,id){
-    if (!confirm('Are you sure?')) return;
-    var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>');
-    var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    xhr.onload = function(){
-        var text = xhr.responseText || '';
-        try {
-            var res = JSON.parse(text);
-            if (res.status === 'ok') location.reload(); else alert(res.message || 'Error');
-        } catch (e) {
-            // Not JSON — show raw response for debugging
-            alert('Unexpected response from server:\n' + text);
-        }
-    };
-    xhr.send(fd);
-}
-</script>
+<!-- simple action handler removed in favor of SweetAlert2 modal-based handler below -->
 
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
