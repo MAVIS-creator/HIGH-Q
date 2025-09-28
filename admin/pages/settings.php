@@ -157,6 +157,9 @@ $defaults = [
         'maintenance' => false,
         'registration' => true,
         'email_verification' => true,
+        // If true, registrations are saved but payment references are NOT auto-created;
+        // admin must verify the registration and create/send a payment reference.
+        'verify_registration_before_payment' => false,
         'two_factor' => false,
         'comment_moderation' => true
     ],
