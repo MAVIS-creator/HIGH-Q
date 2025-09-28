@@ -11,7 +11,7 @@ if ($ref) {
     $payment = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 $csrf = generateToken('signup_form');
-include __DIR__ . '/includes/header.php';
+// Minimal waiting page: no header/footer for a clean payment flow
 ?>
 <section class="about-hero">
   <div class="container">
@@ -29,7 +29,7 @@ include __DIR__ . '/includes/header.php';
 
   <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">10:00</div>
 
-        <form method="post" action="register.php" id="payer-form">
+  <form method="post" action="/register.php" id="payer-form">
           <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
           <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
           <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
@@ -52,7 +52,7 @@ include __DIR__ . '/includes/header.php';
           // polling
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
           function check(){
-            var xhr = new XMLHttpRequest(); xhr.open('GET', '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
+            var xhr = new XMLHttpRequest(); xhr.open('GET', '/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
             xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = '/public/' + r.payment.receipt_path; } else { location.reload(); } } }catch(e){} }};
             xhr.send();
           }
