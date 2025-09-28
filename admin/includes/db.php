@@ -5,14 +5,11 @@ require __DIR__ . '/../../vendor/autoload.php'; // adjust path if needed
 
 use Dotenv\Dotenv;
 
-// Prefer project root .env (two levels up), fallback to admin/.env
+// Load project root .env only (admin should use root .env for consistency)
 $rootDir = dirname(__DIR__, 2);
-$adminDir = dirname(__DIR__);
 try {
     if (file_exists($rootDir . '/.env')) {
         Dotenv::createImmutable($rootDir)->safeLoad();
-    } elseif (file_exists($adminDir . '/.env')) {
-        Dotenv::createImmutable($adminDir)->safeLoad();
     }
 } catch (Throwable $e) {
     // Ignore parse errors here; we'll fall back to getenv() below
