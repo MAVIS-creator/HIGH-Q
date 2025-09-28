@@ -104,6 +104,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 ]);
                 logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
                 $success[] = "Article '{$title}' updated.";
+                // If this is an AJAX edit (X-Requested-With), return JSON with updated post data
+                if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true, 'post' => [
+                        'id' => $id,
+                        'title' => $title,
+                        'excerpt' => $excerpt,
+                        'category' => '', // category name not joined here
+                        'author' => $_SESSION['user']['name'] ?? '' ,
+                        'featured_image' => $imgPath
+                    ]]);
+                    exit;
+                }
             }
 
             // DELETE
