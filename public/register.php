@@ -169,7 +169,12 @@ $csrf = generateToken('signup_form');
 													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" placeholder="Relationship to student" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
 													</div>
 
-													<div class="form-row"><label><input type="checkbox" name="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?>> I agree to the terms and conditions</label></div>
+													<div class="form-row">
+														<label>
+															<input type="checkbox" name="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
+															I agree to the <a href="terms.php" target="_blank">terms and conditions</a>
+														</label>
+													</div>
 													<div style="margin-top:12px;"><button class="btn-primary" type="submit">Submit Registration</button></div>
 												</form>
 											</div>
