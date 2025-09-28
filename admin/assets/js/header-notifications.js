@@ -35,6 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Update panel content
             panel.innerHTML = '';
+
+            // add header with Mark all as read control
+            const headerBar = document.createElement('div');
+            headerBar.className = 'notif-panel-header';
+            headerBar.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid #f1f1f1;background:#fafafa"><strong style="font-size:13px">Notifications</strong><div><button class="mark-all" style="background:none;border:none;color:#007bff;cursor:pointer;padding:4px 8px">Mark all as read</button></div></div>';
+            panel.appendChild(headerBar);
             if (!data.notifications || data.notifications.length === 0) {
                 panel.innerHTML = '<div class="notif-empty">No notifications</div>';
                 return;
@@ -65,6 +71,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.appendChild(time);
                 panel.appendChild(item);
             });
+
+            // wire up Mark all button
+            const markAllBtn = panel.querySelector('.mark-all');
+            if (markAllBtn) {
+                markAllBtn.addEventListener('click', async function(ev) {
+                    ev.preventDefault();
+                    markAllBtn.disabled = true; markAllBtn.textContent = 'Marking...';
+                    try {
+                        // Send mark_read for each notification
+                        const ops = data.notifications.map(n => {
+                            const fd = new FormData(); fd.append('type', n.type); fd.append('id', n.id);
+                            return fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+                        });
+                        await Promise.all(ops);
+                        // reload notifications
+                        loadNotifications();
+                    } catch (e) {
+                        console.error('Failed to mark all as read', e);
+                        markAllBtn.disabled = false; markAllBtn.textContent = 'Mark all as read';
+                    }
+                });
+            }
         } catch(e) {
             console.error('Error loading notifications:', e);
             panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
