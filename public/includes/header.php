@@ -22,9 +22,14 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           $siteSettings['site']['bank_name'] = $row['bank_name'] ?? '';
           $siteSettings['site']['bank_account_name'] = $row['bank_account_name'] ?? '';
           $siteSettings['site']['bank_account_number'] = $row['bank_account_number'] ?? '';
+          // Backwards-compatible flat keys (some public templates expect flat structure)
+          $siteSettings['bank_name'] = $siteSettings['site']['bank_name'];
+          $siteSettings['bank_account_name'] = $siteSettings['site']['bank_account_name'];
+          $siteSettings['bank_account_number'] = $siteSettings['site']['bank_account_number'];
           $siteSettings['contact']['phone'] = $row['contact_phone'] ?? $siteSettings['contact']['phone'];
           $siteSettings['contact']['email'] = $row['contact_email'] ?? $siteSettings['contact']['email'];
           $siteSettings['contact']['address'] = $row['contact_address'] ?? $siteSettings['contact']['address'];
+          $siteSettings['contact_phone'] = $siteSettings['contact']['phone'];
         }
       } catch (Throwable $e) {
         // fall back to the legacy settings table if site_settings not present
