@@ -10,8 +10,31 @@ if ($ref) {
     $stmt->execute([$ref]);
     $payment = $stmt->fetch(PDO::FETCH_ASSOC);
 }
+// Minimal branded waiting page: include site CSS but omit full header/footer
 $csrf = generateToken('signup_form');
-// Minimal waiting page: no header/footer for a clean payment flow
+// Include basic head assets (brand styles) without full header include
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="/assets/css/public.css">
+</head>
+<body>
+  <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
+    <div class="container" style="display:flex;align-items:center;gap:12px;">
+      <img src="/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+      <div>
+        <strong>HIGH Q SOLID ACADEMY</strong>
+        <div style="font-size:12px;color:#666;">Secure payment</div>
+      </div>
+    </div>
+  </div>
+  <main class="public-main" style="padding:28px 0;">
+<?php
 ?>
 <section class="about-hero">
   <div class="container">
@@ -64,4 +87,7 @@ $csrf = generateToken('signup_form');
   </div>
 </section>
 
-<?php include __DIR__ . '/includes/footer.php';
+  </main>
+  <footer style="padding:18px 0;text-align:center;color:#777;font-size:13px;">&copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY</footer>
+</body>
+</html>
