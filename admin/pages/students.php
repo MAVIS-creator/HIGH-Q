@@ -208,7 +208,7 @@ if ($hasRegistrations) {
               <div><strong>DOB:</strong> <?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
               <div><strong>Address:</strong> <?= htmlspecialchars(strlen($s['home_address']??'')>80 ? substr($s['home_address'],0,80).'...' : ($s['home_address']??'-')) ?></div>
               <div><strong>Emergency:</strong> <?= htmlspecialchars(($s['emergency_contact_name'] ?? '-') . ' / ' . ($s['emergency_contact_phone'] ?? '-')) ?></div>
-              <div style="margin-top:8px;"><a href="index.php?pages=students&action=view&id=<?= $s['id'] ?>">View full registration</a></div>
+              <div style="margin-top:8px;"><a href="#" class="view-registration" data-id="<?= $s['id'] ?>">View full registration</a></div>
             </div>
           </div>
         </div>
