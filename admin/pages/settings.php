@@ -583,6 +583,7 @@ $csrf = generateToken('settings_form');
                             'maintenance' => ['label'=>'Maintenance Mode','desc'=>'Temporarily disable public access to the site'],
                             'registration' => ['label'=>'User Registration','desc'=>'Allow new users to register for accounts'],
                             'email_verification' => ['label'=>'Email Verification','desc'=>'Require email verification for new accounts'],
+                            'verify_registration_before_payment' => ['label'=>'Verify registration before payment','desc'=>'Require admin verification of registration details before creating payment reference and sending it to registrant'],
                             'two_factor' => ['label'=>'Two-Factor Authentication','desc'=>'Enable 2FA for enhanced security'],
                             'comment_moderation' => ['label'=>'Comment Moderation','desc'=>'Require approval before comments are published']
                         ];
