@@ -226,6 +226,11 @@ if ($hasRegistrations) {
           <div class="card-right">
             <div class="card-actions">
               <!-- view icon removed as requested -->
+              <?php if (!empty($s['status'])): ?>
+                <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
+                <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
+                <a class="btn" href="index.php?pages=audit_logs&action=filter&for=registration&id=<?= $s['id'] ?>">View audit</a>
+              <?php endif; ?>
               <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this registration?');">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
