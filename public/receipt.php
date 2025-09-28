@@ -50,7 +50,7 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
     <div class="actions">
       <button onclick="window.print();" class="btn-primary">Print / Download</button>
       <a href="/contact.php" class="btn" style="margin-left:8px;">Contact Support</a>
-      <a href="/chatbox.php" class="btn" style="margin-left:8px;">Open Live Chat</a>
+      <a href="/contact.php#livechat" class="btn" style="margin-left:8px;">Open Live Chat</a>
     </div>
 
     <div style="margin-top:18px;color:#333">
