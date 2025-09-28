@@ -128,16 +128,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                 // send confirmation email to user (attach receipt if available) and to admin
                 try {
                     // user
-                    if (!empty($p['email'])) {
-                        $subject = 'Payment Confirmed — HIGH Q SOLID ACADEMY';
-                        $htmlMail = "<p>Hi " . htmlspecialchars($p['name']) . ",</p><p>Your payment (reference: " . htmlspecialchars($p['reference']) . ") has been confirmed. Your account is now active.</p>";
-                        $attachments = [];
-                        if (!empty($receiptPath)) {
-                            $full = __DIR__ . '/../../public/' . ltrim($receiptPath, '/');
-                            if (is_readable($full)) $attachments[] = $full;
+                        if (!empty($p['email'])) {
+                            // Branded HTML email
+                            $site = 'HIGH Q'; $logo = '';
+                            try { $s = $pdo->query('SELECT site_name, logo_url FROM site_settings LIMIT 1')->fetch(PDO::FETCH_ASSOC); if (!empty($s['site_name'])) $site = $s['site_name']; if (!empty($s['logo_url'])) $logo = $s['logo_url']; } catch(Throwable $e){}
+                            $subject = $site . ' — Payment Confirmed';
+                            $htmlMail = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
+                            $htmlMail .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333}.container{max-width:640px;margin:0 auto;padding:18px}.btn{display:inline-block;padding:8px 12px;background:#d62828;color:#fff;border-radius:6px;text-decoration:none}</style>';
+                            $htmlMail .= '</head><body><div class="container">';
+                            if ($logo) $htmlMail .= '<div style="margin-bottom:12px"><img src="' . htmlspecialchars($logo) . '" alt="' . htmlspecialchars($site) . '" style="max-height:60px"></div>';
+                            $htmlMail .= '<h2>Hi ' . htmlspecialchars($p['name'] ?? '') . '</h2>';
+                            $htmlMail .= '<p>Your payment with reference <strong>' . htmlspecialchars($p['reference']) . '</strong> has been confirmed. Your account has been activated.</p>';
+                            if (!empty($receiptPath)) {
+                                $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/' . ltrim($receiptPath, '/');
+                                $htmlMail .= '<p><a class="btn" href="' . htmlspecialchars($link) . '" target="_blank">Download Receipt</a></p>';
+                            }
+                            $htmlMail .= '<p>Thanks,<br>' . htmlspecialchars($site) . ' team</p>';
+                            $htmlMail .= '</div></body></html>';
+                            $attachments = [];
+                            if (!empty($receiptPath)) {
+                                $full = __DIR__ . '/../../public/' . ltrim($receiptPath, '/');
+                                if (is_readable($full)) $attachments[] = $full;
+                            }
+                            @sendEmail($p['email'], $subject, $htmlMail, $attachments);
                         }
-                        @sendEmail($p['email'], $subject, $htmlMail, $attachments);
-                    }
 
                     // admin
                     $adminEmail = null;
@@ -186,9 +200,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             $stmt = $pdo->prepare('SELECT student_id, reference FROM payments WHERE id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
                 if ($p && !empty($p['student_id'])) { $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$p['student_id']]); $user = $u->fetch();
                 if ($user && !empty($user['email'])) {
-                    $subject = 'Payment Not Accepted — HIGH Q SOLID ACADEMY';
-                    $html = "<p>Hi " . htmlspecialchars($user['name']) . ",</p><p>We could not accept your payment (reference: " . htmlspecialchars($p['reference']) . "). Please review and contact support.</p>";
+                    $site = 'HIGH Q'; $logo = '';
+                    try { $s = $pdo->query('SELECT site_name, logo_url FROM site_settings LIMIT 1')->fetch(PDO::FETCH_ASSOC); if (!empty($s['site_name'])) $site = $s['site_name']; if (!empty($s['logo_url'])) $logo = $s['logo_url']; } catch(Throwable $e){}
+                    $subject = $site . ' — Payment Not Accepted';
+                    $html = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
+                    $html .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333}.container{max-width:640px;margin:0 auto;padding:18px}</style>';
+                    $html .= '</head><body><div class="container">';
+                    if ($logo) $html .= '<div style="margin-bottom:12px"><img src="' . htmlspecialchars($logo) . '" alt="' . htmlspecialchars($site) . '" style="max-height:60px"></div>';
+                    $html .= '<h2>Hi ' . htmlspecialchars($user['name'] ?? '') . '</h2>';
+                    $html .= '<p>Unfortunately, we could not accept your payment (reference: <strong>' . htmlspecialchars($p['reference']) . '</strong>).</p>';
                     if (!empty($reason)) $html .= '<p><strong>Reason:</strong> ' . htmlspecialchars($reason) . '</p>';
+                    $html .= '<p>Please contact support for assistance.</p>';
+                    $html .= '<p>Regards,<br>' . htmlspecialchars($site) . ' team</p>';
+                    $html .= '</div></body></html>';
                     @sendEmail($user['email'], $subject, $html);
                 }
             }
