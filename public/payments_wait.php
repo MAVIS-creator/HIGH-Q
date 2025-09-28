@@ -74,27 +74,29 @@ $csrf = generateToken('signup_form');
               fetch('api/mark_sent.php', { method: 'POST', body: fd, credentials: 'same-origin' })
                 .then(function(r){ return r.json(); })
                 .then(function(j){
-                  if (j.status === 'ok') {
-                    // show success and let polling detect confirmation
-                    btn.textContent = 'Recorded — awaiting admin verification';
-                  } else {
-                    alert(j.message || 'Failed to record transfer.');
-                    btn.disabled = false; btn.textContent = 'I have sent the money';
-                  }
+                      if (j.status === 'ok') {
+                        // show success and let polling detect confirmation
+                        btn.textContent = 'Recorded — awaiting admin verification';
+                        // display recorded payer details
+                        var info = document.getElementById('payerRecordedInfo');
+                        if (info) {
+                          var pay = j.payment || {};
+                          info.innerHTML = '<h4>Recorded transfer details</h4>'+
+                            '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>'+
+                            '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>'+
+                            '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
+                          info.style.border = '1px dashed #ccc';
+                          info.style.padding = '10px';
+                          info.style.marginTop = '12px';
+                          info.style.display = 'block';
+                        }
+                      } else {
+                        alert(j.message || 'Failed to record transfer.');
+                        btn.disabled = false; btn.textContent = 'I have sent the money';
+                      }
                 }).catch(function(){ alert('Network error'); btn.disabled = false; btn.textContent = 'I have sent the money'; });
             });
-            // display recorded payer details
-            var info = document.getElementById('payerRecordedInfo');
-            if (info) {
-              var pay = j.payment || {};
-              info.innerHTML = '<h4>Recorded transfer details</h4>'+
-                '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>'+
-                '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>'+
-                '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
-              info.style.border = '1px dashed #ccc';
-              info.style.padding = '10px';
-              info.style.marginTop = '12px';
-            }
+            
           })();
         </script>
 
