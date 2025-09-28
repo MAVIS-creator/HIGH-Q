@@ -59,7 +59,8 @@
 
             var data = new FormData(this);
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', location.href, true);
+            // Submit settings to the dedicated JSON endpoint to ensure JSON-only responses
+            xhr.open('POST', '/HIGH-Q/admin/api/save-settings.php', true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
             xhr.onload = function() {
