@@ -76,7 +76,7 @@ $csrf = generateToken('signup_form');
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
           function check(){
             var xhr = new XMLHttpRequest(); xhr.open('GET', '/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
-            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = '/public/' + r.payment.receipt_path; } else { location.reload(); } } }catch(e){} }};
+            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = '/' + r.payment.receipt_path; } else { window.location = '/receipt.php?ref=' + encodeURIComponent(ref); } } }catch(e){} }};
             xhr.send();
           }
           var poll = setInterval(check, 10000);
