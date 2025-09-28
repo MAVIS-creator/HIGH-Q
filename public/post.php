@@ -83,7 +83,7 @@ document.querySelectorAll('.btn-reply').forEach(b=>b.addEventListener('click',fu
 document.getElementById('commentForm').addEventListener('submit', function(e){
   e.preventDefault();
   var fd = new FormData(this);
-  fetch('/HIGH-Q/public/api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
+  fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
     if (j.status === 'ok') { alert(j.message||'Submitted'); location.reload(); } else { alert(j.message||'Error'); }
   }).catch(()=>alert('Network error'));
 });
