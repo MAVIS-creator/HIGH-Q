@@ -186,6 +186,15 @@ if (is_array($dbSettings) && !empty($dbSettings)) {
 
 // Handle save action (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // If this is an AJAX request, ensure we return only JSON and clear any accidental output
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+        // Clear any output buffers to avoid HTML leaking into JSON response
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
+        header('Content-Type: application/json');
+    }
+
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('settings_form', $token)) {
         http_response_code(400);
