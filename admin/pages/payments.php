@@ -232,7 +232,8 @@ $totalPages = (int)ceil($total / $perPage);
 <div class="roles-page">
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
     <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
-        <form method="get" class="filter-form">
+        <form method="get" action="index.php" class="filter-form">
+            <input type="hidden" name="pages" value="payments">
             <label for="statusFilter">Status:</label>
             <select id="statusFilter" name="status">
                 <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
@@ -348,34 +349,58 @@ function doAction(action,id){
     confirmHtml += '</div>';
 
     var textAction = action === 'confirm' ? 'Confirm' : 'Reject';
-    Swal.fire({
-        title: textAction + ' payment?',
-        html: confirmHtml,
-        icon: action === 'confirm' ? 'question' : 'warning',
-        showCancelButton: true,
-        confirmButtonText: textAction,
-        preConfirm: () => {
-            var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>');
-            return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
-                .then(res => res.text())
-                .then(text => {
-                    try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); }
-                })
-                .catch(err => { throw err; });
-        }
-    }).then((res) => {
-        if (res.isConfirmed) {
-            var data = res.value;
-            if (data && data.status === 'ok') {
-                showToast('success', data.message || 'Done');
-                setTimeout(function(){ location.reload(); }, 800);
-            } else {
-                showToast('error', data && data.message ? data.message : 'Error');
+    if (action === 'reject') {
+        Swal.fire({
+            title: 'Reject payment?',
+            html: confirmHtml + '<p>Please provide a reason for rejection:</p>',
+            input: 'textarea',
+            inputPlaceholder: 'Reason (optional)',
+            showCancelButton: true,
+            confirmButtonText: 'Reject',
+            preConfirm: (reason) => {
+                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>'); fd.append('reason', reason || '');
+                return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
+                    .then(res => res.text())
+                    .then(text => {
+                        try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); }
+                    });
             }
-        }
-    }).catch(err => {
-        Swal.fire({icon:'error',title:'Server Error',html:Swal.escapeHtml(err.message || String(err))});
-    });
+        }).then((res) => {
+            if (res.isConfirmed) {
+                var data = res.value;
+                if (data && data.status === 'ok') {
+                    showToast('success', data.message || 'Rejected');
+                    setTimeout(function(){ location.reload(); }, 800);
+                } else {
+                    showToast('error', data && data.message ? data.message : 'Error');
+                }
+            }
+        }).catch(err => { Swal.fire({icon:'error',title:'Server Error',html:Swal.escapeHtml(err.message || String(err))}); });
+    } else {
+        Swal.fire({
+            title: textAction + ' payment?',
+            html: confirmHtml,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: textAction,
+            preConfirm: () => {
+                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', '<?= generateToken('payments_form') ?>');
+                return fetch(location.href, {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest'}})
+                    .then(res => res.text())
+                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
+            }
+        }).then((res) => {
+            if (res.isConfirmed) {
+                var data = res.value;
+                if (data && data.status === 'ok') {
+                    showToast('success', data.message || 'Done');
+                    setTimeout(function(){ location.reload(); }, 800);
+                } else {
+                    showToast('error', data && data.message ? data.message : 'Error');
+                }
+            }
+        }).catch(err => { Swal.fire({icon:'error',title:'Server Error',html:Swal.escapeHtml(err.message || String(err))}); });
+    }
 }
 </script>
 
