@@ -220,6 +220,12 @@ tr:hover { background:#fff8e1; }
     color: var(--dark-black);
 }
 
+/* Payments filter form (moved from inline in payments.php) */
+.filter-form { margin:0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.filter-form label { font-size:13px; color:#333; }
+.filter-form input[type="text"], .filter-form input[type="date"], .filter-form select { padding:6px 8px; border:1px solid #ddd; border-radius:4px; }
+.filter-form button { padding:6px 10px; }
+
 /* Action buttons */
 .btn-view {
     background: var(--accent-yellow);
