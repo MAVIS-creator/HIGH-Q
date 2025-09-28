@@ -74,7 +74,8 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'contact_facebook' => $contact['facebook'] ?? null,
         'contact_twitter' => $contact['twitter'] ?? null,
         'contact_instagram' => $contact['instagram'] ?? null,
-        'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+    'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+    'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
         'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
         'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
         'two_factor' => !empty($security['two_factor']) ? 1 : 0,
@@ -94,7 +95,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             vision = :vision, about = :about,
             contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
             contact_facebook = :contact_facebook, contact_twitter = :contact_twitter, contact_instagram = :contact_instagram,
-            maintenance = :maintenance, registration = :registration, email_verification = :email_verification,
+            maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
             two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
             WHERE id = :id";
         $params['id'] = $id;
@@ -106,13 +107,13 @@ function upsertSiteSettings(PDO $pdo, array $data) {
              bank_name, bank_account_name, bank_account_number,
              contact_phone, contact_email, contact_address,
              contact_facebook, contact_twitter, contact_instagram,
-             maintenance, registration, email_verification, two_factor, comment_moderation)
+            maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation)
             VALUES
             (:site_name, :tagline, :logo_url, :vision, :about,
              :bank_name, :bank_account_name, :bank_account_number,
              :contact_phone, :contact_email, :contact_address,
              :contact_facebook, :contact_twitter, :contact_instagram,
-             :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
+             :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
         
@@ -155,6 +156,7 @@ $defaults = [
     ],
     'security' => [
         'maintenance' => false,
+        'maintenance_allowed_ips' => '',
         'registration' => true,
         'email_verification' => true,
         // If true, registrations are saved but payment references are NOT auto-created;
