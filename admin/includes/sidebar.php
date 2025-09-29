@@ -39,7 +39,13 @@ $menuItems = [
     <nav class="sidebar-nav">
         <ul>
             <?php foreach ($menuItems as $slug => $item): ?>
-                <?php if (in_array($slug, $permissions)): ?>
+                <?php
+                    // Show item if role_permissions contains the menu slug
+                    $show = in_array($slug, $permissions);
+                    // Also show audit_logs to users who have the general 'settings' permission (common admin role)
+                    if (!$show && $slug === 'audit_logs' && in_array('settings', $permissions)) $show = true;
+                ?>
+                <?php if ($show): ?>
                     <li><a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
                             <i class='<?= $item['icon']; ?>'></i> <?= $item['title']; ?>
                         </a></li>
