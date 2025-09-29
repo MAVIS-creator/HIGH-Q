@@ -259,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           data-tutor="<?= $c['tutor_id'] ?>"
           data-active="<?= $c['is_active'] ?>"
           data-icon="<?= htmlspecialchars($c['icon'] ?? '') ?>"
-          data-features="<?= htmlspecialchars($c['features'] ?? '') ?>"
+          data-features="<?= htmlspecialchars($c['features_list'] ?? $c['features'] ?? '') ?>"
           data-badge="<?= htmlspecialchars($c['highlight_badge'] ?? '') ?>"
         ><i class='bx bx-edit'></i> Edit</button>
       </div>
