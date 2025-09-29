@@ -1,6 +1,14 @@
 // admin/assets/js/admin-security.js
 (function(){
     function start(){
+        // ensure small helper styles are available in modals (keeps assets self-contained)
+        var styleId = 'hq-admin-security-styles';
+        if (!document.getElementById(styleId)) {
+            var s = document.createElement('style');
+            s.id = styleId;
+            s.innerHTML = '.hq-table{width:100%;border-collapse:collapse}.hq-table th,.hq-table td{padding:8px;border-bottom:1px solid #eee;text-align:left}.hq-table th{background:#fafafa;font-weight:700}.hq-btn{padding:6px 8px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}.hq-btn.danger{background:#ffefef;border-color:#f5c6cb;color:#a94442}';
+            document.head.appendChild(s);
+        }
         if (typeof Swal === 'undefined') return; // SweetAlert required
 
         function ajaxJson(method, url, data, cb){
@@ -38,10 +46,10 @@
                     ajaxJson('GET','/HIGH-Q/admin/api/mac_blocklist.php', null, function(err,res){
                         var cont = document.getElementById('mac-list');
                         if (err || !res || !res.rows) { cont.innerHTML = '<div class="muted">Failed to load list</div>'; return; }
-                        var html = '<table class="table" style="width:100%;"><thead><tr><th>MAC</th><th>Reason</th><th>Enabled</th><th>Actions</th></tr></thead><tbody>';
+                        var html = '<table class="hq-table" style="width:100%;"><thead><tr><th>MAC</th><th>Reason</th><th>Enabled</th><th>Actions</th></tr></thead><tbody>';
                         res.rows.forEach(function(r){
-                            html += '<tr><td>'+Swal.escapeHtml(r.mac)+'</td><td>'+Swal.escapeHtml(r.reason||'')+'</td><td>'+(r.enabled ? 'Yes' : 'No')+'</td>'+
-                                    '<td><button data-id="'+r.id+'" class="btn small toggle-enable">Toggle</button> <button data-id="'+r.id+'" class="btn small del">Delete</button></td></tr>';
+                html += '<tr><td>'+Swal.escapeHtml(r.mac)+'</td><td>'+Swal.escapeHtml(r.reason||'')+'</td><td>'+(r.enabled ? 'Yes' : 'No')+'</td>'+
+                    '<td><button data-id="'+r.id+'" class="hq-btn toggle-enable">Toggle</button> <button data-id="'+r.id+'" class="hq-btn danger del">Delete</button></td></tr>';
                         });
                         html += '</tbody></table>';
                         cont.innerHTML = html;
