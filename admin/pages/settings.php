@@ -682,6 +682,8 @@ $csrf = generateToken('settings_form');
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
                         <button type="button" id="downloadLogs" class="btn">Download Logs</button>
                         <button type="button" id="exportClear" class="btn">Export &amp; Clear Logs</button>
+                        <button type="button" id="openMacManager" class="btn">Manage MAC Blocklist</button>
+                        <button type="button" id="openIpLogs" class="btn">View IP Logs</button>
                     </div>
                 </div>
             </div>
@@ -693,6 +695,7 @@ $csrf = generateToken('settings_form');
     </form>
 
     <script src="../assets/js/settings.js"></script>
+    <script src="../assets/js/admin-security.js"></script>
 
 <?php
 require_once __DIR__ . '/../includes/footer.php';
