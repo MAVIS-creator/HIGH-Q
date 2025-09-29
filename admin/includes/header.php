@@ -116,6 +116,43 @@ if (!headers_sent()) {
             echo "<div class=\"admin-flash admin-flash-{$type}\">" . htmlspecialchars($msg) . "</div>";
         }
     }
+    // --- Admin area IP/MAC logging and blocklist enforcement ---
+    try {
+        if (file_exists(__DIR__ . '/../../config/db.php')) {
+            // ensure DB is available (admin pages often include db earlier)
+            if (!isset($pdo)) require_once __DIR__ . '/../../config/db.php';
+        }
+        if (isset($pdo)) {
+            $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+            $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
+            $path = $_SERVER['REQUEST_URI'] ?? null;
+            $referer = $_SERVER['HTTP_REFERER'] ?? null;
+            $userId = $_SESSION['user']['id'] ?? null;
+            $headers = [];
+            foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
+                if (!empty($_SERVER[$h])) $headers[$h] = $_SERVER[$h];
+            }
+            $hdrJson = !empty($headers) ? json_encode($headers) : null;
+            $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, user_id, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
+            $ins->execute([$remoteIp, $ua, $path, $referer, $userId, $hdrJson]);
+
+            // Check MAC header and enforce mac_blocklist
+            $mac = null;
+            foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
+                if (!empty($_SERVER[$h])) { $mac = trim($_SERVER[$h]); break; }
+            }
+            if (!empty($mac)) {
+                $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
+                $q->execute([$mac]);
+                $r = $q->fetch(PDO::FETCH_ASSOC);
+                if ($r && !empty($r['enabled'])) {
+                    http_response_code(403);
+                    echo "<h1>Access denied</h1><p>Your device is blocked.</p>";
+                    exit;
+                }
+            }
+        }
+    } catch (Throwable $e) { error_log('admin ip/mac logging error: ' . $e->getMessage()); }
     ?>
     <main class="admin-main">
         <style>
