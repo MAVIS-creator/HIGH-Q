@@ -87,8 +87,18 @@ if (in_array($page, $allowed_pages)) {
 
 if (!$pageAllowed) {
     // fallback to dashboard
-    $page = 'dashboard';
-    $pageTitle = 'Dashboard';
+    // If requested page file exists and the role has the 'settings' permission, allow it (convenience for admins)
+    $candidatesExplicit = [__DIR__ . "/{$page}.php", __DIR__ . "/pages/{$page}.php", __DIR__ . "/../pages/{$page}.php"];
+    $fileExists = false;
+    foreach ($candidatesExplicit as $f) { if (file_exists($f)) { $fileExists = true; break; } }
+    if ($fileExists && in_array('settings', $allowed_pages)) {
+        $pageAllowed = true;
+    }
+
+    if (!$pageAllowed) {
+        $page = 'dashboard';
+        $pageTitle = 'Dashboard';
+    }
 }
 
 // Include layout parts (paths relative to this file)

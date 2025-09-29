@@ -136,20 +136,43 @@ if (!headers_sent()) {
             $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, user_id, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
             $ins->execute([$remoteIp, $ua, $path, $referer, $userId, $hdrJson]);
 
-            // Check MAC header and enforce mac_blocklist
+            // Decide enforcement mode: 'mac' | 'ip' | 'both' (default 'mac')
+            $enforcement = 'mac';
+            try {
+                $stmtS = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+                $stmtS->execute(['system_settings']);
+                $val = $stmtS->fetchColumn();
+                $j = $val ? json_decode($val, true) : [];
+                $enforcement = $j['security']['enforcement_mode'] ?? $j['security']['enforce_by'] ?? $enforcement;
+            } catch (Throwable $e) { /* ignore */ }
+
+            // Check MAC header if allowed
             $mac = null;
             foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
                 if (!empty($_SERVER[$h])) { $mac = trim($_SERVER[$h]); break; }
             }
-            if (!empty($mac)) {
+            if (!empty($mac) && in_array($enforcement, ['mac','both'])) {
                 $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
                 $q->execute([$mac]);
                 $r = $q->fetch(PDO::FETCH_ASSOC);
                 if ($r && !empty($r['enabled'])) {
                     http_response_code(403);
-                    echo "<h1>Access denied</h1><p>Your device is blocked.</p>";
+                    echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
                     exit;
                 }
+            }
+
+            // If enforcement allows IP checks or uses fallback, check blocked_ips table
+            if (in_array($enforcement, ['ip','both'])) {
+                try {
+                    $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
+                    $bq->execute([$remoteIp]);
+                    if ($bq->fetch()) {
+                        http_response_code(403);
+                        echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
+                        exit;
+                    }
+                } catch (Throwable $e) { /* ignore */ }
             }
         }
     } catch (Throwable $e) { error_log('admin ip/mac logging error: ' . $e->getMessage()); }
