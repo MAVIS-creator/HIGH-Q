@@ -24,6 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
+        // Read max attempts setting
+        $maxAttempts = 5;
+        try {
+            $stmtS = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+            $stmtS->execute(['system_settings']);
+            $val = $stmtS->fetchColumn();
+            $j = $val ? json_decode($val, true) : [];
+            $maxAttempts = intval($j['advanced']['max_login_attempts'] ?? $maxAttempts);
+            if ($maxAttempts < 1) $maxAttempts = 5;
+        } catch (Throwable $e) { }
+
+        // Rate-limit check: count recent attempts for this IP
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        try {
+            if (!empty($ip)) {
+                $stmtLA = $pdo->prepare('SELECT attempts, last_attempt FROM login_attempts WHERE ip = ? LIMIT 1');
+                $stmtLA->execute([$ip]);
+                $la = $stmtLA->fetch(PDO::FETCH_ASSOC);
+                if ($la && intval($la['attempts']) >= $maxAttempts) {
+                    // Block the IP as fallback
+                    $insB = $pdo->prepare('INSERT INTO blocked_ips (ip, reason, created_at) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE reason = VALUES(reason)');
+                    $insB->execute([$ip, 'Exceeded login attempts']);
+                    $error = 'Too many login attempts. Your IP has been temporarily blocked.';
+                }
+            }
+        } catch (Throwable $e) { error_log('login rate-check error: ' . $e->getMessage()); }
+
         if ($user && password_verify($password, $user['password'])) {
             if ($user['is_active'] == 0) {
                 $error = "Your account is pending approval.";
@@ -38,11 +65,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'role_slug' => $user['role_slug'],
                     'role_name' => $user['role_name']
                 ];
+                // On successful login, clear any login_attempts record for this IP
+                try {
+                    $stmtDel = $pdo->prepare('DELETE FROM login_attempts WHERE ip = ? OR email = ?');
+                    $stmtDel->execute([$ip, $email]);
+                } catch (Throwable $e) { error_log('clear login attempts failed: ' . $e->getMessage()); }
+
                 header("Location: pages/index.php");
                 exit;
             }
         } else {
             $error = "Invalid email or password.";
+            // record failed attempt
+            try {
+                if (!empty($ip)) {
+                    $stmtUp = $pdo->prepare('INSERT INTO login_attempts (email, ip, attempts, last_attempt) VALUES (?, ?, 1, NOW()) ON DUPLICATE KEY UPDATE attempts = attempts + 1, last_attempt = NOW()');
+                    $stmtUp->execute([$email, $ip]);
+                    // If attempts now exceed threshold, block IP
+                    $stmtChk = $pdo->prepare('SELECT attempts FROM login_attempts WHERE ip = ? LIMIT 1');
+                    $stmtChk->execute([$ip]);
+                    $cur = $stmtChk->fetchColumn();
+                    if ($cur !== false && intval($cur) >= $maxAttempts) {
+                        $insB = $pdo->prepare('INSERT INTO blocked_ips (ip, reason, created_at) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE reason = VALUES(reason)');
+                        $insB->execute([$ip, 'Exceeded login attempts']);
+                    }
+                }
+            } catch (Throwable $e) { error_log('record login attempt failed: ' . $e->getMessage()); }
         }
     }
 }

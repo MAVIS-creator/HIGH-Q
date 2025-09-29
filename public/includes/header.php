@@ -144,24 +144,40 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           }
         } catch (Throwable $e) { error_log('ip_logs insert failed: ' . $e->getMessage()); }
 
-        // --- MAC blocklist enforcement: if client provides a MAC header, check mac_blocklist ---
+        // --- MAC/IP enforcement: consult settings.security.enforcement_mode ('mac'|'ip'|'both') ---
         try {
+          $enforcement = 'mac';
+          $stmtS = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+          $stmtS->execute(['system_settings']);
+          $val = $stmtS->fetchColumn();
+          $j = $val ? json_decode($val, true) : [];
+          $enforcement = $j['security']['enforcement_mode'] ?? $j['security']['enforce_by'] ?? $enforcement;
+
           $mac = null;
           foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
             if (!empty($_SERVER[$h])) { $mac = trim($_SERVER[$h]); break; }
           }
-          if (!empty($mac) && !empty($pdo)) {
+          if (!empty($mac) && in_array($enforcement, ['mac','both'])) {
             $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
             $q->execute([$mac]);
             $r = $q->fetch(PDO::FETCH_ASSOC);
             if ($r && !empty($r['enabled'])) {
-              // Deny access (403) for blocked MAC addresses
               http_response_code(403);
-              echo "<h1>Access denied</h1><p>Your device is blocked.</p>";
+              echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
               exit;
             }
           }
-        } catch (Throwable $e) { error_log('mac check failed: ' . $e->getMessage()); }
+
+          if (in_array($enforcement, ['ip','both'])) {
+            $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
+            $bq->execute([$remoteIp]);
+            if ($bq->fetch()) {
+              http_response_code(403);
+              echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
+              exit;
+            }
+          }
+        } catch (Throwable $e) { error_log('mac/ip enforcement failed: ' . $e->getMessage()); }
       } catch (Throwable $e) {
         // If anything goes wrong here, fall back to normal header rendering
       }
