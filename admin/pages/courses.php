@@ -40,7 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
   // $tutor removed
         $active = isset($_POST['is_active']) ? 1 : 0;
-    $icon   = trim($_POST['icon'] ?? '');
+  // Support custom Boxicons class via icon_class (preferred) or fallback to selected filename/class from the dropdown
+  $icon_class = trim($_POST['icon_class'] ?? '');
+  $icon   = $icon_class !== '' ? $icon_class : trim($_POST['icon'] ?? '');
     $features = trim($_POST['features'] ?? '');
     $highlight_badge = trim($_POST['highlight_badge'] ?? '');
 
@@ -128,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           $price,
                   null,
                   $active,
-                  $icon ?: null,
+                    $icon ?: null,
                   $highlight_badge ?: null,
                   $id
                 ]);
