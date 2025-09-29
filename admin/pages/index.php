@@ -65,6 +65,11 @@ if (!in_array('dashboard', $allowed_pages)) {
     $allowed_pages[] = 'dashboard';
 }
 
+// If the role has the 'settings' permission, allow access to audit_logs (convenience)
+if (in_array('settings', $allowed_pages) && !in_array('audit_logs', $allowed_pages)) {
+    $allowed_pages[] = 'audit_logs';
+}
+
 // Security: allow exact matches or logical subpages (e.g. 'chat_view') if base permission exists.
 $pageAllowed = false;
 if (in_array($page, $allowed_pages)) {
