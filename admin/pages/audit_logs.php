@@ -1,4 +1,56 @@
 <?php
+// admin/pages/audit_logs.php
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/csrf.php';
+
+requirePermission('settings');
+
+$current = $_GET['pages'] ?? 'audit_logs';
+$pageTitle = 'Audit Logs';
+$pageSubtitle = 'System audit trail';
+require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/sidebar.php';
+
+$q = [];
+if (!empty($_GET['user_id'])) $q['user_id'] = intval($_GET['user_id']);
+// Build a simple query
+$sql = 'SELECT * FROM audit_logs';
+if ($q) $sql .= ' WHERE user_id = ' . intval($q['user_id']);
+$sql .= ' ORDER BY id DESC LIMIT 500';
+$stmt = $pdo->query($sql);
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+<div class="page-header">
+    <div>
+        <h1><i class="bx bxs-report"></i> Audit Logs</h1>
+        <p>Recent audit events</p>
+    </div>
+    <div>
+        <a href="?pages=settings&action=download_logs" class="btn">Download CSV</a>
+    </div>
+</div>
+<div class="card">
+    <table class="table" style="width:100%;">
+        <thead><tr><th>ID</th><th>User</th><th>Action</th><th>IP</th><th>When</th><th>Meta</th></tr></thead>
+        <tbody>
+            <?php foreach ($rows as $r): ?>
+                <tr>
+                    <td><?= htmlspecialchars($r['id']) ?></td>
+                    <td><?= htmlspecialchars($r['user_id']) ?></td>
+                    <td><?= htmlspecialchars($r['action']) ?></td>
+                    <td><?= htmlspecialchars($r['ip']) ?></td>
+                    <td><?= htmlspecialchars($r['created_at']) ?></td>
+                    <td><pre style="white-space:pre-wrap;word-break:break-word;max-width:400px;"><?= htmlspecialchars($r['meta']) ?></pre></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php require_once __DIR__ . '/../includes/footer.php';
+<?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
