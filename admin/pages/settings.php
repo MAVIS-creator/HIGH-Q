@@ -618,6 +618,15 @@ $csrf = generateToken('settings_form');
                             <textarea name="settings[security][maintenance_allowed_ips]" placeholder="e.g. 203.0.113.5, 198.51.100.0" class="input" rows="2"><?= htmlspecialchars($current['security']['maintenance_allowed_ips'] ?? '') ?></textarea>
                             <div class="muted">Enter IP addresses that may bypass maintenance mode. Separate with commas. CIDR not currently supported.</div>
                         </div>
+                        <div style="margin-top:12px;">
+                            <label>Enforcement Mode</label>
+                            <select name="settings[security][enforcement_mode]" class="input">
+                                <option value="mac" <?= $current['security']['enforcement_mode'] === 'mac' ? 'selected' : '' ?>>MAC-based (default)</option>
+                                <option value="ip" <?= $current['security']['enforcement_mode'] === 'ip' ? 'selected' : '' ?>>IP-based</option>
+                                <option value="both" <?= $current['security']['enforcement_mode'] === 'both' ? 'selected' : '' ?>>Both (MAC preferred, then IP)</option>
+                            </select>
+                            <div class="muted">Choose which enforcement method the system should prefer when blocking visitors.</div>
+                        </div>
                 </div>
             </div>
 
