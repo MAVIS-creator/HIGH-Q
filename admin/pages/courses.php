@@ -437,7 +437,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     courseForm.reset();
     if (fFeatures) fFeatures.value = '';
     if (fBadge) fBadge.value = '';
-    if (iconPreview) iconPreview.innerHTML = '';
+  if (iconPreview) iconPreview.innerHTML = '';
+  if (fIconClass) fIconClass.value = '';
 
     if (mode === 'edit' && data && data.id) {
       // populate fields
@@ -507,17 +508,18 @@ function escapeHtml(s){
 
   document.querySelectorAll('.btn-editCourse').forEach(btn => {
     btn.addEventListener('click', () => {
+      // use getAttribute for fields that may contain newlines or special chars (features, desc)
       openCourseModal('edit', {
         id: btn.dataset.id,
         title: btn.dataset.title,
         slug: btn.dataset.slug,
-        desc: btn.dataset.desc,
+        desc: btn.getAttribute('data-desc'),
         duration: btn.dataset.duration,
         price: btn.dataset.price,
         tutor_id: btn.dataset.tutor,
         is_active: btn.dataset.active,
         icon: btn.dataset.icon || '',
-        features: btn.dataset.features || '',
+        features: btn.getAttribute('data-features') || '',
         badge: btn.dataset.badge || ''
       });
     });
