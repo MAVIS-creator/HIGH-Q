@@ -159,6 +159,7 @@ $defaults = [
         'maintenance_allowed_ips' => '',
         'registration' => true,
         'email_verification' => true,
+        'enforcement_mode' => 'mac',
         // If true, registrations are saved but payment references are NOT auto-created;
         // admin must verify the registration and create/send a payment reference.
         'verify_registration_before_payment' => false,
@@ -245,6 +246,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Security toggles
     if (isset($posted['security']) && is_array($posted['security'])) {
         foreach ($defaults['security'] as $k => $v) {
+            if ($k === 'enforcement_mode') {
+                // accept 'mac', 'ip' or 'both'
+                $mode = trim($posted['security']['enforcement_mode'] ?? '') ?: $v;
+                if (!in_array($mode, ['mac','ip','both'])) $mode = $v;
+                $safeSet($next, ['security', $k], $mode);
+                continue;
+            }
             $val = isset($posted['security'][$k]) ? (bool)$posted['security'][$k] : false;
             $safeSet($next, ['security', $k], $val);
         }
