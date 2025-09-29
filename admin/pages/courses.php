@@ -308,7 +308,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                   <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
                 <?php endforeach; ?>
               </select>
-              <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <input type="text" name="icon_class" id="fIconClass" placeholder="Or enter boxicons class (e.g. 'bx bxs-book')" style="padding:6px;border:1px solid #ccc;border-radius:4px;font-size:0.95rem">
+                <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -419,6 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   // Tutor removed
   const fActive   = document.getElementById('fActive');
   const fIcon     = document.getElementById('fIcon');
+  const fIconClass = document.getElementById('fIconClass');
   const fFeatures = document.getElementById('fFeatures');
   const fBadge    = document.getElementById('fBadge');
   const iconPreview = document.getElementById('iconPreview');
@@ -444,7 +448,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   // populate price (may be empty meaning 'Varies')
   fPrice.value = (data.price === null || typeof data.price === 'undefined' || data.price === '') ? '' : data.price;
       fActive.checked = data.is_active == '1' || data.is_active == 1 || data.is_active === true;
-      fIcon.value = data.icon || '';
+      // if the stored icon looks like a boxicons class (contains 'bx'), populate the custom class input
+      if (typeof data.icon === 'string' && data.icon.indexOf('bx') !== -1) {
+        if (fIconClass) fIconClass.value = data.icon || '';
+        if (fIcon) fIcon.value = '';
+      } else {
+        if (fIcon) fIcon.value = data.icon || '';
+        if (fIconClass) fIconClass.value = '';
+      }
       if (fFeatures) fFeatures.value = data.features || '';
       if (fBadge) fBadge.value = data.badge || '';
       updateIconPreview();
@@ -466,7 +477,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 // Update icon preview live
 function updateIconPreview() {
   if (!iconPreview || !fIcon) return;
-  const v = fIcon.value || '';
+  const v = (fIconClass && fIconClass.value) ? fIconClass.value : (fIcon.value || '');
   if (!v) { iconPreview.innerHTML = ''; return; }
   if (v.indexOf('bx') !== -1) {
     iconPreview.innerHTML = `<i class="${escapeHtml(v)}" style="font-size:20px"></i>`;
@@ -477,6 +488,7 @@ function updateIconPreview() {
 }
 
 fIcon && fIcon.addEventListener('change', updateIconPreview);
+fIconClass && fIconClass.addEventListener('input', updateIconPreview);
 
 // helper to escape (very small helper for insertion into HTML)
 function escapeHtml(s){
