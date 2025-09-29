@@ -92,7 +92,16 @@
                     function load(filter){
                         var qs = '';
                         if (filter){ qs = '?'+new URLSearchParams(filter).toString(); }
-                        ajaxJson('GET','/HIGH-Q/admin/api/ip_logs.php'+qs, null, function(err,res){ var cont = document.getElementById('ip-rows'); if (err||!res||!res.rows) { cont.innerHTML = '<div class="muted">Failed to load</div>'; return; } var html = '<table class="table" style="width:100%;"><thead><tr><th>ID</th><th>IP</th><th>User</th><th>UA</th><th>Path</th><th>When</th></tr></thead><tbody>'; res.rows.forEach(function(r){ html += '<tr><td>'+r.id+'</td><td>'+Swal.escapeHtml(r.ip)+'</td><td>'+ (r.user_id||'') +'</td><td>'+Swal.escapeHtml((r.user_agent||'').slice(0,80))+'</td><td>'+Swal.escapeHtml(r.path||'') +'</td><td>'+r.created_at+'</td></tr>'; }); html += '</tbody></table>'; cont.innerHTML = html; }); }
+                        ajaxJson('GET','/HIGH-Q/admin/api/ip_logs.php'+qs, null, function(err,res){
+                            var cont = document.getElementById('ip-rows');
+                            if (err||!res||!res.rows) { cont.innerHTML = '<div class="muted">Failed to load</div>'; return; }
+                            var html = '<table class="hq-table"><thead><tr><th>ID</th><th>IP</th><th>User</th><th>UA</th><th>Path</th><th>When</th></tr></thead><tbody>';
+                            res.rows.forEach(function(r){
+                                html += '<tr><td>'+r.id+'</td><td>'+Swal.escapeHtml(r.ip)+'</td><td>'+ (r.user_id||'') +'</td><td>'+Swal.escapeHtml((r.user_agent||'').slice(0,80))+'</td><td>'+Swal.escapeHtml(r.path||'') +'</td><td>'+r.created_at+'</td></tr>';
+                            });
+                            html += '</tbody></table>';
+                            cont.innerHTML = html;
+                        }); }
                     load();
                     document.getElementById('applyFilter').addEventListener('click', function(){ var ip = document.getElementById('filterIp').value.trim(); var user = document.getElementById('filterUser').value.trim(); var f = {}; if (ip) f.ip = ip; if (user) f.user_id = user; load(f); });
                 }
