@@ -15,6 +15,13 @@ if (!$post) {
     echo "<p>Post not found.</p>";
     exit;
 }
+// Fetch categories for the select (some installs may not have the table)
+try {
+  $catsStmt = $pdo->query("SELECT id,name FROM categories ORDER BY name");
+  $categories = $catsStmt->fetchAll();
+} catch (Throwable $e) {
+  $categories = [];
+}
 ?>
 <div class="modal-content-inner">
   <h3>Edit Post: <?= htmlspecialchars($post['title']) ?></h3>
@@ -40,6 +47,15 @@ if (!$post) {
     <div class="form-row">
       <label>Tags</label>
       <input type="text" name="tags" value="<?= htmlspecialchars($post['tags']) ?>">
+    </div>
+    <div class="form-row">
+      <label>Category</label>
+      <select name="category_id">
+        <option value="">Uncategorized</option>
+        <?php foreach ($categories as $c): ?>
+          <option value="<?= $c['id'] ?>" <?= (isset($post['category_id']) && $post['category_id'] == $c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
     <div class="form-row">
       <label>Featured Image</label>
