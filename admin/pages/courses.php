@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <?php endif; ?>
 
 
-  <div class="page-actions" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+  <div class="page-actions" style="display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-bottom:12px;">
     <button id="newCourseBtn" class="header-cta">New Course</button>
     <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
       <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
