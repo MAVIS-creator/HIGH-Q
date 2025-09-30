@@ -154,7 +154,7 @@ body {
 
 /* Add a bit more left spacing so content/cards don't sit flush to the sidebar */
 .roles-page, .courses-page, .roles-table, .admin-main > div {
-  margin-left: calc(var(--sidebar-width) + 12px);
+  margin-left: calc(var(--sidebar-width) + 8px);
 }
 
 /* Small screens: allow filter form to stack nicely */
