@@ -65,6 +65,7 @@ require_once __DIR__ . '/includes/header.php';
     <article class="post-article">
     <h1><?= htmlspecialchars($post['title']) ?></h1>
     <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
+    <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?> · <?= htmlspecialchars(time_ago($post['created_at'])) ?></div>
     <div class="post-content" style="margin-top:12px;">
       <?php if (!empty($post['excerpt'])): ?>
         <div class="post-excerpt" style="border:1px solid #f0e8e8;padding:18px;border-radius:8px;margin-bottom:14px;background:#fff"><?= nl2br(htmlspecialchars($post['excerpt'])) ?></div>
@@ -148,9 +149,74 @@ require_once __DIR__ . '/includes/header.php';
         <input type="hidden" name="parent_id" id="parent_id" value="">
         <div class="form-row"><input type="text" name="name" placeholder="Your name (optional)"></div>
         <div class="form-row"><input type="email" name="email" placeholder="Email (optional)"></div>
-        <div class="form-row"><textarea name="content" rows="4" placeholder="Share your thoughts on this article..." required></textarea></div>
+                <?= nl2br(htmlspecialchars($post['content'])) ?>
         <div class="form-actions"><button type="submit" class="btn-approve">Post Comment</button> <button type="button" id="cancelReply" class="btn-link" style="display:none">Cancel Reply</button></div>
       </form>
+              <!-- Sidebar: actions, stats, TOC -->
+              <aside class="post-sidebar">
+                <div class="post-actions">
+                  <div class="post-stats">
+                    <?php
+                      // Likes: show real count from post_likes if table exists, otherwise fallback to posts.likes column
+                      $likesCount = 0;
+                      try {
+                        $lstmt = $pdo->prepare("SELECT COUNT(*) FROM post_likes WHERE post_id = ?");
+                        $lstmt->execute([$postId]);
+                        $likesCount = (int)$lstmt->fetchColumn();
+                      } catch (Throwable $e) {
+                        // fallback to posts.likes column if present
+                        if (isset($post['likes'])) $likesCount = (int)$post['likes'];
+                      }
+                      $commentsCount = max(0, count($allComments));
+                    ?>
+                    <button id="likeBtn" class="icon-btn">❤ <span id="likesCount" class="count"><?= $likesCount ?></span></button>
+                    <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button>
+                    <button id="shareBtn" class="icon-btn">🔗 Share</button>
+                  </div>
+                </div>
+
+                <div class="toc-box" id="tocBox">
+                  <h4>Table of Contents</h4>
+                  <div id="tocInner">
+                    <?php
+                      // Build TOC by parsing headings from post content (supports <h2>, <h3>)
+                      $tocHtml = '';
+                      try {
+                        libxml_use_internal_errors(true);
+                        $doc = new DOMDocument();
+                        // wrap content to ensure a root element
+                        $doc->loadHTML('<div>' . $post['content'] . '</div>');
+                        $xpath = new DOMXPath($doc);
+                        $nodes = $xpath->query('//h2|//h3');
+                        if ($nodes && $nodes->length) {
+                          $lastLevel = 2;
+                          $tocHtml .= "<ul class=\"toc-list\">";
+                          foreach ($nodes as $n) {
+                            $tag = strtolower($n->nodeName);
+                            $level = ($tag === 'h3') ? 3 : 2;
+                            $text = trim($n->textContent);
+                            // generate id if not present
+                            $id = $n->getAttribute('id');
+                            if (!$id) {
+                              $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($text));
+                              $id = trim($id, '-');
+                              // ensure unique by appending index
+                              $id .= '-' . spl_object_id($n);
+                              $n->setAttribute('id', $id);
+                            }
+                            $tocHtml .= '<li class="toc-item toc-level-' . $level . '"><a href="#' . htmlspecialchars($id) . '">' . htmlspecialchars($text) . '</a></li>';
+                          }
+                          $tocHtml .= "</ul>";
+                        } else {
+                          $tocHtml = '<p class="muted">No headings found.</p>';
+                        }
+                      } catch (Throwable $e) { $tocHtml = '<p class="muted">Unable to build TOC</p>'; }
+                      echo $tocHtml;
+                    ?>
+                  </div>
+                </div>
+              </aside>
+
     </div>
   </section>
 </div>
@@ -193,6 +259,8 @@ document.addEventListener('DOMContentLoaded', function(){
             var parent = list.querySelector('.comment[data-id="c'+c.parent_id+'"]');
             if (parent) {
               var replies = parent.querySelector('.replies');
+        <!-- honeypot field to trap bots -->
+        <div style="display:none"><input type="text" name="hp_name" autocomplete="off" tabindex="-1"></div>
               if (!replies) { replies = document.createElement('div'); replies.className='replies'; parent.querySelector('.comment-main').appendChild(replies); }
               node.setAttribute('data-id','c'+c.id);
               replies.appendChild(node);
@@ -220,6 +288,8 @@ function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return
 function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
 
 // Render a comment node from a comment object returned by API
+    // simple rate-limit UI: disable for a short while
+    var submitBtn = this.querySelector('button[type=submit]'); if (submitBtn) { submitBtn.disabled = true; }
 function renderCommentNode(c) {
   var node = document.createElement('article'); node.className='comment';
   var av = document.createElement('div'); av.className='comment-avatar'; av.innerHTML='<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>';
