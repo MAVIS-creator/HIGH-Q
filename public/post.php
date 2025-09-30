@@ -24,7 +24,21 @@ require_once __DIR__ . '/includes/header.php';
     <h1><?= htmlspecialchars($post['title']) ?></h1>
     <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
     <div class="post-content" style="margin-top:12px;">
-      <?= $post['content'] ?>
+      <?php if (!empty($post['featured_image'])): ?>
+        <?php
+          $fi = $post['featured_image'];
+          if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
+            $imgSrc = $fi;
+          } else {
+            $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
+          }
+        ?>
+        <div class="post-thumb" style="margin-bottom:12px;">
+          <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover">
+        </div>
+      <?php endif; ?>
+
+      <?= nl2br(htmlspecialchars($post['content'])) ?>
     </div>
   </article>
 
