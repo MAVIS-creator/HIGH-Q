@@ -2,6 +2,19 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
+// small helper to show human-friendly elapsed time for comments
+if (!function_exists('time_ago')) {
+  function time_ago($ts) {
+    $t = strtotime($ts);
+    if (!$t) return $ts;
+    $diff = time() - $t;
+    if ($diff < 60) return $diff . 's ago';
+    if ($diff < 3600) return floor($diff/60) . 'm ago';
+    if ($diff < 86400) return floor($diff/3600) . 'h ago';
+    return floor($diff/86400) . 'd ago';
+  }
+}
+
 // support either ?id= or ?slug= links (home.php uses slug)
 $postId = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
