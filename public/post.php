@@ -60,11 +60,15 @@ foreach ($repliesMap as $parentId => $list) {
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
-<div class="container" style="max-width:900px;margin:24px auto;padding:0 12px;">
-  <article class="post-article">
+<div class="container" style="max-width:1100px;margin:24px auto;padding:0 12px;">
+  <div class="post-grid">
+    <article class="post-article">
     <h1><?= htmlspecialchars($post['title']) ?></h1>
     <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
     <div class="post-content" style="margin-top:12px;">
+      <?php if (!empty($post['excerpt'])): ?>
+        <div class="post-excerpt" style="border:1px solid #f0e8e8;padding:18px;border-radius:8px;margin-bottom:14px;background:#fff"><?= nl2br(htmlspecialchars($post['excerpt'])) ?></div>
+      <?php endif; ?>
       <?php if (!empty($post['featured_image'])): ?>
         <?php
           $fi = $post['featured_image'];
@@ -105,7 +109,29 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="comment-main">
                       <div class="comment-meta"><strong><?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($rep['created_at'])) ?></span></div>
                       <div class="comment-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-                    </div>
+                        </div>
+                        <!-- Sidebar (TOC, share, stats) -->
+                        <aside class="post-sidebar">
+                          <div class="post-actions">
+                            <div class="post-stats">
+                              <button class="icon-btn">❤ <span class="count"><?= rand(20,400) ?></span></button>
+                              <button class="icon-btn">💬 <span class="count"><?= count($comments) ?></span></button>
+                              <button class="icon-btn">🔗 Share</button>
+                            </div>
+                          </div>
+                          <div class="toc-box">
+                            <h4>Table of Contents</h4>
+                            <!-- simple TOC by headings in content (placeholder) -->
+                            <ul>
+                              <li>The Rise of Renewable Energy Solutions</li>
+                              <li>Smart Cities: The Urban Revolution</li>
+                              <li>Circular Economy and Waste Reduction</li>
+                              <li>The Role of Artificial Intelligence</li>
+                              <li>Looking Ahead: Challenges and Opportunities</li>
+                            </ul>
+                          </div>
+                        </aside>
+                      </div>
                   </div>
                 <?php endforeach; ?>
               </div>
@@ -130,22 +156,24 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <script>
-// handle reply button: set parent_id and scroll to form
-document.querySelectorAll('.btn-reply').forEach(b=>b.addEventListener('click',function(){
-  var id = this.dataset.id; document.getElementById('parent_id').value = id;
-  // show cancel link
-  var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display = 'inline-block';
-  // scroll to form
-  var formTop = document.querySelector('.comment-form-wrap').getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({top: formTop - 80, behavior: 'smooth'});
-}));
+document.addEventListener('DOMContentLoaded', function(){
+  // handle reply button: set parent_id and scroll to form
+  document.querySelectorAll('.btn-reply').forEach(b=>b.addEventListener('click',function(e){
+    e.preventDefault();
+    var id = this.dataset.id; document.getElementById('parent_id').value = id;
+    // show cancel link
+    var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display = 'inline-block';
+    // scroll to form
+    var formTop = document.querySelector('.comment-form-wrap').getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({top: formTop - 80, behavior: 'smooth'});
+  }));
 
-document.getElementById('commentForm').addEventListener('submit', function(e){
-// submit comment form via fetch to public/api/comments.php
-document.getElementById('commentForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  var fd = new FormData(this);
-  fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
+  // submit comment form via fetch to public/api/comments.php
+  var formEl = document.getElementById('commentForm');
+  formEl.addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(this);
+    fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
     if (j.status === 'ok') {
         // If comment is pending moderation, notify user
         if (j.message && j.message.toLowerCase().indexOf('awaiting') !== -1) {
@@ -180,11 +208,13 @@ document.getElementById('commentForm').addEventListener('submit', function(e){
           var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
         }
       } else { alert(j.message||'Error'); }
-  }).catch(()=>alert('Network error'));
-});
+    }).catch(()=>alert('Network error'));
+  });
 
-// cancel reply
-var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display='none'; });
+  // cancel reply
+  var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display='none'; });
+
+});
 
 function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
