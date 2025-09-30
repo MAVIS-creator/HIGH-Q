@@ -2,19 +2,47 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
+// support either ?id= or ?slug= links (home.php uses slug)
 $postId = (int)($_GET['id'] ?? 0);
-if (!$postId) { header('Location: index.php'); exit; }
+$slug = trim($_GET['slug'] ?? '');
+if (!$postId && $slug === '') { header('Location: index.php'); exit; }
 
-// fetch post
-$stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
-$stmt->execute([$postId]);
+// fetch post by id or slug
+if ($postId) {
+  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
+  $stmt->execute([$postId]);
+} else {
+  $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1');
+  $stmt->execute([$slug]);
+}
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$post) { echo "<p>Post not found.</p>"; exit; }
 
-// fetch approved comments (top-level)
-$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
+// fetch approved comments (top-level) and their replies in one go
+$postId = $post['id'];
+$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND status = "approved" ORDER BY created_at DESC');
 $cstmt->execute([$postId]);
-$comments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
+$allComments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
+
+// build nested structure in PHP for deterministic ordering
+$comments = [];
+$repliesMap = [];
+foreach ($allComments as $c) {
+  if (empty($c['parent_id'])) {
+    $comments[$c['id']] = $c;
+    $comments[$c['id']]['replies'] = [];
+  } else {
+    $repliesMap[$c['parent_id']][] = $c;
+  }
+}
+foreach ($repliesMap as $parentId => $list) {
+  if (isset($comments[$parentId])) {
+    $comments[$parentId]['replies'] = $list;
+  } else {
+    // orphan replies: attach to top-level comments list end
+    foreach ($list as $l) $comments[$l['id']] = $l;
+  }
+}
 
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
@@ -42,46 +70,47 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   </article>
 
-  <section id="commentsSection" style="margin-top:28px;">
+  <section id="commentsSection" class="comments-section">
     <h2>Comments</h2>
 
-    <div id="commentsList">
+    <div id="commentsList" class="comments-list">
       <?php foreach($comments as $c): ?>
-        <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
-          <div class="comment-header">
-            <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
-            <div>
-              <button class="btn-reply small" data-id="<?= $c['id'] ?>">Reply</button>
+        <article class="comment" data-id="<?= $c['id'] ?>">
+          <div class="comment-avatar"><div class="avatar-circle"><?= strtoupper(substr($c['name'] ?: 'A',0,1)) ?></div></div>
+          <div class="comment-main">
+            <div class="comment-meta"><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($c['created_at'])) ?></span></div>
+            <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+            <div class="comment-actions">
+              <button class="btn-link btn-reply" data-id="<?= $c['id'] ?>">Reply</button>
             </div>
+
+            <?php if (!empty($c['replies'])): ?>
+              <div class="replies">
+                <?php foreach($c['replies'] as $rep): ?>
+                  <div class="comment reply">
+                    <div class="comment-avatar"><div class="avatar-circle muted"><?= strtoupper(substr($rep['name'] ?: 'A',0,1)) ?></div></div>
+                    <div class="comment-main">
+                      <div class="comment-meta"><strong><?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($rep['created_at'])) ?></span></div>
+                      <div class="comment-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
           </div>
-          <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
-
-          <?php
-            // fetch replies for this comment
-            $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
-            $rstmt->execute([$c['id']]);
-            $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach($replies as $rep):
-          ?>
-            <div class="comment reply">
-              <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
-              <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-            </div>
-          <?php endforeach; ?>
-
-        </div>
+        </article>
       <?php endforeach; ?>
     </div>
 
-    <div style="margin-top:18px;">
-      <h3>Leave a comment</h3>
+    <div class="comment-form-wrap">
+      <h3>Join the conversation</h3>
       <form id="commentForm">
         <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
         <input type="hidden" name="parent_id" id="parent_id" value="">
-        <div class="form-row"><label>Name</label><input type="text" name="name"></div>
-        <div class="form-row"><label>Email</label><input type="email" name="email"></div>
-        <div class="form-row"><label>Comment</label><textarea name="content" rows="5" required></textarea></div>
-        <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button></div>
+        <div class="form-row"><input type="text" name="name" placeholder="Your name (optional)"></div>
+        <div class="form-row"><input type="email" name="email" placeholder="Email (optional)"></div>
+        <div class="form-row"><textarea name="content" rows="4" placeholder="Share your thoughts on this article..." required></textarea></div>
+        <div class="form-actions"><button type="submit" class="btn-approve">Post Comment</button> <button type="button" id="cancelReply" class="btn-link" style="display:none">Cancel Reply</button></div>
       </form>
     </div>
   </section>
