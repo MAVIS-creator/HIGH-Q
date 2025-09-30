@@ -1,17 +1,19 @@
 <?php
 require_once __DIR__ . '/config/db.php';
-// handle new question post
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$pageTitle = 'Community Q&A';
+require_once __DIR__ . '/includes/header.php';
+// handle new question post via AJAX from the styled form; preserve legacy POST fallback
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['ajax']) || isset($_SERVER['HTTP_X_REQUESTED_WITH']))) {
   $name = trim($_POST['name'] ?? '');
   $content = trim($_POST['content'] ?? '');
   if ($content !== '') {
     $stmt = $pdo->prepare('INSERT INTO forum_questions (name, content, created_at) VALUES (?, ?, NOW())');
     $stmt->execute([$name ?: 'Anonymous', $content]);
-    header('Location: community.php'); exit;
+    header('Content-Type: application/json'); echo json_encode(['status'=>'ok']); exit;
   }
+  header('Content-Type: application/json'); echo json_encode(['status'=>'error','message'=>'Missing content']); exit;
 }
-$pageTitle = 'Community Q&A';
-require_once __DIR__ . '/includes/header.php';
+
 // fetch recent questions
 $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER BY created_at DESC LIMIT 50')->fetchAll();
 ?>
