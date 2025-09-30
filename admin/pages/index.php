@@ -131,6 +131,23 @@ foreach ($candidates as $file) {
     }
 }
 
+// If not found, try a simple singular fallback (e.g., 'posts' -> 'post.php')
+if (!$found && substr($page, -1) === 's') {
+    $sing = rtrim($page, 's');
+    $singCandidates = [
+        __DIR__ . "/{$sing}.php",
+        __DIR__ . "/pages/{$sing}.php",
+        __DIR__ . "/../pages/{$sing}.php",
+    ];
+    foreach ($singCandidates as $file) {
+        if (file_exists($file)) {
+            include $file;
+            $found = true;
+            break;
+        }
+    }
+}
+
 if (!$found) {
     // Friendly debug output to show where it's looking
     echo "<div class='container'><h2>Page not found</h2>";
