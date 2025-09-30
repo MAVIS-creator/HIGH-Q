@@ -96,6 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 // Insert normalized features rows
                 if (!empty($features_lines)) {
                     $pos = 0;
+                // Load available icons (with class) from icons table (if exists)
+                try {
+                  $icons = $pdo->query("SELECT id,name,filename,`class` FROM icons ORDER BY name")->fetchAll();
+                } catch (\Exception $e) {
+                  $icons = [];
+                }
                     $ins = $pdo->prepare("INSERT INTO course_features (course_id, feature_text, position) VALUES (?, ?, ?)");
                     foreach ($features_lines as $line) {
                         $ins->execute([$newCourseId, $line, $pos++]);
@@ -177,6 +183,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       $courses = [];
     }
 
+    // Load available icons (with class) from icons table (if exists)
+    try {
+      $icons = $pdo->query("SELECT id,name,filename,`class` FROM icons ORDER BY name")->fetchAll();
+    } catch (\Exception $e) {
+      $icons = [];
+    }
 ?>
 
 <div class="courses-page">
@@ -195,6 +207,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
   <div class="page-actions" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
     <button id="newCourseBtn" class="header-cta">New Course</button>
+    <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
+      <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+      <button type="submit" class="header-cta" style="background:#f7c948;color:#222">Bulk Convert Icons</button>
+    </form>
   </div>
 
    <div class="courses-grid">
@@ -250,6 +266,147 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         </span>
       </div>
 
+      <div class="course-actions">
+        <button class="btn-editCourse"
+          data-id="<?= $c['id'] ?>"
+          data-title="<?= htmlspecialchars($c['title']) ?>"
+          data-slug="<?= htmlspecialchars($c['slug']) ?>"
+          data-desc="<?= htmlspecialchars($c['description']) ?>"
+          data-duration="<?= htmlspecialchars($c['duration']) ?>"
+          data-price="<?= $c['price'] === null ? '' : $c['price'] ?>"
+          data-tutor="<?= $c['tutor_id'] ?>"
+          data-active="<?= $c['is_active'] ?>"
+          data-icon="<?= htmlspecialchars($c['icon'] ?? '') ?>"
+          data-features="<?= htmlspecialchars($c['features_list'] ?? $c['features'] ?? '') ?>"
+          data-badge="<?= htmlspecialchars($c['highlight_badge'] ?? '') ?>"
+        ><i class='bx bx-edit'></i> Edit</button>
+      </div>
+    </div>
+  <?php endforeach; ?>
+  </div>
+
+  <!-- Course Modal (Create/Edit) -->
+  <div class="modal" id="courseModal">
+    <div class="modal-content">
+      <span class="modal-close" id="courseModalClose"><i class='bx bx-x'></i></span>
+      <h3 id="courseModalTitle">New Course</h3>
+
+      <form id="courseForm" method="post">
+        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fTitle">Title</label>
+            <input type="text" name="title" id="fTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="fSlug">Slug</label>
+            <input type="text" name="slug" id="fSlug" required>
+          </div>
+        </div>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fDuration">Duration</label>
+            <input type="text" name="duration" id="fDuration">
+          </div>
+          <div class="form-group">
+            <label for="fPrice">Price (₦) <small style="color:#666;font-weight:400">leave blank for "Varies"</small></label>
+            <input type="text" name="price" id="fPrice" placeholder="Varies">
+          </div>
+        </div>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fIcon">Icon</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select name="icon" id="fIcon" class="styled-select">
+                <option value="">— Default —</option>
+                <?php foreach($icons as $ic): ?>
+                  <?php $val = $ic['class'] ?: $ic['filename']; ?>
+                  <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($ic['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <input type="text" name="icon_class" id="fIconClass" placeholder="Or enter boxicons class (e.g. 'bx bxs-book')" style="padding:6px;border:1px solid #ccc;border-radius:4px;font-size:0.95rem">
+                <div id="iconPreview" aria-hidden="true" style="min-width:40px;min-height:24px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="fBadge">Highlight badge (short text)</label>
+            <input type="text" name="highlight_badge" id="fBadge">
+          </div>
+        </div>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label for="fFeatures">Features (one per line)</label>
+            <textarea name="features" id="fFeatures" rows="4" placeholder="Benefit 1\nBenefit 2\nBenefit 3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fDesc">Description</label>
+            <textarea name="description" id="fDesc" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="form-row compact-row">
+          <div class="form-group">
+            <label><input type="checkbox" name="is_active" id="fActive" checked> Active</label>
+          </div>
+        </div>
+        <div class="form-actions" style="justify-content:flex-end">
+          <button type="submit" class="btn-approve">Save Course</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="modalOverlay"></div>
+
+  <!-- Icon Picker Modal -->
+  <div class="modal" id="iconPickerModal" style="display:none;z-index:9999">
+    <div class="modal-content" style="max-width:520px;">
+      <span class="modal-close" id="iconPickerClose"><i class='bx bx-x'></i></span>
+      <h3 style="margin-bottom:10px">Select Icon</h3>
+      <div id="iconPickerList" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-height:340px;overflow-y:auto;margin-bottom:10px;"></div>
+      <div style="text-align:right"><button type="button" id="iconPickerCancel" style="padding:6px 16px;border-radius:4px;border:1px solid #bbb;background:#eee;">Cancel</button></div>
+    </div>
+  </div>
+
+  <script>
+  // Icon Picker Modal logic
+  const iconPickerBtn = document.getElementById('iconPickerBtn');
+  const iconPickerModal = document.getElementById('iconPickerModal');
+  const iconPickerList = document.getElementById('iconPickerList');
+  const iconPickerClose = document.getElementById('iconPickerClose');
+  const iconPickerCancel = document.getElementById('iconPickerCancel');
+  // icons data from PHP
+  const iconsData = <?php echo json_encode($icons); ?>;
+  function openIconPicker() {
+    if (!iconPickerModal || !iconPickerList) return;
+    iconPickerList.innerHTML = '';
+    iconsData.forEach(ic => {
+      let el = document.createElement('div');
+      el.className = 'icon-picker-item';
+      el.style = 'display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;cursor:pointer;border:1px solid #eee;border-radius:6px;background:#fafafa;';
+      let preview;
+      if (ic.class && ic.class.indexOf('bx') !== -1) {
+        preview = `<i class='${ic.class}' style='font-size:28px;color:#222'></i>`;
+      } else {
+        preview = `<img src='../public/assets/images/icons/${ic.filename}' style='width:28px;height:28px;object-fit:contain'>`;
+      }
+      el.innerHTML = `${preview}<span style='font-size:0.95em;color:#444'>${ic.name}</span>`;
+      el.title = ic.name;
+      el.onclick = function() {
+        if (fIconClass) fIconClass.value = ic.class && ic.class.indexOf('bx') !== -1 ? ic.class : ic.filename;
+        updateIconPreview();
+        iconPickerModal.style.display = 'none';
+      };
+      iconPickerList.appendChild(el);
+    });
+    iconPickerModal.style.display = 'block';
+    iconPickerModal.classList.add('open');
+    overlay.classList.add('open');
+  }
+  if (iconPickerBtn) iconPickerBtn.addEventListener('click', openIconPicker);
+  if (iconPickerClose) iconPickerClose.addEventListener('click', function(){ iconPickerModal.style.display = 'none'; overlay.classList.remove('open'); iconPickerModal.classList.remove('open'); });
+  if (iconPickerCancel) iconPickerCancel.addEventListener('click', function(){ iconPickerModal.style.display = 'none'; overlay.classList.remove('open'); iconPickerModal.classList.remove('open'); });
+  </script>
       <div class="course-actions">
         <button class="btn-editCourse"
           data-id="<?= $c['id'] ?>"
