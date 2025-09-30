@@ -769,6 +769,39 @@ nav a.active::after { background: var(--hq-yellow); }
   margin-bottom: 10px;
 }
 
+/* Post layout grid */
+.post-grid { display:grid; grid-template-columns: 1fr 320px; gap:28px; align-items:start; }
+.post-article { background: #fff; padding: 18px; border-radius: 12px; box-shadow: 0 10px 30px rgba(11,37,64,0.04); }
+.post-sidebar { position:sticky; top:96px; }
+.post-actions { margin-bottom:18px; }
+.post-stats { display:flex; gap:12px; align-items:center; }
+.icon-btn { background:#fff;border:1px solid rgba(0,0,0,0.06);padding:8px 10px;border-radius:8px;cursor:pointer; }
+.icon-btn .count { margin-left:6px; font-weight:700; }
+
+.toc-box { background:#fff;border:1px solid rgba(0,0,0,0.06);padding:12px;border-radius:8px; }
+.toc-box h4 { margin:0 0 8px; }
+.toc-list { list-style:none;padding:0;margin:0;font-size:14px; }
+.toc-item { margin-bottom:6px; }
+.toc-item a { color:var(--hq-black); text-decoration:none; }
+.toc-item a:hover { color:var(--hq-yellow); }
+.toc-item.toc-level-3 { margin-left:10px; font-size:13px; }
+
+.share-menu { z-index:99999; }
+.share-item { display:block; padding:6px 10px; color:var(--hq-black); text-decoration:none; }
+
+/* Newsletter area styling */
+.newsletter { background: linear-gradient(90deg, #fff, #fff); padding:24px 0; border-top:4px solid var(--hq-yellow); }
+.newsletter-form input[type=email] { padding:12px;border-radius:8px;border:1px solid #eee; }
+.newsletter .newsletter-submit { background:#fff;border:1px solid rgba(0,0,0,0.08);padding:10px 14px;border-radius:8px }
+
+/* Footer spacing fix for attachment look */
+.site-footer { padding-top: 56px; padding-bottom: 28px; }
+
+@media (max-width: 900px) {
+  .post-grid { grid-template-columns: 1fr; }
+  .post-sidebar { position:static; }
+}
+
 /* Call to Action Section */
 .cta-section {
   background: var(--hq-yellow);
