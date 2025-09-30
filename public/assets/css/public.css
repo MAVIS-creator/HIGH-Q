@@ -1376,6 +1376,27 @@ nav a.active::after { background: var(--hq-yellow); }
   .replies { margin-left:48px }
 }
 
+/* Forum replies extra styling */
+.forum-card { background:#fff;border:1px solid #f4eaea;padding:12px;border-radius:10px }
+.forum-card .avatar-circle { width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700 }
+.forum-replies .forum-reply { background: #fff; border-left: 2px solid #f7e9ea; padding-left:10px; border-radius:6px }
+.forum-reply .avatar-circle { width:36px;height:36px }
+.sub-replies { margin-top:8px; margin-left:12px; border-left:1px dashed #f0e8e8; padding-left:8px }
+
+/* collapse control for threaded comments */
+.collapse-toggle { font-size:12px; color:var(--hq-gray); cursor:pointer; margin-left:8px }
+.collapse-toggle:hover { color:var(--hq-yellow) }
+
+/* subtle icon/button styling like screenshot */
+.comment-actions .btn-link { color:#a44; font-weight:600 }
+.muted { color:#9b9b9b; font-size:13px }
+
+/* small screens: tighten spacing */
+@media (max-width:700px) {
+  .forum-card { padding:10px }
+  .comment-form-wrap .btn-approve { padding:7px 12px }
+}
+
 /* What Happens Next section styling (used on register.php) */
 .next-section { background: #faf7f6; padding-top: 40px; padding-bottom: 48px; }
 .next-section .ceo-heading { margin-bottom: 18px; }

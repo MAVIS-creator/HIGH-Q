@@ -85,8 +85,37 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
       replyBtn.addEventListener('click', function(){
         var txt = form.querySelector('textarea').value.trim(); if (!txt) { alert('Please write a reply'); return; }
         var fd = new FormData(); fd.append('question_id', id); fd.append('name','Anonymous'); fd.append('content', txt);
+        // optional parent_id if replying to a specific reply (support multi-level)
+        var replyingTo = form.dataset.parentId || null;
+        if (replyingTo) fd.append('parent_id', replyingTo);
         fetch('api/forum_reply.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
-          if (j.status === 'ok') { location.reload(); } else { alert(j.message || 'Error'); }
+          if (j.status === 'ok' && j.reply) {
+            // append reply instantly
+            var reply = j.reply;
+            var container = document.querySelector('.forum-card[data-id="'+id+'"] .forum-replies');
+            if (!container) return location.reload();
+            var node = document.createElement('div'); node.className='forum-reply'; node.style='margin-top:8px;display:flex;gap:8px;align-items:flex-start;';
+            node.innerHTML = '<div style="width:36px;"><div class="avatar-circle muted">'+(reply.name?reply.name.charAt(0).toUpperCase():'A')+'</div></div><div><div style="font-weight:700;font-size:13px">'+escapeHtml(reply.name)+' <small class="muted">· just now</small></div><div style="margin-top:6px">'+nl2br(escapeHtml(reply.content))+'</div></div>';
+            // if parent_id present, find parent reply container and append as nested
+            if (reply.parent_id) {
+              var parentNode = container.querySelector('.forum-reply[data-id="r'+reply.parent_id+'"]');
+              if (!parentNode) {
+                // attach at top-level
+                container.insertBefore(node, container.firstChild);
+              } else {
+                // ensure sub-replies wrapper exists
+                var sub = parentNode.querySelector('.sub-replies');
+                if (!sub) { sub = document.createElement('div'); sub.className='sub-replies'; sub.style='margin-left:12px;margin-top:8px;'; parentNode.appendChild(sub); }
+                node.setAttribute('data-id','r'+reply.id);
+                sub.appendChild(node);
+              }
+            } else {
+              // top-level reply
+              node.setAttribute('data-id','r'+reply.id);
+              container.insertBefore(node, container.firstChild);
+            }
+            form.remove();
+          } else { alert(j.message || 'Error'); }
         }).catch(()=>alert('Network error'));
       });
     }));
