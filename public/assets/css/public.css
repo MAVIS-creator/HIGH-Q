@@ -1397,6 +1397,11 @@ nav a.active::after { background: var(--hq-yellow); }
   .comment-form-wrap .btn-approve { padding:7px 12px }
 }
 
+/* collapsed comment helper */
+.comment-main.collapsed .comment-body,
+.comment-main.collapsed .comment-actions,
+.comment-main.collapsed .replies { display:none }
+
 /* What Happens Next section styling (used on register.php) */
 .next-section { background: #faf7f6; padding-top: 40px; padding-bottom: 48px; }
 .next-section .ceo-heading { margin-bottom: 18px; }

@@ -147,23 +147,39 @@ document.getElementById('commentForm').addEventListener('submit', function(e){
   var fd = new FormData(this);
   fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
     if (j.status === 'ok') {
-      // If comment is auto-approved, append to top of list; otherwise notify pending
-      if (j.message && j.message.toLowerCase().indexOf('awaiting') !== -1) {
-        alert(j.message);
-        // reset form
-        document.getElementById('commentForm').reset();
-        document.getElementById('parent_id').value = '';
-        var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
-        return;
-      }
-      // Build a simple DOM node for the new comment and insert at top
-      var data = { name: fd.get('name') || 'Anonymous', content: fd.get('content') };
-      var div = document.createElement('article'); div.className = 'comment';
-      div.innerHTML = '<div class="comment-avatar"><div class="avatar-circle">'+(data.name.charAt(0).toUpperCase()||'A')+'</div></div><div class="comment-main"><div class="comment-meta"><strong>'+escapeHtml(data.name)+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(data.content))+'</div></div>';
-      var list = document.getElementById('commentsList'); if (list) list.insertBefore(div, list.firstChild);
-      document.getElementById('commentForm').reset(); document.getElementById('parent_id').value = '';
-      var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
-    } else { alert(j.message||'Error'); }
+        // If comment is pending moderation, notify user
+        if (j.message && j.message.toLowerCase().indexOf('awaiting') !== -1) {
+          alert(j.message);
+          document.getElementById('commentForm').reset();
+          document.getElementById('parent_id').value = '';
+          var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
+          return;
+        }
+        // Append the returned comment object instantly
+        if (j.comment) {
+          var c = j.comment;
+          var list = document.getElementById('commentsList');
+          var node = renderCommentNode(c);
+          // if parent_id present, find parent and append to its replies container
+          if (c.parent_id) {
+            var parent = list.querySelector('.comment[data-id="c'+c.parent_id+'"]');
+            if (parent) {
+              var replies = parent.querySelector('.replies');
+              if (!replies) { replies = document.createElement('div'); replies.className='replies'; parent.querySelector('.comment-main').appendChild(replies); }
+              node.setAttribute('data-id','c'+c.id);
+              replies.appendChild(node);
+            } else {
+              node.setAttribute('data-id','c'+c.id);
+              list.insertBefore(node, list.firstChild);
+            }
+          } else {
+            node.setAttribute('data-id','c'+c.id);
+            list.insertBefore(node, list.firstChild);
+          }
+          document.getElementById('commentForm').reset(); document.getElementById('parent_id').value = '';
+          var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
+        }
+      } else { alert(j.message||'Error'); }
   }).catch(()=>alert('Network error'));
 });
 
@@ -172,6 +188,23 @@ var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn
 
 function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
+
+// Render a comment node from a comment object returned by API
+function renderCommentNode(c) {
+  var node = document.createElement('article'); node.className='comment';
+  var av = document.createElement('div'); av.className='comment-avatar'; av.innerHTML='<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>';
+  var main = document.createElement('div'); main.className='comment-main';
+  main.innerHTML = '<div class="comment-meta"><strong>'+escapeHtml(c.name || 'Anonymous')+'</strong> <span class="muted">· just now</span> <span class="collapse-toggle" data-target="c'+c.id+'">Collapse</span></div>' +
+                   '<div class="comment-body">'+nl2br(escapeHtml(c.content))+'</div>' +
+                   '<div class="comment-actions"><button class="btn-link btn-reply" data-id="'+c.id+'">Reply</button></div>';
+  node.appendChild(av); node.appendChild(main);
+  // hook reply button
+  var replyBtn = main.querySelector('.btn-reply'); if (replyBtn) replyBtn.addEventListener('click', function(){ document.getElementById('parent_id').value = this.dataset.id; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; window.scrollTo({top: document.querySelector('.comment-form-wrap').getBoundingClientRect().top + window.scrollY - 80, behavior:'smooth'}); });
+  // collapse toggle
+  var coll = main.querySelector('.collapse-toggle'); if (coll) coll.addEventListener('click', function(){ var target = this.dataset.target; var el = document.querySelector('.comment[data-id="'+target+'"] .comment-main'); if (el) { el.classList.toggle('collapsed'); this.textContent = el.classList.contains('collapsed') ? 'Expand' : 'Collapse'; } });
+  node.setAttribute('data-id','c'+c.id);
+  return node;
+}
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php';
