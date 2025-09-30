@@ -303,6 +303,36 @@ $posts = $stmt->fetchAll();
     <?php include '../includes/footer.php'; ?>
 
    <script>
+// Auto-generate slug from title and excerpt from content; display chosen file name
+const pTitle = document.getElementById('pTitle');
+const pSlug = document.getElementById('pSlug');
+const pContent = document.getElementById('pContent');
+const pExcerpt = document.getElementById('pExcerpt');
+const pImage = document.getElementById('pImage');
+const pImageName = document.getElementById('pImageName');
+
+function slugify(v){ return String(v || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+if (pTitle && pSlug) {
+    pTitle.addEventListener('input', function(){
+        try { if (!pSlug.value || pSlug.value.trim()==='') pSlug.value = slugify(pTitle.value); } catch(e){}
+    });
+}
+if (pContent && pExcerpt) {
+    pContent.addEventListener('input', function(){
+        try {
+            if (!pExcerpt.value || pExcerpt.value.trim()==='') {
+                var txt = pContent.value.replace(/\s+/g,' ').trim();
+                pExcerpt.value = txt.length > 160 ? txt.substr(0,160).trim() + '...' : txt;
+            }
+        } catch(e){}
+    });
+}
+if (pImage) {
+    pImage.addEventListener('change', function(){
+        if (pImage.files && pImage.files.length>0) pImageName.textContent = pImage.files[0].name; else pImageName.textContent = 'No file chosen';
+    });
+}
+
 const overlay     = document.getElementById('modalOverlay');
 const editModal   = document.getElementById('editPostModal');
 const editContent = document.getElementById('editPostModalContent');
