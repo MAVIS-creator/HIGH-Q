@@ -150,11 +150,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $ok = false;
                 }
                                 if ($ok) {
-                                                    $newId = $pdo->lastInsertId();
-                                                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
-                                                    $success[] = "Article '{$title}' created.";
-                                                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
-                                                } else {
+                                    $newId = $pdo->lastInsertId();
+                                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
+                                    // Set a session flash so admin UI can show a notification after redirect
+                                    $_SESSION['flash_post'] = [
+                                        'type' => 'success',
+                                        'message' => "Article '{$title}' created.",
+                                        'published' => ($status === 'published')
+                                    ];
+                                    // Redirect back to posts listing explicitly
+                                    header("Location: index.php?pages=posts");
+                                    exit;
+                                } else {
                                     $ei = $stmt->errorInfo();
                                     $msg = "Failed to create article: " . ($ei[2] ?? 'Unknown DB error');
                                     $errors[] = $msg;
@@ -196,8 +204,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                 }
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
-                    $success[] = "Article '{$title}' updated.";
                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATED ID: " . $id . "\n", FILE_APPEND | LOCK_EX);
+                    // If this is an AJAX edit, return JSON including published state
+                    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true, 'post' => [
+                            'id' => $id,
+                            'title' => $title,
+                            'excerpt' => $excerpt,
+                            'category' => '',
+                            'author' => $_SESSION['user']['name'] ?? '' ,
+                            'featured_image' => $imgPath,
+                            'published' => ($status === 'published')
+                        ]]);
+                        exit;
+                    }
+
+                    // Non-AJAX update: set session flash and redirect to posts
+                    $_SESSION['flash_post'] = [
+                        'type' => 'success',
+                        'message' => "Article '{$title}' updated.",
+                        'published' => ($status === 'published')
+                    ];
+                    header("Location: index.php?pages=posts");
+                    exit;
                 } else {
                     $ei = $stmt->errorInfo();
                     $msg = "Failed to update article: " . ($ei[2] ?? 'Unknown DB error');
