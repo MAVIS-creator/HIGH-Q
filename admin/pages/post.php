@@ -33,6 +33,15 @@ try {
 } catch (Throwable $e) {
     $hasCategoryId = false;
 }
+// Detect whether the posts table has a tags column (some installs don't)
+$hasTags = false;
+try {
+    $colStmt2 = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts' AND COLUMN_NAME = 'tags'");
+    $colStmt2->execute();
+    $hasTags = (bool)$colStmt2->fetchColumn();
+} catch (Throwable $e) {
+    $hasTags = false;
+}
 
 // Handle Create / Edit / Delete / Toggle Publish
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
@@ -88,33 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         if (empty($errors)) {
                         // CREATE
             if ($act === 'create') {
-                if ($hasCategoryId) {
-                    $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
-                    $params = [
-                        $title,
-                        $slug,
-                        $excerpt,
-                        $content,
-                        $category_id ?: null,
-                        $tags,
-                        $imgPath ?: null,
-                        $status,
-                        $_SESSION['user']['id']
-                    ];
-                } else {
-                    // posts table doesn't have category_id on this install — omit it
-                    $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?)\n                ");
-                    $params = [
-                        $title,
-                        $slug,
-                        $excerpt,
-                        $content,
-                        $tags,
-                        $imgPath ?: null,
-                        $status,
-                        $_SESSION['user']['id']
-                    ];
-                }
+                // Build columns and params dynamically based on DB schema
+                $cols = ['title', 'slug', 'excerpt', 'content'];
+                $params = [$title, $slug, $excerpt, $content];
+                if ($hasCategoryId) { $cols[] = 'category_id'; $params[] = $category_id ?: null; }
+                if ($hasTags) { $cols[] = 'tags'; $params[] = $tags; }
+                $cols[] = 'featured_image'; $cols[] = 'status'; $cols[] = 'author_id';
+                $params[] = $imgPath ?: null; $params[] = $status; $params[] = $_SESSION['user']['id'];
+
+                $placeholders = implode(',', array_fill(0, count($cols), '?'));
+                $sql = "INSERT INTO posts (" . implode(', ', $cols) . ") VALUES ({$placeholders})";
+                $stmt = $pdo->prepare($sql);
                 $ok = $stmt->execute($params);
                                 if ($ok) {
                                     logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
@@ -135,32 +128,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                                if ($hasCategoryId) {
-                                    $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
-                                    $params = [
-                                        $title,
-                                        $slug,
-                                        $excerpt,
-                                        $content,
-                                        $category_id ?: null,
-                                        $tags,
-                                        $imgPath ?: null,
-                                        $status,
-                                        $id
-                                    ];
-                                } else {
-                                    $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
-                                    $params = [
-                                        $title,
-                                        $slug,
-                                        $excerpt,
-                                        $content,
-                                        $tags,
-                                        $imgPath ?: null,
-                                        $status,
-                                        $id
-                                    ];
-                                }
+                                // Build SET clause and params dynamically
+                                $setParts = ['title=?', 'slug=?', 'excerpt=?', 'content=?'];
+                                $params = [$title, $slug, $excerpt, $content];
+                                if ($hasCategoryId) { $setParts[] = 'category_id=?'; $params[] = $category_id ?: null; }
+                                if ($hasTags) { $setParts[] = 'tags=?'; $params[] = $tags; }
+                                $setParts[] = 'featured_image=?'; $params[] = $imgPath ?: null;
+                                $setParts[] = 'status=?'; $params[] = $status;
+                                $sql = "UPDATE posts SET " . implode(', ', $setParts) . ", updated_at=NOW() WHERE id=?";
+                                $params[] = $id;
+                                $stmt = $pdo->prepare($sql);
                                 $ok = $stmt->execute($params);
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
