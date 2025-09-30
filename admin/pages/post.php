@@ -309,6 +309,16 @@ $posts = $stmt->fetchAll();
     <?php include '../includes/sidebar.php'; ?>
 
     <div class="container">
+        <?php if (!empty($_SESSION['flash_post'])): ?>
+            <?php $f = $_SESSION['flash_post']; unset($_SESSION['flash_post']); ?>
+            <div class="admin-notice" style="background:#e7ffef;border-left:4px solid #66cc88;padding:12px;margin-bottom:12px;">
+                <div><?= htmlspecialchars($f['message']) ?></div>
+                <?php if (isset($f['published'])): ?>
+                    <div style="font-size:0.9rem;color:#666;margin-top:6px;">Status: <strong><?= $f['published'] ? 'Published' : 'Draft' ?></strong></div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
         <?php if (!empty($errors)): ?>
             <div class="admin-notice" style="background:#ffecec;border-left:4px solid #f28b82;padding:12px;margin-bottom:12px;">
                 <?php foreach ($errors as $err) echo '<div>' . htmlspecialchars($err) . '</div>'; ?>
@@ -576,6 +586,18 @@ function bindAjaxForm(id) {
                             card.insertBefore(img, card.firstChild);
                         }
                         img.src = data.post.featured_image;
+                    }
+                }
+                // Show temporary notification about publish state if provided
+                if (data.post && typeof data.post.published !== 'undefined') {
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        const note = document.createElement('div');
+                        note.className = 'admin-notice';
+                        note.style = "background:#e7ffef;border-left:4px solid #66cc88;padding:12px;margin-bottom:12px;";
+                        note.textContent = data.post.published ? 'Post published.' : 'Post saved as draft.';
+                        container.insertBefore(note, container.firstChild);
+                        setTimeout(() => note.remove(), 4500);
                     }
                 }
                 closeEditModal();
