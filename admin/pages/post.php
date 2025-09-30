@@ -90,13 +90,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $status,
                     $_SESSION['user']['id']
                 ]);
-                if ($ok) {
-                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
-                    $success[] = "Article '{$title}' created.";
-                } else {
-                    $ei = $stmt->errorInfo();
-                    $errors[] = "Failed to create article: " . ($ei[2] ?? 'Unknown DB error');
-                }
+                                if ($ok) {
+                                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                    $success[] = "Article '{$title}' created.";
+                                } else {
+                                    $ei = $stmt->errorInfo();
+                                    $msg = "Failed to create article: " . ($ei[2] ?? 'Unknown DB error');
+                                    $errors[] = $msg;
+                                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATE ERROR: " . $msg . "\n", FILE_APPEND | LOCK_EX);
+                                }
             }
 
             // EDIT
@@ -124,7 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $success[] = "Article '{$title}' updated.";
                 } else {
                     $ei = $stmt->errorInfo();
-                    $errors[] = "Failed to update article: " . ($ei[2] ?? 'Unknown DB error');
+                    $msg = "Failed to update article: " . ($ei[2] ?? 'Unknown DB error');
+                    $errors[] = $msg;
+                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATE ERROR: " . $msg . "\n", FILE_APPEND | LOCK_EX);
                 }
                 // If this is an AJAX edit (X-Requested-With), return JSON with updated post data
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
