@@ -139,6 +139,32 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
+/* Payments filter form: inline layout with responsive wrapping */
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-content: center;
+}
+.filter-form label { display: flex; align-items: center; gap:6px; margin:0; }
+.filter-form input.small, .filter-form select.small { width: 120px; padding:6px 8px; }
+.filter-form input.medium { width: 220px; padding:6px 8px; }
+.filter-form .btn { margin-left:4px; }
+
+/* Add a bit more left spacing so content/cards don't sit flush to the sidebar */
+.roles-page, .courses-page, .roles-table, .admin-main > div {
+  margin-left: calc(var(--sidebar-width) + 18px);
+}
+
+/* Small screens: allow filter form to stack nicely */
+@media (max-width: 900px) {
+  .filter-form input.small, .filter-form select.small { width: 100%; }
+  .filter-form input.medium { width: 100%; }
+  .filter-form { gap:8px; }
+  .roles-page, .courses-page { margin-left: calc(var(--sidebar-width) + 12px); }
+}
+
 .header-left {
   display: flex;
   align-items: center;
