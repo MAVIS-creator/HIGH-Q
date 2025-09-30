@@ -111,7 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             $filename = uniqid('post_') . '.' . $ext;
             $target   = $uploadDir . $filename;
             if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target)) {
-                $imgPath = "uploads/posts/{$filename}";
+                // Save featured image as a full URL (APP_URL + uploads path) instead of filesystem path
+                $imgRel = "uploads/posts/{$filename}";
+                $imgPath = rtrim($appUrl, '/') . '/' . ltrim($imgRel, '/');
             }
         }
 
@@ -323,7 +325,7 @@ $posts = $stmt->fetchAll();
                 <?php foreach ($posts as $p): ?>
                     <div class="post-card" id="post-row-<?= $p['id'] ?>">
                         <?php if ($p['featured_image']): ?>
-                            <img src="../public/<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
+                            <img src="<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
                         <?php endif; ?>
                         <div class="meta">
                             <strong><?= htmlspecialchars($p['title']) ?></strong>
