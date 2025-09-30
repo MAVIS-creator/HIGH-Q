@@ -161,4 +161,16 @@ require_once __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php';
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
+
+<script>
+document.getElementById('newsletterForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var fd = new FormData(this);
+  fetch('api/subscribe_newsletter.php', { method: 'POST', body: fd }).then(r=>r.json()).then(j=>{
+    var msg = document.getElementById('newsletterMsg');
+    if (j.status === 'ok') { msg.style.display='block'; msg.style.color='green'; msg.textContent = j.message || 'Subscribed'; this.reset(); }
+    else { msg.style.display='block'; msg.style.color='crimson'; msg.textContent = j.message || 'Error'; }
+  }).catch(()=>{ var msg = document.getElementById('newsletterMsg'); msg.style.display='block'; msg.style.color='crimson'; msg.textContent='Network error'; });
+});
+</script>
