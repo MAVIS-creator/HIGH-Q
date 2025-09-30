@@ -356,6 +356,7 @@ CREATE TABLE `posts` (
   `category_id` int(11) DEFAULT NULL,
   `tags` text DEFAULT NULL,
   `excerpt` text DEFAULT NULL,
+  `featured_image` varchar(1024) DEFAULT NULL,
   `content` longtext DEFAULT NULL,
   `category` varchar(100) DEFAULT NULL,
   `status` enum('draft','published','archived') DEFAULT 'draft',
