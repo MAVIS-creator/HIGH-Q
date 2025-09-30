@@ -65,22 +65,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         if (empty($errors)) {
                         // CREATE
-                        if ($act === 'create') {
-                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
-                                $stmt->execute([
-                                        $title,
-                                        $slug,
-                                        $excerpt,
-                                        $content,
-                                        $category_id ?: null,
-                                        $tags,
-                                        $imgPath ?: null,
-                                        $status,
-                                        $_SESSION['user']['id']
-                                ]);
-                                logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
-                                $success[] = "Article '{$title}' created.";
-                        }
+            if ($act === 'create') {
+                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
+                $ok = $stmt->execute([
+                    $title,
+                    $slug,
+                    $excerpt,
+                    $content,
+                    $category_id ?: null,
+                    $tags,
+                    $imgPath ?: null,
+                    $status,
+                    $_SESSION['user']['id']
+                ]);
+                if ($ok) {
+                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                    $success[] = "Article '{$title}' created.";
+                } else {
+                    $ei = $stmt->errorInfo();
+                    $errors[] = "Failed to create article: " . ($ei[2] ?? 'Unknown DB error');
+                }
+            }
 
             // EDIT
                         if ($act === 'edit' && $id) {
@@ -91,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $imgPath = $old->fetchColumn();
                 }
                                 $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
-                $stmt->execute([
+                $ok = $stmt->execute([
                     $title,
                     $slug,
                     $excerpt,
@@ -102,8 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $status,
                     $id
                 ]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
-                $success[] = "Article '{$title}' updated.";
+                if ($ok) {
+                    logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
+                    $success[] = "Article '{$title}' updated.";
+                } else {
+                    $ei = $stmt->errorInfo();
+                    $errors[] = "Failed to update article: " . ($ei[2] ?? 'Unknown DB error');
+                }
                 // If this is an AJAX edit (X-Requested-With), return JSON with updated post data
                 if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                     header('Content-Type: application/json');
@@ -135,8 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-    // Only redirect to the posts list when there were no validation or processing errors.
-    if (empty($errors)) {
+    // Only redirect to the posts list when we successfully created/updated (i.e. have success messages)
+    if (empty($errors) && !empty($success)) {
         header("Location: index.php?pages=posts");
         exit;
     }
