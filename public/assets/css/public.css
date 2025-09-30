@@ -731,18 +731,11 @@ nav a.active::after { background: var(--hq-yellow); }
   display: flex;
   align-items: center;
   background: #fff;
-<<<<<<< HEAD
-  border-radius: 8px;
-  padding: 16px;
-  gap: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-=======
   border-radius: 10px;
   padding: 12px 14px;
   /* more compact */
   gap: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
->>>>>>> 6449231c1cf459d441450f022261d539fe781c97
 }
 
 .feature-icon {
