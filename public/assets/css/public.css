@@ -1402,6 +1402,26 @@ nav a.active::after { background: var(--hq-yellow); }
 .comment-main.collapsed .comment-actions,
 .comment-main.collapsed .replies { display:none }
 
+/* Post page layout and right sidebar */
+.post-grid { display:grid; grid-template-columns: 1fr 320px; gap:28px; align-items:start }
+.post-sidebar { background:transparent }
+.post-stats { display:flex; gap:8px; margin-bottom:12px }
+.icon-btn { background:#fff;border:1px solid #f0e8e8;padding:8px 10px;border-radius:8px;cursor:pointer }
+.icon-btn .count { margin-left:6px;color:var(--hq-red);font-weight:700 }
+.toc-box { background:#fff;border:1px solid #f0e8e8;padding:12px;border-radius:8px }
+.toc-box h4 { margin:0 0 8px 0 }
+.toc-box ul { list-style:none;padding:0;margin:0 }
+.toc-box li { padding:6px 0;border-bottom:1px dashed #f6eded;font-size:14px }
+
+/* Newsletter form styling (matching site theme) */
+.newsletter .container { display:flex; gap:24px; align-items:center }
+.newsletter input[type="email"] { padding:12px;border-radius:8px;border:1px solid #f0e8e8;background:#fff }
+.newsletter .btn-ghost { background:#fff;border:1px solid #f0e8e8;padding:10px 14px;border-radius:8px }
+.newsletter h3 { margin:0 0 6px 0 }
+
+/* Post excerpt box */
+.post-excerpt { background:#fff; border-left:4px solid #f7e9ea }
+
 /* What Happens Next section styling (used on register.php) */
 .next-section { background: #faf7f6; padding-top: 40px; padding-bottom: 48px; }
 .next-section .ceo-heading { margin-bottom: 18px; }
