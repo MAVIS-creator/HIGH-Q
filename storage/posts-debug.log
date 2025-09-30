@@ -2,3 +2,7 @@
 2025-09-30T11:51:51+02:00 POST to post.php action=create
 POST keys: csrf_token, title, slug, excerpt, content, category_id, tags
 FILES: featured_image(hq-logo.jpeg)
+----
+2025-09-30T12:46:09+02:00 POST to post.php action=create
+POST keys: csrf_token, title, slug, excerpt, content, category_id, tags
+FILES: featured_image(hq-logo.jpeg)
