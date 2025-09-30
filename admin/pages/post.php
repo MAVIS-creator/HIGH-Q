@@ -280,6 +280,7 @@ $posts = $stmt->fetchAll();
                     <label>Featured Image</label>
                     <div class="file-input-wrap">
                         <input type="file" name="featured_image" id="pImage" accept="image/*">
+                        <button type="button" id="pImageBtn" class="btn">Choose File</button>
                         <span id="pImageName" class="file-name">No file chosen</span>
                     </div>
                 </div>
