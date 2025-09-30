@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                                 $html .= "<p><a href='" . htmlspecialchars($postUrl) . "'>Read the full article</a></p>";
                                                 // try PHPMailer if available
                                                 if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-                                                    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+                                                $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
                                                     try {
                                                         $mail->isHTML(true);
                                                         $mail->setFrom('no-reply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), 'HIGH Q');
@@ -259,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                     $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
                                     $html .= "<p><a href='" . htmlspecialchars($postUrl) . "'>Read the full article</a></p>";
                                     if (class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
-                                        $mail = new PHPMailer\\PHPMailer\\PHPMailer(true);
+                                        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
                                         try { $mail->isHTML(true); $mail->setFrom('no-reply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), 'HIGH Q'); $mail->Subject = $subject; $mail->Body = $html; foreach ($subs as $to) { $mail->clearAllRecipients(); $mail->addAddress($to); $mail->send(); } } catch (Throwable $me) {}
                                     } else {
                                         $headers = "MIME-Version: 1.0\r\n";
