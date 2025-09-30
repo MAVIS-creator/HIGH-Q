@@ -26,6 +26,18 @@ if (!is_dir($uploadDir)) {
 
 // Handle Create / Edit / Delete / Toggle Publish
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+    // Temporary debug log (remove when investigation complete)
+    try {
+        $dbgDir = __DIR__ . '/../../storage';
+        if (!is_dir($dbgDir)) @mkdir($dbgDir, 0755, true);
+        $dbgFile = $dbgDir . '/posts-debug.log';
+        $log = "----\n" . date('c') . " POST to post.php action=" . ($_GET['action'] ?? '') . "\n";
+        $log .= "POST keys: " . implode(', ', array_keys($_POST ?? [])) . "\n";
+        $files = [];
+        foreach ($_FILES as $k=>$f) { $files[] = $k . '(' . ($f['name'] ?? '') . ')'; }
+        $log .= "FILES: " . implode(', ', $files) . "\n";
+        @file_put_contents($dbgFile, $log, FILE_APPEND | LOCK_EX);
+    } catch (\Throwable $e) { /* ignore debug failures */ }
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = "Invalid CSRF token.";
     } else {
