@@ -6,6 +6,8 @@
   /* make sure it sits within the admin-main area and is centered like roles.php */
   box-sizing: border-box;
 }
+/* Override general admin left-margin to bring cards closer to sidebar but not touching */
+.courses-page { margin-left: 12px !important; }
 
 /* Ensure the courses page doesn't float to the right — align with admin-main padding */
 .admin-main .courses-page { padding-left: 20px; padding-right: 20px; }
