@@ -165,6 +165,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $errors[] = "Failed to delete course: " . $e->getMessage();
       }
     }
+    // Bulk convert icons: map filename -> boxicons class using icons table
+    if ($act === 'bulk_convert_icons') {
+      try {
+        // fetch mappings where a class exists
+        $mappings = $pdo->query("SELECT filename, `class` FROM icons WHERE `class` IS NOT NULL AND `class` <> ''")->fetchAll(PDO::FETCH_ASSOC);
+        $updated = 0;
+        $updStmt = $pdo->prepare("UPDATE courses SET icon = ? WHERE icon = ?");
+        foreach ($mappings as $m) {
+          $filename = $m['filename'];
+          $cls = $m['class'];
+          if (!$filename || !$cls) continue;
+          $updStmt->execute([$cls, $filename]);
+          $updated += $updStmt->rowCount();
+        }
+        if ($updated > 0) {
+          $success[] = "Bulk converted {$updated} icon(s) to Boxicons classes.";
+          logAction($pdo, $_SESSION['user']['id'], 'bulk_convert_icons', ['changed'=>$updated]);
+        } else {
+          $success[] = "No icons required conversion.";
+        }
+      } catch (\Exception $e) {
+        $errors[] = "Bulk convert failed: " . $e->getMessage();
+      }
+    }
   }
 
 }
