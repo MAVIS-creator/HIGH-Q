@@ -36,6 +36,12 @@
 .post-card .info { display:flex; gap:8px; align-items:center; flex-wrap:wrap }
 .post-card .info .cat-pill { background:#f2f2f2; color:#333; padding:6px 10px; border-radius:999px; font-size:0.85rem }
 
+/* Card action buttons (Edit/Delete) */
+.post-card .actions { display:flex; gap:8px; align-items:center; margin-top:6px }
+.post-card .actions .btn { background:#fff; border:1px solid rgba(0,0,0,0.08); padding:6px 8px; border-radius:6px; cursor:pointer }
+.post-card .actions .btn-danger { background:#ff4b2b; color:#fff; border:none }
+.post-card .actions .edit-link { color:#2563eb; text-decoration:none; padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:#fff }
+
 
 .summary-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin-bottom:1rem }
 .summary-cards .card { background:#fff; padding:1rem; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04) }
