@@ -19,6 +19,22 @@
 .posts-empty { text-align:center; padding:40px; color:#777 }
 .module-header .search-form input[type=text]{ width:640px; padding:0.8rem 1rem; border-radius:10px; border:1px solid #eee; background:#fafafa }
 
+/* Post modal form styling tweaks */
+.modal .form-row { margin-bottom:12px; }
+.modal .form-row label { display:block; margin-bottom:6px; font-weight:600; }
+.modal input[type="text"], .modal textarea, .modal select { width:100%; padding:10px 12px; border:1px solid #e6e6e6; border-radius:8px; background:#fff }
+.modal textarea { min-height:120px; }
+.modal .form-row input[type="file"] { display:none; }
+.file-input-wrap { display:flex; align-items:center; gap:10px; }
+.file-name { color:#666; font-size:0.95rem; }
+.modal select { max-width:360px; }
+.modal .form-row input[type="checkbox"] { transform:scale(1.05); margin-right:8px }
+
+/* Tag and category pill styles for display (card listing) */
+.post-card .info { display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+.post-card .info .cat-pill { background:#f2f2f2; color:#333; padding:6px 10px; border-radius:999px; font-size:0.85rem }
+
+
 .summary-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin-bottom:1rem }
 .summary-cards .card { background:#fff; padding:1rem; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.04) }
 
