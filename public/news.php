@@ -168,10 +168,15 @@ require_once __DIR__ . '/includes/header.php';
 document.getElementById('newsletterForm').addEventListener('submit', function(e){
   e.preventDefault();
   var fd = new FormData(this);
+  var submitBtn = this.querySelector('.newsletter-submit');
+  submitBtn.disabled = true;
   fetch('api/subscribe_newsletter.php', { method: 'POST', body: fd }).then(r=>r.json()).then(j=>{
     var msg = document.getElementById('newsletterMsg');
-    if (j.status === 'ok') { msg.style.display='block'; msg.style.color='green'; msg.textContent = j.message || 'Subscribed'; this.reset(); }
-    else { msg.style.display='block'; msg.style.color='crimson'; msg.textContent = j.message || 'Error'; }
-  }).catch(()=>{ var msg = document.getElementById('newsletterMsg'); msg.style.display='block'; msg.style.color='crimson'; msg.textContent='Network error'; });
+    msg.style.display='block';
+    msg.className = 'newsletter-msg ' + (j.status === 'ok' ? 'success' : 'error');
+    msg.textContent = j.message || (j.status === 'ok' ? 'Subscribed' : 'Error');
+    if (j.status === 'ok') { document.querySelector('.newsletter-form').reset(); }
+  }).catch(()=>{ var msg = document.getElementById('newsletterMsg'); msg.style.display='block'; msg.className='newsletter-msg error'; msg.textContent='Network error'; })
+  .finally(()=>{ submitBtn.disabled = false; });
 });
 </script>
