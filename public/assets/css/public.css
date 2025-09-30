@@ -793,8 +793,6 @@ nav a.active::after { background: var(--hq-yellow); }
   margin-bottom: 10px;
 }
 
-<<<<<<< HEAD
-=======
 /* Call to Action Section */
 .cta-section {
   background: var(--hq-yellow);
@@ -1145,7 +1143,6 @@ nav a.active::after { background: var(--hq-yellow); }
   .register-sidebar { order: 2; }
 }
 
->>>>>>> 6449231c1cf459d441450f022261d539fe781c97
 .ceo-hero {
   padding: 80px 0 100px;
   background: var(--hq-white);
