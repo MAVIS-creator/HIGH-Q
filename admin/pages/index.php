@@ -85,6 +85,14 @@ if (in_array($page, $allowed_pages)) {
     }
 }
 
+// If this is a POST that includes an action, allow the requested page to be included so
+// the page's own permission checks and POST handlers can run. This avoids returning the
+// dashboard HTML for background POSTs where the role-permissions mapping might not match
+// (the page itself will still call requirePermission()).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+    $pageAllowed = true;
+}
+
 if (!$pageAllowed) {
     // fallback to dashboard
     // If requested page file exists and the role has the 'settings' permission, allow it (convenience for admins)
