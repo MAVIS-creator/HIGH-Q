@@ -111,9 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             $filename = uniqid('post_') . '.' . $ext;
             $target   = $uploadDir . $filename;
             if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target)) {
-                // Save featured image as a full URL (APP_URL + uploads path) instead of filesystem path
-                $imgRel = "uploads/posts/{$filename}";
-                $imgPath = rtrim($appUrl, '/') . '/' . ltrim($imgRel, '/');
+                // Save featured image as a relative path (uploads/posts/...) so it works across envs
+                $imgPath = "uploads/posts/{$filename}";
             }
         }
 
