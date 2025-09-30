@@ -24,6 +24,16 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
+// Detect whether the posts table has a category_id column on this install
+$hasCategoryId = false;
+try {
+    $colStmt = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts' AND COLUMN_NAME = 'category_id'");
+    $colStmt->execute();
+    $hasCategoryId = (bool)$colStmt->fetchColumn();
+} catch (Throwable $e) {
+    $hasCategoryId = false;
+}
+
 // Handle Create / Edit / Delete / Toggle Publish
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     // Temporary debug log (remove when investigation complete)
@@ -78,18 +88,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         if (empty($errors)) {
                         // CREATE
             if ($act === 'create') {
-                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
-                $ok = $stmt->execute([
-                    $title,
-                    $slug,
-                    $excerpt,
-                    $content,
-                    $category_id ?: null,
-                    $tags,
-                    $imgPath ?: null,
-                    $status,
-                    $_SESSION['user']['id']
-                ]);
+                if ($hasCategoryId) {
+                    $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
+                    $params = [
+                        $title,
+                        $slug,
+                        $excerpt,
+                        $content,
+                        $category_id ?: null,
+                        $tags,
+                        $imgPath ?: null,
+                        $status,
+                        $_SESSION['user']['id']
+                    ];
+                } else {
+                    // posts table doesn't have category_id on this install — omit it
+                    $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?)\n                ");
+                    $params = [
+                        $title,
+                        $slug,
+                        $excerpt,
+                        $content,
+                        $tags,
+                        $imgPath ?: null,
+                        $status,
+                        $_SESSION['user']['id']
+                    ];
+                }
+                $ok = $stmt->execute($params);
                                 if ($ok) {
                                     logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
                                     $success[] = "Article '{$title}' created.";
@@ -109,18 +135,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
-                $ok = $stmt->execute([
-                    $title,
-                    $slug,
-                    $excerpt,
-                    $content,
-                    $category_id ?: null,
-                    $tags,
-                    $imgPath ?: null,
-                    $status,
-                    $id
-                ]);
+                                if ($hasCategoryId) {
+                                    $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
+                                    $params = [
+                                        $title,
+                                        $slug,
+                                        $excerpt,
+                                        $content,
+                                        $category_id ?: null,
+                                        $tags,
+                                        $imgPath ?: null,
+                                        $status,
+                                        $id
+                                    ];
+                                } else {
+                                    $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
+                                    $params = [
+                                        $title,
+                                        $slug,
+                                        $excerpt,
+                                        $content,
+                                        $tags,
+                                        $imgPath ?: null,
+                                        $status,
+                                        $id
+                                    ];
+                                }
+                                $ok = $stmt->execute($params);
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
                     $success[] = "Article '{$title}' updated.";
