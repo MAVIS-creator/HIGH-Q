@@ -311,6 +311,7 @@ const pContent = document.getElementById('pContent');
 const pExcerpt = document.getElementById('pExcerpt');
 const pImage = document.getElementById('pImage');
 const pImageName = document.getElementById('pImageName');
+const pImageBtn = document.getElementById('pImageBtn');
 
 function slugify(v){ return String(v || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
 if (pTitle && pSlug) {
@@ -330,8 +331,28 @@ if (pContent && pExcerpt) {
 }
 if (pImage) {
     pImage.addEventListener('change', function(){
-        if (pImage.files && pImage.files.length>0) pImageName.textContent = pImage.files[0].name; else pImageName.textContent = 'No file chosen';
+        if (pImage.files && pImage.files.length>0) {
+            pImageName.textContent = pImage.files[0].name;
+            // optional small preview: if file is image, show preview inside modal
+            try {
+                var f = pImage.files[0];
+                if (f.type.indexOf('image/') === 0) {
+                    var reader = new FileReader();
+                    reader.onload = function(e){
+                        // create or update preview img
+                        var ex = document.getElementById('pImagePreview');
+                        if (!ex) {
+                            ex = document.createElement('img'); ex.id = 'pImagePreview'; ex.style.maxWidth='120px'; ex.style.maxHeight='80px'; ex.style.marginLeft='8px'; ex.style.borderRadius='6px';
+                            pImageName.parentNode.appendChild(ex);
+                        }
+                        ex.src = e.target.result;
+                    };
+                    reader.readAsDataURL(f);
+                }
+            } catch(e){}
+        } else pImageName.textContent = 'No file chosen';
     });
+    if (pImageBtn) pImageBtn.addEventListener('click', function(){ pImage.click(); });
 }
 
 const overlay     = document.getElementById('modalOverlay');
