@@ -365,8 +365,18 @@ $posts = $stmt->fetchAll();
                 <?php foreach ($posts as $p): ?>
                     <div class="post-card" id="post-row-<?= $p['id'] ?>">
                         <?php if ($p['featured_image']): ?>
-                            <img src="<?= htmlspecialchars($p['featured_image']) ?>" class="thumb">
-                        <?php endif; ?>
+                                <?php
+                                    // Support both full URLs and legacy relative paths stored in DB.
+                                    $fi = $p['featured_image'];
+                                    if (preg_match('#^https?://#i', $fi) || strpos($fi, '//') === 0 || strpos($fi, '/') === 0) {
+                                        $imgSrc = $fi;
+                                    } else {
+                                        // legacy relative path (e.g. uploads/posts/xxx.jpg) -> prefix admin->public
+                                        $imgSrc = '../public/' . ltrim($fi, '/');
+                                    }
+                                ?>
+                                <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb">
+                            <?php endif; ?>
                         <div class="meta">
                             <strong><?= htmlspecialchars($p['title']) ?></strong>
                             <div class="info"><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?> • <?= htmlspecialchars($p['author'] ?? '') ?></div>
@@ -585,7 +595,16 @@ function bindAjaxForm(id) {
                             img.className = 'thumb';
                             card.insertBefore(img, card.firstChild);
                         }
-                        img.src = data.post.featured_image;
+                        // Determine if returned path is absolute URL or relative
+                        let fi = data.post.featured_image;
+                        let src = fi;
+                        try {
+                            if (!/^https?:\/\//i.test(fi) && !fi.startsWith('//') && !fi.startsWith('/')) {
+                                // legacy relative path -> prefix with ../public/
+                                src = '../public/' + fi.replace(/^\/+/, '');
+                            }
+                        } catch (e) { src = fi; }
+                        img.src = src;
                     }
                 }
                 // Show temporary notification about publish state if provided
