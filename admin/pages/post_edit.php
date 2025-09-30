@@ -45,7 +45,7 @@ if (!$post) {
       <label>Featured Image</label>
       <input type="file" name="featured_image" accept="image/*">
       <?php if ($post['featured_image']): ?>
-        <img src="../public/<?= htmlspecialchars($post['featured_image']) ?>" class="thumb" style="margin-top:0.5rem;">
+        <img src="<?= htmlspecialchars($post['featured_image']) ?>" class="thumb" style="margin-top:0.5rem;">
       <?php endif; ?>
     </div>
     <div class="form-row">

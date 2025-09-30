@@ -545,7 +545,7 @@ function bindAjaxForm(id) {
                             img.className = 'thumb';
                             card.insertBefore(img, card.firstChild);
                         }
-                        img.src = `../public/${data.post.featured_image}`;
+                        img.src = data.post.featured_image;
                     }
                 }
                 closeEditModal();
