@@ -110,9 +110,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $stmt = $pdo->prepare($sql);
                 $ok = $stmt->execute($params);
                                 if ($ok) {
-                                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
-                                    $success[] = "Article '{$title}' created.";
-                                } else {
+                                                    $newId = $pdo->lastInsertId();
+                                                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                                    $success[] = "Article '{$title}' created.";
+                                                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
+                                                } else {
                                     $ei = $stmt->errorInfo();
                                     $msg = "Failed to create article: " . ($ei[2] ?? 'Unknown DB error');
                                     $errors[] = $msg;
@@ -142,6 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
                     $success[] = "Article '{$title}' updated.";
+                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATED ID: " . $id . "\n", FILE_APPEND | LOCK_EX);
                 } else {
                     $ei = $stmt->errorInfo();
                     $msg = "Failed to update article: " . ($ei[2] ?? 'Unknown DB error');
