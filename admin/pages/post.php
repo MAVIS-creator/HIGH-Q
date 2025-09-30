@@ -43,6 +43,22 @@ try {
     $hasTags = false;
 }
 
+// Fetch list of available columns on posts table to build queries safely
+$availableCols = [];
+try {
+    $colsStmt = $pdo->prepare("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts'");
+    $colsStmt->execute();
+    $availableCols = $colsStmt->fetchAll(PDO::FETCH_COLUMN);
+} catch (Throwable $e) {
+    $availableCols = [];
+}
+
+$hasFeaturedImage = in_array('featured_image', $availableCols, true);
+$hasStatus = in_array('status', $availableCols, true);
+$hasAuthorId = in_array('author_id', $availableCols, true);
+$hasUpdatedAt = in_array('updated_at', $availableCols, true);
+$hasCategory = in_array('category', $availableCols, true);
+
 // Handle Create / Edit / Delete / Toggle Publish
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     // Temporary debug log (remove when investigation complete)
@@ -102,8 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $params = [$title, $slug, $excerpt, $content];
                 if ($hasCategoryId) { $cols[] = 'category_id'; $params[] = $category_id ?: null; }
                 if ($hasTags) { $cols[] = 'tags'; $params[] = $tags; }
-                $cols[] = 'featured_image'; $cols[] = 'status'; $cols[] = 'author_id';
-                $params[] = $imgPath ?: null; $params[] = $status; $params[] = $_SESSION['user']['id'];
+                if ($hasFeaturedImage) { $cols[] = 'featured_image'; $params[] = $imgPath ?: null; }
+                if ($hasStatus) { $cols[] = 'status'; $params[] = $status; }
+                if ($hasAuthorId) { $cols[] = 'author_id'; $params[] = $_SESSION['user']['id']; }
 
                 $placeholders = implode(',', array_fill(0, count($cols), '?'));
                 $sql = "INSERT INTO posts (" . implode(', ', $cols) . ") VALUES ({$placeholders})";
@@ -130,15 +147,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                                // Build SET clause and params dynamically
-                                $setParts = ['title=?', 'slug=?', 'excerpt=?', 'content=?'];
-                                $params = [$title, $slug, $excerpt, $content];
-                                if ($hasCategoryId) { $setParts[] = 'category_id=?'; $params[] = $category_id ?: null; }
-                                if ($hasTags) { $setParts[] = 'tags=?'; $params[] = $tags; }
-                                $setParts[] = 'featured_image=?'; $params[] = $imgPath ?: null;
-                                $setParts[] = 'status=?'; $params[] = $status;
-                                $sql = "UPDATE posts SET " . implode(', ', $setParts) . ", updated_at=NOW() WHERE id=?";
-                                $params[] = $id;
+                                                // Build SET clause and params dynamically
+                                                $setParts = ['title=?', 'slug=?', 'excerpt=?', 'content=?'];
+                                                $params = [$title, $slug, $excerpt, $content];
+                                                if ($hasCategoryId) { $setParts[] = 'category_id=?'; $params[] = $category_id ?: null; }
+                                                if ($hasTags) { $setParts[] = 'tags=?'; $params[] = $tags; }
+                                                if ($hasFeaturedImage) { $setParts[] = 'featured_image=?'; $params[] = $imgPath ?: null; }
+                                                if ($hasStatus) { $setParts[] = 'status=?'; $params[] = $status; }
+                                                $sql = "UPDATE posts SET " . implode(', ', $setParts);
+                                                if ($hasUpdatedAt) $sql .= ", updated_at=NOW()";
+                                                $sql .= " WHERE id=?";
+                                                $params[] = $id;
                                 $stmt = $pdo->prepare($sql);
                                 $ok = $stmt->execute($params);
                 if ($ok) {
