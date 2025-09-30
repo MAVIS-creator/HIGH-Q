@@ -102,7 +102,8 @@ require_once __DIR__ . '/includes/header.php';
             <?php if (!empty($p['featured_image'] ?? '')): ?>
               <img src="<?= htmlspecialchars($p['featured_image']) ?>" alt="" class="thumb">
             <?php endif; ?>
-            <h3><a href="post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
+            <?php $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); $href = ($basePath === '/' ? '' : $basePath) . '/post.php?id=' . rawurlencode($p['id']); ?>
+            <h3><a href="<?= htmlspecialchars($href) ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
             <p class="muted"><?= htmlspecialchars($p['created_at']) ?></p>
             <p><?= htmlspecialchars($p['excerpt']) ?></p>
             <?php if ($hasTags): ?>
@@ -116,7 +117,7 @@ require_once __DIR__ . '/includes/header.php';
               ?>
             </p>
             <?php endif; ?>
-            <a href="post.php?id=<?= $p['id'] ?>" class="btn-ghost">Read More</a>
+            <a href="<?= htmlspecialchars($href) ?>" class="btn-ghost">Read More</a>
           </article>
         <?php endforeach; ?>
       </div>

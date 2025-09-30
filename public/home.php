@@ -299,7 +299,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
             <?php endif; ?>
             <div class="news-body">
-              <h4><a href="post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
+              <?php
+                $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+                $href = ($basePath === '/' ? '' : $basePath) . '/post.php?slug=' . rawurlencode($post['slug']);
+              ?>
+              <h4><a href="<?= htmlspecialchars($href) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? '')) > 180 ? substr($post['excerpt'], 0, 177) . '...' : ($post['excerpt'] ?? ''))) ?></p>
               <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time></div>
             </div>
