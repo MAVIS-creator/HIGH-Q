@@ -3,171 +3,109 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
 // small helper to show human-friendly elapsed time for comments
-if (!function_exists('time_ago')) {
-  function time_ago($ts) {
-    $t = strtotime($ts);
-    if (!$t) return $ts;
-    $diff = time() - $t;
-    if ($diff < 60) return $diff . 's ago';
-    if ($diff < 3600) return floor($diff/60) . 'm ago';
-    if ($diff < 86400) return floor($diff/3600) . 'h ago';
-    return floor($diff/86400) . 'd ago';
-  }
-}
-
-// support either ?id= or ?slug= links (home.php uses slug)
-$postId = (int)($_GET['id'] ?? 0);
-$slug = trim($_GET['slug'] ?? '');
-if (!$postId && $slug === '') { header('Location: index.php'); exit; }
-
-// fetch post by id or slug
-if ($postId) {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
-  $stmt->execute([$postId]);
-} else {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1');
-  $stmt->execute([$slug]);
-}
-$post = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$post) { echo "<p>Post not found.</p>"; exit; }
-
-// fetch approved comments (top-level) and their replies in one go
-$postId = $post['id'];
-$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND status = "approved" ORDER BY created_at DESC');
-$cstmt->execute([$postId]);
-$allComments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
-
-// build nested structure in PHP for deterministic ordering
-$comments = [];
-$repliesMap = [];
-foreach ($allComments as $c) {
-  if (empty($c['parent_id'])) {
-    $comments[$c['id']] = $c;
-    $comments[$c['id']]['replies'] = [];
-  } else {
-    $repliesMap[$c['parent_id']][] = $c;
-  }
-}
-foreach ($repliesMap as $parentId => $list) {
-  if (isset($comments[$parentId])) {
-    $comments[$parentId]['replies'] = $list;
-  } else {
-    // orphan replies: attach to top-level comments list end
-    foreach ($list as $l) $comments[$l['id']] = $l;
-  }
-}
-
-$pageTitle = $post['title'];
-require_once __DIR__ . '/includes/header.php';
-?>
-<div class="container" style="max-width:1100px;margin:24px auto;padding:0 12px;">
-  <div class="post-grid">
-    <article class="post-article">
-    <h1><?= htmlspecialchars($post['title']) ?></h1>
-    <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
-    <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?> · <?= htmlspecialchars(time_ago($post['created_at'])) ?></div>
-    <div class="post-content" style="margin-top:12px;">
-      <?php if (!empty($post['excerpt'])): ?>
-        <div class="post-excerpt" style="border:1px solid #f0e8e8;padding:18px;border-radius:8px;margin-bottom:14px;background:#fff"><?= nl2br(htmlspecialchars($post['excerpt'])) ?></div>
-      <?php endif; ?>
-      <?php if (!empty($post['featured_image'])): ?>
-        <?php
-          $fi = $post['featured_image'];
-          if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
-            $imgSrc = $fi;
-          } else {
-            $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
-          }
-        ?>
-        <div class="post-thumb" style="margin-bottom:12px;">
-          <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover">
-        </div>
-      <?php endif; ?>
-
-      <?php
-        // Prefer to render sanitized HTML from post content so TOC anchors work.
-        $renderedContent = null;
-        try {
-          libxml_use_internal_errors(true);
-          $wrapper = new DOMDocument();
-          $wrapper->loadHTML('<div>' . $post['content'] . '</div>');
-          $body = $wrapper->getElementsByTagName('body')->item(0);
-          // extract innerHTML of our wrapper div
-          $div = $body->getElementsByTagName('div')->item(0);
-          $html = '';
-          if ($div) {
-            foreach ($div->childNodes as $child) {
-              $html .= $wrapper->saveHTML($child);
-            }
-          }
-          // allow only a whitelist of tags for safety
-          $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
-          $renderedContent = strip_tags($html, $allowed);
-        } catch (Throwable $e) { $renderedContent = nl2br(htmlspecialchars($post['content'])); }
-        echo $renderedContent;
-      ?>
-    </div>
-  </article>
-
-  <section id="commentsSection" class="comments-section">
-    <h2>Comments</h2>
-
-    <div id="commentsList" class="comments-list">
-      <?php foreach($comments as $c): ?>
-        <article class="comment" data-id="<?= $c['id'] ?>">
-          <div class="comment-avatar"><div class="avatar-circle"><?= strtoupper(substr($c['name'] ?: 'A',0,1)) ?></div></div>
-          <div class="comment-main">
-            <div class="comment-meta"><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($c['created_at'])) ?></span></div>
-            <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
-            <div class="comment-actions">
-              <button class="btn-link btn-reply" data-id="<?= $c['id'] ?>">Reply</button>
-            </div>
-
-            <?php if (!empty($c['replies'])): ?>
-              <div class="replies">
-                <?php foreach($c['replies'] as $rep): ?>
-                  <div class="comment reply">
-                    <div class="comment-avatar"><div class="avatar-circle muted"><?= strtoupper(substr($rep['name'] ?: 'A',0,1)) ?></div></div>
-                    <div class="comment-main">
-                      <div class="comment-meta"><strong><?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($rep['created_at'])) ?></span></div>
-                      <div class="comment-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-                        </div>
-                        <!-- Sidebar (TOC, share, stats) -->
-                        <aside class="post-sidebar">
-                          <div class="post-actions">
-                            <div class="post-stats">
-                              <button class="icon-btn">❤ <span class="count"><?= rand(20,400) ?></span></button>
-                              <button class="icon-btn">💬 <span class="count"><?= count($comments) ?></span></button>
-                              <button class="icon-btn">🔗 Share</button>
-                            </div>
-                          </div>
-                          <div class="toc-box">
-                            <h4>Table of Contents</h4>
-                            <!-- simple TOC by headings in content (placeholder) -->
-                            <ul>
-                              <li>The Rise of Renewable Energy Solutions</li>
-                              <li>Smart Cities: The Urban Revolution</li>
-                              <li>Circular Economy and Waste Reduction</li>
-                              <li>The Role of Artificial Intelligence</li>
-                              <li>Looking Ahead: Challenges and Opportunities</li>
-                            </ul>
-                          </div>
-                        </aside>
-                      </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-            <?php endif; ?>
-          </div>
-        </article>
-      <?php endforeach; ?>
-    </div>
-
     <div class="comment-form-wrap">
       <h3>Join the conversation</h3>
       <form id="commentForm">
         <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
         <input type="hidden" name="parent_id" id="parent_id" value="">
+        <!-- honeypot field to trap bots -->
+        <div style="display:none"><input type="text" name="hp_name" autocomplete="off" tabindex="-1"></div>
+        <div class="form-row"><input type="text" name="name" placeholder="Your name (optional)"></div>
+        <div class="form-row"><input type="email" name="email" placeholder="Email (optional)"></div>
+        <div class="form-row"><textarea name="content" rows="4" placeholder="Share your thoughts on this article..." required></textarea></div>
+        <div class="form-actions"><button type="submit" class="btn-approve">Post Comment</button> <button type="button" id="cancelReply" class="btn-link" style="display:none">Cancel Reply</button></div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // handle reply button: set parent_id and scroll to form
+  document.querySelectorAll('.btn-reply').forEach(b=>b.addEventListener('click',function(e){
+    e.preventDefault();
+    var id = this.dataset.id; document.getElementById('parent_id').value = id;
+    // show cancel link
+    var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display = 'inline-block';
+    // scroll to form
+    var formTop = document.querySelector('.comment-form-wrap').getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({top: formTop - 80, behavior: 'smooth'});
+  }));
+
+  // submit comment form via fetch to public/api/comments.php
+  var formEl = document.getElementById('commentForm');
+  formEl.addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(this);
+    var submitBtn = this.querySelector('button[type=submit]'); if (submitBtn) submitBtn.disabled = true;
+    fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
+      if (j.status === 'ok') {
+        // If comment is pending moderation, notify user
+        if (j.message && j.message.toLowerCase().indexOf('awaiting') !== -1) {
+          alert(j.message);
+          formEl.reset();
+          document.getElementById('parent_id').value = '';
+          var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
+          return;
+        }
+        // Append the returned comment object instantly
+        if (j.comment) {
+          var c = j.comment;
+          var list = document.getElementById('commentsList');
+          var node = renderCommentNode(c);
+          // if parent_id present, find parent and append to its replies container
+          if (c.parent_id) {
+            var parent = list.querySelector('.comment[data-id="c'+c.parent_id+'"]');
+            if (parent) {
+              var replies = parent.querySelector('.replies');
+              if (!replies) { replies = document.createElement('div'); replies.className='replies'; parent.querySelector('.comment-main').appendChild(replies); }
+              node.setAttribute('data-id','c'+c.id);
+              replies.appendChild(node);
+            } else {
+              node.setAttribute('data-id','c'+c.id);
+              list.insertBefore(node, list.firstChild);
+            }
+          } else {
+            node.setAttribute('data-id','c'+c.id);
+            list.insertBefore(node, list.firstChild);
+          }
+          formEl.reset(); document.getElementById('parent_id').value = '';
+          var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
+        }
+      } else { alert(j.message||'Error'); }
+    }).catch(()=>alert('Network error')).finally(()=>{ if (submitBtn) submitBtn.disabled = false; });
+  });
+
+  // cancel reply
+  var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display='none'; });
+
+  // like button
+  document.getElementById('likeBtn')?.addEventListener('click', function(){
+    var btn = this; btn.disabled = true;
+    fetch('api/like_post.php', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: 'post_id=' + encodeURIComponent(<?= $postId ?>) })
+      .then(r=>r.json()).then(j=>{
+        if (j.status === 'ok') { document.getElementById('likesCount').textContent = j.count; }
+      }).catch(()=>{}).finally(()=>{ btn.disabled=false; });
+  });
+
+  // share button: open small menu
+  document.getElementById('shareBtn')?.addEventListener('click', function(){
+    var url = window.location.href; var title = document.querySelector('h1')?.textContent || document.title;
+    var items = [
+      {label:'Twitter', href: 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(url)},
+      {label:'Facebook', href: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)},
+      {label:'WhatsApp', href: 'https://api.whatsapp.com/send?text=' + encodeURIComponent(title + ' ' + url)},
+      {label:'Copy link', href: 'copy'}
+    ];
+    var menu = document.createElement('div'); menu.className='share-menu';
+    items.forEach(it=>{ var a = document.createElement('a'); a.href = it.href === 'copy' ? '#' : it.href; a.target='_blank'; a.textContent = it.label; a.className='share-item'; a.addEventListener('click', function(ev){ ev.preventDefault(); if (it.href==='copy') { navigator.clipboard?.writeText(url).then(()=>{ alert('Link copied'); }).catch(()=>{ prompt('Copy this URL', url); }); } else { window.open(it.href,'_blank','noopener'); } }); menu.style.position='absolute'; menu.style.right='12px'; menu.style.top='48px'; menu.style.background='#fff'; menu.style.border='1px solid #eee'; menu.style.padding='8px'; menu.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'; menu.appendChild(a); });
+    // remove existing
+    var existing = document.querySelector('.share-menu'); if (existing) existing.remove();
+    document.body.appendChild(menu);
+    setTimeout(()=>{ window.addEventListener('click', function remover(){ menu.remove(); window.removeEventListener('click', remover); }); }, 50);
+  });
+});
+</script>
         <div class="form-row"><input type="text" name="name" placeholder="Your name (optional)"></div>
         <div class="form-row"><input type="email" name="email" placeholder="Email (optional)"></div>
                 <?= nl2br(htmlspecialchars($post['content'])) ?>
