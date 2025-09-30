@@ -2,7 +2,7 @@
 require '../includes/auth.php';
 require '../includes/db.php';
 require '../includes/csrf.php';
-requirePermission('posts');
+requirePermission('post');
 
 $csrf = generateToken();
 $id   = (int)($_GET['id'] ?? 0);
@@ -57,23 +57,5 @@ if (!$post) {
   </form>
 </div>
 <script>
-document.querySelectorAll('.edit-link').forEach(link => {
-  link.addEventListener('click', function(e) {
-    e.preventDefault();
-    const id = this.dataset.id;
-    fetch(`post_edit.php?id=${id}`)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('editPostModalContent').innerHTML = html;
-        document.getElementById('modalOverlay').classList.add('open');
-        document.getElementById('editPostModal').classList.add('open');
-      });
-  });
-});
-
-document.getElementById('modalOverlay').addEventListener('click', closeEditModal);
-function closeEditModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.getElementById('editPostModal').classList.remove('open');
-}
+// edit-link clicks are handled centrally from the posts listing page. This file only contains the modal content.
 </script>

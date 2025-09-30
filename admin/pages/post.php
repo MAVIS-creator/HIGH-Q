@@ -9,7 +9,7 @@ $pageTitle = 'News & Blog';
 $pageSubtitle = 'Create and manage news articles and blog posts';
 
 // Only Admin / Sub-Admin / Moderator
-requirePermission('posts'); // where 'roles' matches the menu slug
+requirePermission('post'); // where 'roles' matches the menu slug
 
 $csrf     = generateToken();
 $errors   = [];
@@ -24,11 +24,61 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
+// Detect whether the posts table has a category_id column on this install
+$hasCategoryId = false;
+try {
+    $colStmt = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts' AND COLUMN_NAME = 'category_id'");
+    $colStmt->execute();
+    $hasCategoryId = (bool)$colStmt->fetchColumn();
+} catch (Throwable $e) {
+    $hasCategoryId = false;
+}
+// Detect whether the posts table has a tags column (some installs don't)
+$hasTags = false;
+try {
+    $colStmt2 = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts' AND COLUMN_NAME = 'tags'");
+    $colStmt2->execute();
+    $hasTags = (bool)$colStmt2->fetchColumn();
+} catch (Throwable $e) {
+    $hasTags = false;
+}
+
+// Fetch list of available columns on posts table to build queries safely
+$availableCols = [];
+try {
+    $colsStmt = $pdo->prepare("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts'");
+    $colsStmt->execute();
+    $availableCols = $colsStmt->fetchAll(PDO::FETCH_COLUMN);
+} catch (Throwable $e) {
+    $availableCols = [];
+}
+
+$hasFeaturedImage = in_array('featured_image', $availableCols, true);
+$hasStatus = in_array('status', $availableCols, true);
+$hasAuthorId = in_array('author_id', $availableCols, true);
+$hasUpdatedAt = in_array('updated_at', $availableCols, true);
+$hasCategory = in_array('category', $availableCols, true);
+
 // Handle Create / Edit / Delete / Toggle Publish
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+    // Temporary debug log (remove when investigation complete)
+    try {
+        $dbgDir = __DIR__ . '/../../storage';
+        if (!is_dir($dbgDir)) @mkdir($dbgDir, 0755, true);
+        $dbgFile = $dbgDir . '/posts-debug.log';
+        $log = "----\n" . date('c') . " POST to post.php action=" . ($_GET['action'] ?? '') . "\n";
+        $log .= "POST keys: " . implode(', ', array_keys($_POST ?? [])) . "\n";
+        $files = [];
+        foreach ($_FILES as $k=>$f) { $files[] = $k . '(' . ($f['name'] ?? '') . ')'; }
+        $log .= "FILES: " . implode(', ', $files) . "\n";
+        @file_put_contents($dbgFile, $log, FILE_APPEND | LOCK_EX);
+    } catch (\Throwable $e) { /* ignore debug failures */ }
+    $dbgFile = __DIR__ . '/../../storage/posts-debug.log';
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = "Invalid CSRF token.";
+        @file_put_contents($dbgFile, date('c') . " CSRF: INVALID\n", FILE_APPEND | LOCK_EX);
     } else {
+        @file_put_contents($dbgFile, date('c') . " CSRF: OK\n", FILE_APPEND | LOCK_EX);
         $act = $_GET['action'];
         $id  = (int)($_GET['id'] ?? 0);
 
@@ -65,22 +115,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         if (empty($errors)) {
                         // CREATE
-                        if ($act === 'create') {
-                                $stmt = $pdo->prepare("\n                  INSERT INTO posts\n                    (title, slug, excerpt, content, category_id, tags, featured_image,\n                     status, author_id)\n                  VALUES (?,?,?,?,?,?,?,?,?)\n                ");
-                                $stmt->execute([
-                                        $title,
-                                        $slug,
-                                        $excerpt,
-                                        $content,
-                                        $category_id ?: null,
-                                        $tags,
-                                        $imgPath ?: null,
-                                        $status,
-                                        $_SESSION['user']['id']
-                                ]);
-                                logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
-                                $success[] = "Article '{$title}' created.";
-                        }
+            if ($act === 'create') {
+                // Build columns and params dynamically based on DB schema
+                $cols = ['title', 'slug', 'excerpt', 'content'];
+                $params = [$title, $slug, $excerpt, $content];
+                if ($hasCategoryId) { $cols[] = 'category_id'; $params[] = $category_id ?: null; }
+                if ($hasTags) { $cols[] = 'tags'; $params[] = $tags; }
+                if ($hasFeaturedImage) { $cols[] = 'featured_image'; $params[] = $imgPath ?: null; }
+                if ($hasStatus) { $cols[] = 'status'; $params[] = $status; }
+                if ($hasAuthorId) { $cols[] = 'author_id'; $params[] = $_SESSION['user']['id']; }
+
+                $placeholders = implode(',', array_fill(0, count($cols), '?'));
+                $sql = "INSERT INTO posts (" . implode(', ', $cols) . ") VALUES ({$placeholders})";
+                try {
+                    @file_put_contents($dbgFile, date('c') . " SQL: " . $sql . "\nPARAMS: " . json_encode($params) . "\n", FILE_APPEND | LOCK_EX);
+                    $stmt = $pdo->prepare($sql);
+                    $ok = $stmt->execute($params);
+                    @file_put_contents($dbgFile, date('c') . " EXECUTE RESULT: " . ($ok ? 'true' : 'false') . "\n", FILE_APPEND | LOCK_EX);
+                    if (!$ok) {
+                        $ei = $stmt->errorInfo();
+                        @file_put_contents($dbgFile, date('c') . " ERRORINFO: " . json_encode($ei) . "\n", FILE_APPEND | LOCK_EX);
+                    }
+                } catch (Throwable $e) {
+                    @file_put_contents($dbgFile, date('c') . " EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+                    $ok = false;
+                }
+                                if ($ok) {
+                                                    $newId = $pdo->lastInsertId();
+                                                    logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                                    $success[] = "Article '{$title}' created.";
+                                                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
+                                                } else {
+                                    $ei = $stmt->errorInfo();
+                                    $msg = "Failed to create article: " . ($ei[2] ?? 'Unknown DB error');
+                                    $errors[] = $msg;
+                                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATE ERROR: " . $msg . "\n", FILE_APPEND | LOCK_EX);
+                                }
+            }
 
             // EDIT
                         if ($act === 'edit' && $id) {
@@ -90,20 +161,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                                $stmt = $pdo->prepare("\n                  UPDATE posts SET\n                    title=?, slug=?, excerpt=?, content=?, category_id=?, tags=?,\n                    featured_image=?, status=?, updated_at=NOW()\n                  WHERE id=?\n                ");
-                $stmt->execute([
-                    $title,
-                    $slug,
-                    $excerpt,
-                    $content,
-                    $category_id ?: null,
-                    $tags,
-                    $imgPath ?: null,
-                    $status,
-                    $id
-                ]);
-                logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
-                $success[] = "Article '{$title}' updated.";
+                                                // Build SET clause and params dynamically
+                                                $setParts = ['title=?', 'slug=?', 'excerpt=?', 'content=?'];
+                                                $params = [$title, $slug, $excerpt, $content];
+                                                if ($hasCategoryId) { $setParts[] = 'category_id=?'; $params[] = $category_id ?: null; }
+                                                if ($hasTags) { $setParts[] = 'tags=?'; $params[] = $tags; }
+                                                if ($hasFeaturedImage) { $setParts[] = 'featured_image=?'; $params[] = $imgPath ?: null; }
+                                                if ($hasStatus) { $setParts[] = 'status=?'; $params[] = $status; }
+                                                $sql = "UPDATE posts SET " . implode(', ', $setParts);
+                                                if ($hasUpdatedAt) $sql .= ", updated_at=NOW()";
+                                                $sql .= " WHERE id=?";
+                                                $params[] = $id;
+                                try {
+                                    @file_put_contents($dbgFile, date('c') . " SQL: " . $sql . "\nPARAMS: " . json_encode($params) . "\n", FILE_APPEND | LOCK_EX);
+                                    $stmt = $pdo->prepare($sql);
+                                    $ok = $stmt->execute($params);
+                                    @file_put_contents($dbgFile, date('c') . " EXECUTE RESULT: " . ($ok ? 'true' : 'false') . "\n", FILE_APPEND | LOCK_EX);
+                                    if (!$ok) {
+                                        $ei = $stmt->errorInfo();
+                                        @file_put_contents($dbgFile, date('c') . " ERRORINFO: " . json_encode($ei) . "\n", FILE_APPEND | LOCK_EX);
+                                    }
+                                } catch (Throwable $e) {
+                                    @file_put_contents($dbgFile, date('c') . " EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+                                    $ok = false;
+                                }
+                if ($ok) {
+                    logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
+                    $success[] = "Article '{$title}' updated.";
+                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATED ID: " . $id . "\n", FILE_APPEND | LOCK_EX);
+                } else {
+                    $ei = $stmt->errorInfo();
+                    $msg = "Failed to update article: " . ($ei[2] ?? 'Unknown DB error');
+                    $errors[] = $msg;
+                    @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATE ERROR: " . $msg . "\n", FILE_APPEND | LOCK_EX);
+                }
+                // If this is an AJAX edit (X-Requested-With), return JSON with updated post data
+                if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true, 'post' => [
+                        'id' => $id,
+                        'title' => $title,
+                        'excerpt' => $excerpt,
+                        'category' => '', // category name not joined here
+                        'author' => $_SESSION['user']['name'] ?? '' ,
+                        'featured_image' => $imgPath
+                    ]]);
+                    exit;
+                }
             }
 
             // DELETE
@@ -122,8 +226,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-    header("Location: index.php?pages=posts");
+    // Only redirect to the posts list when we successfully created/updated (i.e. have success messages)
+    if (empty($errors) && !empty($success)) {
+        header("Location: index.php?pages=posts");
         exit;
+    }
     }
 }
 
@@ -163,6 +270,16 @@ $posts = $stmt->fetchAll();
     <?php include '../includes/sidebar.php'; ?>
 
     <div class="container">
+        <?php if (!empty($errors)): ?>
+            <div class="admin-notice" style="background:#ffecec;border-left:4px solid #f28b82;padding:12px;margin-bottom:12px;">
+                <?php foreach ($errors as $err) echo '<div>' . htmlspecialchars($err) . '</div>'; ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($success)): ?>
+            <div class="admin-notice" style="background:#e7ffef;border-left:4px solid #66cc88;padding:12px;margin-bottom:12px;">
+                <?php foreach ($success as $s) echo '<div>' . htmlspecialchars($s) . '</div>'; ?>
+            </div>
+        <?php endif; ?>
         <div class="module-header">
             <div>
                 <h1>News & Blog Management</h1>
@@ -182,6 +299,19 @@ $posts = $stmt->fetchAll();
         </div>
 
         <?php if ($posts): ?>
+            <?php
+                $missing = [];
+                foreach ($posts as $pp) {
+                    if ($pp['status'] === 'published' && (empty($pp['excerpt']) || empty($pp['featured_image']))) {
+                        $missing[] = $pp;
+                    }
+                }
+            ?>
+            <?php if (!empty($missing)): ?>
+                <div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;">
+                    <strong>Notice:</strong> <?= count($missing) ?> published post(s) are missing an excerpt or featured image. It's recommended to add an excerpt and/or featured image for better listings and sharing.
+                </div>
+            <?php endif; ?>
             <div class="posts-grid">
                 <?php foreach ($posts as $p): ?>
                     <div class="post-card" id="post-row-<?= $p['id'] ?>">
@@ -191,10 +321,13 @@ $posts = $stmt->fetchAll();
                         <div class="meta">
                             <strong><?= htmlspecialchars($p['title']) ?></strong>
                             <div class="info"><?= htmlspecialchars($p['category'] ?? 'Uncategorized') ?> • <?= htmlspecialchars($p['author'] ?? '') ?></div>
+                            <?php if ($p['status'] === 'published' && (empty($p['excerpt']) || empty($p['featured_image']))): ?>
+                                <span title="Missing excerpt or image" style="color:var(--hq-yellow);margin-left:8px">⚠</span>
+                            <?php endif; ?>
                         </div>
                         <div class="excerpt"><?= nl2br(htmlspecialchars($p['excerpt'] ?: '')) ?></div>
                         <div class="actions">
-                            <a href="post_edit.php?id=<?= $p['id'] ?>" class="btn">Edit</a>
+                            <a href="post_edit.php?id=<?= $p['id'] ?>" class="btn edit-link" data-id="<?= $p['id'] ?>">Edit</a>
                             <form method="post" action="index.php?action=delete&amp;id=<?= $p['id'] ?>&amp;pages=posts" style="display:inline">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                                 <button class="btn btn-danger" type="submit">Delete</button>
@@ -215,7 +348,7 @@ $posts = $stmt->fetchAll();
         <div class="modal-content">
             <span class="modal-close" id="postModalClose"><i class="bx bx-x"></i></span>
             <h3 id="postModalTitle">New Article</h3>
-            <form id="postForm" method="post" enctype="multipart/form-data">
+            <form id="postForm" method="post" action="index.php?pages=posts&action=create" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
                 <div class="form-row">
@@ -249,7 +382,11 @@ $posts = $stmt->fetchAll();
                 </div>
                 <div class="form-row">
                     <label>Featured Image</label>
-                    <input type="file" name="featured_image" id="pImage" accept="image/*">
+                    <div class="file-input-wrap">
+                        <input type="file" name="featured_image" id="pImage" accept="image/*">
+                        <button type="button" id="pImageBtn" class="btn">Choose File</button>
+                        <span id="pImageName" class="file-name">No file chosen</span>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label><input type="checkbox" name="publish" id="pPublish"> Publish immediately</label>
@@ -271,6 +408,57 @@ $posts = $stmt->fetchAll();
     <?php include '../includes/footer.php'; ?>
 
    <script>
+// Auto-generate slug from title and excerpt from content; display chosen file name
+const pTitle = document.getElementById('pTitle');
+const pSlug = document.getElementById('pSlug');
+const pContent = document.getElementById('pContent');
+const pExcerpt = document.getElementById('pExcerpt');
+const pImage = document.getElementById('pImage');
+const pImageName = document.getElementById('pImageName');
+const pImageBtn = document.getElementById('pImageBtn');
+
+function slugify(v){ return String(v || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+if (pTitle && pSlug) {
+    pTitle.addEventListener('input', function(){
+        try { if (!pSlug.value || pSlug.value.trim()==='') pSlug.value = slugify(pTitle.value); } catch(e){}
+    });
+}
+if (pContent && pExcerpt) {
+    pContent.addEventListener('input', function(){
+        try {
+            if (!pExcerpt.value || pExcerpt.value.trim()==='') {
+                var txt = pContent.value.replace(/\s+/g,' ').trim();
+                pExcerpt.value = txt.length > 160 ? txt.substr(0,160).trim() + '...' : txt;
+            }
+        } catch(e){}
+    });
+}
+if (pImage) {
+    pImage.addEventListener('change', function(){
+        if (pImage.files && pImage.files.length>0) {
+            pImageName.textContent = pImage.files[0].name;
+            // optional small preview: if file is image, show preview inside modal
+            try {
+                var f = pImage.files[0];
+                if (f.type.indexOf('image/') === 0) {
+                    var reader = new FileReader();
+                    reader.onload = function(e){
+                        // create or update preview img
+                        var ex = document.getElementById('pImagePreview');
+                        if (!ex) {
+                            ex = document.createElement('img'); ex.id = 'pImagePreview'; ex.style.maxWidth='120px'; ex.style.maxHeight='80px'; ex.style.marginLeft='8px'; ex.style.borderRadius='6px';
+                            pImageName.parentNode.appendChild(ex);
+                        }
+                        ex.src = e.target.result;
+                    };
+                    reader.readAsDataURL(f);
+                }
+            } catch(e){}
+        } else pImageName.textContent = 'No file chosen';
+    });
+    if (pImageBtn) pImageBtn.addEventListener('click', function(){ pImage.click(); });
+}
+
 const overlay     = document.getElementById('modalOverlay');
 const editModal   = document.getElementById('editPostModal');
 const editContent = document.getElementById('editPostModalContent');

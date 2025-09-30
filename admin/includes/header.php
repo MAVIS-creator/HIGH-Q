@@ -1,5 +1,9 @@
 <?php
 // admin/includes/header.php
+// Start output buffering so downstream header() calls succeed even if this file emits HTML
+if (!headers_sent()) {
+    ob_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +14,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../assets/css/notifications.css">
+    <!-- SweetAlert2 (used by many admin pages) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/notifications.js" defer></script>
+    <script src="../assets/js/header-notifications.js" defer></script>
     <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
@@ -106,6 +116,66 @@
             echo "<div class=\"admin-flash admin-flash-{$type}\">" . htmlspecialchars($msg) . "</div>";
         }
     }
+    // --- Admin area IP/MAC logging and blocklist enforcement ---
+    try {
+        if (file_exists(__DIR__ . '/../../config/db.php')) {
+            // ensure DB is available (admin pages often include db earlier)
+            if (!isset($pdo)) require_once __DIR__ . '/../../config/db.php';
+        }
+        if (isset($pdo)) {
+            $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+            $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
+            $path = $_SERVER['REQUEST_URI'] ?? null;
+            $referer = $_SERVER['HTTP_REFERER'] ?? null;
+            $userId = $_SESSION['user']['id'] ?? null;
+            $headers = [];
+            foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
+                if (!empty($_SERVER[$h])) $headers[$h] = $_SERVER[$h];
+            }
+            $hdrJson = !empty($headers) ? json_encode($headers) : null;
+            $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, user_id, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
+            $ins->execute([$remoteIp, $ua, $path, $referer, $userId, $hdrJson]);
+
+            // Decide enforcement mode: 'mac' | 'ip' | 'both' (default 'mac')
+            $enforcement = 'mac';
+            try {
+                $stmtS = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+                $stmtS->execute(['system_settings']);
+                $val = $stmtS->fetchColumn();
+                $j = $val ? json_decode($val, true) : [];
+                $enforcement = $j['security']['enforcement_mode'] ?? $j['security']['enforce_by'] ?? $enforcement;
+            } catch (Throwable $e) { /* ignore */ }
+
+            // Check MAC header if allowed
+            $mac = null;
+            foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
+                if (!empty($_SERVER[$h])) { $mac = trim($_SERVER[$h]); break; }
+            }
+            if (!empty($mac) && in_array($enforcement, ['mac','both'])) {
+                $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
+                $q->execute([$mac]);
+                $r = $q->fetch(PDO::FETCH_ASSOC);
+                if ($r && !empty($r['enabled'])) {
+                    http_response_code(403);
+                    echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
+                    exit;
+                }
+            }
+
+            // If enforcement allows IP checks or uses fallback, check blocked_ips table
+            if (in_array($enforcement, ['ip','both'])) {
+                try {
+                    $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
+                    $bq->execute([$remoteIp]);
+                    if ($bq->fetch()) {
+                        http_response_code(403);
+                        echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
+                        exit;
+                    }
+                } catch (Throwable $e) { /* ignore */ }
+            }
+        }
+    } catch (Throwable $e) { error_log('admin ip/mac logging error: ' . $e->getMessage()); }
     ?>
     <main class="admin-main">
         <style>
@@ -115,67 +185,4 @@
         .notif-item{padding:10px;border-bottom:1px solid #f1f1f1}
         .notif-item:last-child{border-bottom:none}
         .notif-empty{padding:20px;text-align:center;color:#666}
-        </style>
-        <script>
-        (function(){
-            const btn = document.getElementById('notifBtn');
-            if(!btn) return;
-            // create dropdown container
-            const wrap = document.createElement('div'); wrap.className='notif-dropdown';
-            const panel = document.createElement('div'); panel.className='notif-panel'; panel.id='notifPanel';
-            wrap.appendChild(btn.cloneNode(true)); // clone the button into wrapper
-            wrap.appendChild(panel);
-            // replace original button with wrapper
-            const orig = btn.parentNode; orig.replaceChild(wrap, btn);
-
-            const badge = wrap.querySelector('#notifBadge');
-
-            async function loadNotifications(){
-                try{
-                    const res = await fetch('/HIGH-Q/admin/api/notifications.php');
-                    if(!res.ok) return;
-                    const j = await res.json();
-                    const list = j.notifications || [];
-                    // update badge
-                    if(list.length>0){ badge.style.display='inline-block'; badge.textContent = list.length; }
-                    else { badge.style.display='none'; }
-                    // render
-                    panel.innerHTML = '';
-                    if(list.length===0){ panel.innerHTML = '<div class="notif-empty">No notifications</div>'; return; }
-                    list.forEach(n=>{
-                        const it = document.createElement('div'); it.className='notif-item';
-                        const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = n.title || '';
-                        const msg = document.createElement('div'); msg.style.fontSize='0.95rem'; msg.style.color='#333'; msg.textContent = n.message || '';
-                        const time = document.createElement('div'); time.style.fontSize='0.8rem'; time.style.color='#888'; time.textContent = n.created_at || '';
-                        it.appendChild(title); it.appendChild(msg); it.appendChild(time);
-                        it.addEventListener('click', ()=>{
-                            // navigate on click depending on type
-                            if(n.type==='chat') window.location = '/HIGH-Q/admin/index.php?pages=chat&thread_id=' + (n.meta.thread_id || n.id);
-                            else if(n.type==='comment') window.location = '/HIGH-Q/admin/index.php?pages=comments&highlight=' + (n.id);
-                            else if(n.type==='student_application') window.location = '/HIGH-Q/admin/index.php?pages=students&highlight=' + (n.id);
-                            else if(n.type==='payment') window.location = '/HIGH-Q/admin/index.php?pages=payments&highlight=' + (n.id);
-                        });
-                        panel.appendChild(it);
-                    });
-                }catch(e){ /* ignore */ }
-            }
-
-            // toggle panel
-            wrap.querySelector('button').addEventListener('click', function(e){
-                e.stopPropagation(); panel.style.display = panel.style.display==='block' ? 'none' : 'block';
-                if(panel.style.display==='block') loadNotifications();
-            });
-
-            // close on outside click
-            document.addEventListener('click', function(e){ if(!wrap.contains(e.target)) panel.style.display='none'; });
-
-            // poll badge count in background
-            async function pollCount(){
-                try{
-                    const res = await fetch('/HIGH-Q/admin/api/notifications.php'); if(!res.ok) return;
-                    const j = await res.json(); const c = j.count || 0; if(c>0) badge.style.display='inline-block', badge.textContent=c; else badge.style.display='none';
-                }catch(e){}
-            }
-            pollCount(); setInterval(pollCount,5000);
-        })();
-        </script>
+    </style>

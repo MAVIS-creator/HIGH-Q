@@ -10,6 +10,16 @@ requirePermission('students'); // where 'students' matches the menu slug
 $csrf = generateToken('students_form');
 
 // Handle POST actions (activate/deactivate/delete)
+// Handle AJAX GET view of a registration
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
+  $id = (int)$_GET['id'];
+  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+  $stmt->execute([$id]); $s = $stmt->fetch(PDO::FETCH_ASSOC);
+  header('Content-Type: application/json');
+  if (!$s) { echo json_encode(['error'=>'Not found']); exit; }
+  echo json_encode($s); exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'];
     $id = (int)$_GET['id'];
@@ -39,20 +49,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         header('Location: index.php?pages=students'); exit;
     }
 
-    if ($action === 'delete') {
-        // Soft-delete: set is_active = 3 (deleted) if schema supports, else remove
-        try {
-            $stmt = $pdo->prepare('UPDATE users SET is_active = 3, updated_at = NOW() WHERE id = ?');
-            $stmt->execute([$id]);
-            logAction($pdo, $currentUserId, 'student_delete', ['student_id'=>$id]);
-        } catch (Exception $e) {
-            // Fallback to hard delete
-            $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
-            $stmt->execute([$id]);
-            logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
-        }
-        header('Location: index.php?pages=students'); exit;
+  if ($action === 'delete') {
+    // If this id exists in student_registrations, delete that registration. Otherwise treat as users delete.
+    $checkReg = $pdo->prepare('SELECT id FROM student_registrations WHERE id = ? LIMIT 1');
+    $checkReg->execute([$id]);
+    $regFound = $checkReg->fetch(PDO::FETCH_ASSOC);
+    if ($regFound) {
+      $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
+      $del->execute([$id]);
+      logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
+      header('Location: index.php?pages=students'); exit;
     }
+
+    // Fallback: Soft-delete user record (legacy path)
+    try {
+      $stmt = $pdo->prepare('UPDATE users SET is_active = 3, updated_at = NOW() WHERE id = ?');
+      $stmt->execute([$id]);
+      logAction($pdo, $currentUserId, 'student_delete', ['student_id'=>$id]);
+    } catch (Exception $e) {
+      // Fallback to hard delete
+      $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
+      $stmt->execute([$id]);
+      logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
+    }
+    header('Location: index.php?pages=students'); exit;
+  }
 
   // Custom: send message/approve flow from modal
   if ($action === 'send_message') {
@@ -79,20 +100,146 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     }
     header('Location: index.php?pages=students'); exit;
   }
+
+  // Confirm registration (admin) - send notification
+  if ($action === 'confirm_registration') {
+    $stmt = $pdo->prepare('SELECT * FROM student_registrations WHERE id = ? LIMIT 1'); $stmt->execute([$id]); $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+    if (!$reg) {
+      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
+      header('Location: index.php?pages=students'); exit;
+    }
+
+    // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
+    if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
+      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
+      setFlash('error','Registration already confirmed'); header('Location: index.php?pages=students'); exit;
+    }
+
+    // Transaction: mark confirmed and optionally create payment and send reference
+    try {
+      $pdo->beginTransaction();
+      $upd = $pdo->prepare('UPDATE student_registrations SET status = ?, updated_at = NOW() WHERE id = ?'); $upd->execute(['confirmed', $id]);
+      logAction($pdo, $currentUserId, 'confirm_registration', ['registration_id'=>$id]);
+
+      // Optional payment creation: admin may include create_payment=1 and amount in POST (AJAX)
+      if (!empty($_POST['create_payment']) && !empty($_POST['amount'])) {
+        $amount = floatval($_POST['amount']);
+        $method = $_POST['method'] ?? 'bank';
+        // create payment placeholder and send reference to registrant email
+        $ref = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
+        $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+        $ins->execute([$amount, $method, $ref]);
+        $paymentId = $pdo->lastInsertId();
+        logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
+
+        // send email to registrant with link to payments_wait (if email present)
+        if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+          // Try to fetch site settings for branding
+          $siteName = 'HIGH Q'; $logoUrl = '';$contactEmail = '';$contactPhone = '';
+          try {
+            $s = $pdo->query('SELECT site_name, logo_url, contact_email, contact_phone FROM site_settings LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+            if (!empty($s['site_name'])) $siteName = $s['site_name'];
+            if (!empty($s['logo_url'])) $logoUrl = $s['logo_url'];
+            if (!empty($s['contact_email'])) $contactEmail = $s['contact_email'];
+            if (!empty($s['contact_phone'])) $contactPhone = $s['contact_phone'];
+          } catch (Throwable $e) { /* ignore */ }
+
+          $subject = $siteName . ' — Payment instructions for your registration';
+          $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+          $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+          // build link relative to public folder (best-effort)
+          $base = $proto . '://' . $host;
+          $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+
+          // Branded HTML message
+          $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
+          $body .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333} .container{max-width:640px;margin:0 auto;padding:20px} .btn{display:inline-block;padding:10px 16px;background:#d62828;color:#fff;border-radius:6px;text-decoration:none}</style>';
+          $body .= '</head><body><div class="container">';
+          if ($logoUrl) $body .= '<div style="margin-bottom:12px;"><img src="' . htmlspecialchars($logoUrl) . '" alt="' . htmlspecialchars($siteName) . '" style="max-height:60px"></div>';
+          $body .= '<h2 style="color:#111">Hello ' . htmlspecialchars(trim($reg['first_name'] . ' ' . ($reg['last_name'] ?? ''))) . ',</h2>';
+          $body .= '<p>Your registration has been approved by ' . htmlspecialchars($siteName) . ' and requires payment to complete enrollment.</p>';
+          $body .= '<p><strong>Amount:</strong> ₦' . number_format($amount,2) . '</p>';
+          $body .= '<p><strong>Payment reference:</strong> <code>' . htmlspecialchars($ref) . '</code></p>';
+          $body .= '<p><a class="btn" href="' . htmlspecialchars($link) . '">Complete payment now</a></p>';
+          $body .= '<p style="color:#666;font-size:13px;margin-top:18px">If the button above does not work, copy and paste this link into your browser: <br>' . htmlspecialchars($link) . '</p>';
+          if ($contactEmail || $contactPhone) {
+            $body .= '<hr><p style="color:#666;font-size:13px">Need help? Contact us at ' . ($contactEmail ? htmlspecialchars($contactEmail) : '') . ($contactPhone ? ' / ' . htmlspecialchars($contactPhone) : '') . '</p>';
+          }
+          $body .= '<p style="margin-top:20px">Thanks,<br>' . htmlspecialchars($siteName) . ' team</p>';
+          $body .= '</div></body></html>';
+
+          @sendEmail($reg['email'], $subject, $body);
+        }
+      }
+
+      $pdo->commit();
+      if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Confirmed']); exit; }
+      header('Location: index.php?pages=students'); exit;
+    } catch (Exception $e) {
+      if ($pdo->inTransaction()) $pdo->rollBack();
+      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
+      setFlash('error','Failed to confirm registration'); header('Location: index.php?pages=students'); exit;
+    }
+  }
+
+  // Reject registration with optional reason
+  if ($action === 'reject_registration') {
+    $reason = trim($_POST['reason'] ?? '');
+    $stmt = $pdo->prepare('SELECT * FROM student_registrations WHERE id = ? LIMIT 1'); $stmt->execute([$id]); $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($reg) {
+      $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['rejected', $id]);
+      logAction($pdo, $currentUserId, 'reject_registration', ['registration_id'=>$id, 'reason'=>$reason]);
+      if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
+        $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] . ' ' . ($reg['last_name'] ?? '')) . ',</p><p>Your registration has been rejected.' . ($reason ? '<br><strong>Reason:</strong> ' . htmlspecialchars($reason) : '') . '</p>';
+        @sendEmail($reg['email'], $subject, $body);
+      }
+    }
+    header('Location: index.php?pages=students'); exit;
+  }
 }
 
-// Fetch students (users with role slug 'student' or where role is null)
-$stmt = $pdo->prepare("SELECT u.*, r.name AS role_name, r.slug AS role_slug FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE r.slug = 'student' OR u.role_id IS NULL ORDER BY u.created_at DESC");
-$stmt->execute();
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Prefer to show structured student registrations if the table exists
+$hasRegistrations = false;
+try {
+  $check = $pdo->query("SHOW TABLES LIKE 'student_registrations'")->fetch();
+  $hasRegistrations = !empty($check);
+} catch (Throwable $e) { $hasRegistrations = false; }
 
-// Counts
-$total = count($students);
-$active = 0; $pending = 0; $banned = 0;
-foreach ($students as $s) {
+// ensure counters exist regardless of which data path is used
+$active = 0; $pending = 0; $banned = 0; $total = 0;
+
+if ($hasRegistrations) {
+  // simple pagination
+  $perPage = 12;
+  $page = max(1, (int)($_GET['page'] ?? 1));
+  $offset = ($page - 1) * $perPage;
+
+  $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
+  $countStmt->execute();
+  $total = (int)$countStmt->fetchColumn();
+
+  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
+  $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+  $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+  $stmt->execute();
+  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} else {
+  // Fetch students (users with role slug 'student' or where role is null)
+  $stmt = $pdo->prepare("SELECT u.*, r.name AS role_name, r.slug AS role_slug FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE r.slug = 'student' OR u.role_id IS NULL ORDER BY u.created_at DESC");
+  $stmt->execute();
+  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Counts for legacy users list
+  $total = count($students);
+  $active = 0; $pending = 0; $banned = 0;
+  foreach ($students as $s) {
     if ($s['is_active']==1) $active++;
     elseif ($s['is_active']==0) $pending++;
     elseif ($s['is_active']==2) $banned++;
+  }
 }
 ?>
 
@@ -128,51 +275,98 @@ foreach ($students as $s) {
   </div>
 
   <div class="users-list" id="studentsList">
-    <?php foreach ($students as $s):
-      $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
-      $roleClass = 'role-student';
-    ?>
-    <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
-      <div class="card-left">
-        <img src="<?= $s['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
-        <div class="card-meta">
-          <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
-          <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
-          <div class="card-badges">
-            <span class="role-badge <?= $roleClass ?>">Student</span>
-            <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
+    <?php if (!empty($hasRegistrations)): ?>
+      <?php foreach ($students as $s): ?>
+        <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>">
+          <div class="card-left">
+            <img src="<?= '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+            <div class="card-meta">
+              <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
+              <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
+              <div class="card-badges">
+                <span class="role-badge role-student">Student</span>
+                <span class="status-badge <?= ($s['status']==='paid' || $s['status']==='confirmed') ? 'status-active' : 'status-pending' ?>"><?= htmlspecialchars(ucfirst($s['status'])) ?></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-actions">
+              <!-- view icon removed as requested -->
+              <?php if (!empty($s['status'])): ?>
+                <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
+                <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
+              <?php endif; ?>
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this registration?');">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-banish">Delete</button>
+              </form>
+            </div>
+            <div class="card-details" style="margin-top:10px;padding:12px;border-radius:6px;background:#fff;">
+              <div><strong>DOB:</strong> <?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
+              <div><strong>Address:</strong> <?= htmlspecialchars(strlen($s['home_address']??'')>80 ? substr($s['home_address'],0,80).'...' : ($s['home_address']??'-')) ?></div>
+              <div><strong>Emergency:</strong> <?= htmlspecialchars(($s['emergency_contact_name'] ?? '-') . ' / ' . ($s['emergency_contact_phone'] ?? '-')) ?></div>
+              <div style="margin-top:8px;"><a href="#" class="view-registration" data-id="<?= $s['id'] ?>">View full registration</a></div>
+            </div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+
+      <!-- Pagination -->
+      <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
+        <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
+          <?php for ($p=1;$p<=$pages;$p++): ?>
+            <a href="index.php?pages=students&page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+          <?php endfor; ?>
+        </div>
+      <?php endif; ?>
+
+    <?php else: ?>
+      <?php foreach ($students as $s):
+        $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
+        $roleClass = 'role-student';
+      ?>
+      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
+        <div class="card-left">
+          <img src="<?= $s['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+          <div class="card-meta">
+            <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
+            <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
+            <div class="card-badges">
+              <span class="role-badge <?= $roleClass ?>">Student</span>
+              <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
+            </div>
+          </div>
+        </div>
+        <div class="card-right">
+          <div class="card-actions">
+            <!-- view icon removed as requested -->
+            <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
+              <?php if ($s['is_active'] == 1): ?>
+                <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-banish">Deactivate</button>
+                </form>
+              <?php elseif ($s['is_active'] == 0): ?>
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-approve">Activate</button>
+                </form>
+              <?php else: ?>
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-approve">Reactivate</button>
+                </form>
+              <?php endif; ?>
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this student? This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn-banish">Delete</button>
+              </form>
+            <?php endif; ?>
           </div>
         </div>
       </div>
-      <div class="card-right">
-        <div class="card-actions">
-          <button class="btn-view" data-user-id="<?= $s['id'] ?>" title="View"><i class='bx bx-show'></i></button>
-          <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
-            <?php if ($s['is_active'] == 1): ?>
-              <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-banish">Deactivate</button>
-              </form>
-            <?php elseif ($s['is_active'] == 0): ?>
-              <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-approve">Activate</button>
-              </form>
-            <?php else: ?>
-              <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-approve">Reactivate</button>
-              </form>
-            <?php endif; ?>
-            <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this student? This cannot be undone.');">
-              <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-              <button type="submit" class="btn-banish">Delete</button>
-            </form>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-    <?php endforeach; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
   </div>
 
 </div>
@@ -201,16 +395,33 @@ function filterStudents(){
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
 
-// View button behavior (reuse users.php modal if present)
-document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click', e=>{
+// View registration link behavior: fetch registration JSON and show modal with Confirm/Reject
+const __students_csrf = '<?= $csrf ?>';
+document.querySelectorAll('.view-registration').forEach(link=>link.addEventListener('click', async (e)=>{
   e.preventDefault();
-  const id = btn.dataset.userId;
-  // If users modal exists in DOM (users.php), call its loader; otherwise open a simple window
-  if (typeof loadUser === 'function') {
-    loadUser(id,'view');
-  } else {
-    window.location = `index.php?pages=users&action=view&id=${id}`;
-  }
+  const id = link.dataset.id;
+  try {
+    const res = await fetch(`index.php?pages=students&action=view&id=${id}`);
+    const data = await res.json();
+    if (!data || data.error) { alert('Registration not found'); return; }
+    // populate modal
+    const content = document.getElementById('registrationContent');
+    content.innerHTML = `
+      <div style="max-height:480px;overflow:auto;">
+        <h4>${(data.first_name||'') + ' ' + (data.last_name||'')}</h4>
+        <div><strong>Email:</strong> ${data.email||''}</div>
+        <div><strong>Phone:</strong> ${data.phone||data.phone_number||''}</div>
+        <div><strong>DOB:</strong> ${data.date_of_birth||data.dob||''}</div>
+        <div><strong>Address:</strong> ${data.home_address||data.address||''}</div>
+        <div><strong>Emergency:</strong> ${(data.emergency_contact_name||'') + ' / ' + (data.emergency_contact_phone||'')}</div>
+        ${data.notes?`<div style="margin-top:8px;"><strong>Notes:</strong><div>${data.notes}</div></div>`:''}
+      </div>
+    `;
+    // store id on modal for actions
+    const modal = document.getElementById('registrationViewModal');
+    modal.dataset.regId = id;
+    modal.style.display = 'flex';
+  } catch (err) { console.error(err); alert('Failed to load registration'); }
 }));
 </script>
 
@@ -261,6 +472,146 @@ document.querySelectorAll('.user-card .btn-view').forEach(btn=>{
 
 // Close modal when clicking outside content
 modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
+</script>
+
+<!-- Registration View & Approve/Reject Modal -->
+<div id="registrationViewModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+  <div class="modal-content" style="background:#fff;padding:18px;border-radius:8px;max-width:780px;width:96%;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+    <h3 id="regModalTitle">Registration</h3>
+    <div id="registrationContent" style="margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button id="regClose" type="button" class="btn">Close</button>
+      <form id="regConfirmForm" method="post" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+        <button type="submit" class="btn btn-approve">Confirm</button>
+      </form>
+      <button id="regRejectBtn" class="btn btn-banish">Reject</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Registration modal handlers
+const regModal = document.getElementById('registrationViewModal');
+const regClose = document.getElementById('regClose');
+const regConfirmForm = document.getElementById('regConfirmForm');
+const regRejectBtn = document.getElementById('regRejectBtn');
+
+regClose.addEventListener('click', ()=> regModal.style.display='none');
+regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.style.display='none'; });
+
+// When confirm form is submitted, POST to confirm_registration
+// Helper to POST action and reload
+async function postAction(url, formData){
+  const res = await fetch(url, { method: 'POST', body: formData });
+  if (!res.ok) throw new Error('Server error');
+  window.location = 'index.php?pages=students';
+}
+
+// Confirm (modal) handler
+regConfirmForm.addEventListener('submit', async function(e){
+  e.preventDefault();
+  const id = regModal.dataset.regId;
+  if (!id) return Swal.fire('Error','No registration selected','error');
+  const choice = await Swal.fire({ title: 'Confirm registration?', text: 'Create payment reference to send to registrant?', icon:'question', showDenyButton:true, showCancelButton:true, confirmButtonText:'Confirm only', denyButtonText:'Create payment & confirm' });
+  if (choice.isConfirmed) {
+    const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error'));
+  } else if (choice.isDenied) {
+    const { value: formValues } = await Swal.fire({
+      title: 'Create payment',
+      html: '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
+            '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
+      focusConfirm: false,
+      preConfirm: () => ({ amount: document.getElementById('swal-amount').value, method: document.getElementById('swal-method').value })
+    });
+    if (!formValues) return;
+    const amt = parseFloat(formValues.amount || 0);
+    if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
+    const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
+    postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed','error'));
+  }
+});
+
+// Reject (modal) via SweetAlert2 textarea
+regRejectBtn.addEventListener('click', ()=>{
+  const id = regModal.dataset.regId;
+  if (!id) return Swal.fire('Error','No registration selected','error');
+  Swal.fire({
+    title: 'Reject registration',
+    input: 'textarea',
+    inputLabel: 'Reason (optional)',
+    inputPlaceholder: 'Enter a reason for rejection',
+    showCancelButton: true,
+    confirmButtonText: 'Reject',
+    cancelButtonText: 'Cancel',
+    inputAttributes: { 'aria-label': 'Rejection reason' }
+  }).then(result=>{
+    if (result.isConfirmed) {
+      const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
+      postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error'));
+    }
+  });
+});
+
+// Delegated inline Confirm/Reject handlers
+document.addEventListener('click', function(e){
+  const t = e.target.closest('.inline-confirm');
+    if (t) {
+    const id = t.dataset.id;
+    if (!id) return Swal.fire('Error','No registration id','error');
+    // Ask if admin wants to create a payment right away
+    Swal.fire({
+      title: 'Confirm registration?',
+      text: 'Do you want to create a payment reference to send to the registrant now?',
+      icon: 'question',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Confirm only',
+      denyButtonText: 'Create payment & confirm'
+    }).then(async res=>{
+      if (res.isConfirmed) {
+        const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
+        // add header so server returns JSON
+        try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
+      } else if (res.isDenied) {
+        // Prompt for amount and method
+        const { value: formValues } = await Swal.fire({
+          title: 'Create payment',
+          html:
+            '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
+            '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
+          focusConfirm: false,
+          preConfirm: () => {
+            return {
+              amount: document.getElementById('swal-amount').value,
+              method: document.getElementById('swal-method').value
+            }
+          }
+        });
+        if (!formValues) return;
+        const amt = parseFloat(formValues.amount || 0);
+        if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
+        const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
+        try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
+      }
+    });
+    return;
+  }
+  const r = e.target.closest('.inline-reject');
+  if (r) {
+    const id = r.dataset.id;
+    if (!id) return Swal.fire('Error','No registration id','error');
+    Swal.fire({
+      title: 'Reject registration',
+      input: 'textarea',
+      inputLabel: 'Reason (optional)',
+      inputPlaceholder: 'Reason for rejection',
+      showCancelButton: true,
+      confirmButtonText: 'Reject'
+    }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+    return;
+  }
+});
 </script>
 
 </body>

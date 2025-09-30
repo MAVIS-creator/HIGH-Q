@@ -21,8 +21,11 @@ $errors = [];
 $flash  = [];
 
 // --- CSRF wrapper for simplicity ---
-function verifyCsrfToken(string $token): bool {
+// Avoid redeclaring verifyCsrfToken if it's already provided by includes/csrf.php
+if (!function_exists('verifyCsrfToken')) {
+  function verifyCsrfToken(string $token): bool {
     return verifyToken('default_form', $token);
+  }
 }
 
 // Define all menu items (matches sidebar.php)

@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
 require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../../public/config/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $threadId = intval($_GET['thread_id'] ?? 0);
 if (!$threadId) { header('Location: ?pages=chat'); exit; }
@@ -22,6 +22,8 @@ $messages = $pdo->prepare('SELECT * FROM chat_messages WHERE thread_id = ? ORDER
 
 $pageTitle = 'Chat Thread #' . $threadId;
 require_once __DIR__ . '/../includes/header.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 ?>
 <div class="roles-page">
@@ -40,24 +42,49 @@ require_once __DIR__ . '/../includes/header.php';
       <div style="text-align:right;margin-top:8px"><button class="btn" type="submit">Send</button></div>
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars(generateToken('chat_form')) ?>">
     </form>
+    <div style="text-align:right;margin-top:8px">
+      <button id="closeThreadBtn" class="btn" style="background:#f44336;color:#fff;border:none;padding:8px 12px;border-radius:6px;">Close Thread</button>
+    </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.getElementById('replyForm').addEventListener('submit', function(e){
   e.preventDefault();
-  var fd=new FormData(this); fd.append('action','reply'); fd.append('thread_id','<?= $threadId ?>');
-  var xhr=new XMLHttpRequest(); xhr.open('POST',location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>',true);
+  var fd=new FormData(this); 
+  fd.append('action','reply'); 
+  fd.append('thread_id','<?= $threadId ?>');
+  var csrfEl = document.querySelector('input[name="_csrf"]'); 
+  if (csrfEl) fd.append('_csrf', csrfEl.value);
+
+  var xhr=new XMLHttpRequest(); 
+  xhr.open('POST', '/HIGH-Q/admin/pages/chat.php',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-  xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok'){ location.reload(); } else alert('Failed'); };
+  xhr.onload=function(){ 
+    try{var r=JSON.parse(xhr.responseText);}catch(e){ 
+      Swal.fire('Error', 'Invalid server response.', 'error'); 
+      return; 
+    } 
+    if(r.status==='ok'){ 
+      Swal.fire('Sent!', 'Your reply has been posted.', 'success')
+        .then(()=>{ location.reload(); });
+    } else {
+      Swal.fire('Failed', 'Could not send your reply.', 'error'); 
+    } 
+  };
   xhr.send(fd);
 });
 
 // Poll messages every 5 seconds
 setInterval(function(){
-  var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
-  xhr.onload = function(){ if (xhr.status !== 200) return; try{ var html = xhr.responseText; } catch(e){ return; }
-    var parser = new DOMParser(); var doc = parser.parseFromString(html, 'text/html');
+  var xhr = new XMLHttpRequest(); 
+  xhr.open('GET', location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
+  xhr.onload = function(){ 
+    if (xhr.status !== 200) return; 
+    try{ var html = xhr.responseText; } catch(e){ return; }
+    var parser = new DOMParser(); 
+    var doc = parser.parseFromString(html, 'text/html');
     var messagesContainer = doc.querySelector('.card > div');
     if (messagesContainer) {
       var target = document.querySelector('.card > div');
@@ -66,6 +93,46 @@ setInterval(function(){
   };
   xhr.send();
 }, 5000);
+
+// Close thread via AJAX with SweetAlert
+document.getElementById('closeThreadBtn').addEventListener('click', function(){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "This will mark the thread as closed.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, close it'
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    var fd = new FormData(); 
+    fd.append('action','close'); 
+    fd.append('thread_id','<?= $threadId ?>');
+    var csrfEl = document.querySelector('input[name="_csrf"]');
+    if (csrfEl) fd.append('_csrf', csrfEl.value);
+
+    var xhr = new XMLHttpRequest(); 
+    xhr.open('POST', '/HIGH-Q/admin/pages/chat.php', true); 
+    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+    xhr.onload = function(){ 
+      try{ var r = JSON.parse(xhr.responseText); }
+      catch(e){ 
+        Swal.fire('Error', 'Invalid server response.', 'error'); 
+        return; 
+      } 
+      if(r.status==='ok'){ 
+        Swal.fire('Closed!', 'The thread has been closed.', 'success')
+          .then(()=>{ window.location.href='?pages=chat'; });
+      } else {
+        Swal.fire('Failed', 'Could not close the thread.', 'error'); 
+      }
+    };
+    xhr.send(fd);
+  });
+});
 </script>
+
 
 <?php require_once __DIR__ . '/../includes/footer.php';

@@ -21,10 +21,12 @@ $menuItems = [
     'courses'   => ['title' => 'Courses', 'icon' => 'bx bxs-book', 'url' => 'index.php?pages=courses'],
     'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?pages=tutors'],
     'students'  => ['title' => 'Students', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?pages=students'],
-    'payments'  => ['title' => 'Payments', 'icon' => 'bx bxs-credit-card', 'url' => 'index.php?pages=payments'],
+        'payments'  => ['title' => 'Payments', 'icon' => 'bx bxs-credit-card', 'url' => 'index.php?pages=payments'],
+        'icons'     => ['title' => 'Icons', 'icon' => 'bx bx-image', 'url' => 'index.php?pages=icons'],
     'post'      => ['title' => 'News / Blog', 'icon' => 'bx bxs-news', 'url' => 'index.php?pages=post'],
     'comments'  => ['title' => 'Comments', 'icon' => 'bx bxs-comment-detail', 'url' => 'index.php?pages=comments'],
     'chat'      => ['title' => 'Chat Support', 'icon' => 'bx bxs-message-dots', 'url' => 'index.php?pages=chat'],
+    'audit_logs' => ['title' => 'Audit Logs', 'icon' => 'bx bxs-report', 'url' => 'index.php?pages=audit_logs'],
 ];
 ?>
 
@@ -37,7 +39,13 @@ $menuItems = [
     <nav class="sidebar-nav">
         <ul>
             <?php foreach ($menuItems as $slug => $item): ?>
-                <?php if (in_array($slug, $permissions)): ?>
+                <?php
+                    // Show item if role_permissions contains the menu slug
+                    $show = in_array($slug, $permissions);
+                    // Also show audit_logs to users who have the general 'settings' permission (common admin role)
+                    if (!$show && $slug === 'audit_logs' && in_array('settings', $permissions)) $show = true;
+                ?>
+                <?php if ($show): ?>
                     <li><a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
                             <i class='<?= $item['icon']; ?>'></i> <?= $item['title']; ?>
                         </a></li>

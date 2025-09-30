@@ -29,6 +29,8 @@ function performSecurityScan(PDO $pdo, array $currentSettings = []) {
     $allowedExt = ['php','phtml','inc','html','htm','js','css','env','sql','lock'];
     $limitFiles = 5000; // safety cap
     $count = 0;
+    // allow override from provided settings
+    $includeVendor = $currentSettings['include_vendor'] ?? false;
 
     $iter = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root));
     foreach ($iter as $file) {
@@ -43,8 +45,8 @@ function performSecurityScan(PDO $pdo, array $currentSettings = []) {
         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
         if (!in_array($ext, $allowedExt)) continue;
 
-        // skip vendor to reduce noise
-        if (strpos($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== false) continue;
+    // skip vendor to reduce noise unless explicitly requested
+    if (!$includeVendor && strpos($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) !== false) continue;
 
         // Skip very large files
         if ($file->getSize() > 2 * 1024 * 1024) continue;
@@ -115,14 +117,56 @@ function performSecurityScan(PDO $pdo, array $currentSettings = []) {
         }
     }
 
-    // Attempt composer audit if composer available
+    // Attempt composer audit if composer available; parse JSON output when present
     $composerOut = null; $composerRc = null;
     @exec('composer audit --format=json 2>&1', $composerOut, $composerRc);
-    if ($composerRc === 0 && !empty($composerOut)) {
+    if (!empty($composerOut)) {
         $joined = implode("\n", $composerOut);
-        $report['composer_audit'] = $joined;
-        // quick count
-        $report['totals']['composer_vulns'] = substr_count($joined, 'advisories');
+        // try to parse JSON
+        $json = json_decode($joined, true);
+        if (json_last_error() === JSON_ERROR_NONE && isset($json['advisories'])) {
+            $report['composer_audit_parsed'] = $json;
+            $report['totals']['composer_vulns'] = count($json['advisories']);
+        } else {
+            // store raw output and return code for debugging
+            $report['composer_audit'] = $joined;
+            $report['composer_audit_rc'] = $composerRc;
+            // best-effort count of the word 'advisories'
+            $report['totals']['composer_vulns'] = substr_count($joined, 'advisories');
+        }
+    } else {
+        $report['composer_audit_rc'] = $composerRc;
+    }
+
+    // Run PHPStan if installed (vendor/bin/phpstan or vendor/bin/phpstan.bat on Windows)
+    $phpstanPaths = [
+        $root . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpstan',
+        $root . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpstan.bat',
+    ];
+    $phpstanFound = null;
+    foreach ($phpstanPaths as $p) {
+        if (is_executable($p) || file_exists($p)) { $phpstanFound = $p; break; }
+    }
+    if ($phpstanFound) {
+        $psOut = null; $psRc = null;
+        // run basic analysis on src and public folders if they exist
+        $targets = [];
+        if (is_dir($root . DIRECTORY_SEPARATOR . 'src')) $targets[] = escapeshellarg($root . DIRECTORY_SEPARATOR . 'src');
+        if (is_dir($root . DIRECTORY_SEPARATOR . 'public')) $targets[] = escapeshellarg($root . DIRECTORY_SEPARATOR . 'public');
+        if (!empty($targets)) {
+            $cmd = escapeshellarg($phpstanFound) . ' analyse ' . implode(' ', $targets) . ' --error-format=json';
+            @exec($cmd . ' 2>&1', $psOut, $psRc);
+            $joined = is_array($psOut) ? implode("\n", $psOut) : (string)$psOut;
+            $json = json_decode($joined, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $report['phpstan'] = $json;
+            } else {
+                $report['phpstan_raw'] = $joined;
+                $report['phpstan_rc'] = $psRc;
+            }
+        }
+    } else {
+        $report['phpstan_available'] = false;
     }
 
     $report['finished_at'] = date('c');

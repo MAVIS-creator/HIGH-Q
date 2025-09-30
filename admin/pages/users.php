@@ -52,11 +52,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         // Role is full
         header('Location: index.php?pages=users'); exit;
       }
+
+        if ($action === 'resend_verification') {
+          // Resend verification email to user (admin action)
+          $u = $pdo->prepare('SELECT id, email, name, is_active, email_verification_sent_at FROM users WHERE id = ? LIMIT 1');
+          $u->execute([$id]); $usr = $u->fetch(PDO::FETCH_ASSOC);
+          if (!$usr) { header('Location: index.php?pages=users'); exit; }
+
+          // Only resend if user is not active
+          if ((int)$usr['is_active'] === 0) {
+            // Rate limit: allow resend every 10 minutes by default (env override)
+            $wait = getenv('VERIFICATION_RESEND_WAIT_MIN') ? intval(getenv('VERIFICATION_RESEND_WAIT_MIN')) : 10;
+            $canSend = true;
+            if (!empty($usr['email_verification_sent_at'])) {
+              $sentTs = strtotime($usr['email_verification_sent_at']);
+              if ($sentTs !== false && (time() - $sentTs) < ($wait * 60)) $canSend = false;
+            }
+
+            if ($canSend) {
+              // generate new token
+              $token = bin2hex(random_bytes(32));
+              $upd = $pdo->prepare('UPDATE users SET email_verification_token = ?, email_verification_sent_at = NOW() WHERE id = ?');
+              $upd->execute([$token, $id]);
+
+              $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+              if ($appUrl) $verifyUrl = rtrim($appUrl, '/') . '/admin/verify_email.php?token=' . urlencode($token);
+              else $verifyUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']) . '/admin/verify_email.php?token=' . urlencode($token);
+
+              $subject = 'Please verify your email';
+              $html = '<p>Hi ' . htmlspecialchars($usr['name'] ?? '') . ',</p>' .
+                      '<p>Please verify your email by clicking <a href="' . htmlspecialchars($verifyUrl) . '">this link</a>.</p>';
+              @sendEmail($usr['email'], $subject, $html);
+              logAction($pdo, $_SESSION['user']['id'], 'resend_verification', ['user_id'=>$id]);
+            }
+          }
+
+          header('Location: index.php?pages=users'); exit;
+        }
     }
 
     $stmt = $pdo->prepare('UPDATE users SET role_id = ?, is_active = 1, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$role_id, $id]);
     logAction($pdo, $currentUserId, 'approve_user', ['user_id' => $id, 'role_id' => $role_id]);
+    // Send approval email to the user if email present
+    try {
+      $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$id]); $usr = $u->fetch(PDO::FETCH_ASSOC);
+      if ($usr && filter_var($usr['email'] ?? '', FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $sub = 'Your account has been approved';
+        $body = '<p>Hi ' . htmlspecialchars($usr['name'] ?? '') . ',</p><p>Your account has been approved and activated. You can now login.</p>';
+        @sendEmail($usr['email'], $sub, $body);
+      }
+    } catch(Throwable $e){}
     header('Location: index.php?pages=users'); exit;
   }
 
@@ -98,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
   $id = (int)$_GET['id'];
   $stmt = $pdo->prepare('SELECT u.*, r.name AS role_name, r.slug AS role_slug,
-    (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS posts_count,
+  (SELECT COUNT(*) FROM posts WHERE author_id = u.id) AS posts_count,
     (SELECT COUNT(*) FROM comments WHERE user_id = u.id) AS comments_count
     FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?');
   $stmt->execute([$id]);
@@ -228,7 +274,7 @@ $users = $pdo->query("
           <button class="btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
           <button class="btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
-            <?php if($u['is_active']===0): ?>
+              <?php if($u['is_active']===0): ?>
               <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <select name="role_id" required>
@@ -238,6 +284,10 @@ $users = $pdo->query("
                   <?php endforeach; ?>
                 </select>
                 <button type="submit" class="btn-approve">Approve</button>
+              </form>
+              <form method="post" action="index.php?pages=users&action=resend_verification&id=<?= $u['id'] ?>" class="inline-form">
+                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                <button type="submit" class="btn">Resend Verification</button>
               </form>
               <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
               <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">

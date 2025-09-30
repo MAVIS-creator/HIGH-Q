@@ -18,6 +18,9 @@ if ($row && is_array($row)) {
             'name' => $row['site_name'] ?? '',
             'tagline' => $row['tagline'] ?? '',
             'logo' => $row['logo_url'] ?? '',
+            'bank_name' => $row['bank_name'] ?? '',
+            'bank_account_name' => $row['bank_account_name'] ?? '',
+            'bank_account_number' => $row['bank_account_number'] ?? '',
             'vision' => $row['vision'] ?? '',
             'about' => $row['about'] ?? ''
         ],

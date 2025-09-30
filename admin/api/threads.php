@@ -13,7 +13,13 @@ if (empty($_SESSION['user'])) {
 
 // Simple query: return recent open threads with minimal fields and unread counts
 $limit = 50;
-$threads = $pdo->prepare('SELECT id, visitor_name, visitor_email, assigned_admin_id, status, last_activity FROM chat_threads ORDER BY last_activity DESC LIMIT ?');
+$threads = $pdo->prepare(
+  'SELECT id, visitor_name, visitor_email, assigned_admin_id, status, last_activity
+   FROM chat_threads
+   WHERE status != "closed"
+   ORDER BY last_activity DESC
+   LIMIT ?'
+);
 $threads->bindValue(1, $limit, PDO::PARAM_INT); $threads->execute();
 $rows = $threads->fetchAll(PDO::FETCH_ASSOC);
 

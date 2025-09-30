@@ -50,15 +50,22 @@ function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings'
 
 // Upsert into the new `site_settings` structured table for client-side SQL reads
 function upsertSiteSettings(PDO $pdo, array $data) {
-    // Map to columns with safe defaults
-    $site = $data['site'] ?? [];
-    $contact = $data['contact'] ?? [];
-    $security = $data['security'] ?? [];
+    try {
+        // Start transaction
+        $pdo->beginTransaction();
+        
+        // Map to columns with safe defaults
+        $site = $data['site'] ?? [];
+        $contact = $data['contact'] ?? [];
+        $security = $data['security'] ?? [];
 
     $params = [
         'site_name' => $site['name'] ?? null,
         'tagline' => $site['tagline'] ?? null,
         'logo_url' => $site['logo'] ?? null,
+        'bank_name' => $site['bank_name'] ?? null,
+        'bank_account_name' => $site['bank_account_name'] ?? null,
+        'bank_account_number' => $site['bank_account_number'] ?? null,
         'vision' => $site['vision'] ?? null,
         'about' => $site['about'] ?? null,
         'contact_phone' => $contact['phone'] ?? null,
@@ -67,7 +74,8 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'contact_facebook' => $contact['facebook'] ?? null,
         'contact_twitter' => $contact['twitter'] ?? null,
         'contact_instagram' => $contact['instagram'] ?? null,
-        'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+    'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+    'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
         'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
         'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
         'two_factor' => !empty($security['two_factor']) ? 1 : 0,
@@ -83,10 +91,11 @@ function upsertSiteSettings(PDO $pdo, array $data) {
     if ($id) {
         $sql = "UPDATE site_settings SET
             site_name = :site_name, tagline = :tagline, logo_url = :logo_url,
+            bank_name = :bank_name, bank_account_name = :bank_account_name, bank_account_number = :bank_account_number,
             vision = :vision, about = :about,
             contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
             contact_facebook = :contact_facebook, contact_twitter = :contact_twitter, contact_instagram = :contact_instagram,
-            maintenance = :maintenance, registration = :registration, email_verification = :email_verification,
+            maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
             two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
             WHERE id = :id";
         $params['id'] = $id;
@@ -95,16 +104,34 @@ function upsertSiteSettings(PDO $pdo, array $data) {
     } else {
         $sql = "INSERT INTO site_settings
             (site_name, tagline, logo_url, vision, about,
+             bank_name, bank_account_name, bank_account_number,
              contact_phone, contact_email, contact_address,
              contact_facebook, contact_twitter, contact_instagram,
-             maintenance, registration, email_verification, two_factor, comment_moderation)
+            maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation)
             VALUES
             (:site_name, :tagline, :logo_url, :vision, :about,
+             :bank_name, :bank_account_name, :bank_account_number,
              :contact_phone, :contact_email, :contact_address,
              :contact_facebook, :contact_twitter, :contact_instagram,
-             :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
+             :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
         $ins = $pdo->prepare($sql);
-        return $ins->execute($params);
+        $result = $ins->execute($params);
+        
+        // Commit the transaction
+        if ($result) {
+            $pdo->commit();
+            return true;
+        } else {
+            $pdo->rollBack();
+            return false;
+        }
+    }
+    } catch (Exception $e) {
+        // Roll back transaction on any error
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
     }
 }
 
@@ -129,8 +156,13 @@ $defaults = [
     ],
     'security' => [
         'maintenance' => false,
+        'maintenance_allowed_ips' => '',
         'registration' => true,
         'email_verification' => true,
+        'enforcement_mode' => 'mac',
+        // If true, registrations are saved but payment references are NOT auto-created;
+        // admin must verify the registration and create/send a payment reference.
+        'verify_registration_before_payment' => false,
         'two_factor' => false,
         'comment_moderation' => true
     ],
@@ -160,6 +192,15 @@ if (is_array($dbSettings) && !empty($dbSettings)) {
 
 // Handle save action (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // If this is an AJAX request, ensure we return only JSON and clear any accidental output
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+        // Clear any output buffers to avoid HTML leaking into JSON response
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
+        header('Content-Type: application/json');
+    }
+
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('settings_form', $token)) {
         http_response_code(400);
@@ -205,6 +246,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Security toggles
     if (isset($posted['security']) && is_array($posted['security'])) {
         foreach ($defaults['security'] as $k => $v) {
+            if ($k === 'enforcement_mode') {
+                // accept 'mac', 'ip' or 'both'
+                $mode = trim($posted['security']['enforcement_mode'] ?? '') ?: $v;
+                if (!in_array($mode, ['mac','ip','both'])) $mode = $v;
+                $safeSet($next, ['security', $k], $mode);
+                continue;
+            }
             $val = isset($posted['security'][$k]) ? (bool)$posted['security'][$k] : false;
             $safeSet($next, ['security', $k], $val);
         }
@@ -235,21 +283,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $saved = false;
     try {
         $saved = saveSettingsToDb($pdo, $next);
+        if (!$saved) {
+            throw new Exception('Failed to save settings to database');
+        }
+        
+        // Also try to update the site_settings table
+        try {
+            upsertSiteSettings($pdo, $next);
+        } catch (Exception $e) {
+            error_log('Site settings upsert error: ' . $e->getMessage());
+            // Don't fail completely if only the site_settings update fails
+        }
+        
     } catch (Exception $e) {
         $saved = false;
+        error_log('Settings save error: ' . $e->getMessage());
+        
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'title' => 'Error',
+                'message' => $e->getMessage(),
+                'icon' => 'error'
+            ]);
+            exit;
+        }
     }
 
     if ($saved) {
         // Also upsert into the structured site_settings table for client-side SQL reads
         try {
-            upsertSiteSettings($pdo, $next);
+            // Set error reporting to catch any database errors
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            if (!upsertSiteSettings($pdo, $next)) {
+                throw new Exception('Failed to update site settings');
+            }
         } catch (Exception $e) {
-            // non-fatal; we'll continue but log an audit entry
+            // Log error and treat as fatal
             try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'site_settings_upsert_failed', ['error'=>$e->getMessage()]); } catch (Exception $ee) {}
+            $saved = false;
         }
 
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            echo json_encode(['status' => 'ok', 'message' => 'Settings saved.']);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'ok',
+                'message' => 'Settings saved successfully',
+                'icon' => 'success',
+                'title' => 'Success'
+            ]);
             exit;
         }
         setFlash('success', 'Settings saved.');
@@ -259,7 +343,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Save failed
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to save settings. Check DB permissions.']);
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode([
+            'status' => 'error',
+            'title' => 'Error',
+            'message' => 'Failed to save settings. Please try again.',
+            'icon' => 'error'
+        ]);
         exit;
     }
     setFlash('error', 'Failed to save settings. Check DB permissions.');
@@ -281,24 +372,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($
             $php = PHP_BINARY;
             $root = realpath(__DIR__ . '/../../');
             $runner = $root . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'scan-runner.php';
-            if (!is_file($runner)) {
-                echo json_encode(['status' => 'error', 'message' => 'Scan runner not available']);
+
+            header('Content-Type: application/json'); // be explicit for AJAX
+
+            if (!is_file($runner) || !is_readable($runner)) {
+                error_log('runScan: runner not found at ' . $runner);
+                echo json_encode(['status' => 'error', 'message' => 'Scan runner not available on server']);
                 exit;
             }
 
-            // Launch background process
-            if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
-                // Windows: use start /B
-                $cmd = "start /B " . escapeshellarg($php) . ' ' . escapeshellarg($runner);
-                pclose(popen($cmd, 'r'));
-            } else {
-                // Unix-like: nohup
-                $cmd = "nohup " . escapeshellarg($php) . ' ' . escapeshellarg($runner) . " > /dev/null 2>&1 &";
-                @exec($cmd);
+            // Build platform-specific command and attempt to launch
+            try {
+                if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
+                    // Windows: use start /B via COMSPEC to avoid shell redirection issues
+                    $comspec = getenv('COMSPEC') ?: 'C:\\Windows\\System32\\cmd.exe';
+                    // /C will run the command then exit; use start to launch background
+                    $cmd = 'start /B ' . escapeshellarg($php) . ' ' . escapeshellarg($runner);
+                    // Use pclose+popen to detach
+                    $proc = @popen($cmd, 'r');
+                    if ($proc !== false) { pclose($proc); }
+                    else throw new Exception('Failed to spawn background process on Windows');
+                } else {
+                    // Unix-like: nohup & disown
+                    $cmd = "nohup " . escapeshellarg($php) . ' ' . escapeshellarg($runner) . " > /dev/null 2>&1 &";
+                    @exec($cmd, $out, $rc);
+                    if ($rc !== 0) throw new Exception('Non-zero exit when launching runner: ' . intval($rc));
+                }
+            } catch (Exception $e) {
+                error_log('runScan: failed to queue runner: ' . $e->getMessage());
+                echo json_encode(['status' => 'error', 'message' => 'Failed to queue security scan: ' . $e->getMessage()]);
+                exit;
             }
 
             // Log queue action
-            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'security_scan_queued', ['by' => $_SESSION['user']['email'] ?? null]); } catch (Exception $e) {}
+            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'security_scan_queued', ['by' => $_SESSION['user']['email'] ?? null]); } catch (Exception $e) { error_log('runScan logAction failed: ' . $e->getMessage()); }
 
             echo json_encode(['status' => 'ok', 'message' => 'Security scan queued; you will receive an email when it completes.']);
             exit;
@@ -446,6 +553,12 @@ $csrf = generateToken('settings_form');
                     <input name="settings[site][tagline]" placeholder="Excellence in Education" value="<?= htmlspecialchars($current['site']['tagline']) ?>" class="input">
                     <label>Logo URL</label>
                     <input name="settings[site][logo]" placeholder="https://example.com/logo.png" value="<?= htmlspecialchars($current['site']['logo']) ?>" class="input">
+                    <label>Bank Name</label>
+                    <input name="settings[site][bank_name]" placeholder="Bank Name" value="<?= htmlspecialchars($current['site']['bank_name'] ?? '') ?>" class="input">
+                    <label>Account Name</label>
+                    <input name="settings[site][bank_account_name]" placeholder="Account Name" value="<?= htmlspecialchars($current['site']['bank_account_name'] ?? '') ?>" class="input">
+                    <label>Account Number</label>
+                    <input name="settings[site][bank_account_number]" placeholder="Account Number" value="<?= htmlspecialchars($current['site']['bank_account_number'] ?? '') ?>" class="input">
                     <label>Vision Statement</label>
                     <textarea name="settings[site][vision]" placeholder="To be the leading educational institution in our region" class="input" rows="3"><?= htmlspecialchars($current['site']['vision']) ?></textarea>
                     <label>About Description</label>
@@ -480,6 +593,7 @@ $csrf = generateToken('settings_form');
                             'maintenance' => ['label'=>'Maintenance Mode','desc'=>'Temporarily disable public access to the site'],
                             'registration' => ['label'=>'User Registration','desc'=>'Allow new users to register for accounts'],
                             'email_verification' => ['label'=>'Email Verification','desc'=>'Require email verification for new accounts'],
+                            'verify_registration_before_payment' => ['label'=>'Verify registration before payment','desc'=>'Require admin verification of registration details before creating payment reference and sending it to registrant'],
                             'two_factor' => ['label'=>'Two-Factor Authentication','desc'=>'Enable 2FA for enhanced security'],
                             'comment_moderation' => ['label'=>'Comment Moderation','desc'=>'Require approval before comments are published']
                         ];
@@ -499,6 +613,20 @@ $csrf = generateToken('settings_form');
                             </div>
                         </div>
                     <?php } ?>
+                        <div style="margin-top:12px;">
+                            <label>Maintenance allowed IPs (comma-separated)</label>
+                            <textarea name="settings[security][maintenance_allowed_ips]" placeholder="e.g. 203.0.113.5, 198.51.100.0" class="input" rows="2"><?= htmlspecialchars($current['security']['maintenance_allowed_ips'] ?? '') ?></textarea>
+                            <div class="muted">Enter IP addresses that may bypass maintenance mode. Separate with commas. CIDR not currently supported.</div>
+                        </div>
+                        <div style="margin-top:12px;">
+                            <label>Enforcement Mode</label>
+                            <select name="settings[security][enforcement_mode]" class="input">
+                                <option value="mac" <?= $current['security']['enforcement_mode'] === 'mac' ? 'selected' : '' ?>>MAC-based (default)</option>
+                                <option value="ip" <?= $current['security']['enforcement_mode'] === 'ip' ? 'selected' : '' ?>>IP-based</option>
+                                <option value="both" <?= $current['security']['enforcement_mode'] === 'both' ? 'selected' : '' ?>>Both (MAC preferred, then IP)</option>
+                            </select>
+                            <div class="muted">Choose which enforcement method the system should prefer when blocking visitors.</div>
+                        </div>
                 </div>
             </div>
 
@@ -571,6 +699,8 @@ $csrf = generateToken('settings_form');
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
                         <button type="button" id="downloadLogs" class="btn">Download Logs</button>
                         <button type="button" id="exportClear" class="btn">Export &amp; Clear Logs</button>
+                        <button type="button" id="openMacManager" class="btn">Manage MAC Blocklist</button>
+                        <button type="button" id="openIpLogs" class="btn">View IP Logs</button>
                     </div>
                 </div>
             </div>
@@ -581,84 +711,8 @@ $csrf = generateToken('settings_form');
         </div>
     </form>
 
-    <script>
-    (function(){
-        // Tabs
-        document.querySelectorAll('.tab-btn').forEach(function(b){
-            b.addEventListener('click', function(){
-                document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(x=>x.style.display='none');
-                b.classList.add('active');
-                var t = b.getAttribute('data-tab');
-                document.querySelector('.tab-panel[data-panel="'+t+'"]').style.display='block';
-            });
-        });
-
-        // AJAX submit for better UX
-        var form = document.getElementById('settingsForm');
-        form.addEventListener('submit', function(e){
-            e.preventDefault();
-            var data = new FormData(form);
-            // mark as ajax
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', location.href, true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.onload = function(){
-                try { var res = JSON.parse(xhr.responseText); } catch(e){ alert('Unexpected response'); return; }
-                if (res.status === 'ok') { alert(res.message || 'Saved'); location.reload(); }
-                else alert(res.message || 'Save failed');
-            };
-            xhr.send(data);
-        });
-
-    // Top save button removed from markup; no-op here to avoid errors
-
-        // Simple actions (AJAX)
-        function doAction(action) {
-            var fd = new FormData();
-            fd.append('action', action);
-            fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', location.href, true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.onload = function(){
-                try { var res = JSON.parse(xhr.responseText); } catch(e) { alert('Unexpected response'); return; }
-                if (res.status === 'ok') {
-                    alert(res.message || 'Done');
-                    if (action === 'clearIPs' || action === 'clearLogs') location.reload();
-                } else {
-                    alert(res.message || 'Action failed');
-                }
-            };
-            xhr.send(fd);
-        }
-
-        document.getElementById('runScan').addEventListener('click', function(){ if (confirm('Start security scan?')) doAction('runScan'); });
-        document.getElementById('clearIPs').addEventListener('click', function(){ if (confirm('Clear blocked IPs?')) doAction('clearIPs'); });
-        document.getElementById('clearLogs').addEventListener('click', function(){ if (confirm('Clear audit logs (except seed)?')) doAction('clearLogs'); });
-        document.getElementById('downloadLogs').addEventListener('click', function(){
-            // open download endpoint in new tab to stream CSV
-            var token = document.querySelector('input[name="_csrf"]').value;
-            var url = location.pathname + '?action=download_logs&_csrf=' + encodeURIComponent(token);
-            window.open(url, '_blank');
-        });
-        document.getElementById('exportClear').addEventListener('click', function(){
-            if (!confirm('This will export audit logs and then clear them. Continue?')) return;
-            // trigger download first
-            var token = document.querySelector('input[name="_csrf"]').value;
-            var url = location.pathname + '?action=download_logs&_csrf=' + encodeURIComponent(token);
-            // open download in new tab then call clear
-            var w = window.open(url, '_blank');
-            setTimeout(function(){
-                // then clear via AJAX
-                var fd = new FormData(); fd.append('action','clearLogs'); fd.append('_csrf', token);
-                var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-                xhr.onload = function(){ try { var res = JSON.parse(xhr.responseText); } catch(e){ alert('Clear failed'); return; } if (res.status==='ok') { alert('Exported and cleared logs'); location.reload(); } else alert('Clear failed: '+(res.message||'unknown')); };
-                xhr.send(fd);
-            }, 1500);
-        });
-    })();
-    </script>
+    <script src="../assets/js/settings.js"></script>
+    <script src="../assets/js/admin-security.js"></script>
 
 <?php
 require_once __DIR__ . '/../includes/footer.php';

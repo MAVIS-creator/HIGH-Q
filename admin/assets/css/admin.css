@@ -139,6 +139,32 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
 
+/* Payments filter form: inline layout with responsive wrapping */
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-content: center;
+}
+.filter-form label { display: flex; align-items: center; gap:6px; margin:0; }
+.filter-form input.small, .filter-form select.small { width: 120px; padding:6px 8px; }
+.filter-form input.medium { width: 220px; padding:6px 8px; }
+.filter-form .btn { margin-left:4px; }
+
+/* Add a bit more left spacing so content/cards don't sit flush to the sidebar */
+.roles-page, .courses-page, .roles-table, .admin-main > div {
+  margin-left: calc(var(--sidebar-width) + 18px);
+}
+
+/* Small screens: allow filter form to stack nicely */
+@media (max-width: 900px) {
+  .filter-form input.small, .filter-form select.small { width: 100%; }
+  .filter-form input.medium { width: 100%; }
+  .filter-form { gap:8px; }
+  .roles-page, .courses-page { margin-left: calc(var(--sidebar-width) + 12px); }
+}
+
 .header-left {
   display: flex;
   align-items: center;
@@ -642,13 +668,25 @@ h1 {
 }
 
 .toggle input {
-  display: none
+  /* keep the native checkbox available for accessibility and keyboard users
+     but visually hide it so the custom track/thumb is shown. Using opacity
+     and absolute positioning keeps it focusable/tabbable while removed
+     from the visual flow. */
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  left: -9999px; /* further remove from layout while keeping focusability
+                    (some UA treat off-screen equally but opacity keeps it tabbable) */
 }
 
 .toggle .track {
   width: 100%;
   height: 100%;
-  background: #e6e6e6;
+  /* off state: white track for clearer contrast */
+  background: #ffffff;
   border-radius: 999px;
   transition: background .2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -664,11 +702,14 @@ h1 {
   height: calc(var(--h) - 4px);
   background: #fff;
   border-radius: 50%;
+  /* subtle border so the thumb is visible on white track */
+  border: 1px solid rgba(0,0,0,0.06);
   transition: transform .18s cubic-bezier(.4, 0, .2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
 }
 
 .toggle input:checked+.track {
+  /* on state: use the site yellow */
   background: var(--hq-yellow);
   box-shadow: 0 2px 8px rgba(255, 214, 0, 0.12);
 }
@@ -694,13 +735,21 @@ h1 {
 }
 
 .toggle input {
-  display: none
+  /* see earlier comment: keep checkbox accessible but visually hidden */
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  left: -9999px;
 }
 
 .toggle .track {
   width: 100%;
   height: 100%;
-  background: #e9e9e9;
+  /* off state: white track for clearer contrast */
+  background: #ffffff;
   border-radius: 999px;
   transition: background .18s ease, box-shadow .18s ease;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
@@ -717,12 +766,15 @@ h1 {
   height: calc(var(--h) - 8px);
   background: #fff;
   border-radius: 50%;
+  /* subtle border so the thumb is visible on white track */
+  border: 1px solid rgba(0,0,0,0.06);
   transition: transform .18s cubic-bezier(.4, 0, .2, 1), box-shadow .12s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .toggle input:checked+.track {
-  background: var(--hq-primary);
+  /* on state: use the site yellow */
+  background: var(--hq-yellow);
   box-shadow: 0 6px 20px rgba(255, 214, 0, 0.12);
 }
 
@@ -1123,4 +1175,323 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+
+/* courses.css */
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.course-card {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: box-shadow 0.2s ease;
+}
+
+.course-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.course-icon {
+  background: #f4ce47;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 48px;
+  font-size: 22px;
+  color: #111;
+}
+
+.course-title {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.course-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.course-title small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.btn-delete {
+  background: #ff5c5c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-delete:hover {
+  background: #e04242;
+}
+
+.course-desc {
+  margin: 12px 0;
+  color: #333;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.course-features {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  margin-top: 10px;
+}
+
+.course-features li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 6px;
+  font-size: 0.92rem;
+}
+
+.course-features li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #f4ce47;
+  font-weight: bold;
+}
+
+.course-highlight {
+  background: #ffe970;
+  color: #444;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12px;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  margin-top: 18px;
+}
+
+.price {
+  font-weight: bold;
+  color: #e50914;
+  font-size: 1.1rem;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+}
+
+.status-active {
+  background: #28a745;
+}
+
+.status-banned {
+  background: #aaa;
+}
+
+.course-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.course-actions .btn-editCourse {
+  background: #f0f0f0;
+  border: none;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.course-actions .btn-editCourse:hover {
+  background: #e2e2e2;
+}
+
 /* footer spacing fix - removed forced left:0 to keep footer beside sidebar by default */
+
+/* Tutors cards (admin) */
+.admin-main .tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+
+
+.admin-main .tutor-card {
+  background: #fff;
+  border: 1px solid var(--hq-gray);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.admin-main .tutor-card:hover {
+  transform: translateY(-3px);
+}
+
+.admin-main .tutor-card .status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.admin-main .tutor-card .status.active {
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+}
+
+.admin-main .tutor-card .status.normal {
+  background: var(--hq-gray);
+  color: #555;
+}
+
+.admin-main .tutor-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--hq-black);
+}
+
+.admin-main .tutor-info .role {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 2px 0 6px;
+}
+
+.admin-main .tutor-info .subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.admin-main .tutor-info .subjects span {
+  background: var(--hq-gray);
+  color: var(--hq-black);
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.admin-main .tutor-experience {
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.admin-main .tutor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.admin-main .tutor-actions button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+
+.admin-main .tutor-actions .edit-btn {
+  background: var(--hq-gray);
+  color: var(--hq-black);
+}
+
+.admin-main .tutor-actions .edit-btn:hover {
+  background: #e1e2e6;
+}
+
+.admin-main .tutor-actions .delete-btn {
+  background: var(--hq-red);
+  color: #fff;
+}
+
+.admin-main .tutor-actions .delete-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-main .date {
+  font-size: 0.75rem;
+  color: #888;
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+}
+
+.admin-main .tutor-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--hq-gray);
+}
+
+.admin-main .tutor-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}

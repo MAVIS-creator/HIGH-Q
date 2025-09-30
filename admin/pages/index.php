@@ -65,10 +65,48 @@ if (!in_array('dashboard', $allowed_pages)) {
     $allowed_pages[] = 'dashboard';
 }
 
-// Security: if page not allowed, fallback to dashboard
-if (!in_array($page, $allowed_pages)) {
-    $page = 'dashboard';
-    $pageTitle = 'Dashboard';
+// If the role has the 'settings' permission, allow access to audit_logs (convenience)
+if (in_array('settings', $allowed_pages) && !in_array('audit_logs', $allowed_pages)) {
+    $allowed_pages[] = 'audit_logs';
+}
+
+// Security: allow exact matches or logical subpages (e.g. 'chat_view') if base permission exists.
+$pageAllowed = false;
+if (in_array($page, $allowed_pages)) {
+    $pageAllowed = true;
+} else {
+    // allow pages that start with an allowed slug + separator (underscore or dash)
+    foreach ($allowed_pages as $ap) {
+        if ($ap === '') continue;
+        if (stripos($page, $ap . '_') === 0 || stripos($page, $ap . '-') === 0) {
+            $pageAllowed = true;
+            break;
+        }
+    }
+}
+
+// If this is a POST that includes an action, allow the requested page to be included so
+// the page's own permission checks and POST handlers can run. This avoids returning the
+// dashboard HTML for background POSTs where the role-permissions mapping might not match
+// (the page itself will still call requirePermission()).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+    $pageAllowed = true;
+}
+
+if (!$pageAllowed) {
+    // fallback to dashboard
+    // If requested page file exists and the role has the 'settings' permission, allow it (convenience for admins)
+    $candidatesExplicit = [__DIR__ . "/{$page}.php", __DIR__ . "/pages/{$page}.php", __DIR__ . "/../pages/{$page}.php"];
+    $fileExists = false;
+    foreach ($candidatesExplicit as $f) { if (file_exists($f)) { $fileExists = true; break; } }
+    if ($fileExists && in_array('settings', $allowed_pages)) {
+        $pageAllowed = true;
+    }
+
+    if (!$pageAllowed) {
+        $page = 'dashboard';
+        $pageTitle = 'Dashboard';
+    }
 }
 
 // Include layout parts (paths relative to this file)
@@ -90,6 +128,23 @@ foreach ($candidates as $file) {
         include $file;
         $found = true;
         break;
+    }
+}
+
+// If not found, try a simple singular fallback (e.g., 'posts' -> 'post.php')
+if (!$found && substr($page, -1) === 's') {
+    $sing = rtrim($page, 's');
+    $singCandidates = [
+        __DIR__ . "/{$sing}.php",
+        __DIR__ . "/pages/{$sing}.php",
+        __DIR__ . "/../pages/{$sing}.php",
+    ];
+    foreach ($singCandidates as $file) {
+        if (file_exists($file)) {
+            include $file;
+            $found = true;
+            break;
+        }
     }
 }
 

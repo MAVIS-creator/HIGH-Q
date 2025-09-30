@@ -1,4 +1,22 @@
-/* tutors.css - card grid for tutors listing */
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-red: #ff4b2b;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --max-width: 960px;
+  --card-width: 760px;
+  --radius: 12px;
+  --sidebar-width: 260px;
+  --header-height: 72px;
+  --footer-height: 56px;
+  --footer-offset: 6px;
+  /* horizontal spacing from sidebar; set to 0 for extreme flush */
+  --footer-right-offset: 6px;
+  /* spacing from right edge; set to 0 for extreme flush */
+}
+
+/* tutors.css - admin tutors grid and card styles */
 .tutors-grid{
 	display:grid;
 	grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
@@ -9,19 +27,52 @@
 	margin-left:auto;
 	margin-right:auto;
 }
+
+/* Card design (based on requested styles) */
 .tutor-card{
 	background:#fff;
-	border:1px solid #eef0f2;
+	border:1px solid var(--hq-gray, #eef0f2);
 	padding:14px;
 	border-radius:12px;
 	display:flex;
 	gap:12px;
 	align-items:flex-start;
 	box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+	position:relative;
 }
-.tutor-card .tutor-photo img, .tutor-card .avatar{ width:72px; height:72px; border-radius:8px; object-fit:cover }
+
+.tutor-card .tutor-photo img, .tutor-card .avatar{ width:90px; height:90px; border-radius:50%; object-fit:cover }
+.tutor-card .tutor-photo{ width:90px; height:90px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--hq-gray); flex-shrink:0 }
 .tutor-card .tutor-info{ flex:1 }
-.tutor-card .actions{ display:flex; gap:8px }
+.tutor-card .actions, .tutor-card .tutor-actions{ display:flex; gap:8px }
+
+.tutor-card .status{
+	position:absolute;
+	top:12px;
+	right:12px;
+	font-size:0.8rem;
+	font-weight:600;
+	padding:4px 10px;
+	border-radius:20px;
+}
+
+.tutor-card .status.active{ background:var(--hq-yellow); color:var(--hq-black) }
+.tutor-card .status.normal{ background:var(--hq-gray); color:#555 }
+
+.tutor-info h3{ margin:0; font-size:1.1rem; font-weight:600; color:var(--hq-black) }
+.tutor-info .role{ font-size:0.9rem; color:#666; margin:2px 0 6px }
+.tutor-info .subjects{ display:flex; flex-wrap:wrap; gap:0.4rem; margin:0.5rem 0 }
+.tutor-info .subjects span{ background:var(--hq-gray); color:var(--hq-black); font-size:0.75rem; padding:3px 10px; border-radius:20px; font-weight:500 }
+.tutor-experience{ font-size:0.85rem; color:#444; margin-bottom:0.5rem }
+
+.tutor-actions{ display:flex; gap:0.5rem; margin-top:0.5rem }
+.tutor-actions button{ border:none; border-radius:8px; padding:6px 10px; font-size:0.8rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:4px; transition:background 0.2s }
+.tutor-actions .edit-btn{ background:var(--hq-gray); color:var(--hq-black) }
+.tutor-actions .edit-btn:hover{ background:#e1e2e6 }
+.tutor-actions .delete-btn{ background:var(--hq-red); color:#fff }
+.tutor-actions .delete-btn:hover{ opacity:0.9 }
+
+.date{ font-size:0.75rem; color:#888; position:absolute; bottom:10px; right:15px }
 
 /* Keep tutors grid centered inside admin-main like roles page */
 .admin-main .tutors-grid { margin-left: 0 }
@@ -31,5 +82,24 @@
 .search-form input[type="text"] { width:520px; padding:0.8rem 1rem; border-radius:10px; border:1px solid #eee; background:#fafafa }
 
 @media (max-width:1000px){ .search-form input[type="text"]{ width:100% } .tutors-grid{ grid-template-columns: repeat(auto-fill, minmax(200px,1fr)) } }
+
+/* Modal styling for tutor form */
+.modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:all .18s ease; z-index:1200 }
+.modal.open { visibility:visible; opacity:1 }
+.modal-content { background:var(--hq-white,#fff); width:760px; max-width:95%; border-radius:14px; padding:20px 22px; box-shadow:0 20px 60px rgba(11,22,48,0.18); transform:translateY(10px); transition:transform .18s ease }
+.modal.open .modal-content { transform:translateY(0) }
+.modal-close { position:absolute; right:22px; top:18px; cursor:pointer; color:var(--hq-gray,#666) }
+.modal h3 { margin:0 0 12px; font-size:1.125rem; display:flex; align-items:center; gap:10px }
+.form-row { margin-bottom:12px }
+.form-row.split-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+.form-row label { display:block; font-size:0.875rem; color:var(--hq-gray,#666); margin-bottom:6px }
+.form-row input[type="text"], .form-row input[type="email"], .form-row input[type="number"], .form-row textarea { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e6e9ee; background:#fafafa; font-size:0.95rem }
+.form-row textarea { min-height:88px; resize:vertical }
+.form-actions { display:flex; justify-content:flex-end; margin-top:8px }
+.btn-approve { background:linear-gradient(180deg,#ffd24d,#f6c23a); border:none; color:#111; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; box-shadow:0 6px 18px rgba(246,194,58,0.18) }
+.btn-approve:hover { filter:brightness(.98) }
+.modal .note { font-size:0.85rem; color:var(--hq-gray,#7a7a7a); margin-bottom:8px }
+
+@media(max-width:640px){ .modal-content{ padding:14px } .form-row.split-2{ grid-template-columns:1fr } }
 
 
