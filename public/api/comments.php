@@ -46,10 +46,15 @@ try {
 
     $stmt = $pdo->prepare("INSERT INTO comments (post_id, parent_id, user_id, name, email, content, status, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?, NOW())");
     $stmt->execute([$postId, $parentId, $name ?: null, $email ?: null, $content, $status]);
+    $id = $pdo->lastInsertId();
     if ($status === 'pending') {
         echo json_encode(['status'=>'ok','message'=>'Comment submitted and awaiting moderation']);
     } else {
-        echo json_encode(['status'=>'ok','message'=>'Comment submitted']);
+        // fetch the inserted row to return minimal data
+        $q = $pdo->prepare('SELECT id, post_id, parent_id, name, content, created_at FROM comments WHERE id = ? LIMIT 1');
+        $q->execute([$id]);
+        $row = $q->fetch(PDO::FETCH_ASSOC);
+        echo json_encode(['status'=>'ok','message'=>'Comment submitted','comment'=>$row]);
     }
 } catch (Exception $e) {
     http_response_code(500);
