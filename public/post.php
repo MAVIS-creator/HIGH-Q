@@ -132,17 +132,46 @@ require_once __DIR__ . '/includes/header.php';
 <script>
 // handle reply button: set parent_id and scroll to form
 document.querySelectorAll('.btn-reply').forEach(b=>b.addEventListener('click',function(){
-  var id = this.dataset.id; document.getElementById('parent_id').value = id; window.scrollTo({top: document.getElementById('commentForm').offsetTop - 80, behavior: 'smooth'});
+  var id = this.dataset.id; document.getElementById('parent_id').value = id;
+  // show cancel link
+  var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display = 'inline-block';
+  // scroll to form
+  var formTop = document.querySelector('.comment-form-wrap').getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({top: formTop - 80, behavior: 'smooth'});
 }));
 
+document.getElementById('commentForm').addEventListener('submit', function(e){
 // submit comment form via fetch to public/api/comments.php
 document.getElementById('commentForm').addEventListener('submit', function(e){
   e.preventDefault();
   var fd = new FormData(this);
   fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
-    if (j.status === 'ok') { alert(j.message||'Submitted'); location.reload(); } else { alert(j.message||'Error'); }
+    if (j.status === 'ok') {
+      // If comment is auto-approved, append to top of list; otherwise notify pending
+      if (j.message && j.message.toLowerCase().indexOf('awaiting') !== -1) {
+        alert(j.message);
+        // reset form
+        document.getElementById('commentForm').reset();
+        document.getElementById('parent_id').value = '';
+        var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
+        return;
+      }
+      // Build a simple DOM node for the new comment and insert at top
+      var data = { name: fd.get('name') || 'Anonymous', content: fd.get('content') };
+      var div = document.createElement('article'); div.className = 'comment';
+      div.innerHTML = '<div class="comment-avatar"><div class="avatar-circle">'+(data.name.charAt(0).toUpperCase()||'A')+'</div></div><div class="comment-main"><div class="comment-meta"><strong>'+escapeHtml(data.name)+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(data.content))+'</div></div>';
+      var list = document.getElementById('commentsList'); if (list) list.insertBefore(div, list.firstChild);
+      document.getElementById('commentForm').reset(); document.getElementById('parent_id').value = '';
+      var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none';
+    } else { alert(j.message||'Error'); }
   }).catch(()=>alert('Network error'));
 });
+
+// cancel reply
+var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display='none'; });
+
+function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php';
