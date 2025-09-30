@@ -84,7 +84,28 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       <?php endif; ?>
 
-      <?= nl2br(htmlspecialchars($post['content'])) ?>
+      <?php
+        // Prefer to render sanitized HTML from post content so TOC anchors work.
+        $renderedContent = null;
+        try {
+          libxml_use_internal_errors(true);
+          $wrapper = new DOMDocument();
+          $wrapper->loadHTML('<div>' . $post['content'] . '</div>');
+          $body = $wrapper->getElementsByTagName('body')->item(0);
+          // extract innerHTML of our wrapper div
+          $div = $body->getElementsByTagName('div')->item(0);
+          $html = '';
+          if ($div) {
+            foreach ($div->childNodes as $child) {
+              $html .= $wrapper->saveHTML($child);
+            }
+          }
+          // allow only a whitelist of tags for safety
+          $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
+          $renderedContent = strip_tags($html, $allowed);
+        } catch (Throwable $e) { $renderedContent = nl2br(htmlspecialchars($post['content'])); }
+        echo $renderedContent;
+      ?>
     </div>
   </article>
 
