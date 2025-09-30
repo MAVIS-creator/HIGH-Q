@@ -208,11 +208,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     // If this is an AJAX edit, return JSON including published state
                     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                         header('Content-Type: application/json');
+                        // Attempt to get category name
+                        $catName = '';
+                        if ($hasCategoryId && $category_id) {
+                            try {
+                                $cst = $pdo->prepare('SELECT name FROM categories WHERE id=?');
+                                $cst->execute([$category_id]);
+                                $catName = $cst->fetchColumn() ?: '';
+                            } catch (Throwable $e) { $catName = ''; }
+                        } elseif (!empty($post['category'])) {
+                            $catName = $post['category'];
+                        }
                         echo json_encode(['success' => true, 'post' => [
                             'id' => $id,
                             'title' => $title,
                             'excerpt' => $excerpt,
-                            'category' => '',
+                            'category' => $catName,
                             'author' => $_SESSION['user']['name'] ?? '' ,
                             'featured_image' => $imgPath,
                             'published' => ($status === 'published')
@@ -588,10 +599,11 @@ function bindAjaxForm(id) {
             if (data.success) {
                 // Update card in place
                 const card = document.getElementById(`post-row-${id}`);
-                if (card) {
+                    if (card) {
                     card.querySelector('.meta strong').textContent = data.post.title;
                     const info = card.querySelector('.meta .info');
-                    if (info) info.textContent = `${data.post.category || 'Uncategorized'} • ${data.post.author || ''}`;
+                    const cat = data.post.category || 'Uncategorized';
+                    if (info) info.textContent = `${cat} • ${data.post.author || ''}`;
                     const excerpt = card.querySelector('.excerpt');
                     if (excerpt) excerpt.innerHTML = (data.post.excerpt || '').replace(/\n/g, '<br>');
                     if (data.post.featured_image) {
