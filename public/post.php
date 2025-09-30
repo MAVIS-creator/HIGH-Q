@@ -21,17 +21,55 @@ if (!$postId && $slug === '') { header('Location: index.php'); exit; }
 
 // fetch post
 if ($postId) {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1'); $stmt->execute([$postId]);
-} else { $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1'); $stmt->execute([$slug]); }
+  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
+  $stmt->execute([$postId]);
+} else {
+  $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1');
+  $stmt->execute([$slug]);
+}
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$post) { echo '<p>Post not found.</p>'; exit; }
 
-// comments
+// fetch approved comments
 $postId = $post['id'];
-$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND status = "approved" ORDER BY created_at DESC'); $cstmt->execute([$postId]); $allComments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
-$comments = []; $repliesMap = [];
-foreach ($allComments as $c) { if (empty($c['parent_id'])) { $comments[$c['id']] = $c; $comments[$c['id']]['replies'] = []; } else { $repliesMap[$c['parent_id']][] = $c; } }
-foreach ($repliesMap as $pid => $list) { if (isset($comments[$pid])) $comments[$pid]['replies'] = $list; else foreach ($list as $l) $comments[$l['id']] = $l; }
+$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND status = "approved" ORDER BY created_at DESC');
+$cstmt->execute([$postId]);
+$allComments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
+
+// build nested comments map
+$comments = [];
+$repliesMap = [];
+foreach ($allComments as $c) {
+  if (empty($c['parent_id'])) { $comments[$c['id']] = $c; $comments[$c['id']]['replies'] = []; }
+  else { $repliesMap[$c['parent_id']][] = $c; }
+}
+foreach ($repliesMap as $pid => $list) {
+  if (isset($comments[$pid])) { $comments[$pid]['replies'] = $list; }
+  else { foreach ($list as $l) $comments[$l['id']] = $l; }
+}
+
+// prepare rendered content and TOC
+$rendered = '';
+$toc = [];
+try {
+  libxml_use_internal_errors(true);
+  $doc = new DOMDocument();
+  $doc->loadHTML('<div>' . $post['content'] . '</div>');
+  $xpath = new DOMXPath($doc);
+  $nodes = $xpath->query('//h2|//h3');
+  $counter = 0;
+  foreach ($nodes as $n) {
+    $text = trim($n->textContent);
+    $id = $n->getAttribute('id');
+    if (!$id) { $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($text)); $id = trim($id, '-') . '-' . (++$counter); $n->setAttribute('id', $id); }
+    $toc[] = ['id' => $id, 'text' => $text, 'level' => (strtolower($n->nodeName) === 'h3' ? 3 : 2)];
+  }
+  $body = $doc->getElementsByTagName('body')->item(0);
+  $div = $body ? $body->getElementsByTagName('div')->item(0) : null;
+  if ($div) { foreach ($div->childNodes as $cn) $rendered .= $doc->saveHTML($cn); }
+  $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
+  $rendered = strip_tags($rendered, $allowed);
+} catch (Throwable $e) { $rendered = nl2br(htmlspecialchars($post['content'])); }
 
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
@@ -45,84 +83,88 @@ require_once __DIR__ . '/includes/header.php';
         <?php if (!empty($post['excerpt'])): ?>
           <div class="post-excerpt" style="border:1px solid #f0e8e8;padding:18px;border-radius:8px;margin-bottom:14px;background:#fff"><?= nl2br(htmlspecialchars($post['excerpt'])) ?></div>
         <?php endif; ?>
-        <?php if (!empty($post['featured_image'])):
-          $fi = $post['featured_image']; if (preg_match('#^https?://#i',$fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) $imgSrc=$fi; else $imgSrc = '/HIGH-Q/'.ltrim($fi,'/'); ?>
+        <?php if (!empty($post['featured_image'])): $fi = $post['featured_image']; if (preg_match('#^https?://#i',$fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) $imgSrc=$fi; else $imgSrc = '/HIGH-Q/'.ltrim($fi,'/'); ?>
           <div class="post-thumb" style="margin-bottom:12px;"><img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover"></div>
         <?php endif; ?>
 
-        <?php
-          // sanitize and ensure headings have ids
-          $rendered = '';
-          try {
-                        libxml_use_internal_errors(true);
-                        $doc = new DOMDocument();
-                        $doc->loadHTML('<div>'.$post['content'].'</div>');
-                        $xpath = new DOMXPath($doc);
-                        $heads = $xpath->query('//h2|//h3');
-                        $i = 0;
-                        foreach ($heads as $h) {
-                          $txt = trim($h->textContent);
-                          $id = $h->getAttribute('id');
-                          if (!$id) {
-                            $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($txt));
-                            $id = trim($id, '-') . '-' . $i++;
-                            $h->setAttribute('id', $id);
-                          }
-                        }
-                        $body = $doc->getElementsByTagName('body')->item(0);
-                        $div = $body ? $body->getElementsByTagName('div')->item(0) : null;
-                        if ($div) {
-                          foreach ($div->childNodes as $cnode) {
-                            $rendered .= $doc->saveHTML($cnode);
-                          }
-                        }
-                        $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
-                        $rendered = strip_tags($rendered, $allowed);
-          } catch (Throwable $e) { $rendered = nl2br(htmlspecialchars($post['content'])); }
-          echo $rendered;
-        ?>
+        <?= $rendered ?>
       </div>
     </article>
 
     <aside class="post-sidebar">
       <?php
-        $likesCount = 0; try { $l = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?'); $l->execute([$postId]); $likesCount = (int)$l->fetchColumn(); } catch (Throwable $e) { if (isset($post['likes'])) $likesCount=(int)$post['likes']; }
+        $likesCount = 0;
+        try { $l = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?'); $l->execute([$postId]); $likesCount = (int)$l->fetchColumn(); } catch (Throwable $e) { if (isset($post['likes'])) $likesCount=(int)$post['likes']; }
         $commentsCount = max(0, count($allComments));
       ?>
-      <div class="post-actions"><div class="post-stats"><button id="likeBtn" class="icon-btn">❤ <span id="likesCount" class="count"><?= $likesCount ?></span></button> <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button> <button id="shareBtn" class="icon-btn">🔗 Share</button></div></div>
-      <div class="toc-box"><h4>Table of Contents</h4><div id="tocInner">
-        <?php
-          try {
-            libxml_use_internal_errors(true);
-            $tdoc = new DOMDocument();
-            $tdoc->loadHTML('<div>'.$post['content'].'</div>');
-            $tx = new DOMXPath($tdoc);
-            $nodes = $tx->query('//h2|//h3');
-            if ($nodes && $nodes->length) {
-              echo '<ul class="toc-list">';
-              foreach ($nodes as $n) {
-                $tag = strtolower($n->nodeName);
-                $lvl = $tag === 'h3' ? 3 : 2;
-                $text = trim($n->textContent);
-                $id = $n->getAttribute('id');
-                if (!$id) {
-                  $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($text));
-                  $id = trim($id, '-');
-                  // ensure uniqueness
-                  static $tocCounter = 0; $id = $id . '-' . (++$tocCounter);
-                  $n->setAttribute('id', $id);
-                }
-                echo '<li class="toc-item toc-level-'.$lvl.'"><a href="#'.htmlspecialchars($id).'">'.htmlspecialchars($text).'</a></li>';
-              }
-              echo '</ul>';
-            } else {
-              echo '<p class="muted">No headings found.</p>';
-            }
-          } catch (Throwable $e) { echo '<p class="muted">Unable to build TOC</p>'; }
-        ?>
-      </div></div>
+      <div class="post-actions">
+        <div class="post-stats">
+          <button id="likeBtn" class="icon-btn">❤ <span id="likesCount" class="count"><?= $likesCount ?></span></button>
+          <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button>
+          <button id="shareBtn" class="icon-btn">🔗 Share</button>
+        </div>
+      </div>
+
+      <div class="toc-box">
+        <h4>Table of Contents</h4>
+        <div id="tocInner">
+          <?php if (!empty($toc)): ?>
+            <ul class="toc-list">
+              <?php foreach ($toc as $t): ?>
+                <li class="toc-item toc-level-<?= $t['level'] ?>"><a href="#<?= htmlspecialchars($t['id']) ?>"><?= htmlspecialchars($t['text']) ?></a></li>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?>
+            <p class="muted">No headings found.</p>
+          <?php endif; ?>
+        </div>
+      </div>
     </aside>
   </div>
+
+  <section id="commentsSection" class="comments-section">
+    <h2>Comments</h2>
+    <div id="commentsList" class="comments-list">
+      <?php foreach ($comments as $c): ?>
+        <article class="comment" data-id="c<?= $c['id'] ?>">
+          <div class="comment-avatar"><div class="avatar-circle"><?= strtoupper(substr($c['name'] ?: 'A',0,1)) ?></div></div>
+          <div class="comment-main">
+            <div class="comment-meta"><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($c['created_at'])) ?></span></div>
+            <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+            <div class="comment-actions"><button class="btn-link btn-reply" data-id="<?= $c['id'] ?>">Reply</button></div>
+            <?php if (!empty($c['replies'])): ?>
+              <div class="replies">
+                <?php foreach ($c['replies'] as $rep): ?>
+                  <div class="comment reply">
+                    <div class="comment-avatar"><div class="avatar-circle muted"><?= strtoupper(substr($rep['name'] ?: 'A',0,1)) ?></div></div>
+                    <div class="comment-main">
+                      <div class="comment-meta"><strong><?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($rep['created_at'])) ?></span></div>
+                      <div class="comment-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+          </div>
+        </article>
+      <?php endforeach; ?>
+    </div>
+
+    <div class="comment-form-wrap">
+      <h3>Join the conversation</h3>
+      <form id="commentForm">
+        <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
+        <input type="hidden" name="parent_id" id="parent_id" value="">
+        <div style="display:none"><input type="text" name="hp_name" autocomplete="off" tabindex="-1"></div>
+        <div class="form-row"><input type="text" name="name" placeholder="Your name (optional)"></div>
+        <div class="form-row"><input type="email" name="email" placeholder="Email (optional)"></div>
+        <div class="form-row"><textarea name="content" rows="4" placeholder="Share your thoughts on this article..." required></textarea></div>
+        <div class="form-actions"><button type="submit" class="btn-approve">Post Comment</button> <button type="button" id="cancelReply" class="btn-link" style="display:none">Cancel Reply</button></div>
+      </form>
+    </div>
+  </section>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   // reply handler
@@ -146,6 +188,7 @@ function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
 function renderCommentNode(c){ var node=document.createElement('article'); node.className='comment'; node.setAttribute('data-id','c'+c.id); var av=document.createElement('div'); av.className='comment-avatar'; av.innerHTML='<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>'; var main=document.createElement('div'); main.className='comment-main'; main.innerHTML = '<div class="comment-meta"><strong>'+escapeHtml(c.name||'Anonymous')+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(c.content))+'</div><div class="comment-actions"><button class="btn-link btn-reply" data-id="'+c.id+'">Reply</button></div>'; node.appendChild(av); node.appendChild(main); var reply=main.querySelector('.btn-reply'); if (reply) reply.addEventListener('click', function(){ document.getElementById('parent_id').value=this.dataset.id; var cancel=document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); return node; }
 
 <?php require_once __DIR__ . '/includes/footer.php';
+
           </div>
         </article>
       <?php endforeach; ?>
