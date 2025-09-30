@@ -179,6 +179,16 @@ $posts = $stmt->fetchAll();
     <?php include '../includes/sidebar.php'; ?>
 
     <div class="container">
+        <?php if (!empty($errors)): ?>
+            <div class="admin-notice" style="background:#ffecec;border-left:4px solid #f28b82;padding:12px;margin-bottom:12px;">
+                <?php foreach ($errors as $err) echo '<div>' . htmlspecialchars($err) . '</div>'; ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($success)): ?>
+            <div class="admin-notice" style="background:#e7ffef;border-left:4px solid #66cc88;padding:12px;margin-bottom:12px;">
+                <?php foreach ($success as $s) echo '<div>' . htmlspecialchars($s) . '</div>'; ?>
+            </div>
+        <?php endif; ?>
         <div class="module-header">
             <div>
                 <h1>News & Blog Management</h1>
