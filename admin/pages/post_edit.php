@@ -83,3 +83,25 @@ try {
 <script>
 // edit-link clicks are handled centrally from the posts listing page. This file only contains the modal content.
 </script>
+<script>
+  // Preview chosen featured image file
+  (function(){
+    var fileInput = document.querySelector('input[name="featured_image"]');
+    if (fileInput) {
+      fileInput.addEventListener('change', function(){
+        var f = this.files && this.files[0];
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function(e){
+          var img = document.getElementById('existingThumb');
+          if (!img) {
+            img = document.createElement('img'); img.className='thumb'; img.id='existingThumb'; img.style.maxWidth='180px';
+            fileInput.parentNode.appendChild(img);
+          }
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(f);
+      });
+    }
+  })();
+</script>
