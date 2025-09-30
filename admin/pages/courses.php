@@ -252,7 +252,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             <?php if (strpos($c['icon'], 'bx') !== false): // icon stored as boxicons class ?>
               <i class="<?= htmlspecialchars($c['icon']) ?>" style="font-size:28px"></i>
             <?php else: ?>
-              <img src="../public/assets/images/icons/<?= htmlspecialchars($c['icon']) ?>" alt="<?= htmlspecialchars($c['title']) ?>">
+              <?php
+                // If icon is an absolute URL or starts with / -> use directly, else assume filename in public assets
+                $iconVal = $c['icon'];
+                if (preg_match('#^https?://#i', $iconVal) || strpos($iconVal, '/') === 0 || strpos($iconVal, '//') === 0) {
+                    $iconSrc = $iconVal;
+                } else {
+                    $iconSrc = '../public/assets/images/icons/' . ltrim($iconVal, '/');
+                }
+              ?>
+              <img src="<?= htmlspecialchars($iconSrc) ?>" alt="<?= htmlspecialchars($c['title']) ?>">
             <?php endif; ?>
           <?php else: ?>
             <i class='bx bxs-graduation'></i>
