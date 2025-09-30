@@ -312,7 +312,7 @@ $posts = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>News & Blog Management — Admin</title>
-    <!-- admin CSS is included via header.php; avoid loading public copy here -->
+    <link rel="stylesheet" href="../public/assets/css/admin.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 
@@ -381,34 +381,7 @@ $posts = $stmt->fetchAll();
                                     // Support both full URLs and legacy relative paths stored in DB.
                                     $fi = $p['featured_image'];
                                     if (preg_match('#^https?://#i', $fi) || strpos($fi, '//') === 0 || strpos($fi, '/') === 0) {
-                                        // Absolute URL or absolute path — use it, but if it's a local URL that points to
-                                        // /HIGH-Q/uploads/... (without /public) try to map to /HIGH-Q/public/uploads/ if file exists.
                                         $imgSrc = $fi;
-                                        // If the host is local and the path contains '/uploads/', try alternate /public path
-                                        $tryPublic = false;
-                                        $u = parse_url($fi);
-                                        $path = $u['path'] ?? '';
-                                        if (!empty($path) && stripos($path, '/uploads/') !== false) {
-                                            // build filesystem path for current URL and check existence
-                                            $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '\\/');
-                                            $fsPath = $docRoot . $path;
-                                            if (!is_readable($fsPath)) {
-                                                // attempt to insert /public after project root segment if present
-                                                // e.g. /HIGH-Q/uploads/... -> /HIGH-Q/public/uploads/...
-                                                $parts = explode('/', ltrim($path, '/'));
-                                                if (count($parts) > 1) {
-                                                    // insert 'public' after first segment
-                                                    $parts2 = $parts;
-                                                    array_splice($parts2, 1, 0, 'public');
-                                                    $altPath = '/' . implode('/', $parts2);
-                                                    $altFs = $docRoot . $altPath;
-                                                    if (is_readable($altFs)) {
-                                                        // map back to URL
-                                                        $imgSrc = (isset($u['scheme']) ? $u['scheme'] . '://' : '') . ($u['host'] ?? '') . $altPath;
-                                                    }
-                                                }
-                                            }
-                                        }
                                     } else {
                                         // legacy relative path (e.g. uploads/posts/xxx.jpg) -> prefix admin->public
                                         $imgSrc = '../public/' . ltrim($fi, '/');
