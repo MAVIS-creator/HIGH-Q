@@ -1,7 +1,8 @@
 .courses-page {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0.15rem 1rem 1rem 1rem; /* move content even closer to the fixed header */
+  /* reduce left padding so content sits closer to the fixed sidebar */
+  padding: 0.15rem 0.75rem 1rem 0.5rem;
   /* make sure it sits within the admin-main area and is centered like roles.php */
   box-sizing: border-box;
 }
@@ -84,8 +85,8 @@
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 10px; /* reduced spacing between course cards */
-  margin-top: 12px;
+  gap: 12px; /* a little breathing room between course cards */
+  margin-top: 8px;
 }
 
 .course-card {
@@ -229,25 +230,28 @@
 }
 
 .course-actions {
-  margin-top: 16px;
+  margin-top: 12px;
   display: flex;
   justify-content: flex-start;
   gap: 12px;
 }
 
-.course-actions .btn-editCourse {
-  background: #f0f0f0;
-  border: none;
+.course-actions .btn-editCourse,
+.course-header .btn-delete {
+  background: #f7f7f7;
+  border: 1px solid #e1e1e1;
   padding: 6px 10px;
   font-size: 0.85rem;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
+  transition: background 0.15s, transform 0.08s;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.course-actions .btn-editCourse:hover {
-  background: #e2e2e2;
+.course-actions .btn-editCourse:hover,
+.course-header .btn-delete:hover {
+  background: #eef0f1;
+  transform: translateY(-1px);
 }
