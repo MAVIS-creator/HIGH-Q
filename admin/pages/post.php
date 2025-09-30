@@ -24,6 +24,13 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
+// Determine application base URL (use APP_URL env if available, otherwise build from host)
+$appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+if (!$appUrl) {
+    $appUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+    $appUrl .= ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']);
+}
+
 // Detect whether the posts table has a category_id column on this install
 $hasCategoryId = false;
 try {
