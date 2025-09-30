@@ -63,6 +63,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       }
     }
 
+    // Detect whether the courses table has a featured_image column on this install
+    $hasFeaturedImage = false;
+    try {
+      $colStmtFI = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'courses' AND COLUMN_NAME = 'featured_image'");
+      $colStmtFI->execute();
+      $hasFeaturedImage = (bool)$colStmtFI->fetchColumn();
+    } catch (Throwable $e) {
+      $hasFeaturedImage = false;
+    }
+
+    // Prepare uploads directory for course images
+    $courseUploadDir = __DIR__ . '/../../public/uploads/courses/';
+    if ($hasFeaturedImage && !is_dir($courseUploadDir)) {
+      @mkdir($courseUploadDir, 0755, true);
+    }
+
+    // Handle featured image upload (if supported)
+    $imgPath = '';
+    if ($hasFeaturedImage && !empty($_FILES['featured_image']['name']) && ($_FILES['featured_image']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+      $ext      = pathinfo($_FILES['featured_image']['name'], PATHINFO_EXTENSION);
+      $filename = uniqid('course_') . '.' . $ext;
+      $target   = $courseUploadDir . $filename;
+      if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target)) {
+        // Prefer storing absolute URL using APP_URL when available
+        $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+        if ($appUrl) {
+          $imgPath = rtrim($appUrl, '/') . '/public/uploads/courses/' . $filename;
+        } else {
+          // Fallback to relative uploads path
+          $imgPath = 'uploads/courses/' . $filename;
+        }
+      }
+    }
+
         // Auto-generate slug from title when missing
         if (!$slug && $title) {
             $slug = preg_replace('/[^a-z0-9]+/', '-', strtolower($title));
