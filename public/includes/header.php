@@ -231,12 +231,21 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           <a href="index.php" class="active">Home</a>
           <a href="about.php">About Us</a>
 
-          <!-- Combined dropdown: a single, general label that reveals Programs and News on click -->
+          <!-- Programs dropdown (now contains Exams) -->
           <div class="nav-dropdown">
-            <a href="#" class="drop-toggle">Programs & News</a>
+            <a href="#" class="drop-toggle">Programs</a>
             <div class="nav-dropdown-content">
               <a href="programs.php">Programs</a>
-              <a href="news.php">News</a>
+              <a href="exams.php">Exams</a>
+            </div>
+          </div>
+
+          <!-- News top-level with Community under it -->
+          <div class="nav-dropdown">
+            <a href="news.php" class="drop-toggle">News</a>
+            <div class="nav-dropdown-content">
+              <a href="news.php">News & Blog</a>
+              <a href="community.php">Community</a>
             </div>
           </div>
 
