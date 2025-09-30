@@ -73,9 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $log .= "FILES: " . implode(', ', $files) . "\n";
         @file_put_contents($dbgFile, $log, FILE_APPEND | LOCK_EX);
     } catch (\Throwable $e) { /* ignore debug failures */ }
+    $dbgFile = __DIR__ . '/../../storage/posts-debug.log';
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = "Invalid CSRF token.";
+        @file_put_contents($dbgFile, date('c') . " CSRF: INVALID\n", FILE_APPEND | LOCK_EX);
     } else {
+        @file_put_contents($dbgFile, date('c') . " CSRF: OK\n", FILE_APPEND | LOCK_EX);
         $act = $_GET['action'];
         $id  = (int)($_GET['id'] ?? 0);
 
@@ -124,8 +127,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
                 $placeholders = implode(',', array_fill(0, count($cols), '?'));
                 $sql = "INSERT INTO posts (" . implode(', ', $cols) . ") VALUES ({$placeholders})";
-                $stmt = $pdo->prepare($sql);
-                $ok = $stmt->execute($params);
+                try {
+                    @file_put_contents($dbgFile, date('c') . " SQL: " . $sql . "\nPARAMS: " . json_encode($params) . "\n", FILE_APPEND | LOCK_EX);
+                    $stmt = $pdo->prepare($sql);
+                    $ok = $stmt->execute($params);
+                    @file_put_contents($dbgFile, date('c') . " EXECUTE RESULT: " . ($ok ? 'true' : 'false') . "\n", FILE_APPEND | LOCK_EX);
+                    if (!$ok) {
+                        $ei = $stmt->errorInfo();
+                        @file_put_contents($dbgFile, date('c') . " ERRORINFO: " . json_encode($ei) . "\n", FILE_APPEND | LOCK_EX);
+                    }
+                } catch (Throwable $e) {
+                    @file_put_contents($dbgFile, date('c') . " EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+                    $ok = false;
+                }
                                 if ($ok) {
                                                     $newId = $pdo->lastInsertId();
                                                     logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
@@ -158,8 +172,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                                 if ($hasUpdatedAt) $sql .= ", updated_at=NOW()";
                                                 $sql .= " WHERE id=?";
                                                 $params[] = $id;
-                                $stmt = $pdo->prepare($sql);
-                                $ok = $stmt->execute($params);
+                                try {
+                                    @file_put_contents($dbgFile, date('c') . " SQL: " . $sql . "\nPARAMS: " . json_encode($params) . "\n", FILE_APPEND | LOCK_EX);
+                                    $stmt = $pdo->prepare($sql);
+                                    $ok = $stmt->execute($params);
+                                    @file_put_contents($dbgFile, date('c') . " EXECUTE RESULT: " . ($ok ? 'true' : 'false') . "\n", FILE_APPEND | LOCK_EX);
+                                    if (!$ok) {
+                                        $ei = $stmt->errorInfo();
+                                        @file_put_contents($dbgFile, date('c') . " ERRORINFO: " . json_encode($ei) . "\n", FILE_APPEND | LOCK_EX);
+                                    }
+                                } catch (Throwable $e) {
+                                    @file_put_contents($dbgFile, date('c') . " EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+                                    $ok = false;
+                                }
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
                     $success[] = "Article '{$title}' updated.";
