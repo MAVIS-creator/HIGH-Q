@@ -1,5 +1,4 @@
 <?php
-<?php
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
@@ -55,14 +54,30 @@ require_once __DIR__ . '/includes/header.php';
           // sanitize and ensure headings have ids
           $rendered = '';
           try {
-            libxml_use_internal_errors(true);
-            $doc = new DOMDocument(); $doc->loadHTML('<div>'.$post['content'].'</div>');
-            $xpath = new DOMXPath($doc); $heads = $xpath->query('//h2|//h3');
-            $i=0; foreach ($heads as $h) { $txt = trim($h->textContent); $id = $h->getAttribute('id'); if (!$id) { $id = preg_replace('/[^a-z0-9]+/i','-',strtolower($txt)); $id = trim($id,'-').'-'.$i++; $h->setAttribute('id',$id); } }
-            $body = $doc->getElementsByTagName('body')->item(0); $div = $body->getElementsByTagName('div')->item(0);
-            if ($div) { foreach ($div->childNodes as $cnode) $rendered .= $doc->saveHTML($cnode); }
-            $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
-            $rendered = strip_tags($rendered, $allowed);
+                        libxml_use_internal_errors(true);
+                        $doc = new DOMDocument();
+                        $doc->loadHTML('<div>'.$post['content'].'</div>');
+                        $xpath = new DOMXPath($doc);
+                        $heads = $xpath->query('//h2|//h3');
+                        $i = 0;
+                        foreach ($heads as $h) {
+                          $txt = trim($h->textContent);
+                          $id = $h->getAttribute('id');
+                          if (!$id) {
+                            $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($txt));
+                            $id = trim($id, '-') . '-' . $i++;
+                            $h->setAttribute('id', $id);
+                          }
+                        }
+                        $body = $doc->getElementsByTagName('body')->item(0);
+                        $div = $body ? $body->getElementsByTagName('div')->item(0) : null;
+                        if ($div) {
+                          foreach ($div->childNodes as $cnode) {
+                            $rendered .= $doc->saveHTML($cnode);
+                          }
+                        }
+                        $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
+                        $rendered = strip_tags($rendered, $allowed);
           } catch (Throwable $e) { $rendered = nl2br(htmlspecialchars($post['content'])); }
           echo $rendered;
         ?>
@@ -77,35 +92,60 @@ require_once __DIR__ . '/includes/header.php';
       <div class="post-actions"><div class="post-stats"><button id="likeBtn" class="icon-btn">❤ <span id="likesCount" class="count"><?= $likesCount ?></span></button> <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button> <button id="shareBtn" class="icon-btn">🔗 Share</button></div></div>
       <div class="toc-box"><h4>Table of Contents</h4><div id="tocInner">
         <?php
-          try { $tdoc = new DOMDocument(); $tdoc->loadHTML('<div>'.$post['content'].'</div>'); $tx = new DOMXPath($tdoc); $nodes = $tx->query('//h2|//h3'); if ($nodes && $nodes->length) { echo '<ul class="toc-list">'; foreach ($nodes as $n) { $tag = strtolower($n->nodeName); $lvl = $tag==='h3'?3:2; $text = trim($n->textContent); $id = $n->getAttribute('id'); if (!$id) { $id = preg_replace('/[^a-z0-9]+/i','-',strtolower($text)); $id = trim($id,'-'); $n->setAttribute('id',$id); } echo '<li class="toc-item toc-level-'.$lvl.'"><a href="#'.htmlspecialchars($id).'">'.htmlspecialchars($text).'</a></li>'; } echo '</ul>'; } else echo '<p class="muted">No headings found.</p>'; } catch (Throwable $e) { echo '<p class="muted">Unable to build TOC</p>'; }
+          try {
+            libxml_use_internal_errors(true);
+            $tdoc = new DOMDocument();
+            $tdoc->loadHTML('<div>'.$post['content'].'</div>');
+            $tx = new DOMXPath($tdoc);
+            $nodes = $tx->query('//h2|//h3');
+            if ($nodes && $nodes->length) {
+              echo '<ul class="toc-list">';
+              foreach ($nodes as $n) {
+                $tag = strtolower($n->nodeName);
+                $lvl = $tag === 'h3' ? 3 : 2;
+                $text = trim($n->textContent);
+                $id = $n->getAttribute('id');
+                if (!$id) {
+                  $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($text));
+                  $id = trim($id, '-');
+                  // ensure uniqueness
+                  static $tocCounter = 0; $id = $id . '-' . (++$tocCounter);
+                  $n->setAttribute('id', $id);
+                }
+                echo '<li class="toc-item toc-level-'.$lvl.'"><a href="#'.htmlspecialchars($id).'">'.htmlspecialchars($text).'</a></li>';
+              }
+              echo '</ul>';
+            } else {
+              echo '<p class="muted">No headings found.</p>';
+            }
+          } catch (Throwable $e) { echo '<p class="muted">Unable to build TOC</p>'; }
         ?>
       </div></div>
     </aside>
   </div>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // reply handler
+  document.querySelectorAll('.btn-reply').forEach(function(b){ b.addEventListener('click', function(e){ e.preventDefault(); document.getElementById('parent_id').value = this.dataset.id; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); });
 
-  <section id="commentsSection" class="comments-section">
-    <h2>Comments</h2>
-    <div id="commentsList" class="comments-list">
-      <?php foreach ($comments as $c): ?>
-        <article class="comment" data-id="<?= $c['id'] ?>">
-          <div class="comment-avatar"><div class="avatar-circle"><?= strtoupper(substr($c['name'] ?: 'A',0,1)) ?></div></div>
-          <div class="comment-main">
-            <div class="comment-meta"><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($c['created_at'])) ?></span></div>
-            <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
-            <div class="comment-actions"><button class="btn-link btn-reply" data-id="<?= $c['id'] ?>">Reply</button></div>
-            <?php if (!empty($c['replies'])): ?>
-              <div class="replies">
-                <?php foreach ($c['replies'] as $rep): ?>
-                  <div class="comment reply">
-                    <div class="comment-avatar"><div class="avatar-circle muted"><?= strtoupper(substr($rep['name'] ?: 'A',0,1)) ?></div></div>
-                    <div class="comment-main">
-                      <div class="comment-meta"><strong><?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">· <?= htmlspecialchars(time_ago($rep['created_at'])) ?></span></div>
-                      <div class="comment-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-                    </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-            <?php endif; ?>
+  // submit comment
+  var form = document.getElementById('commentForm'); if (form) form.addEventListener('submit', function(e){ e.preventDefault(); var fd = new FormData(this); var btn = this.querySelector('button[type=submit]'); if (btn) btn.disabled = true; fetch('api/comments.php',{method:'POST',body:fd}).then(function(r){ return r.json(); }).then(function(j){ if (j.status === 'ok') { if (j.comment) { var node = renderCommentNode(j.comment); var list = document.getElementById('commentsList'); if (j.comment.parent_id) { var parent = list.querySelector('.comment[data-id="c'+j.comment.parent_id+'"]'); if (parent) { var replies = parent.querySelector('.replies'); if (!replies) { replies = document.createElement('div'); replies.className='replies'; parent.querySelector('.comment-main').appendChild(replies); } replies.insertBefore(node, replies.firstChild); } else list.insertBefore(node, list.firstChild); } else list.insertBefore(node, list.firstChild); } else { alert(j.message || 'Comment submitted'); } form.reset(); document.getElementById('parent_id').value=''; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none'; } else { alert(j.message || 'Error'); } }).catch(function(){ alert('Network error'); }).finally(function(){ if (btn) btn.disabled = false; }); });
+
+  // cancel reply
+  var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display = 'none'; });
+
+  // like
+  var likeBtn = document.getElementById('likeBtn'); if (likeBtn) likeBtn.addEventListener('click', function(){ var b=this; b.disabled=true; fetch('api/like_post.php', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: 'post_id=' + encodeURIComponent(<?= (int)$postId ?>) }).then(function(r){ return r.json(); }).then(function(j){ if (j.status==='ok') { document.getElementById('likesCount').textContent = j.count; } }).finally(function(){ b.disabled=false; }); });
+
+  // share
+  var shareBtn = document.getElementById('shareBtn'); if (shareBtn) shareBtn.addEventListener('click', function(){ var url = window.location.href; var title = document.querySelector('h1')?.textContent || document.title; var items = [ {label:'Twitter', href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(title)+'&url='+encodeURIComponent(url)}, {label:'Facebook', href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)}, {label:'WhatsApp', href:'https://api.whatsapp.com/send?text='+encodeURIComponent(title+' '+url)}, {label:'Copy', href:'copy'} ]; var menu = document.createElement('div'); menu.className='share-menu'; menu.style.position='absolute'; menu.style.right='20px'; menu.style.top='80px'; menu.style.background='#fff'; menu.style.border='1px solid #eee'; menu.style.padding='8px'; menu.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'; items.forEach(function(it){ var a=document.createElement('a'); a.href = it.href==='copy' ? '#' : it.href; a.textContent = it.label; a.className='share-item'; a.style.display='block'; a.style.padding='6px 8px'; a.addEventListener('click', function(ev){ ev.preventDefault(); if (it.href==='copy') { navigator.clipboard?.writeText(url).then(function(){ alert('Link copied'); }).catch(function(){ prompt('Copy this URL', url); }); } else { window.open(it.href,'_blank','noopener'); } }); menu.appendChild(a); }); var existing = document.querySelector('.share-menu'); if (existing) existing.remove(); document.body.appendChild(menu); setTimeout(function(){ window.addEventListener('click', function rm(){ menu.remove(); window.removeEventListener('click', rm); }); }, 50); });
+});
+
+function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
+function renderCommentNode(c){ var node=document.createElement('article'); node.className='comment'; node.setAttribute('data-id','c'+c.id); var av=document.createElement('div'); av.className='comment-avatar'; av.innerHTML='<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>'; var main=document.createElement('div'); main.className='comment-main'; main.innerHTML = '<div class="comment-meta"><strong>'+escapeHtml(c.name||'Anonymous')+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(c.content))+'</div><div class="comment-actions"><button class="btn-link btn-reply" data-id="'+c.id+'">Reply</button></div>'; node.appendChild(av); node.appendChild(main); var reply=main.querySelector('.btn-reply'); if (reply) reply.addEventListener('click', function(){ document.getElementById('parent_id').value=this.dataset.id; var cancel=document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); return node; }
+
+<?php require_once __DIR__ . '/includes/footer.php';
           </div>
         </article>
       <?php endforeach; ?>
