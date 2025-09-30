@@ -3,7 +3,6 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-// small helper to show human-friendly elapsed time for comments
 if (!function_exists('time_ago')) {
   function time_ago($ts) {
     $t = strtotime($ts);
@@ -16,42 +15,24 @@ if (!function_exists('time_ago')) {
   }
 }
 
-// support either ?id= or ?slug= links (home.php uses slug)
+// support either ?id= or ?slug=
 $postId = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
 if (!$postId && $slug === '') { header('Location: index.php'); exit; }
 
-// fetch post by id or slug
+// fetch post
 if ($postId) {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
-  $stmt->execute([$postId]);
-} else {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1');
-  $stmt->execute([$slug]);
-}
+  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1'); $stmt->execute([$postId]);
+} else { $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1'); $stmt->execute([$slug]); }
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$post) { echo "<p>Post not found.</p>"; exit; }
+if (!$post) { echo '<p>Post not found.</p>'; exit; }
 
-// fetch approved comments
+// comments
 $postId = $post['id'];
-$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND status = "approved" ORDER BY created_at DESC');
-$cstmt->execute([$postId]);
-$allComments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
-
-// build nested comments
-$comments = [];
-$repliesMap = [];
-foreach ($allComments as $c) {
-  if (empty($c['parent_id'])) {
-    $comments[$c['id']] = $c; $comments[$c['id']]['replies'] = [];
-  } else {
-    $repliesMap[$c['parent_id']][] = $c;
-  }
-}
-foreach ($repliesMap as $parentId => $list) {
-  if (isset($comments[$parentId])) { $comments[$parentId]['replies'] = $list; }
-  else { foreach ($list as $l) $comments[$l['id']] = $l; }
-}
+$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND status = "approved" ORDER BY created_at DESC'); $cstmt->execute([$postId]); $allComments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
+$comments = []; $repliesMap = [];
+foreach ($allComments as $c) { if (empty($c['parent_id'])) { $comments[$c['id']] = $c; $comments[$c['id']]['replies'] = []; } else { $repliesMap[$c['parent_id']][] = $c; } }
+foreach ($repliesMap as $pid => $list) { if (isset($comments[$pid])) $comments[$pid]['replies'] = $list; else foreach ($list as $l) $comments[$l['id']] = $l; }
 
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
@@ -65,86 +46,47 @@ require_once __DIR__ . '/includes/header.php';
         <?php if (!empty($post['excerpt'])): ?>
           <div class="post-excerpt" style="border:1px solid #f0e8e8;padding:18px;border-radius:8px;margin-bottom:14px;background:#fff"><?= nl2br(htmlspecialchars($post['excerpt'])) ?></div>
         <?php endif; ?>
-        <?php if (!empty($post['featured_image'])): 
-          $fi = $post['featured_image'];
-          if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) { $imgSrc = $fi; } else { $imgSrc = '/HIGH-Q/' . ltrim($fi, '/'); }
-        ?>
+        <?php if (!empty($post['featured_image'])):
+          $fi = $post['featured_image']; if (preg_match('#^https?://#i',$fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) $imgSrc=$fi; else $imgSrc = '/HIGH-Q/'.ltrim($fi,'/'); ?>
           <div class="post-thumb" style="margin-bottom:12px;"><img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover"></div>
         <?php endif; ?>
 
         <?php
-          // Render sanitized HTML and ensure headings have ids so TOC links work
-          $renderedContent = '';
+          // sanitize and ensure headings have ids
+          $rendered = '';
           try {
             libxml_use_internal_errors(true);
-            $doc = new DOMDocument();
-            $doc->loadHTML('<div>' . $post['content'] . '</div>');
-            $xpath = new DOMXPath($doc);
-            $headings = $xpath->query('//h2|//h3');
-            foreach ($headings as $idx => $h) {
-              $text = trim($h->textContent);
-              $id = $h->getAttribute('id');
-              if (!$id) {
-                $id = preg_replace('/[^a-z0-9]+/i','-', strtolower($text)); $id = trim($id,'-') . '-' . $idx;
-                $h->setAttribute('id', $id);
-              }
-            }
-            $body = $doc->getElementsByTagName('body')->item(0);
-            $div = $body->getElementsByTagName('div')->item(0);
-            if ($div) {
-              foreach ($div->childNodes as $child) { $renderedContent .= $doc->saveHTML($child); }
-            }
+            $doc = new DOMDocument(); $doc->loadHTML('<div>'.$post['content'].'</div>');
+            $xpath = new DOMXPath($doc); $heads = $xpath->query('//h2|//h3');
+            $i=0; foreach ($heads as $h) { $txt = trim($h->textContent); $id = $h->getAttribute('id'); if (!$id) { $id = preg_replace('/[^a-z0-9]+/i','-',strtolower($txt)); $id = trim($id,'-').'-'.$i++; $h->setAttribute('id',$id); } }
+            $body = $doc->getElementsByTagName('body')->item(0); $div = $body->getElementsByTagName('div')->item(0);
+            if ($div) { foreach ($div->childNodes as $cnode) $rendered .= $doc->saveHTML($cnode); }
             $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
-            $renderedContent = strip_tags($renderedContent, $allowed);
-          } catch (Throwable $e) { $renderedContent = nl2br(htmlspecialchars($post['content'])); }
-          echo $renderedContent;
+            $rendered = strip_tags($rendered, $allowed);
+          } catch (Throwable $e) { $rendered = nl2br(htmlspecialchars($post['content'])); }
+          echo $rendered;
         ?>
       </div>
     </article>
 
     <aside class="post-sidebar">
       <?php
-        // likes and counts
-        $likesCount = 0;
-        try { $lstmt = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?'); $lstmt->execute([$postId]); $likesCount = (int)$lstmt->fetchColumn(); } catch (Throwable $e) { if (isset($post['likes'])) $likesCount = (int)$post['likes']; }
+        $likesCount = 0; try { $l = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?'); $l->execute([$postId]); $likesCount = (int)$l->fetchColumn(); } catch (Throwable $e) { if (isset($post['likes'])) $likesCount=(int)$post['likes']; }
         $commentsCount = max(0, count($allComments));
       ?>
-      <div class="post-actions">
-        <div class="post-stats">
-          <button id="likeBtn" class="icon-btn">❤ <span id="likesCount" class="count"><?= $likesCount ?></span></button>
-          <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button>
-          <button id="shareBtn" class="icon-btn">🔗 Share</button>
-        </div>
-      </div>
-
-      <div class="toc-box">
-        <h4>Table of Contents</h4>
-        <div id="tocInner">
-          <?php
-            // build TOC from renderedContent (parse again to be safe)
-            try {
-              $tocDoc = new DOMDocument(); $tocDoc->loadHTML('<div>' . $post['content'] . '</div>');
-              $xpath2 = new DOMXPath($tocDoc); $nodes = $xpath2->query('//h2|//h3');
-              if ($nodes && $nodes->length) {
-                echo '<ul class="toc-list">';
-                foreach ($nodes as $n) {
-                  $tag = strtolower($n->nodeName); $level = $tag === 'h3' ? 3 : 2; $text = trim($n->textContent);
-                  $id = $n->getAttribute('id'); if (!$id) { $id = preg_replace('/[^a-z0-9]+/i','-', strtolower($text)); $id = trim($id,'-'); $n->setAttribute('id',$id); }
-                  echo '<li class="toc-item toc-level-' . $level . '"><a href="#' . htmlspecialchars($id) . '">' . htmlspecialchars($text) . '</a></li>';
-                }
-                echo '</ul>';
-              } else { echo '<p class="muted">No headings found.</p>'; }
-            } catch (Throwable $e) { echo '<p class="muted">Unable to build TOC</p>'; }
-          ?>
-        </div>
-      </div>
+      <div class="post-actions"><div class="post-stats"><button id="likeBtn" class="icon-btn">❤ <span id="likesCount" class="count"><?= $likesCount ?></span></button> <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button> <button id="shareBtn" class="icon-btn">🔗 Share</button></div></div>
+      <div class="toc-box"><h4>Table of Contents</h4><div id="tocInner">
+        <?php
+          try { $tdoc = new DOMDocument(); $tdoc->loadHTML('<div>'.$post['content'].'</div>'); $tx = new DOMXPath($tdoc); $nodes = $tx->query('//h2|//h3'); if ($nodes && $nodes->length) { echo '<ul class="toc-list">'; foreach ($nodes as $n) { $tag = strtolower($n->nodeName); $lvl = $tag==='h3'?3:2; $text = trim($n->textContent); $id = $n->getAttribute('id'); if (!$id) { $id = preg_replace('/[^a-z0-9]+/i','-',strtolower($text)); $id = trim($id,'-'); $n->setAttribute('id',$id); } echo '<li class="toc-item toc-level-'.$lvl.'"><a href="#'.htmlspecialchars($id).'">'.htmlspecialchars($text).'</a></li>'; } echo '</ul>'; } else echo '<p class="muted">No headings found.</p>'; } catch (Throwable $e) { echo '<p class="muted">Unable to build TOC</p>'; }
+        ?>
+      </div></div>
     </aside>
   </div>
 
   <section id="commentsSection" class="comments-section">
     <h2>Comments</h2>
     <div id="commentsList" class="comments-list">
-      <?php foreach($comments as $c): ?>
+      <?php foreach ($comments as $c): ?>
         <article class="comment" data-id="<?= $c['id'] ?>">
           <div class="comment-avatar"><div class="avatar-circle"><?= strtoupper(substr($c['name'] ?: 'A',0,1)) ?></div></div>
           <div class="comment-main">
@@ -153,7 +95,7 @@ require_once __DIR__ . '/includes/header.php';
             <div class="comment-actions"><button class="btn-link btn-reply" data-id="<?= $c['id'] ?>">Reply</button></div>
             <?php if (!empty($c['replies'])): ?>
               <div class="replies">
-                <?php foreach($c['replies'] as $rep): ?>
+                <?php foreach ($c['replies'] as $rep): ?>
                   <div class="comment reply">
                     <div class="comment-avatar"><div class="avatar-circle muted"><?= strtoupper(substr($rep['name'] ?: 'A',0,1)) ?></div></div>
                     <div class="comment-main">
@@ -187,25 +129,24 @@ require_once __DIR__ . '/includes/header.php';
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   // reply handler
-  document.querySelectorAll('.btn-reply').forEach(b => b.addEventListener('click', function(e){ e.preventDefault(); document.getElementById('parent_id').value = this.dataset.id; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }));
+  document.querySelectorAll('.btn-reply').forEach(function(b){ b.addEventListener('click', function(e){ e.preventDefault(); document.getElementById('parent_id').value = this.dataset.id; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); });
 
   // submit comment
-  var form = document.getElementById('commentForm'); form.addEventListener('submit', function(e){ e.preventDefault(); var fd = new FormData(this); var btn = this.querySelector('button[type=submit]'); if (btn) btn.disabled = true; fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{ if (j.status==='ok') { if (j.comment) { var node = renderCommentNode(j.comment); var list = document.getElementById('commentsList'); if (j.comment.parent_id) { var parent = list.querySelector('.comment[data-id="c'+j.comment.parent_id+'"]'); if (parent) { var replies = parent.querySelector('.replies'); if (!replies) { replies = document.createElement('div'); replies.className='replies'; parent.querySelector('.comment-main').appendChild(replies); } replies.insertBefore(node, replies.firstChild); } else list.insertBefore(node, list.firstChild); } else list.insertBefore(node, list.firstChild); } else { alert(j.message || 'Comment submitted'); } form.reset(); document.getElementById('parent_id').value=''; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none'; } else { alert(j.message||'Error'); } }).catch(()=>alert('Network error')).finally(()=>{ if (btn) btn.disabled = false; }); });
+  var form = document.getElementById('commentForm'); if (form) form.addEventListener('submit', function(e){ e.preventDefault(); var fd = new FormData(this); var btn = this.querySelector('button[type=submit]'); if (btn) btn.disabled = true; fetch('api/comments.php',{method:'POST',body:fd}).then(function(r){ return r.json(); }).then(function(j){ if (j.status === 'ok') { if (j.comment) { var node = renderCommentNode(j.comment); var list = document.getElementById('commentsList'); if (j.comment.parent_id) { var parent = list.querySelector('.comment[data-id="c'+j.comment.parent_id+'"]'); if (parent) { var replies = parent.querySelector('.replies'); if (!replies) { replies = document.createElement('div'); replies.className='replies'; parent.querySelector('.comment-main').appendChild(replies); } replies.insertBefore(node, replies.firstChild); } else list.insertBefore(node, list.firstChild); } else list.insertBefore(node, list.firstChild); } else { alert(j.message || 'Comment submitted'); } form.reset(); document.getElementById('parent_id').value=''; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='none'; } else { alert(j.message || 'Error'); } }).catch(function(){ alert('Network error'); }).finally(function(){ if (btn) btn.disabled = false; }); });
 
   // cancel reply
-  var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display='none'; });
+  var cancelBtn = document.getElementById('cancelReply'); if (cancelBtn) cancelBtn.addEventListener('click', function(){ document.getElementById('parent_id').value = ''; this.style.display = 'none'; });
 
   // like
-  document.getElementById('likeBtn')?.addEventListener('click', function(){ var btn = this; btn.disabled = true; fetch('api/like_post.php', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:'post_id=' + encodeURIComponent(<?= $postId ?>)}).then(r=>r.json()).then(j=>{ if (j.status==='ok') document.getElementById('likesCount').textContent = j.count; }).finally(()=>{ btn.disabled = false; }); });
+  var likeBtn = document.getElementById('likeBtn'); if (likeBtn) likeBtn.addEventListener('click', function(){ var b=this; b.disabled=true; fetch('api/like_post.php', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: 'post_id=' + encodeURIComponent(<?= $postId ?>) }).then(function(r){ return r.json(); }).then(function(j){ if (j.status==='ok') { document.getElementById('likesCount').textContent = j.count; } }).finally(function(){ b.disabled=false; }); });
 
   // share
-  document.getElementById('shareBtn')?.addEventListener('click', function(){ var url = window.location.href; var title = document.querySelector('h1')?.textContent || document.title; var items = [ {label:'Twitter', href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(title)+'&url='+encodeURIComponent(url)}, {label:'Facebook', href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)}, {label:'WhatsApp', href:'https://api.whatsapp.com/send?text='+encodeURIComponent(title+' '+url)}, {label:'Copy', href:'copy'} ]; var menu = document.createElement('div'); menu.className='share-menu'; menu.style.position='absolute'; menu.style.right='20px'; menu.style.top='80px'; menu.style.background='#fff'; menu.style.border='1px solid #eee'; menu.style.padding='8px'; menu.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'; items.forEach(it=>{ var a=document.createElement('a'); a.href = it.href==='copy' ? '#' : it.href; a.textContent = it.label; a.className='share-item'; a.style.display='block'; a.style.padding='6px 8px'; a.addEventListener('click', function(ev){ ev.preventDefault(); if (it.href==='copy') { navigator.clipboard?.writeText(url).then(()=>alert('Link copied')).catch(()=>prompt('Copy this URL', url)); } else { window.open(it.href,'_blank','noopener'); } }); menu.appendChild(a); }); var existing = document.querySelector('.share-menu'); if (existing) existing.remove(); document.body.appendChild(menu); setTimeout(()=>{ window.addEventListener('click', function rm(){ menu.remove(); window.removeEventListener('click', rm); }); }, 50); });
+  var shareBtn = document.getElementById('shareBtn'); if (shareBtn) shareBtn.addEventListener('click', function(){ var url = window.location.href; var title = document.querySelector('h1')?.textContent || document.title; var items = [ {label:'Twitter', href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(title)+'&url='+encodeURIComponent(url)}, {label:'Facebook', href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)}, {label:'WhatsApp', href:'https://api.whatsapp.com/send?text='+encodeURIComponent(title+' '+url)}, {label:'Copy', href:'copy'} ]; var menu = document.createElement('div'); menu.className='share-menu'; menu.style.position='absolute'; menu.style.right='20px'; menu.style.top='80px'; menu.style.background='#fff'; menu.style.border='1px solid #eee'; menu.style.padding='8px'; menu.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'; items.forEach(function(it){ var a=document.createElement('a'); a.href = it.href==='copy' ? '#' : it.href; a.textContent = it.label; a.className='share-item'; a.style.display='block'; a.style.padding='6px 8px'; a.addEventListener('click', function(ev){ ev.preventDefault(); if (it.href==='copy') { navigator.clipboard?.writeText(url).then(function(){ alert('Link copied'); }).catch(function(){ prompt('Copy this URL', url); }); } else { window.open(it.href,'_blank','noopener'); } }); menu.appendChild(a); }); var existing = document.querySelector('.share-menu'); if (existing) existing.remove(); document.body.appendChild(menu); setTimeout(function(){ window.addEventListener('click', function rm(){ menu.remove(); window.removeEventListener('click', rm); }); }, 50); });
 });
 
-function escapeHtml(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
-
-function renderCommentNode(c){ var node = document.createElement('article'); node.className='comment'; node.setAttribute('data-id','c'+c.id); var av = document.createElement('div'); av.className='comment-avatar'; av.innerHTML = '<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>'; var main = document.createElement('div'); main.className='comment-main'; main.innerHTML = '<div class="comment-meta"><strong>'+escapeHtml(c.name||'Anonymous')+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(c.content))+'</div><div class="comment-actions"><button class="btn-link btn-reply" data-id="'+c.id+'">Reply</button></div>'; node.appendChild(av); node.appendChild(main); var replyBtn = main.querySelector('.btn-reply'); if (replyBtn) replyBtn.addEventListener('click', function(){ document.getElementById('parent_id').value = this.dataset.id; var cancel = document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); return node; }
+function renderCommentNode(c){ var node=document.createElement('article'); node.className='comment'; node.setAttribute('data-id','c'+c.id); var av=document.createElement('div'); av.className='comment-avatar'; av.innerHTML='<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>'; var main=document.createElement('div'); main.className='comment-main'; main.innerHTML = '<div class="comment-meta"><strong>'+escapeHtml(c.name||'Anonymous')+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(c.content))+'</div><div class="comment-actions"><button class="btn-link btn-reply" data-id="'+c.id+'">Reply</button></div>'; node.appendChild(av); node.appendChild(main); var reply=main.querySelector('.btn-reply'); if (reply) reply.addEventListener('click', function(){ document.getElementById('parent_id').value=this.dataset.id; var cancel=document.getElementById('cancelReply'); if (cancel) cancel.style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); return node; }
 
 <?php require_once __DIR__ . '/includes/footer.php';
 
