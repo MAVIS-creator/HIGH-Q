@@ -278,7 +278,10 @@ $posts = $stmt->fetchAll();
                 </div>
                 <div class="form-row">
                     <label>Featured Image</label>
-                    <input type="file" name="featured_image" id="pImage" accept="image/*">
+                    <div class="file-input-wrap">
+                        <input type="file" name="featured_image" id="pImage" accept="image/*">
+                        <span id="pImageName" class="file-name">No file chosen</span>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label><input type="checkbox" name="publish" id="pPublish"> Publish immediately</label>
