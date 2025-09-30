@@ -135,8 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
         }
 
-    header("Location: index.php?pages=posts");
+    // Only redirect to the posts list when there were no validation or processing errors.
+    if (empty($errors)) {
+        header("Location: index.php?pages=posts");
         exit;
+    }
     }
 }
 
