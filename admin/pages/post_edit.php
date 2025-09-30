@@ -60,8 +60,16 @@ try {
     <div class="form-row">
       <label>Featured Image</label>
       <input type="file" name="featured_image" accept="image/*">
-      <?php if ($post['featured_image']): ?>
-        <img src="<?= htmlspecialchars($post['featured_image']) ?>" class="thumb" style="margin-top:0.5rem;">
+      <?php if (!empty($post['featured_image'])): ?>
+        <?php
+          $fi = $post['featured_image'];
+          if (preg_match('#^https?://#i', $fi) || strpos($fi, '//') === 0 || strpos($fi, '/') === 0) {
+            $imgSrc = $fi;
+          } else {
+            $imgSrc = '../public/' . ltrim($fi, '/');
+          }
+        ?>
+        <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb" id="existingThumb" style="margin-top:0.5rem;max-width:180px;">
       <?php endif; ?>
     </div>
     <div class="form-row">
