@@ -312,7 +312,7 @@ $posts = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>News & Blog Management — Admin</title>
-    <link rel="stylesheet" href="../public/assets/css/admin.css">
+    <!-- admin CSS is included via header.php; avoid loading public copy here -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 
