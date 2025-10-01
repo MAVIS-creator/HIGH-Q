@@ -39,7 +39,13 @@ require_once __DIR__ . '/includes/header.php';
       <?php endif; ?>
 
       <?= nl2br(htmlspecialchars($post['content'])) ?>
-    </div>
+      </div>
+      <div class="post-actions">
+        <button id="likeBtn" class="btn">Like</button>
+        <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span>
+        <button id="commentToggle" class="btn">Comment</button>
+        <span class="muted" style="margin-left:12px;">Comments: <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></span>
+      </div>
   </article>
 
   <section id="commentsSection" style="margin-top:28px;">
