@@ -16,6 +16,60 @@ $cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id I
 $cstmt->execute([$postId]);
 $comments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
 
+// compute total approved comments count for display
+$ccstmt = $pdo->prepare('SELECT COUNT(1) FROM comments WHERE post_id = ? AND status = "approved"');
+$ccstmt->execute([$postId]);
+$comments_count = (int)$ccstmt->fetchColumn();
+
+// Build a server-side Table of Contents by scanning headings in the post content (if present)
+$tocHtml = '';
+$renderedContent = '';
+if (!empty($post['content'])) {
+  libxml_use_internal_errors(true);
+  $doc = new DOMDocument();
+  // Wrap in a div to get fragment handling and set UTF-8
+  $wrapped = '<div>' . $post['content'] . '</div>';
+  $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped);
+  $xpath = new DOMXPath($doc);
+  $nodes = $xpath->query('//h2|//h3|//h4');
+  if ($nodes->length > 0) {
+    $ids = [];
+    $tocItems = [];
+    foreach ($nodes as $n) {
+      $text = trim($n->textContent);
+      if ($text === '') continue;
+      $base = preg_replace('/[^a-z0-9\-]+/','-',strtolower(trim($text)));
+      $id = 'toc-' . $postId . '-' . trim($base, '-');
+      // ensure unique
+      $suffix = 1;
+      $orig = $id;
+      while (in_array($id, $ids)) { $id = $orig . '-' . $suffix; $suffix++; }
+      $ids[] = $id;
+      $n->setAttribute('id', $id);
+      $tocItems[] = ['id' => $id, 'text' => $text, 'tag' => $n->nodeName];
+    }
+    // build TOC HTML
+    $tocHtml .= '<aside class="post-toc" aria-label="Table of Contents">';
+    $tocHtml .= '<h4>Table of Contents</h4><ul>';
+    foreach ($tocItems as $it) {
+      $indent = $it['tag'] === 'h3' ? ' style="margin-left:8px;"' : ($it['tag'] === 'h4' ? ' style="margin-left:14px;"' : '');
+      $tocHtml .= '<li' . $indent . '><a href="#' . htmlspecialchars($it['id']) . '">' . htmlspecialchars($it['text']) . '</a></li>';
+    }
+    $tocHtml .= '</ul></aside>';
+  }
+
+  // extract inner HTML of wrapped div as rendered content
+  $div = $doc->getElementsByTagName('div')->item(0);
+  if ($div) {
+    $html = '';
+    foreach ($div->childNodes as $child) { $html .= $doc->saveHTML($child); }
+    $renderedContent = $html;
+  } else {
+    $renderedContent = htmlspecialchars($post['content']);
+  }
+  libxml_clear_errors();
+}
+
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -23,6 +77,11 @@ require_once __DIR__ . '/includes/header.php';
   <article class="post-article">
     <h1><?= htmlspecialchars($post['title']) ?></h1>
     <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
+
+    <?php if ($tocHtml !== ''): ?>
+      <?= $tocHtml ?>
+    <?php endif; ?>
+
     <div class="post-content" style="margin-top:12px;">
       <?php if (!empty($post['featured_image'])): ?>
         <?php
@@ -38,7 +97,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       <?php endif; ?>
 
-      <?= nl2br(htmlspecialchars($post['content'])) ?>
+  <?= $renderedContent ?: nl2br(htmlspecialchars($post['content'])) ?>
       </div>
       <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
         <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
