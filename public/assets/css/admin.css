@@ -317,14 +317,16 @@ tr:hover { background:#fff8e1; }
 }
 .modal.open { display: flex; }
 .modal-content {
-    width: 520px;
-    max-width: 92%;
-    background: var(--pure-white);
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    padding: 1.2rem;
-    position: relative;
-    animation: popIn 0.2s ease;
+  width: 520px;
+  max-width: 92%;
+  max-height: 86vh; /* avoid overflow past viewport */
+  overflow: auto; /* allow scrolling when content is long */
+  background: var(--pure-white);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  padding: 1.2rem;
+  position: relative;
+  animation: popIn 0.2s ease;
 }
 .modal-close {
     position: absolute;
