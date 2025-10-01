@@ -280,7 +280,8 @@ if (!isset($pdo) || !$pdo) {
 }
 if (isset($pdo) && $pdo instanceof PDO) {
   try {
-    $sql = "SELECT p.id, p.title, p.slug, p.excerpt, p.created_at, p.featured_image, COALESCE(p.likes,0) AS likes, (SELECT COUNT(1) FROM comments c WHERE c.post_id = p.id AND c.status = 'approved') AS comments_count FROM posts p WHERE p.status = 'published' ORDER BY p.created_at DESC LIMIT 4";
+  // Use a safe likes count subquery so this works on installations without a posts.likes column
+  $sql = "SELECT p.id, p.title, p.slug, p.excerpt, p.created_at, p.featured_image, (SELECT COUNT(1) FROM post_likes pl WHERE pl.post_id = p.id) AS likes, (SELECT COUNT(1) FROM comments c WHERE c.post_id = p.id AND c.status = 'approved') AS comments_count FROM posts p WHERE p.status = 'published' ORDER BY p.created_at DESC LIMIT 4";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $latestPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
