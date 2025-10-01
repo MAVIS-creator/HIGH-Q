@@ -16,25 +16,11 @@ $parentId = !empty($_POST['parent_id']) ? intval($_POST['parent_id']) : null;
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $content = trim($_POST['content'] ?? '');
-// honeypot field
-$hp = trim($_POST['hp_name'] ?? '');
 
 if (!$postId || $content === '') {
     echo json_encode(['status'=>'error','message'=>'Missing required fields']);
     exit;
 }
-
-// reject if honeypot filled
-if ($hp !== '') { http_response_code(400); echo json_encode(['status'=>'error','message'=>'Spam detected']); exit; }
-
-// simple rate-limit: deny if same IP posted in last 20 seconds
-$ip = $_SERVER['REMOTE_ADDR'] ?? null;
-try {
-    $rt = $pdo->prepare('SELECT created_at FROM comments WHERE ip = ? ORDER BY created_at DESC LIMIT 1');
-    $rt->execute([$ip]);
-    $last = $rt->fetchColumn();
-    if ($last && (time() - strtotime($last) < 20)) { echo json_encode(['status'=>'error','message'=>'You are posting too frequently']); exit; }
-} catch (Throwable $e) { /* ignore */ }
 
 try {
     // Determine comment moderation setting (default to true if unknown)
@@ -58,17 +44,12 @@ try {
 
     $status = $commentModeration ? 'pending' : 'approved';
 
-    $stmt = $pdo->prepare("INSERT INTO comments (post_id, parent_id, user_id, name, email, content, status, ip, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, NOW())");
-    $stmt->execute([$postId, $parentId, $name ?: null, $email ?: null, $content, $status, $ip]);
-    $id = $pdo->lastInsertId();
+    $stmt = $pdo->prepare("INSERT INTO comments (post_id, parent_id, user_id, name, email, content, status, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?, NOW())");
+    $stmt->execute([$postId, $parentId, $name ?: null, $email ?: null, $content, $status]);
     if ($status === 'pending') {
         echo json_encode(['status'=>'ok','message'=>'Comment submitted and awaiting moderation']);
     } else {
-        // fetch the inserted row to return minimal data
-        $q = $pdo->prepare('SELECT id, post_id, parent_id, name, content, created_at FROM comments WHERE id = ? LIMIT 1');
-        $q->execute([$id]);
-        $row = $q->fetch(PDO::FETCH_ASSOC);
-        echo json_encode(['status'=>'ok','message'=>'Comment submitted','comment'=>$row]);
+        echo json_encode(['status'=>'ok','message'=>'Comment submitted']);
     }
 } catch (Exception $e) {
     http_response_code(500);

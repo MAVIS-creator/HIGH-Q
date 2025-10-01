@@ -150,48 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 }
                                 if ($ok) {
                                     $newId = $pdo->lastInsertId();
-                                    // If published, send newsletter to subscribers
-                                    if ($status === 'published') {
-                                        try {
-                                            $subs = $pdo->query('SELECT email FROM newsletter_subscribers WHERE email IS NOT NULL')->fetchAll(PDO::FETCH_COLUMN);
-                                            if (!empty($subs)) {
-                                                // build a simple HTML message
-                                                $postUrl = rtrim($appUrl,'/') . '/public/post.php?id=' . $newId;
-                                                $subject = "New article published: " . $title;
-                                                $html = "<h2>" . htmlspecialchars($title) . "</h2>";
-                                                $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
-                                                $html .= "<p><a href='" . htmlspecialchars($postUrl) . "'>Read the full article</a></p>";
-                                                // try PHPMailer if available
-                                                if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-                                                $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-                                                    try {
-                                                        $mail->isHTML(true);
-                                                        $mail->setFrom('no-reply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), 'HIGH Q');
-                                                        $mail->Subject = $subject;
-                                                        $mail->Body = $html;
-                                                        foreach ($subs as $to) {
-                                                            $mail->clearAllRecipients();
-                                                            $mail->addAddress($to);
-                                                            $mail->send();
-                                                        }
-                                                    } catch (Throwable $me) {
-                                                        // swallow mail errors
-                                                    }
-                                                } else {
-                                                    // fallback: use mail() in batches
-                                                    $headers = "MIME-Version: 1.0\r\n";
-                                                    $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-                                                    $headers .= "From: HIGH Q <no-reply@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ">\r\n";
-                                                    foreach ($subs as $to) {
-                                                        @mail($to, $subject, $html, $headers);
-                                                    }
-                                                }
-                                            }
-                                        } catch (Throwable $e) {
-                                            // log and continue
-                                            @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " Newsletter error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
-                                        }
-                                    }
                                     logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
                                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
                                     // Set a session flash so admin UI can show a notification after redirect
@@ -213,15 +171,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
             // EDIT
                         if ($act === 'edit' && $id) {
-                            // If no new image, keep existing
+                // If no new image, keep existing
                 if (!$imgPath) {
                     $old = $pdo->prepare("SELECT featured_image FROM posts WHERE id=?");
                     $old->execute([$id]);
                     $imgPath = $old->fetchColumn();
                 }
-                            // fetch previous status so we can detect transition to 'published'
-                            $prevStatus = null;
-                            try { $ps = $pdo->prepare('SELECT status FROM posts WHERE id=? LIMIT 1'); $ps->execute([$id]); $prevStatus = $ps->fetchColumn(); } catch (Throwable $e) { $prevStatus = null; }
                                                 // Build SET clause and params dynamically
                                                 $setParts = ['title=?', 'slug=?', 'excerpt=?', 'content=?'];
                                                 $params = [$title, $slug, $excerpt, $content];
@@ -248,28 +203,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                 }
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
-                        // If was not published and now is published, send newsletter
-                        if ($prevStatus !== 'published' && $status === 'published') {
-                            try {
-                                $subs = $pdo->query('SELECT email FROM newsletter_subscribers WHERE email IS NOT NULL')->fetchAll(PDO::FETCH_COLUMN);
-                                if (!empty($subs)) {
-                                    $postUrl = rtrim($appUrl,'/') . '/public/post.php?id=' . $id;
-                                    $subject = "New article published: " . $title;
-                                    $html = "<h2>" . htmlspecialchars($title) . "</h2>";
-                                    $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
-                                    $html .= "<p><a href='" . htmlspecialchars($postUrl) . "'>Read the full article</a></p>";
-                                    if (class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
-                                        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-                                        try { $mail->isHTML(true); $mail->setFrom('no-reply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), 'HIGH Q'); $mail->Subject = $subject; $mail->Body = $html; foreach ($subs as $to) { $mail->clearAllRecipients(); $mail->addAddress($to); $mail->send(); } } catch (Throwable $me) {}
-                                    } else {
-                                        $headers = "MIME-Version: 1.0\r\n";
-                                        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-                                        $headers .= "From: HIGH Q <no-reply@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ">\r\n";
-                                        foreach ($subs as $to) { @mail($to, $subject, $html, $headers); }
-                                    }
-                                }
-                            } catch (Throwable $e) { @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " Newsletter error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX); }
-                        }
                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATED ID: " . $id . "\n", FILE_APPEND | LOCK_EX);
                     // If this is an AJAX edit, return JSON including published state
                     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {

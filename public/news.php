@@ -102,8 +102,7 @@ require_once __DIR__ . '/includes/header.php';
             <?php if (!empty($p['featured_image'] ?? '')): ?>
               <img src="<?= htmlspecialchars($p['featured_image']) ?>" alt="" class="thumb">
             <?php endif; ?>
-            <?php $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); $href = ($basePath === '/' ? '' : $basePath) . '/post.php?id=' . rawurlencode($p['id']); ?>
-            <h3><a href="<?= htmlspecialchars($href) ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
+            <h3><a href="post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
             <p class="muted"><?= htmlspecialchars($p['created_at']) ?></p>
             <p><?= htmlspecialchars($p['excerpt']) ?></p>
             <?php if ($hasTags): ?>
@@ -117,7 +116,7 @@ require_once __DIR__ . '/includes/header.php';
               ?>
             </p>
             <?php endif; ?>
-            <a href="<?= htmlspecialchars($href) ?>" class="btn-ghost">Read More</a>
+            <a href="post.php?id=<?= $p['id'] ?>" class="btn-ghost">Read More</a>
           </article>
         <?php endforeach; ?>
       </div>
@@ -154,11 +153,11 @@ require_once __DIR__ . '/includes/header.php';
   <div class="container" style="max-width:900px;">
     <h3>Subscribe to our newsletter</h3>
     <p class="muted">Get the latest news and announcements delivered to your inbox.</p>
-    <form id="newsletterForm" class="newsletter-form" style="display:flex;gap:8px;max-width:600px;">
-      <input type="email" name="email" class="newsletter-email" placeholder="Your email address" required>
-      <button type="submit" class="btn-ghost newsletter-submit">Subscribe</button>
+    <form id="newsletterForm" style="display:flex;gap:8px;max-width:600px;">
+      <input type="email" name="email" placeholder="Your email address" required style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px">
+      <button type="submit" class="btn-ghost">Subscribe</button>
     </form>
-    <div id="newsletterMsg" class="newsletter-msg" style="margin-top:8px;display:none"></div>
+    <div id="newsletterMsg" style="margin-top:8px;color:green;display:none"></div>
   </div>
 </section>
 
@@ -168,15 +167,10 @@ require_once __DIR__ . '/includes/header.php';
 document.getElementById('newsletterForm').addEventListener('submit', function(e){
   e.preventDefault();
   var fd = new FormData(this);
-  var submitBtn = this.querySelector('.newsletter-submit');
-  submitBtn.disabled = true;
   fetch('api/subscribe_newsletter.php', { method: 'POST', body: fd }).then(r=>r.json()).then(j=>{
     var msg = document.getElementById('newsletterMsg');
-    msg.style.display='block';
-    msg.className = 'newsletter-msg ' + (j.status === 'ok' ? 'success' : 'error');
-    msg.textContent = j.message || (j.status === 'ok' ? 'Subscribed' : 'Error');
-    if (j.status === 'ok') { document.querySelector('.newsletter-form').reset(); }
-  }).catch(()=>{ var msg = document.getElementById('newsletterMsg'); msg.style.display='block'; msg.className='newsletter-msg error'; msg.textContent='Network error'; })
-  .finally(()=>{ submitBtn.disabled = false; });
+    if (j.status === 'ok') { msg.style.display='block'; msg.style.color='green'; msg.textContent = j.message || 'Subscribed'; this.reset(); }
+    else { msg.style.display='block'; msg.style.color='crimson'; msg.textContent = j.message || 'Error'; }
+  }).catch(()=>{ var msg = document.getElementById('newsletterMsg'); msg.style.display='block'; msg.style.color='crimson'; msg.textContent='Network error'; });
 });
 </script>
