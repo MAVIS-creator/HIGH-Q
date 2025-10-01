@@ -24,11 +24,39 @@ $comments_count = (int)$ccstmt->fetchColumn();
 // Build a server-side Table of Contents by scanning headings in the post content (if present)
 $tocHtml = '';
 $renderedContent = '';
-if (!empty($post['content'])) {
+$contentRaw = $post['content'] ?? '';
+// If the content is plain text (no HTML tags), convert simple Markdown-style headings (#, ##, ###)
+// into <h2>/<h3>/<h4> and wrap paragraphs in <p> blocks so the TOC and spacing work.
+if ($contentRaw !== '' && strpos($contentRaw, '<') === false) {
+  // Convert heading markers
+  $contentProcessed = preg_replace('/^###\s*(.+)$/m', '<h4>$1</h4>', $contentRaw);
+  $contentProcessed = preg_replace('/^##\s*(.+)$/m', '<h3>$1</h3>', $contentProcessed);
+  $contentProcessed = preg_replace('/^#\s*(.+)$/m', '<h2>$1</h2>', $contentProcessed);
+
+  // Split into paragraphs on blank lines
+  $paras = preg_split('/\n\s*\n/', $contentProcessed);
+  $out = '';
+  foreach ($paras as $p) {
+    $p = trim($p);
+    if ($p === '') continue;
+    // if paragraph already contains a heading tag, keep as-is; otherwise wrap in <p>
+    if (preg_match('/^\s*<h[2-4]>/i', $p)) {
+      $out .= $p;
+    } else {
+      $out .= '<p>' . nl2br(htmlspecialchars($p)) . '</p>';
+    }
+  }
+  $contentForDoc = $out;
+} else {
+  // contains HTML already or is empty; use as-is
+  $contentForDoc = $contentRaw;
+}
+
+if ($contentForDoc !== '') {
   libxml_use_internal_errors(true);
   $doc = new DOMDocument();
   // Wrap in a div to get fragment handling and set UTF-8
-  $wrapped = '<div>' . $post['content'] . '</div>';
+  $wrapped = '<div>' . $contentForDoc . '</div>';
   $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped);
   $xpath = new DOMXPath($doc);
   $nodes = $xpath->query('//h2|//h3|//h4');
@@ -45,9 +73,8 @@ if (!empty($post['content'])) {
       $orig = $id;
       while (in_array($id, $ids)) { $id = $orig . '-' . $suffix; $suffix++; }
       $ids[] = $id;
-      if ($n instanceof DOMElement) {
-        $n->setAttribute('id', $id);
-      }
+      // set id attribute
+      if ($n->hasAttributes()) { $n->setAttribute('id', $id); } else { $n->setAttribute('id', $id); }
       $tocItems[] = ['id' => $id, 'text' => $text, 'tag' => $n->nodeName];
     }
     // build TOC HTML
@@ -67,7 +94,7 @@ if (!empty($post['content'])) {
     foreach ($div->childNodes as $child) { $html .= $doc->saveHTML($child); }
     $renderedContent = $html;
   } else {
-    $renderedContent = htmlspecialchars($post['content']);
+    $renderedContent = htmlspecialchars($contentForDoc);
   }
   libxml_clear_errors();
 }
