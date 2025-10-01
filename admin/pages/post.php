@@ -561,7 +561,11 @@ function closePostModal() {
 
 if (newPostBtn) newPostBtn.addEventListener('click', openPostModal);
 if (postModalClose) postModalClose.addEventListener('click', closePostModal);
+// clicking on overlay already closes; also support clicking the modal backdrop area
 overlay.addEventListener('click', () => { closePostModal(); closeEditModal(); });
+postModal.addEventListener('click', function(e){
+    if (e.target === postModal) closePostModal();
+});
 
 // Open modal and load form
 document.querySelectorAll('.edit-link').forEach(link => {
