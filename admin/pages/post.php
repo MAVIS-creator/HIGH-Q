@@ -441,6 +441,16 @@ $posts = $stmt->fetchAll();
                 <div class="form-row">
                     <label>Content *</label>
                     <textarea name="content" id="pContent" rows="6" required></textarea>
+                    <div class="muted" style="margin-top:8px;font-size:13px;padding:10px;border-left:3px solid var(--hq-yellow);background:#fffdf6;border-radius:4px;">
+                        <strong>Heading quick guide</strong>
+                        <div style="margin-top:6px">You can use simple Markdown-style headings when writing content. They will be converted automatically on public view:</div>
+                        <ul style="margin:8px 0 0 18px;padding:0;">
+                          <li><code># Section title</code> &rarr; <em>&lt;h2&gt;Section title&lt;/h2&gt;</em></li>
+                          <li><code>## Subsection</code> &rarr; <em>&lt;h3&gt;Subsection&lt;/h3&gt;</em></li>
+                          <li><code>### Sub-sub</code> &rarr; <em>&lt;h4&gt;Sub-sub&lt;/h4&gt;</em></li>
+                        </ul>
+                        <div style="margin-top:8px;color:var(--hq-gray);">Leave a blank line between headings and paragraphs for best results.</div>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label>Category</label>
