@@ -482,6 +482,30 @@ nav a.active::after { background: var(--hq-yellow); }
 
 }
 
+/* Post page tweaks: sidebar, icon buttons, TOC, comment form */
+.post-grid { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+.post-article { background: #fff; padding: 18px; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); }
+.post-sidebar { padding: 12px; background: #fff; border-radius: 8px; min-width: 260px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); }
+.post-sidebar .post-actions { margin-bottom: 12px; }
+.icon-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: #fcfcfc; border: 1px solid rgba(0,0,0,0.04); cursor: pointer; color: var(--hq-black); font-weight: 600; }
+.icon-btn i { font-size: 18px; line-height: 1; }
+.icon-btn .count { margin-left: 6px; background: var(--hq-yellow-pale); padding: 2px 6px; border-radius: 6px; font-weight: 700; }
+.toc-box h4 { margin: 0 0 8px 0; font-size: 15px; }
+.toc-list { list-style: none; padding: 0; margin: 0; }
+.toc-item { margin: 6px 0; }
+.toc-item a { color: var(--hq-gray-dark); text-decoration: none; }
+.toc-item a:hover { color: var(--hq-yellow); }
+.comment-form-wrap { margin-top: 18px; padding: 12px; border-radius: 8px; background: #fff; border: 1px solid rgba(0,0,0,0.04); }
+.comment-form-wrap input[type="text"], .comment-form-wrap input[type="email"], .comment-form-wrap textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); margin-bottom: 8px; font-size: 14px; }
+.comment-form-wrap .form-actions { display:flex; gap:10px; align-items:center; }
+.comment-form-wrap .btn-approve { background: var(--hq-yellow); padding: 8px 12px; border-radius:8px; border: none; font-weight:700; cursor:pointer; }
+.comment-form-wrap .btn-link { background: transparent; border: none; color: var(--hq-gray); cursor: pointer; }
+
+@media (max-width: 900px) {
+  .post-grid { grid-template-columns: 1fr; }
+  .post-sidebar { order: 2; }
+}
+
 /* Floating live chat button */
 .floating-chat {
   position: fixed;
