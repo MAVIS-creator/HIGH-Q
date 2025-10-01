@@ -2,15 +2,16 @@
 // Clean single-post view: consolidated and type-annotated for IDEs. No large inline JS.
 require_once __DIR__ . '/config/db.php';
 <?php
+// Single clean post view — no inline JS beyond POST_ID; behavior is in assets/js/post.js
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-// support either ?id= or ?slug=
+// get post id/slug
 $postId = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
 if (!$postId && $slug === '') { header('Location: index.php'); exit; }
 
-// fetch post
+// query post
 if ($postId) {
   $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
   $stmt->execute([$postId]);
@@ -26,7 +27,7 @@ if (!$post) {
   exit;
 }
 
-// Build TOC and sanitized content. Annotate DOM types to satisfy IDEs.
+// build TOC and sanitized content
 $rendered = '';
 $toc = [];
 try {
@@ -36,37 +37,24 @@ try {
   $doc->loadHTML('<div>' . $post['content'] . '</div>');
   /** @var \DOMXPath $xpath */
   $xpath = new DOMXPath($doc);
-  /** @var \DOMNodeList $nodes */
   $nodes = $xpath->query('//h2|//h3');
-  $counter = 0;
+  $i = 0;
   /** @var \DOMElement $n */
   foreach ($nodes as $n) {
-    $text = trim($n->textContent);
+    $txt = trim($n->textContent);
     $id = $n->getAttribute('id');
-    if (!$id) {
-      $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($text));
-      $id = trim($id, '-') . '-' . (++$counter);
-      $n->setAttribute('id', $id);
-    }
-    $toc[] = ['id' => $id, 'text' => $text, 'level' => (strtolower($n->nodeName) === 'h3' ? 3 : 2)];
+    if (!$id) { $id = preg_replace('/[^a-z0-9]+/i','-',strtolower($txt)); $id = trim($id,'-') . '-' . (++$i); $n->setAttribute('id',$id); }
+    $toc[] = ['id'=>$id,'text'=>$txt,'level'=>(strtolower($n->nodeName)==='h3'?3:2)];
   }
   $body = $doc->getElementsByTagName('body')->item(0);
   $div = $body ? $body->getElementsByTagName('div')->item(0) : null;
   if ($div) { foreach ($div->childNodes as $cn) $rendered .= $doc->saveHTML($cn); }
   $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
   $rendered = strip_tags($rendered, $allowed);
-} catch (Throwable $e) {
-  $rendered = nl2br(htmlspecialchars($post['content']));
-}
+} catch (Throwable $e) { $rendered = nl2br(htmlspecialchars($post['content'])); }
 
 $likesCount = 0;
-try {
-  $ls = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?');
-  $ls->execute([(int)$post['id']]);
-  $likesCount = (int)$ls->fetchColumn();
-} catch (Throwable $_) {
-  if (isset($post['likes'])) $likesCount = (int)$post['likes'];
-}
+try { $ls = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?'); $ls->execute([(int)$post['id']]); $likesCount = (int)$ls->fetchColumn(); } catch (Throwable $_) { if (isset($post['likes'])) $likesCount = (int)$post['likes']; }
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -125,7 +113,6 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 </div>
 
-<!-- Provide only a small data attachment; all behavior is in external JS -->
 <script>window.POST_ID = <?= json_encode((int)$post['id']) ?>;</script>
 <script src="assets/js/post.js"></script>
 
