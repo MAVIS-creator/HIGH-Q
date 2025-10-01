@@ -78,11 +78,9 @@ require_once __DIR__ . '/includes/header.php';
     <h1><?= htmlspecialchars($post['title']) ?></h1>
     <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
 
-    <?php if ($tocHtml !== ''): ?>
-      <?= $tocHtml ?>
-    <?php endif; ?>
-
-    <div class="post-content" style="margin-top:12px;">
+    <div class="post-top" style="display:flex;gap:20px;align-items:flex-start;margin-top:12px;">
+      <div class="post-main" style="flex:1;">
+        <div class="post-content">
       <?php if (!empty($post['featured_image'])): ?>
         <?php
           $fi = $post['featured_image'];
@@ -97,8 +95,21 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       <?php endif; ?>
 
-  <?= $renderedContent ?: nl2br(htmlspecialchars($post['content'])) ?>
+      <?= $renderedContent ?: nl2br(htmlspecialchars($post['content'])) ?>
+        </div>
       </div>
+
+      <aside class="post-toc" style="width:260px;">
+        <?php if ($tocHtml !== ''): ?>
+          <?= $tocHtml ?>
+        <?php else: ?>
+          <div class="post-toc">
+            <h4>Table of Contents</h4>
+            <p class="muted">No sections found for this article.</p>
+          </div>
+        <?php endif; ?>
+      </aside>
+    </div>
       <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
         <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
         <div class="meta small muted"><i class="fa-regular fa-heart"></i> <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span></div>

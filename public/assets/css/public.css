@@ -1247,6 +1247,20 @@ nav a.active::after { background: var(--hq-yellow); }
 .news-count { color:var(--hq-gray); font-size:13px; display:inline-flex; align-items:center; gap:6px; }
 .post-actions .meta { display:inline-flex; align-items:center; gap:6px; }
 
+/* Post top layout: content left, TOC right */
+.post-top { display:flex; gap:20px; align-items:flex-start; }
+.post-main .post-content { background:#fff; padding:18px; border-radius:10px; border:1px solid rgba(0,0,0,0.04); box-shadow:0 12px 36px rgba(11,37,64,0.04); }
+.post-toc { position:sticky; top:96px; }
+.post-toc .post-toc { padding:12px; }
+.post-toc h4 { margin:0 0 8px; }
+.post-toc ul { margin:0; padding:0; list-style:none; }
+.post-toc li { margin:6px 0; }
+
+@media (max-width: 900px) {
+  .post-top { flex-direction:column; }
+  .post-toc { position:static; width:auto; }
+}
+
 @media (max-width: 1000px) {
   .news-grid { grid-template-columns: repeat(2,1fr); }
 }
