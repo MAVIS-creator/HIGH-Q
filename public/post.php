@@ -1,5 +1,5 @@
 <?php
-// Clean single post template - consolidated and free of duplicated blocks
+// Clean single post template
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
@@ -156,7 +156,7 @@ require_once __DIR__ . '/includes/header.php';
 <script>
 const POST_ID = <?= json_encode((int)$postId) ?>;
 
-function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function escapeHtml(s){ return String(s).replace(/[&<>\\"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
 
 function renderCommentNode(c){
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php';
 <?php
 // Single clean post template (no duplicates)
 require_once __DIR__ . '/config/db.php';
