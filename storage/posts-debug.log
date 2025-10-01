@@ -77,3 +77,4 @@ PARAMS: ["Introducing the HIGH Q SOLID ACADEMY Website!","introducing-the-high-q
 2025-09-30T23:16:33+02:00 EXECUTE RESULT: true
 2025-09-30T23:16:33+02:00 DB UPDATED ID: 1
 2025-10-01T22:39:24+02:00 HOME POSTS QUERY ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.likes' in 'field list'
+2025-10-01T22:44:39+02:00 HOME POSTS QUERY ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.likes' in 'field list'
