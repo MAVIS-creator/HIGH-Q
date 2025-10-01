@@ -300,7 +300,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
             <?php endif; ?>
             <div class="news-body">
-              <h4><a href="post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
+              <h4><a href="./post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? '')) > 180 ? substr($post['excerpt'], 0, 177) . '...' : ($post['excerpt'] ?? ''))) ?></p>
               <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
                 <span style="margin-left:12px;">👍 <?= intval($post['likes'] ?? 0) ?></span>
