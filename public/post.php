@@ -1,5 +1,5 @@
 <?php
-// Consolidated single-post template (annotated for IDEs, external JS)
+// Consolidated single-post template (clean, no inline JS besides POST_ID)
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
@@ -121,7 +121,7 @@ require_once __DIR__ . '/includes/header.php';
 <script src="assets/js/post.js"></script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-<?php
+
 // Minimal single-post view with TOC and comments (type-annotated for IDE)
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
