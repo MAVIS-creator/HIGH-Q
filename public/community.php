@@ -21,9 +21,9 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
     <p class="muted">Ask questions anonymously — no account needed.</p>
     <div style="display:flex;gap:24px;align-items:flex-start;margin-top:20px;">
       <div style="flex:1;">
-        <form method="post">
-          <div class="form-row"><label>Name (optional)</label><input type="text" name="name"></div>
-          <div class="form-row"><label>Your question</label><textarea name="content" rows="5" required></textarea></div>
+        <form method="post" class="comment-form-wrap">
+          <div class="form-row"><label class="form-label">Name (optional)</label><input class="form-input" type="text" name="name"></div>
+          <div class="form-row"><label class="form-label">Your question</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
           <div class="form-actions"><button class="btn-approve" type="submit">Post Question</button></div>
         </form>
       </div>

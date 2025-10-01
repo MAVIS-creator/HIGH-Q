@@ -204,13 +204,13 @@ require_once __DIR__ . '/includes/header.php';
 
     <div style="margin-top:18px;">
       <h3>Leave a comment</h3>
-      <form id="commentForm">
+      <form id="commentForm" class="comment-form-wrap">
         <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
         <input type="hidden" name="parent_id" id="parent_id" value="">
-        <div class="form-row"><label>Name</label><input type="text" name="name"></div>
-        <div class="form-row"><label>Email</label><input type="email" name="email"></div>
-        <div class="form-row"><label>Comment</label><textarea name="content" rows="5" required></textarea></div>
-        <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button></div>
+        <div class="form-row"><label class="form-label">Name</label><input class="form-input" type="text" name="name"></div>
+        <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
+        <div class="form-row"><label class="form-label">Comment</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
+        <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
       </form>
     </div>
   </section>
