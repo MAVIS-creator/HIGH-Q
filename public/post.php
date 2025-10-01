@@ -9,6 +9,17 @@ $slug = trim($_GET['slug'] ?? '');
 if (!$postId && $slug === '') { header('Location: index.php'); exit; }
 
 // fetch post
+<?php
+// Final cleaned single-post view. All client JS is externalized to public/assets/js/post.js
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/functions.php';
+
+// support either ?id= or ?slug=
+$postId = (int)($_GET['id'] ?? 0);
+$slug = trim($_GET['slug'] ?? '');
+if (!$postId && $slug === '') { header('Location: index.php'); exit; }
+
+// fetch post
 if ($postId) {
   $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
   $stmt->execute([$postId]);
@@ -24,7 +35,7 @@ if (!$post) {
   exit;
 }
 
-// Build TOC and sanitized content. Annotate DOM types to satisfy Intelephense.
+// Build TOC and sanitized content. Annotate DOM types to satisfy IDEs.
 $rendered = '';
 $toc = [];
 try {
@@ -123,155 +134,12 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 </div>
 
-<!-- minimal inline data for external script only -->
+<!-- Provide only a small data attachment; all behavior is in external JS -->
 <script>window.POST_ID = <?= json_encode((int)$post['id']) ?>;</script>
 <script src="assets/js/post.js"></script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
 
-require_once __DIR__ . '/config/functions.php';
-
-$postId = (int)($_GET['id'] ?? 0);
-$slug = trim($_GET['slug'] ?? '');
-if (!$postId && $slug === '') { header('Location: index.php'); exit; }
-
-if ($postId) {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
-  $stmt->execute([$postId]);
-} else {
-  $stmt = $pdo->prepare('SELECT * FROM posts WHERE slug = ? LIMIT 1');
-  $stmt->execute([$slug]);
-}
-$post = $stmt->fetch(PDO::FETCH_ASSOC);
-
-require_once __DIR__ . '/includes/header.php';
-
-if (!$post) {
-  echo '<div class="container"><p>Post not found.</p></div>';
-  require_once __DIR__ . '/includes/footer.php';
-  exit;
-}
-
-// Build TOC: use DOMDocument and DOMXPath. Add phpdoc annotations so intelephense knows types.
-$rendered = '';
-$toc = [];
-try {
-  /** @var \DOMDocument $doc */
-  $doc = new DOMDocument();
-  libxml_use_internal_errors(true);
-  $doc->loadHTML('<div>' . $post['content'] . '</div>');
-  /** @var \DOMXPath $xpath */
-  $xpath = new DOMXPath($doc);
-  /** @var \DOMNodeList $nodes */
-  $nodes = $xpath->query('//h2|//h3');
-  $counter = 0;
-  /** @var \DOMElement $n */
-  foreach ($nodes as $n) {
-    $text = trim($n->textContent);
-    $id = $n->getAttribute('id');
-    if (!$id) {
-      $id = preg_replace('/[^a-z0-9]+/i', '-', strtolower($text));
-      $id = trim($id, '-') . '-' . (++$counter);
-      $n->setAttribute('id', $id);
-    }
-    $toc[] = ['id' => $id, 'text' => $text, 'level' => (strtolower($n->nodeName) === 'h3' ? 3 : 2)];
-  }
-  $body = $doc->getElementsByTagName('body')->item(0);
-  $div = $body ? $body->getElementsByTagName('div')->item(0) : null;
-  if ($div) { foreach ($div->childNodes as $cn) $rendered .= $doc->saveHTML($cn); }
-  $allowed = '<h1><h2><h3><h4><p><ul><ol><li><strong><em><a><img><br><blockquote><pre><code>';
-  $rendered = strip_tags($rendered, $allowed);
-} catch (Throwable $e) {
-  $rendered = nl2br(htmlspecialchars($post['content']));
-}
-
-?>
-<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-
-<div class="container" style="max-width:1100px;margin:24px auto;padding:0 12px;">
-  <div class="post-grid">
-    <article class="post-article">
-      <h1><?= htmlspecialchars($post['title']) ?></h1>
-      <div class="meta muted"><?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?> · <?= htmlspecialchars(time_ago($post['created_at'])) ?></div>
-      <div class="post-content" style="margin-top:12px;">
-        <?php if (!empty($post['excerpt'])): ?>
-          <div class="post-excerpt" style="border:1px solid #f0e8e8;padding:18px;border-radius:8px;margin-bottom:14px;background:#fff"><?= nl2br(htmlspecialchars($post['excerpt'])) ?></div>
-        <?php endif; ?>
-        <?php if (!empty($post['featured_image'])): $fi = $post['featured_image']; if (preg_match('#^https?://#i',$fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) $imgSrc=$fi; else $imgSrc = '/HIGH-Q/'.ltrim($fi,'/'); ?>
-          <div class="post-thumb" style="margin-bottom:12px;"><img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover"></div>
-        <?php endif; ?>
-
-        <?= $rendered ?>
-      </div>
-    </article>
-
-    <aside class="post-sidebar">
-      <?php
-      $likesCount = 0;
-      try {
-        $ls = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?');
-        $ls->execute([$postId]);
-        $likesCount = (int)$ls->fetchColumn();
-      } catch (Throwable $e) {
-        if (isset($post['likes'])) $likesCount = (int)$post['likes'];
-      }
-      $commentsCount = 0; // we'll load comments server-side where appropriate
-      ?>
-
-      <div class="post-actions">
-        <div class="post-stats">
-          <button id="likeBtn" class="icon-btn" aria-label="Like this post"><i class="bx bx-heart"></i> <span id="likesCount"><?= $likesCount ?></span></button>
-          <button class="icon-btn" aria-label="Comments"><i class="bx bx-comment"></i> <span class="count"><?= $commentsCount ?></span></button>
-          <button id="shareBtn" class="icon-btn" aria-label="Share"><i class="bx bx-share-alt"></i> Share</button>
-        </div>
-      </div>
-
-      <div class="toc-box"><h4>Table of Contents</h4><div id="tocInner">
-        <?php if (!empty($toc)): ?><ul class="toc-list"><?php foreach ($toc as $t): ?><li class="toc-item toc-level-<?= $t['level'] ?>"><a href="#<?= htmlspecialchars($t['id']) ?>"><?= htmlspecialchars($t['text']) ?></a></li><?php endforeach; ?></ul><?php else: ?><p class="muted">No headings found.</p><?php endif; ?>
-      </div></div>
-    </aside>
-  </div>
-
-  <section id="commentsSection" class="comments-section">
-    <h2>Comments</h2>
-    <div id="commentsList" class="comments-list">
-      <!-- Comments will be inserted by JS or server-side rendering -->
-    </div>
-
-    <div class="comment-form-wrap">
-      <h3>Join the conversation</h3>
-      <form id="commentForm">
-        <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
-        <input type="hidden" name="parent_id" id="parent_id" value="">
-        <div style="display:none"><input type="text" name="hp_name" autocomplete="off" tabindex="-1"></div>
-        <div class="form-row"><input type="text" name="name" placeholder="Your name (optional)"></div>
-        <div class="form-row"><input type="email" name="email" placeholder="Email (optional)"></div>
-        <div class="form-row"><textarea name="content" rows="4" placeholder="Share your thoughts on this article..." required></textarea></div>
-        <div class="form-actions"><button type="submit" class="btn-approve">Post Comment</button> <button type="button" id="cancelReply" class="btn-link" style="display:none">Cancel Reply</button></div>
-      </form>
-    </div>
-  </section>
-</div>
-
-<!-- provide minimal inline JS data (single value) to the external script -->
-<script>window.POST_ID = <?= json_encode((int)$postId) ?>;</script>
-<script src="assets/js/post.js"></script>
-
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
-      const btn = this.querySelector('button[type=submit]'); if (btn) btn.disabled=true;
-      fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{ handleCommentResponse(j, form); }).catch(()=>alert('Network error')).finally(()=>{ if (btn) btn.disabled=false; });
-    });
-
-    document.getElementById('cancelReply')?.addEventListener('click', function(){ document.getElementById('parent_id').value=''; this.style.display='none'; });
-
-    document.getElementById('likeBtn')?.addEventListener('click', function(){ const b=this; b.disabled=true; fetch('api/like_post.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'post_id='+encodeURIComponent(POST_ID)}).then(r=>r.json()).then(j=>{ handleLikeResponse(j); }).catch(()=>{}).finally(()=>b.disabled=false); });
-
-    document.getElementById('shareBtn')?.addEventListener('click', function(e){ e.stopPropagation(); const url=window.location.href; const title=document.querySelector('h1')?.textContent||document.title; const items=[{label:'Twitter',href:'https://twitter.com/intent/tweet?text='+encodeURIComponent(title)+'&url='+encodeURIComponent(url)},{label:'Facebook',href:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)},{label:'WhatsApp',href:'https://api.whatsapp.com/send?text='+encodeURIComponent(title+' '+url)},{label:'Copy',href:'copy'}]; let menu=document.querySelector('.share-menu'); if (menu) { menu.remove(); menu=null; } if (!menu) { menu=document.createElement('div'); menu.className='share-menu'; menu.style.position='absolute'; menu.style.right='20px'; menu.style.top=(e.pageY||80)+'px'; menu.style.background='#fff'; menu.style.border='1px solid #eee'; menu.style.padding='8px'; items.forEach(it=>{ const a=document.createElement('a'); a.href=it.href==='copy'?'#':it.href; a.textContent=it.label; a.style.display='block'; a.style.padding='6px 8px'; a.addEventListener('click', ev=>{ ev.preventDefault(); if (it.href==='copy') { navigator.clipboard?.writeText(url).then(()=>alert('Link copied')).catch(()=>prompt('Copy this URL',url)); } else { window.open(it.href,'_blank','noopener'); } }); menu.appendChild(a); }); document.body.appendChild(menu); setTimeout(()=>{ const rm=()=>{ menu.remove(); window.removeEventListener('click',rm); }; window.addEventListener('click',rm); },50); } });
-  });
-
-  </script>
-
-  <?php require_once __DIR__ . '/includes/footer.php'; ?>
     const node = renderCommentNode(comment);
     const list = document.getElementById('commentsList');
     if (comment.parent_id) {
