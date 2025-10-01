@@ -429,7 +429,7 @@ function renderCommentNode(c){ const node=document.createElement('article'); nod
   function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function nl2br(s){ return s.replace(/\r?\n/g,'<br>'); }
   function renderCommentNode(c){ const node=document.createElement('article'); node.className='comment'; node.setAttribute('data-id','c'+c.id); const av=document.createElement('div'); av.className='comment-avatar'; av.innerHTML='<div class="avatar-circle">'+(c.name?c.name.charAt(0).toUpperCase():'A')+'</div>'; const main=document.createElement('div'); main.className='comment-main'; main.innerHTML='<div class="comment-meta"><strong>'+escapeHtml(c.name||'Anonymous')+'</strong> <span class="muted">· just now</span></div><div class="comment-body">'+nl2br(escapeHtml(c.content))+'</div><div class="comment-actions"><button class="btn-link btn-reply" data-id="'+c.id+'">Reply</button></div>'; node.appendChild(av); node.appendChild(main); const reply=main.querySelector('.btn-reply'); if (reply) reply.addEventListener('click', function(){ document.getElementById('parent_id').value=this.dataset.id; document.getElementById('cancelReply').style.display='inline-block'; document.querySelector('.comment-form-wrap').scrollIntoView({behavior:'smooth', block:'center'}); }); return node; }
-</script>
+
   <?php require_once __DIR__ . '/includes/footer.php'; ?>
   if (isset($comments[$pid])) $comments[$pid]['replies'] = $list; else foreach ($list as $l) $comments[$l['id']] = $l;
 }
