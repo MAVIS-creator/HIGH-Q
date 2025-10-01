@@ -40,11 +40,11 @@ require_once __DIR__ . '/includes/header.php';
 
       <?= nl2br(htmlspecialchars($post['content'])) ?>
       </div>
-      <div class="post-actions">
-        <button id="likeBtn" class="btn">Like</button>
-        <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span>
-        <button id="commentToggle" class="btn">Comment</button>
-        <span class="muted" style="margin-left:12px;">Comments: <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></span>
+      <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
+        <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
+        <div class="meta small muted"><i class="fa-regular fa-heart"></i> <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span></div>
+        <button id="commentToggle" class="btn btn-comment"><i class="fa-regular fa-comment-dots"></i> Comment</button>
+        <div class="meta small muted" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></div>
       </div>
   </article>
 
@@ -93,20 +93,8 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 </div>
 
-<script>
-// handle reply button: set parent_id and scroll to form
-document.querySelectorAll('.btn-reply').forEach(b=>b.addEventListener('click',function(){
-  var id = this.dataset.id; document.getElementById('parent_id').value = id; window.scrollTo({top: document.getElementById('commentForm').offsetTop - 80, behavior: 'smooth'});
-}));
-
-// submit comment form via fetch to public/api/comments.php
-document.getElementById('commentForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  var fd = new FormData(this);
-  fetch('api/comments.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{
-    if (j.status === 'ok') { alert(j.message||'Submitted'); location.reload(); } else { alert(j.message||'Error'); }
-  }).catch(()=>alert('Network error'));
-});
-</script>
+<!-- comment and like handling moved to external script to reduce inline JS -->
+<script>window.POST_ID = <?= (int)$postId ?>;</script>
+<script src="./assets/js/post.js"></script>
 
 <?php require_once __DIR__ . '/includes/footer.php';

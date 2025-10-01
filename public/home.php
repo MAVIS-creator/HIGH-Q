@@ -303,8 +303,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <h4><a href="./post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? '')) > 180 ? substr($post['excerpt'], 0, 177) . '...' : ($post['excerpt'] ?? ''))) ?></p>
               <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
-                <span style="margin-left:12px;">👍 <?= intval($post['likes'] ?? 0) ?></span>
-                <span style="margin-left:8px;">💬 <?= intval($post['comments_count'] ?? 0) ?></span>
+                <span class="news-count" style="margin-left:12px;"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
+                <span class="news-count" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
               </div>
             </div>
           </article>
