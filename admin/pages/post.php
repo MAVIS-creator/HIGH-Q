@@ -430,14 +430,7 @@ $posts = $stmt->fetchAll();
                     <label>Title *</label>
                     <input type="text" name="title" id="pTitle" required>
                 </div>
-                <div class="form-row">
-                    <label>Slug</label>
-                    <input type="text" name="slug" id="pSlug">
-                </div>
-                <div class="form-row">
-                    <label>Excerpt</label>
-                    <input type="text" name="excerpt" id="pExcerpt">
-                </div>
+                <!-- Slug and excerpt are auto-generated; removed from modal to simplify authoring -->
                 <div class="form-row">
                     <label>Content *</label>
                     <textarea name="content" id="pContent" rows="6" required></textarea>
