@@ -45,7 +45,9 @@ if (!empty($post['content'])) {
       $orig = $id;
       while (in_array($id, $ids)) { $id = $orig . '-' . $suffix; $suffix++; }
       $ids[] = $id;
-      $n->setAttribute('id', $id);
+      if ($n instanceof DOMElement) {
+        $n->setAttribute('id', $id);
+      }
       $tocItems[] = ['id' => $id, 'text' => $text, 'tag' => $n->nodeName];
     }
     // build TOC HTML
