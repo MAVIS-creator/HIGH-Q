@@ -1,7 +1,4 @@
 <?php
-// Clean single-post view: consolidated and type-annotated for IDEs. No large inline JS.
-require_once __DIR__ . '/config/db.php';
-<?php
 // Single clean post view — no inline JS beyond POST_ID; behavior is in assets/js/post.js
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
