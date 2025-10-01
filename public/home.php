@@ -271,13 +271,22 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <?php
 // Latest News & Updates: fetch up to 4 published posts
 $latestPosts = [];
+// Ensure we have a PDO connection (try to require the public config if missing)
+if (!isset($pdo) || !$pdo) {
+  $dbPath = __DIR__ . '/config/db.php';
+  if (file_exists($dbPath)) {
+    try { require_once $dbPath; } catch (Throwable $e) { /* ignore */ }
+  }
+}
 if (isset($pdo) && $pdo instanceof PDO) {
   try {
-    // include likes and comment count for quick display
-    $stmt = $pdo->prepare("SELECT p.id, p.title, p.slug, p.excerpt, p.created_at, p.featured_image, COALESCE(p.likes,0) AS likes, (SELECT COUNT(1) FROM comments c WHERE c.post_id = p.id AND c.status = 'approved') AS comments_count FROM posts p WHERE p.status='published' ORDER BY p.created_at DESC LIMIT 4");
+    $sql = "SELECT p.id, p.title, p.slug, p.excerpt, p.created_at, p.featured_image, COALESCE(p.likes,0) AS likes, (SELECT COUNT(1) FROM comments c WHERE c.post_id = p.id AND c.status = 'approved') AS comments_count FROM posts p WHERE p.status = 'published' ORDER BY p.created_at DESC LIMIT 4";
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
-    $latestPosts = $stmt->fetchAll();
+    $latestPosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } catch (Throwable $e) {
+    // log DB error for debugging without exposing to users
+    @file_put_contents(__DIR__ . '/../storage/posts-debug.log', date('c') . " HOME POSTS QUERY ERROR: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
     $latestPosts = [];
   }
 }
@@ -300,8 +309,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
             <?php endif; ?>
             <div class="news-body">
-              <h4><a href="./post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
-              <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? '')) > 180 ? substr($post['excerpt'], 0, 177) . '...' : ($post['excerpt'] ?? ''))) ?></p>
+              <h4><a href="./post.php?id=<?= intval($post['id']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
+              <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?? '') ?></p>
               <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
                 <span class="news-count" style="margin-left:12px;"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
                 <span class="news-count" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
