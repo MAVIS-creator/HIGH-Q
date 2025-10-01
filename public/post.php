@@ -167,27 +167,7 @@ require_once __DIR__ . '/includes/header.php';
 
         <aside class="post-sidebar">
           <?php $likesCount=0; try{$ls=$pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id=?');$ls->execute([$postId]);$likesCount=(int)$ls->fetchColumn();}catch(Throwable$e){ if(isset($post['likes'])) $likesCount=(int)$post['likes']; } $commentsCount = max(0,count($allComments)); ?>
-          <div class="post-actions">
-            <div class="post-stats">
-              <button id="likeBtn" class="icon-btn like-btn" aria-label="Like post">
-                <!-- heart SVG -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7-4.35-9.2-6.5C-0.4 11.8 3 6 7 6c2.4 0 3.8 1.6 5 3 1.2-1.4 2.6-3 5-3 4 0 7.4 5.8 4.2 8.5C19 16.65 12 21 12 21z" fill="currentColor"/></svg>
-                <span id="likesCount"><?= $likesCount ?></span>
-              </button>
-
-              <button class="icon-btn comments-btn" aria-label="Comments">
-                <!-- comment SVG -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="currentColor"/></svg>
-                <span class="count"><?= $commentsCount ?></span>
-              </button>
-
-              <button id="shareBtn" class="icon-btn share-btn" aria-label="Share">
-                <!-- share SVG -->
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M12 3v13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>Share</span>
-              </button>
-            </div>
-          </div>
+          <div class="post-actions"><div class="post-stats"><button id="likeBtn" class="icon-btn">❤ <span id="likesCount"><?= $likesCount ?></span></button> <button class="icon-btn">💬 <span class="count"><?= $commentsCount ?></span></button> <button id="shareBtn" class="icon-btn">🔗 Share</button></div></div>
 
           <div class="toc-box"><h4>Table of Contents</h4><div id="tocInner">
             <?php if (!empty($toc)): ?><ul class="toc-list"><?php foreach ($toc as $t): ?><li class="toc-item toc-level-<?= $t['level'] ?>"><a href="#<?= htmlspecialchars($t['id']) ?>"><?= htmlspecialchars($t['text']) ?></a></li><?php endforeach; ?></ul><?php else: ?><p class="muted">No headings found.</p><?php endif; ?>
