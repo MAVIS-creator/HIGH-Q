@@ -1,12 +1,14 @@
 <?php
-// Consolidated single-post template (clean, no inline JS besides POST_ID)
+// Clean single-post view: consolidated and type-annotated for IDEs. No large inline JS.
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
+// support either ?id= or ?slug=
 $postId = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
 if (!$postId && $slug === '') { header('Location: index.php'); exit; }
 
+// fetch post
 if ($postId) {
   $stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
   $stmt->execute([$postId]);
@@ -15,7 +17,6 @@ if ($postId) {
   $stmt->execute([$slug]);
 }
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$post) {
   require_once __DIR__ . '/includes/header.php';
   echo '<div class="container"><p>Post not found.</p></div>';
@@ -57,7 +58,13 @@ try {
 }
 
 $likesCount = 0;
-try { $ls = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?'); $ls->execute([(int)$post['id']]); $likesCount = (int)$ls->fetchColumn(); } catch (Throwable $_) { if (isset($post['likes'])) $likesCount = (int)$post['likes']; }
+try {
+  $ls = $pdo->prepare('SELECT COUNT(*) FROM post_likes WHERE post_id = ?');
+  $ls->execute([(int)$post['id']]);
+  $likesCount = (int)$ls->fetchColumn();
+} catch (Throwable $_) {
+  if (isset($post['likes'])) $likesCount = (int)$post['likes'];
+}
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -116,14 +123,12 @@ require_once __DIR__ . '/includes/header.php';
   </section>
 </div>
 
-<!-- tiny inline data for external script -->
+<!-- minimal inline data for external script only -->
 <script>window.POST_ID = <?= json_encode((int)$post['id']) ?>;</script>
 <script src="assets/js/post.js"></script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
 
-// Minimal single-post view with TOC and comments (type-annotated for IDE)
-require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
 $postId = (int)($_GET['id'] ?? 0);
