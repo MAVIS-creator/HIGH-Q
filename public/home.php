@@ -273,7 +273,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
 $latestPosts = [];
 if (isset($pdo) && $pdo instanceof PDO) {
   try {
-    $stmt = $pdo->prepare("SELECT id, title, slug, excerpt, created_at, featured_image FROM posts WHERE status='published' ORDER BY created_at DESC LIMIT 4");
+    // include likes and comment count for quick display
+    $stmt = $pdo->prepare("SELECT p.id, p.title, p.slug, p.excerpt, p.created_at, p.featured_image, COALESCE(p.likes,0) AS likes, (SELECT COUNT(1) FROM comments c WHERE c.post_id = p.id AND c.status = 'approved') AS comments_count FROM posts p WHERE p.status='published' ORDER BY p.created_at DESC LIMIT 4");
     $stmt->execute();
     $latestPosts = $stmt->fetchAll();
   } catch (Throwable $e) {
@@ -301,7 +302,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
             <div class="news-body">
               <h4><a href="post.php?slug=<?= htmlspecialchars($post['slug']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?: (strlen(strip_tags($post['excerpt'] ?? '')) > 180 ? substr($post['excerpt'], 0, 177) . '...' : ($post['excerpt'] ?? ''))) ?></p>
-              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time></div>
+              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
+                <span style="margin-left:12px;">👍 <?= intval($post['likes'] ?? 0) ?></span>
+                <span style="margin-left:8px;">💬 <?= intval($post['comments_count'] ?? 0) ?></span>
+              </div>
             </div>
           </article>
         <?php endforeach; ?>
