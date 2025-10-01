@@ -149,14 +149,16 @@ require_once __DIR__ . '/includes/header.php';
 </section>
 
 <!-- Newsletter subscribe form -->
-<section class="newsletter" style="background:#fff;padding:20px 0;margin-top:18px;border-top:1px solid #f1f1f1;">
+<section class="newsletter" style="margin-top:18px;border-top:1px solid #f1f1f1;">
   <div class="container" style="max-width:900px;">
     <h3>Subscribe to our newsletter</h3>
     <p class="muted">Get the latest news and announcements delivered to your inbox.</p>
-    <form id="newsletterForm" style="display:flex;gap:8px;max-width:600px;">
-      <input type="email" name="email" placeholder="Your email address" required style="flex:1;padding:10px;border:1px solid #ddd;border-radius:6px">
-      <button type="submit" class="btn-ghost">Subscribe</button>
-    </form>
+    <div class="newsletter-panel" style="max-width:600px;">
+      <form id="newsletterForm" style="display:flex;gap:8px;">
+        <input type="email" name="email" placeholder="Your email address" required class="form-input">
+        <button type="submit" class="btn-primary">Subscribe</button>
+      </form>
+    </div>
     <div id="newsletterMsg" style="margin-top:8px;color:green;display:none"></div>
   </div>
 </section>
