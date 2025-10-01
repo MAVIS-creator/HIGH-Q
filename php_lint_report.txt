@@ -1,0 +1,38 @@
+﻿OK: C:\xampp\htdocs\HIGH-Q\admin\forgot_password.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\index.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\login.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\logout.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\pending.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\reset_password_final.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\signup.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\verify_email.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\ip_logs.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\mac_blocklist.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\mark_read.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\notifications.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\run-scan.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\save-settings.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\api\threads.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\includes\auth.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\includes\csrf.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\includes\db.php
+
+OK: C:\xampp\htdocs\HIGH-Q\admin\includes\footer.php
+
