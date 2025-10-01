@@ -1198,6 +1198,35 @@ nav a.active::after { background: var(--hq-yellow); }
   color: var(--hq-gray-dark);
 }
 
+/* Form controls used across post, community and newsletter */
+.form-input, input.form-input {
+  padding:10px 12px;
+  border:1px solid #e6e6e6;
+  border-radius:6px;
+  width:100%;
+  box-sizing:border-box;
+}
+.form-textarea {
+  padding:10px 12px;
+  border:1px solid #e6e6e6;
+  border-radius:6px;
+  width:100%;
+  box-sizing:border-box;
+  min-height:120px;
+}
+.form-label { display:block; margin-bottom:6px; font-weight:700; }
+.comment-form-wrap { background:#fff; border:1px solid rgba(0,0,0,0.04); padding:14px; border-radius:8px; box-shadow:0 12px 36px rgba(11,37,64,0.04); max-width:720px; }
+.comment-form-wrap .form-actions { margin-top:8px; display:flex; gap:8px; align-items:center; }
+
+/* Newsletter panel using site colors */
+.newsletter-panel { background: linear-gradient(180deg, var(--hq-yellow-pale), #fff); padding:14px; border-radius:10px; border:1px solid rgba(245,185,4,0.12); display:block; }
+.newsletter-panel .form-input { border-radius:6px; }
+.newsletter-panel .btn-primary { background: var(--hq-yellow); color: #111; border-radius:6px; padding:10px 14px; border:1px solid rgba(0,0,0,0.06); }
+
+/* Community form shares comment styles */
+.community .comment-form-wrap, .community .form-input, .community .form-textarea { width:100%; }
+
+
 /* Post page: Table of Contents and comment panel styles */
 .post-toc {
   background: #fff;
