@@ -353,8 +353,7 @@ function showToast(type, title){
 }
 
 function doAction(action,id){
-    // fetch row data from the table to show payer details in the confirmation modal
-    // find the button that triggered this action and its row
+    // find the table row and data attributes
     var btn = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]');
     var tr = btn ? btn.closest('tr') : document.querySelector('tr[data-payment-id="'+id+'"]');
     var payer = tr ? (tr.getAttribute('data-payer-name') || '') : '';
@@ -373,57 +372,37 @@ function doAction(action,id){
     confirmHtml += '<p><strong>User Email:</strong> ' + Swal.escapeHtml(email || '-') + '</p>';
     confirmHtml += '</div>';
 
-    var textAction = action === 'confirm' ? 'Confirm' : 'Reject';
-    if (action === 'reject') {
-        Swal.fire({
-            title: 'Reject payment?',
-            html: confirmHtml + '<p>Please provide a reason for rejection:</p>',
-            input: 'textarea',
-            inputPlaceholder: 'Reason (optional)',
-            showCancelButton: true,
-            confirmButtonText: 'Reject',
-            preConfirm: (reason) => {
-                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF); fd.append('reason', reason || '');
-                return fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}, credentials:'same-origin'})
-                    .then(res => res.text())
-                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
+    const actionLabel = action === 'confirm' ? 'approve' : 'reject';
+    Swal.fire({
+        title: `Are you sure you want to ${actionLabel} this payment?`,
+        text: "This action cannot be undone.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: (action === 'confirm') ? '#28a745' : '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: `Yes, ${actionLabel} it`,
+        cancelButtonText: 'Cancel',
+        html: confirmHtml
+    }).then(result => {
+        if (!result.isConfirmed) return;
+        const fd = new FormData();
+        fd.append('_csrf', window.__PAYMENTS_CSRF);
+        fd.append('action', action);
+        fd.append('id', id);
+        if (action === 'reject' && result.value) {
+            // if using input reason, but we don't have a reason input here; the modal shows confirmHtml only
+        }
+
+        fetch('index.php?pages=payments', { method: 'POST', body: fd, credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(d => {
+            if (d.status === 'ok') {
+                Swal.fire({ icon: 'success', title: 'Updated!', text: `Payment has been ${actionLabel}ed successfully.`, timer: 1500, showConfirmButton: false }).then(()=> location.reload());
+            } else {
+                Swal.fire({ icon: 'error', title: 'Error', text: d.message || 'Something went wrong.' });
             }
-        }).then((res) => {
-            if (res.isConfirmed) {
-                var data = res.value;
-                if (data && data.status === 'ok') {
-                    showToast('success', data.message || 'Rejected');
-                    setTimeout(function(){ location.reload(); }, 800);
-                } else {
-                    showToast('error', data && data.message ? data.message : 'Error');
-                }
-            }
-        }).catch(err => { Swal.fire({icon:'error',title:'Server Error',html:Swal.escapeHtml(err.message || String(err))}); });
-    } else {
-        Swal.fire({
-            title: textAction + ' payment?',
-            html: confirmHtml,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: textAction,
-            preConfirm: () => {
-                var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', window.__PAYMENTS_CSRF);
-                return fetch('index.php?pages=payments', {method:'POST', body: fd, headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'}, credentials:'same-origin'})
-                    .then(res => res.text())
-                    .then(text => { try { return JSON.parse(text); } catch(e) { throw new Error('Unexpected response from server:\n' + text); } });
-            }
-        }).then((res) => {
-            if (res.isConfirmed) {
-                var data = res.value;
-                if (data && data.status === 'ok') {
-                    showToast('success', data.message || 'Done');
-                    setTimeout(function(){ location.reload(); }, 800);
-                } else {
-                    showToast('error', data && data.message ? data.message : 'Error');
-                }
-            }
-        }).catch(err => { Swal.fire({icon:'error',title:'Server Error',html:Swal.escapeHtml(err.message || String(err))}); });
-    }
+        }).catch(e => { Swal.fire({ icon: 'error', title: 'Request failed', text: e.message || 'Please try again later.' }); });
+    });
 }
 </script>
 
