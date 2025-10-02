@@ -369,56 +369,32 @@ Swal.escapeHtml = function(str) {
     });
 };
 
-function doAction(action,id){
-    // find the table row and data attributes
-    var btn = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]');
-    var tr = btn ? btn.closest('tr') : document.querySelector('tr[data-payment-id="'+id+'"]');
-    var payer = tr ? (tr.getAttribute('data-payer-name') || '') : '';
-    var payerAcc = tr ? (tr.getAttribute('data-payer-account') || '') : '';
-    var payerBank = tr ? (tr.getAttribute('data-payer-bank') || '') : '';
-    var ref = tr ? (tr.getAttribute('data-reference') || '') : '';
-    var email = tr ? (tr.getAttribute('data-email') || '') : '';
-    var amt = tr ? (tr.getAttribute('data-amount') || tr.querySelector('td:nth-child(4)')?.textContent || '') : '';
+function doAction(action, id) {
+    const fd = new FormData();
+    fd.append('action', action);
+    fd.append('id', id);
 
-    var confirmHtml = '<div style="text-align:left">';
-    confirmHtml += '<p><strong>Reference:</strong> ' + Swal.escapeHtml(ref || '-') + '</p>';
-    confirmHtml += '<p><strong>Amount:</strong> ' + Swal.escapeHtml(amt || '-') + '</p>';
-    confirmHtml += '<p><strong>Payer:</strong> ' + Swal.escapeHtml(payer || '-') + '</p>';
-    confirmHtml += '<p><strong>Account:</strong> ' + Swal.escapeHtml(payerAcc || '-') + '</p>';
-    confirmHtml += '<p><strong>Bank:</strong> ' + Swal.escapeHtml(payerBank || '-') + '</p>';
-    confirmHtml += '<p><strong>User Email:</strong> ' + Swal.escapeHtml(email || '-') + '</p>';
-    confirmHtml += '</div>';
-
-    const actionLabel = action === 'confirm' ? 'approve' : 'reject';
-    Swal.fire({
-        title: `Are you sure you want to ${actionLabel} this payment?`,
-        text: "This action cannot be undone.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: (action === 'confirm') ? '#28a745' : '#d33',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: `Yes, ${actionLabel} it`,
-        cancelButtonText: 'Cancel',
-        html: confirmHtml
-    }).then(result => {
-        if (!result.isConfirmed) return;
-        const fd = new FormData();
-        fd.append('_csrf', window.__PAYMENTS_CSRF);
-        fd.append('action', action);
-        fd.append('id', id);
-        if (action === 'reject' && result.value) {
-            // if using input reason, but we don't have a reason input here; the modal shows confirmHtml only
-        }
-
-        fetch('index.php?pages=payments', { method: 'POST', body: fd, credentials: 'same-origin' })
-        .then(r => r.json())
-        .then(d => {
-            if (d.status === 'ok') {
-                Swal.fire({ icon: 'success', title: 'Updated!', text: `Payment has been ${actionLabel}ed successfully.`, timer: 1500, showConfirmButton: false }).then(()=> location.reload());
-            } else {
-                Swal.fire({ icon: 'error', title: 'Error', text: d.message || 'Something went wrong.' });
-            }
-        }).catch(e => { Swal.fire({ icon: 'error', title: 'Request failed', text: e.message || 'Please try again later.' }); });
+    fetch('index.php?pages=payments', {
+        method: 'POST',
+        body: fd,
+        credentials: 'same-origin',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => {
+        if (!r.ok) throw new Error('Network error ' + r.status);
+        return r.json();
+    })
+    .then(data => {
+        // normalize status for compatibility with server returning 'ok' or 'success'
+        const status = (data.status === 'ok') ? 'success' : data.status;
+        const icon = (status === 'ok' || status === 'success') ? 'success' : status;
+        Swal.fire({ icon: icon, title: data.message || '' }).then(() => {
+            if (status === 'success') location.reload();
+        });
+    })
+    .catch(err => {
+        console.error('AJAX error:', err);
+        Swal.fire({ icon: 'error', title: 'Unexpected Error', text: err.message });
     });
 }
 </script>
