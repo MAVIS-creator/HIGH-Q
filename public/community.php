@@ -19,20 +19,36 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
   <div class="container">
     <h1>Community</h1>
     <p class="muted">Ask questions anonymously — no account needed.</p>
-    <div style="display:flex;gap:24px;align-items:flex-start;margin-top:20px;">
-      <div style="flex:1;">
+    <div style="margin-top:20px;">
+      <div style="max-width:720px;">
         <form method="post" class="comment-form-wrap">
           <div class="form-row"><label class="form-label">Name (optional)</label><input class="form-input" type="text" name="name"></div>
           <div class="form-row"><label class="form-label">Your question</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
           <div class="form-actions"><button class="btn-approve" type="submit">Post Question</button></div>
         </form>
-      </div>
-      <div style="flex:1;">
-        <h3>Recent questions</h3>
+
+        <h3 style="margin-top:28px;">Recent questions</h3>
         <?php foreach($q as $qq): ?>
-          <div style="border:1px solid #eee;padding:12px;border-radius:8px;margin-bottom:10px;">
-            <div style="font-weight:700"><?= htmlspecialchars($qq['name']) ?> <small class="muted" style="font-weight:400">at <?= $qq['created_at'] ?></small></div>
-            <div style="margin-top:6px"><?= nl2br(htmlspecialchars($qq['content'])) ?></div>
+          <div class="forum-question">
+            <div class="fq-head"><strong><?= htmlspecialchars($qq['name']) ?></strong> <small class="muted">at <?= $qq['created_at'] ?></small></div>
+            <div class="fq-body"><?= nl2br(htmlspecialchars($qq['content'])) ?></div>
+            <div class="fq-actions"><button class="reply-toggle" data-id="<?= $qq['id'] ?>">Reply</button></div>
+            <div class="fq-replies" id="replies-<?= $qq['id'] ?>">
+              <?php
+                $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
+                $rstmt->execute([$qq['id']]);
+                $reps = $rstmt->fetchAll();
+                foreach ($reps as $rep):
+              ?>
+                <div class="forum-reply"><strong><?= htmlspecialchars($rep['name']) ?></strong> <small class="muted">at <?= $rep['created_at'] ?></small><div class="fq-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div></div>
+              <?php endforeach; ?>
+            </div>
+            <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;margin-top:8px;">
+              <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
+              <div class="form-row"><label class="form-label">Name (optional)</label><input class="form-input" type="text" name="rname"></div>
+              <div class="form-row"><label class="form-label">Your reply</label><textarea class="form-textarea" name="rcontent" rows="3" required></textarea></div>
+              <div class="form-actions"><button class="btn-approve" type="submit">Post Reply</button></div>
+            </form>
           </div>
         <?php endforeach; ?>
       </div>
