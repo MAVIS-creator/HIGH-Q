@@ -629,22 +629,29 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 async function postAction(url, formData){
   const res = await fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} });
   let payload = null;
-  try {
-    payload = await res.json();
-  } catch (e) { payload = null; }
+  try { payload = await res.json(); } catch (e) { payload = null; }
   if (!res.ok || !payload) {
-    const msg = payload && payload.message ? payload.message : 'Server error';
+    const msg = payload && (payload.message || payload.error) ? (payload.message || payload.error) : 'Server error';
     await Swal.fire('Error', msg, 'error');
     throw new Error(msg);
   }
-  // show server-sent message (success or error)
-  if (payload.status && payload.status === 'ok') {
-    await Swal.fire('Success', payload.message || 'Operation completed', 'success');
-    window.location = 'index.php?pages=students';
-    return payload;
+
+  const ok = (payload.status && payload.status === 'ok') || (payload.success === true);
+  if (!ok) {
+    const msg = payload.message || payload.error || 'Operation failed';
+    await Swal.fire('Error', msg, 'error');
+    throw new Error(msg);
   }
-  await Swal.fire('Error', payload.message || 'Operation failed', 'error');
-  throw new Error(payload.message || 'Operation failed');
+
+  // Show success with optional details (reference / email_sent / email)
+  let details = '';
+  if (payload.reference) details += `<div style="margin-top:8px"><strong>Reference:</strong> <code>${payload.reference}</code></div>`;
+  if (typeof payload.email_sent !== 'undefined') details += `<div><strong>Email sent:</strong> ${payload.email_sent ? 'Yes' : 'No'}</div>`;
+  if (payload.email) details += `<div><strong>Email:</strong> ${payload.email}</div>`;
+  const message = payload.message || 'Operation completed';
+  const html = message + (details ? `<hr/>${details}` : '');
+  await Swal.fire({ title: 'Success', html: html, icon: 'success' });
+  return payload;
 }
 
 // Confirm (modal) handler
@@ -653,21 +660,29 @@ regConfirmForm.addEventListener('submit', async function(e){
   const id = regModal.dataset.regId;
   if (!id) return Swal.fire('Error','No registration selected','error');
   const choice = await Swal.fire({ title: 'Confirm registration?', text: 'Create payment reference to send to registrant?', icon:'question', showDenyButton:true, showCancelButton:true, confirmButtonText:'Confirm only', denyButtonText:'Create payment & confirm' });
-  if (choice.isConfirmed) {
-    const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to confirm','error'));
-  } else if (choice.isDenied) {
-    const { value: formValues } = await Swal.fire({
-      title: 'Create payment',
-      html: '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
-            '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
-      focusConfirm: false,
-      preConfirm: () => ({ amount: document.getElementById('swal-amount').value, method: document.getElementById('swal-method').value })
-    });
-    if (!formValues) return;
-    const amt = parseFloat(formValues.amount || 0);
-    if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
-    const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-    postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed','error'));
+  try {
+    if (choice.isConfirmed) {
+      const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
+      const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+      // success shown by postAction; reload to reflect changes
+      window.location = 'index.php?pages=students';
+    } else if (choice.isDenied) {
+      const { value: formValues } = await Swal.fire({
+        title: 'Create payment',
+        html: '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
+              '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
+        focusConfirm: false,
+        preConfirm: () => ({ amount: document.getElementById('swal-amount').value, method: document.getElementById('swal-method').value })
+      });
+      if (!formValues) return;
+      const amt = parseFloat(formValues.amount || 0);
+      if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
+      const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
+      const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+      window.location = 'index.php?pages=students';
+    }
+  } catch (err) {
+    Swal.fire('Error','Failed to confirm','error');
   }
 });
 
@@ -686,8 +701,18 @@ regRejectBtn.addEventListener('click', ()=>{
     inputAttributes: { 'aria-label': 'Rejection reason' }
   }).then(result=>{
     if (result.isConfirmed) {
-      const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-      postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error'));
+      (async ()=>{
+        try {
+          const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
+          const payload = await postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd);
+          // update UI: remove buttons and mark status
+          const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
+          if (card) {
+            card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
+            const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Rejected'; badge.classList.remove('status-pending'); badge.classList.remove('status-active'); badge.classList.add('status-banned'); }
+          }
+        } catch (e) { Swal.fire('Error','Failed to reject','error'); }
+      })();
     }
   });
 });
@@ -709,16 +734,16 @@ document.addEventListener('click', function(e){
       denyButtonText: 'Create payment & confirm'
     }).then(async res=>{
         if (res.isConfirmed) {
-          const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-          try {
-            const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
-            // update UI: hide confirm/reject buttons and set status badge
-            const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
-            if (card) {
-              card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
-              const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Confirmed'; badge.classList.remove('status-pending'); badge.classList.add('status-active'); }
-            }
-          } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
+              const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
+              try {
+                const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+                // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
+                const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
+                if (card) {
+                  card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
+                  const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Confirmed'; badge.classList.remove('status-pending'); badge.classList.add('status-active'); }
+                }
+              } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
       } else if (res.isDenied) {
         // Prompt for amount and method
         const { value: formValues } = await Swal.fire({
