@@ -50,20 +50,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     // Update status to indicate registration has been confirmed/awaiting payment
     $pdo->prepare("UPDATE student_registrations SET status = 'awaiting_payment' WHERE id = ?")->execute([$reg['id']]);
 
-    $pdo->commit();
+  $pdo->commit();
 
-    echo json_encode([
-      'success' => true,
-      'message' => 'Payment link created.',
-      'reference' => $ref,
-      'email' => $email,
-      'email_sent' => (bool)$email_sent,
-    ]);
+  header('Content-Type: application/json');
+  echo json_encode([
+    'success' => true,
+    'message' => 'Payment link created.',
+    'reference' => $ref,
+    'email' => $email,
+    'email_sent' => (bool)$email_sent,
+  ]);
   } catch (Exception $e) {
     $pdo->rollBack();
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+  header('Content-Type: application/json');
+  echo json_encode(['success' => false, 'error' => $e->getMessage()]);
   }
   exit;
+}
+
+// Support POST view_registration for AJAX clients
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'view_registration') {
+  $id = intval($_POST['id'] ?? 0);
+  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+  $stmt->execute([$id]);
+  $s = $stmt->fetch(PDO::FETCH_ASSOC);
+  header('Content-Type: application/json');
+  if (!$s) { echo json_encode(['error'=>'Not found']); exit; }
+  echo json_encode($s); exit;
 }
 
 // Handle POST actions (activate/deactivate/delete)
