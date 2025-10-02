@@ -42,24 +42,54 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
         <h3 style="margin-top:28px;">Recent questions</h3>
         <?php foreach($q as $qq): ?>
           <div class="forum-question">
-            <div class="fq-head"><strong><?= htmlspecialchars($qq['name']) ?></strong> <small class="muted">at <?= $qq['created_at'] ?></small></div>
-            <div class="fq-body"><?= nl2br(htmlspecialchars($qq['content'])) ?></div>
-            <div class="fq-actions"><button class="reply-toggle" data-id="<?= $qq['id'] ?>">Reply</button></div>
-            <div class="fq-replies" id="replies-<?= $qq['id'] ?>">
+            <!-- Question -->
+            <div class="post-header">
+              <div class="avatar"><?= strtoupper(substr($qq['name'],0,1)) ?></div>
+              <div class="post-meta">
+                <strong class="username"><?= htmlspecialchars($qq['name']) ?></strong>
+                <span class="time"><?= $qq['created_at'] ?></span>
+              </div>
+            </div>
+            <div class="post-body">
+              <?= nl2br(htmlspecialchars($qq['content'])) ?>
+            </div>
+            <div class="post-actions">
+              <button class="reply-toggle" data-id="<?= $qq['id'] ?>">💬 Reply</button>
+            </div>
+
+            <!-- Replies -->
+            <div class="post-replies" id="replies-<?= $qq['id'] ?>">
               <?php
                 $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
                 $rstmt->execute([$qq['id']]);
                 $reps = $rstmt->fetchAll();
                 foreach ($reps as $rep):
               ?>
-                <div class="forum-reply"><strong><?= htmlspecialchars($rep['name']) ?></strong> <small class="muted">at <?= $rep['created_at'] ?></small><div class="fq-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div></div>
+                <div class="forum-reply">
+                  <div class="post-header">
+                    <div class="avatar"><?= strtoupper(substr($rep['name'],0,1)) ?></div>
+                    <div class="post-meta">
+                      <strong class="username"><?= htmlspecialchars($rep['name']) ?></strong>
+                      <span class="time"><?= $rep['created_at'] ?></span>
+                    </div>
+                  </div>
+                  <div class="post-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+                </div>
               <?php endforeach; ?>
             </div>
-            <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;margin-top:8px;">
+
+            <!-- Reply form -->
+            <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;">
               <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
-              <div class="form-row"><label class="form-label">Name (optional)</label><input class="form-input" type="text" name="rname"></div>
-              <div class="form-row"><label class="form-label">Your reply</label><textarea class="form-textarea" name="rcontent" rows="3" required></textarea></div>
-              <div class="form-actions"><button class="btn-approve" type="submit">Post Reply</button></div>
+              <div class="form-row">
+                <input class="form-input" type="text" name="rname" placeholder="Name (optional)">
+              </div>
+              <div class="form-row">
+                <textarea class="form-textarea" name="rcontent" rows="3" placeholder="Write your reply..." required></textarea>
+              </div>
+              <div class="form-actions">
+                <button class="btn-approve" type="submit">Post Reply</button>
+              </div>
             </form>
           </div>
         <?php endforeach; ?>
