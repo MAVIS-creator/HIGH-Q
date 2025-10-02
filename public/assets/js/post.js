@@ -32,7 +32,15 @@
     const body = '<div class="comment-body">' + (c.content || '') + '</div>';
   const likes = '<button class="like-btn" data-id="' + (c.id||'') + '"><i class="bx bx-heart"></i> <span class="like-count">' + (c.likes||0) + '</span></button>';
   const reply = '<button class="reply-btn" data-id="' + (c.id||'') + '"><i class="bx bx-reply"></i> Reply</button>';
+
     wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + ' ' + reply + '</div>';
+
+    // if comment is pending and was created in this session, show awaiting-moderation marker
+    if (c && c.status === 'pending') {
+      wrapper.classList.add('pending-comment');
+      const bodyEl = wrapper.querySelector('.comment-body');
+      if (bodyEl) bodyEl.insertAdjacentHTML('beforeend', '<div class="muted small">⏳ Awaiting moderation</div>');
+    }
 
     // bind reply
     wrapper.querySelector('.reply-btn').addEventListener('click', function () {
