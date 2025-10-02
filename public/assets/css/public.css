@@ -2160,3 +2160,14 @@ nav a.active::after { background: var(--hq-yellow); }
 .pending-comment {
   opacity: 0.7;
 }
+
+/* Forum / community styles */
+.forum-question { border:1px solid #eee;padding:12px;border-radius:8px;margin-bottom:12px;background:#fff }
+.forum-question .fq-head { font-weight:700;margin-bottom:6px }
+.forum-question .fq-body { margin-bottom:8px;color:#333 }
+.forum-reply { margin-left:20px;border-left:2px solid #f4f4f4;padding-left:12px;margin-top:8px;background:#fbfbfb;padding:10px;border-radius:6px }
+.reply-toggle { background:none;border:0;color:#666;cursor:pointer;padding:6px 8px;border-radius:6px }
+.reply-toggle:hover { background:rgba(0,0,0,0.03) }
+.btn-approve { background:#111827;color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer }
+.btn-approve:hover { opacity:0.95 }
+.forum-reply-form .form-row { margin-bottom:6px }

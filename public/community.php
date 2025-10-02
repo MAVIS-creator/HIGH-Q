@@ -1,13 +1,25 @@
 <?php
 require_once __DIR__ . '/config/db.php';
-// handle new question post
+// handle new question post and replies
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $name = trim($_POST['name'] ?? '');
-  $content = trim($_POST['content'] ?? '');
-  if ($content !== '') {
-    $stmt = $pdo->prepare('INSERT INTO forum_questions (name, content, created_at) VALUES (?, ?, NOW())');
-    $stmt->execute([$name ?: 'Anonymous', $content]);
+  if (!empty($_POST['question_id'])) {
+    // reply submission
+    $qid = intval($_POST['question_id']);
+    $rname = trim($_POST['rname'] ?? '');
+    $rcontent = trim($_POST['rcontent'] ?? '');
+    if ($rcontent !== '') {
+      $rstmt = $pdo->prepare('INSERT INTO forum_replies (question_id, name, content, created_at) VALUES (?, ?, ?, NOW())');
+      $rstmt->execute([$qid, $rname ?: 'Anonymous', $rcontent]);
+    }
     header('Location: community.php'); exit;
+  } else {
+    $name = trim($_POST['name'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+    if ($content !== '') {
+      $stmt = $pdo->prepare('INSERT INTO forum_questions (name, content, created_at) VALUES (?, ?, NOW())');
+      $stmt->execute([$name ?: 'Anonymous', $content]);
+      header('Location: community.php'); exit;
+    }
   }
 }
 $pageTitle = 'Community Q&A';
