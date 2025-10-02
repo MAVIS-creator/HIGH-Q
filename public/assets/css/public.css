@@ -2207,12 +2207,23 @@ nav a.active::after { background: var(--hq-yellow); }
   line-height: 1.4;
 }
 
+.comment-body {
+  font-size: 16px;
+}
+
 /* Actions (like, reply) */
 .comment-actions {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-top: 8px;
+}
+
+.reply-wrap {
+  margin-top: 8px;
+}
+.reply-wrap .reply-btn {
+  display: inline-block;
 }
 
 .comment .like-btn {
