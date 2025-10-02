@@ -133,44 +133,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $paymentId = $pdo->lastInsertId();
         logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
 
-        // send email to registrant with link to payments_wait (if email present)
-        if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
-          // Try to fetch site settings for branding
-          $siteName = 'HIGH Q'; $logoUrl = '';$contactEmail = '';$contactPhone = '';
-          try {
-            $s = $pdo->query('SELECT site_name, logo_url, contact_email, contact_phone FROM site_settings LIMIT 1')->fetch(PDO::FETCH_ASSOC);
-            if (!empty($s['site_name'])) $siteName = $s['site_name'];
-            if (!empty($s['logo_url'])) $logoUrl = $s['logo_url'];
-            if (!empty($s['contact_email'])) $contactEmail = $s['contact_email'];
-            if (!empty($s['contact_phone'])) $contactPhone = $s['contact_phone'];
-          } catch (Throwable $e) { /* ignore */ }
+          // send email to registrant with link to payments_wait (if email present)
+          $emailSent = false;
+          if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+            // Try to fetch site settings for branding (non-essential)
+            $siteName = 'HIGH Q'; $logoUrl = '';$contactEmail = '';$contactPhone = '';
+            try {
+              $s = $pdo->query('SELECT site_name, logo_url, contact_email, contact_phone FROM site_settings LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+              if (!empty($s['site_name'])) $siteName = $s['site_name'];
+              if (!empty($s['logo_url'])) $logoUrl = $s['logo_url'];
+              if (!empty($s['contact_email'])) $contactEmail = $s['contact_email'];
+              if (!empty($s['contact_phone'])) $contactPhone = $s['contact_phone'];
+            } catch (Throwable $e) { /* ignore */ }
 
-          $subject = $siteName . ' — Payment instructions for your registration';
-          $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-          $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-          // build link relative to public folder (best-effort)
-          $base = $proto . '://' . $host;
-          $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+            $subject = $siteName . ' — Payment instructions for your registration';
+            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            // build link relative to public folder (best-effort)
+            $base = $proto . '://' . $host;
+            $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
 
-          // Branded HTML message
-          $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
-          $body .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333} .container{max-width:640px;margin:0 auto;padding:20px} .btn{display:inline-block;padding:10px 16px;background:#d62828;color:#fff;border-radius:6px;text-decoration:none}</style>';
-          $body .= '</head><body><div class="container">';
-          if ($logoUrl) $body .= '<div style="margin-bottom:12px;"><img src="' . htmlspecialchars($logoUrl) . '" alt="' . htmlspecialchars($siteName) . '" style="max-height:60px"></div>';
-          $body .= '<h2 style="color:#111">Hello ' . htmlspecialchars(trim($reg['first_name'] . ' ' . ($reg['last_name'] ?? ''))) . ',</h2>';
-          $body .= '<p>Your registration has been approved by ' . htmlspecialchars($siteName) . ' and requires payment to complete enrollment.</p>';
-          $body .= '<p><strong>Amount:</strong> ₦' . number_format($amount,2) . '</p>';
-          $body .= '<p><strong>Payment reference:</strong> <code>' . htmlspecialchars($ref) . '</code></p>';
-          $body .= '<p><a class="btn" href="' . htmlspecialchars($link) . '">Complete payment now</a></p>';
-          $body .= '<p style="color:#666;font-size:13px;margin-top:18px">If the button above does not work, copy and paste this link into your browser: <br>' . htmlspecialchars($link) . '</p>';
-          if ($contactEmail || $contactPhone) {
-            $body .= '<hr><p style="color:#666;font-size:13px">Need help? Contact us at ' . ($contactEmail ? htmlspecialchars($contactEmail) : '') . ($contactPhone ? ' / ' . htmlspecialchars($contactPhone) : '') . '</p>';
+            // Branded HTML message
+            $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
+            $body .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333} .container{max-width:640px;margin:0 auto;padding:20px} .btn{display:inline-block;padding:10px 16px;background:#d62828;color:#fff;border-radius:6px;text-decoration:none}</style>';
+            $body .= '</head><body><div class="container">';
+            if ($logoUrl) $body .= '<div style="margin-bottom:12px;"><img src="' . htmlspecialchars($logoUrl) . '" alt="' . htmlspecialchars($siteName) . '" style="max-height:60px"></div>';
+            $body .= '<h2 style="color:#111">Hello ' . htmlspecialchars(trim($reg['first_name'] . ' ' . ($reg['last_name'] ?? ''))) . ',</h2>';
+            $body .= '<p>Your registration has been approved by ' . htmlspecialchars($siteName) . ' and requires payment to complete enrollment.</p>';
+            $body .= '<p><strong>Amount:</strong> ₦' . number_format($amount,2) . '</p>';
+            $body .= '<p><strong>Payment reference:</strong> <code>' . htmlspecialchars($ref) . '</code></p>';
+            $body .= '<p><a class="btn" href="' . htmlspecialchars($link) . '">Complete payment now</a></p>';
+            $body .= '<p style="color:#666;font-size:13px;margin-top:18px">If the button above does not work, copy and paste this link into your browser: <br>' . htmlspecialchars($link) . '</p>';
+            if ($contactEmail || $contactPhone) {
+              $body .= '<hr><p style="color:#666;font-size:13px">Need help? Contact us at ' . ($contactEmail ? htmlspecialchars($contactEmail) : '') . ($contactPhone ? ' / ' . htmlspecialchars($contactPhone) : '') . '</p>';
+            }
+            $body .= '<p style="margin-top:20px">Thanks,<br>' . htmlspecialchars($siteName) . ' team</p>';
+            $body .= '</div></body></html>';
+
+            try {
+              $emailSent = (bool) sendEmail($reg['email'], $subject, $body);
+            } catch (Throwable $e) { $emailSent = false; }
           }
-          $body .= '<p style="margin-top:20px">Thanks,<br>' . htmlspecialchars($siteName) . ' team</p>';
-          $body .= '</div></body></html>';
-
-          @sendEmail($reg['email'], $subject, $body);
-        }
       }
 
       $pdo->commit();
