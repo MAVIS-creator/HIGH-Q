@@ -21,6 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $rstmt->execute([$r['id']]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
             $r['replies'] = $replies ?: [];
+            // comment likes count
+            try {
+                $lc = $pdo->prepare('SELECT COUNT(1) FROM comment_likes WHERE comment_id = ?'); $lc->execute([$r['id']]); $r['likes'] = (int)$lc->fetchColumn();
+                $chk = $pdo->prepare('SELECT 1 FROM comment_likes WHERE comment_id = ? AND (session_id = ? OR ip = ?) LIMIT 1'); $chk->execute([$r['id'], session_id(), $_SERVER['REMOTE_ADDR'] ?? null]); $r['liked'] = (bool)$chk->fetchColumn();
+            } catch (Throwable $e) { $r['likes'] = 0; $r['liked'] = false; }
             $out[] = $r;
         }
         echo json_encode($out);
