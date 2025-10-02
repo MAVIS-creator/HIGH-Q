@@ -179,11 +179,9 @@ require_once __DIR__ . '/includes/header.php';
         <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
           <div class="comment-header">
             <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
-            <div>
-              <button class="btn-reply small" data-id="<?= $c['id'] ?>">Reply</button>
-            </div>
           </div>
           <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+          <div class="reply-wrap"><button class="btn-reply small reply-btn" data-id="<?= $c['id'] ?>">Reply</button></div>
 
           <?php
             // fetch replies for this comment
