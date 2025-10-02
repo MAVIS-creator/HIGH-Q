@@ -374,22 +374,30 @@ function doAction(action, id) {
     const fd = new FormData();
     fd.append('action', action);
     fd.append('id', id);
+    // include CSRF token
+    if (window.__PAYMENTS_CSRF) fd.append('_csrf', window.__PAYMENTS_CSRF);
 
     fetch('index.php?pages=payments', {
         method: 'POST',
         body: fd,
         credentials: 'same-origin',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
     })
-    .then(r => {
-        if (!r.ok) throw new Error('Network error ' + r.status);
-        return r.json();
-    })
-    .then(data => {
+    .then(r => r.text())
+    .then(text => {
+        // Detect HTML (likely a login redirect or error page)
+        const trimmed = text.trim();
+        if (trimmed.startsWith('<')) {
+            // show a helpful error with server HTML (truncated)
+            console.error('Server returned HTML instead of JSON', trimmed.substring(0,200));
+            return Swal.fire({ icon: 'error', title: 'Server returned HTML', html: '<pre style="max-height:200px;overflow:auto">' + Swal.escapeHtml(trimmed.substring(0,2000)) + '</pre>' });
+        }
+        let data = null;
+        try { data = JSON.parse(trimmed); } catch (e) { throw new Error('Invalid JSON response'); }
         // normalize status for compatibility with server returning 'ok' or 'success'
         const status = (data.status === 'ok') ? 'success' : data.status;
-        const icon = (status === 'ok' || status === 'success') ? 'success' : status;
-        Swal.fire({ icon: icon, title: data.message || '' }).then(() => {
+        const icon = (status === 'ok' || status === 'success') ? 'success' : status || 'info';
+        return Swal.fire({ icon: icon, title: data.message || '' }).then(() => {
             if (status === 'success') location.reload();
         });
     })
