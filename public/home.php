@@ -96,7 +96,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <!-- Left Card -->
         <div class="ceo-card">
           <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam">
+            <img src="./assets/images/master.jpg" alt="Master Adebule Quam">
           </div>
           <h3>Master Adebule Quam</h3>
           <p class="role">CEO & Lead Tutor</p>
