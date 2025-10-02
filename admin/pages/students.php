@@ -593,10 +593,17 @@ document.addEventListener('click', function(e){
       confirmButtonText: 'Confirm only',
       denyButtonText: 'Create payment & confirm'
     }).then(async res=>{
-      if (res.isConfirmed) {
-        const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-        // add header so server returns JSON
-  try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
+        if (res.isConfirmed) {
+          const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
+          try {
+            const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+            // update UI: hide confirm/reject buttons and set status badge
+            const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
+            if (card) {
+              card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
+              const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Confirmed'; badge.classList.remove('status-pending'); badge.classList.add('status-active'); }
+            }
+          } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
       } else if (res.isDenied) {
         // Prompt for amount and method
         const { value: formValues } = await Swal.fire({
@@ -616,13 +623,21 @@ document.addEventListener('click', function(e){
         const amt = parseFloat(formValues.amount || 0);
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
+        try {
+          const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+          // update UI similar to above
+          const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
+          if (card) {
+            card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
+            const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Confirmed'; badge.classList.remove('status-pending'); badge.classList.add('status-active'); }
+          }
+        } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
       }
     });
     return;
   }
   const r = e.target.closest('.inline-reject');
-  if (r) {
+    if (r) {
     const id = r.dataset.id;
     if (!id) return Swal.fire('Error','No registration id','error');
     Swal.fire({
