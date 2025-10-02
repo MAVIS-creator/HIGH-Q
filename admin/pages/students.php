@@ -401,7 +401,7 @@ document.querySelectorAll('.view-registration').forEach(link=>link.addEventListe
   e.preventDefault();
   const id = link.dataset.id;
   try {
-    const res = await fetch(`index.php?pages=students&action=view&id=${id}`);
+  const res = await fetch(`index.php?pages=students&action=view&id=${id}`, { credentials: 'same-origin' });
     const data = await res.json();
     if (!data || data.error) { alert('Registration not found'); return; }
     // populate modal
@@ -503,7 +503,7 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 // When confirm form is submitted, POST to confirm_registration
 // Helper to POST action and reload
 async function postAction(url, formData){
-  const res = await fetch(url, { method: 'POST', body: formData });
+  const res = await fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} });
   if (!res.ok) throw new Error('Server error');
   window.location = 'index.php?pages=students';
 }
@@ -572,7 +572,7 @@ document.addEventListener('click', function(e){
       if (res.isConfirmed) {
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
         // add header so server returns JSON
-        try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
+  try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
       } else if (res.isDenied) {
         // Prompt for amount and method
         const { value: formValues } = await Swal.fire({
@@ -592,7 +592,7 @@ document.addEventListener('click', function(e){
         const amt = parseFloat(formValues.amount || 0);
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-        try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
+  try { await fetch(`index.php?pages=students&action=confirm_registration&id=${id}`, { method: 'POST', body: fd, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }); window.location='index.php?pages=students'; } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
       }
     });
     return;
