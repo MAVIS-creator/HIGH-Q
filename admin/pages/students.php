@@ -71,12 +71,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // Support POST view_registration for AJAX clients
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'view_registration') {
   $id = intval($_POST['id'] ?? 0);
-  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+
+  $stmt = $pdo->prepare("
+    SELECT sr.*, COALESCE(sr.email, u.email) AS email, u.name AS user_name
+    FROM student_registrations sr
+    LEFT JOIN users u ON u.id = sr.user_id
+    WHERE sr.id = ?
+    LIMIT 1
+  ");
   $stmt->execute([$id]);
   $s = $stmt->fetch(PDO::FETCH_ASSOC);
+
   header('Content-Type: application/json');
-  if (!$s) { echo json_encode(['error'=>'Not found']); exit; }
-  echo json_encode($s); exit;
+  if (!$s) {
+    echo json_encode(['success' => false, 'error' => 'Registration not found']);
+    exit;
+  }
+
+  echo json_encode([
+    'success' => true,
+    'data' => [
+      'first_name'             => $s['first_name'] ?? null,
+      'last_name'              => $s['last_name'] ?? null,
+      'email'                  => $s['email'] ?? null,
+      'date_of_birth'          => $s['date_of_birth'] ?? null,
+      'home_address'           => $s['home_address'] ?? null,
+      'previous_education'     => $s['previous_education'] ?? null,
+      'academic_goals'         => $s['academic_goals'] ?? null,
+      'emergency_contact_name' => $s['emergency_contact_name'] ?? null,
+      'emergency_contact_phone'=> $s['emergency_contact_phone'] ?? null,
+      'emergency_relationship' => $s['emergency_relationship'] ?? null,
+      'status'                 => $s['status'] ?? null,
+      'created_at'             => $s['created_at'] ?? null,
+    ]
+  ]);
+  exit;
 }
 
 // Handle POST actions (activate/deactivate/delete)
