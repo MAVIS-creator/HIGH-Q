@@ -375,3 +375,4 @@ if (!empty($_SESSION['registration_pending_id'])) {
 	unset($_SESSION['registration_pending_id']);
 }
 ?>
+
