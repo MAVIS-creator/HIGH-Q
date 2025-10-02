@@ -16,14 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     $action = $_POST['action'] ?? '';
     $id = intval($_POST['id'] ?? 0);
     if ($action === 'approve') {
-        $upd = $pdo->prepare('UPDATE comments SET status = "approved" WHERE id = ?'); $ok = $upd->execute([$id]);
-        if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_approved', ['comment_id'=>$id]);
-        echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
+    $upd = $pdo->prepare('UPDATE comments SET status = "approved" WHERE id = ?'); $ok = $upd->execute([$id]);
+    // debug log
+    try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " APPROVE id={$id} ok=" . ($ok?1:0) . "\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
+    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_approved', ['comment_id'=>$id]);
+    echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
     if ($action === 'reject') {
-        $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
-        if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_deleted', ['comment_id'=>$id]);
-        echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
+    $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
+    try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " REJECT id={$id} ok=" . ($ok?1:0) . "\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
+    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_deleted', ['comment_id'=>$id]);
+    echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
 
     // Admin reply action: insert a new comment row as a reply and mark parent admin_reply_by
@@ -47,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             // mark that parent received an admin reply (optional meta column)
             try { $upd = $pdo->prepare('UPDATE comments SET admin_reply_by = ? WHERE id = ?'); $upd->execute([$adminId, $id]); } catch (Exception $e) {}
             logAction($pdo, $adminId, 'comment_replied', ['parent_id'=>$id]);
+      try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " REPLY parent={$id} new_ok=1 admin={$adminId}\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
         }
         echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }

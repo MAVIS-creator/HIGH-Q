@@ -71,6 +71,8 @@ try {
 
     $stmt = $pdo->prepare("INSERT INTO comments (post_id, parent_id, user_id, name, email, content, status, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?, NOW())");
     $stmt->execute([$postId, $parentId, $name ?: null, $email ?: null, $content, $status]);
+    // debug log insertion
+    try { @file_put_contents(__DIR__ . '/../storage/comments-debug.log', date('c') . " INSERT post={$postId} parent={$parentId} status={$status}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $e) {}
     if ($status === 'pending') {
         echo json_encode(['status'=>'ok','message'=>'Comment submitted and awaiting moderation']);
     } else {
