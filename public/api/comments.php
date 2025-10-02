@@ -17,16 +17,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $out = [];
         foreach ($rows as $r) {
             $r['replies'] = [];
-            // fetch replies
-            $rstmt = $pdo->prepare('SELECT id, name, email, content, created_at, user_id FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
-            $rstmt->execute([$r['id']]);
+            // fetch replies (include pending ones created in this session)
+            $rstmt = $pdo->prepare('SELECT id, name, email, content, created_at, status, session_id, user_id FROM comments WHERE parent_id = ? AND (status = "approved" OR (status = "pending" AND session_id = ?)) ORDER BY created_at ASC');
+            $rstmt->execute([$r['id'], session_id()]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
             $r['replies'] = $replies ?: [];
-            // comment likes count
+            // comment likes count for the parent
             try {
                 $lc = $pdo->prepare('SELECT COUNT(1) FROM comment_likes WHERE comment_id = ?'); $lc->execute([$r['id']]); $r['likes'] = (int)$lc->fetchColumn();
                 $chk = $pdo->prepare('SELECT 1 FROM comment_likes WHERE comment_id = ? AND (session_id = ? OR ip = ?) LIMIT 1'); $chk->execute([$r['id'], session_id(), $_SERVER['REMOTE_ADDR'] ?? null]); $r['liked'] = (bool)$chk->fetchColumn();
             } catch (Throwable $e) { $r['likes'] = 0; $r['liked'] = false; }
+            // enrich replies with likes/liked flag
+            foreach ($r['replies'] as &$rep) {
+                try {
+                    $lc2 = $pdo->prepare('SELECT COUNT(1) FROM comment_likes WHERE comment_id = ?'); $lc2->execute([$rep['id']]); $rep['likes'] = (int)$lc2->fetchColumn();
+                    $chk2 = $pdo->prepare('SELECT 1 FROM comment_likes WHERE comment_id = ? AND (session_id = ? OR ip = ?) LIMIT 1'); $chk2->execute([$rep['id'], session_id(), $_SERVER['REMOTE_ADDR'] ?? null]); $rep['liked'] = (bool)$chk2->fetchColumn();
+                } catch (Throwable $e) { $rep['likes'] = 0; $rep['liked'] = false; }
+            }
             $out[] = $r;
         }
         echo json_encode($out);
