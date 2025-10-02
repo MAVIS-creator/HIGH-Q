@@ -505,32 +505,48 @@ statusFilter.addEventListener('change', filterStudents);
 
 // View registration link behavior: fetch registration JSON and show modal with Confirm/Reject
 const __students_csrf = '<?= $csrf ?>';
-document.querySelectorAll('.view-registration').forEach(link=>link.addEventListener('click', async (e)=>{
-  e.preventDefault();
-  const id = link.dataset.id;
-  try {
-  const res = await fetch(`index.php?pages=students&action=view&id=${id}`, { credentials: 'same-origin' });
-    const data = await res.json();
-    if (!data || data.error) { alert('Registration not found'); return; }
-    // populate modal
-    const content = document.getElementById('registrationContent');
-    content.innerHTML = `
-      <div style="max-height:480px;overflow:auto;">
-        <h4>${(data.first_name||'') + ' ' + (data.last_name||'')}</h4>
-        <div><strong>Email:</strong> ${data.email||''}</div>
-        <div><strong>Phone:</strong> ${data.phone||data.phone_number||''}</div>
-        <div><strong>DOB:</strong> ${data.date_of_birth||data.dob||''}</div>
-        <div><strong>Address:</strong> ${data.home_address||data.address||''}</div>
-        <div><strong>Emergency:</strong> ${(data.emergency_contact_name||'') + ' / ' + (data.emergency_contact_phone||'')}</div>
-        ${data.notes?`<div style="margin-top:8px;"><strong>Notes:</strong><div>${data.notes}</div></div>`:''}
-      </div>
-    `;
-    // store id on modal for actions
-    const modal = document.getElementById('registrationViewModal');
-    modal.dataset.regId = id;
-    modal.style.display = 'flex';
-  } catch (err) { console.error(err); alert('Failed to load registration'); }
-}));
+document.querySelectorAll('.view-registration').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const id = this.dataset.id;
+    const body = new URLSearchParams();
+    body.append('action', 'view_registration');
+    body.append('id', id);
+    // include CSRF token if desired by server-side protections
+    body.append('csrf_token', __students_csrf);
+
+    fetch('index.php?pages=students', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
+      body: body.toString()
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.success) {
+        const d = resp.data;
+        document.getElementById('registrationContent').innerHTML = `
+          <div style="max-height:480px;overflow:auto;">
+            <h4>${d.first_name || ''} ${d.last_name || ''}</h4>
+            <p><strong>Email:</strong> ${d.email || ''}</p>
+            <p><strong>Date of Birth:</strong> ${d.date_of_birth || ''}</p>
+            <p><strong>Home Address:</strong> ${d.home_address || ''}</p>
+            <p><strong>Previous Education:</strong> ${d.previous_education || ''}</p>
+            <p><strong>Academic Goals:</strong> ${d.academic_goals || ''}</p>
+            <p><strong>Emergency Contact:</strong> ${d.emergency_contact_name || ''} (${d.emergency_relationship || ''}) - ${d.emergency_contact_phone || ''}</p>
+            <p><strong>Status:</strong> ${d.status || ''}</p>
+            <p><strong>Registered At:</strong> ${d.created_at || ''}</p>
+          </div>
+        `;
+        const modal = document.getElementById('registrationViewModal');
+        modal.dataset.regId = id;
+        modal.style.display = 'flex';
+      } else {
+        Swal.fire('Error', resp.error || 'Registration not found', 'error');
+      }
+    }).catch(err => { console.error(err); Swal.fire('Error','Failed to load registration','error'); });
+  });
+});
 </script>
 
 <!-- Approve & Message Modal -->
