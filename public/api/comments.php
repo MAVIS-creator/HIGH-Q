@@ -9,9 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $postId = intval($_GET['post_id'] ?? 0);
     if (!$postId) { echo json_encode([]); exit; }
     try {
-        // fetch top-level approved comments
-        $stmt = $pdo->prepare('SELECT id, name, email, content, created_at FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
-        $stmt->execute([$postId]);
+    // fetch top-level approved comments and any pending comments created in this session
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $stmt = $pdo->prepare('SELECT id, name, email, content, created_at, status, session_id FROM comments WHERE post_id = ? AND parent_id IS NULL AND (status = "approved" OR (status = "pending" AND session_id = ?)) ORDER BY created_at DESC');
+    $stmt->execute([$postId, session_id()]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $out = [];
         foreach ($rows as $r) {
@@ -69,8 +70,9 @@ try {
 
     $status = $commentModeration ? 'pending' : 'approved';
 
-    $stmt = $pdo->prepare("INSERT INTO comments (post_id, parent_id, user_id, name, email, content, status, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?, NOW())");
-    $stmt->execute([$postId, $parentId, $name ?: null, $email ?: null, $content, $status]);
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $stmt = $pdo->prepare("INSERT INTO comments (post_id, parent_id, user_id, name, email, content, status, session_id, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, NOW())");
+    $stmt->execute([$postId, $parentId, $name ?: null, $email ?: null, $content, $status, session_id()]);
     // debug log insertion
     try { @file_put_contents(__DIR__ . '/../storage/comments-debug.log', date('c') . " INSERT post={$postId} parent={$parentId} status={$status}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $e) {}
     if ($status === 'pending') {
