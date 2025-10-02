@@ -10,6 +10,93 @@ requirePermission('students'); // where 'students' matches the menu slug
 $csrf = generateToken('students_form');
 
 // Handle POST actions (activate/deactivate/delete)
+// New: support POST-based AJAX actions where client sends action in POST body
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+  header('Content-Type: application/json; charset=utf-8');
+  $postAction = $_POST['action'];
+  // Confirm registration (POST-driven)
+  if ($postAction === 'confirm_registration') {
+    $id = intval($_POST['id'] ?? 0);
+    try {
+      $pdo->beginTransaction();
+      // Fetch registration + user email
+      $stmt = $pdo->prepare("SELECT sr.*, COALESCE(sr.email, u.email) AS email, u.id AS user_id FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+      $stmt->execute([$id]);
+      $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!$reg) throw new Exception('Registration not found');
+
+      $email = $reg['email'] ?? null;
+      $studentId = !empty($reg['user_id']) ? $reg['user_id'] : null;
+
+      // create payment reference and row
+      $ref = uniqid('pay_');
+      $amount = floatval($_POST['amount'] ?? 0) ?: 20000;
+      $method = $_POST['method'] ?? 'paystack';
+
+      $ins = $pdo->prepare("INSERT INTO payments (student_id, registration_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
+      $ins->execute([$studentId, $reg['id'], $amount, $method, $ref]);
+
+      // build email
+      $link = (($_SERVER['HTTPS'] ?? '') === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+      $siteName = $_ENV['MAIL_FROM_NAME'] ?? 'HIGH Q SOLID ACADEMY';
+      $logoUrl = ($_ENV['APP_URL'] ?? '') . '/assets/logo.png';
+      $contactEmail = $_ENV['MAIL_FROM_ADDRESS'] ?? null;
+      $contactPhone = $_ENV['CONTACT_PHONE'] ?? '';
+
+      $subject = 'Complete Your Registration Payment';
+      $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
+      $body .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333} .container{max-width:640px;margin:0 auto;padding:20px} .btn{display:inline-block;padding:10px 16px;background:#d62828;color:#fff;border-radius:6px;text-decoration:none}</style>';
+      $body .= '</head><body><div class="container">';
+      if ($logoUrl) $body .= '<div style="margin-bottom:12px;"><img src="' . htmlspecialchars($logoUrl) . '" alt="' . htmlspecialchars($siteName) . '" style="max-height:60px"></div>';
+      $body .= '<h2 style="color:#111">Hello ' . htmlspecialchars(trim($reg['first_name'] . ' ' . ($reg['last_name'] ?? ''))) . ',</h2>';
+      $body .= '<p>Your registration has been approved by ' . htmlspecialchars($siteName) . ' and requires payment to complete enrollment.</p>';
+      $body .= '<p><strong>Amount:</strong> ₦' . number_format($amount, 2) . '</p>';
+      $body .= '<p><strong>Payment reference:</strong> <code>' . htmlspecialchars($ref) . '</code></p>';
+      $body .= '<p><a class="btn" href="' . htmlspecialchars($link) . '">Complete payment now</a></p>';
+      $body .= '<p style="color:#666;font-size:13px;margin-top:18px">If the button above does not work, copy and paste this link into your browser: <br>' . htmlspecialchars($link) . '</p>';
+      if ($contactEmail || $contactPhone) $body .= '<hr><p style="color:#666;font-size:13px">Need help? Contact us at ' . ($contactEmail ? htmlspecialchars($contactEmail) : '') . ($contactPhone ? ' / ' . htmlspecialchars($contactPhone) : '') . '</p>';
+      $body .= '<p style="margin-top:20px">Thanks,<br>' . htmlspecialchars($siteName) . ' team</p>';
+      $body .= '</div></body></html>';
+
+      $emailSent = false;
+      if ($email) {
+        try { $emailSent = (bool) sendEmail($email, $subject, $body); } catch (Throwable $e) { $emailSent = false; }
+      }
+
+      // update registration status
+      $upd = $pdo->prepare("UPDATE student_registrations SET status = 'paid', updated_at = NOW() WHERE id = ?");
+      $upd->execute([$reg['id']]);
+
+      $pdo->commit();
+      echo json_encode(['success' => true, 'message' => 'Payment link sent successfully', 'reference' => $ref, 'email_sent' => $emailSent, 'email' => $email]);
+    } catch (Exception $e) {
+      if ($pdo->inTransaction()) $pdo->rollBack();
+      echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+  }
+
+  // View registration (POST-driven)
+  if ($postAction === 'view_registration') {
+    $id = intval($_POST['id'] ?? 0);
+    $stmt = $pdo->prepare("SELECT sr.*, COALESCE(sr.email, u.email) AS email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $s = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$s) { echo json_encode(['success' => false, 'error' => 'Registration not found']); exit; }
+
+    $progStmt = $pdo->prepare("SELECT c.title FROM student_programs sp JOIN courses c ON c.id = sp.course_id WHERE sp.registration_id = ?");
+    $progStmt->execute([$id]);
+    $programs = $progStmt->fetchAll(PDO::FETCH_COLUMN);
+
+    echo json_encode(['success' => true, 'data' => [
+      'first_name' => $s['first_name'], 'last_name' => $s['last_name'], 'email' => $s['email'],
+      'date_of_birth' => $s['date_of_birth'], 'home_address' => $s['home_address'], 'previous_education' => $s['previous_education'],
+      'academic_goals' => $s['academic_goals'], 'emergency_contact_name' => $s['emergency_contact_name'], 'emergency_contact_phone' => $s['emergency_contact_phone'],
+      'emergency_relationship' => $s['emergency_relationship'], 'status' => $s['status'], 'created_at' => $s['created_at'], 'programs' => $programs
+    ]]);
+    exit;
+  }
+}
 // Handle AJAX GET view of a registration
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
   $id = (int)$_GET['id'];
