@@ -149,6 +149,27 @@ if (!empty($_GET['ajax'])) {
 
 <script>
 function doAction(action,id){ if(!confirm('Are you sure?')) return; var fd=new FormData(); fd.append('action',action); fd.append('id',id); fd.append('_csrf','<?= generateToken('comments_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok') location.reload(); else alert('Failed'); }; xhr.send(fd); }
+
+// Delegated click handler for action buttons (approve/reject/reply)
+document.querySelector('table.roles-table').addEventListener('click', function(e){
+  var btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  var action = btn.getAttribute('data-action');
+  var id = btn.getAttribute('data-id');
+  if (action === 'approve' || action === 'reject') {
+    doAction(action, id);
+    return;
+  }
+  if (action === 'reply') {
+    var preview = btn.getAttribute('data-preview') || '';
+    currentReplyParent = parseInt(id,10);
+    document.getElementById('replyPreview').textContent = preview;
+    document.getElementById('replyContent').value = '';
+    document.getElementById('replyModal').classList.add('open');
+    document.getElementById('replyOverlay').classList.add('open');
+    return;
+  }
+});
 // Poll the comments fragment every 5 seconds
 setInterval(function(){
   var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=comments&ajax=1&_=' + Date.now(), true);
