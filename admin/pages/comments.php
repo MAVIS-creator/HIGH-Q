@@ -151,7 +151,18 @@ function doAction(action,id){ if(!confirm('Are you sure?')) return; var fd=new F
 // Poll the comments fragment every 5 seconds
 setInterval(function(){
   var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=comments&ajax=1&_=' + Date.now(), true);
-  xhr.onload = function(){ if (xhr.status !== 200) return; document.querySelector('table.roles-table tbody').innerHTML = xhr.responseText; };
+  xhr.onload = function(){
+    if (xhr.status !== 200) return;
+    // basic check: if response looks like a table fragment (starts with <tr) then replace tbody
+    var txt = xhr.responseText || '';
+    if (txt.trim().startsWith('<tr')) {
+      document.querySelector('table.roles-table tbody').innerHTML = txt;
+    } else {
+      // ignore unexpected responses to avoid rendering full page inside the table
+      console.warn('Ignored unexpected comments fragment during polling');
+    }
+  };
+  xhr.onerror = function(){ /* ignore network errors during polling */ };
   xhr.send();
 }, 5000);
 </script>

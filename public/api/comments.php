@@ -4,11 +4,31 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/csrf.php';
 
-// Expect POST from public comment form
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['status'=>'error','message'=>'Method not allowed']);
-    exit;
+// Support GET for fetching comments (used by the public post page) and POST for submitting
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $postId = intval($_GET['post_id'] ?? 0);
+    if (!$postId) { echo json_encode([]); exit; }
+    try {
+        // fetch top-level approved comments
+        $stmt = $pdo->prepare('SELECT id, name, email, content, created_at FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
+        $stmt->execute([$postId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $out = [];
+        foreach ($rows as $r) {
+            $r['replies'] = [];
+            // fetch replies
+            $rstmt = $pdo->prepare('SELECT id, name, email, content, created_at, user_id FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
+            $rstmt->execute([$r['id']]);
+            $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
+            $r['replies'] = $replies ?: [];
+            $out[] = $r;
+        }
+        echo json_encode($out);
+        exit;
+    } catch (Throwable $e) {
+        echo json_encode([]);
+        exit;
+    }
 }
 
 $postId = intval($_POST['post_id'] ?? 0);

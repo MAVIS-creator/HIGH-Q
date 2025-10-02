@@ -20,9 +20,15 @@ $ip = $_SERVER['REMOTE_ADDR'] ?? null;
 
 // Helper: get likes count
 function get_likes($pdo, $postId) {
-	$q = $pdo->prepare('SELECT COALESCE(likes,0) FROM posts WHERE id = ?');
-	$q->execute([$postId]);
-	return (int)$q->fetchColumn();
+	// Prefer posts.likes if present, otherwise count post_likes table
+	try {
+		$q = $pdo->prepare('SELECT COUNT(1) FROM post_likes WHERE post_id = ?');
+		$q->execute([$postId]);
+		return (int)$q->fetchColumn();
+	} catch (Throwable $e) {
+		// As a final fallback, try to read posts.likes if it exists
+		try { $q = $pdo->prepare('SELECT COALESCE(likes,0) FROM posts WHERE id = ?'); $q->execute([$postId]); return (int)$q->fetchColumn(); } catch (Throwable $e2) { return 0; }
+	}
 }
 
 try {
@@ -44,9 +50,13 @@ try {
 			$ins->execute([$postId, $sessionId, $ip]);
 			$affected = $ins->rowCount();
 			if ($affected) {
-				// increment counter on posts table
-				$up = $pdo->prepare('UPDATE posts SET likes = COALESCE(likes,0) + 1 WHERE id = ?');
-				$up->execute([$postId]);
+				// If posts.likes column exists, increment it; otherwise rely on post_likes count
+				try {
+					$up = $pdo->prepare('UPDATE posts SET likes = COALESCE(likes,0) + 1 WHERE id = ?');
+					$up->execute([$postId]);
+				} catch (Throwable $e) {
+					// ignore - some installs don't have posts.likes
+				}
 			}
 			$pdo->commit();
 		} catch (Throwable $e) {
