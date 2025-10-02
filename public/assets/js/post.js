@@ -27,13 +27,35 @@
   function renderComment(c) {
     const wrapper = document.createElement('div');
     wrapper.className = 'comment';
-    wrapper.innerHTML = '<div class="comment-head"><strong>' + escapeHtml(c.name || 'Anonymous') + '</strong> <span class="muted small">' + escapeHtml(c.created_at || '') + '</span></div><div class="comment-body">' + (c.content || '') + '</div><div class="comment-actions"><button class="reply-btn">Reply</button></div>';
-    const replyBtn = wrapper.querySelector('.reply-btn');
-    replyBtn.addEventListener('click', function () {
+    const avatar = '<div class="avatar">' + escapeHtml((c.name||'A').substr(0,1).toUpperCase()) + '</div>';
+    const head = '<div class="comment-head">' + avatar + '<div><strong>' + escapeHtml(c.name || 'Anonymous') + '</strong><div class="meta small">' + escapeHtml(c.created_at || '') + '</div></div></div>';
+    const body = '<div class="comment-body">' + (c.content || '') + '</div>';
+    const likes = '<button class="like-btn" data-id="' + (c.id||'') + '"><i class="fa-regular fa-heart"></i> <span class="like-count">' + (c.likes||0) + '</span></button>';
+    const reply = '<button class="reply-btn" data-id="' + (c.id||'') + '">Reply</button>';
+    wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + ' ' + reply + '</div>';
+
+    // bind reply
+    wrapper.querySelector('.reply-btn').addEventListener('click', function () {
       parentInput.value = c.id;
       cancelReply.style.display = 'inline-block';
       commentForm.scrollIntoView({behavior:'smooth'});
     });
+
+    // bind like for comment
+    const likeBtnC = wrapper.querySelector('.like-btn');
+    likeBtnC.addEventListener('click', function () {
+      const cid = this.getAttribute('data-id');
+      if (sessionStorage.getItem('liked_comment_' + cid) === '1') return;
+      fetch('/HIGH-Q/public/api/comment_like.php', { method: 'POST', body: new URLSearchParams({ comment_id: cid }) })
+        .then(r => r.json())
+        .then(j => {
+          if (j && typeof j.likes !== 'undefined') {
+            this.querySelector('.like-count').textContent = j.likes;
+          }
+          if (j && j.liked) sessionStorage.setItem('liked_comment_' + cid, '1');
+        }).catch(()=>{});
+    });
+
     return wrapper;
   }
 
