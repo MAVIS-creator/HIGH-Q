@@ -40,18 +40,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $paymentLink .= '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
 
     // Send email
+    $email_sent = false;
     if ($email) {
       $subject = "Payment Link for Your Registration";
       $message = "<p>Hi " . htmlspecialchars($reg['first_name']) . ",</p>\n                <p>Please complete your payment using the secure link below:</p>\n                <p><a href='" . htmlspecialchars($paymentLink) . "'>" . htmlspecialchars($paymentLink) . "</a></p>\n                <p>Best regards,<br><strong>HIGH Q SOLID ACADEMY</strong></p>\n            ";
-      sendEmail($email, $subject, $message);
+      $email_sent = sendEmail($email, $subject, $message);
     }
 
-    // Update status
-    $pdo->prepare("UPDATE student_registrations SET status = 'paid' WHERE id = ?")->execute([$reg['id']]);
+    // Update status to indicate registration has been confirmed/awaiting payment
+    $pdo->prepare("UPDATE student_registrations SET status = 'awaiting_payment' WHERE id = ?")->execute([$reg['id']]);
 
     $pdo->commit();
 
-    echo json_encode(['success' => true, 'message' => 'Payment link sent successfully!']);
+    echo json_encode([
+      'success' => true,
+      'message' => 'Payment link created.',
+      'reference' => $ref,
+      'email' => $email,
+      'email_sent' => (bool)$email_sent,
+    ]);
   } catch (Exception $e) {
     $pdo->rollBack();
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
