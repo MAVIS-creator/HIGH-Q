@@ -30,8 +30,8 @@
     const avatar = '<div class="avatar">' + escapeHtml((c.name||'A').substr(0,1).toUpperCase()) + '</div>';
     const head = '<div class="comment-head">' + avatar + '<div><strong>' + escapeHtml(c.name || 'Anonymous') + '</strong><div class="meta small">' + escapeHtml(c.created_at || '') + '</div></div></div>';
     const body = '<div class="comment-body">' + (c.content || '') + '</div>';
-    const likes = '<button class="like-btn" data-id="' + (c.id||'') + '"><i class="fa-regular fa-heart"></i> <span class="like-count">' + (c.likes||0) + '</span></button>';
-    const reply = '<button class="reply-btn" data-id="' + (c.id||'') + '">Reply</button>';
+  const likes = '<button class="like-btn" data-id="' + (c.id||'') + '"><i class="bx bx-heart"></i> <span class="like-count">' + (c.likes||0) + '</span></button>';
+  const reply = '<button class="reply-btn" data-id="' + (c.id||'') + '"><i class="bx bx-reply"></i> Reply</button>';
     wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + ' ' + reply + '</div>';
 
     // bind reply
