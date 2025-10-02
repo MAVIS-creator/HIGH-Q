@@ -177,7 +177,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       }
 
       $pdo->commit();
-      if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Confirmed']); exit; }
+      if ($isAjax) {
+        $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null];
+        echo json_encode($resp); exit;
+      }
       header('Location: index.php?pages=students'); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
@@ -193,11 +196,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     if ($reg) {
       $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['rejected', $id]);
       logAction($pdo, $currentUserId, 'reject_registration', ['registration_id'=>$id, 'reason'=>$reason]);
+      $emailSent = false;
       if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
         $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
         $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] . ' ' . ($reg['last_name'] ?? '')) . ',</p><p>Your registration has been rejected.' . ($reason ? '<br><strong>Reason:</strong> ' . htmlspecialchars($reason) : '') . '</p>';
-        @sendEmail($reg['email'], $subject, $body);
+        try { $emailSent = (bool) sendEmail($reg['email'], $subject, $body); } catch (Throwable $e) { $emailSent = false; }
       }
+      $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+      if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
     header('Location: index.php?pages=students'); exit;
   }
