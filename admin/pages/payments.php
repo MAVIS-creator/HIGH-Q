@@ -352,6 +352,23 @@ function showToast(type, title){
     Swal.fire({toast:true,position:'top-end',icon:type,title:title,showConfirmButton:false,timer:3000});
 }
 
+// Add escapeHtml helper
+Swal.escapeHtml = function(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"'`=\/]/g, function (s) {
+        return ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;'
+        })[s];
+    });
+};
+
 function doAction(action,id){
     // find the table row and data attributes
     var btn = document.querySelector('button[onclick="doAction(\''+action+'\','+id+')"]');
