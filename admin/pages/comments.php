@@ -149,7 +149,20 @@ if (!empty($_GET['ajax'])) {
 </div>
 
 <script>
-function doAction(action,id){ if(!confirm('Are you sure?')) return; var fd=new FormData(); fd.append('action',action); fd.append('id',id); fd.append('_csrf','<?= generateToken('comments_form') ?>'); var xhr=new XMLHttpRequest(); xhr.open('POST',location.href,true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest'); xhr.onload=function(){ try{var r=JSON.parse(xhr.responseText);}catch(e){alert('Error');return;} if(r.status==='ok') location.reload(); else alert('Failed'); }; xhr.send(fd); }
+function doAction(action,id){
+  var token = document.getElementById('comments_csrf').value || '';
+  Swal.fire({ title: 'Confirm', text: 'Are you sure?', icon: 'question', showCancelButton: true }).then(function(res){
+    if (!res.isConfirmed) return;
+    var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', token);
+    var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+    xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; }
+      if (r.status === 'ok') { Swal.fire('Success','Action completed','success').then(()=> location.reload()); }
+      else { Swal.fire('Failed', r.message || 'Operation failed', 'error'); }
+    };
+    xhr.onerror = function(){ Swal.fire('Error','Network error','error'); };
+    xhr.send(fd);
+  });
+}
 
 // Delegated click handler for action buttons (approve/reject/reply)
 document.querySelector('table.roles-table').addEventListener('click', function(e){
