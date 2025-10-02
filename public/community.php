@@ -98,3 +98,22 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
   </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php';
+?>
+<script>
+  // toggle reply form under questions
+  (function(){
+    document.addEventListener('click', function(e){
+      var t = e.target.closest && e.target.closest('.reply-toggle');
+      if (!t) return;
+      var id = t.getAttribute('data-id');
+      var form = document.querySelector('.forum-reply-form[data-qid="'+id+'"]');
+      if (!form) return;
+      if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        form.scrollIntoView({behavior:'smooth', block:'center'});
+      } else {
+        form.style.display = 'none';
+      }
+    });
+  })();
+</script>
