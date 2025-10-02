@@ -9,6 +9,56 @@ requirePermission('students'); // where 'students' matches the menu slug
 // Generate CSRF token
 $csrf = generateToken('students_form');
 
+// Support POST-driven AJAX actions (confirm_registration, view_registration)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'confirm_registration') {
+  $id = intval($_POST['id'] ?? 0);
+
+  $pdo->beginTransaction();
+  try {
+    // Fetch registration (with email and user fallback)
+    $stmt = $pdo->prepare("\n            SELECT sr.*, COALESCE(sr.email, u.email) AS email, u.id AS user_id\n            FROM student_registrations sr\n            LEFT JOIN users u ON u.id = sr.user_id\n            WHERE sr.id = ?\n            LIMIT 1\n        ");
+    $stmt->execute([$id]);
+    $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$reg) {
+      throw new Exception("Registration not found");
+    }
+
+    $email = $reg['email'];
+    $studentId = $reg['user_id'] ?: null;
+
+    // Generate reference + insert payment row
+    $ref = uniqid("pay_");
+    $amount = 20000; // adjust amount as needed
+    $method = "paystack";
+
+    $ins = $pdo->prepare("\n            INSERT INTO payments (student_id, registration_id, amount, payment_method, reference, status, created_at)\n            VALUES (?, ?, ?, ?, ?, 'pending', NOW())\n        ");
+    $ins->execute([$studentId, $reg['id'], $amount, $method, $ref]);
+
+    // Build payment link
+    $paymentLink = ($_SERVER['HTTPS'] ?? '') === 'on' ? 'https' : 'http';
+    $paymentLink .= '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+
+    // Send email
+    if ($email) {
+      $subject = "Payment Link for Your Registration";
+      $message = "<p>Hi " . htmlspecialchars($reg['first_name']) . ",</p>\n                <p>Please complete your payment using the secure link below:</p>\n                <p><a href='" . htmlspecialchars($paymentLink) . "'>" . htmlspecialchars($paymentLink) . "</a></p>\n                <p>Best regards,<br><strong>HIGH Q SOLID ACADEMY</strong></p>\n            ";
+      sendEmail($email, $subject, $message);
+    }
+
+    // Update status
+    $pdo->prepare("UPDATE student_registrations SET status = 'paid' WHERE id = ?")->execute([$reg['id']]);
+
+    $pdo->commit();
+
+    echo json_encode(['success' => true, 'message' => 'Payment link sent successfully!']);
+  } catch (Exception $e) {
+    $pdo->rollBack();
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+  }
+  exit;
+}
+
 // Handle POST actions (activate/deactivate/delete)
 // Handle AJAX GET view of a registration
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
