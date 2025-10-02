@@ -2152,6 +2152,16 @@ nav a.active::after { background: var(--hq-yellow); }
   color: var(--hq-black);
 }
 
+/* Ensure comments always stack vertically */
+#commentsList {
+  display: block;
+}
+
+.comment {
+  display: block;
+  width: 100%;
+}
+
 /* Main Comment Block */
 .comment {
   display: flex;
