@@ -170,12 +170,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				error_log('Registration notification error: ' . $e->getMessage());
 			}
 
-			// bank transfer: redirect to dedicated waiting page with instructions (use relative path)
+			// bank transfer: redirect to dedicated waiting page only if a payment reference was created.
+			// If verify-before-payment is enabled, no payment/reference was created and we should show an awaiting-verification message.
 			if ($method === 'bank') {
-				$_SESSION['last_payment_id'] = $paymentId;
-				$_SESSION['last_payment_reference'] = $reference;
-				header('Location: payments_wait.php?ref=' . urlencode($reference));
-				exit;
+				if ($reference) {
+					$_SESSION['last_payment_id'] = $paymentId;
+					$_SESSION['last_payment_reference'] = $reference;
+					header('Location: payments_wait.php?ref=' . urlencode($reference));
+					exit;
+				} else {
+					// mark in session and redirect back to registration with pending flag so UI shows awaiting verification
+					$_SESSION['registration_pending_id'] = $registrationId;
+					header('Location: register.php?pending=1');
+					exit;
+				}
 			}
 
 		} catch (Exception $e) {
