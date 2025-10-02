@@ -504,8 +504,23 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 // Helper to POST action and reload
 async function postAction(url, formData){
   const res = await fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} });
-  if (!res.ok) throw new Error('Server error');
-  window.location = 'index.php?pages=students';
+  let payload = null;
+  try {
+    payload = await res.json();
+  } catch (e) { payload = null; }
+  if (!res.ok || !payload) {
+    const msg = payload && payload.message ? payload.message : 'Server error';
+    await Swal.fire('Error', msg, 'error');
+    throw new Error(msg);
+  }
+  // show server-sent message (success or error)
+  if (payload.status && payload.status === 'ok') {
+    await Swal.fire('Success', payload.message || 'Operation completed', 'success');
+    window.location = 'index.php?pages=students';
+    return payload;
+  }
+  await Swal.fire('Error', payload.message || 'Operation failed', 'error');
+  throw new Error(payload.message || 'Operation failed');
 }
 
 // Confirm (modal) handler
