@@ -64,6 +64,17 @@
         }).catch(()=>{});
     });
 
+    // render replies if provided
+    if (Array.isArray(c.replies) && c.replies.length) {
+      const repliesWrap = document.createElement('div');
+      repliesWrap.className = 'replies';
+      c.replies.forEach(r => {
+        const relEl = renderComment(r);
+        repliesWrap.appendChild(relEl);
+      });
+      wrapper.appendChild(repliesWrap);
+    }
+
     return wrapper;
   }
 

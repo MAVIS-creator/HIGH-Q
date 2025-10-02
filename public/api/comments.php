@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $out = [];
         foreach ($rows as $r) {
             $r['replies'] = [];
-            // fetch replies
-            $rstmt = $pdo->prepare('SELECT id, name, email, content, created_at, user_id FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
-            $rstmt->execute([$r['id']]);
+            // fetch replies (approved or pending if created in this session)
+            $rstmt = $pdo->prepare('SELECT id, name, email, content, created_at, status, session_id, user_id FROM comments WHERE parent_id = ? AND (status = "approved" OR (status = "pending" AND session_id = ?)) ORDER BY created_at ASC');
+            $rstmt->execute([$r['id'], session_id()]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
             $r['replies'] = $replies ?: [];
             // comment likes count
