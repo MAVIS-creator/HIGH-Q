@@ -70,10 +70,11 @@ if (!empty($_GET['ajax'])) {
     echo "<td>".htmlspecialchars($c['created_at'])."</td>";
 
     // build action buttons safely using json_encode for the preview string
-    $preview = json_encode(mb_strimwidth($c['content'],0,120,'...'));
-    $replyBtn = "<button class='btn' onclick='openReply({$c['id']}, {$preview})'>Reply</button>";
+    $preview = htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES);
+    // use data-action buttons to allow delegated handlers
+    $replyBtn = "<button class='btn' data-action='reply' data-id='{$c['id']}' data-preview='{$preview}'>Reply</button>";
     if ($c['status'] === 'pending') {
-      $actions = "<button class='btn' onclick=\"doAction('approve',{$c['id']})\">Approve</button> <button class='btn' onclick=\"doAction('reject',{$c['id']})\">Delete</button> " . $replyBtn;
+      $actions = "<button class='btn' data-action='approve' data-id='{$c['id']}'>Approve</button> <button class='btn' data-action='reject' data-id='{$c['id']}'>Delete</button> " . $replyBtn;
     } else {
       $actions = $replyBtn;
     }
@@ -116,11 +117,11 @@ if (!empty($_GET['ajax'])) {
           <td><?= htmlspecialchars($c['status']) ?></td>
           <td><?= htmlspecialchars($c['created_at']) ?></td>
           <td><?php if ($c['status'] === 'pending'): ?>
-              <button class="btn" onclick="doAction('approve',<?= $c['id'] ?>)">Approve</button>
-              <button class="btn" onclick="doAction('reject',<?= $c['id'] ?>)">Delete</button>
-              <button class="btn" onclick="openReply(<?= $c['id'] ?>, <?= json_encode(mb_strimwidth($c['content'],0,120,'...')) ?>)">Reply</button>
+              <button class="btn" data-action="approve" data-id="<?= $c['id'] ?>">Approve</button>
+              <button class="btn" data-action="reject" data-id="<?= $c['id'] ?>">Delete</button>
+              <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>">Reply</button>
             <?php else: ?>
-              <button class="btn" onclick="openReply(<?= $c['id'] ?>, <?= json_encode(mb_strimwidth($c['content'],0,120,'...')) ?>)">Reply</button>
+              <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>">Reply</button>
             <?php endif; ?></td>
         </tr>
         <?php
