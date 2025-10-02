@@ -31,9 +31,9 @@
     const head = '<div class="comment-head">' + avatar + '<div><strong>' + escapeHtml(c.name || 'Anonymous') + '</strong><div class="meta small">' + escapeHtml(c.created_at || '') + '</div></div></div>';
     const body = '<div class="comment-body">' + (c.content || '') + '</div>';
   const likes = '<button class="like-btn" data-id="' + (c.id||'') + '"><i class="bx bx-heart"></i> <span class="like-count">' + (c.likes||0) + '</span></button>';
-  const reply = '<div class="reply-wrap"><button class="reply-btn" data-id="' + (c.id||'') + '"><i class="bx bx-reply"></i> Reply</button></div>';
+  const reply = '<button class="reply-btn" data-id="' + (c.id||'') + '"><i class="bx bx-reply"></i> Reply</button>';
 
-    wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + '</div>' + reply;
+    wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + ' ' + reply + '</div>';
 
     // if comment is pending and was created in this session, show awaiting-moderation marker
     if (c && c.status === 'pending') {
@@ -43,8 +43,7 @@
     }
 
     // bind reply
-    const replyBtn = wrapper.querySelector('.reply-btn');
-    if (replyBtn) replyBtn.addEventListener('click', function () {
+    wrapper.querySelector('.reply-btn').addEventListener('click', function () {
       parentInput.value = c.id;
       cancelReply.style.display = 'inline-block';
       commentForm.scrollIntoView({behavior:'smooth'});
@@ -64,18 +63,6 @@
           if (j && j.liked) sessionStorage.setItem('liked_comment_' + cid, '1');
         }).catch(()=>{});
     });
-
-    // render replies (one level deep)
-    if (Array.isArray(c.replies) && c.replies.length) {
-      const repliesWrap = document.createElement('div');
-      repliesWrap.className = 'replies';
-      c.replies.forEach(r => {
-        const rel = renderComment(r);
-        rel.classList.add('reply');
-        repliesWrap.appendChild(rel);
-      });
-      wrapper.appendChild(repliesWrap);
-    }
 
     return wrapper;
   }
@@ -135,7 +122,7 @@
       const fd = new FormData(commentForm);
       fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
         .then(r => r.json())
-        .then(j => { if (j && (j.status === 'ok' || j.success)) { commentForm.reset(); parentInput.value=''; cancelReply.style.display='none'; fetchComments(); } else { alert(j && j.message ? j.message : 'Unable to post comment'); } })
+        .then(j => { if (j && j.success) { commentForm.reset(); parentInput.value=''; cancelReply.style.display='none'; fetchComments(); } else { alert(j && j.message ? j.message : 'Unable to post comment'); } })
         .catch(() => { alert('Unable to post comment'); });
     });
   }
