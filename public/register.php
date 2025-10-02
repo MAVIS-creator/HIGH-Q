@@ -376,3 +376,5 @@ if (!empty($_SESSION['registration_pending_id'])) {
 }
 ?>
 
+
+<?php endif; ?>
