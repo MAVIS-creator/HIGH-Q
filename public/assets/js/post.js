@@ -24,9 +24,10 @@
       }).catch(() => { commentsList.innerHTML = '<p class="muted">Unable to load comments.</p>'; });
   }
 
-  function renderComment(c) {
+  function renderComment(c, isReply) {
     const wrapper = document.createElement('div');
     wrapper.className = 'comment';
+    if (isReply) wrapper.classList.add('reply');
     const avatar = '<div class="avatar">' + escapeHtml((c.name||'A').substr(0,1).toUpperCase()) + '</div>';
     const head = '<div class="comment-head">' + avatar + '<div><strong>' + escapeHtml(c.name || 'Anonymous') + '</strong><div class="meta small">' + escapeHtml(c.created_at || '') + '</div></div></div>';
     const body = '<div class="comment-body">' + (c.content || '') + '</div>';
@@ -69,7 +70,7 @@
       const repliesWrap = document.createElement('div');
       repliesWrap.className = 'replies';
       c.replies.forEach(r => {
-        const relEl = renderComment(r);
+        const relEl = renderComment(r, true);
         repliesWrap.appendChild(relEl);
       });
       wrapper.appendChild(repliesWrap);
