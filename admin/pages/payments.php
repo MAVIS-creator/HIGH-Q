@@ -6,9 +6,6 @@ requirePermission('payments');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-$pageTitle = 'Payments';
-require_once __DIR__ . '/../includes/header.php';
-
 // handle ajax actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     // Always respond with JSON for AJAX
@@ -222,6 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     }
     echo json_encode(['status'=>'error','message'=>'Unknown action']); exit;
 }
+
+$pageTitle = 'Payments';
+require_once __DIR__ . '/../includes/header.php';
 
 // List payments with pagination, search & filter
 $perPage = 20;
