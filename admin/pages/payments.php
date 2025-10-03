@@ -2,10 +2,12 @@
 // admin/pages/payments.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
-
 requirePermission('payments');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
+
+$pageTitle = 'Payments';
+require_once __DIR__ . '/../includes/header.php';
 
 // handle ajax actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
@@ -77,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
 
                     $html = '<!doctype html><html><head><meta charset="utf-8"><title>Receipt ' . htmlspecialchars($p['reference']) . '</title>';
                     $html .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#222} .container{max-width:700px;margin:0 auto;padding:24px} h2{color:#111} .meta{margin:12px 0;color:#444}</style>';
-                    $html .= '</head><body><div class="container'>";
+                    $html .= '</head><body><div class="container">';
                     $html .= '<h2>Payment Receipt</h2>';
                     $html .= '<div class="meta"><strong>Reference:</strong> ' . htmlspecialchars($p['reference']) . '</div>';
                     $html .= '<div class="meta"><strong>Name:</strong> ' . htmlspecialchars(trim($payerName)) . '</div>';
@@ -90,10 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
 
                     // prefer PDF if library available
                     $fn = 'receipt-' . preg_replace('/[^A-Za-z0-9\-]/','', $p['reference']);
-                    if (class_exists('\\Dompdf\\Dompdf')) {
+                    if (class_exists('\Dompdf\Dompdf')) {
                         // generate PDF using Dompdf if available
                         try {
-                            $dompdfClass = '\\\\Dompdf\\\\Dompdf';
+                            $dompdfClass = '\\Dompdf\\Dompdf';
                             $dompdf = new $dompdfClass();
                             $dompdf->loadHtml($html);
                             $dompdf->setPaper('A4', 'portrait');
@@ -133,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                             $subject = $site . ' — Payment Confirmed';
                             $htmlMail = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
                             $htmlMail .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333}.container{max-width:640px;margin:0 auto;padding:18px}.btn{display:inline-block;padding:8px 12px;background:#d62828;color:#fff;border-radius:6px;text-decoration:none}</style>';
-                            $htmlMail .= '</head><body><div class="container'>";
+                            $htmlMail .= '</head><body><div class="container">';
                             if ($logo) $htmlMail .= '<div style="margin-bottom:12px"><img src="' . htmlspecialchars($logo) . '" alt="' . htmlspecialchars($site) . '" style="max-height:60px"></div>';
                             $htmlMail .= '<h2>Hi ' . htmlspecialchars($p['name'] ?? '') . '</h2>';
                             $htmlMail .= '<p>Your payment with reference <strong>' . htmlspecialchars($p['reference']) . '</strong> has been confirmed. Your account has been activated.</p>';
@@ -203,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     $subject = $site . ' — Payment Not Accepted';
                     $html = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
                     $html .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#333}.container{max-width:640px;margin:0 auto;padding:18px}</style>';
-                    $html .= '</head><body><div class="container'>";
+                    $html .= '</head><body><div class="container">';
                     if ($logo) $html .= '<div style="margin-bottom:12px"><img src="' . htmlspecialchars($logo) . '" alt="' . htmlspecialchars($site) . '" style="max-height:60px"></div>';
                     $html .= '<h2>Hi ' . htmlspecialchars($user['name'] ?? '') . '</h2>';
                     $html .= '<p>Unfortunately, we could not accept your payment (reference: <strong>' . htmlspecialchars($p['reference']) . '</strong>).</p>';
@@ -220,9 +222,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     }
     echo json_encode(['status'=>'error','message'=>'Unknown action']); exit;
 }
-
-$pageTitle = 'Payments';
-require_once __DIR__ . '/../includes/header.php';
 
 // List payments with pagination, search & filter
 $perPage = 20;
@@ -374,30 +373,22 @@ function doAction(action, id) {
     const fd = new FormData();
     fd.append('action', action);
     fd.append('id', id);
-    // include CSRF token
-    if (window.__PAYMENTS_CSRF) fd.append('_csrf', window.__PAYMENTS_CSRF);
 
     fetch('index.php?pages=payments', {
         method: 'POST',
         body: fd,
         credentials: 'same-origin',
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(r => r.text())
-    .then(text => {
-        // Detect HTML (likely a login redirect or error page)
-        const trimmed = text.trim();
-        if (trimmed.startsWith('<')) {
-            // show a helpful error with server HTML (truncated)
-            console.error('Server returned HTML instead of JSON', trimmed.substring(0,200));
-            return Swal.fire({ icon: 'error', title: 'Server returned HTML', html: '<pre style="max-height:200px;overflow:auto">' + Swal.escapeHtml(trimmed.substring(0,2000)) + '</pre>' });
-        }
-        let data = null;
-        try { data = JSON.parse(trimmed); } catch (e) { throw new Error('Invalid JSON response'); }
+    .then(r => {
+        if (!r.ok) throw new Error('Network error ' + r.status);
+        return r.json();
+    })
+    .then(data => {
         // normalize status for compatibility with server returning 'ok' or 'success'
         const status = (data.status === 'ok') ? 'success' : data.status;
-        const icon = (status === 'ok' || status === 'success') ? 'success' : status || 'info';
-        return Swal.fire({ icon: icon, title: data.message || '' }).then(() => {
+        const icon = (status === 'ok' || status === 'success') ? 'success' : status;
+        Swal.fire({ icon: icon, title: data.message || '' }).then(() => {
             if (status === 'success') location.reload();
         });
     })
