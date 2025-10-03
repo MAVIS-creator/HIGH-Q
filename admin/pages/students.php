@@ -63,7 +63,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   } catch (Exception $e) {
     $pdo->rollBack();
   header('Content-Type: application/json');
-  echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+  // Log the exception to help debugging (safe append-only log)
+  try {
+    $logDir = __DIR__ . '/../../storage/logs';
+    if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+    $logFile = $logDir . '/students_confirm_errors.log';
+    $msg = "[" . date('Y-m-d H:i:s') . "] Confirm registration error: " . $e->getMessage() . " -- in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString() . "\n\n";
+    @file_put_contents($logFile, $msg, FILE_APPEND | LOCK_EX);
+  } catch (Throwable $ex) { /* ignore logging errors */ }
+
+  $resp = ['success' => false, 'error' => 'Server error'];
+  // If explicit debug requested, include the exception message and trace
+  if (!empty($_GET['debug']) && $_GET['debug'] === '1') {
+    $resp['error'] = $e->getMessage();
+    $resp['trace'] = $e->getTraceAsString();
+  }
+  echo json_encode($resp);
   }
   exit;
 }
