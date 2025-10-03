@@ -17,17 +17,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     $rate['count']++;
     if ($rate['count'] > 6) { echo json_encode(['status'=>'error','message'=>'Rate limit exceeded, try again later']); exit; }
     $token = $_POST['_csrf'] ?? '';
-    if (!verifyToken('payments_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
+    // verify CSRF; if invalid, log details for debugging (safe, local only)
+    if (!verifyToken('payments_form', $token)) {
+        $resp = ['status'=>'error','message'=>'Invalid CSRF'];
+        // log
+        try {
+            $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+            $logFile = $logDir . '/payments_ajax.log';
+            $entry = "[".date('Y-m-d H:i:s')."] Invalid CSRF on payments.ajax - IP=".($_SERVER['REMOTE_ADDR']??'')." Session=".session_id()." POST=".json_encode(array_keys($_POST))."\n";
+            @file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
+        } catch (Throwable $e) {}
+        // include debug details when requested via GET
+        if (!empty($_GET['debug']) && $_GET['debug']==='1') $resp['debug_post'] = $_POST;
+        echo json_encode($resp); exit;
+    }
     $action = $_POST['action'] ?? '';
     $id = intval($_POST['id'] ?? 0);
     if ($action === 'confirm') {
         // ensure idempotent: only confirm if not already confirmed
         $cur = $pdo->prepare('SELECT status FROM payments WHERE id = ? LIMIT 1'); $cur->execute([$id]); $curS = $cur->fetchColumn();
-        if ($curS === 'confirmed') { echo json_encode(['status'=>'ok','message'=>'Already confirmed']); exit; }
+    if ($curS === 'confirmed') { echo json_encode(['status'=>'ok','message'=>'Already confirmed']); exit; }
         // mark payment confirmed
         $upd = $pdo->prepare('UPDATE payments SET status = "confirmed", confirmed_at = NOW(), updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
-        if ($ok) {
+    if ($ok) {
             // log action: admin confirmed payment
             try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'confirm_payment', ['payment_id'=>$id]); } catch(Throwable $e){}
             // fetch payment details
@@ -190,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $reason = trim($_POST['reason'] ?? '');
         $upd = $pdo->prepare('UPDATE payments SET status = "failed", updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
-        if ($ok) {
+    if ($ok) {
             // log action: admin rejected payment
             try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'reject_payment', ['payment_id'=>$id,'reason'=>$reason]); } catch(Throwable $e){}
             // notify user of rejection
@@ -217,7 +230,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         } else echo json_encode(['status'=>'error','message'=>'DB error']);
         exit;
     }
-    echo json_encode(['status'=>'error','message'=>'Unknown action']); exit;
+    // Unknown action - log and optionally return debug info
+    $resp = ['status'=>'error','message'=>'Unknown action'];
+    try {
+        $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+        $logFile = $logDir . '/payments_ajax.log';
+        $entry = "[".date('Y-m-d H:i:s')."] Unknown payments.ajax action - action=".($action?:'')." POST=".json_encode(array_keys($_POST))."\n";
+        @file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
+    } catch (Throwable $e) {}
+    if (!empty($_GET['debug']) && $_GET['debug']==='1') $resp['debug_post'] = $_POST;
+    echo json_encode($resp); exit;
 }
 
 $pageTitle = 'Payments';
