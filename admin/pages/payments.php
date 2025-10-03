@@ -373,6 +373,8 @@ function doAction(action, id) {
     const fd = new FormData();
     fd.append('action', action);
     fd.append('id', id);
+    // include CSRF token expected by the server
+    if (window.__PAYMENTS_CSRF) fd.append('_csrf', window.__PAYMENTS_CSRF);
 
     fetch('index.php?pages=payments', {
         method: 'POST',
