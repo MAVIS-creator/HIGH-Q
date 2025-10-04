@@ -67,13 +67,15 @@ $csrf = generateToken('signup_form');
           // submit mark-sent via fetch to API endpoint and handle response
           (function(){
             var form = document.getElementById('payer-form');
+            // Use a stable base so AJAX requests don't resolve relative to the rewritten /pay/ URL
+            var HQ_BASE = window.location.origin + '/HIGH-Q';
             var btn = document.getElementById('markSentBtn');
             form.addEventListener('submit', function(e){
               e.preventDefault();
               btn.disabled = true; btn.textContent = 'Recording...';
               document.getElementById('pageSpinner').style.display = 'block';
               var fd = new FormData(form);
-              fetch('api/mark_sent.php', {
+              fetch(HQ_BASE + '/public/api/mark_sent.php', {
                 method: 'POST',
                 body: fd,
                 credentials: 'same-origin',
@@ -135,7 +137,7 @@ $csrf = generateToken('signup_form');
           // polling
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
           function check(){
-            var xhr = new XMLHttpRequest(); xhr.open('GET', 'api/payment_status.php?ref=' + encodeURIComponent(ref), true);
+            var xhr = new XMLHttpRequest(); xhr.open('GET', HQ_BASE + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
             xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = r.payment.receipt_path; } else { window.location = 'receipt.php?ref=' + encodeURIComponent(ref); } } }catch(e){} }};
             xhr.send();
           }
