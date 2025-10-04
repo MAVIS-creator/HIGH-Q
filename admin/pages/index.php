@@ -110,8 +110,23 @@ if (!$pageAllowed) {
 }
 
 // Include layout parts (paths relative to this file)
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+// If this is an AJAX/JSON request (background POST with action or X-Requested-With), avoid rendering the full admin chrome
+$isAjaxRequest = false;
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    $isAjaxRequest = true;
+}
+if (!$isAjaxRequest && !empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
+    $isAjaxRequest = true;
+}
+if (!$isAjaxRequest && !empty($_REQUEST['action'])) {
+    // treat POST/GET with an action param as AJAX API-style request
+    $isAjaxRequest = true;
+}
+
+if (!$isAjaxRequest) {
+    require_once __DIR__ . '/../includes/header.php';
+    require_once __DIR__ . '/../includes/sidebar.php';
+}
 
 // Try sensible locations for the page file (avoids pages/pages/ double-nesting)
 $candidates = [
