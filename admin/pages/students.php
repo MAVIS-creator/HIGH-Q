@@ -32,6 +32,33 @@ if (!empty($earlyAction)) {
   $GLOBALS['HQ_BASE_URL'] = $baseUrl;
 }
 
+  // Helper: insert payment row with fallback for databases where payments.id is not AUTO_INCREMENT
+  function insertPaymentWithFallback(PDO $pdo, $studentId, $amount, $method, $reference) {
+    try {
+      $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
+      $ins->execute([ $studentId, $amount, $method, $reference ]);
+      return (int)$pdo->lastInsertId();
+    } catch (Throwable $e) {
+      // fallback: lock table, compute next id, insert with explicit id
+      try {
+        $pdo->beginTransaction();
+        // Lock the table for write to avoid races
+        $pdo->exec('LOCK TABLES payments WRITE');
+        $row = $pdo->query('SELECT MAX(id) AS m FROM payments')->fetch(PDO::FETCH_ASSOC);
+        $next = (int)($row['m'] ?? 0) + 1;
+        $ins2 = $pdo->prepare('INSERT INTO payments (id, student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, "pending", NOW())');
+        $ins2->execute([ $next, $studentId, $amount, $method, $reference ]);
+        $pdo->exec('UNLOCK TABLES');
+        $pdo->commit();
+        return $next;
+      } catch (Throwable $e2) {
+        try { $pdo->exec('UNLOCK TABLES'); } catch (Throwable $_) {}
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        throw $e; // rethrow original exception
+      }
+    }
+  }
+
 requirePermission('students'); // where 'students' matches the menu slug
 // Generate CSRF token
 $csrf = generateToken('students_form');
