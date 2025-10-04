@@ -9,6 +9,14 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 if (!$isAjaxRequest && !empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
     $isAjaxRequest = true;
 }
+// If an 'action' parameter is present (common in admin AJAX), and the method is POST or the request indicates JSON,
+// treat the request as AJAX even if the X-Requested-With header wasn't provided by the client.
+if (!$isAjaxRequest && !empty($_REQUEST['action'])) {
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    if ($method === 'POST' || (!empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) || !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+        $isAjaxRequest = true;
+    }
+}
 if ($isAjaxRequest) {
     // For AJAX requests we still want to perform lightweight setup (session/auth) but avoid HTML output.
     // Return early so that pages which include this header for UI don't accidentally send HTML when they
