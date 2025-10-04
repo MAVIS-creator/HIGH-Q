@@ -70,8 +70,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     echo json_encode(['success'=>true,'link'=>$link,'reference'=>$reference,'student'=>['first_name'=>$reg['first_name'] ?? null,'last_name'=>$reg['last_name'] ?? null,'email'=>$reg['email'] ?? null]]);
     exit;
   } catch (Throwable $e) {
-    error_log('create_payment_link error: ' . $e->getMessage());
-    echo json_encode(['success'=>false,'error'=>'Server error']); exit;
+    // Detailed logging to students_confirm_errors.log to help debugging
+    try {
+      $logDir = __DIR__ . '/../../storage/logs';
+      if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+      $logFile = $logDir . '/students_confirm_errors.log';
+      $msg = "[" . date('Y-m-d H:i:s') . "] create_payment_link error: " . $e->getMessage() . " -- in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString() . "\n\n";
+      @file_put_contents($logFile, $msg, FILE_APPEND | LOCK_EX);
+    } catch (Throwable $ex) { /* ignore logging errors */ }
+
+    $resp = ['success'=>false,'error'=>'Server error'];
+    $debugRequested = (!empty($_GET['debug']) && $_GET['debug'] === '1') || (!empty($_POST['debug']) && $_POST['debug'] === '1');
+    if ($debugRequested) {
+      $resp['error'] = $e->getMessage();
+      $resp['trace'] = $e->getTraceAsString();
+    }
+    echo json_encode($resp);
+    exit;
   }
 }
 
