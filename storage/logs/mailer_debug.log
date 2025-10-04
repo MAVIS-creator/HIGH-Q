@@ -62,3 +62,59 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-04T21:12:17+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
 
+[2025-10-04T21:12:18+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
+[2025-10-04T21:12:18+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-04T21:12:18+02:00] [level=2] SERVER -> CLIENT: 
+[2025-10-04T21:12:18+02:00] [level=1] SMTP ERROR: QUIT command failed: 
+[2025-10-04T21:12:18+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
+[2025-10-04T21:12:19+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-46e7234f547sm89698975e9.9 - gsmtp
+
+[2025-10-04T21:12:19+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2025-10-04T21:12:19+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.70.198]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250 SMTPUTF8
+
+[2025-10-04T21:12:19+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-10-04T21:12:19+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-10-04T21:12:20+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
+[2025-10-04T21:12:20+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-04T21:12:20+02:00] [level=2] SERVER -> CLIENT: 
+[2025-10-04T21:12:20+02:00] [level=1] SMTP ERROR: QUIT command failed: 
+[2025-10-04T21:12:20+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
+[2025-10-04T21:12:20+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-46e5c44bd75sm109193815e9.4 - gsmtp
+
+[2025-10-04T21:12:20+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2025-10-04T21:12:20+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.70.198]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250 SMTPUTF8
+
+[2025-10-04T21:12:20+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-10-04T21:12:21+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-10-04T21:12:22+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
+[2025-10-04T21:12:22+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-04T21:12:22+02:00] [level=2] SERVER -> CLIENT: 
+[2025-10-04T21:12:22+02:00] [level=1] SMTP ERROR: QUIT command failed: 
+[2025-10-04T21:12:22+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed
