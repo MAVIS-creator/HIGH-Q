@@ -230,13 +230,10 @@ $csrf = generateToken('signup_form');
 												<?php endif; ?>
 
 												<?php if (!empty($_GET['pending']) || !empty($_SESSION['registration_pending_id'])): ?>
-    <div id="pending-notice" class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;transition:opacity 0.6s ease;">
-        <strong>Registration submitted — awaiting admin verification</strong>
-        <p>Your registration was received and is pending review by an administrator. You will receive an email and/or phone call when your registration is verified. No payment is required until verification is complete.</p>
-    </div>
-    <?php unset($_SESSION['registration_pending_id']); ?>
-<?php endif; ?>
-
+													<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
+														<strong>Registration submitted — awaiting admin verification</strong>
+														<p>Your registration was received and is pending review by an administrator. You will receive an email and/or phone call when your registration is verified. No payment is required until verification is complete.</p>
+													</div>
 												<?php else: ?>
 													<form method="post">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
