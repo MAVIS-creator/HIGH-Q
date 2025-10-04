@@ -636,6 +636,51 @@ document.querySelectorAll('.view-registration').forEach(btn => {
 });
 </script>
 
+<script>
+// Create payment link via AJAX and show result
+async function createPaymentLink(studentId) {
+  try {
+    const body = new URLSearchParams();
+    body.append('action', 'create_payment_link');
+    body.append('id', studentId);
+
+    const res = await fetch('index.php?pages=students', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+      body: body.toString()
+    });
+    const data = await res.json();
+    if (data.success) {
+      Swal.fire({
+        title: 'Payment Link Created ✅',
+        html: `
+          <p>Reference: <code>${data.reference}</code></p>
+          <p><a href="${data.link}" target="_blank">${data.link}</a></p>
+        `,
+        icon: 'success',
+        timer: 10000,
+        showConfirmButton: true
+      });
+    } else {
+      Swal.fire('Error', data.error || 'Unknown error', 'error');
+    }
+  } catch (err) {
+    Swal.fire('Error', err.message || 'Unexpected error', 'error');
+  }
+}
+
+// Hook up button in registration modal
+const regCreatePaymentBtn = document.getElementById('regCreatePaymentBtn');
+if (regCreatePaymentBtn) {
+  regCreatePaymentBtn.addEventListener('click', () => {
+    const id = regModal.dataset.regId;
+    if (!id) return Swal.fire('Error','No registration selected','error');
+    createPaymentLink(id);
+  });
+}
+</script>
+
 <!-- Approve & Message Modal -->
 <div id="studentModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
   <div class="modal-content" style="background:#fff;padding:18px;border-radius:8px;max-width:560px;width:94%;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
