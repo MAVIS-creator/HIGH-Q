@@ -230,10 +230,19 @@ $csrf = generateToken('signup_form');
 												<?php endif; ?>
 
 												<?php if (!empty($_GET['pending']) || !empty($_SESSION['registration_pending_id'])): ?>
-													<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
-														<strong>Registration submitted — awaiting admin verification</strong>
-														<p>Your registration was received and is pending review by an administrator. You will receive an email and/or phone call when your registration is verified. No payment is required until verification is complete.</p>
-													</div>
+													<script>
+													document.addEventListener('DOMContentLoaded', () => {
+														Swal.fire({
+															icon: 'info',
+															title: 'Registration Submitted',
+															html: 'Your registration was received and is pending review by an administrator. You will receive an email and/or phone call when your registration is verified.<br>No payment is required until verification is complete.',
+															timer: 6000,
+															timerProgressBar: true,
+															showConfirmButton: false
+														});
+													});
+													</script>
+													<?php unset($_SESSION['registration_pending_id']); ?>
 												<?php else: ?>
 													<form method="post">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
@@ -368,13 +377,5 @@ $csrf = generateToken('signup_form');
 </section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
-
-<?php
-// clear registration pending marker so message shows only once
-if (!empty($_SESSION['registration_pending_id'])) {
-	unset($_SESSION['registration_pending_id']);
-}
-?>
-
 
 <?php endif; ?>
