@@ -13,3 +13,8 @@
 #1 C:\xampp\htdocs\HIGH-Q\admin\pages\index.php(143): include('C:\\xampp\\htdocs...')
 #2 {main}
 
+[2025-10-04 15:30:15] Confirm registration error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'registration_id' in 'field list' -- in C:\xampp\htdocs\HIGH-Q\admin\pages\students.php:101
+#0 C:\xampp\htdocs\HIGH-Q\admin\pages\students.php(101): PDO->prepare('\n            IN...')
+#1 C:\xampp\htdocs\HIGH-Q\admin\pages\index.php(143): include('C:\\xampp\\htdocs...')
+#2 {main}
+
