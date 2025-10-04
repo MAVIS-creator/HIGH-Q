@@ -80,7 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     // Generate unique payment reference
     $reference = 'PAY-' . strtoupper(bin2hex(random_bytes(5)));
     $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0.0;
-    $method = $_POST['method'] ?? 'bank';
+  $method = $_POST['method'] ?? 'bank_transfer';
+  // normalize common values
+  if (in_array(strtolower($method), ['bank', 'bank_transfer', 'transfer'])) $method = 'bank_transfer';
+  if (strtolower($method) === 'paystack') $method = 'paystack';
 
   // Insert payment placeholder using fallback helper
   $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
