@@ -26,6 +26,11 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
     $mail = new PHPMailer(true);
 
     try {
+        // Prepare debug logging if requested
+        $debugEnabled = !empty($_ENV['MAIL_DEBUG']) && ($_ENV['MAIL_DEBUG'] === '1' || strtolower($_ENV['MAIL_DEBUG']) === 'true');
+        $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+        $debugLog = $logDir . '/mailer_debug.log';
+
         // Server settings (from .env)
         $mail->isSMTP();
         $mail->Host       = $_ENV['MAIL_HOST'];
@@ -34,6 +39,13 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         $mail->Password   = $_ENV['MAIL_PASSWORD'];
         $mail->SMTPSecure = $_ENV['MAIL_ENCRYPTION'] ?? PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = $_ENV['MAIL_PORT'] ?? 587;
+
+        if (!empty($debugEnabled)) {
+            $mail->SMTPDebug = 2; // show client/server messages
+            $mail->Debugoutput = function($str, $level) use ($debugLog) {
+                @file_put_contents($debugLog, "[" . date('c') . "] [level=" . $level . "] " . $str . "\n", FILE_APPEND | LOCK_EX);
+            };
+        }
 
         // Recipients
         $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
@@ -53,7 +65,9 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
 
         return $mail->send();
     } catch (Exception $e) {
-        error_log("Mailer Error: " . $mail->ErrorInfo);
+        // Log PHPMailer error (includes Debug output if enabled)
+        try { @file_put_contents(__DIR__ . '/../../storage/logs/students_confirm_errors.log', "[" . date('c') . "] Mailer Exception: " . ($mail->ErrorInfo ?? $e->getMessage()) . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+        error_log("Mailer Error: " . ($mail->ErrorInfo ?? $e->getMessage()));
         return false;
     }
 }
