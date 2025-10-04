@@ -427,10 +427,16 @@ function doAction(action, id) {
     })
     .then(r => {
         if (!r.ok) throw new Error('Network error ' + r.status);
-        return r.json();
+        return r.text().then(text => {
+            try { return JSON.parse(text); } catch(e) { return { __raw: text }; }
+        });
     })
     .then(data => {
-        // normalize status for compatibility with server returning 'ok' or 'success'
+        if (data && data.__raw) {
+            // server returned non-JSON (likely HTML), show raw body for debugging
+            Swal.fire({ icon: 'error', title: 'Unexpected response', html: '<pre style="text-align:left;white-space:pre-wrap;max-height:300px;overflow:auto">' + Swal.escapeHtml(data.__raw) + '</pre>' });
+            return;
+        }
         const status = (data.status === 'ok') ? 'success' : data.status;
         const icon = (status === 'ok' || status === 'success') ? 'success' : status;
         Swal.fire({ icon: icon, title: data.message || '' }).then(() => {
