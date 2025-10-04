@@ -4,6 +4,33 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
+// --- Early AJAX handling: ensure JSON responses are not contaminated by HTML ---
+// Determine requested action (AJAX clients typically send action via POST)
+$earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
+if (!empty($earlyAction)) {
+  // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
+  header('Content-Type: application/json');
+
+  // Try to load APP_URL from .env if Dotenv is available, otherwise fall back to request host
+  $baseUrl = null;
+  if (class_exists('\Dotenv\\Dotenv')) {
+    try {
+      $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+      $dotenv->load();
+      $baseUrl = rtrim($_ENV['APP_URL'] ?? ($_ENV['APP_URL'] ?? ''), '/');
+    } catch (Throwable $e) {
+      // ignore dotenv load errors
+      $baseUrl = null;
+    }
+  }
+  if (empty($baseUrl)) {
+    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $baseUrl = $proto . '://' . $host;
+  }
+  // expose $baseUrl for later handlers in this file
+  $GLOBALS['HQ_BASE_URL'] = $baseUrl;
+}
 
 requirePermission('students'); // where 'students' matches the menu slug
 // Generate CSRF token
