@@ -697,6 +697,7 @@ modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display=
         <button type="submit" class="btn btn-approve">Confirm</button>
       </form>
       <button id="regRejectBtn" class="btn btn-banish">Reject</button>
+      <button id="regCreatePaymentBtn" class="btn header-cta" style="margin-left:8px;">Create payment link</button>
     </div>
   </div>
 </div>
