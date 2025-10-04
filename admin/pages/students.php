@@ -93,18 +93,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $base = rtrim($base, '/');
     // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
-    $link = $base . '/public/payments_wait.php?ref=' . urlencode($reference);
+  // Use a prettier, public-facing URL (e.g. /pay/{ref})
+  $link = $base . '/pay/' . urlencode($reference);
 
     // Try to send email to registrant with the payment link
     $emailSent = false;
     if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
       try {
         $subject = 'Payment link for your registration';
-        $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] ?? '') . ',</p>';
-        $body .= '<p>Your registration requires payment. Please complete payment using the link below:</p>';
-        $body .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
-        $body .= '<p>Reference: <strong>' . htmlspecialchars($reference) . '</strong></p>';
-        $body .= '<p>Thanks,<br>HIGH Q SOLID ACADEMY</p>';
+  $body = '<div style="font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.4">';
+  $body .= '<h2 style="color:#1a73e8;margin-bottom:0.25rem">Registration Approved — Next Step: Payment</h2>';
+  $body .= '<p style="margin-top:0.5rem">Hi ' . htmlspecialchars($reg['first_name'] ?? '') . ',</p>';
+  $body .= '<p>Thank you — your registration has been reviewed and accepted. To complete your registration and secure your place, please complete the payment using the secure link below.</p>';
+  $body .= '<p style="text-align:center;margin:20px 0"><a href="' . htmlspecialchars($link) . '" style="background-color:#1a73e8;color:#ffffff;padding:12px 18px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600">Complete Payment</a></p>';
+  $body .= '<p style="font-size:0.95rem;color:#555">If the button above does not work, copy and paste this URL into your browser:</p>';
+  $body .= '<p style="word-break:break-all;"><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
+  $body .= '<p style="margin-top:0.5rem">Reference: <strong>' . htmlspecialchars($reference) . '</strong></p>';
+  $body .= '<hr style="border:none;border-top:1px solid #eee;margin:18px 0">';
+  $body .= '<p style="font-size:0.9rem;color:#666">If you have questions, reply to this email or contact our support team. Best regards,<br><strong>HIGH Q SOLID ACADEMY</strong></p>';
+  $body .= '</div>';
         $emailSent = (bool) sendEmail($reg['email'], $subject, $body);
         if (!$emailSent) {
           // log a note to the students_confirm_errors log for admin debugging
@@ -179,13 +186,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     }
     $base = rtrim($base, '/');
     // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
-    $paymentLink = $base . '/public/payments_wait.php?ref=' . urlencode($ref);
+  $paymentLink = $base . '/pay/' . urlencode($ref);
 
     // Send email
     $email_sent = false;
     if ($email) {
       $subject = "Payment Link for Your Registration";
-      $message = "<p>Hi " . htmlspecialchars($reg['first_name']) . ",</p>\n                <p>Please complete your payment using the secure link below:</p>\n                <p><a href='" . htmlspecialchars($paymentLink) . "'>" . htmlspecialchars($paymentLink) . "</a></p>\n                <p>Best regards,<br><strong>HIGH Q SOLID ACADEMY</strong></p>\n            ";
+  $message = '<div style="font-family:Arial,Helvetica,sans-serif;color:#222;line-height:1.45">';
+  $message .= '<h2 style="color:#1a73e8;margin-bottom:0.25rem">Your Registration Has Been Accepted</h2>';
+  $message .= '<p style="margin-top:0.5rem">Hi ' . htmlspecialchars($reg['first_name']) . ',</p>';
+  $message .= '<p>Congratulations — your registration has been reviewed and accepted. To finalize your enrollment, please complete the payment using the secure link below.</p>';
+  $message .= '<p style="text-align:center;margin:20px 0"><a href="' . htmlspecialchars($paymentLink) . '" style="background-color:#1a73e8;color:#ffffff;padding:12px 18px;border-radius:6px;text-decoration:none;display:inline-block;font-weight:600">Complete Your Payment</a></p>';
+  $message .= '<p style="font-size:0.95rem;color:#555">If the button does not work, use this URL:</p>';
+  $message .= '<p style="word-break:break-all;"><a href="' . htmlspecialchars($paymentLink) . '">' . htmlspecialchars($paymentLink) . '</a></p>';
+  $message .= '<p style="margin-top:0.5rem">Reference: <strong>' . htmlspecialchars($ref) . '</strong></p>';
+  $message .= '<hr style="border:none;border-top:1px solid #eee;margin:18px 0">';
+  $message .= '<p style="font-size:0.9rem;color:#666">If you need assistance, reply to this message or contact support.</p>';
+  $message .= '<p style="margin-top:6px"><strong>Best regards,<br>HIGH Q SOLID ACADEMY</strong></p>';
+  $message .= '</div>';
       $email_sent = sendEmail($email, $subject, $message);
     }
 
