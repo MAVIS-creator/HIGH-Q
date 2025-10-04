@@ -1,5 +1,21 @@
 <?php
 // admin/includes/header.php
+// If this is an AJAX or API call expecting JSON, do not emit the full HTML header
+$isAjaxRequest = false;
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    $isAjaxRequest = true;
+}
+// Also consider requests that explicitly accept JSON
+if (!$isAjaxRequest && !empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
+    $isAjaxRequest = true;
+}
+if ($isAjaxRequest) {
+    // For AJAX requests we still want to perform lightweight setup (session/auth) but avoid HTML output.
+    // Return early so that pages which include this header for UI don't accidentally send HTML when they
+    // intended to return JSON. Caller scripts can still perform logging or authentication earlier.
+    return;
+}
+
 // Start output buffering so downstream header() calls succeed even if this file emits HTML
 if (!headers_sent()) {
     ob_start();
