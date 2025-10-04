@@ -2,7 +2,6 @@
 // admin/pages/payments.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
-requirePermission('payments');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
@@ -257,6 +256,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     if (!empty($_GET['debug']) && $_GET['debug']==='1') $resp['debug_post'] = $_POST;
     echo json_encode($resp); exit;
 }
+
+// Now verify permission for the rest of the page (non-AJAX)
+requirePermission('payments');
 
 $pageTitle = 'Payments';
 require_once __DIR__ . '/../includes/header.php';
