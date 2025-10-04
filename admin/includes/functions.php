@@ -47,6 +47,19 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
             };
         }
 
+        // Ensure PHPMailer uses PHP's configured CA file when present to avoid cert verify failures
+        $caFile = ini_get('openssl.cafile') ?: ($_ENV['MAIL_CAFILE'] ?? null);
+        if (!empty($caFile) && is_readable($caFile)) {
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer' => true,
+                    'verify_peer_name' => true,
+                    'allow_self_signed' => false,
+                    'cafile' => $caFile,
+                ],
+            ];
+        }
+
         // Recipients
         $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
         $mail->addAddress($to);
