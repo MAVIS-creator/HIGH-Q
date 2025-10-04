@@ -173,7 +173,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     // Generate reference + insert payment row
     $ref = uniqid("pay_");
     $amount = 20000; // adjust amount as needed
-    $method = "paystack";
+    // pick method from POST (admin UI) or fall back to bank_transfer
+    $method = $_POST['method'] ?? 'bank_transfer';
+    if (in_array(strtolower($method), ['bank', 'bank_transfer', 'transfer'])) $method = 'bank_transfer';
+    if (strtolower($method) === 'paystack') $method = 'paystack';
 
   $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
 
