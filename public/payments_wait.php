@@ -149,32 +149,67 @@ $csrf = generateToken('signup_form');
       <div id="payerRecordedInfo" style="display:none;"></div>
 
       <script>
-        // countdown derived from payment.created_at and a 2-day expiry; persists across refresh
+        // Page-level timer: 10 minutes per page load (persisted in localStorage per reference)
+        // Link-level expiry: server enforces 2 days from payment.created_at (already handled server-side)
         (function(){
           var created = <?= json_encode($payment['created_at'] ?? null) ?>;
-          var expirySeconds = 2 * 24 * 60 * 60; // 2 days
-          var el = document.getElementById('countdown');
-          function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
-          function updateCountdown(){
-            if (!created) { el.textContent = '--:--'; return; }
-            var createdTs = Math.floor(new Date(created).getTime()/1000);
-            var now = Math.floor(Date.now()/1000);
-            var remain = expirySeconds - (now - createdTs);
-            if (remain <= 0) { el.textContent = 'Link expired'; return; }
-            el.textContent = fmt(remain);
-            return remain;
-          }
-          updateCountdown();
-          setInterval(updateCountdown, 1000);
-
-          // polling for admin confirmation
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
+          var pageTimeout = 10 * 60; // 10 minutes
+          var el = document.getElementById('countdown');
+          var form = document.getElementById('payer-form');
+          var storageKey = 'hq_pay_timer_' + ref;
+
+          function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
+
+          // create or reuse a start timestamp for the page timer so refresh doesn't reset it
+          var startTs = null;
+          try {
+            var stored = localStorage.getItem(storageKey);
+            if (stored) startTs = parseInt(stored,10);
+            if (!startTs || isNaN(startTs)) { startTs = Math.floor(Date.now()/1000); localStorage.setItem(storageKey, startTs); }
+          } catch (e) { startTs = Math.floor(Date.now()/1000); }
+
+          function updatePageTimer(){
+            var now = Math.floor(Date.now()/1000);
+            var remain = pageTimeout - (now - startTs);
+            if (remain <= 0) {
+              el.textContent = 'Payment window closed — please request a new link or contact support.';
+              if (form) form.style.display = 'none';
+              return false;
+            }
+            el.textContent = fmt(remain);
+            return true;
+          }
+
+          updatePageTimer();
+          setInterval(updatePageTimer, 1000);
+
+          // polling for admin confirmation and server-side expiry
           function check(){
+            if (!ref) return;
             var xhr = new XMLHttpRequest(); xhr.open('GET', (window.HQ_BASE||'') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
-            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = r.payment.receipt_path; } else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); } } else if (r.status==='ok' && r.payment && r.payment.status==='expired'){ document.getElementById('payer-form').style.display='none'; el.textContent = 'Link expired'; } }catch(e){} }};
+            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText);
+                  if (r.status==='ok' && r.payment) {
+                    var st = r.payment.status || '';
+                    if (st === 'confirmed') {
+                      // redirect to receipt when confirmed
+                      if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                      else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                    } else if (st === 'expired') {
+                      // backend marked expired
+                      if (form) form.style.display = 'none';
+                      el.textContent = 'Link expired';
+                    }
+                  }
+                } catch(e){} }};
             xhr.send();
           }
-          var poll = setInterval(check, 10000);
+          // run an initial check and then poll
+          check();
+          setInterval(check, 10000);
+
+          // when the user successfully records a payment we can clear the page timer so UX resets on next visit
+          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); } catch(e){} });
         })();
       </script>
 
