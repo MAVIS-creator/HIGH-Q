@@ -1,15 +1,86 @@
 /* Minimal payment page styling and spinner for payments_wait.php */
-body{font-family:Arial,Helvetica,sans-serif;background:#f6f7f9;color:#222;margin:0}
-.container{max-width:900px;margin:0 auto;padding:20px}
-.minimal-header{background:#fff;border-bottom:1px solid #eee}
-.card{background:#fff;padding:18px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.04);}
-.btn-primary{background:#1a73e8;color:#fff;border:0;padding:10px 14px;border-radius:6px;cursor:pointer}
-.form-row{margin:8px 0}
-.form-row label{display:block;font-size:13px;color:#555;margin-bottom:6px}
-.form-row input{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px}
-#payerRecordedInfo{display:none}
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f6f7f9;
+    color: #222;
+    margin: 0
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px
+}
+
+.minimal-header {
+    background: #fff;
+    border-bottom: 1px solid #eee
+}
+
+.card {
+    background: #fff;
+    padding: 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.btn-primary {
+    background: #1a73e8;
+    color: #fff;
+    border: 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer
+}
+
+.form-row {
+    margin: 8px 0
+}
+
+.form-row label {
+    display: block;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px
+}
+
+.form-row input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px
+}
+
+#payerRecordedInfo {
+    display: none
+}
+
 /* spinner */
-.spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(0,0,0,0.08);border-top-color:#1a73e8;animation:spin 1s linear infinite;margin:12px 0}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.spinner {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 4px solid rgba(0, 0, 0, 0.08);
+    border-top-color: #1a73e8;
+    animation: spin 1s linear infinite;
+    margin: 12px 0
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0)
+    }
+
+    to {
+        transform: rotate(360deg)
+    }
+}
+
 /* countdown */
-#countdown{font-family:monospace;background:#fff;padding:8px;border-radius:6px;display:inline-block}
+#countdown {
+    font-family: monospace;
+    background: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    display: inline-block
+}

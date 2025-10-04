@@ -43,6 +43,7 @@ $csrf = generateToken('signup_form');
       <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
   <?php else: ?>
       <div class="card">
+        <div class="spinner" id="pageSpinner" style="display:none"></div>
   <p>Please transfer <strong>₦<?= number_format($payment['amount'],2) ?></strong> to the account below and use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong>.</p>
   <p><strong>Account Name:</strong> <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
   <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '') ?><br>
@@ -70,6 +71,7 @@ $csrf = generateToken('signup_form');
             form.addEventListener('submit', function(e){
               e.preventDefault();
               btn.disabled = true; btn.textContent = 'Recording...';
+              document.getElementById('pageSpinner').style.display = 'block';
               var fd = new FormData(form);
               fetch('api/mark_sent.php', {
                 method: 'POST',
@@ -103,12 +105,13 @@ $csrf = generateToken('signup_form');
                         }
                         // trigger an immediate check so the page can react to a quick admin confirmation
                         try { if (typeof check === 'function') check(); } catch(e){}
+                        document.getElementById('pageSpinner').style.display = 'none';
                       } else {
                         // show raw server message when available to make debugging easier
                         var msg = j.message || 'Failed to record transfer.';
                         if (j.raw) msg += '\nServer response:\n' + j.raw;
                         alert(msg);
-                        btn.disabled = false; btn.textContent = 'I have sent the money';
+                        btn.disabled = false; btn.textContent = 'I have sent the money'; document.getElementById('pageSpinner').style.display = 'none';
                       }
                 }).catch(function(err){ alert('Network error: ' + (err && err.message ? err.message : 'unknown')); btn.disabled = false; btn.textContent = 'I have sent the money'; });
             });
