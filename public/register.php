@@ -235,10 +235,19 @@ $csrf = generateToken('signup_form');
 														Swal.fire({
 															icon: 'info',
 															title: 'Registration Submitted',
-															html: 'Your registration was received and is pending review by an administrator. You will receive an email and/or phone call when your registration is verified.<br>No payment is required until verification is complete.',
-															timer: 6000,
-															timerProgressBar: true,
-															showConfirmButton: false
+															html: 'Your registration was received and is pending review by an administrator. You will receive an email and/or phone call when your registration is verified.<br><strong>No payment is required until verification is complete.</strong>',
+															showCancelButton: true,
+															confirmButtonText: 'Go to Dashboard',
+															cancelButtonText: 'Stay on this page',
+															footer: '<a href="/public/terms.php" target="_blank" style="color:#444">Terms & Privacy</a>',
+															didClose: () => {
+																// optional: focus return
+															}
+														}).then(result => {
+															if (result.isConfirmed) {
+																// Redirect to a sensible place (home or student list)
+																window.location = 'index.php';
+															}
 														});
 													});
 													</script>
