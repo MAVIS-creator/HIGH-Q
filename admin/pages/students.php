@@ -55,9 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0.0;
     $method = $_POST['method'] ?? 'bank';
 
-    // Insert payment placeholder
-    $ins = $pdo->prepare('INSERT INTO payments (student_id, registration_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, "pending", NOW())');
-    $ins->execute([ $reg['user_id'] ?: null, $reg['id'], $amount, $method, $reference ]);
+  // Insert payment placeholder (no registration_id column in payments table)
+  $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
+  $ins->execute([ $reg['user_id'] ?: null, $amount, $method, $reference ]);
 
     // Build link using loaded base URL if available
     $base = $GLOBALS['HQ_BASE_URL'] ?? null;
@@ -98,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     $amount = 20000; // adjust amount as needed
     $method = "paystack";
 
-    $ins = $pdo->prepare("\n            INSERT INTO payments (student_id, registration_id, amount, payment_method, reference, status, created_at)\n            VALUES (?, ?, ?, ?, ?, 'pending', NOW())\n        ");
-    $ins->execute([$studentId, $reg['id'], $amount, $method, $ref]);
+  $ins = $pdo->prepare("\n            INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at)\n            VALUES (?, ?, ?, ?, 'pending', NOW())\n        ");
+  $ins->execute([$studentId, $amount, $method, $ref]);
 
     // Build payment link (prefer APP_URL from environment if loaded)
     $base = $GLOBALS['HQ_BASE_URL'] ?? null;
