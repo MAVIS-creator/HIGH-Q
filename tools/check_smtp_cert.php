@@ -6,7 +6,18 @@ $cafile = 'C:\\xampp\\php\\extras\\ssl\\cacert.pem';
 
 echo "Connecting to $host:$port using CA file $cafile\n";
 $errno = 0; $errstr = '';
-$socket = stream_socket_client("tcp://$host:$port", $errno, $errstr, 10);
+$context = stream_context_create([
+    'ssl' => [
+        'capture_peer_cert' => true,
+        'verify_peer' => true,
+        'verify_peer_name' => true,
+        'allow_self_signed' => false,
+        'cafile' => $cafile,
+        'peer_name' => $host,
+    ]
+]);
+
+$socket = stream_socket_client("tcp://$host:$port", $errno, $errstr, 10, STREAM_CLIENT_CONNECT, $context);
 if (!$socket) {
     echo "socket connect failed: $errno - $errstr\n";
     exit(1);
