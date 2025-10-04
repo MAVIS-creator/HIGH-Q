@@ -329,7 +329,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-      <form id="tutorForm" method="post" action="">
+  <form id="tutorForm" method="post" action="index.php?pages=tutors&action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
