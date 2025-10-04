@@ -1,10 +1,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Set the base to the project subdirectory so rules map correctly when the app is not in the server root
+    RewriteBase /HIGH-Q/
 
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ /public/payments_wait.php?ref=$1 [L,QSA]
+    # Use a relative target (no leading slash) so the rewrite stays inside this project folder
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
 
-    # If you have an existing front controller in /public, you can add other rules here.
     # Preserve existing files and directories
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
