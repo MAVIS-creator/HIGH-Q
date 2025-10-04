@@ -24,3 +24,5 @@
 error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
 [2025-10-04T17:32:16+02:00] Mailer Exception: SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
 error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
+[2025-10-04T20:44:24+02:00] Mailer Exception: SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
+error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
