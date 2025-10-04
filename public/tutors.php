@@ -6,9 +6,16 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   try {
     require_once __DIR__ . '/config/db.php';
     if (isset($pdo)) {
+      // Try featured tutors first
       $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
       $stmt->execute();
       $tutors = $stmt->fetchAll();
+      // If none are featured, fall back to any tutors so the section is visible for testing
+      if (empty($tutors)) {
+        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY created_at DESC LIMIT 6");
+        $stmt2->execute();
+        $tutors = $stmt2->fetchAll();
+      }
     }
   } catch (Throwable $e) {
     // swallow DB errors and render an empty state
@@ -25,7 +32,19 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     </div>
 
     <?php if (empty($tutors)): ?>
-      <p class="no-posts">No tutors available at this time.</p>
+      <p class="no-posts">No tutors available at this time. (If you're testing, create a tutor in the admin area.)</p>
+      <!-- Placeholder tutor so layout can be previewed -->
+      <div class="tutors-grid">
+        <article class="tutor-card">
+          <div class="tutor-thumb"><img src="./assets/images/avatar-placeholder.png" alt="Placeholder"></div>
+          <div class="tutor-body">
+            <h3>Sample Tutor</h3>
+            <p class="role">B.Sc, M.Ed</p>
+            <p class="tutor-short">Experienced educator in Mathematics and Sciences.</p>
+            <div class="subjects"><span class="tag">Mathematics</span><span class="tag">Physics</span></div>
+          </div>
+        </article>
+      </div>
     <?php else: ?>
       <div class="tutors-grid">
         <?php foreach ($tutors as $t): ?>
