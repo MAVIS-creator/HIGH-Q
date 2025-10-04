@@ -73,8 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   } catch (Throwable $ex) { /* ignore logging errors */ }
 
   $resp = ['success' => false, 'error' => 'Server error'];
-  // If explicit debug requested, include the exception message and trace
-  if (!empty($_GET['debug']) && $_GET['debug'] === '1') {
+  // If explicit debug requested via GET or POST, include the exception message and trace
+  $debugRequested = (!empty($_GET['debug']) && $_GET['debug'] === '1') || (!empty($_POST['debug']) && $_POST['debug'] === '1');
+  if ($debugRequested) {
     $resp['error'] = $e->getMessage();
     $resp['trace'] = $e->getTraceAsString();
   }
