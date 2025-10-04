@@ -2170,6 +2170,11 @@ nav a.active::after { background: var(--hq-yellow); }
   background: #fff;
 }
 
+#pending-notice.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
 /* Header row */
 .post-header {
   display: flex;
