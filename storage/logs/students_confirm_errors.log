@@ -19,3 +19,4 @@
 #2 {main}
 
 [2025-10-04T16:15:03+02:00] Mailer Exception: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
+
