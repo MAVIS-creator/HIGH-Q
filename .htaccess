@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ /public/payments_wait.php?ref=$1 [L,QSA]
+
+    # If you have an existing front controller in /public, you can add other rules here.
+    # Preserve existing files and directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+</IfModule>
+
+# Fallback: if mod_rewrite isn't available, users can still use the full /public/payments_wait.php?ref=REF URL
