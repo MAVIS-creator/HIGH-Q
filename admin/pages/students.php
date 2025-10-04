@@ -93,7 +93,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $base = rtrim($base, '/');
     $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($reference);
 
-    echo json_encode(['success'=>true,'link'=>$link,'reference'=>$reference,'student'=>['first_name'=>$reg['first_name'] ?? null,'last_name'=>$reg['last_name'] ?? null,'email'=>$reg['email'] ?? null]]);
+    // Try to send email to registrant with the payment link
+    $emailSent = false;
+    if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+      try {
+        $subject = 'Payment link for your registration';
+        $body = '<p>Hi ' . htmlspecialchars($reg['first_name'] ?? '') . ',</p>';
+        $body .= '<p>Your registration requires payment. Please complete payment using the link below:</p>';
+        $body .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
+        $body .= '<p>Reference: <strong>' . htmlspecialchars($reference) . '</strong></p>';
+        $body .= '<p>Thanks,<br>HIGH Q SOLID ACADEMY</p>';
+        $emailSent = (bool) sendEmail($reg['email'], $subject, $body);
+        if (!$emailSent) {
+          // log a note to the students_confirm_errors log for admin debugging
+          try {
+            $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+            @file_put_contents($logDir . '/students_confirm_errors.log', "[" . date('Y-m-d H:i:s') . "] create_payment_link email failed to send to: " . ($reg['email'] ?? 'unknown') . "\n", FILE_APPEND | LOCK_EX);
+          } catch (Throwable $_) { }
+        }
+      } catch (Throwable $me) {
+        try { $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true); @file_put_contents($logDir . '/students_confirm_errors.log', "[" . date('Y-m-d H:i:s') . "] create_payment_link sendEmail exception: " . $me->getMessage() . "\n" . $me->getTraceAsString() . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+        $emailSent = false;
+      }
+    }
+
+    echo json_encode(['success'=>true,'link'=>$link,'reference'=>$reference,'email_sent'=>(bool)$emailSent,'email'=>$reg['email'] ?? null,'student'=>['first_name'=>$reg['first_name'] ?? null,'last_name'=>$reg['last_name'] ?? null,'email'=>$reg['email'] ?? null]]);
     exit;
   } catch (Throwable $e) {
     // Detailed logging to students_confirm_errors.log to help debugging
