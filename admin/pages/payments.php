@@ -304,13 +304,26 @@ $totalPages = (int)ceil($total / $perPage);
         <tbody>
         <?php foreach($payments as $p): ?>
             <?php
+                // Compute a human-friendly display status when DB value is missing/null
+                $displayStatus = $p['status'] ?? null;
+                if (empty($displayStatus)) {
+                    if (!empty($p['payer_account_number']) || !empty($p['payer_account_name']) || !empty($p['payer_bank_name'])) {
+                        $displayStatus = 'sent';
+                    } elseif (!empty($p['reference'])) {
+                        $displayStatus = 'pending';
+                    } else {
+                        $displayStatus = 'unknown';
+                    }
+                }
+
                 $dataAttrs = 'data-payment-id="' . htmlspecialchars($p['id']) . '"'
                     . ' data-payer-name="' . htmlspecialchars($p['payer_account_name'] ?? '') . '"'
                     . ' data-payer-account="' . htmlspecialchars($p['payer_account_number'] ?? '') . '"'
                     . ' data-payer-bank="' . htmlspecialchars($p['payer_bank_name'] ?? '') . '"'
                     . ' data-reference="' . htmlspecialchars($p['reference'] ?? '') . '"'
                     . ' data-email="' . htmlspecialchars($p['email'] ?? '') . '"'
-                    . ' data-amount="' . htmlspecialchars(number_format($p['amount'],2)) . '"';
+                    . ' data-amount="' . htmlspecialchars(number_format($p['amount'],2)) . '"'
+                    . ' data-display-status="' . htmlspecialchars($displayStatus) . '"';
             ?>
             <tr <?= $dataAttrs ?> >
                 <td><?= htmlspecialchars($p['id']) ?></td>
@@ -318,13 +331,13 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars($p['payer_account_name'] ?? ($p['name'] ?? '')) ?></td>
                 <td><?= htmlspecialchars(number_format($p['amount'],2)) ?></td>
                 <td><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
-                <td><?= htmlspecialchars($p['status']) ?></td>
+                <td><?= htmlspecialchars(ucfirst($displayStatus)) ?></td>
                 <td><?= htmlspecialchars($p['payer_account_number'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                 <td>
                     <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
-                    <?php if ($p['status'] === 'pending' || $p['status'] === 'sent'): ?>
+                    <?php if ($displayStatus === 'pending' || $displayStatus === 'sent'): ?>
                         <div style="margin-top:6px;">
                             <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
                             <button class="btn" onclick="doAction('reject',<?= $p['id'] ?>)">Reject</button>
