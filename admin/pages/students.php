@@ -63,9 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     $ins = $pdo->prepare("\n            INSERT INTO payments (student_id, registration_id, amount, payment_method, reference, status, created_at)\n            VALUES (?, ?, ?, ?, ?, 'pending', NOW())\n        ");
     $ins->execute([$studentId, $reg['id'], $amount, $method, $ref]);
 
-    // Build payment link
-    $paymentLink = ($_SERVER['HTTPS'] ?? '') === 'on' ? 'https' : 'http';
-    $paymentLink .= '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+    // Build payment link (prefer APP_URL from environment if loaded)
+    $base = $GLOBALS['HQ_BASE_URL'] ?? null;
+    if (empty($base)) {
+      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+    }
+    // Ensure there's no trailing slash
+    $base = rtrim($base, '/');
+    $paymentLink = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
 
     // Send email
     $email_sent = false;
