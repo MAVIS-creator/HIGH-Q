@@ -113,6 +113,12 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
   background: #ccc;
 }
 
+/* Modal form label styling */
+.modal-content label {
+  color: #1a73e8; /* blue-ish label color */
+  font-weight: 600;
+}
+
 // Only Admin & Sub-Admin
 </style>';
 
