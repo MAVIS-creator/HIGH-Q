@@ -338,8 +338,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             <input type="text" name="name" id="tName" required>
           </div>
           <div>
-            <label>Title</label>
-            <input type="text" name="title" id="tTitle" placeholder="e.g., Senior Mathematics Teacher">
+            <label>Qualifications</label>
+            <input type="text" name="title" id="tTitle" placeholder="e.g., B.Sc Biology, PGCE">
           </div>
         </div>
 
