@@ -90,8 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                         }
                     } catch (Throwable $ex) { /* ignore */ }
 
-                    $payerName = $reg['first_name'] . ' ' . $reg['last_name'];
-                    $payerEmail = $reg['email'] ?? $p['email'] ?? '';
+                    $payerName = trim(($reg['first_name'] ?? '') . ' ' . ($reg['last_name'] ?? ''));
+                    // Prefer registration email when available (for guest registrations)
+                    $payerEmail = $p['email'] ?? '';
+                    try {
+                        if (empty($payerEmail) && !empty($p['registration_id'])) {
+                            $r2 = $pdo->prepare('SELECT email FROM student_registrations WHERE id = ? LIMIT 1'); $r2->execute([$p['registration_id']]); $rr = $r2->fetch(PDO::FETCH_ASSOC);
+                            if (!empty($rr['email'])) $payerEmail = $rr['email'];
+                        }
+                        // fallback to registration row fetched earlier
+                        if (empty($payerEmail) && !empty($reg['email'])) $payerEmail = $reg['email'];
+                    } catch (Throwable $e) { /* ignore */ }
                     $payerAddress = $reg['home_address'] ?? '';
 
                     $html = '<!doctype html><html><head><meta charset="utf-8"><title>Receipt ' . htmlspecialchars($p['reference']) . '</title>';
