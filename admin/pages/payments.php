@@ -285,7 +285,8 @@ $totalPages = (int)ceil($total / $perPage);
             <label for="statusFilter">Status:</label>
             <select id="statusFilter" name="status" class="small">
                 <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
-                <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
+                    <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
+                    <option value="sent"<?= $statusFilter==='sent'? ' selected':'' ?>>Sent</option>
                 <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
                 <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
             </select>
@@ -323,7 +324,7 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                 <td>
                     <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
-                    <?php if ($p['status'] === 'pending'): ?>
+                    <?php if ($p['status'] === 'pending' || $p['status'] === 'sent'): ?>
                         <div style="margin-top:6px;">
                             <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
                             <button class="btn" onclick="doAction('reject',<?= $p['id'] ?>)">Reject</button>
