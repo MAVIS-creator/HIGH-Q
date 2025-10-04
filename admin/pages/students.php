@@ -37,6 +37,44 @@ requirePermission('students'); // where 'students' matches the menu slug
 $csrf = generateToken('students_form');
 
 // Support POST-driven AJAX actions (confirm_registration, view_registration)
+// Handle create_payment_link (AJAX) - returns JSON link + reference
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create_payment_link') {
+  // Ensure admin permission
+  requirePermission('students');
+  $id = intval($_POST['id'] ?? 0);
+  if ($id <= 0) { echo json_encode(['success'=>false,'error'=>'Invalid ID']); exit; }
+
+  try {
+    $stmt = $pdo->prepare("SELECT sr.*, COALESCE(sr.email, u.email) AS email, u.id AS user_id FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$reg) { echo json_encode(['success'=>false,'error'=>'Registration not found']); exit; }
+
+    // Generate unique payment reference
+    $reference = 'PAY-' . strtoupper(bin2hex(random_bytes(5)));
+    $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0.0;
+    $method = $_POST['method'] ?? 'bank';
+
+    // Insert payment placeholder
+    $ins = $pdo->prepare('INSERT INTO payments (student_id, registration_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, "pending", NOW())');
+    $ins->execute([ $reg['user_id'] ?: null, $reg['id'], $amount, $method, $reference ]);
+
+    // Build link using loaded base URL if available
+    $base = $GLOBALS['HQ_BASE_URL'] ?? null;
+    if (empty($base)) {
+      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+    }
+    $base = rtrim($base, '/');
+    $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($reference);
+
+    echo json_encode(['success'=>true,'link'=>$link,'reference'=>$reference,'student'=>['first_name'=>$reg['first_name'] ?? null,'last_name'=>$reg['last_name'] ?? null,'email'=>$reg['email'] ?? null]]);
+    exit;
+  } catch (Throwable $e) {
+    error_log('create_payment_link error: ' . $e->getMessage());
+    echo json_encode(['success'=>false,'error'=>'Server error']); exit;
+  }
+}
+
 // Handle confirm_registration when sent either as POST action or as POST to URL with ?action=confirm_registration
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST['action'] === 'confirm_registration') || (isset($_GET['action']) && $_GET['action'] === 'confirm_registration'))) {
   $id = intval($_POST['id'] ?? $_GET['id'] ?? 0);
