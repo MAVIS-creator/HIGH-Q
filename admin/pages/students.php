@@ -10,8 +10,9 @@ requirePermission('students'); // where 'students' matches the menu slug
 $csrf = generateToken('students_form');
 
 // Support POST-driven AJAX actions (confirm_registration, view_registration)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'confirm_registration') {
-  $id = intval($_POST['id'] ?? 0);
+// Handle confirm_registration when sent either as POST action or as POST to URL with ?action=confirm_registration
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST['action'] === 'confirm_registration') || (isset($_GET['action']) && $_GET['action'] === 'confirm_registration'))) {
+  $id = intval($_POST['id'] ?? $_GET['id'] ?? 0);
 
   $pdo->beginTransaction();
   try {
