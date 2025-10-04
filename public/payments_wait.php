@@ -71,12 +71,23 @@ $csrf = generateToken('signup_form');
               e.preventDefault();
               btn.disabled = true; btn.textContent = 'Recording...';
               var fd = new FormData(form);
-              fetch('api/mark_sent.php', { method: 'POST', body: fd, credentials: 'same-origin' })
-                .then(function(r){ return r.json(); })
+              fetch('api/mark_sent.php', {
+                method: 'POST',
+                body: fd,
+                credentials: 'same-origin',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+              })
+                .then(function(r){
+                    // Try to parse JSON safely; if not JSON, read as text for debugging
+                    return r.text().then(function(text){
+                        try { return JSON.parse(text); } catch(e) { return { status: 'error', message: 'Invalid server response', raw: text }; }
+                    });
+                })
                 .then(function(j){
                       if (j.status === 'ok') {
                         // show success and let polling detect confirmation
                         btn.textContent = 'Recorded — awaiting admin verification';
+                        btn.disabled = true;
                         // display recorded payer details
                         var info = document.getElementById('payerRecordedInfo');
                         if (info) {
@@ -90,11 +101,16 @@ $csrf = generateToken('signup_form');
                           info.style.marginTop = '12px';
                           info.style.display = 'block';
                         }
+                        // trigger an immediate check so the page can react to a quick admin confirmation
+                        try { if (typeof check === 'function') check(); } catch(e){}
                       } else {
-                        alert(j.message || 'Failed to record transfer.');
+                        // show raw server message when available to make debugging easier
+                        var msg = j.message || 'Failed to record transfer.';
+                        if (j.raw) msg += '\nServer response:\n' + j.raw;
+                        alert(msg);
                         btn.disabled = false; btn.textContent = 'I have sent the money';
                       }
-                }).catch(function(){ alert('Network error'); btn.disabled = false; btn.textContent = 'I have sent the money'; });
+                }).catch(function(err){ alert('Network error: ' + (err && err.message ? err.message : 'unknown')); btn.disabled = false; btn.textContent = 'I have sent the money'; });
             });
             
           })();
