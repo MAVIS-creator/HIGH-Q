@@ -6,10 +6,17 @@ requirePermission('payments');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-// handle ajax actions
+// Ensure logs directory exists for AJAX handlers
+try { if (!is_dir(__DIR__ . '/../../storage/logs')) @mkdir(__DIR__ . '/../../storage/logs', 0755, true); } catch (Throwable $e) {}
+
+// handle ajax actions - keep this before any header/template output so AJAX gets JSON only
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     // Always respond with JSON for AJAX
     header('Content-Type: application/json');
+    // quick auth/session check - return JSON error if not logged in instead of redirecting
+    if (empty($_SESSION['user'])) {
+        echo json_encode(['status'=>'error','message'=>'Not authenticated']); exit;
+    }
     // Simple rate limiter: max 6 actions per 30 seconds per session
     if (!isset($_SESSION['payments_rate'])) $_SESSION['payments_rate'] = ['count'=>0,'time'=>time()];
     $rate = &$_SESSION['payments_rate'];
