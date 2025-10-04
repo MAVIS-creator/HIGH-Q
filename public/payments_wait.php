@@ -2,13 +2,35 @@
 // public/payments_wait.php
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
+$siteSettings = [];
 require_once __DIR__ . '/config/functions.php';
 $ref = $_GET['ref'] ?? ($_SESSION['last_payment_reference'] ?? '');
+$HQ_SUBPATH = '/HIGH-Q'; // adjust if you move the project
+$HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $HQ_SUBPATH : '');
+
+// load site settings (bank details, logo) for display
+try {
+  $stmtS = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
+  $siteSettings = $stmtS->fetch(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) { $siteSettings = []; }
 $payment = null;
 if ($ref) {
-    $stmt = $pdo->prepare('SELECT p.*, u.email, u.name FROM payments p LEFT JOIN users u ON u.id = p.student_id WHERE p.reference = ? LIMIT 1');
-    $stmt->execute([$ref]);
-    $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+  $stmt = $pdo->prepare('SELECT p.*, u.email, u.name FROM payments p LEFT JOIN users u ON u.id = p.student_id WHERE p.reference = ? LIMIT 1');
+  $stmt->execute([$ref]);
+  $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  // enforce 2-day expiry for unpaid pending links
+  try {
+    if ($payment && !empty($payment['created_at'])) {
+      $createdTs = strtotime($payment['created_at']);
+      $expirySeconds = 2 * 24 * 60 * 60; // 2 days
+      if (time() - $createdTs > $expirySeconds && in_array($payment['status'], ['pending'])) {
+        $upd = $pdo->prepare('UPDATE payments SET status = "expired", updated_at = NOW() WHERE id = ?');
+        $upd->execute([$payment['id']]);
+        $payment['status'] = 'expired';
+      }
+    }
+  } catch (Throwable $e) { /* ignore expiry update errors */ }
 }
 // Minimal branded waiting page: include site CSS but omit full header/footer
 $csrf = generateToken('signup_form');
@@ -21,12 +43,12 @@ $csrf = generateToken('signup_form');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="./assets/css/payment.css">
+  <link rel="stylesheet" href="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/css/payment.css">
 </head>
 <body>
   <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
     <div class="container" style="display:flex;align-items:center;gap:12px;">
-      <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <img src="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
         <div style="font-size:12px;color:#666;">Secure payment</div>
@@ -40,18 +62,18 @@ $csrf = generateToken('signup_form');
   <div class="container">
     <h2>Payment in Progress</h2>
     <?php if (!$payment): ?>
-      <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
+  <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
   <?php else: ?>
       <div class="card">
         <div class="spinner" id="pageSpinner" style="display:none"></div>
   <p>Please transfer <strong>₦<?= number_format($payment['amount'],2) ?></strong> to the account below and use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong>.</p>
   <p><strong>Account Name:</strong> <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
-  <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '') ?><br>
-  <strong>Account Number:</strong> <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '') ?></p>
+  <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
+  <strong>Account Number:</strong> <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
 
-        <p>After making the transfer, click "I have sent the money" and provide your transfer details. An admin will verify within 10 minutes. If confirmation takes longer, an agent will contact you.</p>
+    <p>This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details. An admin will verify and confirm your payment.</p>
 
-  <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">10:00</div>
+  <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">--:--</div>
 
   <form method="post" action="#" id="payer-form">
           <!-- mark_sent API expects _csrf and payment_id fields -->
@@ -65,17 +87,17 @@ $csrf = generateToken('signup_form');
 
         <script>
           // submit mark-sent via fetch to API endpoint and handle response
+          // Expose HQ_BASE globally so other scripts (polling) can use it
+          window.HQ_BASE = window.location.origin + '<?= $HQ_SUBPATH ?>';
           (function(){
             var form = document.getElementById('payer-form');
-            // Use a stable base so AJAX requests don't resolve relative to the rewritten /pay/ URL
-            var HQ_BASE = window.location.origin + '/HIGH-Q';
             var btn = document.getElementById('markSentBtn');
             form.addEventListener('submit', function(e){
               e.preventDefault();
               btn.disabled = true; btn.textContent = 'Recording...';
               document.getElementById('pageSpinner').style.display = 'block';
               var fd = new FormData(form);
-              fetch(HQ_BASE + '/public/api/mark_sent.php', {
+              fetch(window.HQ_BASE + '/public/api/mark_sent.php', {
                 method: 'POST',
                 body: fd,
                 credentials: 'same-origin',
@@ -127,18 +149,29 @@ $csrf = generateToken('signup_form');
       <div id="payerRecordedInfo" style="display:none;"></div>
 
       <script>
-        // simple 10 minute countdown + polling for status
+        // countdown derived from payment.created_at and a 2-day expiry; persists across refresh
         (function(){
-          var total = 10*60; // seconds
+          var created = <?= json_encode($payment['created_at'] ?? null) ?>;
+          var expirySeconds = 2 * 24 * 60 * 60; // 2 days
           var el = document.getElementById('countdown');
           function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
-          var iv = setInterval(function(){ total--; if (total<0){ clearInterval(iv); el.textContent = 'Time elapsed — confirmation may take longer. A tutor will contact you.'; return; } el.textContent = fmt(total); }, 1000);
+          function updateCountdown(){
+            if (!created) { el.textContent = '--:--'; return; }
+            var createdTs = Math.floor(new Date(created).getTime()/1000);
+            var now = Math.floor(Date.now()/1000);
+            var remain = expirySeconds - (now - createdTs);
+            if (remain <= 0) { el.textContent = 'Link expired'; return; }
+            el.textContent = fmt(remain);
+            return remain;
+          }
+          updateCountdown();
+          setInterval(updateCountdown, 1000);
 
-          // polling
+          // polling for admin confirmation
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
           function check(){
-            var xhr = new XMLHttpRequest(); xhr.open('GET', HQ_BASE + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
-            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = r.payment.receipt_path; } else { window.location = 'receipt.php?ref=' + encodeURIComponent(ref); } } }catch(e){} }};
+            var xhr = new XMLHttpRequest(); xhr.open('GET', (window.HQ_BASE||'') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
+            xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText); if (r.status==='ok' && r.payment && r.payment.status==='confirmed'){ if (r.payment.receipt_path){ window.location = r.payment.receipt_path; } else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); } } else if (r.status==='ok' && r.payment && r.payment.status==='expired'){ document.getElementById('payer-form').style.display='none'; el.textContent = 'Link expired'; } }catch(e){} }};
             xhr.send();
           }
           var poll = setInterval(check, 10000);
