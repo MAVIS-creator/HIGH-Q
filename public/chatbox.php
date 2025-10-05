@@ -282,42 +282,60 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const attachmentPreview = document.getElementById('attachmentPreview');
             // emoji removed
 
-            function getThreadId() {
-                return localStorage.getItem('hq_thread_id') || null;
-            }
-
-            function setThreadId(id) {
-                localStorage.setItem('hq_thread_id', id);
-            }
+            function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
+            function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
 
             function appendMessage(sender, msg, is_staff = false, attachments = []) {
                 const div = document.createElement('div');
                 div.className = 'chat-message ' + (is_staff ? 'staff' : 'visitor');
                 div.innerHTML = '<strong>' + sender + ':</strong> ' + msg;
                 attachments.forEach(a => {
-                    const img = document.createElement('img');
-                    img.src = a;
-                    img.className = 'chat-image';
-                    div.appendChild(img);
+                    // if it's an object with type, render properly
+                    if (typeof a === 'object' && a.type && a.type.startsWith('image')) {
+                        const img = document.createElement('img');
+                        img.src = a.url;
+                        img.className = 'chat-image';
+                        div.appendChild(img);
+                    } else if (typeof a === 'object') {
+                        const link = document.createElement('a');
+                        link.href = a.url;
+                        link.target = '_blank';
+                        link.textContent = a.name || 'Attachment';
+                        div.appendChild(document.createElement('br'));
+                        div.appendChild(link);
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = a;
+                        img.className = 'chat-image';
+                        div.appendChild(img);
+                    }
                 });
                 chatDiv.appendChild(div);
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }
 
-            // Attachment handling with preview
-            attachBtn.addEventListener('click', () => {
-                attachmentInput.click();
-            });
+            // Attachment handling with preview (images show thumbnails, others show filename)
+            attachBtn.addEventListener('click', () => { attachmentInput.click(); });
             attachmentInput.addEventListener('change', () => {
                 attachmentPreview.innerHTML = '';
                 Array.from(attachmentInput.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        attachmentPreview.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            attachmentPreview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        const div = document.createElement('div');
+                        div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                        div.style.padding = '6px 8px';
+                        div.style.borderRadius = '6px';
+                        div.style.background = '#fff';
+                        div.style.marginTop = '4px';
+                        attachmentPreview.appendChild(div);
+                    }
                 });
             });
 
@@ -343,7 +361,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     const j = await res.json();
                     if (j.status === 'ok') {
                         setThreadId(j.thread_id);
-                        const attachedFiles = Array.from(attachmentInput.files).map(f => URL.createObjectURL(f));
+                        const attachedFiles = Array.from(attachmentInput.files).map(f => ({ url: URL.createObjectURL(f), name: f.name, type: f.type }));
                         appendMessage(nameInput.value, msgInput.value, false, attachedFiles);
                         msgInput.value = '';
                         msgInput.style.height = 'auto';
@@ -354,6 +372,38 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     console.error(e);
                 }
             }
+
+            // Start flow: show start form, then show footer after starting
+            const chatStartEl = document.getElementById('chatStart');
+            const chatFooterEl = document.getElementById('chatFooter');
+            const startBtn = document.getElementById('startBtn');
+            const startName = document.getElementById('start_name');
+            const startEmail = document.getElementById('start_email');
+            const startMsg = document.getElementById('start_message');
+
+            startBtn.addEventListener('click', async function(){
+                const name = startName.value.trim() || 'Guest';
+                const email = startEmail.value.trim() || '';
+                const message = startMsg.value.trim() || 'Hi, I need help.';
+                // set visitor name/email into footer inputs
+                document.getElementById('c_name').value = name;
+                // post initial message via send_message flow to create thread and add message
+                const fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', message);
+                try {
+                    const res = await fetch('?action=send_message', { method: 'POST', body: fd });
+                    const j = await res.json();
+                    if (j.status === 'ok') {
+                        setThreadId(j.thread_id);
+                        // hide start form and show footer
+                        chatStartEl.style.display = 'none';
+                        chatFooterEl.style.display = 'flex';
+                        // show system message
+                        appendMessage('SYSTEM', 'An agent will be with you shortly. Meanwhile you can continue typing.', true);
+                        // trigger immediate refresh
+                        getMessages();
+                    }
+                } catch (e) { console.error(e); }
+            });
 
             sendBtn.addEventListener('click', sendMessage);
             msgInput.addEventListener('keypress', e => {
@@ -372,8 +422,15 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     if (j.status !== 'ok') return;
                     chatDiv.innerHTML = '';
                     j.messages.forEach(m => {
+                        // handle attachments in message: server may embed <img> or <a> tags; we'll display message HTML safely
                         appendMessage(m.sender_name, m.message, m.is_from_staff == 1);
                     });
+                    // if thread is closed, disable inputs
+                    if (j.thread_status && j.thread_status === 'closed') {
+                        chatFooterEl.style.display = 'none';
+                        if (chatStartEl) chatStartEl.style.display = 'none';
+                        appendMessage('SYSTEM', 'This conversation has been closed by an agent.', true);
+                    }
                 } catch (e) {
                     console.error(e);
                 }
