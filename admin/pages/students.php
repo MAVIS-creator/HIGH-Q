@@ -712,7 +712,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  fetch('../index.php?pages=students', {
+  fetch('/HIGH-Q/admin/pages/students.php', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
@@ -754,7 +754,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await fetch('../index.php?pages=students', {
+  const res = await fetch('/HIGH-Q/admin/pages/students.php', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
@@ -818,7 +818,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `../index.php?pages=students&action=send_message&id=${id}`;
+  modalForm.action = `/HIGH-Q/admin/pages/students.php?action=send_message&id=${id}`;
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
