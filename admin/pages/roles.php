@@ -354,12 +354,25 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   const btn = e.target.closest('button[data-action="destroy"]');
   if (!btn) return;
   const id = btn.getAttribute('data-id');
-  if (!confirm('Remove this role permanently? This action cannot be undone.')) return;
-  // send POST to admin router
-  const fd = new FormData(); fd.append('action','delete'); fd.append('csrf_token','<?= $csrf ?>');
-  const xhr = new XMLHttpRequest(); xhr.open('POST','../index.php?pages=roles&action=delete&id='+encodeURIComponent(id), true);
-  xhr.onload = function(){ if (xhr.status===200) { location.reload(); } else { alert('Failed to remove role'); } };
-  xhr.send(fd);
+  if (!id) return;
+  Swal.fire({
+    title: 'Remove role?',
+    text: 'Remove this role permanently? This action cannot be undone.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    confirmButtonText: 'Yes, remove'
+  }).then(function(res){
+    if (!res.isConfirmed) return;
+    const fd = new FormData(); fd.append('action','delete'); fd.append('csrf_token','<?= $csrf ?>');
+    var xhr = new XMLHttpRequest(); xhr.open('POST','../index.php?pages=roles&action=delete&id='+encodeURIComponent(id), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+    xhr.onload = function(){ try{ var j = JSON.parse(xhr.responseText||'{}'); } catch(e){ j=null; }
+      if (xhr.status===200 && j && (j.status==='ok' || j.success===true)) { Swal.fire('Removed','Role removed','success').then(()=> location.reload()); }
+      else { Swal.fire('Failed','Could not remove role','error'); }
+    };
+    xhr.onerror = function(){ Swal.fire('Error','Network error','error'); };
+    xhr.send(fd);
+  });
 });
 </script>
 </body>
