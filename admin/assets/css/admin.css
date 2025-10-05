@@ -438,6 +438,38 @@ h1 {
   border-bottom: none;
 }
 
+/* Center main admin content (works with the fixed sidebar)
+   - Limit the content width and center it inside .admin-main
+   - Keep some horizontal padding so content doesn't touch the viewport edges
+   - Ensure individual cards/tables are centered within the content area
+*/
+.admin-main > .container,
+.admin-main > div,
+.roles-page,
+.courses-page,
+.page-content {
+  max-width: var(--max-width);
+  margin: 0 auto; /* center within the available admin-main area */
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* Make typical cards and narrow panels centered and constrained for readability */
+.admin-main .card,
+.admin-main .roles-table,
+.admin-main .summary-cards {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--card-width);
+}
+
+/* On very small screens, allow content to use full width (existing media rules will override left offsets) */
+@media (max-width: 768px) {
+  .admin-main > .container,
+  .admin-main > div { padding-left: 8px; padding-right: 8px; }
+  .admin-main .card, .admin-main .roles-table { max-width: 100%; }
+}
+
 @media (max-width: 1100px) {
   /* On narrower screens make table occupy the full content width but keep small side padding */
   .roles-table { width: calc(100% - 32px); max-width: 100%; }
