@@ -52,7 +52,15 @@ if ($row && is_array($row)) {
             $val = $stmt->fetchColumn();
         }
         $data = $val ? json_decode($val, true) : [];
-        if (is_array($data)) $out = $data;
+        if (is_array($data)) {
+            // Normalize legacy twitter key to tiktok for clients
+            if (isset($data['contact']) && is_array($data['contact'])) {
+                if (empty($data['contact']['tiktok']) && !empty($data['contact']['twitter'])) {
+                    $data['contact']['tiktok'] = $data['contact']['twitter'];
+                }
+            }
+            $out = $data;
+        }
     } catch (Exception $e) { $out = []; }
 }
 
