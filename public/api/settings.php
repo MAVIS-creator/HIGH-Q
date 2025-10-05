@@ -29,8 +29,8 @@ if ($row && is_array($row)) {
             'email' => $row['contact_email'] ?? '',
             'address' => $row['contact_address'] ?? '',
             'facebook' => $row['contact_facebook'] ?? '',
-            // expose tiktok key (stored in contact_twitter column for backward compatibility)
-            'tiktok' => $row['contact_twitter'] ?? '',
+            // expose tiktok key (preferred column contact_tiktok; fallback to legacy contact_twitter)
+            'tiktok' => $row['contact_tiktok'] ?? $row['contact_twitter'] ?? '',
             'instagram' => $row['contact_instagram'] ?? ''
         ],
         'security' => [

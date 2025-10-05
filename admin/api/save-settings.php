@@ -110,8 +110,8 @@ try {
             'contact_email' => $contact['email'] ?? null,
             'contact_address' => $contact['address'] ?? null,
             'contact_facebook' => $contact['facebook'] ?? null,
-            // Map tiktok field into contact_twitter DB column for compatibility
-            'contact_twitter' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
+            // Map tiktok field into contact_tiktok column (fallback to legacy twitter)
+            'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
             'contact_instagram' => $contact['instagram'] ?? null,
             'maintenance' => !empty($security['maintenance']) ? 1 : 0,
             'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
@@ -130,7 +130,7 @@ try {
                 bank_name = :bank_name, bank_account_name = :bank_account_name, bank_account_number = :bank_account_number,
                 vision = :vision, about = :about,
                 contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
-                contact_facebook = :contact_facebook, contact_twitter = :contact_twitter, contact_instagram = :contact_instagram,
+                contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
                 maintenance = :maintenance, registration = :registration, email_verification = :email_verification,
                 two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
                 WHERE id = :id";
@@ -147,7 +147,7 @@ try {
                 (:site_name, :tagline, :logo_url, :vision, :about,
                  :bank_name, :bank_account_name, :bank_account_number,
                  :contact_phone, :contact_email, :contact_address,
-                 :contact_facebook, :contact_twitter, :contact_instagram,
+                 :contact_facebook, :contact_tiktok, :contact_instagram,
                  :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
             $ins = $pdo->prepare($sql);
             $ins->execute($params);
