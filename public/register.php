@@ -52,8 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$stmt = $pdo->prepare("SELECT id,price FROM courses WHERE id IN ($placeholders)");
 		foreach ($programs as $i => $pid) { $stmt->bindValue($i+1, $pid, PDO::PARAM_INT); }
 		$stmt->execute();
-		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		foreach ($rows as $r) { $amount += floatval($r['price']); }
+				$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+				$selectedHasVaries = false;
+				foreach ($rows as $r) {
+					// if price is null or empty treat as 'Varies' and require admin verification before payment
+					if (!isset($r['price']) || $r['price'] === null || $r['price'] === '') {
+						$selectedHasVaries = true;
+					}
+					$amount += floatval($r['price']);
+				}
 	}
 	$amount = round($amount, 2);
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
@@ -124,6 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					}
 				}
 			} catch (Throwable $e) { /* ignore */ }
+			// If any selected program is 'Varies' (no fixed price), require verification before payment
+			if (!empty($selectedHasVaries)) $verifyBeforePayment = true;
 
 			$reference = null; $paymentId = null;
 			if (!$verifyBeforePayment) {
