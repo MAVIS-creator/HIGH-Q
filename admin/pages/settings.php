@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Contact
     if (isset($posted['contact']) && is_array($posted['contact'])) {
-        foreach (['phone','email','address','facebook','twitter','instagram'] as $k) {
+        foreach (['phone','email','address','facebook','tiktok','instagram'] as $k) {
             if (isset($posted['contact'][$k])) $safeSet($next, ['contact', $k], trim($posted['contact'][$k]));
         }
     }
