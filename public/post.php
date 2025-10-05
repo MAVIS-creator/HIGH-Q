@@ -180,7 +180,7 @@ require_once __DIR__ . '/includes/header.php';
           <div class="comment-header">
             <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
             <div>
-              <button class="btn-reply small" data-id="<?= $c['id'] ?>">Reply</button>
+              <button class="reply-btn small" data-id="<?= $c['id'] ?>">Reply</button>
             </div>
           </div>
           <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
