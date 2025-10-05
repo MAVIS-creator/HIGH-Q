@@ -298,13 +298,14 @@ const menusContainer = document.getElementById('menusContainer');
 function openModal(mode, role = {}) {
   overlay.classList.add('open');
   roleModal.classList.add('open');
+  document.body.classList.add('modal-open');
 
   // Reset checkboxes
   menusContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
   if (mode === 'edit') {
     modalTitle.textContent = 'Edit Role';
-  roleForm.action = `index.php?pages=roles&action=edit&id=${role.id}`;
+  roleForm.action = `../index.php?pages=roles&action=edit&id=${role.id}`;
     nameInput.value = role.name;
     slugInput.value = role.slug;
     maxInput.value  = role.max_count || '';
@@ -316,7 +317,7 @@ function openModal(mode, role = {}) {
     });
   } else {
     modalTitle.textContent = 'New Role';
-  roleForm.action = 'index.php?pages=roles&action=create';
+  roleForm.action = '../index.php?pages=roles&action=create';
     nameInput.value = '';
     slugInput.value = '';
     maxInput.value  = '';
@@ -326,6 +327,7 @@ function openModal(mode, role = {}) {
 function closeModal() {
   overlay.classList.remove('open');
   roleModal.classList.remove('open');
+  document.body.classList.remove('modal-open');
 }
 
 newRoleBtn.addEventListener('click', () => openModal('create'));
@@ -345,6 +347,19 @@ document.querySelectorAll('.btn-editRole').forEach(btn => {
     };
     openModal('edit', role);
   });
+});
+
+// Delegated handler for destroy (AJAX remove) - posts to admin router
+document.querySelector('table.roles-table').addEventListener('click', function(e){
+  const btn = e.target.closest('button[data-action="destroy"]');
+  if (!btn) return;
+  const id = btn.getAttribute('data-id');
+  if (!confirm('Remove this role permanently? This action cannot be undone.')) return;
+  // send POST to admin router
+  const fd = new FormData(); fd.append('action','delete'); fd.append('csrf_token','<?= $csrf ?>');
+  const xhr = new XMLHttpRequest(); xhr.open('POST','../index.php?pages=roles&action=delete&id='+encodeURIComponent(id), true);
+  xhr.onload = function(){ if (xhr.status===200) { location.reload(); } else { alert('Failed to remove role'); } };
+  xhr.send(fd);
 });
 </script>
 </body>
