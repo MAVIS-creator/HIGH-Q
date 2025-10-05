@@ -49,7 +49,18 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <?php
         // Static lead card for Adebule Quam (CEO) — manually inserted so it always appears first
       ?>
-  c
+      <div class="tutor-lead-wrap">
+        <article class="tutor-card tutor-lead">
+          <div class="tutor-thumb">
+            <img src="./assets/images/avatar-placeholder.png" alt="Adebule Quam">
+          </div>
+          <div class="tutor-body">
+            <h3>Adebule Quam</h3>
+            <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
+            <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
+          </div>
+        </article>
+      </div>
 
       <div class="tutors-grid">
         <?php foreach ($tutors as $t): ?>
