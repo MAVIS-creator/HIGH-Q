@@ -9,13 +9,16 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 if (!$isAjaxRequest && !empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
     $isAjaxRequest = true;
 }
-// If an 'action' parameter is present (common in admin AJAX), and the method is POST or the request indicates JSON,
-// treat the request as AJAX even if the X-Requested-With header wasn't provided by the client.
+// If an 'action' parameter is present it's commonly used for both normal form POSTs and AJAX calls.
+// Only treat the request as AJAX when it is explicitly requested by the client: either via
+// the X-Requested-With header, an explicit ajax=1 parameter, or the Accept header indicates JSON.
 if (!$isAjaxRequest && !empty($_REQUEST['action'])) {
-    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    if ($method === 'POST' || (!empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) || !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-        $isAjaxRequest = true;
-    }
+    // Consider it AJAX only when the client explicitly marked it as such
+    $explicitAjax = false;
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) $explicitAjax = true;
+    if (!empty($_REQUEST['ajax']) && $_REQUEST['ajax'] == '1') $explicitAjax = true;
+    if (!empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) $explicitAjax = true;
+    if ($explicitAjax) $isAjaxRequest = true;
 }
 if ($isAjaxRequest) {
     // For AJAX requests we still want to perform lightweight setup (session/auth) but avoid HTML output.
