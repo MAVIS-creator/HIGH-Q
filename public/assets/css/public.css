@@ -1320,6 +1320,10 @@ nav a.active::after {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
 }
 
+/* Ensure program cards animate on load (fade+slide) */
+.program-card { opacity: 0; transform: translateY(10px); transition: opacity .5s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1); }
+.is-loaded .program-card { opacity: 1; transform: none; }
+
 .program-card-inner {
   display: flex;
   flex-direction: column;
