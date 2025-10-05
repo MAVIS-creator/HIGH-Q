@@ -194,8 +194,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <meta charset="UTF-8">
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <!-- Font Awesome -->
+  <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
+  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
+  <!-- Fallback to CDN if local not available -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <!-- Font Awesome (fallback for admin/backwards compatibility) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <link rel="stylesheet" href="./assets/css/public.css">
@@ -308,6 +311,28 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                     });
                   });
                 } catch (innerErr) { /* ignore */ }
+
+                // Icon fallback: if Boxicons didn't render (font not available), replace bx <i> tags with a simple inline SVG square so UI stays usable.
+                try {
+                  // Test whether boxicons are rendering by checking computed font-family of a test element
+                  var test = document.createElement('i');
+                  test.className = 'bx bx-test-icon';
+                  test.style.display = 'none';
+                  document.body.appendChild(test);
+                  var ff = window.getComputedStyle(test).fontFamily || '';
+                  document.body.removeChild(test);
+                  if (!/boxicons/i.test(ff)) {
+                    // Replace visible .bx icons with inline fallback SVG (small square with inner glyph look)
+                    document.querySelectorAll('i.bx, i.bxs, i.bxl').forEach(function(icon){
+                      try {
+                        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+                        svg.setAttribute('width','20'); svg.setAttribute('height','20'); svg.setAttribute('viewBox','0 0 24 24');
+                        svg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="4" fill="#fff6d9" stroke="#f5b904" stroke-width="1.2"></rect>';
+                        icon.parentNode.replaceChild(svg, icon);
+                      } catch(e){}
+                    });
+                  }
+                } catch(e){}
               });
             });
           } else {
