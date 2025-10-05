@@ -508,6 +508,53 @@ nav a.active::after {
 
   /* End animation utilities */
 
+/* Global card animation rules (apply to main page cards but exclude sidebar/asides)
+   - default: subtle fade+slide on load
+   - hover: different hover style per card type is possible via hover-zoom
+   - sidebar/asides slide in from the right to differentiate them */
+
+/* Base selector for common cards (explicit list for safety) */
+.program-card, .tutor-card, .value-card, .post-card, .card, .stat, .achievement {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .52s cubic-bezier(.2,.8,.2,1), transform .52s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease;
+}
+.is-loaded .program-card,
+.is-loaded .tutor-card,
+.is-loaded .value-card,
+.is-loaded .post-card,
+.is-loaded .card,
+.is-loaded .stat,
+.is-loaded .achievement {
+  opacity: 1;
+  transform: none;
+}
+
+/* Slightly different hover styles per card type for visual variety */
+.program-card.hover-zoom:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 22px 48px rgba(0,0,0,0.10); }
+.tutor-card.hover-zoom:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,0.12); }
+.value-card.hover-zoom:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,0.08); }
+.post-card.hover-zoom:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(0,0,0,0.09); }
+
+/* Fade out helper for cards removed dynamically */
+.card.fade-out, .program-card.fade-out, .tutor-card.fade-out {
+  animation: fadeOut .44s ease forwards;
+}
+
+/* Sidebar / aside cards slide in horizontally and are excluded from the vertical entrance */
+.sidebar-card, .register-sidebar .card, .register-sidebar .card * {
+  opacity: 0;
+  transform: translateX(18px);
+  transition: opacity .48s ease, transform .48s cubic-bezier(.2,.8,.2,1);
+}
+.is-loaded .sidebar-card, .is-loaded .register-sidebar .card { opacity: 1; transform: none; }
+
+/* reduce animation motion on small screens to avoid jank */
+@media (max-width: 700px) {
+  .program-card, .tutor-card, .value-card, .post-card, .card, .stat { transform: none; transition: opacity .42s ease; }
+  .sidebar-card, .register-sidebar .card { transform: none; }
+}
+
   /* Testimonials */
   .testimonials-section {
     padding: 48px 0;
