@@ -258,7 +258,7 @@ document.getElementById('replyOverlay').addEventListener('click', function(){ do
 
 document.getElementById('replySend').addEventListener('click', function(){
   var content = document.getElementById('replyContent').value.trim();
-  if (!content) { alert('Please enter a reply'); return; }
+  if (!content) { Swal.fire('Error','Please enter a reply','error'); return; }
   var fd = new FormData();
   fd.append('action','reply');
   fd.append('id', currentReplyParent);
@@ -267,7 +267,7 @@ document.getElementById('replySend').addEventListener('click', function(){
   var xhr = new XMLHttpRequest();
   xhr.open('POST', '../index.php?pages=comments', true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-  xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ alert('Error'); return; } if (r.status==='ok') { location.reload(); } else { alert('Failed to send reply'); } };
+  xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; } if (r.status==='ok') { location.reload(); } else { Swal.fire('Failed', r.message || 'Failed to send reply', 'error'); } };
   xhr.send(fd);
 });
 </script>
