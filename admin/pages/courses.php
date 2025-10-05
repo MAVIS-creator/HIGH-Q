@@ -324,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <span class="modal-close" id="courseModalClose"><i class='bx bx-x'></i></span>
       <h3 id="courseModalTitle">New Course</h3>
 
-      <form id="courseForm" method="post">
+  <form id="courseForm" method="post" action="/HIGH-Q/admin/pages/courses.php?action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="form-row compact-row">
           <div class="form-group">
@@ -560,9 +560,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       if (fFeatures) fFeatures.value = data.features || '';
       if (fBadge) fBadge.value = data.badge || '';
       updateIconPreview();
-      courseForm.action = `index.php?pages=courses&action=edit&id=${data.id}`;
+      courseForm.action = `/HIGH-Q/admin/pages/courses.php?action=edit&id=${data.id}`;
     } else {
-      courseForm.action = 'index.php?pages=courses&action=create';
+      courseForm.action = '/HIGH-Q/admin/pages/courses.php?action=create';
     }
   }
   // Auto-generate slug client-side as user types title when slug is empty
