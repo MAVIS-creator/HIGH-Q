@@ -379,7 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-    header('Location: index.php?pages=students'); exit;
+  header('Location: ../index.php?pages=students'); exit;
   }
 
   // Confirm registration (admin) - send notification
@@ -387,14 +387,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $stmt = $pdo->prepare('SELECT * FROM student_registrations WHERE id = ? LIMIT 1'); $stmt->execute([$id]); $reg = $stmt->fetch(PDO::FETCH_ASSOC);
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
-      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-      header('Location: index.php?pages=students'); exit;
+  if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
+  header('Location: ../index.php?pages=students'); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
-      if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-      setFlash('error','Registration already confirmed'); header('Location: index.php?pages=students'); exit;
+  if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
+  setFlash('error','Registration already confirmed'); header('Location: ../index.php?pages=students'); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
