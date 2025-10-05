@@ -139,7 +139,7 @@ if ($q) {
   $searchTerm = "%{$q}%";
   $params = [$searchTerm, $searchTerm, $searchTerm];
 }
-$query .= " ORDER BY created_at DESC";
+$query .= " ORDER BY id ASC";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
@@ -399,9 +399,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           function openModal(mode, data = {}) {
             overlay.classList.add('open');
             tutorModal.classList.add('open');
-            if (mode === 'edit') {
+              if (mode === 'edit') {
               modalTitle.textContent = 'Edit Tutor';
-              tutorForm.action = `index.php?pages=tutors&action=edit&id=${data.id}`;
+              tutorForm.action = `../index.php?pages=tutors&action=edit&id=${data.id}`;
               fields.name.value = data.name || '';
               fields.title.value = data.title || '';
               // email/phone removed from modal; keep them server-side untouched
@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               fields.image.value = data.image || '';
             } else {
               modalTitle.textContent = 'Add Tutor';
-              tutorForm.action = 'index.php?pages=tutors&action=create';
+              tutorForm.action = '../index.php?pages=tutors&action=create';
               Object.values(fields).forEach(f => f.value = '');
             }
           }
@@ -494,8 +494,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
       // open modal and fill values
       document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
-      const form = document.getElementById('tutorForm');
-      form.action = `index.php?pages=tutors&action=edit&id=${id}`;
+  const form = document.getElementById('tutorForm');
+  form.action = `../index.php?pages=tutors&action=edit&id=${id}`;
       document.getElementById('tName').value = name;
       document.getElementById('tTitle').value = title;
       document.getElementById('tSubjects').value = subs;
