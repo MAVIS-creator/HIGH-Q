@@ -220,37 +220,44 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </div>
 
 <!-- Role Modal -->
-<div class="modal" id="roleModal">
-  <div class="modal-content">
-    <span class="modal-close" id="roleModalClose"><i class='bx bx-x'></i></span>
+<div class="modal" id="roleModal" aria-hidden="true">
+  <div class="modal-content role-modal-content">
+    <button class="modal-close" id="roleModalClose" aria-label="Close"><i class='bx bx-x'></i></button>
     <h3 id="roleModalTitle">New Role</h3>
 
-  <form id="roleForm" method="post" action="">
+  <form id="roleForm" method="post" action="../index.php?pages=roles&action=create">
       <!-- CSRF token -->
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 
-      <div class="form-row">
-        <label>Name</label>
-        <input type="text" name="name" id="roleName" required>
-      </div>
-      <div class="form-row">
-        <label>Slug</label>
-        <input type="text" name="slug" id="roleSlug" required>
-      </div>
-      <div class="form-row">
-        <label>Max Users (0 for unlimited)</label>
-        <input type="number" name="max_count" id="roleMax" min="0">
-      </div>
-      <div class="form-row">
-        <label>Menus</label>
-        <div id="menusContainer">
-          <?php foreach ($allMenus as $slug => $label): ?>
-            <label>
-              <input type="checkbox" name="menus[]" value="<?= htmlspecialchars($slug) ?>"> <?= htmlspecialchars($label) ?>
-            </label><br>
-          <?php endforeach; ?>
+      <div class="role-modal-grid">
+        <div class="col">
+          <div class="form-row">
+            <label>Name</label>
+            <input type="text" name="name" id="roleName" required>
+          </div>
+          <div class="form-row">
+            <label>Slug</label>
+            <input type="text" name="slug" id="roleSlug" required>
+          </div>
+          <div class="form-row">
+            <label>Max Users (0 for unlimited)</label>
+            <input type="number" name="max_count" id="roleMax" min="0">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-row">
+            <label>Menus</label>
+            <div id="menusContainer">
+              <?php foreach ($allMenus as $slug => $label): ?>
+                <label style="display:inline-flex;align-items:center;gap:8px;width:48%;margin-bottom:6px;">
+                  <input type="checkbox" name="menus[]" value="<?= htmlspecialchars($slug) ?>"> <?= htmlspecialchars($label) ?>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
         </div>
       </div>
+
       <div class="form-actions">
         <button type="submit" class="btn-approve">Save Role</button>
       </div>
@@ -258,6 +265,23 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   </div>
 </div>
 <div id="modalOverlay"></div>
+
+<style>
+/* Role modal: two-column grid and scrollable content */
+.modal { display:none; position:fixed; inset:0; z-index:1200; align-items:center; justify-content:center; }
+.modal.open { display:flex; }
+.modal .modal-content.role-modal-content { background:#fff; padding:18px; border-radius:8px; width:880px; max-width:96%; max-height:86vh; overflow:auto; box-shadow:0 6px 30px rgba(0,0,0,.18); }
+.role-modal-grid { display:flex; gap:18px; align-items:flex-start; }
+.role-modal-grid .col { flex:1; min-width:220px; }
+.role-modal-grid .col .form-row { margin-bottom:10px; }
+.role-modal-grid #menusContainer { display:flex; flex-wrap:wrap; gap:6px; }
+.modal-close { position:absolute; right:12px; top:8px; background:transparent;border:0;font-size:1.2rem;cursor:pointer;color:#333 }
+#modalOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1199; }
+#modalOverlay.open { display:block; }
+/* prevent page scroll while modal open */
+body.modal-open { overflow: hidden; }
+@media (max-width:800px) { .modal .modal-content.role-modal-content { width: 94%; padding:12px; } .role-modal-grid { flex-direction:column; } }
+</style>
 
 <script>
 const roleModal    = document.getElementById('roleModal');
