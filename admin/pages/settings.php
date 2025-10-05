@@ -71,9 +71,10 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'contact_phone' => $contact['phone'] ?? null,
         'contact_email' => $contact['email'] ?? null,
         'contact_address' => $contact['address'] ?? null,
-        'contact_facebook' => $contact['facebook'] ?? null,
-        'contact_twitter' => $contact['twitter'] ?? null,
-        'contact_instagram' => $contact['instagram'] ?? null,
+    'contact_facebook' => $contact['facebook'] ?? null,
+    // store tiktok into contact_twitter column for backward compatibility with existing schema
+    'contact_twitter' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
+    'contact_instagram' => $contact['instagram'] ?? null,
     'maintenance' => !empty($security['maintenance']) ? 1 : 0,
     'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
         'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
@@ -151,7 +152,7 @@ $defaults = [
         'email' => '',
         'address' => '',
         'facebook' => '',
-        'twitter' => '',
+        'tiktok' => '',
         'instagram' => ''
     ],
     'security' => [

@@ -110,7 +110,8 @@ try {
             'contact_email' => $contact['email'] ?? null,
             'contact_address' => $contact['address'] ?? null,
             'contact_facebook' => $contact['facebook'] ?? null,
-            'contact_twitter' => $contact['twitter'] ?? null,
+            // Map tiktok field into contact_twitter DB column for compatibility
+            'contact_twitter' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
             'contact_instagram' => $contact['instagram'] ?? null,
             'maintenance' => !empty($security['maintenance']) ? 1 : 0,
             'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
