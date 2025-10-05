@@ -3034,6 +3034,12 @@ input.form-input {
   box-shadow: 0 6px 20px rgba(19, 24, 33, 0.06);
 }
 
+/* Animate tutor cards into view */
+.tutor-card { opacity: 0; transform: translateY(10px); transition: opacity .52s cubic-bezier(.2,.8,.2,1), transform .52s cubic-bezier(.2,.8,.2,1); }
+.is-loaded .tutor-card { opacity: 1; transform: none; }
+.tutor-card.hover-zoom { transition: transform .28s ease, box-shadow .28s ease; }
+.tutor-card.hover-zoom:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 48px rgba(0,0,0,0.08); }
+
 .tutor-thumb {
   background: linear-gradient(135deg, #f6f8fa, #eaeef2);
   /* banner background */
