@@ -346,7 +346,7 @@ $posts = $stmt->fetchAll();
                 <p class="subtitle">Create and manage news articles and blog posts.</p>
             </div>
             <div class="module-actions">
-                <form method="get" action="index.php" class="search-form">
+                <form method="get" action="?pages=posts" class="search-form">
                     <input type="hidden" name="pages" value="posts">
                     <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
                     
