@@ -33,14 +33,37 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             $uploadDir = __DIR__ . '/uploads/chat/';
             if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+            $maxBytes = 100 * 1024 * 1024; // 100 MB
             for ($i = 0; $i < count($files['name']); $i++) {
                 if (($files['error'][$i] ?? 1) !== UPLOAD_ERR_OK) continue;
+                $size = $files['size'][$i] ?? 0;
+                if ($size > $maxBytes) continue; // too large
                 $type = $files['type'][$i] ?? '';
                 if (!in_array($type, $allowed, true)) continue;
+                $tmp = $files['tmp_name'][$i] ?? null;
+                if (!$tmp || !is_uploaded_file($tmp)) continue;
+
+                // Basic magic-byte checks
+                $fh = fopen($tmp, 'rb');
+                $magic = $fh ? fread($fh, 8) : '';
+                if ($fh) fclose($fh);
+
+                $valid = false;
+                if (strpos($type, 'image/') === 0) {
+                    // validate image by getimagesize
+                    if (@getimagesize($tmp) !== false) $valid = true;
+                } elseif ($type === 'application/pdf') {
+                    if (substr($magic, 0, 4) === '%PDF') $valid = true;
+                } elseif ($type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                    // DOCX are zip packages; check for PK.. signature
+                    if (substr($magic, 0, 2) === "PK") $valid = true;
+                }
+                if (!$valid) continue;
+
                 $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
                 $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
                 $dest = $uploadDir . $nameSafe;
-                if (move_uploaded_file($files['tmp_name'][$i], $dest)) {
+                if (move_uploaded_file($tmp, $dest)) {
                     $url = 'uploads/chat/' . $nameSafe;
                     $savedAttachUrls[] = ['url' => $url, 'orig' => $files['name'][$i], 'mime' => $type];
                     // for images, embed a preview in message; for other files, append as a link
