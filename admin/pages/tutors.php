@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 }
 ?>
 <title>Tutors Management — Admin</title>
-<link rel="stylesheet" href="../public/assets/css/admin.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
 <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 
