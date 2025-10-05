@@ -246,24 +246,28 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 </head>
 
 <body>
-    <div class="chat-card">
+        <div class="chat-card">
         <div class="chat-header">Live Chat — Online</div>
         <div class="chat-body" id="chatMessages"></div>
-        <div class="chat-footer">
-            <button type="button" class="btn-attachment" id="attachBtn">📎</button>
+
+        <!-- Start form: visitor enters name/email/initial message first -->
+        <div class="chat-start" id="chatStart">
+            <input type="text" id="start_name" placeholder="Your name" />
+            <input type="email" id="start_email" placeholder="Your email (optional)" />
+            <textarea id="start_message" placeholder="Briefly tell us how we can help..." rows="3"></textarea>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+                <button id="startBtn" class="btn">Start Chat</button>
+                <div style="font-size:0.9rem;color:#666;margin-left:auto">We will connect you to an agent shortly</div>
+            </div>
+        </div>
+
+        <div class="chat-footer" id="chatFooter" style="display:none;">
+            <button type="button" class="btn-attachment" id="attachBtn"><i class="fas fa-paperclip"></i></button>
             <input type="file" id="attachment" style="display:none;" multiple>
             <input type="text" id="c_name" placeholder="Your Name">
             <textarea id="c_message" rows="1" placeholder="Type a message..."></textarea>
             <button id="sendBtn">Send</button>
             <div class="attachment-preview" id="attachmentPreview"></div>
-            <div class="options-container">
-                <button data-option="one">One</button>
-                <button data-option="two">Two</button>
-                <button data-option="three">Three</button>
-            </div>
-        </div>
-        <div class="emoji-panel" id="emojiPanel">
-            <!-- emojis dynamically generated -->
         </div>
     </div>
 
