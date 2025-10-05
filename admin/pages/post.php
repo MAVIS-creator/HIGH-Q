@@ -423,7 +423,7 @@ $posts = $stmt->fetchAll();
         <div class="modal-content">
             <span class="modal-close" id="postModalClose"><i class="bx bx-x"></i></span>
             <h3 id="postModalTitle">New Article</h3>
-            <form id="postForm" method="post" action="index.php?pages=posts&action=create" enctype="multipart/form-data">
+            <form id="postForm" method="post" action="?pages=posts&action=create" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
                 <div class="form-row">
