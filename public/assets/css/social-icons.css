@@ -1,0 +1,49 @@
+.socials {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.socials a {
+    color: #333;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.socials a:hover {
+    color: #ffd600;
+    transform: translateY(-3px);
+}
+
+/* Specific icon styles */
+.bxl-facebook-circle {
+    color: #1877f2;
+}
+
+.bxl-instagram-alt {
+    color: #e4405f;
+}
+
+.bxl-tiktok {
+    color: #000000;
+}
+
+/* Force icon display */
+.bx {
+    display: inline-block !important;
+    vertical-align: middle;
+}
+
+/* Icon animation on hover */
+.socials a:hover .bx {
+    animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
