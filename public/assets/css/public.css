@@ -2974,10 +2974,11 @@ input.form-input {
 }
 
 .tutor-lead {
-  width: 50%;
+  width: 40%;
   display: flex;
   flex-direction: column;
   border-radius: 12px;
+  text-align: center;
 }
 
 .tutor-lead .tutor-thumb {
