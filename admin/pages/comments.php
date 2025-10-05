@@ -23,11 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
     if ($action === 'reject') {
-    $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
+  $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
     try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " REJECT id={$id} ok=" . ($ok?1:0) . "\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
     if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_deleted', ['comment_id'=>$id]);
     echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
+
+  // Permanent destroy (admin-only hard delete) - action 'destroy'
+  if ($action === 'destroy') {
+    $del = $pdo->prepare('DELETE FROM comments WHERE id = ?');
+    $ok = $del->execute([$id]);
+    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_destroyed', ['comment_id'=>$id]);
+    echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
+  }
 
     // Admin reply action: insert a new comment row as a reply and mark parent admin_reply_by
     if ($action === 'reply') {
