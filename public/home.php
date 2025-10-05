@@ -27,7 +27,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 <section class="hero">
   <div class="container">
-    <div class="hero-left">
+    <div class="row">
+      <div class="hero-left col-lg-8 col-md-12">
       <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
@@ -49,9 +50,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
           <div>Highest JAMB Score</div>
         </div>
       </div>
-    </div>
+      </div>
 
-    <aside class="hero-right">
+      <aside class="hero-right col-lg-4 col-md-12">
       <div class="feature-card">
         <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
@@ -73,7 +74,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
           <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
         </div>
       </div>
-    </aside>
+      </aside>
+    </div>
   </div>
 </section>
 
@@ -91,8 +93,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <!-- Two Column Layout: left column holds card + quote, right column holds content + stats + button -->
-    <div class="ceo-grid">
-      <div class="ceo-left-column">
+    <div class="row ceo-grid">
+      <div class="ceo-left-column col-lg-5 col-md-12">
         <!-- Left Card -->
         <div class="ceo-card">
           <div class="ceo-photo">
@@ -112,9 +114,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </p>
           <span>- Master Adebule Quam</span>
         </div>
-      </div>
+  </div>
 
-      <div class="ceo-right-column">
+  <div class="ceo-right-column col-lg-7 col-md-12">
         <!-- Right Content -->
         <div class="ceo-content">
           <h3>Seasoned Educator & Mentor</h3>
@@ -167,7 +169,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
-    <div class="programs-grid">
+    <div class="row programs-grid">
       <?php if (empty($programs)): ?>
         <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
@@ -191,6 +193,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
+          <div class="col-lg-4 col-md-6">
           <article class="program-card">
             <div class="program-card-inner">
               <div class="program-icon">
@@ -247,6 +250,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <?php endif; ?>
             </div>
           </article>
+          </div>
 
         <?php endforeach; ?>
       <?php endif; ?>
