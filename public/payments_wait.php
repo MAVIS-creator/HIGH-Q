@@ -134,10 +134,12 @@ $csrf = generateToken('signup_form');
                         // show raw server message when available to make debugging easier
                         var msg = j.message || 'Failed to record transfer.';
                         if (j.raw) msg += '\nServer response:\n' + j.raw;
-                        alert(msg);
+                        if (typeof Swal !== 'undefined') {
+                          Swal.fire({ icon: 'error', title: 'Failed', text: msg });
+                        } else { alert(msg); }
                         btn.disabled = false; btn.textContent = 'I have sent the money'; document.getElementById('pageSpinner').style.display = 'none';
                       }
-                }).catch(function(err){ alert('Network error: ' + (err && err.message ? err.message : 'unknown')); btn.disabled = false; btn.textContent = 'I have sent the money'; });
+                }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); btn.disabled = false; btn.textContent = 'I have sent the money'; });
             });
             
           })();
