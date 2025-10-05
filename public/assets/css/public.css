@@ -516,16 +516,25 @@ nav a.active::after {
 /* Base selector for common cards (explicit list for safety) */
 .program-card, .tutor-card, .value-card, .post-card, .card, .stat, .achievement {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(12px);
   transition: opacity .52s cubic-bezier(.2,.8,.2,1), transform .52s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease;
 }
-.is-loaded .program-card,
-.is-loaded .tutor-card,
-.is-loaded .value-card,
-.is-loaded .post-card,
-.is-loaded .card,
-.is-loaded .stat,
-.is-loaded .achievement {
+
+/* Reveal when either the page is loaded or the element enters the viewport */
+.is-loaded .program-card.in-view,
+.is-loaded .tutor-card.in-view,
+.is-loaded .value-card.in-view,
+.is-loaded .post-card.in-view,
+.is-loaded .card.in-view,
+.is-loaded .stat.in-view,
+.is-loaded .achievement.in-view,
+.program-card.in-view,
+.tutor-card.in-view,
+.value-card.in-view,
+.post-card.in-view,
+.card.in-view,
+.stat.in-view,
+.achievement.in-view {
   opacity: 1;
   transform: none;
 }
@@ -547,7 +556,7 @@ nav a.active::after {
   transform: translateX(18px);
   transition: opacity .48s ease, transform .48s cubic-bezier(.2,.8,.2,1);
 }
-.is-loaded .sidebar-card, .is-loaded .register-sidebar .card { opacity: 1; transform: none; }
+.sidebar-card.in-view, .register-sidebar .card.in-view, .is-loaded .sidebar-card, .is-loaded .register-sidebar .card { opacity: 1; transform: none; }
 
 /* reduce animation motion on small screens to avoid jank */
 @media (max-width: 700px) {
