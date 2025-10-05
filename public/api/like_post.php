@@ -44,30 +44,38 @@ try {
 	}
 
 	if ($method === 'POST') {
-		// attempt to insert into post_likes; rely on unique index to prevent duplicates
-		$pdo->beginTransaction();
+		// Toggle like: if this session/ip already liked, remove it; otherwise insert
 		try {
-			$ins = $pdo->prepare('INSERT IGNORE INTO post_likes (post_id, session_id, ip) VALUES (?, ?, ?)');
-			$ins->execute([$postId, $sessionId, $ip]);
-			$affected = $ins->rowCount();
-			if ($affected) {
-				// If posts.likes column exists, increment it; otherwise rely on post_likes count
-				try {
-					$up = $pdo->prepare('UPDATE posts SET likes = COALESCE(likes,0) + 1 WHERE id = ?');
-					$up->execute([$postId]);
-				} catch (Throwable $e) {
-					// ignore - some installs don't have posts.likes
+			$pdo->beginTransaction();
+			$chk = $pdo->prepare('SELECT id FROM post_likes WHERE post_id = ? AND (session_id = ? OR ip = ?) LIMIT 1');
+			$chk->execute([$postId, $sessionId, $ip]);
+			$row = $chk->fetch(PDO::FETCH_ASSOC);
+			$likedNow = false;
+			if ($row) {
+				// already liked by this visitor -> remove the like
+				$del = $pdo->prepare('DELETE FROM post_likes WHERE id = ?');
+				$del->execute([$row['id']]);
+				// attempt to decrement posts.likes if column exists
+				try { $up = $pdo->prepare('UPDATE posts SET likes = GREATEST(COALESCE(likes,0) - 1, 0) WHERE id = ?'); $up->execute([$postId]); } catch (Throwable $_) {}
+				$likedNow = false;
+			} else {
+				// not yet liked -> insert
+				$ins = $pdo->prepare('INSERT IGNORE INTO post_likes (post_id, session_id, ip) VALUES (?, ?, ?)');
+				$ins->execute([$postId, $sessionId, $ip]);
+				$affected = $ins->rowCount();
+				if ($affected) {
+					try { $up = $pdo->prepare('UPDATE posts SET likes = COALESCE(likes,0) + 1 WHERE id = ?'); $up->execute([$postId]); } catch (Throwable $_) {}
+					$likedNow = true;
 				}
 			}
 			$pdo->commit();
+			$likes = get_likes($pdo, $postId);
+			echo json_encode(['status' => 'ok', 'likes' => $likes, 'liked' => $likedNow]);
+			exit;
 		} catch (Throwable $e) {
-			$pdo->rollBack();
+			try { $pdo->rollBack(); } catch (Throwable $_) {}
 			throw $e;
 		}
-
-		$likes = get_likes($pdo, $postId);
-		echo json_encode(['status' => 'ok', 'likes' => $likes, 'liked' => (bool)$affected]);
-		exit;
 	}
 
 	http_response_code(405);
