@@ -1,12 +1,10 @@
 <!-- ===== FOOTER START ===== -->
-<footer class="site-footer py-5">
-  <div class="container">
-    <div class="row g-4">
+<footer class="site-footer">
+  <div class="container footer-grid">
 
-        <!-- Logo & About -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="footer-about">
-          <div class="logo d-flex align-items-center mb-3">
+    <!-- Logo & About -->
+  <div class="footer-about">
+      <div class="logo">
         <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
         <div>
           <h2>HIGH Q SOLID ACADEMY</h2>
@@ -42,11 +40,10 @@
       </div>
     </div>
 
-      <!-- Quick Links -->
-      <div class="col-6 col-md-6 col-lg-2">
-        <div class="footer-links">
-          <h3 class="mb-3">Quick Links</h3>
-          <ul class="list-unstyled">
+    <!-- Quick Links -->
+    <div class="footer-links">
+      <h3>Quick Links</h3>
+      <ul>
         <li><a href="index.php">Home</a></li>
         <li><a href="about.php">About Us</a></li>
         <li><a href="programs.php">Programs</a></li>
@@ -55,11 +52,10 @@
       </ul>
     </div>
 
-      <!-- Programs -->
-      <div class="col-6 col-md-6 col-lg-2">
-        <div class="footer-programs">
-          <h3 class="mb-3">Our Programs</h3>
-          <ul class="list-unstyled">
+    <!-- Programs -->
+      <div class="footer-programs">
+      <h3>Our Programs</h3>
+      <ul>
         <?php
           try {
             $progs = $pdo->query("SELECT title, slug FROM courses WHERE is_active=1 ORDER BY title LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
@@ -77,10 +73,9 @@
       </ul>
     </div>
 
-      <!-- Contact -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="footer-contact">
-          <h3 class="mb-3">Contact Information</h3>
+    <!-- Contact -->
+    <div class="footer-contact">
+      <h3>Contact Information</h3>
       <div class="address-box">
         <strong><i class="fas fa-map-marker-alt"></i> Tutorial Address</strong>
         <p>8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA, Maya, Ikorodu</p>
@@ -102,10 +97,9 @@
   </div>
 
   <!-- Bottom -->
-  <div class="footer-bottom mt-4 pt-4 border-top">
-    <div class="d-flex flex-column flex-md-row justify-content-between">
-      <p class="mb-3 mb-md-0">© <?= date('Y') ?> High Q Solid Academy Limited. All rights reserved.</p>
-      <div class="links">
+  <div class="footer-bottom">
+    <p>© <?= date('Y') ?> High Q Solid Academy Limited. All rights reserved.</p>
+    <div class="links">
       <a href="privacy.php">Privacy Policy</a>
       <a href="terms.php">Terms of Service</a>
     </div>

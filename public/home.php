@@ -27,36 +27,31 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 <section class="hero">
   <div class="container">
-    <div class="row align-items-start">
-      <div class="col-lg-7 hero-left">
-        <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
-        <h1>Excellence in <span class="accent">Education</span></h1>
-        <p class="lead">
-          At High Q Solid Academy, we are committed to making our students excel academically and mentally.
-          Join thousands of successful students who have achieved their dreams with our proven teaching methods.
-        </p>
-        <div class="hero-ctas">
-          <a href="register.php" class="btn-primary">Register Now</a>
-          <a href="programs.php" class="btn-ghost">See Our Programs</a>
+    <div class="hero-left">
+      <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
+      <h1>Excellence in <span class="accent">Education</span></h1>
+      <p class="lead">
+        At High Q Solid Academy, we are committed to making our students excel academically and mentally.
+        Join thousands of successful students who have achieved their dreams with our proven teaching methods.
+      </p>
+      <div class="hero-ctas">
+        <a href="register.php" class="btn-primary">Register Now</a>
+        <a href="programs.php" class="btn-ghost">See Our Programs</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>6+</strong>
+          <div>Years Experience</div>
+        </div>
+        <div><strong>1000+</strong>
+          <div>Students Trained</div>
+        </div>
+        <div><strong>305</strong>
+          <div>Highest JAMB Score</div>
         </div>
       </div>
+    </div>
 
-      <aside class="col-lg-5 hero-right">
-        <div class="hero-stats">
-          <div>
-            <strong>6+</strong>
-            <div>Years Experience</div>
-          </div>
-          <div>
-            <strong>1000+</strong>
-            <div>Students Trained</div>
-          </div>
-          <div>
-            <strong>305</strong>
-            <div>Highest JAMB Score</div>
-          </div>
-        </div>
-
+    <aside class="hero-right">
       <div class="feature-card">
         <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
@@ -78,8 +73,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
         </div>
       </div>
-      </aside>
-    </div>
+    </aside>
   </div>
 </section>
 
@@ -97,8 +91,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <!-- Two Column Layout: left column holds card + quote, right column holds content + stats + button -->
-    <div class="row ceo-grid">
-      <div class="ceo-left-column col-lg-5 col-md-12">
+    <div class="ceo-grid">
+      <div class="ceo-left-column">
         <!-- Left Card -->
         <div class="ceo-card">
           <div class="ceo-photo">
@@ -118,9 +112,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </p>
           <span>- Master Adebule Quam</span>
         </div>
-  </div>
+      </div>
 
-  <div class="ceo-right-column col-lg-7 col-md-12">
+      <div class="ceo-right-column">
         <!-- Right Content -->
         <div class="ceo-content">
           <h3>Seasoned Educator & Mentor</h3>
@@ -173,7 +167,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
-    <div class="row programs-grid">
+    <div class="programs-grid">
       <?php if (empty($programs)): ?>
         <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
@@ -197,7 +191,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
           $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
-          <div class="col-lg-4 col-md-6">
           <article class="program-card">
             <div class="program-card-inner">
               <div class="program-icon">
@@ -254,7 +247,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
               <?php endif; ?>
             </div>
           </article>
-          </div>
 
         <?php endforeach; ?>
       <?php endif; ?>
@@ -272,8 +264,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <a href="register.php" class="btn-primary">Register for Programs</a>
         <a href="programs.php" class="btn-ghost">View All Programs</a>
       </div>
-  </div>
-</section>
     </div>
   </div>
 </section>
@@ -313,9 +303,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
     <?php if (empty($latestPosts)): ?>
       <p class="no-posts">No news posts available at the moment. Check back later for updates!</p>
     <?php else: ?>
-      <div class="row news-grid">
+      <div class="news-grid">
         <?php foreach ($latestPosts as $post): ?>
-          <div class="col-lg-3 col-md-6">
           <article class="news-card">
             <?php if (!empty($post['featured_image'])): ?>
               <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
@@ -329,7 +318,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
               </div>
             </div>
           </article>
-          </div>
         <?php endforeach; ?>
       </div>
       <div class="news-cta" style="text-align:center;margin-top:18px;">

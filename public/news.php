@@ -77,56 +77,46 @@ require_once __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-
 <section class="programs-content">
   <div class="container">
-    <div class="ceo-heading mb-3">
+    <div class="ceo-heading">
       <h2>Latest <span class="highlight">News & Blog</span></h2>
     </div>
 
     <!-- Filters: category + search -->
-    <form method="get" action="news.php" class="news-filters row g-2 align-items-center mb-3">
-      <div class="col-auto">
-        <select name="category" class="form-select">
-          <option value="">All Categories</option>
-          <?php foreach($categories as $c): ?>
-            <option value="<?= $c['id'] ?>" <?= $selectedCategory == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-      <div class="col">
-        <input type="text" name="q" class="form-control" placeholder="Search title..." value="<?= htmlspecialchars($q) ?>">
-      </div>
-      <div class="col-auto">
-        <button class="btn btn-outline-secondary">Filter</button>
-      </div>
+    <form method="get" action="news.php" class="news-filters" style="margin-bottom:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <select name="category">
+        <option value="">All Categories</option>
+        <?php foreach($categories as $c): ?>
+          <option value="<?= $c['id'] ?>" <?= $selectedCategory == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
+        <?php endforeach; ?>
+      </select>
+      <input type="text" name="q" placeholder="Search title..." value="<?= htmlspecialchars($q) ?>">
+      <button class="btn-ghost">Filter</button>
     </form>
 
     <?php if ($posts): ?>
-      <div class="row posts-grid g-3">
+      <div class="posts-grid">
         <?php foreach ($posts as $p): ?>
-          <article class="post-card col-12 col-md-6 col-lg-4">
-            <div class="card h-100">
-              <?php if (!empty($p['featured_image'] ?? '')): ?>
-                <img src="<?= htmlspecialchars($p['featured_image']) ?>" alt="" class="card-img-top img-fluid">
-              <?php endif; ?>
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title"><a href="./post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h5>
-                <p class="text-muted small mb-2"><?= htmlspecialchars($p['created_at']) ?></p>
-                <p class="card-text mb-3"><?= htmlspecialchars($p['excerpt']) ?></p>
-                <?php if ($hasTags): ?>
-                  <div class="mb-2">
-                    <?php
-                      $tags = array_filter(array_map('trim', explode(',', $p['tags'] ?? '')));
-                      foreach ($tags as $t) {
-                          echo '<a class="badge bg-light text-dark me-1" href="news.php?tag=' . urlencode($t) . '">' . htmlspecialchars($t) . '</a> ';
-                      }
-                    ?>
-                  </div>
-                <?php endif; ?>
-                <div class="mt-auto"><a href="./post.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-primary">Read More</a></div>
-              </div>
-            </div>
+          <article class="post-card">
+            <?php if (!empty($p['featured_image'] ?? '')): ?>
+              <img src="<?= htmlspecialchars($p['featured_image']) ?>" alt="" class="thumb">
+            <?php endif; ?>
+            <h3><a href="./post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
+            <p class="muted"><?= htmlspecialchars($p['created_at']) ?></p>
+            <p><?= htmlspecialchars($p['excerpt']) ?></p>
+            <?php if ($hasTags): ?>
+            <p>
+              <?php
+                // show tags as links (comma separated)
+                $tags = array_filter(array_map('trim', explode(',', $p['tags'] ?? '')));
+                foreach ($tags as $t) {
+                    echo '<a class="tag" href="news.php?tag=' . urlencode($t) . '">' . htmlspecialchars($t) . '</a> ';
+                }
+              ?>
+            </p>
+            <?php endif; ?>
+            <a href="./post.php?id=<?= $p['id'] ?>" class="btn-ghost">Read More</a>
           </article>
         <?php endforeach; ?>
       </div>

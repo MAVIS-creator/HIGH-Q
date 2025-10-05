@@ -29,18 +29,18 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
 </head>
 <body>
   <div class="receipt-card">
-    <div class="receipt-header d-flex align-items-center gap-3">
+    <div class="receipt-header">
       <img src="/assets/images/hq-logo.jpeg" alt="logo" style="height:60px;">
       <div>
         <h2>Payment Receipt</h2>
-        <div class="text-muted"><?= htmlspecialchars($siteName) ?></div>
+        <div style="color:#888"><?= htmlspecialchars($siteName) ?></div>
       </div>
     </div>
 
     <hr>
     <div>
       <strong>Reference:</strong> <?= htmlspecialchars($p['reference']) ?> <br>
-  <strong>Amount:</strong> <?= number_format($p['amount'],2) ?> <br>
+  <strong>Amount:</strong> ₦<?= number_format($p['amount'],2) ?> <br>
   <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?> <br>
   <strong>Name:</strong> <?= htmlspecialchars($p['payer_account_name'] ?? $p['payer_name'] ?? '') ?> <br>
   <strong>Email:</strong> <?= htmlspecialchars($p['payer_email'] ?? $p['email'] ?? '') ?> <br>
@@ -48,13 +48,13 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
   <div class="receipt-meta">Payment recorded at: <?= htmlspecialchars($p['created_at'] ?? '') ?></div>
     </div>
 
-    <div class="actions mt-3">
-      <button onclick="window.print();" class="btn btn-primary">Print / Download</button>
-      <a href="contact.php" class="btn btn-secondary ms-2">Contact Support</a>
-      <a href="contact.php#livechat" class="btn btn-outline-secondary ms-2">Open Live Chat</a>
+    <div class="actions">
+  <button onclick="window.print();" class="btn-primary">Print / Download</button>
+  <a href="contact.php" class="btn" style="margin-left:8px;">Contact Support</a>
+  <a href="contact.php#livechat" class="btn" style="margin-left:8px;">Open Live Chat</a>
     </div>
 
-    <div class="mt-4" style="color:#333">
+    <div style="margin-top:18px;color:#333">
       <h4>Next steps</h4>
       <p>Thank you for registering. You can contact us via the contact form for faster responses or start a live chat with an agent.</p>
     </div>

@@ -53,9 +53,8 @@ include __DIR__ . '/includes/header.php';
 </section>
 
 <div class="container register-layout contact-layout" style="margin-top:28px;">
-	<div class="row">
-		<main class="col-lg-8 register-main">
-			<div class="card">
+	<main class="register-main">
+		<div class="card">
 			<h3>Send Us a <span style="color:var(--hq-yellow);">Message</span></h3>
 			<p class="card-desc">Fill out the form below and we'll get back to you within 24 hours.</p>
 
@@ -70,24 +69,18 @@ include __DIR__ . '/includes/header.php';
 				</div>
 			<?php endif; ?>
 
-						<form method="post">
+			<form method="post">
 				<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-								<div class="row form-row form-inline">
-									<div class="col-md-6 mb-3">
-										<label>First Name</label>
-										<input class="form-control" name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>">
-									</div>
-									<div class="col-md-6 mb-3">
-										<label>Last Name</label>
-										<input class="form-control" name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>">
-									</div>
-								</div>
+				<div class="form-row form-inline">
+					<div style="flex:1"><label>First Name</label><input name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
+					<div style="flex:1"><label>Last Name</label><input name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
+				</div>
 
-								<div class="form-row mb-3"><label>Email Address</label><input class="form-control" type="email" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
-								<div class="form-row mb-3"><label>Phone Number</label><input class="form-control" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>"></div>
+				<div class="form-row"><label>Email Address</label><input type="email" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
+				<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>"></div>
 
-								<div class="form-row mb-3"><label>Program of Interest</label>
-										<select class="form-control" name="program">
+				<div class="form-row"><label>Program of Interest</label>
+					<select name="program">
 						<option value="">Select a program</option>
 						<?php
 						try { $courses = $pdo->query("SELECT id,title FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC); }
@@ -100,46 +93,45 @@ include __DIR__ . '/includes/header.php';
 					</select>
 				</div>
 
-								<div class="form-row mb-3"><label>Message</label><textarea id="contact_message" class="form-control" name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
+				<div class="form-row"><label>Message</label><textarea id="contact_message" name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
 
-								<div style="margin-top:12px;"><button class="btn-primary btn btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
+				<div style="margin-top:12px;"><button class="btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
 			</form>
 		</div>
 	</main>
 
-		<aside class="col-lg-4 register-sidebar">
-			<div class="sidebar-card" data-icon="tutor">
-				<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-				<h4>Tutorial Center</h4>
-				<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
-			</div>
-
-			<div class="sidebar-card" data-icon="office">
-				<div class="card-icon"><i class="bx bx-map" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-				<h4>Area Office</h4>
-				<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
-			</div>
-
-			<div class="sidebar-card" data-icon="contact">
-				<div class="card-icon"><i class="bx bx-phone" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-				<h4>Contact Information</h4>
-				<p class="sidebar-text"><strong>Phone</strong><br>0807 208 8794</p>
-				<p class="sidebar-text"><strong>Email</strong><br>info@hqacademy.com</p>
-				<p class="sidebar-text"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
-			</div>
-
-			<div class="quick-actions d-flex flex-column">
-				<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit">
-					<i class="bx bx-calendar"></i>
-					<div>Schedule Visit</div>
+	<aside class="register-sidebar">
+				<div class="sidebar-card" data-icon="tutor">
+					<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
+					<h4>Tutorial Center</h4>
+					<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
 				</div>
-				<div class="quick-action livechat" role="button" tabindex="0" id="openLiveChat" aria-label="Live Chat">
-					<i class="bx bx-chat"></i>
-					<div>Live Chat</div>
+
+				<div class="sidebar-card" data-icon="office">
+					<div class="card-icon"><i class="bx bx-map" style="font-size:28px;color:var(--hq-yellow);"></i></div>
+					<h4>Area Office</h4>
+					<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
 				</div>
-			</div>
-		</aside>
-	</div>
+
+				<div class="sidebar-card" data-icon="contact">
+					<div class="card-icon"><i class="bx bx-phone" style="font-size:28px;color:var(--hq-yellow);"></i></div>
+					<h4>Contact Information</h4>
+					<p class="sidebar-text"><strong>Phone</strong><br>0807 208 8794</p>
+					<p class="sidebar-text"><strong>Email</strong><br>info@hqacademy.com</p>
+					<p class="sidebar-text"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+				</div>
+
+				<div class="quick-actions">
+					<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit">
+						<i class="bx bx-calendar"></i>
+						<div>Schedule Visit</div>
+					</div>
+					<div class="quick-action livechat" role="button" tabindex="0" id="openLiveChat" aria-label="Live Chat">
+						<i class="bx bx-chat"></i>
+						<div>Live Chat</div>
+					</div>
+				</div>
+	</aside>
 </div>
 
 <!-- Frequently Asked Questions (row 1) -->
