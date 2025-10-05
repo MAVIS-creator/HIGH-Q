@@ -1,49 +1,71 @@
 .socials {
     display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    align-items: center;
 }
 
-.socials a {
-    color: #333;
-    font-size: 1.5rem;
+.socials .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.socials .social-link i {
+    font-size: 1.8rem;
+    position: relative;
+    z-index: 2;
     transition: all 0.3s ease;
 }
 
-.socials a:hover {
-    color: #ffd600;
-    transform: translateY(-3px);
+/* Social media brand colors */
+.socials .social-link.facebook i { color: #1877f2; }
+.socials .social-link.instagram i { color: #e4405f; }
+.socials .social-link.tiktok i { color: #000000; }
+
+/* Hover effects */
+.socials .social-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* Specific icon styles */
-.bxl-facebook-circle {
-    color: #1877f2;
+.socials .social-link:hover i {
+    transform: scale(1.1);
 }
 
-.bxl-instagram-alt {
-    color: #e4405f;
+.socials .social-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffd600;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 1;
 }
 
-.bxl-tiktok {
-    color: #000000;
+.socials .social-link:hover::before {
+    transform: translateY(0);
 }
 
-/* Force icon display */
+.socials .social-link:hover i {
+    color: #fff !important;
+}
+
+/* Ensure icons are visible */
 .bx {
     display: inline-block !important;
-    vertical-align: middle;
-}
-
-/* Icon animation on hover */
-.socials a:hover .bx {
-    animation: bounce 0.5s ease;
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
+    vertical-align: middle !important;
+    width: 1em;
+    height: 1em;
+    line-height: 1;
 }
