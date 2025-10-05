@@ -46,6 +46,49 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         </article>
       </div>
     <?php else: ?>
+      <?php
+        // Render the first tutor as a standalone lead card (e.g., CEO / featured)
+        $lead = null;
+        if (!empty($tutors)) {
+          $lead = array_shift($tutors);
+        }
+      ?>
+
+      <?php if ($lead): ?>
+        <div class="tutor-lead-wrap">
+          <article class="tutor-card tutor-lead">
+            <div class="tutor-thumb">
+              <img src="./<?= htmlspecialchars($lead['photo'] ?: 'assets/images/avatar-placeholder.png') ?>" alt="<?= htmlspecialchars($lead['name']) ?>">
+            </div>
+            <div class="tutor-body">
+              <h3><?= htmlspecialchars($lead['name']) ?></h3>
+              <?php
+                // Split qualifications by comma and show each on its own line
+                $quals = array_filter(array_map('trim', explode(',', $lead['qualifications'] ?? '')));
+                if (!empty($quals)):
+                  foreach ($quals as $q):
+              ?>
+                    <p class="qualification-line"><?= htmlspecialchars($q) ?></p>
+              <?php
+                  endforeach;
+                else:
+              ?>
+                  <p class="qualification-line">Not specified</p>
+              <?php endif; ?>
+
+              <p class="tutor-short"><?= htmlspecialchars($lead['short_bio']) ?></p>
+              <?php $subs = json_decode($lead['subjects'] ?? '[]', true); if (!empty($subs)): ?>
+                <div class="subjects">
+                  <?php foreach ($subs as $s): ?>
+                    <span class="tag"><?= htmlspecialchars($s) ?></span>
+                  <?php endforeach; ?>
+                </div>
+              <?php endif; ?>
+            </div>
+          </article>
+        </div>
+      <?php endif; ?>
+
       <div class="tutors-grid">
         <?php foreach ($tutors as $t): ?>
           <article class="tutor-card">
@@ -54,7 +97,19 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             </div>
             <div class="tutor-body">
               <h3><?= htmlspecialchars($t['name']) ?></h3>
-              <p class="role"><?= htmlspecialchars($t['qualifications']) ?></p>
+              <?php
+                $quals = array_filter(array_map('trim', explode(',', $t['qualifications'] ?? '')));
+                if (!empty($quals)):
+                  foreach ($quals as $q):
+              ?>
+                    <p class="qualification-line"><?= htmlspecialchars($q) ?></p>
+              <?php
+                  endforeach;
+                else:
+              ?>
+                  <p class="qualification-line">Not specified</p>
+              <?php endif; ?>
+
               <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
               <?php $subs = json_decode($t['subjects'] ?? '[]', true); if (!empty($subs)): ?>
                 <div class="subjects">

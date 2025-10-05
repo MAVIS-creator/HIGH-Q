@@ -2091,6 +2091,22 @@ nav a.active::after { background: var(--hq-yellow); }
   border: 4px solid rgba(255,255,255,0.8);
 }
 
+/* Lead card (full-width / standalone row) */
+.tutor-lead-wrap { margin-bottom: 24px; }
+.tutor-lead { width: 100%; display: flex; flex-direction: column; border-radius: 12px; }
+.tutor-lead .tutor-thumb { height: 220px; }
+.tutor-lead .tutor-thumb img { width: 96px; height: 96px; border-radius: 50%; }
+.tutor-lead .tutor-body { padding: 20px; }
+
+.qualification-line {
+  margin: 2px 0;
+  color: #d99a00; /* gold-like color */
+  font-weight: 600;
+}
+
+/* Ensure thumbnails center the circular avatar similar to provided image */
+.tutor-thumb { background-position: center; }
+
 .tutor-body {
   padding: 16px;
   display: flex;
