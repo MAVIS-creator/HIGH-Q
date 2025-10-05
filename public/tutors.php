@@ -47,47 +47,22 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       </div>
     <?php else: ?>
       <?php
-        // Render the first tutor as a standalone lead card (e.g., CEO / featured)
-        $lead = null;
-        if (!empty($tutors)) {
-          $lead = array_shift($tutors);
-        }
+        // Static lead card for Adebule Quam (CEO) — manually inserted so it always appears first
       ?>
+      <div class="tutor-lead-wrap">
+        <article class="tutor-card tutor-lead">
+          <div class="tutor-thumb">
+            <img src="./assets/images/avatar-placeholder.png" alt="Adebule Quam">
+          </div>
+          <div class="tutor-body">
+            <h3>Adebule Quam</h3>
+            <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
+            <p class="tutor-short">Master Adebule Quam is a seasoned tutor versed in the teaching profession. Over the years, he has produced students who have achieved breathtaking academic excellence and excelled in various examinations including GCE, WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
 
-      <?php if ($lead): ?>
-        <div class="tutor-lead-wrap">
-          <article class="tutor-card tutor-lead">
-            <div class="tutor-thumb">
-              <img src="./<?= htmlspecialchars($lead['photo'] ?: 'assets/images/avatar-placeholder.png') ?>" alt="<?= htmlspecialchars($lead['name']) ?>">
-            </div>
-            <div class="tutor-body">
-              <h3><?= htmlspecialchars($lead['name']) ?></h3>
-              <?php
-                // Split qualifications by comma and show each on its own line
-                $quals = array_filter(array_map('trim', explode(',', $lead['qualifications'] ?? '')));
-                if (!empty($quals)):
-                  foreach ($quals as $q):
-              ?>
-                    <p class="qualification-line"><?= htmlspecialchars($q) ?></p>
-              <?php
-                  endforeach;
-                else:
-              ?>
-                  <p class="qualification-line">Not specified</p>
-              <?php endif; ?>
-
-              <p class="tutor-short"><?= htmlspecialchars($lead['short_bio']) ?></p>
-              <?php $subs = json_decode($lead['subjects'] ?? '[]', true); if (!empty($subs)): ?>
-                <div class="subjects">
-                  <?php foreach ($subs as $s): ?>
-                    <span class="tag"><?= htmlspecialchars($s) ?></span>
-                  <?php endforeach; ?>
-                </div>
-              <?php endif; ?>
-            </div>
-          </article>
-        </div>
-      <?php endif; ?>
+            He believes in the school of thought that education is the force to push one ahead of others. Under his guidance, High Q Academy has blossomed into a hub of academic excellence and technological proficiency.</p>
+          </div>
+        </article>
+      </div>
 
       <div class="tutors-grid">
         <?php foreach ($tutors as $t): ?>
