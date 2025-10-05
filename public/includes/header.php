@@ -223,46 +223,70 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <!-- Logo + Name -->
-        <div class="logo">
-          <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo" href="index.php">
-          <div>
-            <h1>HIGH Q SOLID ACADEMY</h1>
-            <small>Limited</small>
-          </div>
-        </div>
+        <nav class="navbar navbar-expand-lg w-100">
+          <!-- Logo + Name -->
+          <a class="navbar-brand" href="index.php">
+            <div class="logo">
+              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+              <div>
+                <h1>HIGH Q SOLID ACADEMY</h1>
+                <small>Limited</small>
+              </div>
+            </div>
+          </a>
 
+          <!-- Mobile Toggle Button -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="bx bx-menu"></i>
+          </button>
 
-        <!-- Navigation -->
-        <nav>
-          <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-          <a href="index.php" class="<?= $cur === 'index.php' ? 'active' : '' ?>">Home</a>
-          <a href="about.php" class="<?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a>
+          <!-- Navigation -->
+          <div class="collapse navbar-collapse" id="mainNav">
+            <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
+              </li>
 
-          <!-- Programs dropdown (now contains Exams) -->
-          <div class="nav-dropdown">
-            <a href="#" class="drop-toggle">Programs</a>
-            <div class="nav-dropdown-content">
-              <a href="programs.php">Programs</a>
-              <a href="exams.php">Exams</a>
+              <!-- Programs Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  Programs
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                </ul>
+              </li>
+
+              <!-- News Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  News
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
+              </li>
+            </ul>
+
+            <!-- Register Button -->
+            <div class="d-none d-lg-block">
+              <a href="register.php" class="btn btn-primary">Register Now</a>
             </div>
           </div>
-
-          <!-- News top-level with Community under it -->
-          <div class="nav-dropdown">
-            <a href="news.php" class="drop-toggle">News</a>
-            <div class="nav-dropdown-content">
-              <a href="news.php">News & Blog</a>
-              <a href="community.php">Community</a>
-            </div>
-          </div>
-
-          <a href="register.php" class="<?= $cur === 'register.php' ? 'active' : '' ?>">Admission</a>
-          <a href="contact.php" class="<?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a>
         </nav>
-
-        <!-- Button -->
-        <a href="register.php" class="btn">Register Now</a>
       </div>
     </div>
   </header>
