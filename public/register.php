@@ -346,15 +346,15 @@ $csrf = generateToken('signup_form');
 						<h4>Why Choose Us?</h4>
 						<div class="why-stats">
 							<div class="stat">
-								<div class="icon"><img src="assets/images/icons/trophy.svg" alt="trophy"></div>
+								<div class="icon"><i class="bx bx-trophy" style="font-size:18px;color:var(--hq-yellow);"></i></div>
 								<div class="stat-body"><strong>305</strong><span>Highest JAMB Score 2025</span></div>
 							</div>
 							<div class="stat">
-								<div class="icon"><img src="assets/images/icons/teacher.svg" alt="students"></div>
+								<div class="icon"><i class="bx bx-group" style="font-size:18px;color:var(--hq-yellow);"></i></div>
 								<div class="stat-body"><strong>1000+</strong><span>Students Trained</span></div>
 							</div>
 							<div class="stat">
-								<div class="icon"><img src="assets/images/icons/results.svg" alt="results"></div>
+								<div class="icon"><i class="bx bx-bar-chart" style="font-size:18px;color:var(--hq-yellow);"></i></div>
 								<div class="stat-body"><strong>99%</strong><span>Success Rate</span></div>
 							</div>
 						</div>
@@ -373,20 +373,20 @@ $csrf = generateToken('signup_form');
 		</div>
 
 		<div class="achievements-grid">
-			<div class="next-stat yellow">
-				<div class="next-icon"><img src="assets/images/icons/payment.svg" alt="confirmation"></div>
+				<div class="next-stat yellow">
+					<div class="next-icon"><i class="bx bx-check-circle" style="font-size:26px;color:#d99a00"></i></div>
 				<strong>1. Confirmation</strong>
 				<span>You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
 			</div>
 
-			<div class="next-stat yellow">
-				<div class="next-icon"><img src="assets/images/icons/book-open.svg" alt="assessment"></div>
+				<div class="next-stat yellow">
+					<div class="next-icon"><i class="bx bx-book-open" style="font-size:26px;color:#d99a00"></i></div>
 				<strong>2. Assessment</strong>
 				<span>We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
 			</div>
 
-			<div class="next-stat red">
-				<div class="next-icon"><img src="assets/images/icons/trophy.svg" alt="learning"></div>
+				<div class="next-stat red">
+					<div class="next-icon"><i class="bx bx-rocket" style="font-size:26px;color:#d9534f"></i></div>
 				<strong>3. Start Learning</strong>
 				<span>Begin your journey with our expert tutors and join the ranks of our successful students.</span>
 			</div>
