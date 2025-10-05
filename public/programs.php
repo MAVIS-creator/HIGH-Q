@@ -21,7 +21,7 @@
 			<div class="programs-grid">
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><img src="./assets/images/icons/target.svg" alt="JAMB"></div>
+						<div class="program-icon"><i class="bx bx-target-lock"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>JAMB Preparation</h4>
@@ -39,7 +39,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><img src="./assets/images/icons/book-stack.svg" alt="WAEC"></div>
+						<div class="program-icon"><i class="bx bx-book"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>WAEC Preparation</h4>
@@ -56,7 +56,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><img src="./assets/images/icons/book-open.svg" alt="NECO"></div>
+						<div class="program-icon"><i class="bx bx-book-open"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>NECO Preparation</h4>
@@ -73,7 +73,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><img src="./assets/images/icons/trophy.svg" alt="Post-UTME"></div>
+						<div class="program-icon"><i class="bx bx-award"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>Post-UTME</h4>
@@ -90,7 +90,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><img src="./assets/images/icons/star.svg" alt="Special Tutorials"></div>
+						<div class="program-icon"><i class="bx bx-star"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>Special Tutorials</h4>
@@ -107,7 +107,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><img src="./assets/images/icons/laptop.svg" alt="Computer Training"></div>
+						<div class="program-icon"><i class="bx bx-laptop"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>Computer Training</h4>

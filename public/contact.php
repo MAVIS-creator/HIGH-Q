@@ -102,19 +102,19 @@ include __DIR__ . '/includes/header.php';
 
 	<aside class="register-sidebar">
 				<div class="sidebar-card" data-icon="tutor">
-					<img class="card-icon" src="assets/images/icons/book-open.svg" alt="Tutorial Center icon">
+					<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
 					<h4>Tutorial Center</h4>
 					<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
 				</div>
 
 				<div class="sidebar-card" data-icon="office">
-					<img class="card-icon" src="assets/images/icons/target.svg" alt="Area Office icon">
+					<div class="card-icon"><i class="bx bx-map" style="font-size:28px;color:var(--hq-yellow);"></i></div>
 					<h4>Area Office</h4>
 					<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
 				</div>
 
 				<div class="sidebar-card" data-icon="contact">
-					<img class="card-icon" src="assets/images/icons/phone.svg" alt="Contact icon">
+					<div class="card-icon"><i class="bx bx-phone" style="font-size:28px;color:var(--hq-yellow);"></i></div>
 					<h4>Contact Information</h4>
 					<p class="sidebar-text"><strong>Phone</strong><br>0807 208 8794</p>
 					<p class="sidebar-text"><strong>Email</strong><br>info@hqacademy.com</p>
