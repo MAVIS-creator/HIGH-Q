@@ -29,22 +29,13 @@
           } catch(Throwable $_) {}
         ?>
         <?php if (!empty($socials['facebook'])): ?>
-          <a href="<?= htmlspecialchars($socials['facebook']) ?>" aria-label="Facebook">
-            <!-- Inline Facebook SVG -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12.07C22 6.59 17.52 2 12 2S2 6.59 2 12.07C2 17.09 5.66 21.19 10.44 22v-7.03H7.9v-2.9h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.25c-1.23 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.9h-2.33V22C18.34 21.19 22 17.09 22 12.07z"/></svg>
-          </a>
+          <a href="<?= htmlspecialchars($socials['facebook']) ?>" aria-label="Facebook"><i class="bx bxl-facebook-circle" aria-hidden="true"></i></a>
         <?php endif; ?>
         <?php if (!empty($socials['instagram'])): ?>
-          <a href="<?= htmlspecialchars($socials['instagram']) ?>" aria-label="Instagram">
-            <!-- Inline Instagram SVG -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8.8a3.2 3.2 0 100 6.4 3.2 3.2 0 000-6.4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
+          <a href="<?= htmlspecialchars($socials['instagram']) ?>" aria-label="Instagram"><i class="bx bxl-instagram-alt" aria-hidden="true"></i></a>
         <?php endif; ?>
         <?php if (!empty($socials['tiktok'])): ?>
-          <a href="<?= htmlspecialchars($socials['tiktok']) ?>" aria-label="TikTok">
-            <!-- Inline TikTok SVG (brand) -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12.5 3v7.2a3.3 3.3 0 01-3.3-3.3V19a4 4 0 11-4-4c0-4.4 3.6-8 8-8V3h3v4h-1.5V3z"/></svg>
-          </a>
+          <a href="<?= htmlspecialchars($socials['tiktok']) ?>" aria-label="TikTok"><i class="bx bxl-tiktok" aria-hidden="true"></i></a>
         <?php endif; ?>
       </div>
     </div>
