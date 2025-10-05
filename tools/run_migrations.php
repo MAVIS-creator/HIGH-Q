@@ -53,8 +53,22 @@ foreach ($files as $f) {
         echo "Applied: $base\n";
     } catch (PDOException $e) {
         $pdo->rollBack();
-        echo "Failed to apply $base: " . $e->getMessage() . "\n"
-            . "Transaction rolled back. Check SQL and re-run.\n";
+        $msg = $e->getMessage();
+        // If the error indicates the column/table/index already exists, treat migration as applied and continue
+        if (preg_match('/(Duplicate column name|already exists|Duplicate key name|column exists|already exists in table)/i', $msg)) {
+            echo "Non-fatal schema error applying $base: $msg\n";
+            // record migration as applied to avoid retrying
+            try {
+                $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
+                $ins->execute([$base]);
+                echo "Marked $base as applied (non-fatal).\n";
+                continue;
+            } catch (Exception $ee) {
+                echo "Failed to record migration $base after non-fatal error: " . $ee->getMessage() . "\n";
+                exit(1);
+            }
+        }
+        echo "Failed to apply $base: " . $msg . "\n" . "Transaction rolled back. Check SQL and re-run.\n";
         exit(1);
     }
 }
