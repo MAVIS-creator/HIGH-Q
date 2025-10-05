@@ -167,8 +167,8 @@ function doAction(action,id){
   var token = document.getElementById('comments_csrf').value || '';
   Swal.fire({ title: 'Confirm', text: 'Are you sure?', icon: 'question', showCancelButton: true }).then(function(res){
     if (!res.isConfirmed) return;
-    var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', token);
-    var xhr = new XMLHttpRequest(); xhr.open('POST', location.href, true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', token);
+  var xhr = new XMLHttpRequest(); xhr.open('POST', '../index.php?pages=comments', true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; }
       if (r.status === 'ok') { Swal.fire('Success','Action completed','success').then(()=> location.reload()); }
       else { Swal.fire('Failed', r.message || 'Operation failed', 'error'); }
@@ -184,7 +184,9 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   if (!btn) return;
   var action = btn.getAttribute('data-action');
   var id = btn.getAttribute('data-id');
-  if (action === 'approve' || action === 'reject') {
+  if (action === 'approve' || action === 'reject' || action === 'destroy') {
+    // destroy is a permanent remove - ask twice
+    if (action === 'destroy' && !confirm('Permanently remove this comment?')) return;
     doAction(action, id);
     return;
   }
@@ -200,7 +202,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
 });
 // Poll the comments fragment every 5 seconds
 setInterval(function(){
-  var xhr = new XMLHttpRequest(); xhr.open('GET', location.pathname + '?pages=comments&ajax=1&_=' + Date.now(), true);
+  var xhr = new XMLHttpRequest(); xhr.open('GET', '../index.php?pages=comments&ajax=1&_=' + Date.now(), true);
   xhr.onload = function(){
     if (xhr.status !== 200) return;
     // basic check: if response looks like a table fragment (starts with <tr) then replace tbody
@@ -261,7 +263,7 @@ document.getElementById('replySend').addEventListener('click', function(){
   fd.append('content', content);
   fd.append('_csrf', '<?= generateToken('comments_form') ?>');
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', location.href, true);
+  xhr.open('POST', '../index.php?pages=comments', true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ alert('Error'); return; } if (r.status==='ok') { location.reload(); } else { alert('Failed to send reply'); } };
   xhr.send(fd);
