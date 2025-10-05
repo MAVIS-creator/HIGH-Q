@@ -1278,6 +1278,11 @@ nav a.active::after {
   margin-top: 24px;
 }
 
+/* Space above programs so the hero and the programs heading feel separated */
+.programs-content {
+  margin-top: 28px;
+}
+
 @media (max-width: 1100px) {
   .programs-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2699,6 +2704,8 @@ input.form-input {
   /* replace with your image */
   background-size: cover;
   background-position: center center;
+  /* add breathing room below the hero so the next section doesn't sit too close */
+  padding-bottom: 28px;
 }
 
 .about-hero-overlay {
