@@ -363,29 +363,39 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }
 
-            // Attachment handling with preview (images show thumbnails, others show filename)
+            // Attachment handling with client-side validation
             attachBtn.addEventListener('click', () => { attachmentInput.click(); });
-            attachmentInput.addEventListener('change', () => {
+            // create alert element if missing
+            let chatAlertEl = document.getElementById('chatAlert');
+            if (!chatAlertEl) {
+                chatAlertEl = document.createElement('div'); chatAlertEl.id = 'chatAlert'; chatAlertEl.className = 'chat-alert'; document.querySelector('.chat-card').appendChild(chatAlertEl);
+            }
+            attachmentInput.addEventListener('change', async () => {
                 attachmentPreview.innerHTML = '';
-                Array.from(attachmentInput.files).forEach(file => {
+                chatAlertEl.style.display = 'none'; chatAlertEl.textContent = '';
+                const maxBytes = 100 * 1024 * 1024;
+                const allowed = ['image/jpeg','image/png','image/gif','image/webp','application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                for (const file of Array.from(attachmentInput.files)) {
+                    if (file.size > maxBytes) { chatAlertEl.textContent = 'File too large: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
+                    if (!allowed.includes(file.type)) { chatAlertEl.textContent = 'Not allowed file type: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
+                    // magic-bytes checks for PDF/DOCX
+                    if (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                        try {
+                            const buf = await file.slice(0, 8).arrayBuffer();
+                            const bytes = new Uint8Array(buf);
+                            const sig = String.fromCharCode.apply(null, Array.from(bytes));
+                            if (file.type === 'application/pdf' && !sig.startsWith('%PDF')) { chatAlertEl.textContent = 'Invalid PDF: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
+                            if (file.type.indexOf('wordprocessingml.document') !== -1 && !(bytes[0] === 0x50 && bytes[1] === 0x4B)) { chatAlertEl.textContent = 'Invalid DOCX: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
+                        } catch (e) { chatAlertEl.textContent = 'Unable to validate file: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
+                    }
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
-                        reader.onload = e => {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            attachmentPreview.appendChild(img);
-                        };
+                        reader.onload = e => { const img = document.createElement('img'); img.src = e.target.result; attachmentPreview.appendChild(img); };
                         reader.readAsDataURL(file);
                     } else {
-                        const div = document.createElement('div');
-                        div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
-                        div.style.padding = '6px 8px';
-                        div.style.borderRadius = '6px';
-                        div.style.background = '#fff';
-                        div.style.marginTop = '4px';
-                        attachmentPreview.appendChild(div);
+                        const div = document.createElement('div'); div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)'; div.style.padding = '6px 8px'; div.style.borderRadius = '6px'; div.style.background = '#fff'; div.style.marginTop = '4px'; attachmentPreview.appendChild(div);
                     }
-                });
+                }
             });
 
             // Auto-resize textarea
