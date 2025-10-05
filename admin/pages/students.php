@@ -462,11 +462,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null, 'email'=> $reg['email'] ?? null];
         echo json_encode($resp); exit;
       }
-      header('Location: index.php?pages=students'); exit;
+  header('Location: ../index.php?pages=students'); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
-      setFlash('error','Failed to confirm registration'); header('Location: index.php?pages=students'); exit;
+  setFlash('error','Failed to confirm registration'); header('Location: ../index.php?pages=students'); exit;
     }
   }
 
@@ -486,7 +486,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
-    header('Location: index.php?pages=students'); exit;
+  header('Location: ../index.php?pages=students'); exit;
   }
 }
 
