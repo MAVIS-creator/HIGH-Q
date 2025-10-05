@@ -1,7 +1,8 @@
 <?php
 // public/api/like_post.php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../config/db.php';
+// public API files live in public/api; the public DB config is at public/config/db.php
+require_once __DIR__ . '/../config/db.php';
 
 // Lightweight like handling with a post_likes table to avoid duplicate likes per session/IP.
 // GET ?post_id=... returns current likes and whether this session/ip has liked.
