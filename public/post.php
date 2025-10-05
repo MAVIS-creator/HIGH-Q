@@ -88,6 +88,26 @@ if ($contentForDoc !== '') {
       $tocHtml .= '<li' . $indent . '><a href="#' . htmlspecialchars($it['id']) . '">' . htmlspecialchars($it['text']) . '</a></li>';
     }
     $tocHtml .= '</ul></aside>';
+    
+    // Add TOC toggle script
+    $tocHtml .= '
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tocToggle = document.querySelector(".toc-toggle");
+        const tocAside = document.querySelector(".post-toc");
+        
+        if (tocToggle && tocAside) {
+            tocToggle.addEventListener("click", function() {
+                tocAside.classList.toggle("active");
+                if (tocAside.classList.contains("active")) {
+                    tocToggle.innerHTML = \'<i class="bx bx-x"></i> Close\';
+                } else {
+                    tocToggle.innerHTML = \'<i class="bx bx-list-ul"></i> Contents\';
+                }
+            });
+        }
+    });
+    </script>';
   }
 
   // extract inner HTML of wrapped div as rendered content
