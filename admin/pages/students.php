@@ -305,29 +305,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $action = $_GET['action'];
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
-    if (!verifyToken('students_form', $token)) {
-        header('Location: index.php?pages=students'); exit;
-    }
+  if (!verifyToken('students_form', $token)) {
+    header('Location: ../index.php?pages=students'); exit;
+  }
 
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
-    if ($id === 1 || $id === $currentUserId) {
-        header('Location: index.php?pages=students'); exit;
-    }
+  if ($id === 1 || $id === $currentUserId) {
+    header('Location: ../index.php?pages=students'); exit;
+  }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
-        logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-        header('Location: index.php?pages=students'); exit;
+  logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
+  header('Location: ../index.php?pages=students'); exit;
     }
 
     if ($action === 'activate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
-        logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-        header('Location: index.php?pages=students'); exit;
+  logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
+  header('Location: ../index.php?pages=students'); exit;
     }
 
   if ($action === 'delete') {
@@ -335,11 +335,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $checkReg = $pdo->prepare('SELECT id FROM student_registrations WHERE id = ? LIMIT 1');
     $checkReg->execute([$id]);
     $regFound = $checkReg->fetch(PDO::FETCH_ASSOC);
-    if ($regFound) {
+      if ($regFound) {
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-      header('Location: index.php?pages=students'); exit;
+      header('Location: ../index.php?pages=students'); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
@@ -353,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
     }
-    header('Location: index.php?pages=students'); exit;
+  header('Location: ../index.php?pages=students'); exit;
   }
 
   // Custom: send message/approve flow from modal
