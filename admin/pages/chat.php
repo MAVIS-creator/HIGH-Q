@@ -112,9 +112,9 @@ function claim(id){
     fd.append('thread_id',id);
     fd.append('_csrf','<?= generateToken('chat_form') ?>');
 
-    var xhr=new XMLHttpRequest();
-    xhr.open('POST',location.href,true);
-    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  var xhr=new XMLHttpRequest();
+  xhr.open('POST','../index.php?pages=chat',true);
+  xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
 
     xhr.onload=function(){
       try{ var r=JSON.parse(xhr.responseText);}catch(e){
