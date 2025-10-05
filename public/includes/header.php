@@ -290,6 +290,24 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             requestAnimationFrame(function(){
               requestAnimationFrame(function(){
                 document.documentElement.classList.add('is-loaded');
+                // After we mark the page as loaded, assign stagger classes to common groups
+                try {
+                  var groups = [
+                    {selector: '.programs-grid .program-card', base: 'stagger'},
+                    {selector: '.tutors-grid .tutor-card', base: 'stagger'},
+                    {selector: '.core-grid .value-card', base: 'stagger'},
+                    {selector: '.ceo-stats .stat', base: 'stagger'}
+                  ];
+                  groups.forEach(function(g){
+                    var nodes = Array.prototype.slice.call(document.querySelectorAll(g.selector));
+                    nodes.forEach(function(n, i){
+                      var idx = Math.min(4, Math.max(1, Math.ceil((i+1)/1)));
+                      n.classList.add(g.base + '-' + idx);
+                      // add a hover-zoom for nice mouse interaction on interactive cards
+                      n.classList.add('hover-zoom');
+                    });
+                  });
+                } catch (innerErr) { /* ignore */ }
               });
             });
           } else {
