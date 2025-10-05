@@ -95,9 +95,9 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         }
 
         .chat-card {
-            width: 360px;
+            width: 420px;
             max-width: 95%;
-            height: 500px;
+            height: 580px;
             background: #fff;
             border-radius: 12px;
             display: flex;
@@ -120,29 +120,33 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            gap: 6px;
+            gap: 10px;
             background: var(--hq-muted);
         }
 
         .chat-message {
-            padding: 8px 12px;
-            border-radius: 18px;
-            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            max-width: 78%;
             word-wrap: break-word;
             white-space: pre-wrap;
             display: inline-block;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
         }
 
         .chat-message.visitor {
             margin-left: auto;
-            background: var(--hq-yellow-2);
-            color: var(--hq-dark);
+            background: #ffd966; /* brighter yellow for good contrast */
+            color: #111;
+            text-align: left;
         }
 
         .chat-message.staff {
             margin-right: auto;
-            background: var(--hq-muted);
-            color: var(--hq-dark);
+            background: #ffffff;
+            color: #111;
+            border: 1px solid #eee;
+            text-align: left;
         }
 
         .chat-message img.chat-image {
@@ -163,7 +167,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         .chat-footer input[type=text],
         .chat-footer textarea {
             flex: 1;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-radius: 18px;
             border: 1px solid #ccc;
             outline: none;
@@ -179,34 +183,14 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             cursor: pointer;
         }
 
-        .btn-attachment,
-        .btn-emoji {
+        .btn-attachment {
             background: none;
             border: none;
             cursor: pointer;
             font-size: 20px;
         }
 
-        .emoji-panel {
-            position: absolute;
-            bottom: 50px;
-            left: 10px;
-            background: #fff;
-            border: 1px solid #ccc;
-            padding: 6px;
-            border-radius: 8px;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-            flex-wrap: wrap;
-            width: 280px;
-        }
-
-        .emoji-panel span {
-            cursor: pointer;
-            font-size: 20px;
-            margin: 2px;
-        }
+        /* emoji panel removed - attachments only */
 
         .attachment-preview {
             display: flex;
@@ -244,9 +228,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         <div class="chat-header">Live Chat — Online</div>
         <div class="chat-body" id="chatMessages"></div>
         <div class="chat-footer">
-            <button type="button" class="btn-attachment" id="attachBtn">➕</button>
+            <button type="button" class="btn-attachment" id="attachBtn">📎</button>
             <input type="file" id="attachment" style="display:none;" multiple>
-            <button type="button" class="btn-emoji" id="emojiBtn">😊</button>
             <input type="text" id="c_name" placeholder="Your Name">
             <textarea id="c_message" rows="1" placeholder="Type a message..."></textarea>
             <button id="sendBtn">Send</button>
@@ -263,15 +246,6 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     </div>
 
     <script>
-        // Emoji list (can be expanded)
-        const emojis = ["😀", "😂", "😍", "👍", "🙌", "😎", "🤔", "🥳", "😢", "😭", "😡", "🤯", "😴", "🤩", "😇", "🤪", "😐", "😶", "😏", "🤤"];
-        const emojiPanel = document.getElementById('emojiPanel');
-        emojis.forEach(e => {
-            const span = document.createElement('span');
-            span.textContent = e;
-            emojiPanel.appendChild(span);
-        });
-
         (function() {
             const sendBtn = document.getElementById('sendBtn');
             const msgInput = document.getElementById('c_message');
@@ -280,7 +254,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const attachmentInput = document.getElementById('attachment');
             const attachBtn = document.getElementById('attachBtn');
             const attachmentPreview = document.getElementById('attachmentPreview');
-            const emojiBtn = document.getElementById('emojiBtn');
+            // emoji removed
 
             function getThreadId() {
                 return localStorage.getItem('hq_thread_id') || null;
@@ -303,16 +277,6 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 chatDiv.appendChild(div);
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }
-
-            // Emoji toggle
-            emojiBtn.addEventListener('click', () => {
-                emojiPanel.style.display = emojiPanel.style.display === 'none' ? 'flex' : 'none';
-            });
-            emojiPanel.querySelectorAll('span').forEach(e => {
-                e.addEventListener('click', () => {
-                    msgInput.value += e.textContent;
-                });
-            });
 
             // Attachment handling with preview
             attachBtn.addEventListener('click', () => {
@@ -343,7 +307,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 fd.append('message', msgInput.value);
                 const tid = getThreadId();
                 if (tid) fd.append('thread_id', tid);
-                Array.from(attachmentInput.files).forEach(f => fd.append('attachment', f));
+                Array.from(attachmentInput.files).forEach((f, idx) => fd.append('attachments[]', f));
 
                 try {
                     const res = await fetch('?action=send_message', {
