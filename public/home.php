@@ -90,48 +90,52 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
-    <!-- Two Column Layout: left column holds card + quote, right column holds content + stats + button -->
+    <!-- Two Column Layout with Bootstrap -->
     <div class="ceo-grid">
       <div class="ceo-left-column">
         <!-- Left Card -->
         <div class="ceo-card">
           <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
           </div>
-          <h3>Master Adebule Quam</h3>
-          <p class="role">CEO & Lead Tutor</p>
+          <div class="ceo-info">
+            <h3 class="mb-1">Master Adebule Quam</h3>
+            <p class="role mb-0">CEO & Lead Tutor</p>
+          </div>
         </div>
 
-        <!-- Quote Box (moved under left card) -->
+        <!-- Quote Box -->
         <div class="ceo-quote">
-          <i class="fas fa-quote-left"></i>
-          <p>
+          <i class="fas fa-quote-left mb-2"></i>
+          <p class="mb-3">
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span>- Master Adebule Quam</span>
+          <span class="d-block text-end">- Master Adebule Quam</span>
         </div>
       </div>
 
       <div class="ceo-right-column">
         <!-- Right Content -->
         <div class="ceo-content">
-          <h3>Seasoned Educator & Mentor</h3>
-          <p>
-            Master Adebule Quam is a seasoned tutor versed in the teaching profession.
-            Over the years, he has produced students who have achieved breathtaking
-            academic excellence and excelled in various examinations including GCE,
-            WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
-          </p>
-          <p>
-            He believes in the school of thought that education is the force to push
-            one ahead of others. Under his guidance, High Q Academy has blossomed into
-            a hub of academic excellence and technological proficiency.
-          </p>
+          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
+          <div class="mb-4">
+            <p class="mb-3">
+              Master Adebule Quam is a seasoned tutor versed in the teaching profession.
+              Over the years, he has produced students who have achieved breathtaking
+              academic excellence and excelled in various examinations including GCE,
+              WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
+            </p>
+            <p>
+              He believes in the school of thought that education is the force to push
+              one ahead of others. Under his guidance, High Q Academy has blossomed into
+              a hub of academic excellence and technological proficiency.
+            </p>
+          </div>
         </div>
 
-        <!-- Stats Row (moved under right content) -->
+        <!-- Stats Grid -->
         <div class="ceo-stats">
           <div class="stat yellow">
             <i class="fas fa-trophy"></i>
