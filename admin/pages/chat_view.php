@@ -39,36 +39,48 @@ error_reporting(E_ALL);
               // If message has inline image tags saved as part of message HTML (older approach), render raw
               // Also check for attachments stored in a separate attachments table (if exists)
               try {
-                $attStmt = $pdo->prepare('SELECT file_url FROM chat_attachments WHERE message_id = ?');
+                $attStmt = $pdo->prepare('SELECT id, file_url, original_name, mime_type, created_at FROM chat_attachments WHERE message_id = ?');
                 $attStmt->execute([$m['id']]);
-                $atts = $attStmt->fetchAll(PDO::FETCH_COLUMN);
+                $atts = $attStmt->fetchAll(PDO::FETCH_ASSOC);
                 if (!empty($atts)) {
-                    echo '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">';
-                    foreach ($atts as $a) {
-                      // Try to determine mime-type from filename extension
+                    echo '<div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">';
+                    foreach ($atts as $att) {
+                      $a = $att['file_url'];
+                      $downloadUrl = '/HIGH-Q/public/download_attachment.php?file=' . urlencode(basename($a));
+                      $origName = $att['original_name'] ?: basename($a);
+                      $mime = $att['mime_type'] ?: '';
+                      $created = $att['created_at'] ?? '';
+                      // compute file size on disk if available
+                      $fsPath = realpath(__DIR__ . '/../../public/' . $a);
+                      $sizeHuman = '';
+                      if ($fsPath && is_file($fsPath)) {
+                        $sz = filesize($fsPath);
+                        if ($sz >= 1024*1024) $sizeHuman = round($sz / (1024*1024), 2) . ' MB';
+                        elseif ($sz >= 1024) $sizeHuman = round($sz / 1024, 2) . ' KB';
+                        else $sizeHuman = $sz . ' B';
+                      }
+
                       $ext = strtolower(pathinfo($a, PATHINFO_EXTENSION));
                       $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
-                      $downloadUrl = '/HIGH-Q/public/download_attachment.php?file=' . urlencode(basename($a));
+
+                      echo '<div style="display:flex;gap:8px;align-items:center;padding:8px;border:1px solid #eee;border-radius:8px;background:#fff">';
                       if ($isImage) {
-                        echo '<div style="position:relative">';
                         echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank"><img src="' . htmlspecialchars($a) . '" style="max-width:120px;border-radius:6px"></a>';
-                        echo '</div>';
                       } else {
-                        $fname = basename($a);
-                        echo '<div style="position:relative;padding:8px;border:1px solid #eee;border-radius:6px;background:#fff;display:flex;align-items:center;gap:8px">';
-                        echo '<i class="fas fa-file" style="font-size:20px;color:#666"></i>';
-                        echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank">' . htmlspecialchars($fname) . '</a>';
-                        echo '</div>';
+                        echo '<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#f5f5f5"><i class="fas fa-file" style="font-size:20px;color:#666"></i></div>';
                       }
-                      // add a delete button if chat_attachments table tracks ids (try to fetch id)
-                      try {
-                        $idQ = $pdo->prepare('SELECT id FROM chat_attachments WHERE file_url = ? LIMIT 1');
-                        $idQ->execute([$a]);
-                        $attId = $idQ->fetchColumn();
-                        if ($attId) {
-                          echo '<button class="btn-delete-attachment" data-id="' . intval($attId) . '" style="margin-left:6px;background:#f44336;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer">Delete</button>';
-                        }
-                      } catch (Throwable $_) { /* ignore */ }
+
+                      echo '<div style="flex:1">';
+                      echo '<div style="font-weight:600">' . htmlspecialchars($origName) . '</div>';
+                      echo '<div style="font-size:0.85rem;color:#666">' . htmlspecialchars($mime) . ' ' . ($sizeHuman ? '• ' . $sizeHuman : '') . ' ' . ($created ? '• ' . htmlspecialchars($created) : '') . '</div>';
+                      echo '</div>';
+
+                      echo '<div style="display:flex;gap:6px">';
+                      echo '<a class="btn" href="' . htmlspecialchars($downloadUrl) . '" target="_blank" style="padding:6px 8px">Download</a>';
+                      echo '<button class="btn-delete-attachment" data-id="' . intval($att['id']) . '" style="background:#f44336;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer">Delete</button>';
+                      echo '</div>';
+
+                      echo '</div>';
                     }
                     echo '</div>';
                   }
