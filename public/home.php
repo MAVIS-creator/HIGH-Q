@@ -39,20 +39,26 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <a href="register.php" class="btn-primary">Register Now</a>
         <a href="programs.php" class="btn-ghost">See Our Programs</a>
       </div>
-      <div class="hero-stats">
-        <div><strong>6+</strong>
-          <div>Years Experience</div>
-        </div>
-        <div><strong>1000+</strong>
-          <div>Students Trained</div>
-        </div>
-        <div><strong>305</strong>
-          <div>Highest JAMB Score</div>
-        </div>
-      </div>
+      <!-- hero-stats moved to the right column on large screens -->
       </div>
 
       <aside class="hero-right col-lg-4 col-md-12">
+      <!-- place summary stats at top of the right column for desktop layout -->
+      <div class="hero-stats mb-3 d-flex justify-content-between gap-2">
+        <div class="text-center p-2 flex-fill bg-light rounded">
+          <strong>6+</strong>
+          <div class="small">Years Experience</div>
+        </div>
+        <div class="text-center p-2 flex-fill bg-light rounded">
+          <strong>1000+</strong>
+          <div class="small">Students Trained</div>
+        </div>
+        <div class="text-center p-2 flex-fill bg-light rounded">
+          <strong>305</strong>
+          <div class="small">Highest JAMB Score</div>
+        </div>
+      </div>
+
       <div class="feature-card">
         <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
