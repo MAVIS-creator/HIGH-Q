@@ -1278,6 +1278,11 @@ nav a.active::after {
   margin-top: 24px;
 }
 
+/* Give breathing room below the programs listing so the next sections don't crowd it */
+.programs-content {
+  margin-bottom: 48px;
+}
+
 .program-card {
   background: #fff;
   border-radius: 16px;
@@ -2837,6 +2842,18 @@ input.form-input {
   margin-bottom: 12px;
 }
 
+/* Ensure the icon element itself is visible and inherits the intended color.
+   Some browsers or reset CSS can make icon fonts render as inline-block with color:inherit not applied.
+   Force display and color on the inner <i> so Boxicons render consistently. */
+.value-icon i,
+.program-icon i,
+.core-icon i {
+  display: inline-block;
+  color: inherit !important;
+  font-size: 20px !important;
+  line-height: 1;
+}
+
 .value-card h4 {
   margin: 0 0 8px;
   color: var(--hq-yellow);
@@ -2863,8 +2880,8 @@ input.form-input {
 .core-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 18px;
+  gap: 30px; /* slightly more space between value cards */
+  margin-top: 28px;
 }
 
 .core-value-card {
