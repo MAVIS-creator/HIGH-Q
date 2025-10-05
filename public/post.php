@@ -80,6 +80,7 @@ if ($contentForDoc !== '') {
       $tocItems[] = ['id' => $id, 'text' => $text, 'tag' => $n->nodeName];
     }
     // build TOC HTML
+    $tocHtml .= '<button class="toc-toggle d-md-none"><i class="bx bx-list-ul"></i> Contents</button>';
     $tocHtml .= '<aside class="post-toc" aria-label="Table of Contents">';
     $tocHtml .= '<h4>Table of Contents</h4><ul>';
     foreach ($tocItems as $it) {
