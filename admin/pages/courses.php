@@ -625,12 +625,12 @@ function escapeHtml(s){
     });
   });
 
-  // Attach confirmation to delete forms
+  // Attach confirmation to delete forms using SweetAlert2
   document.querySelectorAll('form.delete-form').forEach(f => {
     f.addEventListener('submit', function(e){
-      if (!confirm('Delete this course? This action cannot be undone.')) {
-        e.preventDefault();
-      }
+      e.preventDefault();
+      const form = this;
+      Swal.fire({ title: 'Delete course?', text: 'Delete this course? This action cannot be undone.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, delete', confirmButtonColor: '#d33' }).then(function(res){ if (res.isConfirmed) form.submit(); });
     });
   });
   </script>

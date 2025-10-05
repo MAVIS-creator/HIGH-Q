@@ -185,9 +185,11 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   var action = btn.getAttribute('data-action');
   var id = btn.getAttribute('data-id');
   if (action === 'approve' || action === 'reject' || action === 'destroy') {
-    // destroy is a permanent remove - ask twice
-    if (action === 'destroy' && !confirm('Permanently remove this comment?')) return;
-    doAction(action, id);
+    if (action === 'destroy') {
+      Swal.fire({ title: 'Permanently remove?', text: 'This will permanently delete the comment.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, delete', confirmButtonColor: '#d33' }).then(function(res){ if (res.isConfirmed) doAction(action,id); });
+    } else {
+      doAction(action, id);
+    }
     return;
   }
   if (action === 'reply') {
