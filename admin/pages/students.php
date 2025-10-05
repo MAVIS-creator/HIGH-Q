@@ -388,13 +388,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-  header('Location: ../index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-  setFlash('error','Registration already confirmed'); header('Location: ../index.php?pages=students'); exit;
+  setFlash('error','Registration already confirmed'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
@@ -462,11 +462,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null, 'email'=> $reg['email'] ?? null];
         echo json_encode($resp); exit;
       }
-  header('Location: ../index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
-  setFlash('error','Failed to confirm registration'); header('Location: ../index.php?pages=students'); exit;
+  setFlash('error','Failed to confirm registration'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
   }
 
