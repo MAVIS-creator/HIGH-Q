@@ -2095,7 +2095,7 @@ nav a.active::after { background: var(--hq-yellow); }
 .tutor-lead-wrap { margin-bottom: 24px; }
 .tutor-lead { width: 100%; display: flex; flex-direction: column; border-radius: 12px; }
 .tutor-lead .tutor-thumb { height: 260px; display:flex; align-items:center; justify-content:center }
-.tutor-lead .tutor-thumb img { width: 140px; height: 140px; border-radius: 50%; box-shadow: 0 6px 18px rgba(11,37,64,0.06); }
+.tutor-lead .tutor-thumb img { width: 72%; height: 72%; border-radius: 50%; box-shadow: 0 6px 18px rgba(11,37,64,0.06); border: none; }
 .tutor-lead .tutor-body { padding: 20px; }
 
 .qualification-line {

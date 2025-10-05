@@ -57,9 +57,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
           <div class="tutor-body">
             <h3>Adebule Quam</h3>
             <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
-            <p class="tutor-short">Master Adebule Quam is a seasoned tutor versed in the teaching profession. Over the years, he has produced students who have achieved breathtaking academic excellence and excelled in various examinations including GCE, WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
-
-            He believes in the school of thought that education is the force to push one ahead of others. Under his guidance, High Q Academy has blossomed into a hub of academic excellence and technological proficiency.</p>
+            <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
           </div>
         </article>
       </div>
