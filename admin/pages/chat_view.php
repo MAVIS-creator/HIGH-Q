@@ -43,12 +43,24 @@ error_reporting(E_ALL);
                 $attStmt->execute([$m['id']]);
                 $atts = $attStmt->fetchAll(PDO::FETCH_COLUMN);
                 if (!empty($atts)) {
-                  echo '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">';
-                  foreach ($atts as $a) {
-                    echo '<a href="' . htmlspecialchars($a) . '" target="_blank"><img src="' . htmlspecialchars($a) . '" style="max-width:120px;border-radius:6px"></a>';
+                    echo '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">';
+                    foreach ($atts as $a) {
+                      // Try to determine mime-type from filename extension
+                      $ext = strtolower(pathinfo($a, PATHINFO_EXTENSION));
+                      $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
+                      $downloadUrl = '/HIGH-Q/public/download_attachment.php?file=' . urlencode(basename($a));
+                      if ($isImage) {
+                        echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank"><img src="' . htmlspecialchars($a) . '" style="max-width:120px;border-radius:6px"></a>';
+                      } else {
+                        $fname = basename($a);
+                        echo '<div style="padding:8px;border:1px solid #eee;border-radius:6px;background:#fff;display:flex;align-items:center;gap:8px">';
+                        echo '<i class="fas fa-file" style="font-size:20px;color:#666"></i>';
+                        echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank">' . htmlspecialchars($fname) . '</a>';
+                        echo '</div>';
+                      }
+                    }
+                    echo '</div>';
                   }
-                  echo '</div>';
-                }
               } catch (Throwable $_) {
                 // if chat_attachments does not exist, ignore
               }
