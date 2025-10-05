@@ -2931,7 +2931,7 @@ input.form-input {
 }
 
 .tutor-card {
-  width: 120px;
+  width: 320px;
   background: #fff;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -2974,7 +2974,7 @@ input.form-input {
 }
 
 .tutor-lead {
-  width: 100%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   border-radius: 12px;
