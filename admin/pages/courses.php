@@ -215,6 +215,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
 ?>
 
+<?php include '../includes/header.php'; ?>
+<?php include '../includes/sidebar.php'; ?>
+
 <div class="courses-page">
 
   <?php if ($errors): ?>
