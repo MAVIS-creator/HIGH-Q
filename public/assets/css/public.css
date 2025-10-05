@@ -2207,6 +2207,10 @@ input.form-input {
   box-shadow: 0 16px 40px rgba(11, 37, 64, 0.09);
 }
 
+/* Stats animate and pop on load */
+.ceo-stats .stat { opacity: 0; transform: translateY(6px) scale(.995); transition: opacity .44s ease, transform .44s cubic-bezier(.2,.8,.2,1); }
+.is-loaded .ceo-stats .stat { opacity: 1; transform: none; }
+
 .stat i {
   font-size: 28px;
   display: block;
@@ -2854,6 +2858,10 @@ input.form-input {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.04);
 }
+
+/* animate the value cards */
+.value-card { opacity: 0; transform: translateY(8px); transition: opacity .48s ease, transform .48s ease; }
+.is-loaded .value-card { opacity: 1; transform: none; }
 
 .value-icon {
   width: 44px;
