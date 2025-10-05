@@ -267,10 +267,23 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     </div>
   </header>
 
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.navbar-toggler');
+        const mobileMenu = document.querySelector('.navbar-collapse');
+        
+        if(mobileMenuBtn && mobileMenu) {
+          mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+          });
+        }
+
         var dropToggles = document.querySelectorAll('.nav-dropdown .drop-toggle');
         dropToggles.forEach(function(toggle){
           toggle.addEventListener('click', function(e){
