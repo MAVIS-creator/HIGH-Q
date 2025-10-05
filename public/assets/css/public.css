@@ -2971,14 +2971,20 @@ input.form-input {
 /* Lead card (full-width / standalone row) */
 .tutor-lead-wrap {
   margin-bottom: 24px;
+  display: flex;
+  justify-content: center; /* center the lead card horizontally */
+  padding: 0 16px;
 }
 
 .tutor-lead {
   width: 40%;
+  max-width: 720px;
+  min-width: 260px;
   display: flex;
   flex-direction: column;
   border-radius: 12px;
   text-align: center;
+  margin: 0 auto; /* ensure centered in older browsers */
 }
 
 .tutor-lead .tutor-thumb {
