@@ -131,8 +131,8 @@ require_once __DIR__ . '/includes/header.php';
     <h1><?= htmlspecialchars($post['title']) ?></h1>
     <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
 
-    <div class="post-top" style="display:flex;gap:20px;align-items:flex-start;margin-top:12px;">
-      <div class="post-main" style="flex:1;">
+    <div class="post-top row g-4" style="margin-top:12px;">
+      <div class="post-main col-lg-8">
         <div class="post-content">
       <?php if (!empty($post['featured_image'])): ?>
         <?php
@@ -152,13 +152,13 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       </div>
 
-      <aside class="post-toc" style="width:260px;">
+      <aside class="post-toc col-lg-4">
         <?php if ($tocHtml !== ''): ?>
           <?= $tocHtml ?>
         <?php else: ?>
-          <div class="post-toc">
-            <h4>Table of Contents</h4>
-            <p class="muted">No sections found for this article.</p>
+          <div class="post-toc card p-3">
+            <h5>Table of Contents</h5>
+            <p class="muted mb-0">No sections found for this article.</p>
           </div>
         <?php endif; ?>
       </aside>

@@ -30,67 +30,49 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
 <section style="padding:40px 0;">
   <div class="container">
     <h1>Community</h1>
-    <p class="muted">Ask questions anonymously — no account needed.</p>
-    <div style="margin-top:20px;">
-      <div style="max-width:720px;">
-        <form method="post" class="comment-form-wrap">
-          <div class="form-row"><label class="form-label">Name (optional)</label><input class="form-input" type="text" name="name"></div>
-          <div class="form-row"><label class="form-label">Your question</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
-          <div class="form-actions"><button class="btn-approve" type="submit">Post Question</button></div>
+    <p class="muted">Ask questions anonymously  no account needed.</p>
+    <div class="row mt-4">
+      <div class="col-lg-8">
+        <form method="post" class="comment-form-wrap card p-3 mb-4">
+          <div class="mb-3"><label class="form-label">Name (optional)</label><input class="form-control" type="text" name="name"></div>
+          <div class="mb-3"><label class="form-label">Your question</label><textarea class="form-control" name="content" rows="5" required></textarea></div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit">Post Question</button></div>
         </form>
 
-        <h3 style="margin-top:28px;">Recent questions</h3>
+        <h3 class="mb-3">Recent questions</h3>
         <?php foreach($q as $qq): ?>
-          <div class="forum-question">
-            <!-- Question -->
-            <div class="post-header">
-              <div class="avatar"><?= strtoupper(substr($qq['name'],0,1)) ?></div>
-              <div class="post-meta">
-                <strong class="username"><?= htmlspecialchars($qq['name']) ?></strong>
-                <span class="time"><?= $qq['created_at'] ?></span>
-              </div>
-            </div>
-            <div class="post-body">
-              <?= nl2br(htmlspecialchars($qq['content'])) ?>
-            </div>
-            <div class="post-actions">
-              <button class="reply-toggle" data-id="<?= $qq['id'] ?>">💬 Reply</button>
-            </div>
-
-            <!-- Replies -->
-            <div class="post-replies" id="replies-<?= $qq['id'] ?>">
-              <?php
-                $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
-                $rstmt->execute([$qq['id']]);
-                $reps = $rstmt->fetchAll();
-                foreach ($reps as $rep):
-              ?>
-                <div class="forum-reply">
-                  <div class="post-header">
-                    <div class="avatar"><?= strtoupper(substr($rep['name'],0,1)) ?></div>
-                    <div class="post-meta">
-                      <strong class="username"><?= htmlspecialchars($rep['name']) ?></strong>
-                      <span class="time"><?= $rep['created_at'] ?></span>
-                    </div>
-                  </div>
-                  <div class="post-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+          <div class="forum-question card mb-3 p-3">
+            <div class="d-flex align-items-start">
+              <div class="avatar me-3"><?= strtoupper(substr($qq['name'],0,1)) ?></div>
+              <div class="flex-fill">
+                <div class="post-meta mb-1"><strong class="username"><?= htmlspecialchars($qq['name']) ?></strong> <span class="time text-muted ms-2"><?= $qq['created_at'] ?></span></div>
+                <div class="post-body mb-2"><?= nl2br(htmlspecialchars($qq['content'])) ?></div>
+                <div class="post-actions">
+                  <button class="btn btn-sm btn-outline-secondary reply-toggle" data-id="<?= $qq['id'] ?>">4ac Reply</button>
                 </div>
-              <?php endforeach; ?>
-            </div>
 
-            <!-- Reply form -->
-            <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;">
-              <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
-              <div class="form-row">
-                <input class="form-input" type="text" name="rname" placeholder="Name (optional)">
+                <div class="post-replies mt-3" id="replies-<?= $qq['id'] ?>">
+                  <?php
+                    $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
+                    $rstmt->execute([$qq['id']]);
+                    $reps = $rstmt->fetchAll();
+                    foreach ($reps as $rep):
+                  ?>
+                    <div class="forum-reply border-top pt-2 mt-2">
+                      <div class="post-meta"><strong class="username"><?= htmlspecialchars($rep['name']) ?></strong> <span class="time text-muted ms-2"><?= $rep['created_at'] ?></span></div>
+                      <div class="post-body mt-1"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+
+                <form method="post" class="forum-reply-form mt-3" data-qid="<?= $qq['id'] ?>" style="display:none;">
+                  <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
+                  <div class="mb-2"><input class="form-control" type="text" name="rname" placeholder="Name (optional)"></div>
+                  <div class="mb-2"><textarea class="form-control" name="rcontent" rows="3" placeholder="Write your reply..." required></textarea></div>
+                  <div class="form-actions"><button class="btn btn-primary" type="submit">Post Reply</button></div>
+                </form>
               </div>
-              <div class="form-row">
-                <textarea class="form-textarea" name="rcontent" rows="3" placeholder="Write your reply..." required></textarea>
-              </div>
-              <div class="form-actions">
-                <button class="btn-approve" type="submit">Post Reply</button>
-              </div>
-            </form>
+            </div>
           </div>
         <?php endforeach; ?>
       </div>
