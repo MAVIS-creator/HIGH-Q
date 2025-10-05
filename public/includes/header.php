@@ -225,7 +225,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100">
+        <nav class="navbar navbar-expand-lg w-100 position-relative">
           <!-- Logo + Name -->
           <a class="navbar-brand" href="index.php">
             <div class="logo">
@@ -237,8 +237,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </a>
 
-          <!-- Mobile Toggle Button -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+          <!-- Mobile Toggle Button - Positioned Absolutely -->
+          <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <i class="bx bx-menu"></i>
           </button>
 
