@@ -1,0 +1,250 @@
+/* Bootstrap Responsive Customization */
+.main-header .navbar {
+  padding: 0;
+}
+
+.navbar-brand {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+}
+
+/* Bootstrap navbar customization */
+.navbar-nav .nav-link {
+  color: var(--hq-black);
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.navbar-nav .nav-link.active {
+  color: var(--hq-red);
+}
+
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--hq-yellow);
+  transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after,
+.navbar-nav .nav-link.active::after {
+  width: 80%;
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0.25rem 0.75rem;
+  font-size: 1.25rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+  outline: 2px solid var(--hq-yellow);
+  outline-offset: 2px;
+}
+
+.dropdown-menu {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  color: var(--hq-black);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: var(--hq-yellow-light);
+  color: var(--hq-black);
+}
+
+/* Grid System Responsive Overrides */
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+[class*="col-"] {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Homepage Hero Section */
+@media (max-width: 991px) {
+  .hero .container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-stats {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-right {
+    margin-top: 2rem;
+  }
+}
+
+/* Programs Grid */
+@media (max-width: 768px) {
+  .programs-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* Footer Responsiveness */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+/* Navigation Responsiveness */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background: white;
+    padding: 1rem;
+    margin: 1rem -1rem -1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem !important;
+  }
+
+  .navbar-nav .nav-link::after {
+    display: none;
+  }
+
+  .btn-primary {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}
+
+/* Card Responsiveness */
+.card {
+  height: 100%;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Typography Responsiveness */
+@media (max-width: 576px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Section Spacing */
+section {
+  padding: clamp(40px, 8vw, 80px) 0;
+}
+
+/* Image Responsiveness */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Table Responsiveness */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  table {
+    min-width: 700px;
+  }
+}
+
+/* Form Responsiveness */
+@media (max-width: 576px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  input, select, textarea {
+    width: 100%;
+  }
+}
+
+/* Top Bar Responsiveness */
+@media (max-width: 576px) {
+  .top-bar .container {
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px 0;
+  }
+  
+  .top-bar .motto {
+    margin-left: 0;
+  }
+}
+
+/* Utility Classes for Responsive Spacing */
+@media (max-width: 768px) {
+  .mb-md-0 { margin-bottom: 0 !important; }
+  .mb-md-1 { margin-bottom: 0.25rem !important; }
+  .mb-md-2 { margin-bottom: 0.5rem !important; }
+  .mb-md-3 { margin-bottom: 1rem !important; }
+  .mb-md-4 { margin-bottom: 1.5rem !important; }
+  .mb-md-5 { margin-bottom: 3rem !important; }
+}
+
+/* Hide elements on different screen sizes */
+@media (max-width: 576px) {
+  .hide-xs { display: none !important; }
+}
+@media (max-width: 768px) {
+  .hide-sm { display: none !important; }
+}
+@media (max-width: 992px) {
+  .hide-md { display: none !important; }
+}
+@media (max-width: 1200px) {
+  .hide-lg { display: none !important; }
+}
