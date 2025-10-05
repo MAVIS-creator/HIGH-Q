@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	var confirm = document.getElementById('confirmSchedule');
 	if(openSchedule && modal){ openSchedule.addEventListener('click', function(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }); openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter') openSchedule.click(); }); }
 	if(cancel){ cancel.addEventListener('click', function(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }); }
-	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ alert('Please pick a date'); return; } alert('Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'); modal.classList.remove('open'); }); }
+	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ if (typeof Swal !== 'undefined') Swal.fire('Oops','Please pick a date','warning'); else alert('Please pick a date'); return; } var msg = 'Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'; if (typeof Swal !== 'undefined') Swal.fire('Request Sent', msg, 'success'); else alert(msg); modal.classList.remove('open'); }); }
 
 	// Live Chat: open iframe modal only. Keep cookie helpers and badge update.
 	var openLive = document.getElementById('openLiveChat');
