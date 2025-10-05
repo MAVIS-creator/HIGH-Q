@@ -106,24 +106,26 @@
       }).catch(() => {});
 
     likeBtn.addEventListener('click', function () {
-      // client-side guard
-      if (sessionStorage.getItem('liked_post_' + POST_ID) === '1') return;
-      // optimistically set UI
-      setLikedUI(true);
+      // toggle like: allow unliking by calling the same endpoint which now toggles
+      // optimistically flip UI
+      const currentlyLiked = sessionStorage.getItem('liked_post_' + POST_ID) === '1';
+      setLikedUI(!currentlyLiked);
       fetch('/HIGH-Q/public/api/like_post.php', { method: 'POST', body: new URLSearchParams({ post_id: POST_ID }) })
         .then(r => r.json())
         .then(j => {
           if (j && typeof j.likes !== 'undefined') likesCountEl.textContent = j.likes;
-          if (j && j.liked) {
-            sessionStorage.setItem('liked_post_' + POST_ID, '1');
-            setLikedUI(true);
+          if (j && typeof j.liked !== 'undefined') {
+            if (j.liked) sessionStorage.setItem('liked_post_' + POST_ID, '1'); else sessionStorage.removeItem('liked_post_' + POST_ID);
+            setLikedUI(j.liked);
           } else {
-            // server refused as duplicate, revert UI
-            setLikedUI(false);
+            // no definite info: revert to previous
+            if (currentlyLiked) sessionStorage.setItem('liked_post_' + POST_ID, '1'); else sessionStorage.removeItem('liked_post_' + POST_ID);
+            setLikedUI(currentlyLiked);
           }
         }).catch(() => {
           // on error, revert UI change
-          setLikedUI(false);
+          if (currentlyLiked) sessionStorage.setItem('liked_post_' + POST_ID, '1'); else sessionStorage.removeItem('liked_post_' + POST_ID);
+          setLikedUI(currentlyLiked);
         });
     });
   }
