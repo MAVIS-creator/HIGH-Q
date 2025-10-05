@@ -6,13 +6,14 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   try {
     require_once __DIR__ . '/config/db.php';
     if (isset($pdo)) {
-      // Try featured tutors first
+      // Try featured tutors first (preserve featured if any), but when falling back or listing ensure tutors are ordered by id ascending per UX request
       $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
       $stmt->execute();
       $tutors = $stmt->fetchAll();
       // If none are featured, fall back to any tutors so the section is visible for testing
       if (empty($tutors)) {
-        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY created_at DESC LIMIT 6");
+        // order by id ascending as requested
+        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC LIMIT 6");
         $stmt2->execute();
         $tutors = $stmt2->fetchAll();
       }
@@ -70,27 +71,33 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             </div>
             <div class="tutor-body">
               <h3><?= htmlspecialchars($t['name']) ?></h3>
+
               <?php
+                // qualifications: show as single line or 'Not specified'
                 $quals = array_filter(array_map('trim', explode(',', $t['qualifications'] ?? '')));
                 if (!empty($quals)):
-                  foreach ($quals as $q):
               ?>
-                    <p class="qualification-line"><?= htmlspecialchars($q) ?></p>
-              <?php
-                  endforeach;
-                else:
-              ?>
-                  <p class="qualification-line">Not specified</p>
+                <p class="qualification-line"><?= htmlspecialchars(implode(', ', $quals)) ?></p>
+              <?php else: ?>
+                <p class="qualification-line">Not specified</p>
               <?php endif; ?>
 
-              <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
+              <!-- Long bio (full description) next -->
+              <?php if (!empty($t['long_bio'])): ?>
+                <div class="tutor-long-bio"><?= nl2br(htmlspecialchars($t['long_bio'])) ?></div>
+              <?php endif; ?>
+
+              <!-- Subjects with label as requested -->
               <?php $subs = json_decode($t['subjects'] ?? '[]', true); if (!empty($subs)): ?>
-                <div class="subjects">
+                <div class="subjects"><strong>Subjects:</strong>
                   <?php foreach ($subs as $s): ?>
                     <span class="tag"><?= htmlspecialchars($s) ?></span>
                   <?php endforeach; ?>
                 </div>
               <?php endif; ?>
+
+              <!-- Short bio (years of experience) at the bottom -->
+              <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
             </div>
           </article>
         <?php endforeach; ?>
