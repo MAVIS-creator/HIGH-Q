@@ -235,6 +235,24 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             border-radius: 18px;
             cursor: pointer;
         }
+            .chat-start {
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                background: #fff;
+                padding-bottom: 12px;
+            }
+            .chat-start input[type="text"], .chat-start input[type="email"], .chat-start textarea {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 8px 10px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+            .chat-start .btn { padding: 8px 12px; border-radius: 8px; }
+            .chat-alert { padding:6px 10px;border-radius:8px;background:#ffecec;color:#cc0000;font-size:13px;margin-top:6px;display:none }
 
         .btn-attachment {
             background: none;
