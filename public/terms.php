@@ -3,9 +3,9 @@ $pageTitle = 'Terms of Service - High Q Solid Academy';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<section class="container" style="max-width:900px;margin:36px auto;padding:0 12px;">
+<section class="doc-page container">
   <h1>Terms of Service</h1>
-  <p>Last updated: <?= date('F j, Y') ?></p>
+  <time>Last updated: <?= date('F j, Y') ?></time>
 
   <p>Welcome to High Q Solid Academy. These Terms of Service ("Terms") govern your access to and use of our website and services. By accessing or using our services you agree to be bound by these Terms.</p>
 
