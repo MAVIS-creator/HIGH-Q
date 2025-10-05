@@ -60,6 +60,7 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
         background: rgba(255, 255, 255, 0.95);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
     }
 
