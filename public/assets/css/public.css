@@ -2074,21 +2074,26 @@ nav a.active::after { background: var(--hq-yellow); }
 }
 
 .tutor-thumb {
-  height: 220px; /* give more vertical space so avatar can be large */
-  background: linear-gradient(180deg, #fbf6ee, #f8f6f4);
+  background: linear-gradient(135deg, #f6f8fa, #eaeef2); /* banner background */
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  height: 140px;           /* controls the height of the top box */
+  position: relative;
 }
 
 .tutor-thumb img {
-  width: 72%;
-  height: 72%;
-  border-radius: 50%;
+  width: 64px;
+  height: 64px;
   object-fit: cover;
-  display: block;
-  background: transparent;
-  border: none;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: #fff;
+  position: absolute;
+  bottom: -32px;          /* makes it float into the body area */
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Lead card (full-width / standalone row) */
@@ -2108,7 +2113,7 @@ nav a.active::after { background: var(--hq-yellow); }
 .tutor-thumb { background-position: center; }
 
 .tutor-body {
-  padding: 16px;
+  padding: 48px 16px 16px; /* leave room at top for floating avatar */
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -2116,8 +2121,8 @@ nav a.active::after { background: var(--hq-yellow); }
 
 @media (max-width: 800px) {
   .tutor-card { width:100%; }
-  .tutor-thumb { height: 200px; }
-  .tutor-thumb img { width: 56%; height: 56%; }
+  .tutor-thumb { height: 120px; }
+  .tutor-thumb img { width: 56px; height: 56px; bottom: -28px; }
 }
 
 .tutor-body h3 {
