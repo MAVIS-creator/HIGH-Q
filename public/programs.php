@@ -135,25 +135,25 @@
 
 		<div class="core-grid">
 			<article class="value-card">
-				<div class="value-icon"><img src="./assets/images/icons/teacher.svg" alt="Expert Tutors"></div>
+				<div class="value-icon"><i class="bx bx-user" style="color:var(--hq-yellow);font-size:20px"></i></div>
 				<h4>Expert Tutors</h4>
 				<p>Experienced and qualified tutors with proven track records</p>
 			</article>
 
 			<article class="value-card">
-				<div class="value-icon"><img src="./assets/images/icons/results.svg" alt="Proven Results"></div>
+				<div class="value-icon"><i class="bx bx-bar-chart" style="color:var(--hq-yellow);font-size:20px"></i></div>
 				<h4>Proven Results</h4>
 				<p>Consistent high performance and success rates across all programs</p>
 			</article>
 
 			<article class="value-card">
-				<div class="value-icon"><img src="./assets/images/icons/target.svg" alt="Personalized"></div>
+				<div class="value-icon"><i class="bx bx-target-lock" style="color:var(--hq-yellow);font-size:20px"></i></div>
 				<h4>Personalized Learning</h4>
 				<p>Tailored approach to meet individual student needs and goals</p>
 			</article>
 
 			<article class="value-card">
-				<div class="value-icon"><img src="./assets/images/icons/laptop.svg" alt="Facilities"></div>
+				<div class="value-icon"><i class="bx bx-laptop" style="color:var(--hq-yellow);font-size:20px"></i></div>
 				<h4>Modern Facilities</h4>
 				<p>State-of-the-art equipment and learning resources</p>
 			</article>
