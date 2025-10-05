@@ -992,7 +992,7 @@ document.addEventListener('click', function(e){
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
         try {
-          const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+          const payload = await postAction(`../index.php?pages=students&action=confirm_registration&id=${id}`, fd);
           // update UI similar to above
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
