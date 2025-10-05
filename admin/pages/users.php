@@ -414,7 +414,10 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 async function loadUser(id, mode='view'){
   const res = await fetch(`index.php?pages=users&action=view&id=${id}`);
   const data = await res.json();
-  if(data.error) return alert(data.error);
+  if(data.error) {
+    if (typeof Swal !== 'undefined') Swal.fire('Error', data.error, 'error'); else alert(data.error);
+    return;
+  }
 
   document.getElementById('mName').textContent = data.name;
   document.getElementById('mEmail').textContent = data.email;
