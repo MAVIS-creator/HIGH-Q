@@ -126,7 +126,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 <head>
   <meta charset="UTF-8">
   <title>Roles Management - HIGH Q SOLID ACADEMY</title>
-  <link rel="stylesheet" href="./assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
     /* Roles table responsive tweaks to avoid pushing into the sidebar */
