@@ -86,9 +86,9 @@ if (!empty($_GET['ajax'])) {
     // use data-action buttons to allow delegated handlers
     $replyBtn = "<button class='btn' data-action='reply' data-id='{$c['id']}' data-preview='{$preview}'>Reply</button>";
     if ($c['status'] === 'pending') {
-      $actions = "<button class='btn' data-action='approve' data-id='{$c['id']}'>Approve</button> <button class='btn' data-action='reject' data-id='{$c['id']}'>Delete</button> " . $replyBtn;
+      $actions = "<button class='btn' data-action='approve' data-id='{$c['id']}'>Approve</button> <button class='btn' data-action='reject' data-id='{$c['id']}'>Delete</button> <button class='btn' data-action='destroy' data-id='{$c['id']}'>Destroy</button> " . $replyBtn;
     } else {
-      $actions = $replyBtn;
+      $actions = "<button class='btn' data-action='destroy' data-id='{$c['id']}'>Destroy</button> " . $replyBtn;
     }
 
     echo "<td>" . $actions . "</td>";
@@ -132,8 +132,10 @@ if (!empty($_GET['ajax'])) {
           <td><?php if ($c['status'] === 'pending'): ?>
               <button class="btn" data-action="approve" data-id="<?= $c['id'] ?>">Approve</button>
               <button class="btn" data-action="reject" data-id="<?= $c['id'] ?>">Delete</button>
+              <button class="btn" data-action="destroy" data-id="<?= $c['id'] ?>">Destroy</button>
               <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>">Reply</button>
             <?php else: ?>
+              <button class="btn" data-action="destroy" data-id="<?= $c['id'] ?>">Destroy</button>
               <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>">Reply</button>
             <?php endif; ?></td>
         </tr>
