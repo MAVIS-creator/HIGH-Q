@@ -100,12 +100,16 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         $ipAllowed = false;
         if ($remoteIp && !empty($allowedIps)) {
           foreach ($allowedIps as $candidate) {
-            if ($candidate === $remoteIp) { $ipAllowed = true; break; }
+            if ($candidate === $remoteIp) {
+              $ipAllowed = true;
+              break;
+            }
             // allow CIDR or prefix matches (simple startsWith) for convenience
             if (strpos($candidate, '/') !== false) {
               // skip complex CIDR handling here; exact match required for safety
             } elseif ($candidate !== '' && strpos($remoteIp, $candidate) === 0) {
-              $ipAllowed = true; break;
+              $ipAllowed = true;
+              break;
             }
           }
         }
@@ -114,17 +118,27 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         if ($maintenance && !($isAdminBySession || $ipAllowed || $isAdminAuthPage)) {
           // Render a simple maintenance notice and exit
           http_response_code(503);
-          ?>
+?>
           <!doctype html>
-          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/public/assets/css/public.css"></head><body>
-          <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
-            <div style="max-width:640px;border:1px solid #eee;padding:28px;border-radius:8px;background:#fff;">
-              <h1>We'll be back soon</h1>
-              <p>Our site is currently undergoing scheduled maintenance. Please check back shortly.</p>
-            </div>
-          </main>
-          </body></html>
-          <?php
+          <html>
+
+          <head>
+            <meta charset="utf-8">
+            <title>Maintenance</title>
+            <link rel="stylesheet" href="/public/assets/css/public.css">
+          </head>
+
+          <body>
+            <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
+              <div style="max-width:640px;border:1px solid #eee;padding:28px;border-radius:8px;background:#fff;">
+                <h1>We'll be back soon</h1>
+                <p>Our site is currently undergoing scheduled maintenance. Please check back shortly.</p>
+              </div>
+            </main>
+          </body>
+
+          </html>
+<?php
           exit;
         }
         // --- IP & MAC logging: insert a short access log for every public request ---
@@ -134,15 +148,19 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           $path = $_SERVER['REQUEST_URI'] ?? null;
           $referer = $_SERVER['HTTP_REFERER'] ?? null;
           $headers = [];
-          foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
-            if (!empty($_SERVER[$h])) { $headers[$h] = $_SERVER[$h]; }
+          foreach (['HTTP_X_DEVICE_MAC', 'HTTP_X_CLIENT_MAC', 'HTTP_MAC', 'HTTP_X_MAC_ADDRESS'] as $h) {
+            if (!empty($_SERVER[$h])) {
+              $headers[$h] = $_SERVER[$h];
+            }
           }
           $hdrJson = !empty($headers) ? json_encode($headers) : null;
           if (!empty($pdo)) {
             $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, headers, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
             $ins->execute([$remoteIp, $ua, $path, $referer, $hdrJson]);
           }
-        } catch (Throwable $e) { error_log('ip_logs insert failed: ' . $e->getMessage()); }
+        } catch (Throwable $e) {
+          error_log('ip_logs insert failed: ' . $e->getMessage());
+        }
 
         // --- MAC/IP enforcement: consult settings.security.enforcement_mode ('mac'|'ip'|'both') ---
         try {
@@ -154,10 +172,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           $enforcement = $j['security']['enforcement_mode'] ?? $j['security']['enforce_by'] ?? $enforcement;
 
           $mac = null;
-          foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
-            if (!empty($_SERVER[$h])) { $mac = trim($_SERVER[$h]); break; }
+          foreach (['HTTP_X_DEVICE_MAC', 'HTTP_X_CLIENT_MAC', 'HTTP_MAC', 'HTTP_X_MAC_ADDRESS'] as $h) {
+            if (!empty($_SERVER[$h])) {
+              $mac = trim($_SERVER[$h]);
+              break;
+            }
           }
-          if (!empty($mac) && in_array($enforcement, ['mac','both'])) {
+          if (!empty($mac) && in_array($enforcement, ['mac', 'both'])) {
             $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
             $q->execute([$mac]);
             $r = $q->fetch(PDO::FETCH_ASSOC);
@@ -168,7 +189,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             }
           }
 
-          if (in_array($enforcement, ['ip','both'])) {
+          if (in_array($enforcement, ['ip', 'both'])) {
             $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
             $bq->execute([$remoteIp]);
             if ($bq->fetch()) {
@@ -177,7 +198,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               exit;
             }
           }
-        } catch (Throwable $e) { error_log('mac/ip enforcement failed: ' . $e->getMessage()); }
+        } catch (Throwable $e) {
+          error_log('mac/ip enforcement failed: ' . $e->getMessage());
+        }
       } catch (Throwable $e) {
         // If anything goes wrong here, fall back to normal header rendering
       }
@@ -202,10 +225,10 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Bootstrap CSS (responsive utilities) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
-      rel="stylesheet" 
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
-      crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous">
 
   <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
@@ -218,8 +241,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Top bar -->
     <div class="top-bar">
       <div class="container">
-  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+        <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
@@ -273,50 +296,66 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
   <script>
     // Toggle nav dropdown open/close on click and close when clicking outside
-    (function(){
-      document.addEventListener('DOMContentLoaded', function(){
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
         var dropToggles = document.querySelectorAll('.nav-dropdown .drop-toggle');
-        dropToggles.forEach(function(toggle){
-          toggle.addEventListener('click', function(e){
+        dropToggles.forEach(function(toggle) {
+          toggle.addEventListener('click', function(e) {
             e.preventDefault();
             var parent = toggle.closest('.nav-dropdown');
             // toggle open on this parent, close others
-            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ if(n !== parent) n.classList.remove('open'); });
+            document.querySelectorAll('.nav-dropdown.open').forEach(function(n) {
+              if (n !== parent) n.classList.remove('open');
+            });
             parent.classList.toggle('open');
           });
         });
 
         // close dropdowns on outside click
-        document.addEventListener('click', function(e){
+        document.addEventListener('click', function(e) {
           if (!e.target.closest('.nav-dropdown')) {
-            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ n.classList.remove('open'); });
+            document.querySelectorAll('.nav-dropdown.open').forEach(function(n) {
+              n.classList.remove('open');
+            });
           }
         });
 
         // Add .is-loaded after first paint so CSS animations trigger after initial paint
         try {
           if ('requestAnimationFrame' in window) {
-            requestAnimationFrame(function(){
-              requestAnimationFrame(function(){
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
                 document.documentElement.classList.add('is-loaded');
                 // After we mark the page as loaded, assign stagger classes to common groups
                 try {
-                  var groups = [
-                    {selector: '.programs-grid .program-card', base: 'stagger'},
-                    {selector: '.tutors-grid .tutor-card', base: 'stagger'},
-                    {selector: '.core-grid .value-card', base: 'stagger'},
-                    {selector: '.ceo-stats .stat', base: 'stagger'}
+                  var groups = [{
+                      selector: '.programs-grid .program-card',
+                      base: 'stagger'
+                    },
+                    {
+                      selector: '.tutors-grid .tutor-card',
+                      base: 'stagger'
+                    },
+                    {
+                      selector: '.core-grid .value-card',
+                      base: 'stagger'
+                    },
+                    {
+                      selector: '.ceo-stats .stat',
+                      base: 'stagger'
+                    }
                   ];
-                  groups.forEach(function(g){
+                  groups.forEach(function(g) {
                     var nodes = Array.prototype.slice.call(document.querySelectorAll(g.selector));
-                    nodes.forEach(function(n, i){
-                      var idx = Math.min(4, Math.max(1, Math.ceil((i+1)/1)));
+                    nodes.forEach(function(n, i) {
+                      var idx = Math.min(4, Math.max(1, Math.ceil((i + 1) / 1)));
                       n.classList.add(g.base + '-' + idx);
                       // add a hover-zoom for nice mouse interaction on interactive cards
                       n.classList.add('hover-zoom');
                     });
                   });
-                } catch (innerErr) { /* ignore */ }
+                } catch (innerErr) {
+                  /* ignore */ }
 
                 // Icon fallback: if Boxicons didn't render (font not available), replace bx <i> tags with a simple inline SVG square so UI stays usable.
                 try {
@@ -329,41 +368,73 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                   document.body.removeChild(test);
                   if (!/boxicons/i.test(ff)) {
                     // Replace visible .bx icons with inline fallback SVG (small square with inner glyph look)
-                    document.querySelectorAll('i.bx, i.bxs, i.bxl').forEach(function(icon){
+                    document.querySelectorAll('i.bx, i.bxs, i.bxl').forEach(function(icon) {
                       try {
-                        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-                        svg.setAttribute('width','20'); svg.setAttribute('height','20'); svg.setAttribute('viewBox','0 0 24 24');
+                        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.setAttribute('width', '20');
+                        svg.setAttribute('height', '20');
+                        svg.setAttribute('viewBox', '0 0 24 24');
                         svg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="4" fill="#fff6d9" stroke="#f5b904" stroke-width="1.2"></rect>';
                         icon.parentNode.replaceChild(svg, icon);
-                      } catch(e){}
+                      } catch (e) {}
                     });
                   }
-                } catch(e){}
+                } catch (e) {}
               });
             });
           } else {
             // fallback
-            setTimeout(function(){ document.documentElement.classList.add('is-loaded'); }, 50);
+            setTimeout(function() {
+              document.documentElement.classList.add('is-loaded');
+            }, 50);
           }
         } catch (e) {
           // if anything goes wrong, still try a small timeout
-          setTimeout(function(){ try { document.documentElement.classList.add('is-loaded'); } catch (_){} }, 100);
+          setTimeout(function() {
+            try {
+              document.documentElement.classList.add('is-loaded');
+            } catch (_) {}
+          }, 100);
         }
         // IntersectionObserver: reveal elements as they scroll into view with staggered delays
         try {
-          var revealContainers = [
-            {container: '.programs-grid', item: '.program-card'},
-            {container: '.tutors-grid', item: '.tutor-card'},
-            {container: '.core-grid', item: '.value-card'},
-            {container: '.posts-grid', item: '.post-card'},
-            {container: '.ceo-stats', item: '.stat'},
-            {container: '.register-sidebar', item: '.card'},
-            {container: '.sidebar-card', item: '.sidebar-card'}
+          var revealContainers = [{
+              container: '.programs-grid',
+              item: '.program-card'
+            },
+            {
+              container: '.tutors-grid',
+              item: '.tutor-card'
+            },
+            {
+              container: '.core-grid',
+              item: '.value-card'
+            },
+            {
+              container: '.posts-grid',
+              item: '.post-card'
+            },
+            {
+              container: '.ceo-stats',
+              item: '.stat'
+            },
+            {
+              container: '.register-sidebar',
+              item: '.card'
+            },
+            {
+              container: '.sidebar-card',
+              item: '.sidebar-card'
+            }
           ];
 
-          var observerOptions = { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.06 };
-          var revealObserver = new IntersectionObserver(function(entries){
-            entries.forEach(function(entry){
+          var observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -8% 0px',
+            threshold: 0.06
+          };
+          var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
               var el = entry.target;
               if (entry.isIntersecting) {
                 // mark visible
@@ -375,11 +446,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             });
           }, observerOptions);
 
-          revealContainers.forEach(function(group){
+          revealContainers.forEach(function(group) {
             var containers = document.querySelectorAll(group.container);
-            containers.forEach(function(parent){
+            containers.forEach(function(parent) {
               var items = parent.querySelectorAll(group.item);
-              items.forEach(function(item, idx){
+              items.forEach(function(item, idx) {
                 // compute a small stagger delay based on index
                 var delay = Math.min(0.28, Math.max(0, idx * 0.06));
                 item.style.transitionDelay = delay + 's';
@@ -388,7 +459,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               });
             });
           });
-        } catch (ioErr) { /* ignore IntersectionObserver errors on old browsers */ }
+        } catch (ioErr) {
+          /* ignore IntersectionObserver errors on old browsers */ }
       });
     })();
   </script>
