@@ -2083,14 +2083,14 @@ nav a.active::after { background: var(--hq-yellow); }
 }
 
 .tutor-thumb img {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
   border-radius: 50%;
   border: 3px solid #fff;
   background: #fff;
   position: absolute;
-  bottom: -32px;          /* makes it float into the body area */
+  bottom: -40px;          /* makes it float into the body area */
   left: 50%;
   transform: translateX(-50%);
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -2099,9 +2099,9 @@ nav a.active::after { background: var(--hq-yellow); }
 /* Lead card (full-width / standalone row) */
 .tutor-lead-wrap { margin-bottom: 24px; }
 .tutor-lead { width: 100%; display: flex; flex-direction: column; border-radius: 12px; }
-.tutor-lead .tutor-thumb { height: 260px; display:flex; align-items:center; justify-content:center }
-.tutor-lead .tutor-thumb img { width: 72%; height: 72%; border-radius: 50%; box-shadow: 0 6px 18px rgba(11,37,64,0.06); border: none; }
-.tutor-lead .tutor-body { padding: 20px; }
+.tutor-lead .tutor-thumb { height: 200px; display:flex; align-items:center; justify-content:center }
+.tutor-lead .tutor-thumb img { width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 6px 18px rgba(11,37,64,0.06); border: none; bottom: -60px; }
+.tutor-lead .tutor-body { padding: 72px 16px 20px; }
 
 .qualification-line {
   margin: 2px 0;
@@ -2122,7 +2122,9 @@ nav a.active::after { background: var(--hq-yellow); }
 @media (max-width: 800px) {
   .tutor-card { width:100%; }
   .tutor-thumb { height: 120px; }
-  .tutor-thumb img { width: 56px; height: 56px; bottom: -28px; }
+  .tutor-thumb img { width: 64px; height: 64px; bottom: -32px; }
+  .tutor-lead .tutor-thumb { height: 160px; }
+  .tutor-lead .tutor-thumb img { width: 96px; height: 96px; bottom: -48px; }
 }
 
 .tutor-body h3 {
