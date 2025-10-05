@@ -136,7 +136,8 @@
 
             var xhr = new XMLHttpRequest();
             // For runScan use the dedicated JSON-only endpoint to avoid HTML output from page includes
-            var endpoint = (action === 'runScan') ? '/HIGH-Q/admin/api/run-scan.php' : location.href;
+            // Use dedicated JSON endpoint for runScan, otherwise post to the admin router so pages return JSON for AJAX
+            var endpoint = (action === 'runScan') ? '/HIGH-Q/admin/api/run-scan.php' : '/HIGH-Q/admin/index.php?pages=settings';
             xhr.open('POST', endpoint, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
