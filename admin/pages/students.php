@@ -306,28 +306,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
   if (!verifyToken('students_form', $token)) {
-    header('Location: ../index.php?pages=students'); exit;
+    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
   if ($id === 1 || $id === $currentUserId) {
-    header('Location: ../index.php?pages=students'); exit;
+    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-  header('Location: ../index.php?pages=students'); exit;
+    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     if ($action === 'activate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: ../index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
   if ($action === 'delete') {
@@ -339,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-      header('Location: ../index.php?pages=students'); exit;
+      header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
@@ -353,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
     }
-  header('Location: ../index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
   // Custom: send message/approve flow from modal
@@ -379,7 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-  header('Location: ../index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
   // Confirm registration (admin) - send notification
@@ -486,7 +486,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
-  header('Location: ../index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 }
 
