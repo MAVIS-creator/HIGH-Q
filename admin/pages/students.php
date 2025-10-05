@@ -946,8 +946,8 @@ regRejectBtn.addEventListener('click', ()=>{
     if (result.isConfirmed) {
       (async ()=>{
         try {
-          const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-      const payload = await postAction(`../index.php?pages=students&action=reject_registration&id=${id}`, fd);
+      const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
+      const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=reject_registration&id=${id}`, fd);
           // update UI: remove buttons and mark status
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -979,7 +979,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-            const payload = await postAction(`../index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+              const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
