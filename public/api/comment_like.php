@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../config/db.php';
+// public API files live in public/api; the public DB config is at public/config/db.php
+require_once __DIR__ . '/../config/db.php';
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $commentId = intval($_REQUEST['comment_id'] ?? 0);
