@@ -133,9 +133,9 @@
       ev.preventDefault();
       const fd = new FormData(commentForm);
       fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
-        .then(r => r.json())
-        .then(j => { if (j && j.success) { commentForm.reset(); parentInput.value=''; cancelReply.style.display='none'; fetchComments(); } else { alert(j && j.message ? j.message : 'Unable to post comment'); } })
-        .catch(() => { alert('Unable to post comment'); });
+  .then(r => r.json())
+  .then(j => { if (j && j.success) { commentForm.reset(); parentInput.value=''; cancelReply.style.display='none'; fetchComments(); } else { var m = j && j.message ? j.message : 'Unable to post comment'; if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); } })
+  .catch(() => { var m = 'Unable to post comment'; if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); });
     });
   }
 

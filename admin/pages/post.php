@@ -645,7 +645,8 @@ function bindAjaxForm(id) {
                 }
                 closeEditModal();
             } else {
-                alert(data.error || 'Update failed');
+                var m = data.error || 'Update failed';
+                if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m);
             }
     });
   });
