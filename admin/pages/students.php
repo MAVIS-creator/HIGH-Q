@@ -664,8 +664,6 @@ if ($hasRegistrations) {
 <?php include '../includes/footer.php'; ?>
 
 <script>
-
-<script>
 // Replace native confirm for student delete forms with SweetAlert2
 document.addEventListener('submit', function(e){
   var f = e.target.closest && e.target.closest('.student-delete-form');
