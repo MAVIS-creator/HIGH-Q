@@ -2094,8 +2094,8 @@ nav a.active::after { background: var(--hq-yellow); }
 /* Lead card (full-width / standalone row) */
 .tutor-lead-wrap { margin-bottom: 24px; }
 .tutor-lead { width: 100%; display: flex; flex-direction: column; border-radius: 12px; }
-.tutor-lead .tutor-thumb { height: 220px; }
-.tutor-lead .tutor-thumb img { width: 96px; height: 96px; border-radius: 50%; }
+.tutor-lead .tutor-thumb { height: 260px; display:flex; align-items:center; justify-content:center }
+.tutor-lead .tutor-thumb img { width: 140px; height: 140px; border-radius: 50%; box-shadow: 0 6px 18px rgba(11,37,64,0.06); }
 .tutor-lead .tutor-body { padding: 20px; }
 
 .qualification-line {
