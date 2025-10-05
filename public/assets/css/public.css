@@ -274,12 +274,19 @@ nav a.active::after {
 .socials a {
   color: var(--hq-gray);
   margin-right: 10px;
-  font-size: 16px;
-  transition: color 0.3s;
+  font-size: 18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;height:34px;
+  border-radius:6px;
+  background:transparent;
+  transition: color 0.18s, background 0.18s;
 }
 
 .socials a:hover {
   color: var(--hq-yellow);
+  background: rgba(245,185,4,0.08);
 }
 
 /* Links & Programs */
