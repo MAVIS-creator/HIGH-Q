@@ -520,6 +520,17 @@ nav a.active::after {
   transition: opacity .52s cubic-bezier(.2,.8,.2,1), transform .52s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease;
 }
 
+/* Respect OS-level reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .program-card, .tutor-card, .value-card, .post-card, .card, .stat, .achievement,
+  .sidebar-card, .register-sidebar .card {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .hover-zoom { transition: none !important; }
+}
+
 /* Reveal when either the page is loaded or the element enters the viewport */
 .is-loaded .program-card.in-view,
 .is-loaded .tutor-card.in-view,
@@ -562,6 +573,19 @@ nav a.active::after {
 @media (max-width: 700px) {
   .program-card, .tutor-card, .value-card, .post-card, .card, .stat { transform: none; transition: opacity .42s ease; }
   .sidebar-card, .register-sidebar .card { transform: none; }
+}
+
+/* Slightly more reserved animations for touch devices/tablets (reduce scale/translation) */
+@media (pointer: coarse) and (max-width: 1100px) {
+  .program-card.hover-zoom:hover,
+  .tutor-card.hover-zoom:hover,
+  .value-card.hover-zoom:hover { transform: none; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+}
+
+/* Desktop: allow full motion */
+@media (pointer: fine) and (min-width: 1101px) {
+  .program-card.hover-zoom:hover { transform: translateY(-6px) scale(1.02); }
+  .tutor-card.hover-zoom:hover { transform: translateY(-8px) scale(1.02); }
 }
 
   /* Testimonials */
