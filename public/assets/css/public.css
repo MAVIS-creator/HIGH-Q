@@ -89,6 +89,8 @@ body {
   background: #fff;
   border-bottom: 2px solid var(--hq-yellow);
   padding: 10px 0;
+  position: relative;
+  z-index: 1000;
 }
 
 .main-header .container {
@@ -97,6 +99,11 @@ body {
   align-items: center;
   gap: 20px;
   padding: 0.5rem 1rem;
+}
+
+/* Ensure dropdowns appear above other content */
+.navbar .dropdown-menu {
+  z-index: 1001;
 }
 
 .logo {
