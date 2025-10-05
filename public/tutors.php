@@ -89,10 +89,13 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
               <!-- Subjects with label as requested -->
               <?php $subs = json_decode($t['subjects'] ?? '[]', true); if (!empty($subs)): ?>
-                <div class="subjects"><strong>Subjects:</strong>
-                  <?php foreach ($subs as $s): ?>
-                    <span class="tag"><?= htmlspecialchars($s) ?></span>
-                  <?php endforeach; ?>
+                <div class="subjects">
+                  <div class="subjects-label"><strong>Subjects:</strong></div>
+                  <div class="subjects-list">
+                    <?php foreach ($subs as $s): ?>
+                      <span class="tag"><?= htmlspecialchars($s) ?></span>
+                    <?php endforeach; ?>
+                  </div>
                 </div>
               <?php endif; ?>
 
