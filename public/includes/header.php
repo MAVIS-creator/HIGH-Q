@@ -202,6 +202,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Font Awesome (fallback for admin/backwards compatibility) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- BoxIcons CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="stylesheet" href="./assets/css/responsive.css">
