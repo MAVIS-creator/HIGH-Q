@@ -45,10 +45,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
       $allowed = ['image/jpeg','image/png','image/gif','image/webp','application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       $uploadDir = __DIR__ . '/../../public/uploads/chat/';
       if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+      $maxBytes = 100 * 1024 * 1024; // 100 MB
       for ($i = 0; $i < count($files['name']); $i++) {
         if ($files['error'][$i] !== UPLOAD_ERR_OK) continue;
+        $size = $files['size'][$i] ?? 0; if ($size > $maxBytes) continue;
         $type = $files['type'][$i] ?? '';
         if (!in_array($type, $allowed, true)) continue;
+        $tmp = $files['tmp_name'][$i] ?? null; if (!$tmp || !is_uploaded_file($tmp)) continue;
+
+        // magic bytes
+        $fh = fopen($tmp, 'rb'); $magic = $fh ? fread($fh, 8) : ''; if ($fh) fclose($fh);
+        $valid = false;
+        if (strpos($type, 'image/') === 0) {
+          if (@getimagesize($tmp) !== false) $valid = true;
+        } elseif ($type === 'application/pdf') {
+          if (substr($magic, 0, 4) === '%PDF') $valid = true;
+        } elseif ($type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+          if (substr($magic, 0, 2) === "PK") $valid = true;
+        }
+        if (!$valid) continue;
+
         $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
         $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
         $dest = $uploadDir . $nameSafe;
