@@ -3,9 +3,9 @@ $pageTitle = 'Privacy Policy - High Q Solid Academy';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<section class="container" style="max-width:900px;margin:36px auto;padding:0 12px;">
+<section class="doc-page container">
   <h1>Privacy Policy</h1>
-  <p>Last updated: <?= date('F j, Y') ?></p>
+  <time>Last updated: <?= date('F j, Y') ?></time>
 
   <p>High Q Solid Academy ("we", "our", "us") respects your privacy and commits to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or register for our programs.</p>
 
