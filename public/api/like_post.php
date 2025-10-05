@@ -73,6 +73,12 @@ try {
 	http_response_code(405);
 	echo json_encode(['status'=>'error','message'=>'Method not allowed']);
 } catch (Throwable $e) {
+	// Log the exception to a file for local debugging (temporary)
+	try {
+		$logPath = __DIR__ . '/../../storage/like_post_error.log';
+		$msg = date('c') . " | " . ($e->getMessage() ?? 'unknown') . "\n" . ($e->getTraceAsString() ?? '') . "\n---\n";
+		@file_put_contents($logPath, $msg, FILE_APPEND | LOCK_EX);
+	} catch (Throwable $_) { /* ignore logging failures */ }
 	http_response_code(500);
 	echo json_encode(['status' => 'error', 'message' => 'DB error']);
 }
