@@ -19,24 +19,60 @@
       <div class="socials">
         <?php
           $socials = [];
-          try { $s = $pdo->query("SELECT social_links, contact_facebook, contact_tiktok, contact_twitter, contact_instagram FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); if(!empty($s['social_links'])) $socials = json_decode($s['social_links'], true) ?: []; 
-            // If structured keys are empty, fall back to legacy contact_* columns
-            if (empty($socials['facebook']) && !empty($s['contact_facebook'])) $socials['facebook'] = $s['contact_facebook'];
-            if (empty($socials['instagram']) && !empty($s['contact_instagram'])) $socials['instagram'] = $s['contact_instagram'];
-            // TikTok: prefer explicit tiktok key, then contact_tiktok column, otherwise fallback to contact_twitter for older installs
-            if (empty($socials['tiktok']) && !empty($s['contact_tiktok'])) $socials['tiktok'] = $s['contact_tiktok'];
-            if (empty($socials['tiktok']) && !empty($s['contact_twitter'])) $socials['tiktok'] = $s['contact_twitter'];
-          } catch(Throwable $_) {}
+          try { 
+            $stmt = $pdo->query("SELECT social_links, contact_facebook, contact_tiktok, contact_twitter, contact_instagram FROM site_settings LIMIT 1");
+            if ($stmt) {
+              $s = $stmt->fetch(PDO::FETCH_ASSOC);
+              if ($s) {
+                // Try structured social_links first
+                if (!empty($s['social_links'])) {
+                  $decoded = json_decode($s['social_links'], true);
+                  if (is_array($decoded)) {
+                    $socials = $decoded;
+                  }
+                }
+                
+                // Fallback to legacy columns if needed
+                if (empty($socials['facebook']) && !empty($s['contact_facebook'])) {
+                  $socials['facebook'] = $s['contact_facebook'];
+                }
+                if (empty($socials['instagram']) && !empty($s['contact_instagram'])) {
+                  $socials['instagram'] = $s['contact_instagram'];
+                }
+                if (empty($socials['tiktok'])) {
+                  if (!empty($s['contact_tiktok'])) {
+                    $socials['tiktok'] = $s['contact_tiktok'];
+                  } elseif (!empty($s['contact_twitter'])) {
+                    $socials['tiktok'] = $s['contact_twitter'];
+                  }
+                }
+              }
+            }
+          } catch(Throwable $_) {
+            // Silently fail and use defaults
+          }
+
+          // Ensure we have some default social links if none are set
+          if (empty($socials)) {
+            $socials = [
+              'facebook' => 'https://facebook.com/highqsolidacademy',
+              'instagram' => 'https://instagram.com/highqsolidacademy',
+              'tiktok' => 'https://tiktok.com/@highqsolidacademy'
+            ];
+          }
         ?>
-        <?php if (!empty($socials['facebook'])): ?>
-          <a href="<?= htmlspecialchars($socials['facebook']) ?>" aria-label="Facebook"><i class="bx bxl-facebook-circle" aria-hidden="true"></i></a>
-        <?php endif; ?>
-        <?php if (!empty($socials['instagram'])): ?>
-          <a href="<?= htmlspecialchars($socials['instagram']) ?>" aria-label="Instagram"><i class="bx bxl-instagram-alt" aria-hidden="true"></i></a>
-        <?php endif; ?>
-        <?php if (!empty($socials['tiktok'])): ?>
-          <a href="<?= htmlspecialchars($socials['tiktok']) ?>" aria-label="TikTok"><i class="bx bxl-tiktok" aria-hidden="true"></i></a>
-        <?php endif; ?>
+        
+        <a href="<?= htmlspecialchars($socials['facebook'] ?? '#') ?>" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+          <i class="bx bxl-facebook-circle"></i>
+        </a>
+        
+        <a href="<?= htmlspecialchars($socials['instagram'] ?? '#') ?>" target="_blank" rel="noopener noreferrer" class="social-link instagram" aria-label="Instagram">
+          <i class="bx bxl-instagram-alt"></i>
+        </a>
+        
+        <a href="<?= htmlspecialchars($socials['tiktok'] ?? '#') ?>" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
+          <i class="bx bxl-tiktok"></i>
+        </a>
       </div>
     </div>
 
