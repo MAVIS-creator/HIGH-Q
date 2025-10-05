@@ -27,37 +27,35 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 <section class="hero">
   <div class="container">
-    <div class="row">
-      <div class="hero-left col-lg-8 col-md-12">
-      <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
-      <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead">
-        At High Q Solid Academy, we are committed to making our students excel academically and mentally.
-        Join thousands of successful students who have achieved their dreams with our proven teaching methods.
-      </p>
-      <div class="hero-ctas">
-        <a href="register.php" class="btn-primary">Register Now</a>
-        <a href="programs.php" class="btn-ghost">See Our Programs</a>
-      </div>
-      <!-- hero-stats moved to the right column on large screens -->
+    <div class="row align-items-start">
+      <div class="col-lg-7 hero-left">
+        <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
+        <h1>Excellence in <span class="accent">Education</span></h1>
+        <p class="lead">
+          At High Q Solid Academy, we are committed to making our students excel academically and mentally.
+          Join thousands of successful students who have achieved their dreams with our proven teaching methods.
+        </p>
+        <div class="hero-ctas">
+          <a href="register.php" class="btn-primary">Register Now</a>
+          <a href="programs.php" class="btn-ghost">See Our Programs</a>
+        </div>
       </div>
 
-      <aside class="hero-right col-lg-4 col-md-12">
-      <!-- place summary stats at top of the right column for desktop layout -->
-      <div class="hero-stats mb-3 d-flex justify-content-between gap-2">
-        <div class="text-center p-2 flex-fill bg-light rounded">
-          <strong>6+</strong>
-          <div class="small">Years Experience</div>
+      <aside class="col-lg-5 hero-right">
+        <div class="hero-stats">
+          <div>
+            <strong>6+</strong>
+            <div>Years Experience</div>
+          </div>
+          <div>
+            <strong>1000+</strong>
+            <div>Students Trained</div>
+          </div>
+          <div>
+            <strong>305</strong>
+            <div>Highest JAMB Score</div>
+          </div>
         </div>
-        <div class="text-center p-2 flex-fill bg-light rounded">
-          <strong>1000+</strong>
-          <div class="small">Students Trained</div>
-        </div>
-        <div class="text-center p-2 flex-fill bg-light rounded">
-          <strong>305</strong>
-          <div class="small">Highest JAMB Score</div>
-        </div>
-      </div>
 
       <div class="feature-card">
         <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
