@@ -17,17 +17,32 @@ foreach ($files as $f) {
     echo "Applying specific migration: $base\n";
     $sql = file_get_contents($f);
     try {
-        $pdo->beginTransaction();
+        // execute the SQL directly. Some migration files include their own transaction control
         $pdo->exec($sql);
+
         // record in migrations table (create if missing)
         $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (id INT AUTO_INCREMENT PRIMARY KEY, filename VARCHAR(512) NOT NULL, applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
         $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
         $ins->execute([$base]);
-        $pdo->commit();
+
         echo "Applied: $base\n";
     } catch (PDOException $e) {
-        if ($pdo->inTransaction()) $pdo->rollBack();
-        echo "Failed to apply $base: " . $e->getMessage() . "\n";
+        $msg = $e->getMessage();
+        // treat common 'already exists' errors as non-fatal (idempotent)
+        if (preg_match('/already exists|duplicate|1060/i', $msg)) {
+            echo "Non-fatal schema error applying $base: $msg\n";
+            try {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (id INT AUTO_INCREMENT PRIMARY KEY, filename VARCHAR(512) NOT NULL, applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
+                $ins->execute([$base]);
+                echo "Marked $base as applied (non-fatal).\n";
+            } catch (PDOException $e2) {
+                echo "Also failed to record migration $base: " . $e2->getMessage() . "\n";
+            }
+            continue;
+        }
+
+        echo "Failed to apply $base: $msg\n";
     }
 }
 
