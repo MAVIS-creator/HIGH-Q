@@ -268,6 +268,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <a href="register.php" class="btn-primary">Register for Programs</a>
         <a href="programs.php" class="btn-ghost">View All Programs</a>
       </div>
+  </div>
+</section>
     </div>
   </div>
 </section>
@@ -307,8 +309,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
     <?php if (empty($latestPosts)): ?>
       <p class="no-posts">No news posts available at the moment. Check back later for updates!</p>
     <?php else: ?>
-      <div class="news-grid">
+      <div class="row news-grid">
         <?php foreach ($latestPosts as $post): ?>
+          <div class="col-lg-3 col-md-6">
           <article class="news-card">
             <?php if (!empty($post['featured_image'])): ?>
               <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
@@ -322,6 +325,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
               </div>
             </div>
           </article>
+          </div>
         <?php endforeach; ?>
       </div>
       <div class="news-cta" style="text-align:center;margin-top:18px;">
