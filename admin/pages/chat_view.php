@@ -59,7 +59,7 @@ document.getElementById('replyForm').addEventListener('submit', function(e){
   if (csrfEl) fd.append('_csrf', csrfEl.value);
 
   var xhr=new XMLHttpRequest(); 
-  xhr.open('POST', '/HIGH-Q/admin/pages/chat.php',true);
+  xhr.open('POST', '../index.php?pages=chat',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.onload=function(){ 
     try{var r=JSON.parse(xhr.responseText);}catch(e){ 
@@ -79,7 +79,7 @@ document.getElementById('replyForm').addEventListener('submit', function(e){
 // Poll messages every 5 seconds
 setInterval(function(){
   var xhr = new XMLHttpRequest(); 
-  xhr.open('GET', location.pathname + '?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
+  xhr.open('GET', '../index.php?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
   xhr.onload = function(){ 
     if (xhr.status !== 200) return; 
     try{ var html = xhr.responseText; } catch(e){ return; }
@@ -113,8 +113,8 @@ document.getElementById('closeThreadBtn').addEventListener('click', function(){
     var csrfEl = document.querySelector('input[name="_csrf"]');
     if (csrfEl) fd.append('_csrf', csrfEl.value);
 
-    var xhr = new XMLHttpRequest(); 
-    xhr.open('POST', '/HIGH-Q/admin/pages/chat.php', true); 
+  var xhr = new XMLHttpRequest(); 
+  xhr.open('POST', '../index.php?pages=chat', true); 
     xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ 
       try{ var r = JSON.parse(xhr.responseText); }
