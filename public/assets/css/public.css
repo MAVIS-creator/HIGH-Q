@@ -1355,8 +1355,9 @@ nav a.active::after {
 }
 
 .register-main textarea {
-  min-height: 84px;
-  padding: 8px 10px;
+  min-height: 110px;
+  width: calc(100% - 20px);
+  padding: 10px 12px;
   box-sizing: border-box;
 }
 
@@ -1369,9 +1370,9 @@ nav a.active::after {
 .register-main input[type="password"],
 .register-main input[type="number"],
 .register-main select {
-  width: calc(100% - 12px);
-  /* leave ~6px breathing space on each side */
-  padding: 8px 10px;
+  width: calc(100% - 20px);
+  /* slightly narrower padding so inputs almost reach the card edge */
+  padding: 10px 12px;
   /* slightly smaller padding so the visual input stretches nearer to the card edge */
   border: 1px solid #e6e6e6;
   border-radius: 6px;
