@@ -209,8 +209,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Top bar -->
     <div class="top-bar">
       <div class="container">
-        <span>📞 <?= htmlentities($contact_phone) ?></span>
-        <span>✉️ info@hqacademy.com</span>
+        <span>📞 <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+        <span>✉️ <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
@@ -230,8 +230,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
         <!-- Navigation -->
         <nav>
-          <a href="index.php" class="active">Home</a>
-          <a href="about.php">About Us</a>
+          <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
+          <a href="index.php" class="<?= $cur === 'index.php' ? 'active' : '' ?>">Home</a>
+          <a href="about.php" class="<?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a>
 
           <!-- Programs dropdown (now contains Exams) -->
           <div class="nav-dropdown">
@@ -251,8 +252,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </div>
 
-          <a href="register.php">Admission</a>
-          <a href="contact.php">Contact</a>
+          <a href="register.php" class="<?= $cur === 'register.php' ? 'active' : '' ?>">Admission</a>
+          <a href="contact.php" class="<?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a>
         </nav>
 
         <!-- Button -->
