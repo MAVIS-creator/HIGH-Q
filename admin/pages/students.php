@@ -642,7 +642,7 @@ if ($hasRegistrations) {
                   <button type="submit" class="btn-approve">Activate</button>
                 </form>
               <?php else: ?>
-                <form method="post" action="../index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
