@@ -586,7 +586,7 @@ if ($hasRegistrations) {
                 <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
                 <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
               <?php endif; ?>
-              <form method="post" action="../index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this registration?');">
+              <form method="post" action="../index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -647,7 +647,7 @@ if ($hasRegistrations) {
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
               <?php endif; ?>
-              <form method="post" action="../index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form" onsubmit="return confirm('Delete this student? This cannot be undone.');">
+              <form method="post" action="../index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -664,6 +664,23 @@ if ($hasRegistrations) {
 <?php include '../includes/footer.php'; ?>
 
 <script>
+
+<script>
+// Replace native confirm for student delete forms with SweetAlert2
+document.addEventListener('submit', function(e){
+  var f = e.target.closest && e.target.closest('.student-delete-form');
+  if (!f) return;
+  e.preventDefault();
+  Swal.fire({
+    title: 'Delete?',
+    text: 'Delete this record? This action cannot be undone.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete'
+  }).then(function(res){ if (res.isConfirmed) f.submit(); });
+});
+</script>
 // Client-side search/filter
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
