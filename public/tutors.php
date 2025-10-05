@@ -35,7 +35,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <?php if (empty($tutors)): ?>
       <p class="no-posts">No tutors available at this time. (If you're testing, create a tutor in the admin area.)</p>
       <!-- Placeholder tutor so layout can be previewed -->
-      <div class="tutors-grid">
+      <div class="row tutors-grid">
+        <div class="col-lg-4 col-md-6">
         <article class="tutor-card">
           <div class="tutor-thumb"><img src="./assets/images/avatar-placeholder.png" alt="Placeholder"></div>
           <div class="tutor-body">
@@ -45,26 +46,32 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             <div class="subjects"><span class="tag">Mathematics</span><span class="tag">Physics</span></div>
           </div>
         </article>
+        </div>
       </div>
     <?php else: ?>
       <?php
         // Static lead card for Adebule Quam (CEO) — manually inserted so it always appears first
       ?>
       <div class="tutor-lead-wrap">
-        <article class="tutor-card tutor-lead">
-          <div class="tutor-thumb">
-            <img src="./assets/images/avatar-placeholder.png" alt="Adebule Quam">
+        <div class="row justify-content-center">
+          <div class="col-lg-6">
+          <article class="tutor-card tutor-lead">
+            <div class="tutor-thumb">
+              <img src="./assets/images/avatar-placeholder.png" alt="Adebule Quam">
+            </div>
+            <div class="tutor-body">
+              <h3>Adebule Quam</h3>
+              <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
+              <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
+            </div>
+          </article>
           </div>
-          <div class="tutor-body">
-            <h3>Adebule Quam</h3>
-            <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
-            <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
-          </div>
-        </article>
+        </div>
       </div>
 
-      <div class="tutors-grid">
+      <div class="row tutors-grid">
         <?php foreach ($tutors as $t): ?>
+          <div class="col-lg-4 col-md-6">
           <article class="tutor-card">
             <div class="tutor-thumb">
               <img src="./<?= htmlspecialchars($t['photo'] ?: 'assets/images/avatar-placeholder.png') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
@@ -103,6 +110,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
               <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
             </div>
           </article>
+          </div>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
@@ -116,20 +124,20 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <div class="ceo-heading">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="achievements-grid">
-      <div class="achievement">
+    <div class="row achievements-grid">
+      <div class="col-lg-3 col-md-6 achievement">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="achievement">
+      <div class="col-lg-3 col-md-6 achievement">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="achievement">
+      <div class="col-lg-3 col-md-6 achievement">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="achievement">
+      <div class="col-lg-3 col-md-6 achievement">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
@@ -144,24 +152,30 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="testimonials-grid">
+    <div class="row testimonials-grid">
+      <div class="col-lg-4 col-md-6">
       <article class="testimonial-card">
         <div class="rating">★★★★★</div>
         <p class="quote">"HQ Academy transformed my understanding of mathematics. The tutors are incredibly patient and explain concepts so clearly!"</p>
         <p class="attribution"><strong>Adunni Olatunji</strong><br><small>JAMB 2023 - Score: 287</small></p>
       </article>
+      </div>
 
+      <div class="col-lg-4 col-md-6">
       <article class="testimonial-card">
         <div class="rating">★★★★★</div>
         <p class="quote">"Thanks to HQ Academy, I passed my WAEC with flying colors. The personalized attention made all the difference!"</p>
         <p class="attribution"><strong>Chidi Okwu</strong><br><small>WAEC 2023 - 8 A's</small></p>
       </article>
+      </div>
 
+      <div class="col-lg-4 col-md-6">
       <article class="testimonial-card">
         <div class="rating">★★★★★</div>
         <p class="quote">"The best decision I made was joining HQ Academy. Their Post-UTME preparation got me into my dream university!"</p>
         <p class="attribution"><strong>Fatima Hassan</strong><br><small>University of Lagos 2023</small></p>
       </article>
+      </div>
     </div>
   </div>
 </section>
@@ -169,8 +183,12 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 <!-- CTA Banner -->
 <section class="cta-join">
   <div class="container">
-    <h2>Ready to Start Your Journey?</h2>
-    <p>Join hundreds of students who have achieved their academic goals with us</p>
-    <a href="register.php" class="btn-dark cta-btn">Register Now</a>
+    <div class="row">
+      <div class="col-md-8 offset-md-2 text-center">
+        <h2>Ready to Start Your Journey?</h2>
+        <p>Join hundreds of students who have achieved their academic goals with us</p>
+        <a href="register.php" class="btn-dark cta-btn">Register Now</a>
+      </div>
+    </div>
   </div>
 </section>
