@@ -266,10 +266,8 @@ $csrf = generateToken('signup_form');
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
-																									<div class="form-row"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
-																									<div class="form-row"><label>Last Name *</label><input name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
-																									<div class="form-row"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div>
-																									<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div>
+																									<div class="form-row form-inline"><div style="flex:1"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div style="flex:1"><label>Last Name *</label><input name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
+																									<div class="form-row form-inline"><div style="flex:1"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div style="flex:1"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
 
@@ -300,7 +298,7 @@ $csrf = generateToken('signup_form');
 															I agree to the <a href="terms.php" target="_blank">terms and conditions</a>
 														</label>
 													</div>
-													<div style="margin-top:12px;"><button class="btn-primary" type="submit">Submit Registration</button></div>
+													<div style="margin-top:12px;"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
 												</form>
 											</div>
 										</main>
