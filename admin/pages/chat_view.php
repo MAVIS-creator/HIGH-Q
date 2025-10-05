@@ -50,14 +50,25 @@ error_reporting(E_ALL);
                       $isImage = in_array($ext, ['jpg','jpeg','png','gif','webp']);
                       $downloadUrl = '/HIGH-Q/public/download_attachment.php?file=' . urlencode(basename($a));
                       if ($isImage) {
+                        echo '<div style="position:relative">';
                         echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank"><img src="' . htmlspecialchars($a) . '" style="max-width:120px;border-radius:6px"></a>';
+                        echo '</div>';
                       } else {
                         $fname = basename($a);
-                        echo '<div style="padding:8px;border:1px solid #eee;border-radius:6px;background:#fff;display:flex;align-items:center;gap:8px">';
+                        echo '<div style="position:relative;padding:8px;border:1px solid #eee;border-radius:6px;background:#fff;display:flex;align-items:center;gap:8px">';
                         echo '<i class="fas fa-file" style="font-size:20px;color:#666"></i>';
                         echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank">' . htmlspecialchars($fname) . '</a>';
                         echo '</div>';
                       }
+                      // add a delete button if chat_attachments table tracks ids (try to fetch id)
+                      try {
+                        $idQ = $pdo->prepare('SELECT id FROM chat_attachments WHERE file_url = ? LIMIT 1');
+                        $idQ->execute([$a]);
+                        $attId = $idQ->fetchColumn();
+                        if ($attId) {
+                          echo '<button class="btn-delete-attachment" data-id="' . intval($attId) . '" style="margin-left:6px;background:#f44336;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer">Delete</button>';
+                        }
+                      } catch (Throwable $_) { /* ignore */ }
                     }
                     echo '</div>';
                   }
