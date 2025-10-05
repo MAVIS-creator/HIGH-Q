@@ -465,7 +465,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         if (result.isConfirmed) {
           const form = document.createElement("form");
           form.method = "POST";
-          form.action = `index.php?pages=tutors&action=delete&id=${id}`;
+          form.action = `/HIGH-Q/admin/pages/tutors.php?action=delete&id=${id}`;
 
           const csrfInput = document.createElement("input");
           csrfInput.type = "hidden";
@@ -495,7 +495,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       // open modal and fill values
       document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
   const form = document.getElementById('tutorForm');
-  form.action = `../index.php?pages=tutors&action=edit&id=${id}`;
+  form.action = `/HIGH-Q/admin/pages/tutors.php?action=edit&id=${id}`;
       document.getElementById('tName').value = name;
       document.getElementById('tTitle').value = title;
       document.getElementById('tSubjects').value = subs;
