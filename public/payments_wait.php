@@ -44,14 +44,15 @@ $csrf = generateToken('signup_form');
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/css/payment.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
-    <div class="container" style="display:flex;align-items:center;gap:12px;">
-  <img src="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <div class="minimal-header bg-white border-bottom py-2">
+    <div class="container d-flex align-items-center gap-3">
+      <img src="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
-        <div style="font-size:12px;color:#666;">Secure payment</div>
+        <div class="text-muted small">Secure payment</div>
       </div>
     </div>
   </div>
@@ -65,24 +66,25 @@ $csrf = generateToken('signup_form');
   <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
   <?php else: ?>
       <div class="card">
-        <div class="spinner" id="pageSpinner" style="display:none"></div>
-  <p>Please transfer <strong>₦<?= number_format($payment['amount'],2) ?></strong> to the account below and use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong>.</p>
-  <p><strong>Account Name:</strong> <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
-  <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
-  <strong>Account Number:</strong> <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
+        <div class="card-body">
+          <div class="spinner" id="pageSpinner" style="display:none"></div>
+          <p>Please transfer <strong><?= number_format($payment['amount'],2) ?></strong> to the account below and use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong>.</p>
+          <p><strong>Account Name:</strong> <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
+          <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
+          <strong>Account Number:</strong> <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
 
     <p>This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details. An admin will verify and confirm your payment.</p>
 
   <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">--:--</div>
 
-  <form method="post" action="#" id="payer-form">
+  <form method="post" action="#" id="payer-form" class="row g-2">
           <!-- mark_sent API expects _csrf and payment_id fields -->
           <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
           <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-          <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-          <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-          <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-          <div style="margin-top:12px;"><button class="btn-primary" id="markSentBtn" type="submit">I have sent the money</button></div>
+    <div class="col-12 col-md-4"><label class="form-label">Name on Payer Account</label><input class="form-control" name="payer_name" required></div>
+    <div class="col-12 col-md-4"><label class="form-label">Account Number</label><input class="form-control" name="payer_number" required></div>
+    <div class="col-12 col-md-4"><label class="form-label">Bank Name</label><input class="form-control" name="payer_bank" required></div>
+    <div class="col-12 mt-2"><button class="btn btn-primary" id="markSentBtn" type="submit">I have sent the money</button></div>
         </form>
 
         <script>
