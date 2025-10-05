@@ -38,6 +38,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     if ($msg === '') { echo json_encode(['status'=>'error','message'=>'Empty']); exit; }
     $ins = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_id, sender_name, message, is_from_staff, created_at) VALUES (?, ?, ?, ?, 1, NOW())');
     $ins->execute([$threadId, $_SESSION['user']['id'], $_SESSION['user']['name'], $msg]);
+    $messageId = $pdo->lastInsertId();
+    // Handle attachments if sent with admin reply
+    if (!empty($_FILES['attachments'])) {
+      $files = $_FILES['attachments'];
+      for ($i = 0; $i < count($files['name']); $i++) {
+        if ($files['error'][$i] !== UPLOAD_ERR_OK) continue;
+        $type = $files['type'][$i] ?? '';
+        $allowed = ['image/jpeg','image/png','image/gif','image/webp'];
+        if (!in_array($type, $allowed, true)) continue;
+        $uploadDir = __DIR__ . '/../../public/uploads/chat/';
+        if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+        $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+        $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
+        $dest = $uploadDir . $nameSafe;
+        if (move_uploaded_file($files['tmp_name'][$i], $dest)) {
+          $url = 'uploads/chat/' . $nameSafe;
+          // Try to insert into chat_attachments table if it exists
+          try {
+            $att = $pdo->prepare('INSERT INTO chat_attachments (message_id, file_url, created_at) VALUES (?, ?, NOW())');
+            $att->execute([$messageId, $url]);
+          } catch (Throwable $_) {
+            // fallback: append to message body
+            $upd = $pdo->prepare('UPDATE chat_messages SET message = CONCAT(message, ?) WHERE id = ?');
+            $upd->execute(['<br><img src="' . $url . '" style="max-width:100%;border-radius:8px">', $messageId]);
+          }
+        }
+      }
+    }
     // update thread last_activity
     $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?'); $u->execute([$threadId]);
     // audit log: admin replied

@@ -28,18 +28,41 @@ error_reporting(E_ALL);
 ?>
 <div class="roles-page">
   <div class="page-header"><h1><i class="bx bxs-message-dots"></i> Thread #<?= htmlspecialchars($threadId) ?></h1></div>
-  <div class="card">
-    <div style="max-height:400px;overflow:auto;padding:8px;border:1px solid #eee;margin-bottom:12px">
+    <div class="card">
+    <div id="messagesBox" style="max-height:420px;overflow:auto;padding:8px;border:1px solid #eee;margin-bottom:12px">
       <?php foreach($msgs as $m): ?>
-        <div style="margin-bottom:10px">
+        <div style="margin-bottom:12px">
           <div style="font-size:0.85rem;color:#666"><?= htmlspecialchars($m['created_at']) ?> — <?= $m['is_from_staff'] ? htmlspecialchars($m['sender_name']) : htmlspecialchars($m['sender_name']?:'Visitor') ?></div>
-          <div style="background:<?= $m['is_from_staff'] ? '#fff3cf' : '#f6f6f6' ?>;padding:8px;border-radius:6px;margin-top:4px"><?= nl2br(htmlspecialchars($m['message'])) ?></div>
+          <div style="background:<?= $m['is_from_staff'] ? '#fff3cf' : '#f6f6f6' ?>;padding:10px;border-radius:8px;margin-top:6px">
+            <?= nl2br(htmlspecialchars($m['message'])) ?>
+            <?php
+              // If message has inline image tags saved as part of message HTML (older approach), render raw
+              // Also check for attachments stored in a separate attachments table (if exists)
+              try {
+                $attStmt = $pdo->prepare('SELECT file_url FROM chat_attachments WHERE message_id = ?');
+                $attStmt->execute([$m['id']]);
+                $atts = $attStmt->fetchAll(PDO::FETCH_COLUMN);
+                if (!empty($atts)) {
+                  echo '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">';
+                  foreach ($atts as $a) {
+                    echo '<a href="' . htmlspecialchars($a) . '" target="_blank"><img src="' . htmlspecialchars($a) . '" style="max-width:120px;border-radius:6px"></a>';
+                  }
+                  echo '</div>';
+                }
+              } catch (Throwable $_) {
+                // if chat_attachments does not exist, ignore
+              }
+            ?>
+          </div>
         </div>
       <?php endforeach; ?>
     </div>
-    <form id="replyForm">
+    <form id="replyForm" enctype="multipart/form-data">
       <textarea name="message" style="width:100%;height:100px;padding:8px" placeholder="Reply..."></textarea>
-      <div style="text-align:right;margin-top:8px"><button class="btn" type="submit">Send</button></div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <input type="file" name="attachments[]" multiple>
+        <div style="margin-left:auto"><button class="btn" type="submit">Send</button></div>
+      </div>
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars(generateToken('chat_form')) ?>">
     </form>
     <div style="text-align:right;margin-top:8px">
