@@ -579,7 +579,7 @@ $csrf = generateToken('settings_form');
                                         <textarea name="settings[contact][address]" placeholder="123 Education Street, Learning City" class="input" rows="3"><?= htmlspecialchars($current['contact']['address']) ?></textarea>
                                         <div style="display:flex;gap:8px;">
                                             <input name="settings[contact][facebook]" placeholder="https://facebook.com/..." value="<?= htmlspecialchars($current['contact']['facebook']) ?>" class="input">
-                                            <input name="settings[contact][twitter]" placeholder="https://twitter.com/..." value="<?= htmlspecialchars($current['contact']['twitter']) ?>" class="input">
+                                            <input name="settings[contact][tiktok]" placeholder="https://www.tiktok.com/@username or full URL" value="<?= htmlspecialchars($current['contact']['tiktok'] ?? $current['contact']['twitter'] ?? '') ?>" class="input">
                                             <input name="settings[contact][instagram]" placeholder="https://instagram.com/..." value="<?= htmlspecialchars($current['contact']['instagram']) ?>" class="input">
                                         </div>
                 </div>

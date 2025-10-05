@@ -3010,6 +3010,23 @@ input.form-input {
   cursor: pointer;
 }
 .btn-submit:hover { filter: brightness(0.98); }
+
+/* Legal / policy pages styling */
+.doc-page {
+  max-width: 900px;
+  margin: 36px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  border: 1px solid #f0f0f0;
+}
+.doc-page h1 { font-size: 28px; margin-bottom: 8px; }
+.doc-page h2 { font-size: 20px; margin-top: 20px; }
+.doc-page p { color: #333; line-height: 1.7; }
+.doc-page ul { margin-left: 20px; }
+.doc-page a { color: #c0392b; text-decoration: underline; }
+.doc-page time { color: #666; display: block; margin-bottom: 12px; }
   margin: 0 auto; /* ensure centered in older browsers */
 }
 
