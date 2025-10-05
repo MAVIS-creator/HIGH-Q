@@ -92,10 +92,11 @@ body {
 }
 
 .main-header .container {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 20px;
+  padding: 0.5rem 1rem;
 }
 
 .logo {
@@ -125,8 +126,39 @@ body {
 nav {
   display: flex;
   gap: 20px;
-  justify-self: center;
-  /* center the nav in the header grid */
+  align-items: center;
+}
+
+/* Mobile navigation */
+@media (max-width: 991px) {
+  .main-header .container {
+    flex-wrap: wrap;
+  }
+  
+  nav {
+    order: 3;
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+    display: none;
+    padding: 1rem 0;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  .navbar-toggler {
+    display: block;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+
+  .navbar-toggler i {
+    font-size: 1.5rem;
+  }
 }
 
 /* Nav dropdown for News/Blog */
@@ -1022,30 +1054,53 @@ nav a.active::after {
 
 /* Hero Section */
 .hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 80px 0;
-  /* remove side padding */
+  position: relative;
   background: var(--hq-yellow);
+  padding: clamp(40px, 8vw, 80px) 0;
+  overflow: hidden;
 }
 
 .hero .container {
   width: 100%;
   max-width: 1200px;
-  /* keeps it neat on big screens */
   margin: 0 auto;
-  /* center container */
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
+  align-items: center;
+  gap: clamp(20px, 4vw, 40px);
+  flex-wrap: wrap;
 }
 
 /* Left Side */
 .hero-left {
   flex: 1;
+  min-width: 300px;
+}
+
+@media (max-width: 991px) {
+  .hero .container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .hero-left, .hero-right {
+    width: 100%;
+  }
+  
+  .hero-stats {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero {
+    padding: 40px 0;
+  }
+  
+  .hero-stats {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
 }
 
 .hero-badge {
