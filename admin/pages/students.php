@@ -697,7 +697,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-    fetch('index.php?pages=students', {
+  fetch('../index.php?pages=students', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
@@ -739,7 +739,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-    const res = await fetch('index.php?pages=students', {
+  const res = await fetch('../index.php?pages=students', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
@@ -803,7 +803,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `index.php?pages=students&action=send_message&id=${id}`;
+  modalForm.action = `../index.php?pages=students&action=send_message&id=${id}`;
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
@@ -891,9 +891,9 @@ regConfirmForm.addEventListener('submit', async function(e){
   try {
     if (choice.isConfirmed) {
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-      const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
-      // success shown by postAction; reload to reflect changes
-      window.location = 'index.php?pages=students';
+  const payload = await postAction(`../index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+  // success shown by postAction; reload to reflect changes
+  window.location = '../index.php?pages=students';
     } else if (choice.isDenied) {
       const { value: formValues } = await Swal.fire({
         title: 'Create payment',
@@ -906,8 +906,8 @@ regConfirmForm.addEventListener('submit', async function(e){
       const amt = parseFloat(formValues.amount || 0);
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-      const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
-      window.location = 'index.php?pages=students';
+  const payload = await postAction(`../index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+  window.location = '../index.php?pages=students';
     }
   } catch (err) {
     Swal.fire('Error','Failed to confirm','error');
@@ -932,7 +932,7 @@ regRejectBtn.addEventListener('click', ()=>{
       (async ()=>{
         try {
           const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-          const payload = await postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd);
+      const payload = await postAction(`../index.php?pages=students&action=reject_registration&id=${id}`, fd);
           // update UI: remove buttons and mark status
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -964,7 +964,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-                const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+            const payload = await postAction(`../index.php?pages=students&action=confirm_registration&id=${id}`, fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
@@ -1015,7 +1015,7 @@ document.addEventListener('click', function(e){
       inputPlaceholder: 'Reason for rejection',
       showCancelButton: true,
       confirmButtonText: 'Reject'
-    }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`../index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
     return;
   }
 });
