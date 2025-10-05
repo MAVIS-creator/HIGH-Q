@@ -52,7 +52,9 @@ foreach ($files as $f) {
         $pdo->commit();
         echo "Applied: $base\n";
     } catch (PDOException $e) {
-        $pdo->rollBack();
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         $msg = $e->getMessage();
         // If the error indicates the column/table/index already exists, treat migration as applied and continue
         if (preg_match('/(Duplicate column name|already exists|Duplicate key name|column exists|already exists in table)/i', $msg)) {
