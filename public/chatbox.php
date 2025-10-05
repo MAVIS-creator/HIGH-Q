@@ -472,6 +472,14 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 }
             });
 
+                // If a thread already exists in localStorage, skip start form and show footer
+                if (getThreadId()) {
+                    if (chatStartEl) chatStartEl.style.display = 'none';
+                    if (chatFooterEl) chatFooterEl.style.display = 'flex';
+                    // populate messages immediately
+                    getMessages();
+                }
+
             async function getMessages() {
                 const tid = getThreadId();
                 if (!tid) return;
