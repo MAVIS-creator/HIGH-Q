@@ -1034,11 +1034,7 @@ nav a.active::after {
   max-width: 1200px;
   /* keeps it neat on big screens */
   margin: 0 auto;
-  /* center container */
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
+  /* allow Bootstrap .row/.col to manage layout; avoid forcing flex here */
 }
 
 /* Left Side */
@@ -1251,16 +1247,22 @@ nav a.active::after {
 }
 
 /* Register two-column layout */
+/* Register layout: only use CSS grid on wider viewports; on small screens allow Bootstrap rows/cols to stack naturally */
 .register-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  /* roomy left, slightly narrower sidebar for better visual balance */
-  gap: 28px;
-  align-items: start;
   margin: 24px auto 48px;
   max-width: 1150px;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+@media (min-width: 992px) {
+  .register-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    /* roomy left, slightly narrower sidebar for better visual balance */
+    gap: 28px;
+    align-items: start;
+  }
 }
 
 .register-layout .register-main {
