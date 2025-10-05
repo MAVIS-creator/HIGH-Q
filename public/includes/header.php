@@ -202,7 +202,10 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Bootstrap CSS (responsive utilities) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-6m7V6V3y1k6b0a0Z7q6Q5D3y8lN1y2Q7z6b0a0Z7q6Q5D3y8lN1y2Q7z6b0a0Z7q" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+      crossorigin="anonymous">
 
   <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
