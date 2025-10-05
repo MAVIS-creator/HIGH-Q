@@ -225,10 +225,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Bootstrap CSS (responsive utilities) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-    crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"crossorigin="anonymous">
 
   <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
@@ -249,48 +246,73 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
     <!-- Main nav -->
     <div class="main-header">
-      <div class="container">
-        <!-- Logo + Name -->
-        <div class="logo">
-          <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo" href="index.php">
-          <div>
-            <h1>HIGH Q SOLID ACADEMY</h1>
-            <small>Limited</small>
+      <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <!-- Logo + Name -->
+          <a class="navbar-brand d-flex align-items-center" href="index.php">
+            <div class="logo d-flex align-items-center">
+              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo me-2">
+              <div>
+                <h1 class="mb-0">HIGH Q SOLID ACADEMY</h1>
+                <small>Limited</small>
+              </div>
+            </div>
+          </a>
+
+          <!-- Hamburger button for mobile -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                  aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- Navigation items that collapse on mobile -->
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+              <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
+              </li>
+
+              <!-- Programs dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" 
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                  Programs
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                </ul>
+              </li>
+
+              <!-- News dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" 
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                  News
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
+              </li>
+            </ul>
+
+            <!-- Button -->
+            <a href="register.php" class="btn btn-primary ms-lg-3">Register Now</a>
           </div>
         </div>
-
-
-        <!-- Navigation -->
-        <nav>
-          <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-          <a href="index.php" class="<?= $cur === 'index.php' ? 'active' : '' ?>">Home</a>
-          <a href="about.php" class="<?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a>
-
-          <!-- Programs dropdown (now contains Exams) -->
-          <div class="nav-dropdown">
-            <a href="#" class="drop-toggle">Programs</a>
-            <div class="nav-dropdown-content">
-              <a href="programs.php">Programs</a>
-              <a href="exams.php">Exams</a>
-            </div>
-          </div>
-
-          <!-- News top-level with Community under it -->
-          <div class="nav-dropdown">
-            <a href="news.php" class="drop-toggle">News</a>
-            <div class="nav-dropdown-content">
-              <a href="news.php">News & Blog</a>
-              <a href="community.php">Community</a>
-            </div>
-          </div>
-
-          <a href="register.php" class="<?= $cur === 'register.php' ? 'active' : '' ?>">Admission</a>
-          <a href="contact.php" class="<?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a>
-        </nav>
-
-        <!-- Button -->
-        <a href="register.php" class="btn">Register Now</a>
-      </div>
+      </nav>
     </div>
   </header>
 
@@ -355,7 +377,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                     });
                   });
                 } catch (innerErr) {
-                  /* ignore */ }
+                  /* ignore */
+                }
 
                 // Icon fallback: if Boxicons didn't render (font not available), replace bx <i> tags with a simple inline SVG square so UI stays usable.
                 try {
@@ -460,7 +483,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             });
           });
         } catch (ioErr) {
-          /* ignore IntersectionObserver errors on old browsers */ }
+          /* ignore IntersectionObserver errors on old browsers */
+        }
       });
     })();
   </script>
