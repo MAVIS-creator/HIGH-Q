@@ -204,12 +204,14 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                   data-menus='<?= json_encode($roleMenus) ?>'>
             <i class='bx bx-edit'></i> Edit
           </button>
-          <form method="post" action="index.php?pages=roles&action=delete&id=<?= $r['id'] ?>" style="display:inline">
+          <form method="post" action="../index.php?pages=roles&action=delete&id=<?= $r['id'] ?>" style="display:inline">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <button type="submit" class="btn-banish">
               <i class='bx bx-trash'></i> Delete
             </button>
           </form>
+          <!-- Permanent remove (AJAX) -->
+          <button class="btn" data-action="destroy" data-id="<?= $r['id'] ?>" title="Remove role permanently">Remove</button>
         </td>
       </tr>
       <?php endforeach; ?>
