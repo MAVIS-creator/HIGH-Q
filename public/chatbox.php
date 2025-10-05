@@ -26,25 +26,47 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $messageHtml = htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        // Handle attachment
-        if (!empty($_FILES['attachment']) && ($_FILES['attachment']['error'] ?? 1) === UPLOAD_ERR_OK) {
-            $f = $_FILES['attachment'];
-            $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (in_array($f['type'], $allowed, true)) {
-                $uploadDir = __DIR__ . '/uploads/chat/';
-                if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
-                $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
+        // Handle attachments[] (allow images + pdf/docx)
+        $savedAttachUrls = [];
+        if (!empty($_FILES['attachments'])) {
+            $files = $_FILES['attachments'];
+            $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            $uploadDir = __DIR__ . '/uploads/chat/';
+            if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+            for ($i = 0; $i < count($files['name']); $i++) {
+                if (($files['error'][$i] ?? 1) !== UPLOAD_ERR_OK) continue;
+                $type = $files['type'][$i] ?? '';
+                if (!in_array($type, $allowed, true)) continue;
+                $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
                 $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
                 $dest = $uploadDir . $nameSafe;
-                if (move_uploaded_file($f['tmp_name'], $dest)) {
+                if (move_uploaded_file($files['tmp_name'][$i], $dest)) {
                     $url = 'uploads/chat/' . $nameSafe;
-                    $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="max-width:100%;border-radius:8px">';
+                    $savedAttachUrls[] = ['url' => $url, 'orig' => $files['name'][$i], 'mime' => $type];
+                    // for images, embed a preview in message; for other files, append as a link
+                    if (strpos($type, 'image/') === 0) {
+                        $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="max-width:100%;border-radius:8px">';
+                    } else {
+                        $messageHtml .= '<br><a href="/HIGH-Q/public/download_attachment.php?file=' . urlencode($nameSafe) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
+                    }
                 }
             }
         }
 
         $stmt = $pdo->prepare('INSERT INTO chat_messages (thread_id, sender_name, message, is_from_staff, created_at) VALUES (:thread_id, :sender_name, :message, 0, NOW())');
         $stmt->execute([':thread_id' => $thread_id, ':sender_name' => $name, ':message' => $messageHtml]);
+        $messageId = $pdo->lastInsertId();
+        // Persist attachments into chat_attachments table if present
+        if (!empty($savedAttachUrls)) {
+            foreach ($savedAttachUrls as $attach) {
+                try {
+                    $ins = $pdo->prepare('INSERT INTO chat_attachments (message_id, file_url, original_name, mime_type, created_at) VALUES (?, ?, ?, ?, NOW())');
+                    $ins->execute([$messageId, $attach['url'], $attach['orig'], $attach['mime']]);
+                } catch (Throwable $_) {
+                    // ignore if table/columns missing
+                }
+            }
+        }
 
         $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id=:id');
         $u->execute([':id' => $thread_id]);
