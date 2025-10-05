@@ -3149,6 +3149,16 @@ input.form-input {
   border-radius: 4px
 }
 
+.comment .reply-btn {
+  background: none;
+  border: 0;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-left:6px;
+}
+
 .comment .like-btn.liked {
   color: crimson
 }
