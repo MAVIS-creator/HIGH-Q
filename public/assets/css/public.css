@@ -2984,6 +2984,32 @@ input.form-input {
   flex-direction: column;
   border-radius: 12px;
   text-align: center;
+/* Two-column inline form rows */
+.form-row.form-inline {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.form-row.form-inline > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Submit button style - prominent red pill */
+.btn-submit {
+  display: block;
+  width: 100%;
+  background: linear-gradient(180deg,#ff4d4f,#d9363e);
+  color: #fff;
+  border: none;
+  padding: 14px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(217,57,62,0.28);
+  cursor: pointer;
+}
+.btn-submit:hover { filter: brightness(0.98); }
   margin: 0 auto; /* ensure centered in older browsers */
 }
 
