@@ -283,6 +283,23 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ n.classList.remove('open'); });
           }
         });
+
+        // Add .is-loaded after first paint so CSS animations trigger after initial paint
+        try {
+          if ('requestAnimationFrame' in window) {
+            requestAnimationFrame(function(){
+              requestAnimationFrame(function(){
+                document.documentElement.classList.add('is-loaded');
+              });
+            });
+          } else {
+            // fallback
+            setTimeout(function(){ document.documentElement.classList.add('is-loaded'); }, 50);
+          }
+        } catch (e) {
+          // if anything goes wrong, still try a small timeout
+          setTimeout(function(){ try { document.documentElement.classList.add('is-loaded'); } catch (_){} }, 100);
+        }
       });
     })();
   </script>
