@@ -3,7 +3,7 @@
   <div class="container footer-grid">
 
     <!-- Logo & About -->
-    <div class="footer-about">
+  <div class="footer-about">
       <div class="logo">
         <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
         <div>
@@ -17,9 +17,13 @@
       </p>
       <p class="motto">"<span>Always Ahead of Others</span>"</p>
       <div class="socials">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
+        <?php
+          $socials = [];
+          try { $s = $pdo->query("SELECT social_links FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); if(!empty($s['social_links'])) $socials = json_decode($s['social_links'], true) ?: []; } catch(Throwable $_) {}
+        ?>
+        <?php if (!empty($socials['facebook'])): ?><a href="<?= htmlspecialchars($socials['facebook']) ?>"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
+        <?php if (!empty($socials['instagram'])): ?><a href="<?= htmlspecialchars($socials['instagram']) ?>"><i class="fab fa-instagram"></i></a><?php endif; ?>
+        <?php if (!empty($socials['tiktok'])): ?><a href="<?= htmlspecialchars($socials['tiktok']) ?>"><i class="fab fa-tiktok"></i></a><?php else: ?><a href="#"><i class="fab fa-tiktok"></i></a><?php endif; ?>
       </div>
     </div>
 
@@ -36,15 +40,23 @@
     </div>
 
     <!-- Programs -->
-    <div class="footer-programs">
+      <div class="footer-programs">
       <h3>Our Programs</h3>
       <ul>
-        <li><a href="programs.php">JAMB/Post-UTME</a></li>
-        <li><a href="programs.php">WAEC/NECO</a></li>
-        <li><a href="programs.php">Digital Skills Training</a></li>
-        <li><a href="programs.php">CBT Preparation</a></li>
-        <li><a href="programs.php">Tutorial Classes</a></li>
-        <li><a href="programs.php">Educational Consultancy</a></li>
+        <?php
+          try {
+            $progs = $pdo->query("SELECT title, slug FROM courses WHERE is_active=1 ORDER BY title LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
+          } catch(Throwable $_) { $progs = []; }
+          if (!empty($progs)) {
+            foreach ($progs as $p) {
+              $slug = $p['slug'] ?: 'programs.php';
+              echo '<li><a href="program.php?slug=' . htmlspecialchars($slug) . '">' . htmlspecialchars($p['title']) . '</a></li>';
+            }
+          } else {
+            // fallback static links
+            echo '<li><a href="programs.php">JAMB/Post-UTME</a></li><li><a href="programs.php">WAEC/NECO</a></li><li><a href="programs.php">Digital Skills Training</a></li>';
+          }
+        ?>
       </ul>
     </div>
 
@@ -59,8 +71,13 @@
         <strong><i class="fas fa-building"></i> Area Office</strong>
         <p>Shop 3, 17, 18, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
       </div>
-      <p><i class="fas fa-phone"></i> 0807 208 8794</p>
-      <p><i class="fas fa-envelope"></i> info@hqacademy.com</p>
+      <?php
+        try { $ss = $pdo->query("SELECT contact_phone, contact_email FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); } catch(Throwable $_) { $ss = []; }
+        $fphone = $ss['contact_phone'] ?? '0807 208 8794';
+        $femail = $ss['contact_email'] ?? 'info@hqacademy.com';
+      ?>
+      <p><i class="fas fa-phone"></i> <?= htmlspecialchars($fphone) ?></p>
+      <p><i class="fas fa-envelope"></i> <?= htmlspecialchars($femail) ?></p>
       <p><i class="fas fa-clock"></i> Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
     </div>
 
