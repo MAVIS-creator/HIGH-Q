@@ -28,9 +28,9 @@
             if (empty($socials['tiktok']) && !empty($s['contact_twitter'])) $socials['tiktok'] = $s['contact_twitter'];
           } catch(Throwable $_) {}
         ?>
-        <?php if (!empty($socials['facebook'])): ?><a href="<?= htmlspecialchars($socials['facebook']) ?>" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
-        <?php if (!empty($socials['instagram'])): ?><a href="<?= htmlspecialchars($socials['instagram']) ?>" aria-label="Instagram"><i class="fab fa-instagram"></i></a><?php endif; ?>
-        <?php if (!empty($socials['tiktok'])): ?><a href="<?= htmlspecialchars($socials['tiktok']) ?>" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><?php endif; ?>
+  <?php if (!empty($socials['facebook'])): ?><a href="<?= htmlspecialchars($socials['facebook']) ?>" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i><i class="bx bxl-facebook-circle" aria-hidden="true"></i></a><?php endif; ?>
+  <?php if (!empty($socials['instagram'])): ?><a href="<?= htmlspecialchars($socials['instagram']) ?>" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i><i class="bx bxl-instagram-alt" aria-hidden="true"></i></a><?php endif; ?>
+  <?php if (!empty($socials['tiktok'])): ?><a href="<?= htmlspecialchars($socials['tiktok']) ?>" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i><i class="bx bxl-tiktok" aria-hidden="true"></i></a><?php endif; ?>
       </div>
     </div>
 

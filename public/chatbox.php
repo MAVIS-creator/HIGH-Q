@@ -110,10 +110,16 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             --hq-muted: #f4f4f6;
         }
 
+        html, body { height: 100%; }
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
             background: transparent;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 18px;
+            box-sizing: border-box;
         }
 
         .chat-card {
@@ -126,6 +132,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             flex-direction: column;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            margin: 0 auto; /* ensure centered */
+            box-sizing: border-box;
         }
 
         .chat-header {
