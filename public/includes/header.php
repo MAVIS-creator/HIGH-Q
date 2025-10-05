@@ -343,6 +343,46 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           // if anything goes wrong, still try a small timeout
           setTimeout(function(){ try { document.documentElement.classList.add('is-loaded'); } catch (_){} }, 100);
         }
+        // IntersectionObserver: reveal elements as they scroll into view with staggered delays
+        try {
+          var revealContainers = [
+            {container: '.programs-grid', item: '.program-card'},
+            {container: '.tutors-grid', item: '.tutor-card'},
+            {container: '.core-grid', item: '.value-card'},
+            {container: '.posts-grid', item: '.post-card'},
+            {container: '.ceo-stats', item: '.stat'},
+            {container: '.register-sidebar', item: '.card'},
+            {container: '.sidebar-card', item: '.sidebar-card'}
+          ];
+
+          var observerOptions = { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.06 };
+          var revealObserver = new IntersectionObserver(function(entries){
+            entries.forEach(function(entry){
+              var el = entry.target;
+              if (entry.isIntersecting) {
+                // mark visible
+                el.classList.add('in-view');
+                // small safety: ensure hover-zoom exists
+                el.classList.add('hover-zoom');
+                revealObserver.unobserve(el);
+              }
+            });
+          }, observerOptions);
+
+          revealContainers.forEach(function(group){
+            var containers = document.querySelectorAll(group.container);
+            containers.forEach(function(parent){
+              var items = parent.querySelectorAll(group.item);
+              items.forEach(function(item, idx){
+                // compute a small stagger delay based on index
+                var delay = Math.min(0.28, Math.max(0, idx * 0.06));
+                item.style.transitionDelay = delay + 's';
+                // if using CSS variables instead, set here as fallback
+                revealObserver.observe(item);
+              });
+            });
+          });
+        } catch (ioErr) { /* ignore IntersectionObserver errors on old browsers */ }
       });
     })();
   </script>
