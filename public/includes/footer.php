@@ -19,11 +19,17 @@
       <div class="socials">
         <?php
           $socials = [];
-          try { $s = $pdo->query("SELECT social_links FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); if(!empty($s['social_links'])) $socials = json_decode($s['social_links'], true) ?: []; } catch(Throwable $_) {}
+          try { $s = $pdo->query("SELECT social_links, contact_facebook, contact_twitter, contact_instagram FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); if(!empty($s['social_links'])) $socials = json_decode($s['social_links'], true) ?: []; 
+            // If structured keys are empty, fall back to legacy contact_* columns
+            if (empty($socials['facebook']) && !empty($s['contact_facebook'])) $socials['facebook'] = $s['contact_facebook'];
+            if (empty($socials['instagram']) && !empty($s['contact_instagram'])) $socials['instagram'] = $s['contact_instagram'];
+            // TikTok: prefer explicit tiktok key, otherwise use contact_twitter column as placeholder for TikTok
+            if (empty($socials['tiktok']) && !empty($s['contact_twitter'])) $socials['tiktok'] = $s['contact_twitter'];
+          } catch(Throwable $_) {}
         ?>
-        <?php if (!empty($socials['facebook'])): ?><a href="<?= htmlspecialchars($socials['facebook']) ?>"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
-        <?php if (!empty($socials['instagram'])): ?><a href="<?= htmlspecialchars($socials['instagram']) ?>"><i class="fab fa-instagram"></i></a><?php endif; ?>
-        <?php if (!empty($socials['tiktok'])): ?><a href="<?= htmlspecialchars($socials['tiktok']) ?>"><i class="fab fa-tiktok"></i></a><?php else: ?><a href="#"><i class="fab fa-tiktok"></i></a><?php endif; ?>
+        <?php if (!empty($socials['facebook'])): ?><a href="<?= htmlspecialchars($socials['facebook']) ?>" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
+        <?php if (!empty($socials['instagram'])): ?><a href="<?= htmlspecialchars($socials['instagram']) ?>" aria-label="Instagram"><i class="fab fa-instagram"></i></a><?php endif; ?>
+        <?php if (!empty($socials['tiktok'])): ?><a href="<?= htmlspecialchars($socials['tiktok']) ?>" aria-label="TikTok"><i class="fab fa-tiktok"></i></a><?php endif; ?>
       </div>
     </div>
 

@@ -209,8 +209,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Top bar -->
     <div class="top-bar">
       <div class="container">
-        <span>📞 <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-        <span>✉️ <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
