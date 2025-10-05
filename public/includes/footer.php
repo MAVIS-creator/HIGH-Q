@@ -19,11 +19,12 @@
       <div class="socials">
         <?php
           $socials = [];
-          try { $s = $pdo->query("SELECT social_links, contact_facebook, contact_twitter, contact_instagram FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); if(!empty($s['social_links'])) $socials = json_decode($s['social_links'], true) ?: []; 
+          try { $s = $pdo->query("SELECT social_links, contact_facebook, contact_tiktok, contact_twitter, contact_instagram FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC); if(!empty($s['social_links'])) $socials = json_decode($s['social_links'], true) ?: []; 
             // If structured keys are empty, fall back to legacy contact_* columns
             if (empty($socials['facebook']) && !empty($s['contact_facebook'])) $socials['facebook'] = $s['contact_facebook'];
             if (empty($socials['instagram']) && !empty($s['contact_instagram'])) $socials['instagram'] = $s['contact_instagram'];
-            // TikTok: prefer explicit tiktok key, otherwise use contact_twitter column as placeholder for TikTok
+            // TikTok: prefer explicit tiktok key, then contact_tiktok column, otherwise fallback to contact_twitter for older installs
+            if (empty($socials['tiktok']) && !empty($s['contact_tiktok'])) $socials['tiktok'] = $s['contact_tiktok'];
             if (empty($socials['tiktok']) && !empty($s['contact_twitter'])) $socials['tiktok'] = $s['contact_twitter'];
           } catch(Throwable $_) {}
         ?>

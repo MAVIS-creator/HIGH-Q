@@ -72,8 +72,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'contact_email' => $contact['email'] ?? null,
         'contact_address' => $contact['address'] ?? null,
     'contact_facebook' => $contact['facebook'] ?? null,
-    // store tiktok into contact_twitter column for backward compatibility with existing schema
-    'contact_twitter' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
+    'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
     'contact_instagram' => $contact['instagram'] ?? null,
     'maintenance' => !empty($security['maintenance']) ? 1 : 0,
     'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
@@ -95,7 +94,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             bank_name = :bank_name, bank_account_name = :bank_account_name, bank_account_number = :bank_account_number,
             vision = :vision, about = :about,
             contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
-            contact_facebook = :contact_facebook, contact_twitter = :contact_twitter, contact_instagram = :contact_instagram,
+            contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
             maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
             two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
             WHERE id = :id";
@@ -107,13 +106,13 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             (site_name, tagline, logo_url, vision, about,
              bank_name, bank_account_name, bank_account_number,
              contact_phone, contact_email, contact_address,
-             contact_facebook, contact_twitter, contact_instagram,
+             contact_facebook, contact_tiktok, contact_instagram,
             maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation)
             VALUES
             (:site_name, :tagline, :logo_url, :vision, :about,
              :bank_name, :bank_account_name, :bank_account_number,
              :contact_phone, :contact_email, :contact_address,
-             :contact_facebook, :contact_twitter, :contact_instagram,
+             :contact_facebook, :contact_tiktok, :contact_instagram,
              :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
