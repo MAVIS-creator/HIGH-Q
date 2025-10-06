@@ -345,12 +345,7 @@ body {
   box-shadow: none;
   position: static;
 }
-main {
-  flex: 1; /* pushes footer to the bottom */
-  margin-left: var(--sidebar-width);
-  padding-top: calc(var(--header-height) + 12px);
-  transition: margin-left 0.25s ease, left 0.25s ease;
-}
+
 
 
 .admin-footer>.footer-card {
