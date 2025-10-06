@@ -24,9 +24,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to load and display notifications
     async function loadNotifications() {
         try {
-            const res = await fetch('/HIGH-Q/admin/api/notifications.php');
-            if (!res.ok) return;
-            const data = await res.json();
+            // include credentials so session cookie is sent and the API can authenticate the admin
+            const res = await fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' });
+            if (!res.ok) {
+                console.warn('Notifications endpoint returned HTTP', res.status);
+                return;
+            }
+
+            // Read as text first so we can show raw HTML errors (PHP notices) in console instead of causing an unhandled JSON parse exception
+            const txt = await res.text();
+            let data;
+            try {
+                data = JSON.parse(txt);
+            } catch (err) {
+                console.error('Notifications API returned non-JSON response:', txt);
+                panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                return;
+            }
             
             // Update badge
             const count = data.notifications?.length || 0;
