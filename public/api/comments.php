@@ -21,6 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $rstmt = $pdo->prepare('SELECT id, name, email, content, created_at, status, session_id, user_id FROM comments WHERE parent_id = ? AND (status = "approved" OR (status = "pending" AND session_id = ?)) ORDER BY created_at ASC');
             $rstmt->execute([$r['id'], session_id()]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
+            // add can_delete flag for replies as well
+            foreach ($replies as &$rep) {
+                $rep['can_delete'] = false;
+                try { if (!empty($rep['session_id']) && $rep['session_id'] === session_id()) $rep['can_delete'] = true; if (!$rep['can_delete'] && isset($_SESSION['user']) && !empty($rep['user_id']) && $_SESSION['user']['id'] == $rep['user_id']) $rep['can_delete'] = true; } catch (Throwable $e) { $rep['can_delete'] = false; }
+            }
             $r['replies'] = $replies ?: [];
             // comment likes count
             try {
