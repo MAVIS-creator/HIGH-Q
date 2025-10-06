@@ -250,6 +250,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             exit;
           }
         }
+          
+          if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' updated successfully"]);
+            exit;
+          }
+        }
       }
     }
   }
@@ -455,6 +462,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
     // Handle form submission via AJAX
     tutorForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = tutorForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+      
+      try {
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        // First check if the response is OK
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+        
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+          if (data.status === 'error') {
+            throw new Error(data.message || 'Failed to save tutor');
+          }
+        } else {
+          throw new Error('Invalid response format from server');
+        }
+        
+        // Show success message
+        await Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: data.message || 'Tutor saved successfully!'
+        });
+        
+        // Close modal and refresh page
+        closeModal();
+        window.location.reload();
+        
+      } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to save tutor. Please try again.'
+        });
+      } finally {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
       e.preventDefault();
       const submitBtn = tutorForm.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
