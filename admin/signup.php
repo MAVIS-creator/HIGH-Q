@@ -5,8 +5,8 @@ require './includes/functions.php'; // contains sendEmail()
 require './includes/csrf.php';
 require __DIR__ . '/../vendor/autoload.php';
 
-// load recaptcha config
-$recfg = file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>''];
+// load admin-specific recaptcha config (ADMIN_RECAPTCHA_* or admin/config wrapper)
+$recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/config/recaptcha.php' : (file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>'']);
 
 $errors = [];
 $success = '';
