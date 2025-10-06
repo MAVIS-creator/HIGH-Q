@@ -195,6 +195,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
       if (!$name) {
         $errors[] = "Name is required.";
+        if ($isAjax) {
+          header('Content-Type: application/json');
+          echo json_encode(['status' => 'error', 'message' => 'Name is required']);
+          exit;
+        }
       }
 
       if (empty($errors)) {
@@ -247,6 +252,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id' => $id]);
           $success[] = "Tutor '{$name}' updated.";
+          
+          if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+              'status' => 'success',
+              'message' => "Tutor '{$name}' updated successfully",
+              'data' => ['id' => $id, 'name' => $name]
+            ]);
+            exit;
+          }
+        }
           if ($isAjax) {
             echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' updated successfully"]);
             exit;
