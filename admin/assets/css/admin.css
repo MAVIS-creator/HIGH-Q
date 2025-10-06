@@ -338,7 +338,8 @@ body {
 
 .admin-footer {
   background: transparent;
-
+  width: 100%;
+  
   padding: 20px 0;
   font-size: 0.95rem;
   box-shadow: none;
