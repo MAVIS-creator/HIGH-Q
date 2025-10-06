@@ -1,15 +1,14 @@
-Options +FollowSymLinks
-Options -Indexes
-
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-</IfModule>
-
-# Basic Auth
+# Basic Authentication
 AuthType Basic
 AuthName "Admin Login"
 AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
 Require valid-user
+
+# Allow accessing assets after authentication
+<FilesMatch "\.(css|js|gif|jpg|jpeg|png|ico|woff|woff2|ttf|svg)$">
+    Satisfy Any
+    Allow from all
+</FilesMatch>
 
 # Error Documents
 ErrorDocument 400 /HIGH-Q/admin/errors/400.php
@@ -17,3 +16,20 @@ ErrorDocument 401 /HIGH-Q/admin/errors/401.php
 ErrorDocument 403 /HIGH-Q/admin/errors/403.php
 ErrorDocument 404 /HIGH-Q/admin/errors/404.php
 ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+
+# Prevent directory listing
+Options -Indexes
+
+# Enable URL rewriting
+RewriteEngine On
+RewriteBase /HIGH-Q/admin/
+
+# Allow access to error pages
+<FilesMatch "^(400|401|403|404|500)\.php$">
+    Satisfy Any
+    Allow from all
+</FilesMatch>
+
+# PHP Settings
+php_value display_errors Off
+php_flag session.cookie_httponly on
