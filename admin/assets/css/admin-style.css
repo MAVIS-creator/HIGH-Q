@@ -1,7 +1,7 @@
 /* Admin layout and footer styles */
 .admin-main {
     min-height: calc(100vh - 60px); /* Adjust based on footer height */
-    padding-bottom: 80px; /* Space for footer */
+    padding-bottom: 110px; /* Space for footer */
     position: relative;
 }
 
@@ -17,12 +17,13 @@
 }
 
 .footer-card {
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: 1200px;
+    margin: 0 auto; /* Center horizontally */
     padding: 0 20px;
     display: flex;
     align-items: center;
     gap: 20px;
+    box-sizing: border-box;
 }
 
 .footer-card-left {
@@ -350,3 +351,11 @@
         right: 20px;
     }
 }
+
+@media(min-width: 992px) {
+    body:not(.sidebar-collapsed) .admin-footer .footer-card {
+        padding-left: 220px; /* approx width of left sidebar */
+    }
+}
+
+body.sidebar-collapsed .admin-footer .footer-card { padding-left: 20px; }
