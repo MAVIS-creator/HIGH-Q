@@ -415,6 +415,20 @@ $csrfToken = generateToken('signup_form');
 
             <button type="submit">Create Account</button>
         </form>
+        <?php if (!empty($recfg['site_key'])): ?>
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+            <script>
+                (function(){
+                    var f = document.querySelector('form');
+                    if (!f) return;
+                    var w = document.createElement('div');
+                    w.className = 'g-recaptcha';
+                    w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>');
+                    w.style.marginTop = '12px';
+                    f.insertBefore(w, f.querySelector('button'));
+                })();
+            </script>
+        <?php endif; ?>
         <script>
             function togglePassword(fieldId, icon) {
                 var input = document.getElementById(fieldId);
