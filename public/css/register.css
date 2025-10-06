@@ -78,33 +78,85 @@
 }
 
 /* Terms checkbox alignment - Updated */
+/* Specific mobile device handling */
+@media screen and (max-width: 720px) {
+    .register-layout {
+        padding: 15px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+}
+
+/* Terms and checkbox styling with mobile focus */
 .terms-row {
-    margin: 20px 0;
+    margin: 15px 0;
+    padding: 5px 0;
 }
 
 .checkbox-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px; /* Minimum touch target size */
+    padding: 5px 0;
 }
 
 .checkbox-wrapper input[type="checkbox"] {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
     margin: 0;
-    width: 16px;
-    height: 16px;
+    padding: 0;
+    position: relative;
+    top: 0;
 }
 
 .checkbox-wrapper label {
-    display: inline;
-    margin: 0;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
     font-weight: normal;
-    line-height: 1;
+    line-height: 1.4;
+    font-size: 14px;
+    flex: 1;
+    white-space: normal;
+    cursor: pointer;
+    /* Ensure text wraps properly on narrow screens */
+    word-break: break-word;
 }
 
-/* Make the clickable area larger on mobile */
-.checkbox-wrapper label {
-    padding: 8px 0;
-    cursor: pointer;
+/* Specific adjustments for very narrow screens */
+@media screen and (max-width: 425px) {
+    .checkbox-wrapper {
+        padding: 8px 0;
+    }
+    
+    .checkbox-wrapper input[type="checkbox"] {
+        margin-right: 8px;
+    }
+}
+
+/* Specific adjustments for Itel A58 Pro Max (720 × 1612) */
+@media screen and (max-width: 720px) and (min-height: 1600px) {
+    .checkbox-wrapper {
+        min-height: 48px;
+    }
+    
+    .checkbox-wrapper label {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+}
+
+/* iPhone 13 Pro Max specific adjustments */
+@media screen and (width: 428px) {
+    .checkbox-wrapper {
+        min-height: 44px;
+    }
 }
 
 /* Submit button */
