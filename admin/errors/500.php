@@ -47,7 +47,7 @@ http_response_code(500);
         <div class="error-code">500</div>
         <h1>Server Error</h1>
         <p class="error-message">An internal server error occurred. Please try again later.</p>
-        <a href="../index.php" class="back-link">← Return to Dashboard</a>
+        <a href="./index.php" class="back-link">← Return to Dashboard</a>
     </div>
 </body>
 </html>
