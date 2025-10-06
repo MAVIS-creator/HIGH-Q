@@ -53,7 +53,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <div class="tutor-lead-wrap">
         <article class="tutor-card tutor-lead">
           <div class="tutor-thumb">
-            <img src="./assets/images/avatar-placeholder.png" alt="Adebule Quam">
+            <img src="./assets/images/a" alt="Adebule Quam">
           </div>
           <div class="tutor-body">
             <h3>Adebule Quam</h3>
