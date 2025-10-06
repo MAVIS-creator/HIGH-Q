@@ -465,51 +465,39 @@ $csrfToken = generateToken('signup_form');
 
     <div class="signup-container">
         <h2>Create Account</h2>
-
         <?php if (!empty($errors)): ?>
-            <div class="error">
-                <?php foreach ($errors as $err) echo "<p>$err</p>"; ?>
-            </div>
+            <div class="error"><?php foreach ($errors as $err) echo $err . "<br>"; ?></div>
         <?php elseif ($success): ?>
             <div class="success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
 
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-
             <div class="form-group">
                 <label>Name</label>
                 <input type="text" name="name" placeholder="John Doe" required>
             </div>
-
             <div class="form-group">
                 <label>Phone Number</label>
                 <input type="text" name="phone" placeholder="+234 801 234 5678">
             </div>
-
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" name="email" placeholder="you@example.com" required>
             </div>
-
             <div class="form-group">
                 <label>Password</label>
                 <div style="position:relative;">
                     <input type="password" name="password" id="signup_password" placeholder="********" required>
-                    <span class="toggle-eye" onclick="togglePassword('signup_password', this)" title="Show/Hide Password">
-                        &#128065;
-                    </span>
+                    <span class="toggle-eye" onclick="togglePassword('signup_password', this)">👁️</span>
                 </div>
             </div>
-
             <div class="form-group">
                 <label>Upload Passport Photo</label>
                 <input type="file" name="avatar" accept="image/png, image/jpeg, image/webp" required>
             </div>
-
             <button type="submit">Create Account</button>
         </form>
-
         <div class="login-link">
             Already have an account? <a href="login.php">Log in</a>
         </div>

@@ -6,7 +6,7 @@
     RewriteBase /HIGH-Q/
     
     # Set public/index.php as homepage
-    DirectoryIndex public/index.php
+    DirectoryIndex /public/index.php
     
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
     RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
