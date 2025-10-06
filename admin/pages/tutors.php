@@ -495,24 +495,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           }
         });
 
-        let data;
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          data = await response.json();
-        } else {
-          const text = await response.text();
-          if (text.includes('success')) {
-            data = { status: 'success' };
-          } else {
-            throw new Error('Invalid response format');
-          }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server did not return JSON response');
+        }
+
+        const data = await response.json();
+        
         if (data.status === 'error') {
           throw new Error(data.message || 'Failed to save tutor');
         }
 
+        // Show success message
         await Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: data.message || 'Tutor saved successfully'
+        });
+
+        // Close modal and refresh page
+        closeModal();
+        window.location.reload();
+
+      } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to save tutor. Please try again.'
+        });
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
           icon: 'success',
           title: 'Success',
           text: 'Tutor saved successfully!'
