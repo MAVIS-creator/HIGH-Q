@@ -344,6 +344,12 @@ body {
   font-size: 0.95rem;
   box-shadow: none;
 }
+main {
+  flex: 1; /* pushes footer to the bottom */
+  margin-left: var(--sidebar-width);
+  padding-top: calc(var(--header-height) + 12px);
+  transition: margin-left 0.25s ease, left 0.25s ease;
+}
 
 
 .admin-footer>.footer-card {
