@@ -24,20 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = 'Invalid email address.'; }
 
 		if (empty($errors)) {
-			// verify recaptcha if configured
-			if (!empty($recfg['secret'])) {
-				$rc = $_POST['g-recaptcha-response'] ?? '';
-				if (!$rc) { $errors[] = 'Please complete the I am not a robot check.'; }
-				else {
-					$verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
-					$params = http_build_query(['secret'=>$recfg['secret'], 'response'=>$rc, 'remoteip'=>$_SERVER['REMOTE_ADDR'] ?? '']);
-					$opts = ['http'=>['method'=>'POST','header'=>'Content-type: application/x-www-form-urlencoded','content'=>$params,'timeout'=>5]];
-					$ctx = stream_context_create($opts);
-					$res = @file_get_contents($verifyUrl, false, $ctx);
-					$j = $res ? json_decode($res, true) : null;
-					if (!$j || empty($j['success'])) { $errors[] = 'reCAPTCHA validation failed. Please try again.'; }
-				}
-			}
+			// Temporarily disabled reCAPTCHA
+			// if (!empty($recfg['secret'])) {
+			//     $rc = $_POST['g-recaptcha-response'] ?? '';
+			//     if (!$rc) { $errors[] = 'Please complete the I am not a robot check.'; }
+			//     // ... recaptcha verification code ...
+			// }
 				$to = 'highqsolidacademy@gmail.com';
 				$subject = 'Website Contact: ' . ($program ? $program : 'General Inquiry');
 				$html = "<h3>Contact form submission</h3>";
