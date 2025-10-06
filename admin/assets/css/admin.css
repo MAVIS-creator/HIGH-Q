@@ -337,18 +337,12 @@ body {
 /* FOOTER */
 
 .admin-footer {
-  margin-top: auto;
-  left: var(--sidebar-width);
-  right: 0;
   background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0;
-  font-size: 0.95rem;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
   margin-left: var(--sidebar-width);
   width: calc(100% - var(--sidebar-width));
+  padding: 20px 0;
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
 }
 
 .admin-footer>.footer-card {
@@ -365,8 +359,6 @@ body {
   margin-left: var(--sidebar-width);
   padding-top: calc(var(--header-height) + 12px);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   transition: margin-left 0.25s ease, left 0.25s ease;
 }
 
