@@ -1,6 +1,7 @@
 <?php
-// Project-level reCAPTCHA configuration. Keep secrets out of repo in production (use .env instead).
+// Project-level reCAPTCHA configuration.
+// Prefer environment variables so secrets are not stored in code.
 return [
-    'site_key' => '6LeYxN8rAAAAAIsexT0T8u9razt6PNJkT9Ypboim',
-    'secret' => '6LeYxN8rAAAAADMspu2G3g5h4-lEl8tnv-lYweRP'
+    'site_key' => getenv('RECAPTCHA_SITE_KEY') ?: '',
+    'secret' => getenv('RECAPTCHA_SECRET') ?: ''
 ];
