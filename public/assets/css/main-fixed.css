@@ -1,0 +1,202 @@
+/* Mobile-first styles for all pages */
+:root {
+    --hq-yellow: #ffc107;
+    --hq-yellow-light: #FFE082;
+    --hq-red: #d9534f;
+}
+
+/* Hero section mobile fix */
+.hero {
+    background: var(--hq-yellow) !important;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+    .hero {
+        text-align: center;
+    }
+    
+    .hero-left {
+        padding: 20px 0;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
+
+/* Schedule Visit Modal Fix */
+.schedule-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.schedule-modal .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.schedule-modal .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .schedule-modal {
+        padding: 15px;
+    }
+    
+    .schedule-modal .modal-content {
+        padding: 15px;
+    }
+    
+    .schedule-modal .close-modal {
+        padding: 10px;
+        font-size: 28px; /* Larger touch target */
+    }
+}
+
+/* Registration Form Fixes */
+.register-layout {
+    padding: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.register-main {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+/* Form Layout Fix */
+.form-row {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.form-inline > div {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 250px;
+}
+
+/* Why Choose Us Section Fix */
+.why-box {
+    background: var(--hq-yellow);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.why-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.why-stats .stat {
+    text-align: center;
+}
+
+.why-stats .stat .icon {
+    font-size: 24px;
+    color: #d9534f;
+    margin-bottom: 10px;
+}
+
+.why-stats .stat strong {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.why-stats .stat span {
+    font-size: 14px;
+}
+
+@media screen and (max-width: 768px) {
+    .why-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .why-stats .stat strong {
+        font-size: 20px;
+    }
+    
+    .why-stats .stat span {
+        font-size: 12px;
+    }
+}
+
+/* Terms Checkbox Fix */
+.terms-checkbox {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px 0;
+}
+
+.terms-checkbox input[type="checkbox"] {
+    margin: 3px 8px 0 0;
+}
+
+.terms-checkbox label {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Responsive Fixes */
+@media screen and (max-width: 768px) {
+    .form-row input,
+    .form-row textarea,
+    .form-row select {
+        width: 100%;
+    }
+    
+    .register-layout {
+        padding: 15px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+}
