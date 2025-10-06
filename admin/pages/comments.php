@@ -186,7 +186,41 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   var id = btn.getAttribute('data-id');
   if (action === 'approve' || action === 'reject' || action === 'destroy') {
     if (action === 'destroy') {
-      Swal.fire({ title: 'Permanently remove?', text: 'This will permanently delete the comment.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, delete', confirmButtonColor: '#d33' }).then(function(res){ if (res.isConfirmed) doAction(action,id); });
+      Swal.fire({ 
+        title: 'Permanently remove?', 
+        text: 'This will permanently delete the comment.', 
+        icon: 'warning', 
+        showCancelButton: true, 
+        confirmButtonText: 'Yes, delete', 
+        confirmButtonColor: '#d33' 
+      }).then(function(res){ 
+        if (res.isConfirmed) {
+          const fd = new FormData();
+          fd.append('action', action);
+          fd.append('id', id);
+          fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
+          
+          fetch('', {
+            method: 'POST',
+            body: fd,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'ok') {
+              Swal.fire('Deleted!', 'Comment has been deleted.', 'success')
+              .then(() => location.reload());
+            } else {
+              throw new Error(data.message || 'Delete failed');
+            }
+          })
+          .catch(error => {
+            Swal.fire('Error!', error.message || 'Something went wrong', 'error');
+          });
+        }
+      });
     } else {
       doAction(action, id);
     }
