@@ -51,17 +51,8 @@ function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings'
 // Upsert into the new `site_settings` structured table for client-side SQL reads
 function upsertSiteSettings(PDO $pdo, array $data) {
     try {
-        $logError = function($msg) {
-            $logFile = __DIR__ . '/site_settings_error.log';
-            $ts = date('Y-m-d H:i:s');
-            file_put_contents($logFile, "[$ts] $msg\n", FILE_APPEND);
-        };
-        // Start transaction only if not already active
-        $shouldCommit = false;
-        if (!$pdo->inTransaction()) {
-            $pdo->beginTransaction();
-            $shouldCommit = true;
-        }
+        // Start transaction
+        $pdo->beginTransaction();
         
         // Map to columns with safe defaults
         $site = $data['site'] ?? [];
@@ -109,7 +100,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             WHERE id = :id";
         $params['id'] = $id;
         $upd = $pdo->prepare($sql);
-        $result = $upd->execute($params);
+        return $upd->execute($params);
     } else {
         $sql = "INSERT INTO site_settings
             (site_name, tagline, logo_url, vision, about,
@@ -125,8 +116,8 @@ function upsertSiteSettings(PDO $pdo, array $data) {
              :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
-    }
-    if ($shouldCommit) {
+        
+        // Commit the transaction
         if ($result) {
             $pdo->commit();
             return true;
@@ -135,7 +126,6 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             return false;
         }
     }
-    return $result;
     } catch (Exception $e) {
         // Roll back transaction on any error
         if ($pdo->inTransaction()) {
@@ -256,73 +246,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Security toggles
     if (isset($posted['security']) && is_array($posted['security'])) {
         foreach ($defaults['security'] as $k => $v) {
-            if (isset($posted['security'][$k])) {
-                $safeSet($next, ['security', $k], $posted['security'][$k]);
+            if ($k === 'enforcement_mode') {
+                // accept 'mac', 'ip' or 'both'
+                $mode = trim($posted['security']['enforcement_mode'] ?? '') ?: $v;
+                if (!in_array($mode, ['mac','ip','both'])) $mode = $v;
+                $safeSet($next, ['security', $k], $mode);
+                continue;
             }
+            $val = isset($posted['security'][$k]) ? (bool)$posted['security'][$k] : false;
+            $safeSet($next, ['security', $k], $val);
         }
     }
-                if ($id) {
-                    $sql = "UPDATE site_settings SET
-                        site_name = :site_name, tagline = :tagline, logo_url = :logo_url,
-                        bank_name = :bank_name, bank_account_name = :bank_account_name, bank_account_number = :bank_account_number,
-                        vision = :vision, about = :about,
-                        contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
-                        contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
-                        maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
-                        two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
-                        WHERE id = :id";
-                    $params['id'] = $id;
-                    $upd = $pdo->prepare($sql);
-                    $result = $upd->execute($params);
-                    if (!$result) {
-                        $logError('UPDATE failed: ' . implode(' | ', $upd->errorInfo()));
-                    }
-                } else {
-                    $sql = "INSERT INTO site_settings
-                        (site_name, tagline, logo_url, vision, about,
-                         bank_name, bank_account_name, bank_account_number,
-                         contact_phone, contact_email, contact_address,
-                         contact_facebook, contact_tiktok, contact_instagram,
-                        maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation)
-                        VALUES
-                        (:site_name, :tagline, :logo_url, :vision, :about,
-                         :bank_name, :bank_account_name, :bank_account_number,
-                         :contact_phone, :contact_email, :contact_address,
-                         :contact_facebook, :contact_tiktok, :contact_instagram,
-                         :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
-                    $ins = $pdo->prepare($sql);
-                    $result = $ins->execute($params);
-                    if (!$result) {
-                        $logError('INSERT failed: ' . implode(' | ', $ins->errorInfo()));
-                    }
-                }
-                if ($shouldCommit) {
-                    if ($result) {
-                        $pdo->commit();
-                        return true;
-                    } else {
-                        $pdo->rollBack();
-                        return false;
-                    }
-                }
-                return $result;
-            } catch (Exception $e) {
-                // Roll back transaction on any error
-                if ($pdo->inTransaction()) {
-                    $pdo->rollBack();
-                }
-                $logError('Exception: ' . $e->getMessage());
-                throw $e;
-            }
+
+    // Notifications
+    if (isset($posted['notifications']) && is_array($posted['notifications'])) {
+        foreach ($defaults['notifications'] as $k => $v) {
+            $val = isset($posted['notifications'][$k]) ? (bool)$posted['notifications'][$k] : false;
+            $safeSet($next, ['notifications', $k], $val);
+        }
+    }
+
+    // Advanced
+    if (isset($posted['advanced']) && is_array($posted['advanced'])) {
+        foreach (['ip_logging','security_scanning','brute_force','ssl_enforce','auto_backup'] as $k) {
+            $val = isset($posted['advanced'][$k]) ? (bool)$posted['advanced'][$k] : false;
+            $safeSet($next, ['advanced', $k], $val);
+        }
+        // numeric fields
+        $maxAttempts = intval($posted['advanced']['max_login_attempts'] ?? $current['advanced']['max_login_attempts']);
+        $sessionTimeout = intval($posted['advanced']['session_timeout'] ?? $current['advanced']['session_timeout']);
+        $safeSet($next, ['advanced', 'max_login_attempts'], max(1, $maxAttempts));
+        $safeSet($next, ['advanced', 'session_timeout'], max(1, $sessionTimeout));
+    }
+
+    // Persist to DB
+    $saved = false;
+    try {
+        $saved = saveSettingsToDb($pdo, $next);
+        if (!$saved) {
+            throw new Exception('Failed to save settings to database');
+        }
+        
+        // Also try to update the site_settings table
+        try {
+            upsertSiteSettings($pdo, $next);
+        } catch (Exception $e) {
+            error_log('Site settings upsert error: ' . $e->getMessage());
+            // Don't fail completely if only the site_settings update fails
+        }
+        
+    } catch (Exception $e) {
+        $saved = false;
+        error_log('Settings save error: ' . $e->getMessage());
+        
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'title' => 'Error',
+                'message' => $e->getMessage(),
+                'icon' => 'error'
+            ]);
             exit;
         }
-    // Save settings to DB (JSON)
-    saveSettingsToDb($pdo, $next);
-    // Upsert to site_settings table
-    upsertSiteSettings($pdo, $next);
-    setFlash('success', 'Settings saved.');
-    header('Location: ?pages=settings');
-    exit;
+    }
+
+    if ($saved) {
+        // Also upsert into the structured site_settings table for client-side SQL reads
+        try {
+            // Set error reporting to catch any database errors
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            if (!upsertSiteSettings($pdo, $next)) {
+                throw new Exception('Failed to update site settings');
+            }
+        } catch (Exception $e) {
+            // Log error and treat as fatal
+            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'site_settings_upsert_failed', ['error'=>$e->getMessage()]); } catch (Exception $ee) {}
+            $saved = false;
+        }
+
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'ok',
+                'message' => 'Settings saved successfully',
+                'icon' => 'success',
+                'title' => 'Success'
+            ]);
+            exit;
+        }
+        setFlash('success', 'Settings saved.');
+        header('Location: ?pages=settings');
+        exit;
     }
 
     // Save failed
@@ -330,7 +346,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
         http_response_code(500);
         echo json_encode([
-    // ...existing code...
+            'status' => 'error',
+            'title' => 'Error',
+            'message' => 'Failed to save settings. Please try again.',
+            'icon' => 'error'
+        ]);
+        exit;
+    }
+    setFlash('error', 'Failed to save settings. Check DB permissions.');
+    header('Location: ?pages=settings');
+    exit;
+}
+
+// Handle AJAX actions (runScan / clearIPs / clearLogs)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+    $action = $_POST['action'];
+    $token = $_POST['_csrf'] ?? '';
+    if (!verifyToken('settings_form', $token)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
+        exit;
+    }
+    try {
+        if ($action === 'runScan') {
+            // Queue the CLI scan runner asynchronously so large scans don't time out.
+            $php = PHP_BINARY;
+            $root = realpath(__DIR__ . '/../../');
+            $runner = $root . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'scan-runner.php';
+
+            header('Content-Type: application/json'); // be explicit for AJAX
+
+            if (!is_file($runner) || !is_readable($runner)) {
+                error_log('runScan: runner not found at ' . $runner);
+                echo json_encode(['status' => 'error', 'message' => 'Scan runner not available on server']);
+                exit;
+            }
+
+            // Build platform-specific command and attempt to launch
+            try {
+                if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
+                    // Windows: use start /B via COMSPEC to avoid shell redirection issues
+                    $comspec = getenv('COMSPEC') ?: 'C:\\Windows\\System32\\cmd.exe';
+                    // /C will run the command then exit; use start to launch background
+                    $cmd = 'start /B ' . escapeshellarg($php) . ' ' . escapeshellarg($runner);
+                    // Use pclose+popen to detach
+                    $proc = @popen($cmd, 'r');
+                    if ($proc !== false) { pclose($proc); }
+                    else throw new Exception('Failed to spawn background process on Windows');
+                } else {
+                    // Unix-like: nohup & disown
+                    $cmd = "nohup " . escapeshellarg($php) . ' ' . escapeshellarg($runner) . " > /dev/null 2>&1 &";
+                    @exec($cmd, $out, $rc);
+                    if ($rc !== 0) throw new Exception('Non-zero exit when launching runner: ' . intval($rc));
+                }
+            } catch (Exception $e) {
+                error_log('runScan: failed to queue runner: ' . $e->getMessage());
+                echo json_encode(['status' => 'error', 'message' => 'Failed to queue security scan: ' . $e->getMessage()]);
+                exit;
+            }
+
+            // Log queue action
+            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'security_scan_queued', ['by' => $_SESSION['user']['email'] ?? null]); } catch (Exception $e) { error_log('runScan logAction failed: ' . $e->getMessage()); }
+
             echo json_encode(['status' => 'ok', 'message' => 'Security scan queued; you will receive an email when it completes.']);
             exit;
         }
