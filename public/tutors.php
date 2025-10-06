@@ -13,7 +13,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       // If none are featured, fall back to any tutors so the section is visible for testing
       if (empty($tutors)) {
         // order by id ascending as requested
-        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC LIMIT 6");
+        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC");
         $stmt2->execute();
         $tutors = $stmt2->fetchAll();
       }
