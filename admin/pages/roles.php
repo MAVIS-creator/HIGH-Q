@@ -130,13 +130,30 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
     /* Roles table responsive tweaks to avoid pushing into the sidebar */
-    .roles-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
-    .roles-table th, .roles-table td { padding: 10px; vertical-align: middle; text-overflow: ellipsis; overflow: hidden; }
-    .roles-table th { background: #111; color: #fff; }
-    .role-badge { display:inline-block; margin:2px 4px; padding:4px 8px; background:#ffefc4; border-radius:14px; font-size:13px; max-width:12ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    td.menus-col { max-width: 28ch; }
+    .roles-table {
+      width: 100%;
+      min-width: 900px;
+      table-layout: auto;
+      border-collapse: collapse;
+      overflow-x: auto;
+      font-size: 15px;
+    }
+    .roles-table th, .roles-table td {
+      padding: 12px 14px;
+      vertical-align: middle;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .roles-table th { background: #111; color: #fff; font-size: 16px; }
+    .role-badge { display:inline-block; margin:2px 4px; padding:4px 8px; background:#ffefc4; border-radius:14px; font-size:13px; max-width:16ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    td.menus-col { max-width: 40ch; }
     td.actions-col { width:1%; white-space:nowrap; }
-    @media (max-width: 900px) { td.menus-col { max-width: 40ch; } .role-badge { max-width: 8rem; } }
+    @media (max-width: 900px) {
+      .roles-table { min-width: 600px; font-size: 14px; }
+      td.menus-col { max-width: 60ch; }
+      .role-badge { max-width: 12rem; }
+    }
   </style>
 </head>
 <body>
