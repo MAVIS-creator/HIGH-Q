@@ -351,8 +351,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       handleResize();
     });
 // Old JavaScript code removed to prevent syntax errors.
-      });
-    })();
+// ...existing code...
   </script>
 
   <main class="public-main">
