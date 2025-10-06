@@ -91,11 +91,11 @@
     Require valid-user
     
     # Custom error pages
-    ErrorDocument 400 /HIGH-Q/public/errors/400.php
-    ErrorDocument 401 /HIGH-Q/public/errors/401.php
-    ErrorDocument 403 /HIGH-Q/public/errors/403.php
-    ErrorDocument 404 /HIGH-Q/public/errors/404.php
-    ErrorDocument 500 /HIGH-Q/public/errors/500.php
+    ErrorDocument 400 /HIGH-Q/admin/errors/400.php
+    ErrorDocument 401 /HIGH-Q/admin/errors/401.php
+    ErrorDocument 403 /HIGH-Q/admin/errors/403.php
+    ErrorDocument 404 /HIGH-Q/admin/errors/404.php
+    ErrorDocument 500 /HIGH-Q/admin/errors/500.php
 </IfModule>
 
 # PHP configuration hardening
