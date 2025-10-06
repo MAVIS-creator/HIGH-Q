@@ -159,14 +159,10 @@ if (!is_dir($uploadDir)) {
 
 // HANDLE CREATE / EDIT / DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
-  // Set JSON header for AJAX requests
-  if ($isAjax) {
-    header('Content-Type: application/json');
-  }
-
   if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
     $errors[] = "Invalid CSRF token.";
     if ($isAjax) {
+      header('Content-Type: application/json');
       echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
       exit;
     }
@@ -199,11 +195,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
       if (!$name) {
         $errors[] = "Name is required.";
-        if ($isAjax) {
-          header('Content-Type: application/json');
-          echo json_encode(['status' => 'error', 'message' => 'Name is required']);
-          exit;
-        }
       }
 
       if (empty($errors)) {
@@ -226,18 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug' => $slug]);
           $success[] = "Tutor '{$name}' created.";
-          
-          if ($isAjax) {
-            echo json_encode([
-              'status' => 'success',
-              'message' => "Tutor '{$name}' created successfully"
-            ]);
-            exit;
-          }
-          if ($isAjax) {
-            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' created successfully"]);
-            exit;
-          }
           
           if ($isAjax) {
             header('Content-Type: application/json');
@@ -264,29 +243,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id' => $id]);
           $success[] = "Tutor '{$name}' updated.";
-          
-          if ($isAjax) {
-            echo json_encode([
-              'status' => 'success',
-              'message' => "Tutor '{$name}' updated successfully"
-            ]);
-            exit;
-          }
-          
-          if ($isAjax) {
-            header('Content-Type: application/json');
-            echo json_encode([
-              'status' => 'success',
-              'message' => "Tutor '{$name}' updated successfully",
-              'data' => ['id' => $id, 'name' => $name]
-            ]);
-            exit;
-          }
-        }
-          if ($isAjax) {
-            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' updated successfully"]);
-            exit;
-          }
           
           if ($isAjax) {
             header('Content-Type: application/json');
@@ -455,14 +411,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
+    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+
     const tutorModal = document.getElementById('tutorModal');
     const overlay = document.getElementById('modalOverlay');
     const closeBtn = document.getElementById('tutorModalClose');
     const newBtn = document.getElementById('newTutorBtn');
     const tutorForm = document.getElementById('tutorForm');
     const modalTitle = document.getElementById('tutorModalTitle');
-    const submitBtn = tutorForm.querySelector('button[type="submit"]');
 
     const fields = {
       name: document.getElementById('tName'),
@@ -497,99 +453,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       tutorModal.classList.remove('open');
     }
 
-    // Form submission handler
-    tutorForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Processing...';
-
-      fetch(this.action, {
-        method: 'POST',
-        body: new FormData(this),
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'error') {
-          throw new Error(data.message || 'Failed to save tutor');
-        }
-        
-        return Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: data.message || 'Tutor saved successfully'
-        });
-      })
-      .then(() => {
-        closeModal();
-        window.location.reload();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to save tutor. Please try again.'
-        });
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      });
-    });
-
     // Handle form submission via AJAX
-    tutorForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Processing...';
-
-      const formData = new FormData(e.target);
-      
-      fetch(e.target.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.status === 'error') {
-          throw new Error(data.message || 'Failed to save tutor');
-        }
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: data.message || 'Tutor saved successfully'
-        }).then(() => {
-          closeModal();
-          window.location.reload();
-        });
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to save tutor. Please try again.'
-        });
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      });
+    tutorForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       const submitBtn = tutorForm.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
@@ -606,44 +471,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           }
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        let data;
         const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Server did not return JSON response');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          if (text.includes('success')) {
+            data = { status: 'success' };
+          } else {
+            throw new Error('Invalid response format');
+          }
         }
 
-        const data = await response.json();
-        
         if (data.status === 'error') {
           throw new Error(data.message || 'Failed to save tutor');
         }
 
-        // Show success message
         await Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: data.message || 'Tutor saved successfully'
-        });
-
-        // Close modal and refresh page
-        closeModal();
-        window.location.reload();
-
-      } catch (error) {
-        console.error('Error:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to save tutor. Please try again.'
-        });
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    });
           icon: 'success',
           title: 'Success',
           text: 'Tutor saved successfully!'
