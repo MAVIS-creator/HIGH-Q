@@ -120,24 +120,26 @@ body {
 }
 
 /* Footer */
+
 .page-footer {
-    position: fixed;
-    bottom: 0;
-    left: var(--sidebar-width);
-    right: 0;
-    background: var(--hq-yellow);
-    color: var(--hq-black);
-    padding: 15px;
-    text-align: center;
-    z-index: 1000;
-    margin: 0;
-    width: calc(100% - var(--sidebar-width));
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  background: transparent; /* transparent to avoid white overlay */
+  color: var(--hq-black);
+  padding: 0 0 10px 0;
+  text-align: center;
+  z-index: 1000;
+  margin: 0;
+  width: calc(100% - var(--sidebar-width));
 }
 
 /* Add padding to main content to prevent footer overlap */
 .admin-main {
-    padding-bottom: 60px;
-}/* SIDEBAR */
+  padding-bottom: 120px; /* ensure space for footer card */
+}
+/* SIDEBAR */
 .admin-sidebar {
   position: fixed;
   top: 0;

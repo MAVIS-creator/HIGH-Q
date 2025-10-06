@@ -5,7 +5,12 @@
 .card-grid,
 .course-grid,
 .user-grid,
-.stats-grid {
+.stats-grid,
+.summary-cards,
+.user-list,
+.card-wrap,
+.course-list,
+.user-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
@@ -43,6 +48,12 @@
 
     .card {
         padding: 15px !important;
+    }
+
+    /* Ensure cards can arrange in columns when space allows */
+    .card, .user-card, .course-card {
+        width: 100%;
+        max-width: none;
     }
 
     .table-responsive {
