@@ -329,55 +329,52 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Handle navbar toggle icon
+    // Handle navbar toggle
     document.addEventListener('DOMContentLoaded', function() {
       const navbarToggler = document.querySelector('.navbar-toggler');
-      const navbarIcon = document.getElementById('navbarIcon');
-      const navbarCloseIcon = document.getElementById('navbarCloseIcon');
       const navbarCollapse = document.getElementById('mainNav');
       let isOpen = false;
 
-      function toggleMenu(shouldOpen) {
-        isOpen = shouldOpen;
-        if (shouldOpen) {
-          navbarIcon.style.display = 'none';
-          navbarCloseIcon.style.display = 'block';
+      function toggleMenu() {
+        isOpen = !isOpen;
+        navbarToggler.classList.toggle('active');
+        
+        if (isOpen) {
           navbarCollapse.classList.add('show');
+          document.body.style.overflow = 'hidden';
         } else {
-          navbarIcon.style.display = 'block';
-          navbarCloseIcon.style.display = 'none';
           navbarCollapse.classList.remove('show');
+          document.body.style.overflow = '';
         }
       }
 
-      navbarToggler.addEventListener('click', function(event) {
-        event.stopPropagation();
-        toggleMenu(!isOpen);
+      // Toggle menu when clicking the button
+      navbarToggler.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu();
       });
 
-      navbarCloseIcon.addEventListener('click', function(event) {
-        event.stopPropagation();
-        toggleMenu(false);
-      });
-
-      // Handle click outside to close menu
-      document.addEventListener('click', function(event) {
-        if (isOpen && !navbarCollapse.contains(event.target) && !navbarToggler.contains(event.target)) {
-          toggleMenu(false);
+      // Close menu when clicking outside
+      document.addEventListener('click', function(e) {
+        if (isOpen && !navbarCollapse.contains(e.target) && !navbarToggler.contains(e.target)) {
+          toggleMenu();
         }
       });
 
-      // Listen for Bootstrap collapse events to sync icon state
-      navbarCollapse.addEventListener('shown.bs.collapse', function() {
-        isOpen = true;
-        navbarIcon.style.display = 'none';
-        navbarCloseIcon.style.display = 'block';
+      // Prevent clicks inside menu from closing it
+      navbarCollapse.addEventListener('click', function(e) {
+        e.stopPropagation();
       });
 
-      navbarCollapse.addEventListener('hidden.bs.collapse', function() {
-        isOpen = false;
-        navbarIcon.style.display = 'block';
-        navbarCloseIcon.style.display = 'none';
+      // Close menu when clicking a nav link
+      const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          if (isOpen) {
+            toggleMenu();
+          }
+        });
       });
     });
     // Toggle nav dropdown open/close on click and close when clicking outside
