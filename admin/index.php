@@ -84,10 +84,15 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="btn-row">
-                    <a href="login.php" class="btn btn-primary">Access Admin Panel</a>
-                    <a href="signup.php" class="btn btn-outline">Register New Admin</a>
-                </div>
+                    <!-- Desktop Mode Recommendation -->
+                    <div class="alert alert-warning mb-3" style="text-align:center;">
+                        <strong>Highly recommended:</strong> For best experience, <span style="color:#e63946">enable Desktop Mode</span> on your mobile browser.<br>
+                        Some admin features are optimized for desktop screens.
+                    </div>
+                    <div class="btn-row">
+                        <a href="login.php" class="btn btn-primary">Access Admin Panel</a>
+                        <a href="signup.php" class="btn btn-outline">Register New Admin</a>
+                    </div>
 
 
                 <!-- Role box -->
