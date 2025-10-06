@@ -268,7 +268,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </a>
             <!-- Mobile Toggle Button -->
             <button class="navbar-toggler mobile-toggle" type="button">
-              <i class="bx bx-menu"></i>
+              <i class="bx bx-menu open-icon"></i>
+              <i class="bx bx-x close-icon d-none"></i>
             </button>
           </div>
 
@@ -329,48 +330,34 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-        // Handle navbar toggle
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const navbarToggler = document.querySelector('.navbar-toggler');
       const navbarCollapse = document.getElementById('mainNav');
-      let isOpen = false;
 
-      function toggleMenu() {
-        isOpen = !isOpen;
-        navbarToggler.classList.toggle('active');
-        navbarCollapse.classList.toggle('show');
-        
-        // Prevent body scroll when menu is open
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-      }
-
-      // Toggle menu when clicking the button
-      navbarToggler.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMenu();
+      // ✅ Use Bootstrap's Collapse API to avoid manual class conflicts
+      const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+        toggle: false
       });
 
-      // Close menu when clicking outside
-      document.addEventListener('click', function(e) {
-        if (isOpen && !navbarCollapse.contains(e.target) && !navbarToggler.contains(e.target)) {
-          toggleMenu();
-        }
+      navbarToggler.addEventListener('click', function () {
+        bsCollapse.toggle();
+        navbarToggler.querySelector('.open-icon').classList.toggle('d-none');
+        navbarToggler.querySelector('.close-icon').classList.toggle('d-none');
       });
 
-      // Prevent clicks inside menu from closing it
-      navbarCollapse.addEventListener('click', function(e) {
-        e.stopPropagation();
-      });
-
-      // Close menu when clicking a nav link
+      // Close menu when clicking a nav link (on mobile)
       const navLinks = navbarCollapse.querySelectorAll('.nav-link');
       navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          if (isOpen) {
-            toggleMenu();
+        link.addEventListener('click', function () {
+          if (navbarCollapse.classList.contains('show')) {
+            bsCollapse.hide();
           }
         });
+      });
+
+      navbarCollapse.addEventListener('hidden.bs.collapse', function () {
+        navbarToggler.querySelector('.open-icon').classList.remove('d-none');
+        navbarToggler.querySelector('.close-icon').classList.add('d-none');
       });
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
