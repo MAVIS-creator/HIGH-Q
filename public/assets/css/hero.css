@@ -1,7 +1,7 @@
 .hero {
     position: relative;
     padding: 4rem 0;
-    background: var(--hq-yellow);
+    background: #ffbf00;
     overflow: hidden;
 }
 
@@ -20,7 +20,7 @@
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.2fr 0.8fr;
     gap: 3rem;
     align-items: center;
 }
@@ -34,8 +34,8 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: #fff;
-    color: var(--hq-black);
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
     border-radius: 50px;
     font-weight: 500;
     margin-bottom: 1.5rem;
@@ -44,6 +44,7 @@
 
 .hero-badge i {
     font-size: 1.2rem;
+    color: #ffbf00;
 }
 
 .hero h1 {
@@ -51,12 +52,12 @@
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    color: var(--hq-black);
+    color: #000;
 }
 
 .hero h1 .accent {
-    color: #fff;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+    color: #ff3e3e;
+    text-shadow: none;
 }
 
 .hero .lead {
