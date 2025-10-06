@@ -96,7 +96,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <!-- Left Card -->
         <div class="ceo-card">
           <div class="ceo-photo">
-            <img src="/HIGH-Q/public/assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
           </div>
           <div class="ceo-info">
             <h3 class="mb-1">Master Adebule Quam</h3>
@@ -206,7 +206,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                   } else {
                     $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
                     if (is_readable($iconPath)) {
-                      echo "<img src=\"/HIGH-Q/public/assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+                      echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
                     } else {
                       // fallback default icon
                       echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
