@@ -110,8 +110,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           }
         }
 
-        // If maintenance is on, block public pages unless requester is admin by session, from allowed IP, or visiting an auth page
-        if ($maintenance && !($isAdminBySession || $ipAllowed || $isAdminAuthPage)) {
+        // If maintenance is on, block public pages unless requester is admin by session (and in admin area), from allowed IP, or visiting an auth page
+        if ($maintenance && !(($isAdminBySession && $isAdminArea) || $ipAllowed || $isAdminAuthPage)) {
           // Render a simple maintenance notice and exit
           http_response_code(503);
           ?>
