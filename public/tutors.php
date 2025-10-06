@@ -186,20 +186,20 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <div class="testimonials-grid">
       <article class="testimonial-card">
         <div class="rating">★★★★★</div>
-        <p class="quote">"HQ Academy transformed my understanding of mathematics. The tutors are incredibly patient and explain concepts so clearly!"</p>
-        <p class="attribution"><strong>Adunni Olatunji</strong><br><small>JAMB 2023 - Score: 287</small></p>
+        <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
+        <p class="attribution"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
       </article>
 
       <article class="testimonial-card">
         <div class="rating">★★★★★</div>
-        <p class="quote">"Thanks to HQ Academy, I passed my WAEC with flying colors. The personalized attention made all the difference!"</p>
-        <p class="attribution"><strong>Chidi Okwu</strong><br><small>WAEC 2023 - 8 A's</small></p>
+        <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
+        <p class="attribution"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
       </article>
 
       <article class="testimonial-card">
         <div class="rating">★★★★★</div>
-        <p class="quote">"The best decision I made was joining HQ Academy. Their Post-UTME preparation got me into my dream university!"</p>
-        <p class="attribution"><strong>Fatima Hassan</strong><br><small>University of Lagos 2023</small></p>
+        <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
+        <p class="attribution"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
       </article>
     </div>
   </div>
