@@ -5,7 +5,13 @@
     position: relative;
 }
 
+/* Make admin footer fixed and aligned to the left edge (near sidebar) */
 .admin-footer {
+    position: fixed;
+    bottom: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    z-index: 1000;
     background: linear-gradient(90deg, #ffd54f, #ffb300); /* warm yellow gradient */
     color: #111;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
@@ -13,8 +19,9 @@
 }
 
 .footer-card {
-    width: min(1200px, 95%);
-    margin: 0 auto; /* center block */
+    width: calc(100% - 40px);
+    max-width: 1400px;
+    margin-left: 20px; /* sit close to sidebar */
     padding: 0 20px;
     display: flex;
     align-items: center;
