@@ -1,53 +1,46 @@
 /* Why Choose Us section responsive styles */
 @media (max-width: 768px) {
     .why-choose-section {
-        padding: 40px 0;
+        padding: 30px 0;
     }
 
-    .feature-card {
-        margin-bottom: 20px;
-        width: 100%;
-        display: flex;
-        align-items: start;
-        gap: 15px;
-        padding: 15px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .why-choose-mobile {
+        display: block;
     }
 
-    .feature-icon {
-        width: 50px;
-        height: 50px;
-        min-width: 50px;
+    .why-choose-desktop {
+        display: none;
+    }
+
+    .why-choose-point {
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .why-choose-point:last-child {
+        border-bottom: none;
+    }
+
+    .why-choose-point h4 {
+        color: var(--hq-black);
+        font-size: 18px;
+        margin: 0 0 8px 0;
         display: flex;
         align-items: center;
-        justify-content: center;
-        border-radius: 10px;
+        gap: 10px;
     }
 
-    .feature-body {
-        flex: 1;
+    .why-choose-point h4 i {
+        color: var(--hq-yellow);
+        font-size: 20px;
     }
 
-    .feature-body h5 {
-        margin: 0 0 8px 0;
-        font-size: 16px;
-        color: var(--hq-black);
-    }
-
-    .feature-body p {
+    .why-choose-point p {
         margin: 0;
-        font-size: 14px;
         color: var(--hq-gray);
-        line-height: 1.4;
-    }
-
-    .feature-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        padding: 0 15px;
+        font-size: 15px;
+        line-height: 1.5;
+        padding-left: 30px;
     }
 }
 

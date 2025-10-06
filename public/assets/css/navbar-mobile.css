@@ -110,13 +110,21 @@
 
     .navbar-nav {
         margin: 0 auto !important;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
     }
 
     .nav-item {
-        margin: 0 10px;
+        margin: 0 8px;
+        white-space: nowrap;
     }
 
     .d-none.d-lg-block {
         margin-left: auto;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 8px 12px;
     }
 }
