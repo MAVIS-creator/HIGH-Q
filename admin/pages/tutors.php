@@ -358,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-    <form id="tutorForm" method="post" action="tutors.php?action=create">
+    <form id="tutorForm" method="post" action="index.php?pages=tutors&action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -434,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       tutorModal.classList.add('open');
       if (mode === 'edit') {
         modalTitle.textContent = 'Edit Tutor';
-        tutorForm.action = `tutors.php?action=edit&id=${data.id}`;
+        tutorForm.action = `index.php?pages=tutors&action=edit&id=${data.id}`;
         fields.name.value = data.name || '';
         fields.title.value = data.title || '';
         fields.subs.value = data.subjects || '';
@@ -443,7 +443,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         fields.image.value = data.image || '';
       } else {
         modalTitle.textContent = 'Add Tutor';
-        tutorForm.action = 'tutors.php?action=create';
+        tutorForm.action = 'index.php?pages=tutors&action=create';
         Object.values(fields).forEach(f => f.value = '');
       }
     }
@@ -556,7 +556,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       if (result.isConfirmed) {
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = `tutors.php?action=delete&id=${id}`;
+        form.action = `index.php?pages=tutors&action=delete&id=${id}`;
 
         const csrfInput = document.createElement("input");
         csrfInput.type = "hidden";
@@ -577,7 +577,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
     document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
     const form = document.getElementById('tutorForm');
-    form.action = `tutors.php?action=edit&id=${id}`;
+    form.action = `index.php?pages=tutors&action=edit&id=${id}`;
     document.getElementById('tName').value = card.dataset.name || '';
     document.getElementById('tTitle').value = card.dataset.title || '';
     document.getElementById('tSubjects').value = card.dataset.subjects || '';
