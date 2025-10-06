@@ -259,7 +259,7 @@ $users = $pdo->query("
     ?>
     <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
       <div class="card-left">
-  <img src="<?= $u['avatar'] ?: '../public/assets/images/hq-logo.jpeg' ?>" class="avatar-sm card-avatar">
+  <img src="<?= $u['avatar'] ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg' ?>" class="avatar-sm card-avatar">
         <div class="card-meta">
           <div class="card-name"><?= htmlspecialchars($u['name']) ?></div>
           <div class="card-email"><?= htmlspecialchars($u['email']) ?></div>
@@ -331,7 +331,7 @@ $users = $pdo->query("
     <!-- View Tab -->
     <div id="viewTab" class="tab-pane active">
       <div class="profile-header">
-  <img id="mAvatar" src="../public/assets/images/hq-logo.jpeg" alt="Avatar">
+  <img id="mAvatar" src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Avatar">
         <div>
           <h3 id="mName">Name</h3>
           <p id="mRole" class="role-badge role-student">Role</p>
