@@ -337,19 +337,18 @@ body {
 /* FOOTER */
 
 .admin-footer {
-  position: sticky;
+  margin-top: auto;
   left: var(--sidebar-width);
   right: 0;
-  bottom: 0;
-  width: calc(100% - var(--sidebar-width));
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  background: #fff;
-  z-index: 1000;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
+  padding: 10px 0;
   font-size: 0.95rem;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
 }
 
 .admin-footer>.footer-card {
@@ -365,9 +364,9 @@ body {
 .admin-main {
   margin-left: var(--sidebar-width);
   padding-top: calc(var(--header-height) + 12px);
-  /* Reserve space for fixed footer so content doesn't hide behind it */
-  padding-bottom: calc(var(--footer-height) + 28px);
-  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   transition: margin-left 0.25s ease, left 0.25s ease;
 }
 
