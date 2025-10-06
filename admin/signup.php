@@ -242,6 +242,7 @@ $csrfToken = generateToken('signup_form');
     <title>Sign Up - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/css/admin.css">
+    <link rel="stylesheet" href="./assets/css/signup.css">
     <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
     <style>
         :root {
