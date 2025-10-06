@@ -1,20 +1,21 @@
-<IfModule mod_rewrite.c><IfModule mod_rewrite.c>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    Options -Indexes
 
-    RewriteEngine On    RewriteEngine On
+    RewriteBase /HIGH-Q/
 
-    Options -Indexes    Options -Indexes
+    # Allow direct access to assets, uploads, and other static directories
+    RewriteRule ^(public/assets|public/uploads|uploads|favicon\.ico|robots\.txt|sitemap\.xml)($|/) - [L]
 
+    # Redirect root to public/home.php
+    RewriteRule ^$ public/home.php [L]
 
+    # Handle public pages
+    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
 
-    RewriteBase /HIGH-Q/    RewriteBase /HIGH-Q/
-
-
-
-    # Allow direct access to assets directory    # Allow direct access to assets directory
-
-    RewriteCond %{REQUEST_URI} ^/HIGH-Q/public/assets/    RewriteRule ^assets/ - [L]
-
-    RewriteRule ^ - [L]
+    # Handle error pages
+    ErrorDocument 404 /HIGH-Q/public/404.php
+    ErrorDocument 500 /HIGH-Q/public/500.php
 
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
 
