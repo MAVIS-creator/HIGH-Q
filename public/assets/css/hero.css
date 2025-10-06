@@ -108,50 +108,94 @@
 .feature-card {
     background: #fff;
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: 8px;
     display: flex;
     gap: 1rem;
     align-items: flex-start;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     transition: all 0.3s ease;
+    margin-bottom: 1rem;
 }
 
 .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .feature-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    flex-shrink: 0;
 }
 
 .feature-icon.yellow {
-    background: var(--hq-yellow-pale);
-    color: var(--hq-yellow);
+    background: #ffbf00;
+    color: #fff;
 }
 
 .feature-icon.red {
-    background: #FFE5E5;
-    color: var(--hq-red);
+    background: #ff3e3e;
+    color: #fff;
 }
 
 .feature-body h5 {
     font-size: 1.1rem;
     margin: 0 0 0.5rem;
-    color: var(--hq-black);
+    color: #000;
+    font-weight: 600;
 }
 
 .feature-body p {
     font-size: 0.9rem;
-    color: var(--hq-gray);
+    color: #666;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.6;
+}
+
+.hero .lead {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: 2rem;
+}
+
+.btn-primary {
+    background: #ff3e3e;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-block;
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: #e63636;
+    transform: translateY(-2px);
+}
+
+.btn-ghost:hover {
+    background: #fff;
+    transform: translateY(-2px);
 }
 
 /* Responsive Design */
