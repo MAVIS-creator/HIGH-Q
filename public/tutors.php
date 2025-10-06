@@ -109,10 +109,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <!-- Tutors footer text -->
     <div class="tutors-footer text-center mt-4">
       <p class="lead">And many other experienced tutors dedicated to your academic success...</p>
-      <p>Join our growing community of successful students mentored by these exceptional educators.</p>
-      <div class="mt-3">
-        <a href="register.php" class="btn-primary">Start Learning Today</a>
-      </div>
+      <p class="tutor-description">Working together with our team of dedicated educators to nurture the next generation of academic achievers.</p>
     </div>
     <?php endif; ?>
   </div>
@@ -134,9 +131,10 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     margin-bottom: 1rem;
 }
 
-.tutors-footer p {
+.tutors-footer .tutor-description {
     color: var(--hq-gray);
-    margin-bottom: 1.5rem;
+    font-style: italic;
+    margin-top: 0.5rem;
 }
 
 .text-center {
