@@ -5,8 +5,8 @@ require_once __DIR__ . '/config/csrf.php';
 $siteSettings = [];
 require_once __DIR__ . '/config/functions.php';
 $ref = $_GET['ref'] ?? ($_SESSION['last_payment_reference'] ?? '');
-$HQ_SUBPATH = '/HIGH-Q'; // adjust if you move the project
-$HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $HQ_SUBPATH : '');
+$HQ_SUBPATH = '';
+$HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] : '');
 
 // load site settings (bank details, logo) for display
 try {
@@ -43,12 +43,12 @@ $csrf = generateToken('signup_form');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/css/payment.css">
+  <link rel="stylesheet" href="/assets/css/payment.css">
 </head>
 <body>
   <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
     <div class="container" style="display:flex;align-items:center;gap:12px;">
-  <img src="<?= htmlspecialchars($HQ_SUBPATH) ?>/public/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <img src="/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
         <div style="font-size:12px;color:#666;">Secure payment</div>
@@ -88,7 +88,7 @@ $csrf = generateToken('signup_form');
         <script>
           // submit mark-sent via fetch to API endpoint and handle response
           // Expose HQ_BASE globally so other scripts (polling) can use it
-          window.HQ_BASE = window.location.origin + '<?= $HQ_SUBPATH ?>';
+          window.HQ_BASE = window.location.origin;
           (function(){
             var form = document.getElementById('payer-form');
             var btn = document.getElementById('markSentBtn');
@@ -97,7 +97,7 @@ $csrf = generateToken('signup_form');
               btn.disabled = true; btn.textContent = 'Recording...';
               document.getElementById('pageSpinner').style.display = 'block';
               var fd = new FormData(form);
-              fetch(window.HQ_BASE + '/public/api/mark_sent.php', {
+              fetch(window.HQ_BASE + '/api/mark_sent.php', {
                 method: 'POST',
                 body: fd,
                 credentials: 'same-origin',
