@@ -243,7 +243,24 @@ $csrfToken = generateToken('signup_form');
     <link rel="stylesheet" href="./assets/css/admin.css">
     <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
     <style>
-        
+        :root{
+                --hq-gray: #f3f4f6;
+            --btn-padding: 0.8rem 1rem;
+            --btn-radius: 8px;
+            --btn-font-size: 1rem;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+            background: linear-gradient(135deg, var(--hq-primary), var(--hq-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 18px;
+            height: 100vh;
+        }
+      
         .signup-container {
             max-width: 400px;
             margin: 20px auto;
