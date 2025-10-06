@@ -98,69 +98,6 @@
   </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="testimonials-section">
-  <div class="container">
-    <div class="section-header text-center">
-      <h2>Testimonial Section</h2>
-      <p>Hear what people have to say about our education at HQ Academy</p>
-    </div>
-
-    <div class="testimonials-grid">
-      <!-- Testimonial 1 -->
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          <div class="quote-icon">
-            <i class='bx bxs-quote-alt-left'></i>
-          </div>
-          <p class="testimonial-text">"What I love most is the value system and how much the school focuses on character alongside academics."</p>
-          <div class="testimonial-author">
-            <img src="./assets/images/testimonials/student1.jpg" alt="Student" class="author-image">
-            <div class="author-info">
-              <h5>Abiodun Damilola</h5>
-              <span class="designation">Student</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonial 2 -->
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          <div class="quote-icon">
-            <i class='bx bxs-quote-alt-left'></i>
-          </div>
-          <p class="testimonial-text">"Through HQ Academy, my child has achieved an outstanding score in JAMB. Their dedication and methodology really helped."</p>
-          <div class="testimonial-author">
-            <img src="./assets/images/testimonials/parent1.jpg" alt="Parent" class="author-image">
-            <div class="author-info">
-              <h5>Mrs. Akindele</h5>
-              <span class="designation">Parent</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonial 3 -->
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          <div class="quote-icon">
-            <i class='bx bxs-quote-alt-left'></i>
-          </div>
-          <p class="testimonial-text">"The personalized attention and innovative teaching methods at HQ Academy have been instrumental in my success."</p>
-          <div class="testimonial-author">
-            <img src="./assets/images/testimonials/student2.jpg" alt="Student" class="author-image">
-            <div class="author-info">
-              <h5>Samiel Michael</h5>
-              <span class="designation">Student</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <?php
 // Include tutors partial (keeps heavy markup in a separate file)
 include __DIR__ . '/tutors.php';

@@ -235,9 +235,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="./assets/css/navbar.css">
   <link rel="stylesheet" href="./assets/css/modal.css">
   <link rel="stylesheet" href="./assets/css/features.css">
-  <link rel="stylesheet" href="./assets/css/testimonials.css">
-
-</head>
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
