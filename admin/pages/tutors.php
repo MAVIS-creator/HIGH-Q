@@ -158,10 +158,14 @@ if (!is_dir($uploadDir)) {
 }
 
 // HANDLE CREATE / EDIT / DELETE
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_POST['action']))) {
+    // Get action from either GET or POST
+    $action = $_GET['action'] ?? $_POST['action'] ?? '';
+    $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
   if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
     $errors[] = "Invalid CSRF token.";
     if ($isAjax) {
+      http_response_code(403);
       header('Content-Type: application/json');
       echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
       exit;
