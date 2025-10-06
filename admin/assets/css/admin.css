@@ -343,7 +343,8 @@ body {
   padding: 20px 0;
   font-size: 0.95rem;
   box-shadow: none;
-  z
+  z-index: -1;
+  position: fixed;
 }
 
 .admin-footer>.footer-card {
