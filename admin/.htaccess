@@ -17,9 +17,14 @@
     # Set base for rewrites
     RewriteBase /HIGH-Q/admin/
     
-    # Force HTTPS (uncomment in production)
-    # RewriteCond %{HTTPS} off
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}/HIGH-Q/admin/$1 [L,R=301]
+    # Support for ngrok URLs and local development
+    SetEnvIf Host "^.*\.ngrok\.io$" NGROK=1
+    SetEnvIf Host "^localhost" LOCAL=1
+    
+    # Force HTTPS except for local development
+    RewriteCond %{HTTPS} off
+    RewriteCond %{ENV:LOCAL} !=1
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/HIGH-Q/admin/$1 [L,R=301]
     
     # Block direct access to sensitive files
     <FilesMatch "^(.*\.)?(env|config|htaccess|htpasswd|ini|log|sh|sql|tpl|yml|db|json|lock)$">
