@@ -4,7 +4,7 @@
   --hq-red: #ff4b2b;
   --hq-black: #0a0a0a;
   --hq-gray: #f3f4f6;
-  --max-width: 960px;
+  --max-width: 1400px;
   --card-width: 760px;
   --radius: 12px;
   --sidebar-width: 260px;
@@ -601,6 +601,15 @@ h1 {
   margin-bottom: 18px
 }
 
+/* On large screens use grid for summary cards to keep consistent column behavior */
+@media screen and (min-width: 1200px) {
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+}
+
 .summary-cards .card {
   flex: 1;
   display: flex;
@@ -716,6 +725,12 @@ h1 {
   gap: 18px;
   grid-auto-flow: dense; /* pack items to fill holes */
   align-items: start; /* ensure cards align to top of the row */
+}
+
+@media screen and (min-width: 1200px) {
+  .dashboard-widgets {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .widget-card {
