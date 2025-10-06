@@ -2,7 +2,10 @@
     RewriteEngine On
     Options -Indexes
 
-    RewriteBase /
+    RewriteBase /HIGH-Q/
+
+    # Allow direct access to assets directory
+    RewriteRule ^assets/ - [L]
 
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
     RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
@@ -15,9 +18,6 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ public/index.php [L,QSA]
 </IfModule>
-
-# Enable rewriting
-RewriteEngine On
 
 # Redirect everything to /public except existing files and directories
 RewriteCond %{REQUEST_FILENAME} !-f
