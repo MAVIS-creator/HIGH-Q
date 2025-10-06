@@ -22,14 +22,21 @@
 .navbar-toggler i {
     font-size: 28px;
     color: var(--hq-black);
-    transition: all 0.3s ease;
-    display: block;
+    transition: opacity 0.3s ease;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-/* Change icon to X when menu is open */
-.navbar-toggler.active i::before {
-    content: "\ebcd";
-    font-family: 'boxicons' !important;
+.navbar-toggler .open-icon,
+.navbar-toggler .close-icon {
+    opacity: 1;
+}
+
+.navbar-toggler .d-none {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* Mobile navbar */
