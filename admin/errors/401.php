@@ -47,7 +47,7 @@ http_response_code(401);
         <div class="error-code">401</div>
         <h1>Unauthorized Access</h1>
         <p class="error-message">Authentication is required to access this area.</p>
-        <a href="../login.php" class="back-link">← Login to Admin Panel</a>
+        <a href="./login.php" class="back-link">← Login to Admin Panel</a>
     </div>
 </body>
 </html>
