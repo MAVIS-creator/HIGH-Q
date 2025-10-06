@@ -343,7 +343,7 @@ body {
   padding: 15px 20px;
   font-size: 0.95rem;
   box-shadow: none;
-  position: relative;
+  position: static;
   margin-top: auto;
   bottom: 0;
   clear: both;
