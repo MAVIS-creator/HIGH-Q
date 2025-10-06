@@ -44,7 +44,7 @@ http_response_code(403);
         <div class="error-code">403</div>
         <h1>Access Forbidden</h1>
         <p class="error-message">You don't have permission to access this resource.</p>
-        <a href="/HIGH-Q/public/index.php" class="back-link">← Return to Homepage</a>
+        <a href="../public/index.php" class="back-link">← Return to Homepage</a>
     </div>
 
     <?php include '../includes/footer.php'; ?>
