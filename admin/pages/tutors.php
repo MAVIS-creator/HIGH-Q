@@ -434,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       tutorModal.classList.add('open');
       if (mode === 'edit') {
         modalTitle.textContent = 'Edit Tutor';
-        tutorForm.action = `${BASE_URL}/admin/pages/tutors.php?action=edit&id=${data.id}`;
+        tutorForm.action = `tutors.php?action=edit&id=${data.id}`;
         fields.name.value = data.name || '';
         fields.title.value = data.title || '';
         fields.subs.value = data.subjects || '';
@@ -443,7 +443,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         fields.image.value = data.image || '';
       } else {
         modalTitle.textContent = 'Add Tutor';
-        tutorForm.action = `${BASE_URL}/admin/pages/tutors.php?action=create`;
+        tutorForm.action = 'tutors.php?action=create';
         Object.values(fields).forEach(f => f.value = '');
       }
     }
