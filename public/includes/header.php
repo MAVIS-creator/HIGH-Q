@@ -267,9 +267,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </div>
             </a>
             <!-- Mobile Toggle Button -->
-            <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-expanded="false">
-              <i class="bx bx-menu" id="navbarIcon"></i>
-              <i class="bx bx-x" id="navbarCloseIcon" style="display: none;"></i>
+            <button class="navbar-toggler mobile-toggle" type="button">
+              <i class="bx bx-menu"></i>
             </button>
           </div>
 
