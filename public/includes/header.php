@@ -124,12 +124,12 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           http_response_code(503);
           ?>
           <!doctype html>
-          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css"></head><body>
+          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/assets/css/public.css"></head><body>
           <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
             <div style="max-width:720px;padding:28px;border-radius:10px;background:linear-gradient(90deg,#ffd54f,#ffb300);box-shadow:0 8px 30px rgba(0,0,0,0.12);color:#111;">
               <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:12px;">
                 <div style="width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,0.08);">
-                  <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
+                  <img src="/assets/images/hq-logo.jpeg" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
                 </div>
                 <h1 style="margin:0;font-size:1.6rem;">We'll be back soon</h1>
               </div>
@@ -209,14 +209,14 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/HIGH-Q/public/assets/images/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/HIGH-Q/public/assets/images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/HIGH-Q/public/assets/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/HIGH-Q/public/assets/images/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
+  <link rel="stylesheet" href="/assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
   <!-- Fallback to CDN if local not available -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Font Awesome (fallback for admin/backwards compatibility) -->
@@ -225,13 +225,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/responsive.css">
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/ceo-responsive.css">
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/animations.css">
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/social-icons.css">
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/post-toc.css">
-  <link rel="stylesheet" href="/HIGH-Q/public/assets/css/hero.css">
+  <link rel="stylesheet" href="/assets/css/public.css">
+  <link rel="stylesheet" href="/assets/css/responsive.css">
+  <link rel="stylesheet" href="/assets/css/ceo-responsive.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <link rel="stylesheet" href="/assets/css/social-icons.css">
+  <link rel="stylesheet" href="/assets/css/post-toc.css">
+  <link rel="stylesheet" href="/assets/css/hero.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -255,7 +255,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           <!-- Logo + Name -->
           <a class="navbar-brand" href="index.php">
             <div class="logo">
-              <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+              <img src="/assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
               <div>
                 <h1>HIGH Q SOLID ACADEMY</h1>
                 <small>Limited</small>
