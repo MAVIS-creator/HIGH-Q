@@ -113,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             } catch (Throwable $e) { error_log('record login attempt failed: ' . $e->getMessage()); }
+                }
         }
     }
 }
