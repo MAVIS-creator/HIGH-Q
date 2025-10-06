@@ -16,8 +16,14 @@ echo "Subscribed: $testEmail\n";
 $postTitle = 'Test Newsletter Post ' . date('Y-m-d H:i');
 $postContent = 'This is a test post for newsletter delivery.';
 $postExcerpt = 'Test excerpt for newsletter.';
-// Find first admin user
-$adminStmt = $pdo->query("SELECT id FROM users WHERE role='admin' OR role='superadmin' OR role='administrator' ORDER BY id ASC LIMIT 1");
+// Find first admin user by role_id
+$adminRoleStmt = $pdo->query("SELECT id FROM roles WHERE slug IN ('admin','superadmin','administrator') ORDER BY id ASC LIMIT 1");
+$adminRoleId = $adminRoleStmt->fetchColumn();
+if (!$adminRoleId) {
+    die("No admin role found. Please create an admin role in the roles table.\n");
+}
+$adminStmt = $pdo->prepare("SELECT id FROM users WHERE role_id = ? ORDER BY id ASC LIMIT 1");
+$adminStmt->execute([$adminRoleId]);
 $adminId = $adminStmt->fetchColumn();
 if (!$adminId) {
     die("No admin user found. Please create an admin user in the users table.\n");
