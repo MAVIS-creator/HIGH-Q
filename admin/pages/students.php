@@ -569,7 +569,7 @@ if ($hasRegistrations) {
       <?php foreach ($students as $s): ?>
         <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>">
           <div class="card-left">
-            <img src="<?= '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+            <img src="<?= '../public/assets/images/hq-logo.jpeg' ?>" class="avatar-sm card-avatar">
             <div class="card-meta">
               <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
               <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
@@ -617,7 +617,7 @@ if ($hasRegistrations) {
       ?>
       <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
         <div class="card-left">
-          <img src="<?= $s['avatar'] ?: '../public/assets/images/avatar-placeholder.png' ?>" class="avatar-sm card-avatar">
+          <img src="<?= $s['avatar'] ?: '../public/assets/images/hq-logo.jpeg' ?>" class="avatar-sm card-avatar">
           <div class="card-meta">
             <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
             <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>

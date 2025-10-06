@@ -37,7 +37,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <!-- Placeholder tutor so layout can be previewed -->
       <div class="tutors-grid">
         <article class="tutor-card">
-          <div class="tutor-thumb"><img src="./assets/images/avatar-placeholder.png" alt="Placeholder"></div>
+      <div class="tutor-thumb"><img src="./assets/images/hq-logo.jpeg" alt="Placeholder"></div>
           <div class="tutor-body">
             <h3>Sample Tutor</h3>
             <p class="role">B.Sc, M.Ed</p>
@@ -67,7 +67,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         <?php foreach ($tutors as $t): ?>
           <article class="tutor-card">
             <div class="tutor-thumb">
-              <img src="./<?= htmlspecialchars($t['photo'] ?: 'assets/images/avatar-placeholder.png') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+              <img src="./<?= htmlspecialchars($t['photo'] ?: 'assets/images/hq-logo.jpeg') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
             </div>
             <div class="tutor-body">
               <h3><?= htmlspecialchars($t['name']) ?></h3>
