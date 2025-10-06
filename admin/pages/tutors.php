@@ -358,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-  <form id="tutorForm" method="post" action="<?= BASE_URL ?>/admin/pages/tutors.php?action=create">
+    <form id="tutorForm" method="post" action="<?= BASE_URL ?>/admin/pages/tutors.php?action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -536,7 +536,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
 <script>
   function deleteTutor(id, name) {
-    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+    const BASE_URL = "<?= BASE_URL ?>";
     Swal.fire({
       title: "Delete Tutor?",
       text: "Are you sure you want to delete " + name + "?",
@@ -564,7 +564,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   }
 
   function editTutor(id) {
-    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+    const BASE_URL = "<?= BASE_URL ?>";
     const card = document.querySelector(`.tutor-card[data-id='${id}']`);
     if (!card) return;
 
