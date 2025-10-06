@@ -44,4 +44,4 @@ User-agent: anthropic-ai
 Disallow: /
 
 # Sitemap location
-Sitemap: https://highqsolidacademy.com/sitemap.xml
+Sitemap: https://highqsolidacademy.com.ng/sitemap.xml
