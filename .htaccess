@@ -4,56 +4,33 @@
 
     RewriteBase /HIGH-Q/
 
-    # Allow direct access to assets, uploads, and other static directories
-    RewriteRule ^(public/assets|public/uploads|uploads|favicon\.ico|robots\.txt|sitemap\.xml)($|/) - [L]
+    # Allow direct access to static files and directories
+    RewriteRule ^(public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
 
-    # Redirect root to public/home.php
+    # Handle admin section
+    RewriteRule ^admin/(.*)$ admin/$1 [L]
+
+    # Handle direct file access
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Pretty payment URL
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
+
+    # Protected downloads
+    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
+
+    # Redirect root to home
     RewriteRule ^$ public/home.php [L]
 
     # Handle public pages
     RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
 
-    # Handle error pages
-    ErrorDocument 404 /HIGH-Q/public/404.php
-    ErrorDocument 500 /HIGH-Q/public/500.php
-
-    # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
-
-    # Allow direct access to assets directory from root    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
-
-    RewriteCond %{REQUEST_URI} ^/HIGH-Q/assets/
-
-    RewriteRule ^ - [L]    # Protect file downloads through script
-
-    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
-
-    # Rewrite assets requests from root to public
-
-    RewriteCond %{REQUEST_URI} ^/HIGH-Q/assets/(.*)$    # Send all non-file/directory requests to public/index.php
-
-    RewriteRule ^assets/(.*)$ public/assets/$1 [L]    RewriteCond %{REQUEST_FILENAME} !-f
-
-    RewriteCond %{REQUEST_FILENAME} !-d
-
-    # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF    RewriteRule ^(.*)$ public/index.php [L,QSA]
-
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]</IfModule>
-
-
-
-    # Protect file downloads through script# Redirect everything to /public except existing files and directories
-
-    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]RewriteCond %{REQUEST_FILENAME} !-f
-
-RewriteCond %{REQUEST_FILENAME} !-d
-
-    # Send all non-file/directory requests to public/index.phpRewriteRule ^(.*)$ public/$1 [L]
-
+    # Default handler for other URLs
     RewriteCond %{REQUEST_FILENAME} !-f
-
-    RewriteCond %{REQUEST_FILENAME} !-d# Optional: set index
-
-    RewriteRule ^(.*)$ public/index.php [L,QSA]DirectoryIndex index.php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
 
 </IfModule>
 # Protect sensitive files
