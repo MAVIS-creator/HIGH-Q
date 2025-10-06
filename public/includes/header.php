@@ -268,7 +268,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </a>
             <!-- Mobile Toggle Button -->
             <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-              <i class="bx bx-menu"></i>
+              <i class="bx bx-menu" id="navbarIcon"></i>
             </button>
           </div>
 
@@ -329,6 +329,22 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
+    // Handle navbar toggle icon
+    document.addEventListener('DOMContentLoaded', function() {
+      const navbarToggler = document.querySelector('.navbar-toggler');
+      const navbarIcon = document.getElementById('navbarIcon');
+      const navbarCollapse = document.getElementById('mainNav');
+
+      navbarToggler.addEventListener('click', function() {
+        if (navbarCollapse.classList.contains('show')) {
+          navbarIcon.classList.remove('bx-x');
+          navbarIcon.classList.add('bx-menu');
+        } else {
+          navbarIcon.classList.remove('bx-menu');
+          navbarIcon.classList.add('bx-x');
+        }
+      });
+    });
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
       document.addEventListener('DOMContentLoaded', function(){

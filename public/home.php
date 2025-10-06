@@ -52,21 +52,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <aside class="hero-right">
-      <!-- Desktop version -->
-      <div class="why-choose-desktop">
-        <div class="feature-card">
-          <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
-          <div class="feature-body">
-            <h5>Top JAMB Scores</h5>
-            <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Mobile version -->
-      <div class="why-choose-mobile">
-        <div class="why-choose-point">
-          <h4><i class='bx bxs-award'></i>Top JAMB Scores</h4>
+      <div class="feature-card">
+        <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
+        <div class="feature-body">
+          <h5>Top JAMB Scores</h5>
           <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
         </div>
       </div>
