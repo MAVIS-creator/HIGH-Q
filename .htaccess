@@ -1,16 +1,59 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Set the base to the project subdirectory so rules map correctly when the app is not in the server root
+    Options -Indexes
+    
+    # Set the base to the project subdirectory
     RewriteBase /HIGH-Q/
-
+    
+    # Set public/index.php as homepage
+    DirectoryIndex public/index.php
+    
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
-    # Use a relative target (no leading slash) so the rewrite stays inside this project folder
     RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
-
+    
+    # Block access to sensitive directories
+    RewriteRule ^(vendor|config|src|bin|migrations|tools|scripts)/ - [F,L]
+    
+    # Clean URLs for admin panel
+    RewriteRule ^admin/?$ admin/index.php [L]
+    
+    # Protect file downloads through script
+    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
+    
     # Preserve existing files and directories
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 </IfModule>
 
-# Fallback: if mod_rewrite isn't available, users can still use the full /public/payments_wait.php?ref=REF URL
+# Protect sensitive files
+<FilesMatch "^\.(env|htaccess|git|config)|\.(sql|bak|config|json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Prevent directory listing
+Options All -Indexes
+
+# Protect against common vulnerabilities
+RewriteCond %{QUERY_STRING} base64_encode[^(]*\([^)]*\) [OR]
+RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+RewriteRule .* index.php [F]
+
+# Custom error pages
+ErrorDocument 400 /HIGH-Q/public/errors/400.php
+ErrorDocument 401 /HIGH-Q/public/errors/401.php
+ErrorDocument 403 /HIGH-Q/public/errors/403.php
+ErrorDocument 404 /HIGH-Q/public/errors/404.php
+ErrorDocument 500 /HIGH-Q/public/errors/500.php
