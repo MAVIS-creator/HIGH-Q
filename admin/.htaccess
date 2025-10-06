@@ -86,8 +86,8 @@
     
     # Require authentication for admin area
     AuthType Basic
-    AuthName "Restricted Area"
-    AuthUserFile /path/to/.htpasswd
+    AuthName "Admin Access"
+    AuthUserFile "c:\xampp\htdocs\HIGH-Q\admin\.htpasswd"
     Require valid-user
     
     # Custom error pages
