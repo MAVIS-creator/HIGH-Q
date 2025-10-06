@@ -131,7 +131,7 @@ if (!headers_sent()) {
                         </button>
                     </div>
                     <div class="header-avatar">
-                        <img src="<?= $_SESSION['user']['avatar'] ?? '../public/assets/images/hq-logo.jpeg'; ?>" alt="Avatar">
+                        <img src="<?= $_SESSION['user']['avatar'] ?? '/HIGH-Q/public/assets/images/hq-logo.jpeg'; ?>" alt="Avatar">
                     </div>
             <?php endif; ?>
         </div>
