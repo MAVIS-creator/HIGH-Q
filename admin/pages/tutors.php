@@ -159,10 +159,54 @@ if (!is_dir($uploadDir)) {
 
 // HANDLE CREATE / EDIT / DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_POST['action']))) {
-    // Get action from either GET or POST
-    $action = $_GET['action'] ?? $_POST['action'] ?? '';
-    $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
-  if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+  // Get action from either GET or POST
+  $action = $_GET['action'] ?? $_POST['action'] ?? '';
+  $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
+
+  // --- Debug logging: write incoming request details to a CLI-readable file ---
+  try {
+    $dbgPath = __DIR__ . '/../cli/tutor_post_debug.log';
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    // Fallback: collect common HTTP_* server vars
+    if (empty($headers)) {
+      foreach ($_SERVER as $k => $v) {
+        if (strpos($k, 'HTTP_') === 0) $headers[$k] = $v;
+      }
+    }
+    $raw = @file_get_contents('php://input');
+    $debugEntry = [
+      'ts' => date('c'),
+      'remote_addr' => $_SERVER['REMOTE_ADDR'] ?? null,
+      'request_uri' => $_SERVER['REQUEST_URI'] ?? null,
+      'is_ajax' => $isAjax,
+      'method' => $_SERVER['REQUEST_METHOD'] ?? 'POST',
+      'action_param' => $action,
+      'id_param' => $id,
+      'headers' => $headers,
+      'cookies' => $_COOKIE ?? [],
+      'post' => $_POST ?? [],
+      'files' => $_FILES ?? [],
+      'raw' => $raw,
+    ];
+    @file_put_contents($dbgPath, json_encode($debugEntry, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n\n", FILE_APPEND | LOCK_EX);
+  } catch (Throwable $e) {
+    // ignore logging failures
+  }
+
+  // Verify CSRF token but also log the provided token result to the same debug file
+  $provided_csrf = $_POST['csrf_token'] ?? '';
+  $csrfOk = false;
+  try {
+    $csrfOk = verifyCsrfToken($provided_csrf);
+  } catch (Throwable $e) {
+    $csrfOk = false;
+  }
+  try {
+    $dbgPath = __DIR__ . '/../cli/tutor_post_debug.log';
+    @file_put_contents($dbgPath, "CSRF_PROVIDED: " . ($provided_csrf ?: '[empty]') . "\nCSRF_OK: " . ($csrfOk ? '1' : '0') . "\n---\n", FILE_APPEND | LOCK_EX);
+  } catch (Throwable $e) {}
+
+  if (!$csrfOk) {
     $errors[] = "Invalid CSRF token.";
     if ($isAjax) {
       http_response_code(403);
