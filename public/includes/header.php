@@ -334,15 +334,30 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     document.addEventListener('DOMContentLoaded', function() {
       const navbarToggler = document.querySelector('.navbar-toggler');
       const navbarIcon = document.getElementById('navbarIcon');
+      const navbarCloseIcon = document.getElementById('navbarCloseIcon');
       const navbarCollapse = document.getElementById('mainNav');
 
-      navbarToggler.addEventListener('click', function() {
-        if (navbarCollapse.classList.contains('show')) {
-          navbarIcon.classList.remove('bx-x');
-          navbarIcon.classList.add('bx-menu');
+      function toggleIcons(isOpen) {
+        if (isOpen) {
+          navbarIcon.style.display = 'none';
+          navbarCloseIcon.style.display = 'block';
         } else {
-          navbarIcon.classList.remove('bx-menu');
-          navbarIcon.classList.add('bx-x');
+          navbarIcon.style.display = 'block';
+          navbarCloseIcon.style.display = 'none';
+        }
+      }
+
+      navbarToggler.addEventListener('click', function() {
+        const willBeOpen = !navbarCollapse.classList.contains('show');
+        toggleIcons(willBeOpen);
+      });
+
+      // Handle click outside to close menu
+      document.addEventListener('click', function(event) {
+        if (navbarCollapse.classList.contains('show') && 
+            !navbarCollapse.contains(event.target) && 
+            !navbarToggler.contains(event.target)) {
+          navbarToggler.click();
         }
       });
     });
