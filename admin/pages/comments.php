@@ -117,7 +117,8 @@ if (!empty($_GET['ajax'])) {
 ?>
 <div class="roles-page">
   <div class="page-header"><h1><i class="bx bxs-comment-detail"></i> Comments</h1></div>
-  <input type="hidden" id="comments_csrf" value="<?= generateToken('comments_form') ?>">
+  <!-- CSRF token for AJAX actions; include name so various scripts can select it reliably -->
+  <input type="hidden" id="comments_csrf" name="_csrf" value="<?= generateToken('comments_form') ?>">
   <table class="roles-table">
     <thead><tr><th>ID</th><th>Post</th><th>Name/Email</th><th>Content</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
     <tbody>

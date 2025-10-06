@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
     // fetch top-level approved comments and any pending comments created in this session
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    $stmt = $pdo->prepare('SELECT id, name, email, content, created_at, status, session_id FROM comments WHERE post_id = ? AND parent_id IS NULL AND (status = "approved" OR (status = "pending" AND session_id = ?)) ORDER BY created_at DESC');
+    $stmt = $pdo->prepare('SELECT id, name, email, content, created_at, status, session_id, user_id FROM comments WHERE post_id = ? AND parent_id IS NULL AND (status = "approved" OR (status = "pending" AND session_id = ?)) ORDER BY created_at DESC');
     $stmt->execute([$postId, session_id()]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $out = [];
@@ -27,6 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $lc = $pdo->prepare('SELECT COUNT(1) FROM comment_likes WHERE comment_id = ?'); $lc->execute([$r['id']]); $r['likes'] = (int)$lc->fetchColumn();
                 $chk = $pdo->prepare('SELECT 1 FROM comment_likes WHERE comment_id = ? AND (session_id = ? OR ip = ?) LIMIT 1'); $chk->execute([$r['id'], session_id(), $_SERVER['REMOTE_ADDR'] ?? null]); $r['liked'] = (bool)$chk->fetchColumn();
             } catch (Throwable $e) { $r['likes'] = 0; $r['liked'] = false; }
+            // whether this visitor may delete this comment: either it was created in this session
+            // (guest) or it belongs to the logged-in user (user_id matches session user)
+            $r['can_delete'] = false;
+            try {
+                // if created in this session, allow deletion
+                if (!empty($r['session_id']) && $r['session_id'] === session_id()) $r['can_delete'] = true;
+                // if user is logged in and owns the comment
+                if (!$r['can_delete'] && isset($_SESSION['user']) && !empty($r['user_id']) && $_SESSION['user']['id'] == $r['user_id']) $r['can_delete'] = true;
+            } catch (Throwable $e) { $r['can_delete'] = false; }
             $out[] = $r;
         }
         echo json_encode($out);
@@ -83,4 +92,34 @@ try {
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['status'=>'error','message'=>'DB error']);
+}
+
+// Support DELETE via POST when a guest/user wants to delete their own comment
+// Expect: method POST with _method=delete and comment_id
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_method']) && strtolower($_POST['_method']) === 'delete') {
+    $cid = intval($_POST['comment_id'] ?? 0);
+    if ($cid <= 0) { echo json_encode(['status'=>'error','message'=>'Missing comment id']); exit; }
+    try {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        // fetch comment
+        $cstmt = $pdo->prepare('SELECT id, session_id, user_id FROM comments WHERE id = ? LIMIT 1');
+        $cstmt->execute([$cid]);
+        $c = $cstmt->fetch(PDO::FETCH_ASSOC);
+        if (!$c) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
+        $allowed = false;
+        // owner by session
+        if (!empty($c['session_id']) && $c['session_id'] === session_id()) $allowed = true;
+        // owner by logged-in user
+        if (!$allowed && isset($_SESSION['user']) && !empty($c['user_id']) && $_SESSION['user']['id'] == $c['user_id']) $allowed = true;
+        if (!$allowed) { echo json_encode(['status'=>'error','message'=>'Permission denied']); exit; }
+        // soft-delete: mark as deleted
+        $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?');
+        $ok = $upd->execute([$cid]);
+        if ($ok) {
+            echo json_encode(['status'=>'ok']);
+        } else {
+            echo json_encode(['status'=>'error','message'=>'DB failed']);
+        }
+    } catch (Throwable $e) { echo json_encode(['status'=>'error','message'=>'Exception']); }
+    exit;
 }
