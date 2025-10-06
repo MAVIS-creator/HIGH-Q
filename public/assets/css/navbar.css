@@ -1,0 +1,118 @@
+/* Navbar toggle animation */
+.navbar-toggler {
+    border: none;
+    padding: 0;
+    outline: none !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler i {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-toggler i.bx-x {
+    transform: rotate(180deg);
+}
+
+/* Mobile navbar */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background: white;
+        position: fixed;
+        top: 80px; /* Adjust based on your header height */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 20px;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        display: block !important;
+        z-index: 1000;
+    }
+
+    .navbar-collapse.show {
+        transform: translateX(0);
+    }
+
+    .navbar-nav {
+        margin: 0 !important;
+        padding: 10px 0;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 10px 0;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+
+    .dropdown-menu {
+        border: none;
+        background: #f8f9fa;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .dropdown-item {
+        padding: 12px 30px;
+    }
+
+    /* Register button on mobile */
+    .navbar-collapse .d-none.d-lg-block {
+        display: block !important;
+        margin-top: 20px;
+        padding: 15px 20px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .navbar-collapse .btn-primary {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+}
+
+/* Desktop navbar */
+@media (min-width: 992px) {
+    .navbar-brand {
+        flex: 0 0 auto;
+    }
+
+    .navbar-collapse {
+        flex: 1 1 auto;
+        display: flex !important;
+        align-items: center;
+        transform: none !important;
+        position: static;
+        padding: 0;
+        background: transparent;
+    }
+
+    .navbar-nav {
+        margin: 0 auto !important;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .nav-item {
+        margin: 0 8px;
+        white-space: nowrap;
+    }
+
+    .d-none.d-lg-block {
+        margin-left: auto;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 8px 12px;
+    }
+}
