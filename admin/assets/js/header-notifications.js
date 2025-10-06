@@ -125,19 +125,39 @@ document.addEventListener('DOMContentLoaded', function() {
             if (markAllBtn) {
                 markAllBtn.addEventListener('click', async function(ev) {
                     ev.preventDefault();
-                    markAllBtn.disabled = true; markAllBtn.textContent = 'Marking...';
+                    ev.stopPropagation();
+                    markAllBtn.disabled = true; 
+                    markAllBtn.textContent = 'Marking...';
                     try {
                         // Send mark_read for each notification
                         const ops = data.notifications.map(n => {
-                            const fd = new FormData(); fd.append('type', n.type); fd.append('id', n.id);
-                            return fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+                            const fd = new FormData(); 
+                            fd.append('type', n.type); 
+                            fd.append('id', n.id);
+                            return fetch('/HIGH-Q/admin/api/mark_read.php', {
+                                method: 'POST', 
+                                body: fd, 
+                                credentials: 'same-origin'
+                            });
                         });
                         await Promise.all(ops);
-                        // reload notifications
-                        loadNotifications();
+                        
+                        // Update UI to show all as read
+                        panel.querySelectorAll('.notification-item').forEach(item => {
+                            item.classList.add('read');
+                        });
+                        badge.style.display = 'none';
+                        badge.textContent = '0';
+                        
+                        markAllBtn.textContent = 'All read';
+                        setTimeout(() => {
+                            markAllBtn.textContent = 'Mark all as read';
+                            markAllBtn.disabled = false;
+                        }, 2000);
                     } catch (e) {
                         console.error('Failed to mark all as read', e);
-                        markAllBtn.disabled = false; markAllBtn.textContent = 'Mark all as read';
+                        markAllBtn.disabled = false; 
+                        markAllBtn.textContent = 'Mark all as read';
                     }
                 });
             }
