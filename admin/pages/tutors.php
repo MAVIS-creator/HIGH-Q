@@ -549,7 +549,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       if (result.isConfirmed) {
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = `${BASE_URL}/admin/pages/tutors.php?action=delete&id=${id}`;
+        form.action = `tutors.php?action=delete&id=${id}`;
 
         const csrfInput = document.createElement("input");
         csrfInput.type = "hidden";
