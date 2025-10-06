@@ -77,15 +77,16 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'contact_phone' => $contact['phone'] ?? null,
         'contact_email' => $contact['email'] ?? null,
         'contact_address' => $contact['address'] ?? null,
-    'contact_facebook' => $contact['facebook'] ?? null,
-    'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
-    'contact_instagram' => $contact['instagram'] ?? null,
-    'maintenance' => !empty($security['maintenance']) ? 1 : 0,
-    'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
+        'contact_facebook' => $contact['facebook'] ?? null,
+        'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
+        'contact_instagram' => $contact['instagram'] ?? null,
+        'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+        'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
         'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
         'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
         'two_factor' => !empty($security['two_factor']) ? 1 : 0,
-        'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0
+        'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0,
+        'new_column_name' => $site['new_column_name'] ?? $contact['new_column_name'] ?? $security['new_column_name'] ?? null
     ];
 
     // If a row exists, update the first row; otherwise insert
@@ -105,7 +106,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
             contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
             maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
-            two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
+            two_factor = :two_factor, comment_moderation = :comment_moderation, new_column_name = :new_column_name, updated_at = NOW()
             WHERE id = :id";
         $params['id'] = $id;
         $upd = $pdo->prepare($sql);
@@ -121,13 +122,13 @@ function upsertSiteSettings(PDO $pdo, array $data) {
              bank_name, bank_account_name, bank_account_number,
              contact_phone, contact_email, contact_address,
              contact_facebook, contact_tiktok, contact_instagram,
-            maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation)
+            maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation, new_column_name)
             VALUES
             (:site_name, :tagline, :logo_url, :vision, :about,
              :bank_name, :bank_account_name, :bank_account_number,
              :contact_phone, :contact_email, :contact_address,
              :contact_facebook, :contact_tiktok, :contact_instagram,
-             :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
+             :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation, :new_column_name)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
         if (!$result) {
