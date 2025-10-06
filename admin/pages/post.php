@@ -158,6 +158,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                         'message' => "Article '{$title}' created.",
                                         'published' => ($status === 'published')
                                     ];
+                                                    // If published, trigger newsletter send (simple immediate loop in background)
+                                                    if ($status === 'published') {
+                                                        try {
+                                                            // Fetch subscribers in small batches
+                                                            $batchSize = 50;
+                                                            $offset = 0;
+                                                            while (true) {
+                                                                $sstmt = $pdo->prepare('SELECT id,email,unsubscribe_token FROM newsletter_subscribers ORDER BY id LIMIT ? OFFSET ?');
+                                                                $sstmt->bindValue(1, (int)$batchSize, PDO::PARAM_INT);
+                                                                $sstmt->bindValue(2, (int)$offset, PDO::PARAM_INT);
+                                                                $sstmt->execute();
+                                                                $subs = $sstmt->fetchAll(PDO::FETCH_ASSOC);
+                                                                if (!$subs) break;
+                                                                foreach ($subs as $sub) {
+                                                                    $uToken = $sub['unsubscribe_token'] ?: bin2hex(random_bytes(20));
+                                                                    // If token was missing, store it
+                                                                    if (empty($sub['unsubscribe_token'])) {
+                                                                        try {
+                                                                            $upd = $pdo->prepare('UPDATE newsletter_subscribers SET unsubscribe_token=?, token_created_at=NOW() WHERE id=?');
+                                                                            $upd->execute([$uToken, $sub['id']]);
+                                                                        } catch (Throwable $_) {}
+                                                                    }
+                                                                    $postUrl = rtrim($appUrl, '/') . '/post.php?id=' . $newId;
+                                                                    $unsubscribeUrl = rtrim($appUrl, '/') . '/public/unsubscribe_newsletter.php?token=' . urlencode($uToken);
+                                                                    $html = "<p>Hi,</p><p>A new article was published: <strong>" . htmlspecialchars($title) . "</strong></p>";
+                                                                    $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
+                                                                    $html .= "<p><a href=\"{$postUrl}\">Read the full article</a></p>";
+                                                                    $html .= "<hr><p style=\"font-size:0.9rem;color:#666\">If you no longer wish to receive these emails, <a href=\"{$unsubscribeUrl}\">unsubscribe</a>.</p>";
+                                                                    // Use admin sendEmail (autoloaded earlier)
+                                                                    try { sendEmail($sub['email'], 'New article: ' . $title, $html); } catch (Throwable $_) {}
+                                                                }
+                                                                $offset += $batchSize;
+                                                                // small sleep to reduce SMTP load
+                                                                usleep(200000);
+                                                            }
+                                                        } catch (Throwable $e) {
+                                                            @file_put_contents(__DIR__ . '/../../storage/logs/newsletter_errors.log', date('c') . " Newsletter send error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+                                                        }
+                                                    }
                                     // Redirect back to posts listing explicitly
                                     header("Location: index.php?pages=posts");
                                     exit;
@@ -196,6 +235,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                     if (!$ok) {
                                         $ei = $stmt->errorInfo();
                                         @file_put_contents($dbgFile, date('c') . " ERRORINFO: " . json_encode($ei) . "\n", FILE_APPEND | LOCK_EX);
+                                        // If this update sets status to published, send newsletter to subscribers
+                                        if ($status === 'published') {
+                                            try {
+                                                // Fetch subscribers and send emails in batches
+                                                $batchSize = 50;
+                                                $offset = 0;
+                                                while (true) {
+                                                    $sstmt = $pdo->prepare('SELECT id,email,unsubscribe_token FROM newsletter_subscribers ORDER BY id LIMIT ? OFFSET ?');
+                                                    $sstmt->bindValue(1, (int)$batchSize, PDO::PARAM_INT);
+                                                    $sstmt->bindValue(2, (int)$offset, PDO::PARAM_INT);
+                                                    $sstmt->execute();
+                                                    $subs = $sstmt->fetchAll(PDO::FETCH_ASSOC);
+                                                    if (!$subs) break;
+                                                    foreach ($subs as $sub) {
+                                                        $uToken = $sub['unsubscribe_token'] ?: bin2hex(random_bytes(20));
+                                                        if (empty($sub['unsubscribe_token'])) {
+                                                            try { $upd = $pdo->prepare('UPDATE newsletter_subscribers SET unsubscribe_token=?, token_created_at=NOW() WHERE id=?'); $upd->execute([$uToken, $sub['id']]); } catch (Throwable $_) {}
+                                                        }
+                                                        $postUrl = rtrim($appUrl, '/') . '/post.php?id=' . $id;
+                                                        $unsubscribeUrl = rtrim($appUrl, '/') . '/public/unsubscribe_newsletter.php?token=' . urlencode($uToken);
+                                                        $html = "<p>Hi,</p><p>An article was published: <strong>" . htmlspecialchars($title) . "</strong></p>";
+                                                        $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
+                                                        $html .= "<p><a href=\"{$postUrl}\">Read the full article</a></p>";
+                                                        $html .= "<hr><p style=\"font-size:0.9rem;color:#666\">If you no longer wish to receive these emails, <a href=\"{$unsubscribeUrl}\">unsubscribe</a>.</p>";
+                                                        try { sendEmail($sub['email'], 'New article: ' . $title, $html); } catch (Throwable $_) {}
+                                                    }
+                                                    $offset += $batchSize;
+                                                    usleep(200000);
+                                                }
+                                            } catch (Throwable $e) {
+                                                @file_put_contents(__DIR__ . '/../../storage/logs/newsletter_errors.log', date('c') . " Newsletter send error: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+                                            }
+                                        }
                                     }
                                 } catch (Throwable $e) {
                                     @file_put_contents($dbgFile, date('c') . " EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
