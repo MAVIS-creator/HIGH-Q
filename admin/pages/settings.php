@@ -627,6 +627,16 @@ $csrf = generateToken('settings_form');
                             </select>
                             <div class="muted">Choose which enforcement method the system should prefer when blocking visitors.</div>
                         </div>
+                        <div style="margin-top:12px;">
+                            <label>Allow admins to view public site during maintenance</label>
+                            <div class="muted">Enable this if administrators should still be able to access the public site when maintenance mode is active.</div>
+                            <div style="margin-top:6px;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="settings[security][allow_admin_public_view_during_maintenance]" value="1" <?= !empty($current['security']['allow_admin_public_view_during_maintenance']) ? 'checked' : '' ?> />
+                                    <span class="track"><span class="thumb"></span></span>
+                                </label>
+                            </div>
+                        </div>
                 </div>
             </div>
 
