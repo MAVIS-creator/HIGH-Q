@@ -7,8 +7,10 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 try {
-    $stmt = $pdo->prepare('INSERT INTO newsletter_subscribers (email, created_at) VALUES (?, NOW())');
-    $stmt->execute([$email]);
+    // generate an unsubscribe token
+    $token = bin2hex(random_bytes(24));
+    $stmt = $pdo->prepare('INSERT INTO newsletter_subscribers (email, created_at, unsubscribe_token, token_created_at) VALUES (?, NOW(), ?, NOW())');
+    $stmt->execute([$email, $token]);
     echo json_encode(['status'=>'ok','message'=>'Subscribed']);
 } catch (Throwable $e) {
     // duplicate entry or other DB error
