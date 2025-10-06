@@ -2,8 +2,8 @@
 // admin/includes/footer.php
 ?>
     </main>
-    <footer class="admin-footer" style="position:relative;z-index:1001;display:flex;justify-content:center;align-items:center;width:100%;">
-        <div class="footer-card">
+    <footer class="admin-footer">
+        <div class="footer-card footer-card--highlight">
             <div class="footer-card-left">
                 <span class="footer-icon"><i class='bx bx-award'></i></span>
             </div>
