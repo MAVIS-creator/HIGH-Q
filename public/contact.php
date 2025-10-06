@@ -213,7 +213,7 @@ include __DIR__ . '/includes/header.php';
 
 <!-- Calendar modal for scheduling visits -->
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
-	<div class="modal" role="document" aria-modal="true">
+	<div class="modal" role="document" aria-modal="true" style="display: block;">
 		<h3>Schedule a Visit</h3>
 		<div class="field">
 			<label>Date</label>
