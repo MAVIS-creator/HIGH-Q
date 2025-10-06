@@ -84,7 +84,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- Filters: category + search -->
-    <form method="get" action="news.php" class="news-filters" style="margin-bottom:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <form method="get" action="/news.php" class="news-filters" style="margin-bottom:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
       <select name="category">
         <option value="">All Categories</option>
         <?php foreach($categories as $c): ?>
