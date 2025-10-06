@@ -242,8 +242,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Top bar -->
     <div class="top-bar">
       <div class="container">
-  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+        <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
@@ -251,7 +251,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100 position-relative">
+        <nav class="navbar w-100 position-relative">
           <!-- Logo + Name -->
           <a class="navbar-brand" href="index.php">
             <div class="logo">
@@ -263,56 +263,44 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </a>
 
-          <!-- Mobile Toggle Button - Positioned Absolutely -->
-          <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+          <!-- Mobile Toggle Button -->
+          <button class="navbar-toggler mobile-toggle" type="button" aria-label="Open navigation">
             <i class="bx bx-menu"></i>
           </button>
 
-          <!-- Navigation -->
-          <div class="collapse navbar-collapse" id="mainNav">
+          <!-- Desktop Nav -->
+          <div class="desktop-nav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
             <ul class="navbar-nav mx-auto">
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
-              </li>
-
-              <!-- Programs Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                  Programs
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
-                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
-                </ul>
-              </li>
-
-              <!-- News Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                  News
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
-                  <li><a class="dropdown-item" href="community.php">Community</a></li>
-                </ul>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
-              </li>
+              <li class="nav-item"><a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+              <li class="nav-item"><a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+              <li class="nav-item"><a class="nav-link <?= $cur === 'programs.php' ? 'active' : '' ?>" href="programs.php">Programs</a></li>
+              <li class="nav-item"><a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+              <li class="nav-item"><a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
             </ul>
+            <a href="register.php" class="btn btn-primary d-none d-lg-block">Register Now</a>
+          </div>
 
-            <!-- Register Button -->
-            <div class="d-none d-lg-block">
-              <a href="register.php" class="btn btn-primary">Register Now</a>
+          <!-- Mobile Nav Overlay -->
+          <div class="mobile-nav-overlay">
+            <div class="mobile-nav-header">
+              <div class="logo">
+                <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+                <div>
+                  <h1>HIGH Q SOLID ACADEMY</h1>
+                  <small>Limited</small>
+                </div>
+              </div>
+              <button class="mobile-nav-close" aria-label="Close navigation"><i class="bx bx-x"></i></button>
             </div>
+            <ul class="mobile-nav-list">
+              <li><a href="index.php">Home</a></li>
+              <li><a href="about.php">About Us</a></li>
+              <li><a href="programs.php">Programs</a></li>
+              <li><a href="register.php">Admission</a></li>
+              <li><a href="contact.php">Contact</a></li>
+            </ul>
+            <a href="register.php" class="btn btn-primary mobile-register-btn">Register Now</a>
           </div>
         </nav>
       </div>
@@ -323,41 +311,45 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Toggle nav dropdown open/close on click and close when clicking outside
-    (function(){
-      document.addEventListener('DOMContentLoaded', function(){
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.navbar-toggler');
-        const mobileMenu = document.querySelector('.navbar-collapse');
-        
-        if(mobileMenuBtn && mobileMenu) {
-          mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('show');
-          });
+    // Mobile nav open/close logic
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuBtn = document.querySelector('.navbar-toggler');
+      const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+      const mobileNavClose = document.querySelector('.mobile-nav-close');
+      const desktopNav = document.querySelector('.desktop-nav');
+
+      function openMobileNav() {
+        mobileNavOverlay.classList.add('open');
+        document.body.classList.add('mobile-nav-open');
+      }
+      function closeMobileNav() {
+        mobileNavOverlay.classList.remove('open');
+        document.body.classList.remove('mobile-nav-open');
+      }
+
+      if (mobileMenuBtn && mobileNavOverlay) {
+        mobileMenuBtn.addEventListener('click', openMobileNav);
+      }
+      if (mobileNavClose && mobileNavOverlay) {
+        mobileNavClose.addEventListener('click', closeMobileNav);
+      }
+      // Close on overlay click (optional)
+      mobileNavOverlay.addEventListener('click', function(e) {
+        if (e.target === mobileNavOverlay) closeMobileNav();
+      });
+
+      // Hide desktop nav on mobile
+      function handleResize() {
+        if (window.innerWidth < 992) {
+          desktopNav.style.display = 'none';
+        } else {
+          desktopNav.style.display = '';
+          closeMobileNav();
         }
-
-        var dropToggles = document.querySelectorAll('.nav-dropdown .drop-toggle');
-        dropToggles.forEach(function(toggle){
-          toggle.addEventListener('click', function(e){
-            e.preventDefault();
-            var parent = toggle.closest('.nav-dropdown');
-            // toggle open on this parent, close others
-            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ if(n !== parent) n.classList.remove('open'); });
-            parent.classList.toggle('open');
-          });
-        });
-
-        // close dropdowns on outside click
-        document.addEventListener('click', function(e){
-          if (!e.target.closest('.nav-dropdown')) {
-            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ n.classList.remove('open'); });
-          }
-        });
-
-        // Add .is-loaded after first paint so CSS animations trigger after initial paint
-        try {
-          if ('requestAnimationFrame' in window) {
-            requestAnimationFrame(function(){
+      }
+      window.addEventListener('resize', handleResize);
+      handleResize();
+    });
               requestAnimationFrame(function(){
                 document.documentElement.classList.add('is-loaded');
                 // After we mark the page as loaded, assign stagger classes to common groups
