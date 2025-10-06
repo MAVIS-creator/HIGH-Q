@@ -455,14 +455,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
-
+    // DOM Elements
     const tutorModal = document.getElementById('tutorModal');
     const overlay = document.getElementById('modalOverlay');
     const closeBtn = document.getElementById('tutorModalClose');
     const newBtn = document.getElementById('newTutorBtn');
     const tutorForm = document.getElementById('tutorForm');
     const modalTitle = document.getElementById('tutorModalTitle');
+    const submitBtn = tutorForm.querySelector('button[type="submit"]');
 
     const fields = {
       name: document.getElementById('tName'),
@@ -496,6 +496,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       overlay.classList.remove('open');
       tutorModal.classList.remove('open');
     }
+
+    // Form submission handler
+    tutorForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'error') {
+          throw new Error(data.message || 'Failed to save tutor');
+        }
+        
+        return Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: data.message || 'Tutor saved successfully'
+        });
+      })
+      .then(() => {
+        closeModal();
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to save tutor. Please try again.'
+        });
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      });
+    });
 
     // Handle form submission via AJAX
     tutorForm.addEventListener('submit', function(e) {
