@@ -1,0 +1,88 @@
+{
+    "ts": "2025-10-06T17:10:49+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "delete",
+    "id_param": 13,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "120",
+        "Cache-Control": "max-age=0",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "Origin": "http://localhost",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-User": "?1",
+        "Sec-Fetch-Dest": "document",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+    },
+    "files": [],
+    "raw": "csrf_token=6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+}
+
+CSRF_PROVIDED: 6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:10:53+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "delete",
+    "id_param": 13,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "120",
+        "Cache-Control": "max-age=0",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Origin": "http://localhost",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-User": "?1",
+        "Sec-Fetch-Dest": "document",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+    },
+    "files": [],
+    "raw": "csrf_token=6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+}
+
+CSRF_PROVIDED: 6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw
+CSRF_OK: 1
+---
