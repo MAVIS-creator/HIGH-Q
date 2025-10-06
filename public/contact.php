@@ -3,6 +3,8 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
+// recaptcha config
+$recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/config/recaptcha.php' : ['site_key'=>'','secret'=>''];
 
 $errors = [];
 $success = '';
@@ -22,6 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = 'Invalid email address.'; }
 
 		if (empty($errors)) {
+			// verify recaptcha if configured
+			if (!empty($recfg['secret'])) {
+				$rc = $_POST['g-recaptcha-response'] ?? '';
+				if (!$rc) { $errors[] = 'Please complete the I am not a robot check.'; }
+				else {
+					$verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+					$params = http_build_query(['secret'=>$recfg['secret'], 'response'=>$rc, 'remoteip'=>$_SERVER['REMOTE_ADDR'] ?? '']);
+					$opts = ['http'=>['method'=>'POST','header'=>'Content-type: application/x-www-form-urlencoded','content'=>$params,'timeout'=>5]];
+					$ctx = stream_context_create($opts);
+					$res = @file_get_contents($verifyUrl, false, $ctx);
+					$j = $res ? json_decode($res, true) : null;
+					if (!$j || empty($j['success'])) { $errors[] = 'reCAPTCHA validation failed. Please try again.'; }
+				}
+			}
 				$to = 'highqsolidacademy@gmail.com';
 				$subject = 'Website Contact: ' . ($program ? $program : 'General Inquiry');
 				$html = "<h3>Contact form submission</h3>";
@@ -97,6 +113,15 @@ include __DIR__ . '/includes/header.php';
 
 				<div style="margin-top:12px;"><button class="btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
 			</form>
+				<?php if (!empty($recfg['site_key'])): ?>
+					<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+					<script>
+						(function(){
+							var f = document.querySelector('form'); if(!f) return;
+							var w = document.createElement('div'); w.className='g-recaptcha'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); w.style.marginTop='12px'; f.insertBefore(w, f.querySelector('button'));
+						})();
+					</script>
+				<?php endif; ?>
 		</div>
 	</main>
 
