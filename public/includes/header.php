@@ -110,8 +110,16 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           }
         }
 
-        // If maintenance is on, block public pages unless requester is admin by session (and in admin area), from allowed IP, or visiting an auth page
-        if ($maintenance && !(($isAdminBySession && $isAdminArea) || $ipAllowed || $isAdminAuthPage)) {
+        // Determine whether admins should be allowed to view the public site during maintenance (struct or legacy)
+        $allowAdminPublicView = false;
+        if (!empty($row) && isset($row['allow_admin_public_view_during_maintenance'])) {
+          $allowAdminPublicView = (bool)$row['allow_admin_public_view_during_maintenance'];
+        } elseif (!empty($j['security']['allow_admin_public_view_during_maintenance'])) {
+          $allowAdminPublicView = (bool)$j['security']['allow_admin_public_view_during_maintenance'];
+        }
+
+        // If maintenance is on, block public pages unless requester is admin by session (and in admin area) or allowed via flag/IP/auth page
+        if ($maintenance && !(($isAdminBySession && $isAdminArea) || $ipAllowed || $isAdminAuthPage || ($isAdminBySession && $allowAdminPublicView))) {
           // Render a simple maintenance notice and exit
           http_response_code(503);
           ?>
