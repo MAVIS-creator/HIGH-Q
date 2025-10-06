@@ -470,3 +470,243 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-04T21:53:45+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 4fb4d7f45d1cf-637881011e9sm6584420a12.25 - gsmtp
 
+[2025-10-06T10:13:21+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-46e72359e0asm152418475e9.12 - gsmtp
+
+[2025-10-06T10:13:21+02:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-10-06T10:13:21+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.96.128]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-06T10:13:21+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-10-06T10:13:21+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-10-06T10:13:22+02:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-10-06T10:13:23+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.96.128]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-06T10:13:23+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-10-06T10:13:23+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-10-06T10:13:23+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-06T10:13:23+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-10-06T10:13:23+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-06T10:13:23+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-10-06T10:13:23+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-10-06T10:13:24+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-46e72359e0asm152418475e9.12 - gsmtp
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<testuser+2627@mailtrap.io>
+
+[2025-10-06T10:13:24+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-46e72359e0asm152418475e9.12 - gsmtp
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-10-06T10:13:24+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-46e72359e0asm152418475e9.12 - gsmtp
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: Date: Mon, 6 Oct 2025 10:13:20 +0200
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: To: testuser+2627@mailtrap.io
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: Subject: New article: Test Newsletter Post 2025-10-06 10:13
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: Message-ID: <LEtQLS8O6THaSVHUinmknNbt53N1Es0vhCTU4t78@DESKTOP-OD5BIHH>
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: <p>Hi,</p><p>A new article was published: <strong>Test Newsletter Post 2025-10-06 10:13</strong></p><p>Test excerpt for newsletter.</p><p><a href='http://localhost/HIGH-Q/post.php?id=3'>Read the full article</a></p><hr><p style='font-size:0.9rem;color:#666'>If you no longer wish to receive these emails, <a href='http://localhost/HIGH-Q/public/unsubscribe_newsletter.php?token=3b5492a3d4ad3905b4cd4c28ade796f4ecdfea2a024acd35'>unsubscribe</a>.</p>
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-06T10:13:24+02:00] [level=1] CLIENT -> SERVER: .
+
+[2025-10-06T10:13:25+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1759738406 5b1f17b1804b1-46e72359e0asm152418475e9.12 - gsmtp
+
+[2025-10-06T10:13:25+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-06T10:13:25+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-46e72359e0asm152418475e9.12 - gsmtp
+
+[2025-10-06T10:13:26+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-4255d8f4abcsm19573306f8f.53 - gsmtp
+
+[2025-10-06T10:13:26+02:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-10-06T10:13:26+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.96.128]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-06T10:13:26+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-10-06T10:13:26+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-10-06T10:13:28+02:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-10-06T10:13:28+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.96.128]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-06T10:13:28+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-10-06T10:13:28+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-10-06T10:13:28+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-06T10:13:29+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-10-06T10:13:29+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-06T10:13:29+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-10-06T10:13:29+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-10-06T10:13:29+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-4255d8f4abcsm19573306f8f.53 - gsmtp
+
+[2025-10-06T10:13:29+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<testuser+6739@mailtrap.io>
+
+[2025-10-06T10:13:29+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-4255d8f4abcsm19573306f8f.53 - gsmtp
+
+[2025-10-06T10:13:29+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-10-06T10:13:30+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-4255d8f4abcsm19573306f8f.53 - gsmtp
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: Date: Mon, 6 Oct 2025 10:13:25 +0200
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: To: testuser+6739@mailtrap.io
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: Subject: New article: Test Newsletter Post 2025-10-06 10:13
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: Message-ID: <8dCkWswAJRKxgQYFOyXtTKPQOkhTHvHeVI1ULpjb0@DESKTOP-OD5BIHH>
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: <p>Hi,</p><p>A new article was published: <strong>Test Newsletter Post 2025-10-06 10:13</strong></p><p>Test excerpt for newsletter.</p><p><a href='http://localhost/HIGH-Q/post.php?id=3'>Read the full article</a></p><hr><p style='font-size:0.9rem;color:#666'>If you no longer wish to receive these emails, <a href='http://localhost/HIGH-Q/public/unsubscribe_newsletter.php?token=e72470805c54f3247f617a1380fe6659278cdd77b9d373f2'>unsubscribe</a>.</p>
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-06T10:13:30+02:00] [level=1] CLIENT -> SERVER: .
+
+[2025-10-06T10:13:31+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1759738411 ffacd0b85a97d-4255d8f4abcsm19573306f8f.53 - gsmtp
+
+[2025-10-06T10:13:31+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-06T10:13:31+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-4255d8f4abcsm19573306f8f.53 - gsmtp
+
+[2025-10-06T10:13:32+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-46e5c4ce4bbsm135292165e9.9 - gsmtp
+
+[2025-10-06T10:13:32+02:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-10-06T10:13:32+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.96.128]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-06T10:13:32+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-10-06T10:13:32+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-10-06T10:13:33+02:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-10-06T10:13:34+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.96.128]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-06T10:13:34+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-10-06T10:13:34+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-10-06T10:13:34+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-06T10:13:34+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-10-06T10:13:34+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-06T10:13:35+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-10-06T10:13:35+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-10-06T10:13:35+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-46e5c4ce4bbsm135292165e9.9 - gsmtp
+
+[2025-10-06T10:13:35+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<testuser+7611@mailtrap.io>
+
+[2025-10-06T10:13:35+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-46e5c4ce4bbsm135292165e9.9 - gsmtp
+
+[2025-10-06T10:13:35+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-10-06T10:13:36+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-46e5c4ce4bbsm135292165e9.9 - gsmtp
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: Date: Mon, 6 Oct 2025 10:13:31 +0200
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: To: testuser+7611@mailtrap.io
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: Subject: New article: Test Newsletter Post 2025-10-06 10:13
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: Message-ID: <8QCyIFRgBRdsZ8z4q1fLm2fnIhw48JEYbTazqLSdvVo@DESKTOP-OD5BIHH>
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: <p>Hi,</p><p>A new article was published: <strong>Test Newsletter Post 2025-10-06 10:13</strong></p><p>Test excerpt for newsletter.</p><p><a href='http://localhost/HIGH-Q/post.php?id=3'>Read the full article</a></p><hr><p style='font-size:0.9rem;color:#666'>If you no longer wish to receive these emails, <a href='http://localhost/HIGH-Q/public/unsubscribe_newsletter.php?token=f9df004b9deea111264d8a227d7a29cb5084dda1a91d0bdb'>unsubscribe</a>.</p>
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-06T10:13:36+02:00] [level=1] CLIENT -> SERVER: .
+
+[2025-10-06T10:13:37+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1759738417 5b1f17b1804b1-46e5c4ce4bbsm135292165e9.9 - gsmtp
+
+[2025-10-06T10:13:37+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-06T10:13:37+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-46e5c4ce4bbsm135292165e9.9 - gsmtp
+
