@@ -245,93 +245,123 @@ $csrfToken = generateToken('signup_form');
     <style>
         :root{
             
-      
-        .signup-container {
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    <style>
+        :root {
+            --hq-primary: #ffd600;
+            --hq-accent: #ff4b2b;
+            --hq-black: #0a0a0a;
+            --hq-gray: #f3f4f6;
+            --hq-red: #ff4b2b;
+            --hq-yellow: #ffd600;
+            --btn-padding: 0.8rem 1rem;
+            --btn-radius: 8px;
+            --btn-font-size: 1rem;
         }
-        .signup-container h2 {
+        body {
+            margin: 0;
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+            background: linear-gradient(135deg, var(--hq-primary), var(--hq-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 18px;
+            height: 100vh;
+        }
+        .signup-card {
+            background: var(--hq-gray);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 380px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+        }
+        .signup-card h2 {
+            color: var(--hq-accent);
+            margin-bottom: 1rem;
             text-align: center;
-            color: #333;
-            margin: 0 0 20px;
-            font-size: 20px;
+            font-size: 1.25rem;
         }
-        .form-group { margin-bottom: 12px; }
-        .form-group label {
+        label {
             display: block;
-            margin-bottom: 4px;
-            color: #555;
-            font-size: 14px;
+            font-weight: 700;
+            margin-top: 0.9rem;
+            color: var(--hq-black);
         }
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="password"] {
+        input {
             width: 100%;
-            padding: 8px 12px;
+            padding: 0.65rem;
+            margin-top: 0.3rem;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            border-radius: 8px;
         }
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 6px;
-            border: 1px dashed #ddd;
-            border-radius: 4px;
-        }
-        .form-group input:focus {
-            border-color: #FF6B00;
-            outline: none;
-        }
-        button[type="submit"] {
-            width: 100%;
-            background: #FF6B00;
-            color: white;
-            padding: 10px;
+        button {
+            background: var(--hq-accent);
+            color: #fff;
             border: none;
-            border-radius: 4px;
-            font-size: 15px;
+            padding: var(--btn-padding);
+            width: 100%;
+            font-size: var(--btn-font-size);
+            border-radius: var(--btn-radius);
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 1.2rem;
+            font-weight: 700;
         }
-        button[type="submit"]:hover { background: #E65100; }
-        .error { 
-            background: #ffe6e6;
-            color: #d63031;
-            padding: 10px;
+        button:hover {
+            background: var(--hq-primary);
+            color: var(--hq-black);
+        }
+        .error {
+            background: #ffefef;
+            color: var(--hq-accent);
+            padding: 0.5rem;
+            border-left: 4px solid var(--hq-accent);
+            margin-bottom: 1rem;
+        }
+        .success {
+            background: #ddffdd;
+            color: green;
+            padding: 0.5rem;
+            border-left: 4px solid green;
+            margin-bottom: 1rem;
+        }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.3rem;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-        .success { 
-            background: #e6ffe6;
-            color: #27ae60;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-        .toggle-eye {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            background: #fff;
+            font-size: 0.9rem;
             cursor: pointer;
-            color: #666;
         }
-        .login-link {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
+        input[type="file"]::-webkit-file-upload-button {
+            background: var(--hq-red);
+            color: var(--hq-gray);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-weight: 600;
         }
-        .login-link a {
-            color: #FF6B00;
-            text-decoration: none;
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: var(--hq-yellow);
+            color: var(--hq-black);
         }
-        .login-link a:hover { text-decoration: underline; }
+        input[type="file"]::file-selector-button {
+            background: var(--hq-red);
+            color: var(--hq-gray);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-weight: 600;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background: var(--hq-yellow);
+            color: var(--hq-black);
+        }
     </style>
         
 
