@@ -252,27 +252,27 @@ $users = $pdo->query("
   </div>
 
   <!-- Users Cards -->
-  <div class="users-list" id="userTableBody">
+  <div class="user-grid" id="userTableBody">
     <?php foreach ($users as $u): 
       $status = $u['is_active']==1 ? 'Active' : ($u['is_active']==0 ? 'Pending' : 'Banned');
       $roleClass   = 'role-' . strtolower($u['role_slug'] ?? 'student');
     ?>
     <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
-      <div class="card-left">
-  <img src="<?= $u['avatar'] ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg' ?>" class="avatar-sm card-avatar">
-        <div class="card-meta">
-          <div class="card-name"><?= htmlspecialchars($u['name']) ?></div>
-          <div class="card-email"><?= htmlspecialchars($u['email']) ?></div>
-          <div class="card-badges">
-            <span class="role-badge <?= $roleClass ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
-            <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
-          </div>
+      <div class="user-avatar">
+        <img src="<?= $u['avatar'] ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg' ?>" alt="Avatar">
+      </div>
+      <div class="user-info">
+        <div class="user-name"><?= htmlspecialchars($u['name']) ?></div>
+        <div class="user-email"><?= htmlspecialchars($u['email']) ?></div>
+        <div class="user-meta">
+          <span class="user-role <?= strtolower($u['role_slug'] ?? 'student') ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
+          <span class="user-status <?= strtolower($status) ?>"><?= $status ?></span>
         </div>
       </div>
-      <div class="card-right">
+      <div class="user-actions">
         <div class="card-actions">
-          <button class="btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
-          <button class="btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
+          <button class="btn-secondary" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+          <button class="btn-primary" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
               <?php if($u['is_active']===0): ?>
               <form method="post" action="?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
