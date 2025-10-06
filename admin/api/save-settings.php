@@ -117,6 +117,8 @@ try {
             'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
             'contact_instagram' => $contact['instagram'] ?? null,
             'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+            'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
+            'allow_admin_public_view_during_maintenance' => !empty($security['allow_admin_public_view_during_maintenance']) ? 1 : 0,
             'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
             'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
             'two_factor' => !empty($security['two_factor']) ? 1 : 0,
@@ -134,7 +136,7 @@ try {
                 vision = :vision, about = :about,
                 contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
                 contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
-                maintenance = :maintenance, registration = :registration, email_verification = :email_verification,
+                maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, allow_admin_public_view_during_maintenance = :allow_admin_public_view_during_maintenance, registration = :registration, email_verification = :email_verification,
                 two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
                 WHERE id = :id";
             $upd = $pdo->prepare($sql);
@@ -146,13 +148,13 @@ try {
                  bank_name, bank_account_name, bank_account_number,
                  contact_phone, contact_email, contact_address,
                  contact_facebook, contact_twitter, contact_instagram,
-                 maintenance, registration, email_verification, two_factor, comment_moderation)
+                 maintenance, maintenance_allowed_ips, allow_admin_public_view_during_maintenance, registration, email_verification, two_factor, comment_moderation)
                 VALUES
                 (:site_name, :tagline, :logo_url, :vision, :about,
                  :bank_name, :bank_account_name, :bank_account_number,
                  :contact_phone, :contact_email, :contact_address,
                  :contact_facebook, :contact_tiktok, :contact_instagram,
-                 :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
+                 :maintenance, :maintenance_allowed_ips, :allow_admin_public_view_during_maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
             $ins = $pdo->prepare($sql);
             $res = $ins->execute($params);
             error_log('save-settings: site_settings insert result: ' . json_encode(['res'=>$res,'params'=>['maintenance'=>$params['maintenance']]]));
