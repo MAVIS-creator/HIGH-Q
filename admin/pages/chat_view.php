@@ -196,4 +196,42 @@ document.getElementById('closeThreadBtn').addEventListener('click', function(){
 <?php require_once __DIR__ . '/../includes/footer.php';
 
 // Add small script to handle delete buttons (placed after footer include so DOM is ready)
-echo "<script>document.addEventListener('click', function(e){ if(!e.target.classList.contains('btn-delete-attachment')) return; var id=e.target.dataset.id; if(!id) return; if(!confirm('Delete attachment?')) return; var fd=new FormData(); fd.append('id', id); fd.append('_csrf', '".generateToken('chat_form')."'); fetch('/HIGH-Q/admin/api/delete_attachment.php',{method:'POST',body:fd}).then(r=>r.json()).then(j=>{ if(j.status==='ok'){ location.reload(); } else { alert('Delete failed: '+(j.message||'unknown')); } }).catch(e=>{ alert('Delete failed'); }); }, false);</script>";
+echo "<script>
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('btn-delete-attachment')) return;
+    var id = e.target.dataset.id;
+    if (!id) return;
+    
+    Swal.fire({
+        title: 'Delete Attachment?',
+        text: 'Are you sure you want to delete this attachment?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var fd = new FormData();
+            fd.append('id', id);
+            fd.append('_csrf', '".generateToken('chat_form')."');
+            
+            fetch('/HIGH-Q/admin/api/delete_attachment.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(r => r.json())
+            .then(j => {
+                if (j.status === 'ok') {
+                    Swal.fire('Deleted!', 'Attachment has been deleted.', 'success')
+                    .then(() => location.reload());
+                } else {
+                    Swal.fire('Error', 'Delete failed: ' + (j.message || 'unknown'), 'error');
+                }
+            })
+            .catch(e => {
+                Swal.fire('Error', 'Delete failed', 'error');
+            });
+        }
+    });
+}, false);</script>";
