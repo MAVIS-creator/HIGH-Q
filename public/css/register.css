@@ -78,26 +78,33 @@
 }
 
 /* Terms checkbox alignment - Updated */
-.form-row:has(input[name="agreed_terms"]) {
+.terms-row {
     margin: 20px 0;
 }
 
-.form-row:has(input[name="agreed_terms"]) label {
-    display: flex !important;
+.checkbox-wrapper {
+    display: flex;
     align-items: center;
-    font-weight: normal;
-    line-height: 1.4;
-    padding: 0;
-    margin: 0;
+    gap: 8px;
 }
 
-.form-row:has(input[name="agreed_terms"]) input[type="checkbox"] {
-    flex-shrink: 0;
-    margin: 0 8px 0 0;
+.checkbox-wrapper input[type="checkbox"] {
+    margin: 0;
     width: 16px;
     height: 16px;
-    position: relative;
-    top: 1px;
+}
+
+.checkbox-wrapper label {
+    display: inline;
+    margin: 0;
+    font-weight: normal;
+    line-height: 1;
+}
+
+/* Make the clickable area larger on mobile */
+.checkbox-wrapper label {
+    padding: 8px 0;
+    cursor: pointer;
 }
 
 /* Submit button */
