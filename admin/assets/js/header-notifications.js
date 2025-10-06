@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.className = 'notification-item ' + (n.is_read ? 'read' : '');
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
-                item.href = '#';
-
+                item.href = `/HIGH-Q/admin/${data.urls[n.type]}${n.id}`;
+                
                 const title = document.createElement('div');
                 title.className = 'notification-title';
                 title.textContent = n.title || '';
@@ -80,12 +80,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const time = document.createElement('div');
                 time.className = 'notification-time';
-                time.textContent = n.created_at || '';
+                // Format the timestamp nicely
+                const date = new Date(n.created_at);
+                time.textContent = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 
                 item.appendChild(title);
                 item.appendChild(message);
                 item.appendChild(time);
                 panel.appendChild(item);
+
+                // Add click handler
+                item.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    // Mark as read
+                    const formData = new FormData();
+                    formData.append('type', n.type);
+                    formData.append('id', n.id);
+                    try {
+                        await fetch('/HIGH-Q/admin/api/mark_read.php', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'same-origin'
+                        });
+                        // Add read class for visual feedback
+                        item.classList.add('read');
+                        // Update the badge count
+                        const curCount = parseInt(badge.textContent) || 0;
+                        if (curCount > 0) {
+                            badge.textContent = curCount - 1;
+                            if (curCount - 1 === 0) {
+                                badge.style.display = 'none';
+                            }
+                        }
+                        // Navigate to the detail page
+                        window.location.href = item.href;
+                    } catch (err) {
+                        console.error('Failed to mark notification as read:', err);
+                    }
+                });
             });
 
             // wire up Mark all button
