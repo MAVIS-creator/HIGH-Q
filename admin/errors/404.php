@@ -47,7 +47,7 @@ http_response_code(404);
         <div class="error-code">404</div>
         <h1>Page Not Found</h1>
         <p class="error-message">The requested admin page could not be found.</p>
-        <a href="../pages/index.php" class="back-link">← Return to Dashboard</a>
+        <a href="../index.php" class="back-link">← Return to Dashboard</a>
     </div>
 </body>
 </html>
