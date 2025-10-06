@@ -1,45 +1,20 @@
-# Enable authentication
 AuthType Basic
 AuthName "Admin Access"
 AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
 Require valid-user
 
-# Enable rewrite engine
-RewriteEngine On
-RewriteBase /HIGH-Q/admin/
+# Allow all access after authentication
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
 
-# Support for ngrok URLs and local development
-SetEnvIf Host "^.*\.ngrok\.io$" NGROK=1
-SetEnvIf Host "^localhost" LOCAL=1
-
-# Prevent directory listing
-Options -Indexes
-
-# Security headers
-<IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
 </IfModule>
 
 # Custom error pages
-ErrorDocument 400 /HIGH-Q/admin/errors/400.php
 ErrorDocument 401 /HIGH-Q/admin/errors/401.php
 ErrorDocument 403 /HIGH-Q/admin/errors/403.php
 ErrorDocument 404 /HIGH-Q/admin/errors/404.php
 ErrorDocument 500 /HIGH-Q/admin/errors/500.php
-
-# Allow execution of PHP files
-<Files *.php>
-    Require all granted
-</Files>
-
-# Block access to sensitive files
-<Files ~ "\.(env|config|json|lock)$">
-    Require all denied
-</Files>
-
-# Allow access to assets
-<FilesMatch "\.(css|js|gif|jpg|jpeg|png|ico|ttf|woff|woff2)$">
-    Require all granted
-</Files>
