@@ -1,6 +1,27 @@
 /* Responsive improvements and animations for admin panel */
 
 /* Base responsive improvements */
+/* Card grid layouts */
+.card-grid,
+.course-grid,
+.user-grid,
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+@media screen and (min-width: 1200px) {
+    .card-grid,
+    .course-grid,
+    .user-grid,
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .admin-main {
         margin-left: 0 !important;
