@@ -217,6 +217,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug' => $slug]);
           $success[] = "Tutor '{$name}' created.";
+          if ($isAjax) {
+            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' created successfully"]);
+            exit;
+          }
           
           if ($isAjax) {
             header('Content-Type: application/json');
@@ -243,6 +247,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id' => $id]);
           $success[] = "Tutor '{$name}' updated.";
+          if ($isAjax) {
+            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' updated successfully"]);
+            exit;
+          }
           
           if ($isAjax) {
             header('Content-Type: application/json');
