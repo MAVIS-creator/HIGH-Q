@@ -59,7 +59,11 @@ try {
     </div>
     <div class="form-row">
       <label>Featured Image</label>
-      <input type="file" name="featured_image" accept="image/*">
+      <div class="file-input-wrap">
+        <input type="file" name="featured_image" id="editImage" accept="image/*">
+        <button type="button" class="btn" onclick="document.getElementById('editImage').click()">Choose File</button>
+        <span id="editImageName" class="file-name">No file chosen</span>
+      </div>
       <?php if (!empty($post['featured_image'])): ?>
         <?php
           $fi = $post['featured_image'];
@@ -69,13 +73,14 @@ try {
             $imgSrc = '../public/' . ltrim($fi, '/');
           }
         ?>
-        <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb" id="existingThumb" style="margin-top:0.5rem;max-width:180px;">
+        <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb" id="existingThumb" style="margin-top:0.5rem;max-width:180px;border-radius:6px;">
       <?php endif; ?>
     </div>
     <div class="form-row">
       <label><input type="checkbox" name="publish" <?= $post['status']==='published'?'checked':''; ?>> Publish</label>
     </div>
     <div class="form-actions">
+      <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
       <button type="submit" class="btn-approve">Update Post</button>
     </div>
   </form>
@@ -84,19 +89,27 @@ try {
 // edit-link clicks are handled centrally from the posts listing page. This file only contains the modal content.
 </script>
 <script>
-  // Preview chosen featured image file
+  // Preview chosen featured image file and update filename display
   (function(){
-    var fileInput = document.querySelector('input[name="featured_image"]');
+    var fileInput = document.getElementById('editImage');
+    var fileNameDisplay = document.getElementById('editImageName');
     if (fileInput) {
       fileInput.addEventListener('change', function(){
         var f = this.files && this.files[0];
-        if (!f) return;
+        if (!f) {
+          fileNameDisplay.textContent = 'No file chosen';
+          return;
+        }
+        fileNameDisplay.textContent = f.name;
         var reader = new FileReader();
         reader.onload = function(e){
           var img = document.getElementById('existingThumb');
           if (!img) {
-            img = document.createElement('img'); img.className='thumb'; img.id='existingThumb'; img.style.maxWidth='180px';
-            fileInput.parentNode.appendChild(img);
+            img = document.createElement('img');
+            img.className = 'thumb';
+            img.id = 'existingThumb';
+            img.style.cssText = 'margin-top:0.5rem;max-width:180px;border-radius:6px;';
+            fileInput.closest('.form-row').appendChild(img);
           }
           img.src = e.target.result;
         };
