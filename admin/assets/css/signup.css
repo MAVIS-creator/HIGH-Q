@@ -1,0 +1,127 @@
+.signup-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.signup-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.signup-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.signup-container label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.signup-container input[type="text"],
+.signup-container input[type="email"],
+.signup-container input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.signup-container input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.signup-container input:focus {
+    border-color: #FF6B00;
+    outline: none;
+}
+
+.signup-container button {
+    background: #FF6B00;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.signup-container button:hover {
+    background: #E65100;
+}
+
+.error {
+    background: #ffe6e6;
+    color: #d63031;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.success {
+    background: #e6ffe6;
+    color: #27ae60;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.toggle-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.toggle-eye:hover {
+    color: #FF6B00;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+.login-link a {
+    color: #FF6B00;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .signup-container {
+        margin: 20px;
+        padding: 20px;
+    }
+}
