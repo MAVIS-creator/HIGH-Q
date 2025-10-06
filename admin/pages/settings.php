@@ -51,6 +51,11 @@ function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings'
 // Upsert into the new `site_settings` structured table for client-side SQL reads
 function upsertSiteSettings(PDO $pdo, array $data) {
     try {
+        $logError = function($msg) {
+            $logFile = __DIR__ . '/site_settings_error.log';
+            $ts = date('Y-m-d H:i:s');
+            file_put_contents($logFile, "[$ts] $msg\n", FILE_APPEND);
+        };
         // Start transaction only if not already active
         $shouldCommit = false;
         if (!$pdo->inTransaction()) {
@@ -251,94 +256,102 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Security toggles
     if (isset($posted['security']) && is_array($posted['security'])) {
         foreach ($defaults['security'] as $k => $v) {
-            if ($k === 'enforcement_mode') {
-                // accept 'mac', 'ip' or 'both'
-                $mode = trim($posted['security']['enforcement_mode'] ?? '') ?: $v;
-                if (!in_array($mode, ['mac','ip','both'])) $mode = $v;
-                $safeSet($next, ['security', $k], $mode);
-                continue;
+                // Start transaction only if not already active
+                $shouldCommit = false;
+                if (!$pdo->inTransaction()) {
+                    $pdo->beginTransaction();
+                    $shouldCommit = true;
+                }
+                // Map to columns with safe defaults
+                $site = $data['site'] ?? [];
+                $contact = $data['contact'] ?? [];
+                $security = $data['security'] ?? [];
+
+                $params = [
+                    'site_name' => $site['name'] ?? null,
+                    'tagline' => $site['tagline'] ?? null,
+                    'logo_url' => $site['logo'] ?? null,
+                    'bank_name' => $site['bank_name'] ?? null,
+                    'bank_account_name' => $site['bank_account_name'] ?? null,
+                    'bank_account_number' => $site['bank_account_number'] ?? null,
+                    'vision' => $site['vision'] ?? null,
+                    'about' => $site['about'] ?? null,
+                    'contact_phone' => $contact['phone'] ?? null,
+                    'contact_email' => $contact['email'] ?? null,
+                    'contact_address' => $contact['address'] ?? null,
+                    'contact_facebook' => $contact['facebook'] ?? null,
+                    'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
+                    'contact_instagram' => $contact['instagram'] ?? null,
+                    'maintenance' => !empty($security['maintenance']) ? 1 : 0,
+                    'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
+                    'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
+                    'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
+                    'two_factor' => !empty($security['two_factor']) ? 1 : 0,
+                    'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0
+                ];
+
+                // If a row exists, update the first row; otherwise insert
+                try {
+                    $stmt = $pdo->query('SELECT id FROM site_settings ORDER BY id ASC LIMIT 1');
+                    $id = $stmt->fetchColumn();
+                } catch (Exception $e) {
+                    $logError('SELECT id error: ' . $e->getMessage());
+                    $id = false;
+                }
+
+                if ($id) {
+                    $sql = "UPDATE site_settings SET
+                        site_name = :site_name, tagline = :tagline, logo_url = :logo_url,
+                        bank_name = :bank_name, bank_account_name = :bank_account_name, bank_account_number = :bank_account_number,
+                        vision = :vision, about = :about,
+                        contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
+                        contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
+                        maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
+                        two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
+                        WHERE id = :id";
+                    $params['id'] = $id;
+                    $upd = $pdo->prepare($sql);
+                    $result = $upd->execute($params);
+                    if (!$result) {
+                        $logError('UPDATE failed: ' . implode(' | ', $upd->errorInfo()));
+                    }
+                } else {
+                    $sql = "INSERT INTO site_settings
+                        (site_name, tagline, logo_url, vision, about,
+                         bank_name, bank_account_name, bank_account_number,
+                         contact_phone, contact_email, contact_address,
+                         contact_facebook, contact_tiktok, contact_instagram,
+                        maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation)
+                        VALUES
+                        (:site_name, :tagline, :logo_url, :vision, :about,
+                         :bank_name, :bank_account_name, :bank_account_number,
+                         :contact_phone, :contact_email, :contact_address,
+                         :contact_facebook, :contact_tiktok, :contact_instagram,
+                         :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
+                    $ins = $pdo->prepare($sql);
+                    $result = $ins->execute($params);
+                    if (!$result) {
+                        $logError('INSERT failed: ' . implode(' | ', $ins->errorInfo()));
+                    }
+                }
+                if ($shouldCommit) {
+                    if ($result) {
+                        $pdo->commit();
+                        return true;
+                    } else {
+                        $pdo->rollBack();
+                        return false;
+                    }
+                }
+                return $result;
+            } catch (Exception $e) {
+                // Roll back transaction on any error
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                $logError('Exception: ' . $e->getMessage());
+                throw $e;
             }
-            $val = isset($posted['security'][$k]) ? (bool)$posted['security'][$k] : false;
-            $safeSet($next, ['security', $k], $val);
-        }
-    }
-
-    // Notifications
-    if (isset($posted['notifications']) && is_array($posted['notifications'])) {
-        foreach ($defaults['notifications'] as $k => $v) {
-            $val = isset($posted['notifications'][$k]) ? (bool)$posted['notifications'][$k] : false;
-            $safeSet($next, ['notifications', $k], $val);
-        }
-    }
-
-    // Advanced
-    if (isset($posted['advanced']) && is_array($posted['advanced'])) {
-        foreach (['ip_logging','security_scanning','brute_force','ssl_enforce','auto_backup'] as $k) {
-            $val = isset($posted['advanced'][$k]) ? (bool)$posted['advanced'][$k] : false;
-            $safeSet($next, ['advanced', $k], $val);
-        }
-        // numeric fields
-        $maxAttempts = intval($posted['advanced']['max_login_attempts'] ?? $current['advanced']['max_login_attempts']);
-        $sessionTimeout = intval($posted['advanced']['session_timeout'] ?? $current['advanced']['session_timeout']);
-        $safeSet($next, ['advanced', 'max_login_attempts'], max(1, $maxAttempts));
-        $safeSet($next, ['advanced', 'session_timeout'], max(1, $sessionTimeout));
-    }
-
-    // Persist to DB
-    $saved = false;
-    try {
-        $saved = saveSettingsToDb($pdo, $next);
-        if (!$saved) {
-            throw new Exception('Failed to save settings to database');
-        }
-        
-        // Also try to update the site_settings table
-        try {
-            upsertSiteSettings($pdo, $next);
-        } catch (Exception $e) {
-            error_log('Site settings upsert error: ' . $e->getMessage());
-            // Don't fail completely if only the site_settings update fails
-        }
-        
-    } catch (Exception $e) {
-        $saved = false;
-        error_log('Settings save error: ' . $e->getMessage());
-        
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'title' => 'Error',
-                'message' => $e->getMessage(),
-                'icon' => 'error'
-            ]);
-            exit;
-        }
-    }
-
-    if ($saved) {
-        // Also upsert into the structured site_settings table for client-side SQL reads
-        try {
-            // Set error reporting to catch any database errors
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            if (!upsertSiteSettings($pdo, $next)) {
-                throw new Exception('Failed to update site settings');
-            }
-        } catch (Exception $e) {
-            // Log error and treat as fatal
-            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'site_settings_upsert_failed', ['error'=>$e->getMessage()]); } catch (Exception $ee) {}
-            $saved = false;
-        }
-
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'status' => 'ok',
-                'message' => 'Settings saved successfully',
-                'icon' => 'success',
-                'title' => 'Success'
-            ]);
             exit;
         }
         setFlash('success', 'Settings saved.');
