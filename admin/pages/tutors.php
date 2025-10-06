@@ -472,13 +472,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
         const response = await fetch(this.action, {
           method: 'POST',
           body: formData,
+          credentials: 'include', // include cookies / basic auth
           headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
           }
         });
         
         // First check if the response is OK
         if (!response.ok) {
+          const txt = await response.text().catch(() => '[no body]');
+          console.error('Non-OK response', response.status, txt);
           throw new Error(`Server error: ${response.status}`);
         }
         
@@ -491,7 +495,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
           }
         } else {
           const text = await response.text();
-          console.log('Server response:', text);
+          console.error('Non-JSON response from server:', text);
           throw new Error('Server did not return JSON response');
         }
         
