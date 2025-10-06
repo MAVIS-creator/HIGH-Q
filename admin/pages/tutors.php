@@ -438,12 +438,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               const formData = new FormData(this);
               const response = await fetch(this.action, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }
               });
               
-              const result = await response.text();
+              // Try to parse as JSON, if not possible, treat as error
+              let data;
+              const contentType = response.headers.get('content-type');
+              if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+              } else {
+                // If not JSON, get the text and check for success indicators
+                const text = await response.text();
+                if (text.includes('success')) {
+                  data = { status: 'success' };
+                } else {
+                  throw new Error('Invalid response format');
+                }
+              }
               
-              // Assuming success if we got here
+              if (data.status === 'error') {
+                throw new Error(data.message || 'Failed to save tutor');
+              }
+              
+              // Show success message
               await Swal.fire({
                 icon: 'success',
                 title: 'Success',
@@ -459,7 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Failed to save tutor. Please try again.'
+                text: error.message || 'Failed to save tutor. Please try again.'
               });
             } finally {
               // Reset button state
