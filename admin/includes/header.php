@@ -53,6 +53,7 @@ if (!headers_sent()) {
     <script src="../assets/js/notifications.js" defer></script>
     <script src="../assets/js/header-notifications.js" defer></script>
     <script src="../assets/js/viewport-check.js" defer></script>
+    <script src="../assets/js/admin-forms.js" defer></script>
     <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
