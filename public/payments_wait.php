@@ -43,12 +43,12 @@ $csrf = generateToken('signup_form');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="/assets/css/payment.css">
+  <link rel="stylesheet" href="./assets/css/payment.css">
 </head>
 <body>
   <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
     <div class="container" style="display:flex;align-items:center;gap:12px;">
-  <img src="/assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
         <div style="font-size:12px;color:#666;">Secure payment</div>
@@ -97,7 +97,7 @@ $csrf = generateToken('signup_form');
               btn.disabled = true; btn.textContent = 'Recording...';
               document.getElementById('pageSpinner').style.display = 'block';
               var fd = new FormData(form);
-              fetch(window.HQ_BASE + '/api/mark_sent.php', {
+              fetch(window.HQ_BASE + './api/mark_sent.php', {
                 method: 'POST',
                 body: fd,
                 credentials: 'same-origin',
