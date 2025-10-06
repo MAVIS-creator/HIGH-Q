@@ -25,23 +25,10 @@
 }
 
 /* General */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
 body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  margin: 0;
   font-family: 'Soel Sans Theory', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   overflow-x: hidden;
-}
-
-/* Main content wrapper should grow to fill space above footer */
-.public-main {
-  flex: 1 0 auto;
-  min-height: 0;
 }
 
 /* Bootstrap container override for consistent branding */
@@ -299,28 +286,17 @@ nav a.active::after {
 
 /* Footer */
 .site-footer {
-  background: linear-gradient(90deg, #222 60%, #333 100%);
+  background: var(--hq-black);
   color: #fff;
-  padding: 48px 0 0 0;
-  font-size: 16px;
-  margin-top: auto;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-  left: 0;
-  right: 0;
-  overflow-x: hidden;
-  border-top: 4px solid var(--hq-yellow);
+  padding: 40px 20px 20px;
+  font-size: 14px;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
-  gap: 48px;
-  padding: 0 32px 32px 32px;
-  max-width: 1200px;
-  margin: 0 auto;
-  box-sizing: border-box;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: clamp(20px, 3vw, 30px);
+  padding: clamp(20px, 3vw, 40px) 0;
 }
 
 /* Logo + About */
@@ -336,10 +312,9 @@ nav a.active::after {
 }
 
 .footer-about h2 {
-  font-size: 22px;
+  font-size: 16px;
   margin: 0;
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
 .footer-about small {
@@ -349,10 +324,8 @@ nav a.active::after {
 }
 
 .footer-about p {
-  margin: 14px 0 0 0;
-  color: #eee;
-  font-size: 16px;
-  line-height: 1.6;
+  margin: 10px 0;
+  line-height: 1.5;
 }
 
 .footer-about .motto span {
@@ -461,14 +434,14 @@ nav a.active::after {
   margin-bottom: 8px;
 }
 
-.footer-links a {
-  color: #ffe566;
+.footer-links a,
+.footer-programs a {
+  color: var(--hq-gray);
   text-decoration: none;
-  font-size: 16px;
-  margin-bottom: 10px;
-  display: block;
-  transition: color 0.2s;
+  transition: color 0.3s;
 }
+
+.footer-links a:hover,
 .footer-programs a:hover {
   color: var(--hq-yellow);
 }
