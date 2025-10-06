@@ -211,7 +211,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
-  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
+  <link rel="stylesheet" href="/HIGH-Q/assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
   <!-- Fallback to CDN if local not available -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Font Awesome (fallback for admin/backwards compatibility) -->
@@ -220,13 +220,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="./assets/css/public.css">
-  <link rel="stylesheet" href="./assets/css/responsive.css">
-  <link rel="stylesheet" href="./assets/css/ceo-responsive.css">
-  <link rel="stylesheet" href="./assets/css/animations.css">
-  <link rel="stylesheet" href="./assets/css/social-icons.css">
-  <link rel="stylesheet" href="./assets/css/post-toc.css">
-  <link rel="stylesheet" href="./assets/css/hero.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/public.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/responsive.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/ceo-responsive.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/animations.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/social-icons.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/post-toc.css">
+  <link rel="stylesheet" href="/HIGH-Q/assets/css/hero.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
