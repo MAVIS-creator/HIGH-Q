@@ -701,7 +701,7 @@ function filterStudents(){
 }
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
-</script>
+
 
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
