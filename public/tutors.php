@@ -6,13 +6,14 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   try {
     require_once __DIR__ . '/config/db.php';
     if (isset($pdo)) {
-      // Get all active tutors, prioritizing featured ones first
-      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_active = 1 ORDER BY is_featured DESC, created_at DESC");
+      // Try featured tutors first (preserve featured if any), but when falling back or listing ensure tutors are ordered by id ascending per UX request
+      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
       $stmt->execute();
       $tutors = $stmt->fetchAll();
-      // If no active tutors found, fall back to any tutors (for testing)
+      // If none are featured, fall back to any tutors so the section is visible for testing
       if (empty($tutors)) {
-        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY created_at DESC");
+        // order by id ascending as requested
+        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC LIMIT 6");
         $stmt2->execute();
         $tutors = $stmt2->fetchAll();
       }
