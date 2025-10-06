@@ -368,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
         <div class="form-actions">
           <div class="sticky-actions">
-              <button type="submit" class="btn-primary">Save Tutor</button>
+              <button type="submit" class="btn-approve">Save Tutor</button>
           </div>
           <button type="reset" class="btn-cancel">Clear</button>
         </div>
@@ -379,6 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
   <?php include '../includes/footer.php'; ?>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     // Modal logic
     document.addEventListener('DOMContentLoaded', function() {
@@ -422,6 +423,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             overlay.classList.remove('open');
             tutorModal.classList.remove('open');
           }
+
+          // Handle form submission via AJAX
+          tutorForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitBtn = tutorForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            
+            try {
+              const formData = new FormData(this);
+              const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData
+              });
+              
+              const result = await response.text();
+              
+              // Assuming success if we got here
+              await Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Tutor saved successfully!'
+              });
+              
+              // Close modal and refresh page
+              closeModal();
+              window.location.reload();
+              
+            } catch (error) {
+              console.error('Error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to save tutor. Please try again.'
+              });
+            } finally {
+              // Reset button state
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalText;
+            }
+          });
 
           // X closes modal
           closeBtn.addEventListener('click', closeModal);
