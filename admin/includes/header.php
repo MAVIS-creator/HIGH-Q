@@ -44,13 +44,15 @@ if (!headers_sent()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/notifications.css">
     <link rel="stylesheet" href="../assets/css/admin-style.css">
+    <link rel="stylesheet" href="../assets/css/notifications.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/notifications.js" defer></script>
     <script src="../assets/js/header-notifications.js" defer></script>
+    <script src="../assets/js/viewport-check.js" defer></script>
     <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
