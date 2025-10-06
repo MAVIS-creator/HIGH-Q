@@ -1,8 +1,8 @@
-# Basic Authentication
-AuthType Basic
-AuthName "Admin Login"
-AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
-Require valid-user
+# Basic Authentication (temporarily disabled for local debugging)
+# AuthType Basic
+# AuthName "Admin Login"
+# AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+# Require valid-user
 
 # Allow accessing assets after authentication
 <FilesMatch "\.(css|js|gif|jpg|jpeg|png|ico|woff|woff2|ttf|svg)$">
