@@ -51,6 +51,19 @@
   gap: 1rem;
   align-items: center;
   padding: 1rem;
+
+/* Fallback multi-column grid rules for various card wrappers */
+.card-wrap, .card-grid, .summary-cards, .course-grid, .user-list, .roles-table-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Ensure individual cards don't constrain width and can flow into grid */
+.card, .user-card, .course-card, .stat-card {
+  max-width: 100%;
+  width: 100%;
+}
   border-bottom: 1px solid #eee;
 }
 
