@@ -226,12 +226,28 @@ $users = $pdo->query("
 
 <div class="users-page">
 
-  <!-- Summary Cards -->
-  <div class="summary-cards">
-    <div class="card"><span class="icon"><i class='bx bx-user'></i></span><div><h3><?= $total_users ?></h3><p>Total Users</p></div></div>
-    <div class="card"><span class="icon"><i class='bx bx-user-check'></i></span><div><h3><?= $active_users ?></h3><p>Active</p></div></div>
-    <div class="card"><span class="icon"><i class='bx bx-time-five'></i></span><div><h3><?= $pending_users ?></h3><p>Pending</p></div></div>
-    <div class="card"><span class="icon"><i class='bx bx-user-x'></i></span><div><h3><?= $banned_users ?></h3><p>Banned</p></div></div>
+  <!-- User Statistics -->
+  <div class="user-stats">
+    <div class="stat-card">
+      <div class="icon"><i class='bx bx-user'></i></div>
+      <div class="number"><?= $total_users ?></div>
+      <div class="label">Total Users</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon"><i class='bx bx-user-check'></i></div>
+      <div class="number"><?= $active_users ?></div>
+      <div class="label">Active</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon"><i class='bx bx-time-five'></i></div>
+      <div class="number"><?= $pending_users ?></div>
+      <div class="label">Pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon"><i class='bx bx-user-x'></i></div>
+      <div class="number"><?= $banned_users ?></div>
+      <div class="label">Banned</div>
+    </div>
   </div>
 
   <!-- Search + Filter -->
@@ -251,11 +267,11 @@ $users = $pdo->query("
     </select>
   </div>
 
-  <!-- Users Cards -->
-  <div class="user-grid" id="userTableBody">
+  <!-- User List -->
+  <div class="user-list" id="userTableBody">
     <?php foreach ($users as $u): 
       $status = $u['is_active']==1 ? 'Active' : ($u['is_active']==0 ? 'Pending' : 'Banned');
-      $roleClass   = 'role-' . strtolower($u['role_slug'] ?? 'student');
+      $roleClass = 'role-' . strtolower($u['role_slug'] ?? 'student');
     ?>
     <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
       <div class="user-avatar">
