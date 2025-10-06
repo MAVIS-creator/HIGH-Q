@@ -186,53 +186,73 @@
     color: #333;
 }
 
-/* Why Choose Us section */
+/* Why Choose Us section - Mobile First */
 .why-box {
     display: block !important;
+    margin-bottom: 20px !important;
+    background: var(--hq-yellow) !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.why-box h4 {
+    color: #fff !important;
+    font-size: 20px !important;
+    margin-bottom: 15px !important;
+    font-weight: bold !important;
 }
 
 .why-stats {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 15px;
-    margin-top: 15px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    margin-top: 15px !important;
 }
 
 .why-stats .stat {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 8px;
-    background: #f8f9fa;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
 }
 
 .why-stats .stat .icon {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    border-radius: 50%;
-    flex-shrink: 0;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #fff !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+}
+
+.why-stats .stat .icon i {
+    font-size: 20px !important;
+    color: var(--hq-yellow) !important;
 }
 
 .why-stats .stat .stat-body {
-    flex: 1;
+    flex: 1 !important;
 }
 
 .why-stats .stat strong {
-    display: block;
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 2px;
+    display: block !important;
+    font-size: 18px !important;
+    color: #333 !important;
+    margin-bottom: 4px !important;
+    font-weight: bold !important;
 }
 
 .why-stats .stat span {
-    display: block;
-    font-size: 14px;
-    color: #666;
+    display: block !important;
+    font-size: 14px !important;
+    color: #666 !important;
+    line-height: 1.4 !important;
 }
 
 /* Tablet and desktop styles */
