@@ -340,9 +340,10 @@ body {
   background: transparent;
   width: 95%;
   margin-left: 5%;
-  padding: 2;
+  padding: 15px 20px;
   font-size: 0.95rem;
   box-shadow: none;
+  position: static;
 }
 main {
   flex: 1; /* pushes footer to the bottom */
