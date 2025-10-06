@@ -343,10 +343,10 @@ body {
   padding: 15px 20px;
   font-size: 0.95rem;
   box-shadow: none;
-  position: static;
+  position: relative;
   margin-top: auto;
   bottom: 0;
-  
+  clear: both;
 }
 
 
