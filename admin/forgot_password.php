@@ -5,7 +5,9 @@ require __DIR__ . '/includes/csrf.php';
 require __DIR__ . '/includes/functions.php'; // contains PHPMailer wrapper
 require __DIR__ . '/../vendor/autoload.php';
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $error = '';
 $success = '';
