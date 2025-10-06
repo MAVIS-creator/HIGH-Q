@@ -51,6 +51,12 @@ function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings'
 // Upsert into the new `site_settings` structured table for client-side SQL reads
 function upsertSiteSettings(PDO $pdo, array $data) {
     try {
+        // Error logging helper
+        $logError = function($msg) {
+            $logFile = __DIR__ . '/site_settings_error.log';
+            $ts = date('Y-m-d H:i:s');
+            file_put_contents($logFile, "[$ts] $msg\n", FILE_APPEND);
+        };
         // Start transaction
         $pdo->beginTransaction();
         
@@ -86,7 +92,10 @@ function upsertSiteSettings(PDO $pdo, array $data) {
     try {
         $stmt = $pdo->query('SELECT id FROM site_settings ORDER BY id ASC LIMIT 1');
         $id = $stmt->fetchColumn();
-    } catch (Exception $e) { $id = false; }
+    } catch (Exception $e) {
+        $logError('SELECT id error: ' . $e->getMessage());
+        $id = false;
+    }
 
     if ($id) {
         $sql = "UPDATE site_settings SET
@@ -100,7 +109,12 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             WHERE id = :id";
         $params['id'] = $id;
         $upd = $pdo->prepare($sql);
-        return $upd->execute($params);
+        $result = $upd->execute($params);
+        if (!$result) {
+            $logError('UPDATE failed: ' . implode(' | ', $upd->errorInfo()));
+        }
+        $pdo->commit();
+        return $result;
     } else {
         $sql = "INSERT INTO site_settings
             (site_name, tagline, logo_url, vision, about,
@@ -116,8 +130,9 @@ function upsertSiteSettings(PDO $pdo, array $data) {
              :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
-        
-        // Commit the transaction
+        if (!$result) {
+            $logError('INSERT failed: ' . implode(' | ', $ins->errorInfo()));
+        }
         if ($result) {
             $pdo->commit();
             return true;
@@ -131,6 +146,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
+        $logError('Exception: ' . $e->getMessage());
         throw $e;
     }
 }
