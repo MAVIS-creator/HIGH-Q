@@ -5,6 +5,9 @@ require './includes/functions.php'; // contains sendEmail()
 require './includes/csrf.php';
 require __DIR__ . '/../vendor/autoload.php';
 
+// load recaptcha config
+$recfg = file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>''];
+
 $errors = [];
 $success = '';
 
@@ -83,6 +86,20 @@ function resizeAndCrop($srcPath, $destPath, $targetWidth = 300, $targetHeight = 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token    = $_POST['_csrf_token'] ?? '';
+    // verify recaptcha if configured
+    if (!empty($recfg['secret'])) {
+        $rc = $_POST['g-recaptcha-response'] ?? '';
+        if (!$rc) { $errors[] = 'Please complete the I am not a robot check.'; }
+        else {
+            $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+            $params = http_build_query(['secret'=>$recfg['secret'], 'response'=>$rc, 'remoteip'=>$_SERVER['REMOTE_ADDR'] ?? '']);
+            $opts = ['http'=>['method'=>'POST','header'=>'Content-type: application/x-www-form-urlencoded','content'=>$params,'timeout'=>5]];
+            $ctx = stream_context_create($opts);
+            $res = @file_get_contents($verifyUrl, false, $ctx);
+            $j = $res ? json_decode($res, true) : null;
+            if (!$j || empty($j['success'])) { $errors[] = 'reCAPTCHA validation failed. Please try again.'; }
+        }
+    }
     $name     = trim($_POST['name'] ?? '');
     $phone    = trim($_POST['phone'] ?? '');
     $email    = trim($_POST['email'] ?? '');

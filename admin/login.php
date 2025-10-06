@@ -3,6 +3,8 @@ session_start();
 require './includes/db.php';
 require './includes/functions.php'; // sendEmail(), etc.
 require './includes/csrf.php'; // CSRF functions
+// load recaptcha config
+$recfg = file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>''];
 
 $error = '';
 
@@ -13,6 +15,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['_csrf_token'] ?? '';
     if (!verifyToken('login_form', $token)) {
         $error = "Invalid CSRF token. Please refresh and try again.";
+    } else {
+        // Verify reCAPTCHA v2/v3 token if site key configured
+        if (!empty($recfg['secret'])) {
+            $recaptcha_response = $_POST['g-recaptcha-response'] ?? '';
+            if (!$recaptcha_response) {
+                $error = "Please complete the I am not a robot check.";
+            } else {
+                // Verify against Google API
+                $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+                $params = http_build_query(['secret'=>$recfg['secret'], 'response'=>$recaptcha_response, 'remoteip'=>$_SERVER['REMOTE_ADDR'] ?? '']);
+                $opts = ['http'=>['method'=>'POST','header'=>'Content-type: application/x-www-form-urlencoded','content'=>$params,'timeout'=>5]];
+                $ctx = stream_context_create($opts);
+                $res = @file_get_contents($verifyUrl, false, $ctx);
+                $j = $res ? json_decode($res, true) : null;
+                if (!$j || empty($j['success'])) {
+                    $error = 'reCAPTCHA validation failed. Please try again.';
+                }
+            }
+        }
     } else {
         $email    = trim($_POST['email']);
         $password = trim($_POST['password']);
@@ -238,6 +259,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <button type="submit">Sign In</button>
         </form>
+
+        <?php if (!empty($recfg['site_key'])): ?>
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+            <script>
+                // Inject a grecaptcha widget into the login form by appending a div
+                (function(){
+                    var f = document.querySelector('form');
+                    if (!f) return;
+                    var w = document.createElement('div');
+                    w.className = 'g-recaptcha';
+                    w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>');
+                    w.style.marginTop = '12px';
+                    f.insertBefore(w, f.querySelector('button'));
+                })();
+            </script>
+        <?php endif; ?>
 
         <a href="forgot_password.php" class="forgot-link">Forgot Password?</a>
         <a href="signup.php" class="forgot-link" style="margin-top:0.25rem;">Don't have an account? Sign up</a>
