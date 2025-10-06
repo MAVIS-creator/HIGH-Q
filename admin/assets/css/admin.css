@@ -344,6 +344,9 @@ body {
   font-size: 0.95rem;
   box-shadow: none;
   position: static;
+  margin-top: auto;
+  bottom: 0;
+  
 }
 
 
