@@ -3,8 +3,7 @@
 // Safe debug endpoint to inspect incoming headers, cookies, and POST payload for AJAX troubleshooting.
 // This file should be removed after debugging.
 
-require_once __DIR__ . '/../includes/auth.php'; // optional: keep admin auth check consistent with other endpoints
-
+// Note: intentionally NOT including auth.php so this endpoint can be used for debugging locally.
 header('Content-Type: application/json; charset=utf-8');
 
 $headers = [];
