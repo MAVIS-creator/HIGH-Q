@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const panel = document.createElement('div');
     panel.className = 'notif-panel notification-list';
     panel.id = 'notifPanel';
+    panel.style.maxHeight = '420px';
+    panel.style.overflow = 'auto';
     
     // Clone button and add to wrapper
     wrap.appendChild(btn.cloneNode(true));
