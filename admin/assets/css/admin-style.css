@@ -6,19 +6,15 @@
 }
 
 .admin-footer {
-    background: #fff;
-    border-top: 1px solid #eee;
-    padding: 15px 0;
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 50;
+    background: linear-gradient(90deg, #ffd54f, #ffb300); /* warm yellow gradient */
+    color: #111;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-top: none;
 }
 
 .footer-card {
-    max-width: 1200px;
-    margin: 0 auto; /* Center horizontally */
+    width: min(1200px, 95%);
+    margin: 0 auto; /* center block */
     padding: 0 20px;
     display: flex;
     align-items: center;
@@ -37,6 +33,7 @@
 
 .footer-card-body {
     flex-grow: 1;
+    margin-left: 0; /* reset any previous shifts */
 }
 
 .footer-title {
@@ -60,7 +57,7 @@
 .footer-card-right {
     flex-shrink: 0;
     font-size: 0.85rem;
-    color: #666;
+    color: rgba(0,0,0,0.6);
 }
 
 /* User card styles */
