@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $csrf = generateToken('signup_form');
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
-<link rel="stylesheet" href="./assets/css/register-fixed.css">
+<link rel="stylesheet" href="/assets/css/main-fixed.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <!-- Hero (reuse about-hero styling used across the site) -->
@@ -304,7 +304,7 @@ $csrf = generateToken('signup_form');
 																required
 															>
 															<label for="agreed_terms" class="terms-label">
-																<span>I agree to the <a href="terms.php" target="_blank">terms and conditions</a></span>
+																<span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span>
 															</label>
 														</div>
 													</div>
