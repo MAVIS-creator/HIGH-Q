@@ -1,0 +1,88 @@
+<IfModule mod_rewrite.c><IfModule mod_rewrite.c>
+
+    RewriteEngine On    RewriteEngine On
+
+    Options -Indexes    Options -Indexes
+
+
+
+    RewriteBase /HIGH-Q/    RewriteBase /HIGH-Q/
+
+
+
+    # Allow direct access to assets directory    # Allow direct access to assets directory
+
+    RewriteCond %{REQUEST_URI} ^/HIGH-Q/public/assets/    RewriteRule ^assets/ - [L]
+
+    RewriteRule ^ - [L]
+
+    # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
+
+    # Allow direct access to assets directory from root    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
+
+    RewriteCond %{REQUEST_URI} ^/HIGH-Q/assets/
+
+    RewriteRule ^ - [L]    # Protect file downloads through script
+
+    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
+
+    # Rewrite assets requests from root to public
+
+    RewriteCond %{REQUEST_URI} ^/HIGH-Q/assets/(.*)$    # Send all non-file/directory requests to public/index.php
+
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L]    RewriteCond %{REQUEST_FILENAME} !-f
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF    RewriteRule ^(.*)$ public/index.php [L,QSA]
+
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]</IfModule>
+
+
+
+    # Protect file downloads through script# Redirect everything to /public except existing files and directories
+
+    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]RewriteCond %{REQUEST_FILENAME} !-f
+
+RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Send all non-file/directory requests to public/index.phpRewriteRule ^(.*)$ public/$1 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    RewriteCond %{REQUEST_FILENAME} !-d# Optional: set index
+
+    RewriteRule ^(.*)$ public/index.php [L,QSA]DirectoryIndex index.php
+
+</IfModule>
+# Protect sensitive files
+<FilesMatch "^\.(env|htaccess|git|config)|\.(sql|bak|config|json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Prevent directory listing
+Options All -Indexes
+
+# Protect against common vulnerabilities
+RewriteCond %{QUERY_STRING} base64_encode[^(]*\([^)]*\) [OR]
+RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+RewriteRule .* index.php [F]
+
+# Custom error pages
+ErrorDocument 400 /public/errors/400.php
+ErrorDocument 401 /public/errors/401.php
+ErrorDocument 403 /public/errors/403.php
+ErrorDocument 404 /public/errors/404.php
+ErrorDocument 500 /public/errors/500.php
