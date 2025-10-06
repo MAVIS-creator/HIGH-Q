@@ -329,7 +329,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Handle navbar toggle
+        // Handle navbar toggle
     document.addEventListener('DOMContentLoaded', function() {
       const navbarToggler = document.querySelector('.navbar-toggler');
       const navbarCollapse = document.getElementById('mainNav');
@@ -338,14 +338,10 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       function toggleMenu() {
         isOpen = !isOpen;
         navbarToggler.classList.toggle('active');
+        navbarCollapse.classList.toggle('show');
         
-        if (isOpen) {
-          navbarCollapse.classList.add('show');
-          document.body.style.overflow = 'hidden';
-        } else {
-          navbarCollapse.classList.remove('show');
-          document.body.style.overflow = '';
-        }
+        // Prevent body scroll when menu is open
+        document.body.style.overflow = isOpen ? 'hidden' : '';
       }
 
       // Toggle menu when clicking the button
@@ -376,7 +372,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           }
         });
       });
-    });
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
