@@ -127,15 +127,32 @@ $notifications = array_slice($notifications,0,10);
 
 // Check read status for all notifications
 foreach ($notifications as &$notification) {
-    $readStmt = $pdo->prepare("
-        SELECT is_read 
-        FROM notifications 
-        WHERE user_id = ? AND type = ? AND reference_id = ?
-    ");
+    $readStmt = $pdo->prepare(
+        "SELECT is_read FROM notifications WHERE user_id = ? AND type = ? AND reference_id = ?"
+    );
     $readStmt->execute([$_SESSION['user']['id'], $notification['type'], $notification['id']]);
     $notification['is_read'] = (bool)$readStmt->fetchColumn();
 }
 unset($notification); // Break reference
+// Wrap in try/catch so missing notifications table doesn't cause a fatal error on installs without that table.
+try {
+    foreach ($notifications as &$notification) {
+        $readStmt = $pdo->prepare(
+            "SELECT is_read FROM notifications WHERE user_id = ? AND type = ? AND reference_id = ?"
+        );
+        $readStmt->execute([$_SESSION['user']['id'], $notification['type'], $notification['id']]);
+        $notification['is_read'] = (bool)$readStmt->fetchColumn();
+    }
+    unset($notification); // Break reference
+} catch (Throwable $e) {
+    // If the notifications table doesn't exist (or any other DB error), mark all as unread
+    foreach ($notifications as &$notification) {
+        $notification['is_read'] = false;
+    }
+    unset($notification);
+    // Preserve debug info when ?debug=1 is used
+    $debug['notifications_read_error'] = $e->getMessage();
+}
 
 // ✅ Normal mode
 $response = [
