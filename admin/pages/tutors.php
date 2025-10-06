@@ -408,197 +408,179 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    // Modal logic
-    document.addEventListener('DOMContentLoaded', function() {
-          const tutorModal = document.getElementById('tutorModal');
-          const overlay = document.getElementById('modalOverlay');
-          const closeBtn = document.getElementById('tutorModalClose');
-          const newBtn = document.getElementById('newTutorBtn');
-          const tutorForm = document.getElementById('tutorForm');
-          const modalTitle = document.getElementById('tutorModalTitle');
+  document.addEventListener('DOMContentLoaded', function() {
+    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
 
-          const fields = {
-            name: document.getElementById('tName'),
-            title: document.getElementById('tTitle'),
-            subs: document.getElementById('tSubjects'),
-            years: document.getElementById('tYears'),
-            bio: document.getElementById('tBio'),
-            image: document.getElementById('tImageUrl')
-          };
+    const tutorModal = document.getElementById('tutorModal');
+    const overlay = document.getElementById('modalOverlay');
+    const closeBtn = document.getElementById('tutorModalClose');
+    const newBtn = document.getElementById('newTutorBtn');
+    const tutorForm = document.getElementById('tutorForm');
+    const modalTitle = document.getElementById('tutorModalTitle');
 
-          function openModal(mode, data = {}) {
-            overlay.classList.add('open');
-            tutorModal.classList.add('open');
-              if (mode === 'edit') {
-              modalTitle.textContent = 'Edit Tutor';
-              tutorForm.action = `/HIGH-Q/admin/pages/tutors.php?action=edit&id=${data.id}`;
-              fields.name.value = data.name || '';
-              fields.title.value = data.title || '';
-              // email/phone removed from modal; keep them server-side untouched
-              fields.subs.value = data.subjects || '';
-              fields.years.value = data.years || '';
-              fields.bio.value = data.bio || '';
-              fields.image.value = data.image || '';
-            } else {
-              modalTitle.textContent = 'Add Tutor';
-              tutorForm.action = '/HIGH-Q/admin/pages/tutors.php?action=create';
-              Object.values(fields).forEach(f => f.value = '');
-            }
+    const fields = {
+      name: document.getElementById('tName'),
+      title: document.getElementById('tTitle'),
+      subs: document.getElementById('tSubjects'),
+      years: document.getElementById('tYears'),
+      bio: document.getElementById('tBio'),
+      image: document.getElementById('tImageUrl')
+    };
+
+    function openModal(mode, data = {}) {
+      overlay.classList.add('open');
+      tutorModal.classList.add('open');
+      if (mode === 'edit') {
+        modalTitle.textContent = 'Edit Tutor';
+        tutorForm.action = `${BASE_URL}/admin/pages/tutors.php?action=edit&id=${data.id}`;
+        fields.name.value = data.name || '';
+        fields.title.value = data.title || '';
+        fields.subs.value = data.subjects || '';
+        fields.years.value = data.years || '';
+        fields.bio.value = data.bio || '';
+        fields.image.value = data.image || '';
+      } else {
+        modalTitle.textContent = 'Add Tutor';
+        tutorForm.action = `${BASE_URL}/admin/pages/tutors.php?action=create`;
+        Object.values(fields).forEach(f => f.value = '');
+      }
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      tutorModal.classList.remove('open');
+    }
+
+    // Handle form submission via AJAX
+    tutorForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const submitBtn = tutorForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      try {
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
           }
-
-          function closeModal() {
-            overlay.classList.remove('open');
-            tutorModal.classList.remove('open');
-          }
-
-          // Handle form submission via AJAX
-          tutorForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const submitBtn = tutorForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
-            
-            try {
-              const formData = new FormData(this);
-              const response = await fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }
-              });
-              
-              // Try to parse as JSON, if not possible, treat as error
-              let data;
-              const contentType = response.headers.get('content-type');
-              if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-              } else {
-                // If not JSON, get the text and check for success indicators
-                const text = await response.text();
-                if (text.includes('success')) {
-                  data = { status: 'success' };
-                } else {
-                  throw new Error('Invalid response format');
-                }
-              }
-              
-              if (data.status === 'error') {
-                throw new Error(data.message || 'Failed to save tutor');
-              }
-              
-              // Show success message
-              await Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Tutor saved successfully!'
-              });
-              
-              // Close modal and refresh page
-              closeModal();
-              window.location.reload();
-              
-            } catch (error) {
-              console.error('Error:', error);
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'Failed to save tutor. Please try again.'
-              });
-            } finally {
-              // Reset button state
-              submitBtn.disabled = false;
-              submitBtn.textContent = originalText;
-            }
-          });
-
-          // Modal close handlers
-          closeBtn.addEventListener('click', closeModal);
-          overlay.addEventListener('click', closeModal);
-          document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
-
-          // New tutor button handler
-          newBtn.addEventListener('click', () => openModal('create'));
-
-          // Edit tutor button handlers
-          document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-              const card = btn.closest('.tutor-card');
-              if (!card) return;
-
-              openModal('edit', {
-                id: card.dataset.id,
-                name: card.dataset.name,
-                title: card.dataset.title,
-                image: card.dataset.image,
-                years: card.dataset.years,
-                bio: card.dataset.bio,
-                subjects: card.dataset.subjects
-              });
-            });
-          });
         });
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    function deleteTutor(id, name) {
-      Swal.fire({
-        title: "Delete Tutor?",
-        text: "Are you sure you want to delete " + name + "?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, delete it!"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const form = document.createElement("form");
-          form.method = "POST";
-          form.action = `/HIGH-Q/admin/pages/tutors.php?action=delete&id=${id}`;
 
-          const csrfInput = document.createElement("input");
-          csrfInput.type = "hidden";
-          csrfInput.name = "csrf_token";
-          csrfInput.value = "<?= $csrf ?>";
-          form.appendChild(csrfInput);
-
-          document.body.appendChild(form);
-          form.submit();
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          if (text.includes('success')) {
+            data = { status: 'success' };
+          } else {
+            throw new Error('Invalid response format');
+          }
         }
+
+        if (data.status === 'error') {
+          throw new Error(data.message || 'Failed to save tutor');
+        }
+
+        await Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Tutor saved successfully!'
+        });
+
+        closeModal();
+        window.location.reload();
+      } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to save tutor. Please try again.'
+        });
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
+    newBtn.addEventListener('click', () => openModal('create'));
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.tutor-card');
+        if (!card) return;
+        openModal('edit', {
+          id: card.dataset.id,
+          name: card.dataset.name,
+          title: card.dataset.title,
+          image: card.dataset.image,
+          years: card.dataset.years,
+          bio: card.dataset.bio,
+          subjects: card.dataset.subjects
+        });
       });
-    }
+    });
+  });
+</script>
 
-    function editTutor(id) {
-      // find the tutor card by ID
-      const card = document.querySelector(`.tutor-card[data-id='${id}']`);
-      if (!card) return;
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      // grab info from dataset
-      const name = card.dataset.name || '';
-      const title = card.dataset.title || '';
-      const subs = card.dataset.subjects || '';
-      const years = card.dataset.years || '';
-      const bio = card.dataset.bio || '';
-      const image = card.dataset.image || '';
+<script>
+  function deleteTutor(id, name) {
+    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+    Swal.fire({
+      title: "Delete Tutor?",
+      text: "Are you sure you want to delete " + name + "?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = `${BASE_URL}/admin/pages/tutors.php?action=delete&id=${id}`;
 
-      // open modal and fill values
-      document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
-  const form = document.getElementById('tutorForm');
-  form.action = `/HIGH-Q/admin/pages/tutors.php?action=edit&id=${id}`;
-      document.getElementById('tName').value = name;
-      document.getElementById('tTitle').value = title;
-      document.getElementById('tSubjects').value = subs;
-      document.getElementById('tYears').value = years;
-      document.getElementById('tBio').value = bio;
-      document.getElementById('tImageUrl').value = image;
+        const csrfInput = document.createElement("input");
+        csrfInput.type = "hidden";
+        csrfInput.name = "csrf_token";
+        csrfInput.value = "<?= $csrf ?>";
+        form.appendChild(csrfInput);
 
-      document.getElementById('modalOverlay').classList.add('open');
-      document.getElementById('tutorModal').classList.add('open');
-    }
-  </script>
+        document.body.appendChild(form);
+        form.submit();
+      }
+    });
+  }
+
+  function editTutor(id) {
+    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+    const card = document.querySelector(`.tutor-card[data-id='${id}']`);
+    if (!card) return;
+
+    document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
+    const form = document.getElementById('tutorForm');
+    form.action = `${BASE_URL}/admin/pages/tutors.php?action=edit&id=${id}`;
+    document.getElementById('tName').value = card.dataset.name || '';
+    document.getElementById('tTitle').value = card.dataset.title || '';
+    document.getElementById('tSubjects').value = card.dataset.subjects || '';
+    document.getElementById('tYears').value = card.dataset.years || '';
+    document.getElementById('tBio').value = card.dataset.bio || '';
+    document.getElementById('tImageUrl').value = card.dataset.image || '';
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.getElementById('tutorModal').classList.add('open');
+  }
+</script>
+
 </body>
 
 </html>
