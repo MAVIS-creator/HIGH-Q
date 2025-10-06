@@ -256,48 +256,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Security toggles
     if (isset($posted['security']) && is_array($posted['security'])) {
         foreach ($defaults['security'] as $k => $v) {
-                // Start transaction only if not already active
-                $shouldCommit = false;
-                if (!$pdo->inTransaction()) {
-                    $pdo->beginTransaction();
-                    $shouldCommit = true;
-                }
-                // Map to columns with safe defaults
-                $site = $data['site'] ?? [];
-                $contact = $data['contact'] ?? [];
-                $security = $data['security'] ?? [];
-
-                $params = [
-                    'site_name' => $site['name'] ?? null,
-                    'tagline' => $site['tagline'] ?? null,
-                    'logo_url' => $site['logo'] ?? null,
-                    'bank_name' => $site['bank_name'] ?? null,
-                    'bank_account_name' => $site['bank_account_name'] ?? null,
-                    'bank_account_number' => $site['bank_account_number'] ?? null,
-                    'vision' => $site['vision'] ?? null,
-                    'about' => $site['about'] ?? null,
-                    'contact_phone' => $contact['phone'] ?? null,
-                    'contact_email' => $contact['email'] ?? null,
-                    'contact_address' => $contact['address'] ?? null,
-                    'contact_facebook' => $contact['facebook'] ?? null,
-                    'contact_tiktok' => $contact['tiktok'] ?? $contact['twitter'] ?? null,
-                    'contact_instagram' => $contact['instagram'] ?? null,
-                    'maintenance' => !empty($security['maintenance']) ? 1 : 0,
-                    'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
-                    'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
-                    'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
-                    'two_factor' => !empty($security['two_factor']) ? 1 : 0,
-                    'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0
-                ];
-
-                // If a row exists, update the first row; otherwise insert
-                try {
-                    $stmt = $pdo->query('SELECT id FROM site_settings ORDER BY id ASC LIMIT 1');
-                    $id = $stmt->fetchColumn();
-                } catch (Exception $e) {
-                    $logError('SELECT id error: ' . $e->getMessage());
-                    $id = false;
-                }
+            if (isset($posted['security'][$k])) {
+                $safeSet($next, ['security', $k], $posted['security'][$k]);
+            }
+        }
 
                 if ($id) {
                     $sql = "UPDATE site_settings SET
@@ -354,9 +316,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             exit;
         }
-        setFlash('success', 'Settings saved.');
-        header('Location: ?pages=settings');
-        exit;
+    // Save settings to DB (JSON)
+    saveSettingsToDb($pdo, $next);
+    // Upsert to site_settings table
+    upsertSiteSettings($pdo, $next);
+    setFlash('success', 'Settings saved.');
+    header('Location: ?pages=settings');
+    exit;
     }
 
     // Save failed
