@@ -189,7 +189,10 @@ $csrf = generateToken('signup_form');
           // polling for admin confirmation and server-side expiry
           function check(){
             if (!ref) return;
-            var xhr = new XMLHttpRequest(); xhr.open('GET', (window.HQ_BASE||'') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref), true);
+            var xhr = new XMLHttpRequest();
+            // add a timestamp to prevent aggressive caching by proxies/browsers
+            var url = (window.HQ_BASE||'') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref) + '&t=' + Date.now();
+            xhr.open('GET', url, true);
             xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText);
                   if (r.status==='ok' && r.payment) {
                     var st = r.payment.status || '';
@@ -206,9 +209,9 @@ $csrf = generateToken('signup_form');
                 } catch(e){} }};
             xhr.send();
           }
-          // run an initial check and then poll
+          // run an initial check and then poll every 5 seconds
           check();
-          setInterval(check, 10000);
+          setInterval(check, 5000);
 
           // when the user successfully records a payment we can clear the page timer so UX resets on next visit
           document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); } catch(e){} });
