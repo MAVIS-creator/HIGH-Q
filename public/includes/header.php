@@ -341,7 +341,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       navbarCollapse.addEventListener('show.bs.collapse', function () {
         openIcon.classList.add('d-none');
         closeIcon.classList.remove('d-none');
-      });
 
       navbarCollapse.addEventListener('hide.bs.collapse', function () {
         openIcon.classList.remove('d-none');
