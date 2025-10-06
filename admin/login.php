@@ -16,24 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyToken('login_form', $token)) {
         $error = "Invalid CSRF token. Please refresh and try again.";
     } else {
-        // Verify reCAPTCHA v2/v3 token if site key configured
-        if (!empty($recfg['secret'])) {
-            $recaptcha_response = $_POST['g-recaptcha-response'] ?? '';
-            if (!$recaptcha_response) {
-                $error = "Please complete the I am not a robot check.";
-            } else {
-                // Verify against Google API
-                $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
-                $params = http_build_query(['secret'=>$recfg['secret'], 'response'=>$recaptcha_response, 'remoteip'=>$_SERVER['REMOTE_ADDR'] ?? '']);
-                $opts = ['http'=>['method'=>'POST','header'=>'Content-type: application/x-www-form-urlencoded','content'=>$params,'timeout'=>5]];
-                $ctx = stream_context_create($opts);
-                $res = @file_get_contents($verifyUrl, false, $ctx);
-                $j = $res ? json_decode($res, true) : null;
-                if (!$j || empty($j['success'])) {
-                    $error = 'reCAPTCHA validation failed. Please try again.';
-                }
-            }
-        }
+        // Temporarily disabled reCAPTCHA
+        // if (!empty($recfg['secret'])) {
+        //     // ... recaptcha verification code ...
+        // }
         // proceed with authentication only if no error so far (CSRF & recaptcha OK)
         if (empty($error)) {
         $email    = trim($_POST['email']);
