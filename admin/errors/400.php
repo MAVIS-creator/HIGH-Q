@@ -47,7 +47,7 @@ http_response_code(400);
         <div class="error-code">400</div>
         <h1>Bad Request</h1>
         <p class="error-message">The request could not be processed.</p>
-        <a href="../pages/index.php" class="back-link">← Return to Dashboard</a>
+        <a href="../index.php" class="back-link">← Return to Dashboard</a>
     </div>
 </body>
 </html>
