@@ -124,6 +124,7 @@ try {
             'two_factor' => !empty($security['two_factor']) ? 1 : 0,
             'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0
         ];
+        error_log('save-settings: site_settings params: ' . json_encode($params));
 
         // Detect existing row
         $stmt = $pdo->query('SELECT id FROM site_settings ORDER BY id ASC LIMIT 1');
@@ -141,13 +142,13 @@ try {
                 WHERE id = :id";
             $upd = $pdo->prepare($sql);
             $res = $upd->execute($params);
-            error_log('save-settings: site_settings update result: ' . json_encode(['sid'=>$sid,'res'=>$res,'params'=>['maintenance'=>$params['maintenance']]]));
+            error_log('save-settings: site_settings update result: ' . json_encode(['sid'=>$sid,'res'=>$res,'params'=>$params]));
         } else {
             $sql = "INSERT INTO site_settings
                 (site_name, tagline, logo_url, vision, about,
                  bank_name, bank_account_name, bank_account_number,
                  contact_phone, contact_email, contact_address,
-                 contact_facebook, contact_twitter, contact_instagram,
+                 contact_facebook, contact_tiktok, contact_instagram,
                  maintenance, maintenance_allowed_ips, allow_admin_public_view_during_maintenance, registration, email_verification, two_factor, comment_moderation)
                 VALUES
                 (:site_name, :tagline, :logo_url, :vision, :about,
@@ -157,7 +158,7 @@ try {
                  :maintenance, :maintenance_allowed_ips, :allow_admin_public_view_during_maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
             $ins = $pdo->prepare($sql);
             $res = $ins->execute($params);
-            error_log('save-settings: site_settings insert result: ' . json_encode(['res'=>$res,'params'=>['maintenance'=>$params['maintenance']]]));
+            error_log('save-settings: site_settings insert result: ' . json_encode(['res'=>$res,'params'=>$params]));
         }
     } catch (Exception $e) {
         // Best-effort; log and continue
