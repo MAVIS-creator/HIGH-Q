@@ -44,7 +44,7 @@ http_response_code(401);
         <div class="error-code">401</div>
         <h1>Unauthorized Access</h1>
         <p class="error-message">You need to be authenticated to access this resource.</p>
-        <a href="/HIGH-Q/public/index.php" class="back-link">← Return to Homepage</a>
+        <a href="../public/index.php" class="back-link">← Return to Homepage</a>
     </div>
 
     <?php include '../includes/footer.php'; ?>

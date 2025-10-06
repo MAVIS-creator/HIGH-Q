@@ -44,7 +44,7 @@ http_response_code(400);
         <div class="error-code">400</div>
         <h1>Bad Request</h1>
         <p class="error-message">Sorry, your browser sent a request that this server could not understand.</p>
-        <a href="/HIGH-Q/public/index.php" class="back-link">← Return to Homepage</a>
+        <a href="../public/index.php" class="back-link">← Return to Homepage</a>
     </div>
 
     <?php include '../includes/footer.php'; ?>

@@ -1,26 +1,5 @@
 User-agent: *
-Disallow: /admin/
-Disallow: /vendor/
-Disallow: /config/
-Disallow: /src/
-Disallow: /bin/
-Disallow: /migrations/
-Disallow: /tools/
-Disallow: /scripts/
-Disallow: /storage/
-Disallow: /downloads/
-Disallow: /pay/
-Disallow: /*.sql$
-Disallow: /*.php$
-Disallow: /*.json$
-Disallow: /*.lock$
-Disallow: /*.log$
-Disallow: /*.bak$
-Disallow: /*.config$
-Disallow: /.env
-Disallow: /.git/
-Disallow: /composer.json
-Disallow: /composer.lock
+# Allow public pages
 Allow: /public/
 Allow: /public/assets/
 Allow: /public/index.php
@@ -29,6 +8,16 @@ Allow: /public/contact.php
 Allow: /public/programs.php
 Allow: /public/news.php
 Allow: /public/community.php
+
+# Protect sensitive paths
+Disallow: /downloads/
+Disallow: /pay/
+Disallow: /*.php$
+Disallow: /*.json$
+Disallow: /*.lock$
+Disallow: /*.log$
+Disallow: /*.bak$
+Disallow: /*.config$
 
 # Slow down bots to prevent overload
 Crawl-delay: 10
