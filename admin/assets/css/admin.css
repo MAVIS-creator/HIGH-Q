@@ -343,6 +343,7 @@ body {
   padding: 20px 0;
   font-size: 0.95rem;
   box-shadow: none;
+  display: grid;
   
 }
 
