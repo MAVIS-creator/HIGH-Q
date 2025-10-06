@@ -186,7 +186,7 @@
     color: #333;
 }
 
-/* Why Choose Us section - Mobile First */
+/* Why Choose Us section - Fixed zoom issues */
 .why-box {
     display: block !important;
     margin: 20px -15px !important;
@@ -194,6 +194,12 @@
     background: var(--hq-yellow) !important;
     visibility: visible !important;
     opacity: 1 !important;
+    position: relative !important;
+    width: auto !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
 }
 
 .why-box h4 {
@@ -205,23 +211,28 @@
 }
 
 .why-stats {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 10px !important;
     margin: 0 !important;
-    justify-content: space-between !important;
+    width: 100% !important;
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 .why-stats .stat {
-    flex: 1 1 auto !important;
-    min-width: calc(33.333% - 10px) !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
+    justify-content: flex-start !important;
     text-align: center !important;
     padding: 10px 5px !important;
     background: transparent !important;
+    position: relative !important;
+    z-index: 2 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .why-stats .stat .icon {
