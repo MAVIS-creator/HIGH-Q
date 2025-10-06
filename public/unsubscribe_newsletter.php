@@ -5,6 +5,13 @@ $email = trim($_GET['email'] ?? $_POST['email'] ?? '');
 $token = trim($_GET['token'] ?? $_POST['token'] ?? '');
 
 // Accept either token alone or email+token for safety
+<?php
+require_once __DIR__ . '/config/db.php';
+
+$email = trim($_GET['email'] ?? $_POST['email'] ?? '');
+$token = trim($_GET['token'] ?? $_POST['token'] ?? '');
+
+// Accept either token alone or email+token for safety
 if (!$token) {
     // show a simple form to paste token/email
     ?>
@@ -38,5 +45,3 @@ if ($id) {
 } else {
     echo "Invalid unsubscribe link or token.";
 }
-
-```php
