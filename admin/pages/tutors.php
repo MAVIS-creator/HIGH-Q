@@ -498,7 +498,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
 
     // Handle form submission via AJAX
-    tutorForm.addEventListener('submit', async function(e) {
+    tutorForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      const formData = new FormData(e.target);
+      
+      fetch(e.target.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.status === 'error') {
+          throw new Error(data.message || 'Failed to save tutor');
+        }
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: data.message || 'Tutor saved successfully'
+        }).then(() => {
+          closeModal();
+          window.location.reload();
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to save tutor. Please try again.'
+        });
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      });
       e.preventDefault();
       const submitBtn = tutorForm.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
