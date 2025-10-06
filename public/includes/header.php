@@ -488,8 +488,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         } catch (ioErr) { /* ignore IntersectionObserver errors on old browsers */ }
       });
     })();
-  }
-
+  });
   </script>
 
   <main class="public-main">
