@@ -707,7 +707,9 @@ $csrf = generateToken('settings_form');
         </div>
 
         <div style="margin-top:18px;">
-            <button type="submit" class="header-cta">Save Changes</button>
+            <div class="sticky-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
         </div>
     </form>
 

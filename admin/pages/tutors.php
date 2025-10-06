@@ -367,7 +367,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-approve">Save Tutor</button>
+          <div class="sticky-actions">
+              <button type="submit" class="btn-primary">Save Tutor</button>
+          </div>
           <button type="reset" class="btn-cancel">Clear</button>
         </div>
       </form>

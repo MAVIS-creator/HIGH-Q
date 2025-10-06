@@ -377,7 +377,9 @@ $users = $pdo->query("
           </select>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn-approve">Save Changes</button>
+          <div class="sticky-actions">
+              <button type="submit" class="btn-primary">Save Changes</button>
+          </div>
         </div>
       </form>
     </div>
