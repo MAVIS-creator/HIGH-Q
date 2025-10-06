@@ -11,19 +11,13 @@
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
     RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
     
-    # Block access to sensitive directories
-    RewriteRule ^(vendor|config|src|bin|migrations|tools|scripts)/ - [F,L]
-    
-    # Clean URLs for admin panel
-    RewriteRule ^admin/?$ admin/index.php [L]
-    
     # Protect file downloads through script
     RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
     
-    # Preserve existing files and directories
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
+    # Send all non-file/directory requests to public/index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/index.php [L,QSA]
 </IfModule>
 
 # Protect sensitive files

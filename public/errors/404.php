@@ -44,7 +44,7 @@ http_response_code(404);
         <div class="error-code">404</div>
         <h1>Page Not Found</h1>
         <p class="error-message">The page you're looking for does not exist or has been moved.</p>
-        <a href="/HIGH-Q/public/index.php" class="back-link">← Return to Homepage</a>
+        <a href="./public/index.php" class="back-link">← Return to Homepage</a>
     </div>
 
     <?php include '../includes/footer.php'; ?>

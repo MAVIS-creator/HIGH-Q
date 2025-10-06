@@ -44,7 +44,7 @@ http_response_code(500);
         <div class="error-code">500</div>
         <h1>Server Error</h1>
         <p class="error-message">Something went wrong on our end. Please try again later.</p>
-        <a href="/HIGH-Q/public/index.php" class="back-link">← Return to Homepage</a>
+        <a href="/public/index.php" class="back-link">← Return to Homepage</a>
     </div>
 
     <?php include '../includes/footer.php'; ?>
