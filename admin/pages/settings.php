@@ -51,8 +51,12 @@ function saveSettingsToDb(PDO $pdo, array $data, string $key = 'system_settings'
 // Upsert into the new `site_settings` structured table for client-side SQL reads
 function upsertSiteSettings(PDO $pdo, array $data) {
     try {
-        // Start transaction
-        $pdo->beginTransaction();
+        // Start transaction only if not already active
+        $shouldCommit = false;
+        if (!$pdo->inTransaction()) {
+            $pdo->beginTransaction();
+            $shouldCommit = true;
+        }
         
         // Map to columns with safe defaults
         $site = $data['site'] ?? [];
@@ -100,7 +104,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             WHERE id = :id";
         $params['id'] = $id;
         $upd = $pdo->prepare($sql);
-        return $upd->execute($params);
+        $result = $upd->execute($params);
     } else {
         $sql = "INSERT INTO site_settings
             (site_name, tagline, logo_url, vision, about,
@@ -116,8 +120,8 @@ function upsertSiteSettings(PDO $pdo, array $data) {
              :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
-        
-        // Commit the transaction
+    }
+    if ($shouldCommit) {
         if ($result) {
             $pdo->commit();
             return true;
@@ -126,6 +130,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             return false;
         }
     }
+    return $result;
     } catch (Exception $e) {
         // Roll back transaction on any error
         if ($pdo->inTransaction()) {
