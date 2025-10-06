@@ -1,26 +1,40 @@
 .notification-list .notification-item {
-    padding: 10px;
+    padding: 12px 15px;
     border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background-color: #fff;
 }
 
 .notification-list .notification-item:hover {
-    background-color: #f5f5f5;
+    background-color: #f8f9fa;
+    text-decoration: none;
+    color: inherit;
+}
+
+.notification-list .notification-item:active {
+    background-color: #f0f0f0;
 }
 
 .notification-list .notification-item.read {
-    opacity: 0.7;
-    background-color: #f9f9f9;
+    opacity: 0.75;
+    background-color: #fafafa;
 }
 
 .notification-list .notification-item .notification-title {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+    font-size: 0.95rem;
 }
 
 .notification-list .notification-item .notification-message {
     color: #666;
     font-size: 0.9em;
+    line-height: 1.4;
+    margin-bottom: 6px;
 }
 
 .notification-list .notification-item .notification-time {
@@ -29,6 +43,40 @@
 }
 
 /* Panel header for notifications dropdown */
-.notif-panel-header { border-bottom: 1px solid #eee; }
-.notif-panel-header .mark-all { font-size: 0.9rem; color: #007bff; background: none; border: none; padding: 6px 8px; cursor: pointer; }
-.notif-panel-header .mark-all:disabled { opacity: 0.6; cursor: default; }
+.notif-panel-header { 
+    border-bottom: 1px solid #eee;
+    background: #fafafa;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.notif-panel-header .mark-all { 
+    font-size: 0.9rem;
+    color: #007bff;
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notif-panel-header .mark-all:hover {
+    color: #0056b3;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+.notif-panel-header .mark-all:disabled { 
+    opacity: 0.6;
+    cursor: default;
+    background: none;
+}
+
+/* Empty state */
+.notif-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #999;
+    font-size: 0.95rem;
+}
