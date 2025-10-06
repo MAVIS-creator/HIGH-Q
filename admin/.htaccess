@@ -1,20 +1,25 @@
+# Enable mod_rewrite
+RewriteEngine On
+
+# Basic authentication setup
 AuthType Basic
-AuthName "Admin Access"
+AuthName "Admin Login"
 AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
 Require valid-user
 
-# Allow PHP execution
-<Files "*.php">
-    Require valid-user
-</Files>
-
-# Prevent direct access to .htaccess and .htpasswd
-<Files ~ "^\.ht">
-    Require all denied
-</Files>
+# Allow all requests after authentication
+<Directory "C:/xampp/htdocs/HIGH-Q/admin">
+    Order allow,deny
+    Allow from all
+    Satisfy any
+</Directory>
 
 # Custom error pages
 ErrorDocument 401 /HIGH-Q/admin/errors/401.php
 ErrorDocument 403 /HIGH-Q/admin/errors/403.php
 ErrorDocument 404 /HIGH-Q/admin/errors/404.php
 ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+
+# PHP settings
+php_flag display_errors off
+php_value error_reporting E_ALL & ~E_NOTICE
