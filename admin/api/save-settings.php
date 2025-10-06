@@ -76,6 +76,9 @@ try {
     $json = json_encode($posted, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     if ($json === false) throw new Exception('Failed to encode settings to JSON');
 
+    // Log payload for debugging
+    error_log('save-settings payload: ' . $json);
+
     // Upsert into settings table by key 'system_settings'
     $stmt = $pdo->prepare("SELECT id FROM settings WHERE `key` = ? LIMIT 1");
     $stmt->execute(['system_settings']);
@@ -135,7 +138,8 @@ try {
                 two_factor = :two_factor, comment_moderation = :comment_moderation, updated_at = NOW()
                 WHERE id = :id";
             $upd = $pdo->prepare($sql);
-            $upd->execute($params);
+            $res = $upd->execute($params);
+            error_log('save-settings: site_settings update result: ' . json_encode(['sid'=>$sid,'res'=>$res,'params'=>['maintenance'=>$params['maintenance']]]));
         } else {
             $sql = "INSERT INTO site_settings
                 (site_name, tagline, logo_url, vision, about,
@@ -150,7 +154,8 @@ try {
                  :contact_facebook, :contact_tiktok, :contact_instagram,
                  :maintenance, :registration, :email_verification, :two_factor, :comment_moderation)";
             $ins = $pdo->prepare($sql);
-            $ins->execute($params);
+            $res = $ins->execute($params);
+            error_log('save-settings: site_settings insert result: ' . json_encode(['res'=>$res,'params'=>['maintenance'=>$params['maintenance']]]));
         }
     } catch (Exception $e) {
         // Best-effort; log and continue
