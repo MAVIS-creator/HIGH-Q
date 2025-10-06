@@ -206,7 +206,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $csrf = generateToken('signup_form');
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
-<link rel="stylesheet" href="/public/css/register.css">
+<link rel="stylesheet" href="/public/css/register-fixed.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <!-- Hero (reuse about-hero styling used across the site) -->
 <section class="about-hero">
