@@ -15,7 +15,7 @@ $csrf = generateToken('users_form');
 $all_roles = $pdo->query("SELECT id, name, slug FROM roles ORDER BY name ASC")->fetchAll();
 
 // Ensure users.css is loaded after admin.css by providing $pageCss for header
-$pageCss = '<link rel="stylesheet" href="../assets/css/users.css">';
+$pageCss = '';
 // Page title and subtitle for header
 $pageTitle = 'User Management';
 $pageSubtitle = 'Manage user accounts, roles, and permissions';
