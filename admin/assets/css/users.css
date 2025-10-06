@@ -1,6 +1,14 @@
 
 /* Users page styles - summary cards, filters, user cards */
-.users-page { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 12px; }
+.users-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px 48px 16px;
+    background: #f8f8fa;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.07);
+}
 
 .summary-cards {
     display: grid;
@@ -40,16 +48,54 @@
 
 .users-list { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3.5rem; }
 
-.user-card { background: #fff; border: 1px solid #f1f1f1; border-radius: 12px; padding: 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; }
+.user-card {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(11,37,64,0.07);
+    padding: 24px 32px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.2s;
+}
 .card-left { display:flex; gap:12px; align-items:center; }
-.card-avatar { width:64px; height:64px; border-radius:8px; object-fit:cover; }
+.card-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ffe566;
+}
 .card-meta { display:flex; flex-direction:column; }
-.card-name { font-weight:700; color:#111; }
-.card-email { color:#666; font-size:0.95rem }
-.card-badges { margin-top:6px }
+.card-name {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #222;
+}
+.card-email {
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 8px;
+}
+.card-badges {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
 .card-right { display:flex; gap:12px; align-items:center }
 
-.main-admin-badge { background: var(--hq-yellow); color:#111; padding:8px 12px; border-radius:999px; font-weight:700 }
+.main-admin-badge {
+    background: var(--hq-yellow);
+    color: #111;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 15px;
+    margin-left: 12px;
+}
 
 /* Responsive */
 @media (max-width:1000px) { .summary-cards { grid-template-columns: repeat(2, 1fr); } .user-filters { flex-direction:column; align-items:stretch; } .card-avatar{ width:56px; height:56px } }
