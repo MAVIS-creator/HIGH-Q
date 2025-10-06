@@ -9,13 +9,30 @@
     box-shadow: none;
 }
 
-.navbar-toggler i {
-    font-size: 24px;
-    transition: transform 0.3s ease;
+.navbar-toggler {
+    position: relative;
+    z-index: 1050;
 }
 
-.navbar-toggler i.bx-x {
-    transform: rotate(180deg);
+.navbar-toggler i {
+    font-size: 28px;
+    transition: all 0.3s ease;
+    color: var(--hq-black);
+}
+
+#navbarCloseIcon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.navbar-toggler.active i.bx-menu {
+    opacity: 0;
+}
+
+.navbar-toggler.active i.bx-x {
+    opacity: 1;
 }
 
 /* Mobile navbar */
