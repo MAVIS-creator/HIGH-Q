@@ -7,6 +7,10 @@ require_once '../includes/csrf.php';
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
 
+// Check if this is an AJAX request
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -155,6 +159,11 @@ if (!is_dir($uploadDir)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
     $errors[] = "Invalid CSRF token.";
+    if ($isAjax) {
+      header('Content-Type: application/json');
+      echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
+      exit;
+    }
   } else {
     $action = $_GET['action'];
     $id     = (int)($_GET['id'] ?? 0);
@@ -164,6 +173,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
       logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id' => $id]);
       $success[] = "Tutor deleted.";
+      
+      if ($isAjax) {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success', 'message' => 'Tutor deleted successfully']);
+        exit;
+      }
     } else {
       // ✅ Create / Edit logic
       $name     = trim($_POST['name'] ?? '');
@@ -200,6 +215,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug' => $slug]);
           $success[] = "Tutor '{$name}' created.";
+          
+          if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' created successfully"]);
+            exit;
+          }
         } elseif ($action === 'edit' && $id) {
           $photo = $imageUrl ?: null;
           $stmt = $pdo->prepare("UPDATE tutors SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, rating=?, is_featured=?, updated_at=NOW() WHERE id=?");
@@ -220,6 +241,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id' => $id]);
           $success[] = "Tutor '{$name}' updated.";
+          
+          if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' updated successfully"]);
+            exit;
+          }
         }
       }
     }
