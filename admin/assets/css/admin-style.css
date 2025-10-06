@@ -29,6 +29,13 @@
     box-sizing: border-box;
 }
 
+.footer-card--highlight {
+    background: linear-gradient(90deg, #ffd54f, #ffb300);
+    border-radius: 8px;
+    padding: 18px 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
 .footer-card-left {
     flex-shrink: 0;
 }
