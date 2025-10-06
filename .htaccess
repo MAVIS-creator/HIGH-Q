@@ -16,6 +16,17 @@
     RewriteRule ^(.*)$ public/index.php [L,QSA]
 </IfModule>
 
+# Enable rewriting
+RewriteEngine On
+
+# Redirect everything to /public except existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Optional: set index
+DirectoryIndex index.php
+
 # Protect sensitive files
 <FilesMatch "^\.(env|htaccess|git|config)|\.(sql|bak|config|json|lock)$">
     Order allow,deny
