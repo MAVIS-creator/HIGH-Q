@@ -681,6 +681,7 @@ document.addEventListener('submit', function(e){
   }).then(function(res){ if (res.isConfirmed) f.submit(); });
 });
 </script>
+<script>
 // Client-side search/filter
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
@@ -698,6 +699,9 @@ function filterStudents(){
     card.style.display = (matchesQ && matchesStatus) ? '' : 'none';
   });
 }
+searchInput.addEventListener('input', filterStudents);
+statusFilter.addEventListener('change', filterStudents);
+</script>
 
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
