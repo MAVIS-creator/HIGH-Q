@@ -21,6 +21,74 @@
   box-sizing: border-box
 }
 
+/* User Management Styles */
+.user-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-list {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-info {
+  overflow: hidden;
+}
+
+.user-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.user-email {
+  color: #666;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 html,
 body {
   height: 100%
@@ -32,6 +100,34 @@ body {
   background: var(--hq-gray);
   font-family: "Segoe UI", Arial, sans-serif;
   color: var(--hq-black);
+}
+
+/* Main Layout */
+.admin-main {
+  min-height: 100vh;
+  margin-left: var(--sidebar-width);
+  padding-top: var(--header-height);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-main > .container {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Footer */
+.page-footer {
+  margin-top: auto;
+  background: #fff;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  margin: 20px 20px 20px;
 }
 
 /* SIDEBAR */
