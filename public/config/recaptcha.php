@@ -3,6 +3,9 @@
 // Prefer PUBLIC_RECAPTCHA_SITE_KEY and PUBLIC_RECAPTCHA_SECRET environment variables.
 // If vlucas/phpdotenv is available and a .env exists in project root, it may already be loaded by other bootstrap code.
 // Always load root .env first, then public/.env if present
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
 if (file_exists(__DIR__ . '/../.env')) {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
     $dotenv->safeLoad();
