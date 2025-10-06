@@ -250,13 +250,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             exit;
           }
         }
-          
-          if ($isAjax) {
-            header('Content-Type: application/json');
-            echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' updated successfully"]);
-            exit;
-          }
-        }
       }
     }
   }
@@ -365,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-    <form id="tutorForm" method="post" action="<?= BASE_URL ?>/admin/pages/tutors.php?action=create">
+    <form id="tutorForm" method="post" action="tutors.php?action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -493,7 +486,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             throw new Error(data.message || 'Failed to save tutor');
           }
         } else {
-          throw new Error('Invalid response format from server');
+          const text = await response.text();
+          console.log('Server response:', text);
+          throw new Error('Server did not return JSON response');
         }
         
         // Show success message
@@ -516,59 +511,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         });
       } finally {
         // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    });
-      e.preventDefault();
-      const submitBtn = tutorForm.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Processing...';
-
-      try {
-        const formData = new FormData(this);
-        const response = await fetch(this.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-
-        let data;
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          data = await response.json();
-        } else {
-          const text = await response.text();
-          if (text.includes('success')) {
-            data = { status: 'success' };
-          } else {
-            throw new Error('Invalid response format');
-          }
-        }
-
-        if (data.status === 'error') {
-          throw new Error(data.message || 'Failed to save tutor');
-        }
-
-        await Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Tutor saved successfully!'
-        });
-
-        closeModal();
-        window.location.reload();
-      } catch (error) {
-        console.error('Error:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to save tutor. Please try again.'
-        });
-      } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
       }
@@ -635,7 +577,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
     document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
     const form = document.getElementById('tutorForm');
-    form.action = `${BASE_URL}/admin/pages/tutors.php?action=edit&id=${id}`;
+    form.action = `tutors.php?action=edit&id=${id}`;
     document.getElementById('tName').value = card.dataset.name || '';
     document.getElementById('tTitle').value = card.dataset.title || '';
     document.getElementById('tSubjects').value = card.dataset.subjects || '';
