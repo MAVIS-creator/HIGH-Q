@@ -236,19 +236,100 @@ $csrfToken = generateToken('signup_form');
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Sign Up - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/css/admin.css">
-    <link rel="stylesheet" href="./assets/css/signup.css">
     <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon">
     <style>
-        :root {
-            --hq-primary: #ffd600;
-            --hq-accent: #ff4b2b;
-            --hq-black: #0a0a0a;
+        .signup-container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .signup-container h2 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 20px;
+            font-size: 20px;
+        }
+        .form-group { margin-bottom: 12px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #555;
+            font-size: 14px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+        }
+        .form-group input:focus {
+            border-color: #FF6B00;
+            outline: none;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: #FF6B00;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button[type="submit"]:hover { background: #E65100; }
+        .error { 
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .success { 
+            background: #e6ffe6;
+            color: #27ae60;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .toggle-eye {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .login-link a {
+            color: #FF6B00;
+            text-decoration: none;
+        }
+        .login-link a:hover { text-decoration: underline; }
+    </style>
             --hq-gray: #f3f4f6;
             --btn-padding: 0.8rem 1rem;
             --btn-radius: 8px;
