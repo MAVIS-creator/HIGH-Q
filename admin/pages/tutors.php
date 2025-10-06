@@ -468,30 +468,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             }
           });
 
-          // X closes modal
+          // Modal close handlers
           closeBtn.addEventListener('click', closeModal);
-
-          // Overlay click also closes modal
           overlay.addEventListener('click', closeModal);
-
-          // Escape key closes modal
           document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
 
+          // New tutor button handler
           newBtn.addEventListener('click', () => openModal('create'));
-          closeBtn.addEventListener('click', closeModal);
-          overlay.addEventListener('click', closeModal);
-          document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
 
-          document.querySelectorAll('.btn-editTutor').forEach(btn => {
+          // Edit tutor button handlers
+          document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', () => {
+              const card = btn.closest('.tutor-card');
+              if (!card) return;
+
               openModal('edit', {
-                id: btn.dataset.id,
-                name: btn.dataset.name,
-                title: btn.dataset.title,
-                image: btn.dataset.image,
-                years: btn.dataset.years,
-                bio: btn.dataset.bio,
-                subjects: btn.dataset.subjects
+                id: card.dataset.id,
+                name: card.dataset.name,
+                title: card.dataset.title,
+                image: card.dataset.image,
+                years: card.dataset.years,
+                bio: card.dataset.bio,
+                subjects: card.dataset.subjects
               });
             });
           });
