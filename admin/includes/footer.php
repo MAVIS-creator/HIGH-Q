@@ -2,7 +2,7 @@
 // admin/includes/footer.php
 ?>
     </main>
-    <footer class="admin-footer">
+    <footer class="admin-footer" style="position:relative;z-index:1001;">
         <div class="footer-card">
             <div class="footer-card-left">
                 <span class="footer-icon"><i class='bx bx-award'></i></span>

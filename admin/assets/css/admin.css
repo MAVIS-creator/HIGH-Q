@@ -1066,6 +1066,7 @@ h1 {
 /* === Settings page polish (overrides to match screenshots) === */
 .admin-main {
   padding-top: 100px;
+  padding-bottom: 80px; /* Prevent footer overlap */
 }
 
 .roles-page {

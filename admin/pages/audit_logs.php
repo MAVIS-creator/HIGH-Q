@@ -18,7 +18,7 @@ $where = '';
 $params = [];
 if ($actionFilter !== '') { $where = 'WHERE action = ?'; $params[] = $actionFilter; }
 $count = $pdo->prepare("SELECT COUNT(*) FROM audit_logs {$where}"); $count->execute($params); $total = (int)$count->fetchColumn();
-$stmt = $pdo->prepare("SELECT a.*, u.name as admin_name FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id {$where} ORDER BY a.created_at DESC LIMIT ? OFFSET ?");
+$stmt = $pdo->prepare("SELECT a.*, u.name as admin_name FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id {$where} ORDER BY a.created_at ASC LIMIT ? OFFSET ?");
 // bind params: if action filter exists, it must be the first; we bind limit and offset after
 $bindIndex = 1;
 if (!empty($params)) { $stmt->bindValue($bindIndex, $params[0]); $bindIndex++; }
@@ -49,7 +49,7 @@ $totalPages = (int)ceil($total / $perPage);
     <?php endforeach; ?>
     </tbody>
   </table>
-  <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+  <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
     <?php if ($page>1): ?><a class="btn" href="?pages=audit_logs&page=<?= $page-1 ?>">&laquo; Prev</a><?php endif; ?>
     <div style="margin:0 8px;">Page <?= $page ?> of <?= $totalPages ?></div>
     <?php if ($page < $totalPages): ?><a class="btn" href="?pages=audit_logs&page=<?= $page+1 ?>">Next &raquo;</a><?php endif; ?>
