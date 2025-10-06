@@ -159,10 +159,14 @@ if (!is_dir($uploadDir)) {
 
 // HANDLE CREATE / EDIT / DELETE
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+  // Set JSON header for AJAX requests
+  if ($isAjax) {
+    header('Content-Type: application/json');
+  }
+
   if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
     $errors[] = "Invalid CSRF token.";
     if ($isAjax) {
-      header('Content-Type: application/json');
       echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
       exit;
     }
@@ -222,6 +226,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_created', ['slug' => $slug]);
           $success[] = "Tutor '{$name}' created.";
+          
+          if ($isAjax) {
+            echo json_encode([
+              'status' => 'success',
+              'message' => "Tutor '{$name}' created successfully"
+            ]);
+            exit;
+          }
           if ($isAjax) {
             echo json_encode(['status' => 'success', 'message' => "Tutor '{$name}' created successfully"]);
             exit;
@@ -252,6 +264,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           ]);
           logAction($pdo, $_SESSION['user']['id'], 'tutor_updated', ['tutor_id' => $id]);
           $success[] = "Tutor '{$name}' updated.";
+          
+          if ($isAjax) {
+            echo json_encode([
+              'status' => 'success',
+              'message' => "Tutor '{$name}' updated successfully"
+            ]);
+            exit;
+          }
           
           if ($isAjax) {
             header('Content-Type: application/json');
