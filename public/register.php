@@ -353,16 +353,31 @@ $csrf = generateToken('signup_form');
 						<h4>Why Choose Us?</h4>
 						<div class="why-stats">
 							<div class="stat">
-								<div class="icon"><i class="bx bx-trophy"></i></div>
-								<div class="stat-body"><strong>305</strong><span>Highest JAMB Score 2025</span></div>
+								<div class="icon">
+									<i class="bx bx-trophy"></i>
+								</div>
+								<div class="stat-body">
+									<strong>305</strong>
+									<span>Highest JAMB Score 2025</span>
+								</div>
 							</div>
 							<div class="stat">
-								<div class="icon"><i class="bx bx-group"></i></div>
-								<div class="stat-body"><strong>1000+</strong><span>Students Trained</span></div>
+								<div class="icon">
+									<i class="bx bx-group"></i>
+								</div>
+								<div class="stat-body">
+									<strong>1000+</strong>
+									<span>Students Trained</span>
+								</div>
 							</div>
 							<div class="stat">
-								<div class="icon"><i class="bx bx-bar-chart"></i></div>
-								<div class="stat-body"><strong>99%</strong><span>Success Rate</span></div>
+								<div class="icon">
+									<i class="bx bx-bar-chart"></i>
+								</div>
+								<div class="stat-body">
+									<strong>99%</strong>
+									<span>Success Rate</span>
+								</div>
 							</div>
 						</div>
 					</div>
