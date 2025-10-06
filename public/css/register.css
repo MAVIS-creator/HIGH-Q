@@ -1,0 +1,123 @@
+/* Mobile-first responsive styles for registration form */
+.register-layout {
+    padding: 20px;
+    max-width: 100%;
+}
+
+.register-main {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.form-row {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="date"],
+.form-row input[type="tel"],
+.form-row textarea,
+.form-row select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px; /* Better for mobile */
+}
+
+/* Fix for relationship field */
+.form-row input[name="emergency_relationship"] {
+    width: 100%;
+    max-width: 100%;
+}
+
+.form-inline {
+    display: block; /* Stack on mobile */
+}
+
+@media (min-width: 768px) {
+    .form-inline {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .form-inline > div {
+        flex: 1;
+    }
+}
+
+/* Programs grid responsive fix */
+.programs-grid {
+    display: grid;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.programs-grid label {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+/* Terms checkbox alignment */
+.form-row input[type="checkbox"] {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Submit button */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* Sidebar responsive */
+@media (min-width: 992px) {
+    .register-layout {
+        display: flex;
+        gap: 30px;
+    }
+    
+    .register-main {
+        flex: 2;
+        margin-bottom: 0;
+    }
+    
+    .register-sidebar {
+        flex: 1;
+    }
+}
+
+/* Section titles */
+.section-title {
+    margin: 25px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title i {
+    color: var(--hq-yellow);
+}

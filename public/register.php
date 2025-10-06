@@ -206,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $csrf = generateToken('signup_form');
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
+<link rel="stylesheet" href="/public/css/register.css">
 
 <!-- Hero (reuse about-hero styling used across the site) -->
 <section class="about-hero">
@@ -266,7 +267,7 @@ $csrf = generateToken('signup_form');
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
-																									<div class="form-row form-inline"><div style="flex:1"><label>First Name *</label><input name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div style="flex:1"><label>Last Name *</label><input name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
+																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
 																									<div class="form-row form-inline"><div style="flex:1"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div style="flex:1"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
@@ -287,9 +288,9 @@ $csrf = generateToken('signup_form');
 
 													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
 													<div class="section-body">
-													<div class="form-row"><label>Parent/Guardian Name</label><input name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
-													<div class="form-row"><label>Parent/Guardian Phone</label><input name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
-													<div class="form-row"><label>Relationship</label><input name="emergency_relationship" placeholder="Relationship to student" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
+													<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
 													</div>
 
 													<div class="form-row">
