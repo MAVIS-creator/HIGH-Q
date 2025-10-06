@@ -15,7 +15,6 @@ HIGH-Q/
 ├── progress.md
 ├── README.md
 ├── robots.txt
-├── WhatsApp Audio 2025-10-01 at 19.14.12_6712377e.opus
 ├── admin/
 │   ├── .env
 │   ├── .htaccess
