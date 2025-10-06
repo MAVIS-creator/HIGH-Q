@@ -1,8 +1,14 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    Options -Indexes
+# Enable rewriting
+RewriteEngine On
 
-    RewriteBase /
+# Redirect everything to /public except existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Optional: set index
+DirectoryIndex index.php
+
 
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
     RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
