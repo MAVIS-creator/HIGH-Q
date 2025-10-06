@@ -1,12 +1,12 @@
 <?php
-http_response_code(401);
+http_response_code(403);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>401 Unauthorized - Admin Panel</title>
+    <title>403 Forbidden - Admin Panel</title>
     <link rel="stylesheet" href="../assets/css/admin.css">
     <style>
         .error-container {
@@ -44,10 +44,10 @@ http_response_code(401);
 </head>
 <body>
     <div class="error-container">
-        <div class="error-code">401</div>
-        <h1>Unauthorized Access</h1>
-        <p class="error-message">Authentication is required to access this area.</p>
-        <a href="../login.php" class="back-link">← Login to Admin Panel</a>
+        <div class="error-code">403</div>
+        <h1>Access Forbidden</h1>
+        <p class="error-message">You don't have permission to access this resource.</p>
+        <a href="../pages/index.php" class="back-link">← Return to Dashboard</a>
     </div>
 </body>
 </html>
