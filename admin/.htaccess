@@ -1,6 +1,6 @@
 # Apache 2.4+
 <IfModule mod_authz_core.c>
-    Require all denied
+    Require all granted
 </IfModule>
 
 # Apache 2.2
@@ -51,7 +51,7 @@
     # Enhanced security headers
     <IfModule mod_headers.c>
         Header set X-Content-Type-Options "nosniff"
-        Header set X-Frame-Options "DENY"
+        Header set X-Frame-Options "SAMEORIGIN"
         Header set X-XSS-Protection "1; mode=block"
         Header set Referrer-Policy "same-origin"
         Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-src https://www.google.com/recaptcha/; connect-src 'self'"
@@ -87,7 +87,7 @@
     # Require authentication for admin area
     AuthType Basic
     AuthName "Admin Access"
-    AuthUserFile "c:\xampp\htdocs\HIGH-Q\admin\.htpasswd"
+    AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
     Require valid-user
     
     # Custom error pages
