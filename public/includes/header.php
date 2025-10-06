@@ -232,7 +232,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="./assets/css/social-icons.css">
   <link rel="stylesheet" href="./assets/css/post-toc.css">
   <link rel="stylesheet" href="./assets/css/hero.css">
-  <link rel="stylesheet" href="./assets/css/navbar-mobile.css">
+  <link rel="stylesheet" href="./assets/css/navbar.css">
   <link rel="stylesheet" href="./assets/css/modal.css">
   <link rel="stylesheet" href="./assets/css/features.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
