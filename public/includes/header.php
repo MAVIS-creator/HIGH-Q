@@ -341,6 +341,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       navbarCollapse.addEventListener('show.bs.collapse', function () {
         openIcon.classList.add('d-none');
         closeIcon.classList.remove('d-none');
+      });
 
       navbarCollapse.addEventListener('hide.bs.collapse', function () {
         openIcon.classList.remove('d-none');
@@ -349,7 +350,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
       // Close menu when clicking nav links
       navbarCollapse.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
+        link.addEventListener('click', (e) => {
+          // Prevent event from bubbling up
+          e.stopPropagation();
           const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
           if (bsCollapse) {
             bsCollapse.hide();
@@ -360,13 +363,17 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
-        // Mobile menu toggle
+        // Mobile menu toggle - using Bootstrap's Collapse API instead of manual toggle
         const mobileMenuBtn = document.querySelector('.navbar-toggler');
         const mobileMenu = document.querySelector('.navbar-collapse');
         
         if(mobileMenuBtn && mobileMenu) {
-          mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('show');
+          mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            const bsCollapse = bootstrap.Collapse.getInstance(mobileMenu);
+            if (bsCollapse) {
+              bsCollapse.toggle();
+            }
           });
         }
 
