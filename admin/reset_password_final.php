@@ -175,9 +175,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 
-<body>
+    <div class="footer" style="position:fixed;left:0;bottom:0;width:100%;background:#fff;color:#555;padding:10px 0;text-align:center;z-index:1000;box-shadow:0 -2px 12px rgba(0,0,0,0.07);font-size:0.95rem;">
+        © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
+    </div>
+</body>
 
-    <div class="card">
         <h2>Set New Password</h2>
         <p>Enter OTP and your new password</p>
 
