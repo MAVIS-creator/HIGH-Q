@@ -1,51 +1,35 @@
-/* Navbar toggle animation */
-.navbar-toggler {
-    border: none;
-    padding: 0;
-    outline: none !important;
-}
-
-.navbar-toggler:focus {
-    box-shadow: none;
-}
-
-.navbar-toggler {
+/* Navbar styles */
+.navbar {
     position: relative;
-    z-index: 1050;
+}
+
+.navbar-toggler {
     width: 40px;
     height: 40px;
     padding: 0;
     border: none;
     background: transparent;
     cursor: pointer;
+    position: relative;
+    z-index: 1050;
 }
 
-.navbar-toggler i {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 28px;
-    transition: all 0.2s ease;
-    color: var(--hq-black);
-}
-
-#navbarCloseIcon {
-    opacity: 0;
-}
-
-.navbar-collapse.show + .navbar-toggler #navbarIcon {
-    opacity: 0;
-}
-
-.navbar-collapse.show + .navbar-toggler #navbarCloseIcon {
-    opacity: 1;
-}
-
-/* Prevent focus outline */
 .navbar-toggler:focus {
     outline: none;
     box-shadow: none;
+}
+
+.navbar-toggler i {
+    font-size: 28px;
+    color: var(--hq-black);
+    transition: all 0.3s ease;
+    display: block;
+}
+
+/* Change icon to X when menu is open */
+.navbar-toggler.active i::before {
+    content: "\ebcd";
+    font-family: 'boxicons' !important;
 }
 
 /* Mobile navbar */
