@@ -290,6 +290,41 @@ $csrfToken = generateToken('signup_form');
             font-size: 0.9rem;
             box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
         }
+        label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+/* Style the file input */
+input[type="file"] {
+  display: block;
+  width: 100%;
+  max-width: 350px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* When hovering */
+input[type="file"]:hover {
+  border-color: #3b82f6;
+  background-color: #eef7ff;
+}
+
+/* Remove default ugly focus outline and make it nice */
+input[type="file"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
     </style>
 </head>
 <body>
