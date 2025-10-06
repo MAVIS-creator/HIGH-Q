@@ -3,14 +3,7 @@
 // Attempt to load site settings (contact phone, bank details, etc.) from database
 $contact_phone = '0807 208 8794';
 $siteSettings = [
-  'site<head>
-  <meta charset="utf-8">
-  <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/HIGH-Q/public/assets/images/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/HIGH-Q/public/assets/images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/HIGH-Q/public/assets/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/HIGH-Q/public/assets/images/favicon-16x16.png">> ['name' => 'HIGH Q SOLID ACADEMY', 'bank_name' => '', 'bank_account_name' => '', 'bank_account_number' => ''],
+  'site' => ['name' => 'HIGH Q SOLID ACADEMY', 'bank_name' => '', 'bank_account_name' => '', 'bank_account_number' => ''],
   'contact' => ['phone' => $contact_phone, 'email' => 'info@hqacademy.com', 'address' => "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu"]
 ];
 // include DB connection if available
