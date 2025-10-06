@@ -1,19 +1,18 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     Options -Indexes
-    
-    # Set the base to the project subdirectory
-    RewriteBase /HIGH-Q/
-    
+
+    RewriteBase /
+
     # Set public/index.php as homepage
-    DirectoryIndex /public/index.php
-    
+    DirectoryIndex public/index.php
+
     # Pretty payment URL: /pay/REF -> /public/payments_wait.php?ref=REF
     RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
-    
+
     # Protect file downloads through script
     RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
-    
+
     # Send all non-file/directory requests to public/index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -46,8 +45,8 @@ RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
 RewriteRule .* index.php [F]
 
 # Custom error pages
-ErrorDocument 400 /HIGH-Q/public/errors/400.php
-ErrorDocument 401 /HIGH-Q/public/errors/401.php
-ErrorDocument 403 /HIGH-Q/public/errors/403.php
-ErrorDocument 404 /HIGH-Q/public/errors/404.php
-ErrorDocument 500 /HIGH-Q/public/errors/500.php
+ErrorDocument 400 /public/errors/400.php
+ErrorDocument 401 /public/errors/401.php
+ErrorDocument 403 /public/errors/403.php
+ErrorDocument 404 /public/errors/404.php
+ErrorDocument 500 /public/errors/500.php
