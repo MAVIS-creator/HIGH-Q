@@ -88,13 +88,14 @@
 
 .hero-stats strong {
     font-size: 2rem;
-    color: var(--hq-yellow);
+    color: #000;
     font-weight: 700;
 }
 
 .hero-stats div div {
-    color: var(--hq-gray);
+    color: #000;
     font-size: 0.9rem;
+    opacity: 0.8;
 }
 
 /* Hero Right Side */
