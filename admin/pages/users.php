@@ -430,7 +430,7 @@ async function loadUser(id, mode='view'){
   document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
   document.getElementById('mPosts').textContent = data.posts_count;
   document.getElementById('mComments').textContent = data.comments_count;
-  document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "../public/assets/images/avatar-placeholder.png";
+  document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "/HIGH-Q/public/assets/images/hq-logo.jpeg";
 
   // Fill edit form
   const form = document.getElementById('editForm');
