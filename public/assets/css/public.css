@@ -25,10 +25,23 @@
 }
 
 /* General */
-body {
+html, body {
+  height: 100%;
   margin: 0;
+  padding: 0;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: 'Soel Sans Theory', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   overflow-x: hidden;
+}
+
+/* Main content wrapper should grow to fill space above footer */
+.public-main {
+  flex: 1 0 auto;
+  min-height: 0;
 }
 
 /* Bootstrap container override for consistent branding */
