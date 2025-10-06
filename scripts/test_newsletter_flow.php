@@ -16,11 +16,17 @@ echo "Subscribed: $testEmail\n";
 $postTitle = 'Test Newsletter Post ' . date('Y-m-d H:i');
 $postContent = 'This is a test post for newsletter delivery.';
 $postExcerpt = 'Test excerpt for newsletter.';
-$stmt = $pdo->prepare('INSERT INTO posts (title, slug, excerpt, content, status, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
+// Find first admin user
+$adminStmt = $pdo->query("SELECT id FROM users WHERE role='admin' OR role='superadmin' OR role='administrator' ORDER BY id ASC LIMIT 1");
+$adminId = $adminStmt->fetchColumn();
+if (!$adminId) {
+    die("No admin user found. Please create an admin user in the users table.\n");
+}
+$stmt = $pdo->prepare('INSERT INTO posts (title, slug, excerpt, content, status, author_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
 $slug = strtolower(str_replace(' ', '-', $postTitle));
-$stmt->execute([$postTitle, $slug, $postExcerpt, $postContent, 'published']);
+$stmt->execute([$postTitle, $slug, $postExcerpt, $postContent, 'published', $adminId]);
 $postId = $pdo->lastInsertId();
-echo "Published post: $postTitle (ID: $postId)\n";
+echo "Published post: $postTitle (ID: $postId, Author: $adminId)\n";
 
 // 3. Send newsletter email to all subscribers
 $stmt = $pdo->prepare('SELECT email, unsubscribe_token FROM newsletter_subscribers');
