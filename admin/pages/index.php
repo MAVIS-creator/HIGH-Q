@@ -175,3 +175,17 @@ if (!$found) {
 }
 
 require_once __DIR__ . '/../includes/footer.php';
+// --- Desktop Mode Recommendation & Login/Signup Section ---
+if ($page === 'dashboard') {
+    echo '<div class="container mt-4 mb-4">';
+    echo '<div class="card" style="max-width:600px;margin:auto;text-align:center;">';
+    echo '<h3>Welcome to the Admin Panel</h3>';
+    echo '<p class="mb-3">For best experience, <strong>enable Desktop Mode</strong> on your mobile browser.<br>Some admin features are optimized for desktop screens.</p>';
+    echo '<div class="d-flex justify-content-center gap-3 mb-2">';
+    echo '<a href="../login.php" class="btn btn-primary">Login</a>';
+    echo '<a href="../signup.php" class="btn btn-outline-secondary">Sign Up</a>';
+    echo '</div>';
+    echo '<small class="text-muted">Highly recommended for mobile users</small>';
+    echo '</div>';
+    echo '</div>';
+}
