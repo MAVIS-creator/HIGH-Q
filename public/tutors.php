@@ -101,15 +101,56 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
               <!-- Short bio (years of experience) at the bottom -->
               <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
-            </div>
-          </article>
-        <?php endforeach; ?>
+          </div>
+        </article>
+      <?php endforeach; ?>
+    </div>
+
+    <!-- Tutors footer text -->
+    <div class="tutors-footer text-center mt-4">
+      <p class="lead">And many other experienced tutors dedicated to your academic success...</p>
+      <p>Join our growing community of successful students mentored by these exceptional educators.</p>
+      <div class="mt-3">
+        <a href="register.php" class="btn-primary">Start Learning Today</a>
       </div>
+    </div>
     <?php endif; ?>
   </div>
 </section>
 
+<style>
+.tutors-footer {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--hq-yellow-pale);
+    border-radius: 12px;
+    text-align: center;
+}
 
+.tutors-footer .lead {
+    color: var(--hq-black);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.tutors-footer p {
+    color: var(--hq-gray);
+    margin-bottom: 1.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+</style>
 <!-- Achievements -->
 <section class="achievements">
   <div class="container">
