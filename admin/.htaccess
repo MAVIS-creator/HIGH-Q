@@ -3,15 +3,15 @@ AuthName "Admin Access"
 AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
 Require valid-user
 
-# Allow all access after authentication
-<IfModule mod_authz_core.c>
-    Require all granted
-</IfModule>
+# Allow PHP execution
+<Files "*.php">
+    Require valid-user
+</Files>
 
-<IfModule !mod_authz_core.c>
-    Order allow,deny
-    Allow from all
-</IfModule>
+# Prevent direct access to .htaccess and .htpasswd
+<Files ~ "^\.ht">
+    Require all denied
+</Files>
 
 # Custom error pages
 ErrorDocument 401 /HIGH-Q/admin/errors/401.php
