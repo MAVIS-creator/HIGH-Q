@@ -242,8 +242,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Top bar -->
     <div class="top-bar">
       <div class="container">
-        <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-        <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
@@ -251,7 +251,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <nav class="navbar w-100 position-relative">
+        <nav class="navbar navbar-expand-lg w-100 position-relative">
           <!-- Logo + Name -->
           <a class="navbar-brand" href="index.php">
             <div class="logo">
@@ -263,44 +263,56 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </a>
 
-          <!-- Mobile Toggle Button -->
-          <button class="navbar-toggler mobile-toggle" type="button" aria-label="Open navigation">
+          <!-- Mobile Toggle Button - Positioned Absolutely -->
+          <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <i class="bx bx-menu"></i>
           </button>
 
-          <!-- Desktop Nav -->
-          <div class="desktop-nav">
+          <!-- Navigation -->
+          <div class="collapse navbar-collapse" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
             <ul class="navbar-nav mx-auto">
-              <li class="nav-item"><a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
-              <li class="nav-item"><a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
-              <li class="nav-item"><a class="nav-link <?= $cur === 'programs.php' ? 'active' : '' ?>" href="programs.php">Programs</a></li>
-              <li class="nav-item"><a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
-              <li class="nav-item"><a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
-            </ul>
-            <a href="register.php" class="btn btn-primary d-none d-lg-block">Register Now</a>
-          </div>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
+              </li>
 
-          <!-- Mobile Nav Overlay -->
-          <div class="mobile-nav-overlay">
-            <div class="mobile-nav-header">
-              <div class="logo">
-                <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-                <div>
-                  <h1>HIGH Q SOLID ACADEMY</h1>
-                  <small>Limited</small>
-                </div>
-              </div>
-              <button class="mobile-nav-close" aria-label="Close navigation"><i class="bx bx-x"></i></button>
-            </div>
-            <ul class="mobile-nav-list">
-              <li><a href="index.php">Home</a></li>
-              <li><a href="about.php">About Us</a></li>
-              <li><a href="programs.php">Programs</a></li>
-              <li><a href="register.php">Admission</a></li>
-              <li><a href="contact.php">Contact</a></li>
+              <!-- Programs Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  Programs
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                </ul>
+              </li>
+
+              <!-- News Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  News
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
+              </li>
             </ul>
-            <a href="register.php" class="btn btn-primary mobile-register-btn">Register Now</a>
+
+            <!-- Register Button -->
+            <div class="d-none d-lg-block">
+              <a href="register.php" class="btn btn-primary">Register Now</a>
+            </div>
           </div>
         </nav>
       </div>
@@ -311,47 +323,135 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Mobile nav open/close logic
-    document.addEventListener('DOMContentLoaded', function() {
-      const mobileMenuBtn = document.querySelector('.navbar-toggler');
-      const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
-      const mobileNavClose = document.querySelector('.mobile-nav-close');
-      const desktopNav = document.querySelector('.desktop-nav');
-
-      function openMobileNav() {
-        mobileNavOverlay.classList.add('open');
-        document.body.classList.add('mobile-nav-open');
-      }
-      function closeMobileNav() {
-        mobileNavOverlay.classList.remove('open');
-        document.body.classList.remove('mobile-nav-open');
-      }
-
-      if (mobileMenuBtn && mobileNavOverlay) {
-        mobileMenuBtn.addEventListener('click', openMobileNav);
-      }
-      if (mobileNavClose && mobileNavOverlay) {
-        mobileNavClose.addEventListener('click', closeMobileNav);
-      }
-      // Close on overlay click (optional)
-      mobileNavOverlay.addEventListener('click', function(e) {
-        if (e.target === mobileNavOverlay) closeMobileNav();
-      });
-
-      // Hide desktop nav on mobile
-      function handleResize() {
-        if (window.innerWidth < 992) {
-          desktopNav.style.display = 'none';
-        } else {
-          desktopNav.style.display = '';
-          closeMobileNav();
+    // Toggle nav dropdown open/close on click and close when clicking outside
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.navbar-toggler');
+        const mobileMenu = document.querySelector('.navbar-collapse');
+        
+        if(mobileMenuBtn && mobileMenu) {
+          mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+          });
         }
-      }
-      window.addEventListener('resize', handleResize);
-      handleResize();
-    });
-// Old JavaScript code removed to prevent syntax errors.
-// ...existing code...
+
+        var dropToggles = document.querySelectorAll('.nav-dropdown .drop-toggle');
+        dropToggles.forEach(function(toggle){
+          toggle.addEventListener('click', function(e){
+            e.preventDefault();
+            var parent = toggle.closest('.nav-dropdown');
+            // toggle open on this parent, close others
+            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ if(n !== parent) n.classList.remove('open'); });
+            parent.classList.toggle('open');
+          });
+        });
+
+        // close dropdowns on outside click
+        document.addEventListener('click', function(e){
+          if (!e.target.closest('.nav-dropdown')) {
+            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ n.classList.remove('open'); });
+          }
+        });
+
+        // Add .is-loaded after first paint so CSS animations trigger after initial paint
+        try {
+          if ('requestAnimationFrame' in window) {
+            requestAnimationFrame(function(){
+              requestAnimationFrame(function(){
+                document.documentElement.classList.add('is-loaded');
+                // After we mark the page as loaded, assign stagger classes to common groups
+                try {
+                  var groups = [
+                    {selector: '.programs-grid .program-card', base: 'stagger'},
+                    {selector: '.tutors-grid .tutor-card', base: 'stagger'},
+                    {selector: '.core-grid .value-card', base: 'stagger'},
+                    {selector: '.ceo-stats .stat', base: 'stagger'}
+                  ];
+                  groups.forEach(function(g){
+                    var nodes = Array.prototype.slice.call(document.querySelectorAll(g.selector));
+                    nodes.forEach(function(n, i){
+                      var idx = Math.min(4, Math.max(1, Math.ceil((i+1)/1)));
+                      n.classList.add(g.base + '-' + idx);
+                      // add a hover-zoom for nice mouse interaction on interactive cards
+                      n.classList.add('hover-zoom');
+                    });
+                  });
+                } catch (innerErr) { /* ignore */ }
+
+                // Icon fallback: if Boxicons didn't render (font not available), replace bx <i> tags with a simple inline SVG square so UI stays usable.
+                try {
+                  // Test whether boxicons are rendering by checking computed font-family of a test element
+                  var test = document.createElement('i');
+                  test.className = 'bx bx-test-icon';
+                  test.style.display = 'none';
+                  document.body.appendChild(test);
+                  var ff = window.getComputedStyle(test).fontFamily || '';
+                  document.body.removeChild(test);
+                  if (!/boxicons/i.test(ff)) {
+                    // Replace visible .bx icons with inline fallback SVG (small square with inner glyph look)
+                    document.querySelectorAll('i.bx, i.bxs, i.bxl').forEach(function(icon){
+                      try {
+                        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+                        svg.setAttribute('width','20'); svg.setAttribute('height','20'); svg.setAttribute('viewBox','0 0 24 24');
+                        svg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="4" fill="#fff6d9" stroke="#f5b904" stroke-width="1.2"></rect>';
+                        icon.parentNode.replaceChild(svg, icon);
+                      } catch(e){}
+                    });
+                  }
+                } catch(e){}
+              });
+            });
+          } else {
+            // fallback
+            setTimeout(function(){ document.documentElement.classList.add('is-loaded'); }, 50);
+          }
+        } catch (e) {
+          // if anything goes wrong, still try a small timeout
+          setTimeout(function(){ try { document.documentElement.classList.add('is-loaded'); } catch (_){} }, 100);
+        }
+        // IntersectionObserver: reveal elements as they scroll into view with staggered delays
+        try {
+          var revealContainers = [
+            {container: '.programs-grid', item: '.program-card'},
+            {container: '.tutors-grid', item: '.tutor-card'},
+            {container: '.core-grid', item: '.value-card'},
+            {container: '.posts-grid', item: '.post-card'},
+            {container: '.ceo-stats', item: '.stat'},
+            {container: '.register-sidebar', item: '.card'},
+            {container: '.sidebar-card', item: '.sidebar-card'}
+          ];
+
+          var observerOptions = { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.06 };
+          var revealObserver = new IntersectionObserver(function(entries){
+            entries.forEach(function(entry){
+              var el = entry.target;
+              if (entry.isIntersecting) {
+                // mark visible
+                el.classList.add('in-view');
+                // small safety: ensure hover-zoom exists
+                el.classList.add('hover-zoom');
+                revealObserver.unobserve(el);
+              }
+            });
+          }, observerOptions);
+
+          revealContainers.forEach(function(group){
+            var containers = document.querySelectorAll(group.container);
+            containers.forEach(function(parent){
+              var items = parent.querySelectorAll(group.item);
+              items.forEach(function(item, idx){
+                // compute a small stagger delay based on index
+                var delay = Math.min(0.28, Math.max(0, idx * 0.06));
+                item.style.transitionDelay = delay + 's';
+                // if using CSS variables instead, set here as fallback
+                revealObserver.observe(item);
+              });
+            });
+          });
+        } catch (ioErr) { /* ignore IntersectionObserver errors on old browsers */ }
+      });
+    })();
   </script>
 
   <main class="public-main">
