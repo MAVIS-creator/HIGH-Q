@@ -34,7 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
-    } else {
+        // proceed with authentication only if no error so far (CSRF & recaptcha OK)
+        if (empty($error)) {
         $email    = trim($_POST['email']);
         $password = trim($_POST['password']);
 
