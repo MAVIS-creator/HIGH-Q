@@ -337,12 +337,13 @@ body {
 /* FOOTER */
 
 .admin-footer {
-  background: #fff;
+  background: transparent;
   margin-left: var(--sidebar-width);
   width: calc(100% - var(--sidebar-width));
   padding: 20px 0;
   font-size: 0.95rem;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
+  box-shadow: none;
+  z
 }
 
 .admin-footer>.footer-card {
