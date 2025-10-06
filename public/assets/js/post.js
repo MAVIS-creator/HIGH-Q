@@ -33,8 +33,9 @@
     const body = '<div class="comment-body">' + (c.content || '') + '</div>';
   const likes = '<button class="like-btn" data-id="' + (c.id||'') + '"><i class="bx bx-heart"></i> <span class="like-count">' + (c.likes||0) + '</span></button>';
   const reply = '<button class="reply-btn" data-id="' + (c.id||'') + '"><i class="bx bx-reply"></i> Reply</button>';
+  const delBtn = c.can_delete ? ' <button class="delete-btn" data-id="' + (c.id||'') + '"><i class="bx bx-trash"></i> Delete</button>' : '';
 
-    wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + ' ' + reply + '</div>';
+    wrapper.innerHTML = head + body + '<div class="comment-actions">' + likes + ' ' + reply + delBtn + '</div>';
 
     // if comment is pending and was created in this session, show awaiting-moderation marker
     if (c && c.status === 'pending') {
@@ -77,6 +78,32 @@
     }
 
     return wrapper;
+  }
+
+  // delegated delete handler on commentsList
+  if (commentsList) {
+    commentsList.addEventListener('click', function (ev) {
+    var btn = ev.target.closest && ev.target.closest('.delete-btn');
+    if (!btn) return;
+    var cid = btn.getAttribute('data-id');
+    if (!cid) return;
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ title: 'Delete comment?', text: 'This will remove your comment', icon: 'warning', showCancelButton: true }).then(function (res) {
+        if (!res.isConfirmed) return;
+        doDelete(cid);
+      });
+    } else {
+      if (!confirm('Delete comment?')) return; doDelete(cid);
+    }
+    });
+  }
+
+  function doDelete(cid) {
+    var fd = new URLSearchParams(); fd.append('_method','delete'); fd.append('comment_id', cid);
+    fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(j => { if (j && j.status === 'ok') fetchComments(); else { if (typeof Swal !== 'undefined') Swal.fire('Error', j.message || 'Delete failed','error'); else alert(j.message || 'Delete failed'); } })
+      .catch(()=>{ if (typeof Swal !== 'undefined') Swal.fire('Error','Network error','error'); else alert('Network error'); });
   }
 
   function escapeHtml(s) {
