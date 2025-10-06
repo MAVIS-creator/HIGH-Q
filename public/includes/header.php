@@ -268,7 +268,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </a>
             <!-- Mobile Toggle Button -->
                         <!-- Navbar Toggler -->
-            <button class="navbar-toggler mobile-toggle" type="button">
+            <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-expanded="false" aria-controls="mainNav">
               <i class="bx bx-menu open-icon"></i>
               <i class="bx bx-x close-icon d-none"></i>
             </button>
@@ -334,41 +334,25 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     document.addEventListener('DOMContentLoaded', function () {
       const navbarToggler = document.querySelector('.navbar-toggler');
       const navbarCollapse = document.getElementById('mainNav');
-
-      // Bootstrap collapse instance
-      const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
-        toggle: false
-      });
-
       const openIcon = navbarToggler.querySelector('.open-icon');
       const closeIcon = navbarToggler.querySelector('.close-icon');
 
-      // Toggler click
-      navbarToggler.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (navbarCollapse.classList.contains('show')) {
-          bsCollapse.hide();
-        } else {
-          bsCollapse.show();
-        }
-      });
-
-      // When menu is shown → show close icon
-      navbarCollapse.addEventListener('shown.bs.collapse', function () {
+      // Show/hide icons when collapse state changes
+      navbarCollapse.addEventListener('show.bs.collapse', function () {
         openIcon.classList.add('d-none');
         closeIcon.classList.remove('d-none');
       });
 
-      // When menu is hidden → show hamburger icon
-      navbarCollapse.addEventListener('hidden.bs.collapse', function () {
+      navbarCollapse.addEventListener('hide.bs.collapse', function () {
         openIcon.classList.remove('d-none');
         closeIcon.classList.add('d-none');
       });
 
-      // Optional: close menu on link click
+      // Close menu when clicking nav links
       navbarCollapse.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
-          if (navbarCollapse.classList.contains('show')) {
+          const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+          if (bsCollapse) {
             bsCollapse.hide();
           }
         });
