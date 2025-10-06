@@ -3,8 +3,8 @@ session_start();
 require './includes/db.php';
 require './includes/functions.php'; // sendEmail(), etc.
 require './includes/csrf.php'; // CSRF functions
-// load recaptcha config
-$recfg = file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>''];
+// load admin-specific recaptcha config (ADMIN_RECAPTCHA_* or admin/config wrapper)
+$recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/config/recaptcha.php' : (file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>'']);
 
 $error = '';
 
