@@ -124,11 +124,17 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           http_response_code(503);
           ?>
           <!doctype html>
-          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/public/assets/css/public.css"></head><body>
+          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css"></head><body>
           <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
-            <div style="max-width:640px;border:1px solid #eee;padding:28px;border-radius:8px;background:#fff;">
-              <h1>We'll be back soon</h1>
-              <p>Our site is currently undergoing scheduled maintenance. Please check back shortly.</p>
+            <div style="max-width:720px;padding:28px;border-radius:10px;background:linear-gradient(90deg,#ffd54f,#ffb300);box-shadow:0 8px 30px rgba(0,0,0,0.12);color:#111;">
+              <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:12px;">
+                <div style="width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,0.08);">
+                  <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
+                </div>
+                <h1 style="margin:0;font-size:1.6rem;">We'll be back soon</h1>
+              </div>
+              <p style="margin:0 0 12px;color:rgba(0,0,0,0.8);">Our site is currently undergoing scheduled maintenance. We're working to bring it back online as quickly as possible.</p>
+              <p style="margin:0;color:rgba(0,0,0,0.7);font-size:0.95rem">If you are an administrator and need access, log in via the admin area or contact support.</p>
             </div>
           </main>
           </body></html>
