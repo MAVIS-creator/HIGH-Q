@@ -86,3 +86,376 @@ CSRF_OK: 1
 CSRF_PROVIDED: 6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw
 CSRF_OK: 1
 ---
+{
+    "ts": "2025-10-06T17:10:59+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": true,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1028",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Android\"",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Accept": "application/json",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryRh7ZuUbMdolK2NdT",
+        "sec-ch-ua-mobile": "?1",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "6d8a51e58c36848936b0.czS0OEo60iGLzlSf246OkaWZ5hdByByB8HirZecTga0.O1DTFT1bjUfPgmP0kN7d3evQly8bolTeihv9Kr9b0JwjZdJcOHfiU72COw",
+        "name": "Osuntogun Opeyemi",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: 6d8a51e58c36848936b0.czS0OEo60iGLzlSf246OkaWZ5hdByByB8HirZecTga0.O1DTFT1bjUfPgmP0kN7d3evQly8bolTeihv9Kr9b0JwjZdJcOHfiU72COw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:10:59+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1028",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Android\"",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryfxsTlAxpAJ578CIA",
+        "sec-ch-ua-mobile": "?1",
+        "Accept": "*/*",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "6d8a51e58c36848936b0.czS0OEo60iGLzlSf246OkaWZ5hdByByB8HirZecTga0.O1DTFT1bjUfPgmP0kN7d3evQly8bolTeihv9Kr9b0JwjZdJcOHfiU72COw",
+        "name": "Osuntogun Opeyemi",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: 6d8a51e58c36848936b0.czS0OEo60iGLzlSf246OkaWZ5hdByByB8HirZecTga0.O1DTFT1bjUfPgmP0kN7d3evQly8bolTeihv9Kr9b0JwjZdJcOHfiU72COw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:10:59+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "delete",
+    "id_param": 13,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "120",
+        "Cache-Control": "max-age=0",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "Origin": "http://localhost",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-User": "?1",
+        "Sec-Fetch-Dest": "document",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+    },
+    "files": [],
+    "raw": "csrf_token=6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+}
+
+CSRF_PROVIDED: 6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:11:06+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": true,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1030",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Android\"",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Accept": "application/json",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryHdFXTwdf9nabMyRO",
+        "sec-ch-ua-mobile": "?1",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "204a6e1c8acdbfa0ec3882.1ZbiOretrWECtCtMntp1VUdMboWveqTDxu5lKxmOIC4.nfKFF8DM8gdG-Bwn1YomGQkFH731EOycvI0zZEHGcR-Fx4RexeCdEzT4RA",
+        "name": "Osuntogun Opeyemi",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: 204a6e1c8acdbfa0ec3882.1ZbiOretrWECtCtMntp1VUdMboWveqTDxu5lKxmOIC4.nfKFF8DM8gdG-Bwn1YomGQkFH731EOycvI0zZEHGcR-Fx4RexeCdEzT4RA
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:11:06+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1030",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Android\"",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundarypFohGomoeBCUArRX",
+        "sec-ch-ua-mobile": "?1",
+        "Accept": "*/*",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "204a6e1c8acdbfa0ec3882.1ZbiOretrWECtCtMntp1VUdMboWveqTDxu5lKxmOIC4.nfKFF8DM8gdG-Bwn1YomGQkFH731EOycvI0zZEHGcR-Fx4RexeCdEzT4RA",
+        "name": "Osuntogun Opeyemi",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: 204a6e1c8acdbfa0ec3882.1ZbiOretrWECtCtMntp1VUdMboWveqTDxu5lKxmOIC4.nfKFF8DM8gdG-Bwn1YomGQkFH731EOycvI0zZEHGcR-Fx4RexeCdEzT4RA
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:11:07+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "delete",
+    "id_param": 13,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "120",
+        "Cache-Control": "max-age=0",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": "\"Android\"",
+        "Origin": "http://localhost",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-User": "?1",
+        "Sec-Fetch-Dest": "document",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+    },
+    "files": [],
+    "raw": "csrf_token=6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw"
+}
+
+CSRF_PROVIDED: 6c4ca8.hVA9-3Dgr8C18uQHm_jfKPmUfNxkylt4v4_YZpmxWYg.zTRa1geB8KbxvtNs0KiMZLfdDeQ-oBMnxeyOKcH5CLnVAVufAq2fsoO-iw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:11:22+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": true,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1027",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Android\"",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "Accept": "application/json",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryEUKXgdJ1Am5C2m3q",
+        "sec-ch-ua-mobile": "?1",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "21734f303b2e113ff.EDQPu3xJPvVy6MB8maghSMGm8wFau1lYjc-aqj9TlaI.WFBolgsoYZM2pPcX0vhyBI_vgjkA0REH96zM5WcbxJNAZWnfDgQOh0Skrw",
+        "name": "Osuntogun Opeyemi D",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: 21734f303b2e113ff.EDQPu3xJPvVy6MB8maghSMGm8wFau1lYjc-aqj9TlaI.WFBolgsoYZM2pPcX0vhyBI_vgjkA0REH96zM5WcbxJNAZWnfDgQOh0Skrw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-06T17:11:22+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1027",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Android\"",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 Edg/141.0.0.0",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryAeI3Ftu9YtlBNqwS",
+        "sec-ch-ua-mobile": "?1",
+        "Accept": "*/*",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
+    },
+    "cookies": {
+        "PHPSESSID": "u6roure81c0pnr8heu4054hakd"
+    },
+    "post": {
+        "csrf_token": "21734f303b2e113ff.EDQPu3xJPvVy6MB8maghSMGm8wFau1lYjc-aqj9TlaI.WFBolgsoYZM2pPcX0vhyBI_vgjkA0REH96zM5WcbxJNAZWnfDgQOh0Skrw",
+        "name": "Osuntogun Opeyemi D",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: 21734f303b2e113ff.EDQPu3xJPvVy6MB8maghSMGm8wFau1lYjc-aqj9TlaI.WFBolgsoYZM2pPcX0vhyBI_vgjkA0REH96zM5WcbxJNAZWnfDgQOh0Skrw
+CSRF_OK: 1
+---
