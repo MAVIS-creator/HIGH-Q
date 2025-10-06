@@ -267,6 +267,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </div>
             </a>
             <!-- Mobile Toggle Button -->
+                        <!-- Navbar Toggler -->
             <button class="navbar-toggler mobile-toggle" type="button">
               <i class="bx bx-menu open-icon"></i>
               <i class="bx bx-x close-icon d-none"></i>
@@ -326,39 +327,53 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     </div>
   </header>
 
-  <!-- Bootstrap JS Bundle with Popper -->
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const navbarToggler = document.querySelector('.navbar-toggler');
       const navbarCollapse = document.getElementById('mainNav');
 
-      // ✅ Use Bootstrap's Collapse API to avoid manual class conflicts
+      // Bootstrap collapse instance
       const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
         toggle: false
       });
 
-      navbarToggler.addEventListener('click', function () {
-        bsCollapse.toggle();
-        navbarToggler.querySelector('.open-icon').classList.toggle('d-none');
-        navbarToggler.querySelector('.close-icon').classList.toggle('d-none');
+      const openIcon = navbarToggler.querySelector('.open-icon');
+      const closeIcon = navbarToggler.querySelector('.close-icon');
+
+      // Toggler click
+      navbarToggler.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (navbarCollapse.classList.contains('show')) {
+          bsCollapse.hide();
+        } else {
+          bsCollapse.show();
+        }
       });
 
-      // Close menu when clicking a nav link (on mobile)
-      const navLinks = navbarCollapse.querySelectorAll('.nav-link');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function () {
+      // When menu is shown → show close icon
+      navbarCollapse.addEventListener('shown.bs.collapse', function () {
+        openIcon.classList.add('d-none');
+        closeIcon.classList.remove('d-none');
+      });
+
+      // When menu is hidden → show hamburger icon
+      navbarCollapse.addEventListener('hidden.bs.collapse', function () {
+        openIcon.classList.remove('d-none');
+        closeIcon.classList.add('d-none');
+      });
+
+      // Optional: close menu on link click
+      navbarCollapse.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
           if (navbarCollapse.classList.contains('show')) {
             bsCollapse.hide();
           }
         });
       });
-
-      navbarCollapse.addEventListener('hidden.bs.collapse', function () {
-        navbarToggler.querySelector('.open-icon').classList.remove('d-none');
-        navbarToggler.querySelector('.close-icon').classList.add('d-none');
-      });
+    });
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
