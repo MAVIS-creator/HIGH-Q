@@ -34,12 +34,12 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: var(--hq-yellow);
+    background: #fff;
     color: var(--hq-black);
     border-radius: 50px;
     font-weight: 500;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(245,185,4,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .hero-badge i {
@@ -55,7 +55,8 @@
 }
 
 .hero h1 .accent {
-    color: var(--hq-yellow);
+    color: #fff;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
 }
 
 .hero .lead {
