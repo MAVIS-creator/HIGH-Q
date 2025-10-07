@@ -259,12 +259,16 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <section class="programs-cta">
   <div class="container">
     <div class="programs-cta-inner">
-      <h3>Ready to Start Your Success Journey?</h3>
-      <p>Join our proven programs and take the first step towards academic excellence. Our expert tutors are ready to guide you to success.</p>
-      <div class="programs-cta-actions">
-        <a href="register.php" class="btn-primary">Register for Programs</a>
-        <a href="programs.php" class="btn-ghost">View All Programs</a>
-      </div>
+        <h3 class="mb-3">Ready to Start Your Success Journey?</h3>
+        <p class="mb-4 mx-auto" style="max-width: 700px;">
+          Join our proven programs and take the first step towards academic excellence. 
+          Our expert tutors are ready to guide you to success.
+        </p>
+
+        <div class="programs-cta-actions d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3">
+          <a href="register.php" class="btn btn-primary">Register for Programs</a>
+          <a href="programs.php" class="btn btn-outline-secondary">View All Programs</a>
+        </div>
     </div>
   </div>
 </section>
