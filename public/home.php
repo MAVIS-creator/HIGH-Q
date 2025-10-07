@@ -57,29 +57,50 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
       </div>
 
-    <aside class="hero-right">
-      <div class="feature-card">
-        <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
-        <div class="feature-body">
-          <h5>Top JAMB Scores</h5>
-          <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
+      <div class="col-lg-6">
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body d-flex gap-4 p-4">
+                <div class="feature-icon bg-warning bg-opacity-10 text-warning rounded-3 p-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                  <i class='bx bxs-award fs-2'></i>
+                </div>
+                <div>
+                  <h5 class="card-title mb-2">Top JAMB Scores</h5>
+                  <p class="card-text text-muted mb-0">Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body d-flex gap-4 p-4">
+                <div class="feature-icon bg-danger bg-opacity-10 text-danger rounded-3 p-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                  <i class='bx bxs-chalkboard fs-2'></i>
+                </div>
+                <div>
+                  <h5 class="card-title mb-2">Expert Tutors</h5>
+                  <p class="card-text text-muted mb-0">Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body d-flex gap-4 p-4">
+                <div class="feature-icon bg-warning bg-opacity-10 text-warning rounded-3 p-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                  <i class='bx bxs-book-open fs-2'></i>
+                </div>
+                <div>
+                  <h5 class="card-title mb-2">Comprehensive Programs</h5>
+                  <p class="card-text text-muted mb-0">From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon red"><i class='bx bxs-chalkboard'></i></div>
-        <div class="feature-body">
-          <h5>Expert Tutors</h5>
-          <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon yellow"><i class='bx bxs-book-open'></i></div>
-        <div class="feature-body">
-          <h5>Comprehensive Programs</h5>
-          <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
-        </div>
-      </div>
-    </aside>
+    </div>
   </div>
 </section>
 
