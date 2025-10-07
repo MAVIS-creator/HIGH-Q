@@ -1,0 +1,56 @@
+/* Offcanvas Mobile Navigation Styles */
+.custom-offcanvas {
+    max-width: 280px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.custom-offcanvas .offcanvas-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.custom-offcanvas .offcanvas-title {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.custom-offcanvas .offcanvas-body {
+    padding: 1rem;
+}
+
+.custom-offcanvas .nav-link {
+    padding: 0.75rem 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.custom-offcanvas .nav-link:hover,
+.custom-offcanvas .nav-link.active {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--bs-primary, #0d6efd);
+}
+
+/* Hide offcanvas on larger screens */
+@media (min-width: 992px) {
+    .custom-offcanvas {
+        display: none;
+    }
+}
+
+/* Mobile toggle button styling */
+.mobile-toggle {
+    padding: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.mobile-toggle:focus {
+    box-shadow: none;
+}
+
+/* Register button in offcanvas */
+.custom-offcanvas .btn-primary {
+    padding: 0.75rem 1.5rem;
+    width: 100%;
+    margin-top: 1rem;
+}

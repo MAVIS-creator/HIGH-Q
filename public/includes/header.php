@@ -263,8 +263,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </a>
 
-          <!-- Mobile Toggle Button - Positioned Absolutely -->
-          <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+          <!-- Toggle for mobile - opens offcanvas -->
+          <button class="navbar-toggler border-0 ms-auto mobile-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
             <i class="bx bx-menu"></i>
           </button>
 
@@ -453,5 +453,28 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       });
     })();
   </script>
+
+  <!-- Offcanvas Side Nav for Mobile -->
+    <div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="mobileNav">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold text-primary">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+                <li class="nav-item"><a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="programs.php">Programs</a></li>
+                <li class="nav-item"><a class="nav-link" href="exams.php">Exams</a></li>
+                <li class="nav-item"><a class="nav-link" href="news.php">News & Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="community.php">Community</a></li>
+                <li class="nav-item"><a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+                <li class="nav-item"><a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+                <li class="nav-item mt-3">
+                    <a href="register.php" class="btn btn-primary w-100">Register Now</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
   <main class="public-main">
