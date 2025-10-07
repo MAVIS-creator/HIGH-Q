@@ -25,31 +25,37 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero">
+<section class="hero py-5">
   <div class="container">
-    <div class="hero-left">
-      <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
-      <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead">
-        At High Q Solid Academy, we are committed to making our students excel academically and mentally.
-        Join thousands of successful students who have achieved their dreams with our proven teaching methods.
-      </p>
-      <div class="hero-ctas">
-        <a href="register.php" class="btn-primary">Register Now</a>
-        <a href="programs.php" class="btn-ghost">See Our Programs</a>
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="d-inline-block bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill mb-4">
+          <i class='bx bxs-star me-2'></i> Nigeria's Premier Tutorial Academy
+        </div>
+        <h1 class="display-4 fw-bold mb-4">Excellence in <span class="text-warning">Education</span></h1>
+        <p class="lead mb-5">
+          At High Q Solid Academy, we are committed to making our students excel academically and mentally.
+          Join thousands of successful students who have achieved their dreams with our proven teaching methods.
+        </p>
+        <div class="d-flex flex-wrap gap-3 mb-5">
+          <a href="register.php" class="btn btn-primary btn-lg px-4">Register Now</a>
+          <a href="programs.php" class="btn btn-outline-primary btn-lg px-4">See Our Programs</a>
+        </div>
+        <div class="row g-4 text-center text-sm-start">
+          <div class="col-sm-4">
+            <h3 class="fw-bold mb-1">6+</h3>
+            <p class="text-muted mb-0">Years Experience</p>
+          </div>
+          <div class="col-sm-4">
+            <h3 class="fw-bold mb-1">1000+</h3>
+            <p class="text-muted mb-0">Students Trained</p>
+          </div>
+          <div class="col-sm-4">
+            <h3 class="fw-bold mb-1">305</h3>
+            <p class="text-muted mb-0">Highest JAMB Score</p>
+          </div>
+        </div>
       </div>
-      <div class="hero-stats">
-        <div><strong>6+</strong>
-          <div>Years Experience</div>
-        </div>
-        <div><strong>1000+</strong>
-          <div>Students Trained</div>
-        </div>
-        <div><strong>305</strong>
-          <div>Highest JAMB Score</div>
-        </div>
-      </div>
-    </div>
 
     <aside class="hero-right">
       <div class="feature-card">
@@ -91,12 +97,12 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <!-- Two Column Layout with Bootstrap -->
-    <div class="ceo-grid">
-      <div class="ceo-left-column">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
         <!-- Left Card -->
-        <div class="ceo-card">
-          <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
+        <div class="card border-0 shadow-lg overflow-hidden">
+          <div class="position-relative">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid w-100">
           </div>
           <div class="ceo-info">
             <h3 class="mb-1">Master Adebule Quam</h3>
