@@ -118,8 +118,9 @@ include __DIR__ . '/includes/header.php';
 							<input class="form-control" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>">
 						</div>
 
-				<div class="form-row"><label>Program of Interest</label>
-					<select name="program">
+				<div class="mb-3">
+					<label class="form-label">Program of Interest</label>
+					<select class="form-select" name="program">
 						<option value="">Select a program</option>
 						<?php
 						try { $courses = $pdo->query("SELECT id,title FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC); }
@@ -132,9 +133,14 @@ include __DIR__ . '/includes/header.php';
 					</select>
 				</div>
 
-				<div class="form-row"><label>Message</label><textarea id="contact_message" name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
+				<div class="mb-4">
+					<label class="form-label">Message</label>
+					<textarea class="form-control" id="contact_message" name="message" rows="5" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea>
+				</div>
 
-				<div style="margin-top:12px;"><button class="btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
+				<div>
+					<button class="btn btn-primary px-4 py-2" type="submit"><i class="bx bx-send me-2"></i>Send Message</button>
+				</div>
 			</form>
 				<?php if (!empty($recfg['site_key'])): ?>
 					<script src="https://www.google.com/recaptcha/api.js" async defer></script>
