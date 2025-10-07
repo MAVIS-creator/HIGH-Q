@@ -94,8 +94,8 @@ if ($contentForDoc !== '') {
     $tocHtml .= '
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const tocToggle = document.querySelector(".toc-toggle");
-        const tocAside = document.querySelector(".post-toc");
+        const tocToggle = document.querySelector(".btn-outline-primary.d-lg-none");
+        const tocAside = document.querySelector(".card.bg-light");
         
         if (tocToggle && tocAside) {
             tocToggle.addEventListener("click", function() {
