@@ -154,55 +154,86 @@ include __DIR__ . '/includes/header.php';
 		</div>
 	</main>
 
-	<aside class="register-sidebar">
-				<div class="sidebar-card" data-icon="tutor">
-					<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-					<h4>Tutorial Center</h4>
-					<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
+	<aside class="col-lg-4">
+				<div class="card shadow-sm mb-4">
+					<div class="card-body">
+						<div class="d-flex align-items-center mb-3">
+							<i class="bx bx-book-open fs-4 text-warning me-2"></i>
+							<h5 class="mb-0">Tutorial Center</h5>
+						</div>
+						<p class="text-muted mb-0">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
+					</div>
 				</div>
 
-				<div class="sidebar-card" data-icon="office">
-					<div class="card-icon"><i class="bx bx-map" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-					<h4>Area Office</h4>
-					<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
+				<div class="card shadow-sm mb-4">
+					<div class="card-body">
+						<div class="d-flex align-items-center mb-3">
+							<i class="bx bx-map fs-4 text-warning me-2"></i>
+							<h5 class="mb-0">Area Office</h5>
+						</div>
+						<p class="text-muted mb-0">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
+					</div>
 				</div>
 
-				<div class="sidebar-card" data-icon="contact">
-					<div class="card-icon"><i class="bx bx-phone" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-					<h4>Contact Information</h4>
-					<p class="sidebar-text"><strong>Phone</strong><br>0807 208 8794</p>
-					<p class="sidebar-text"><strong>Email</strong><br>info@hqacademy.com</p>
-					<p class="sidebar-text"><strong>Office Hours</strong><br>Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+				<div class="card shadow-sm mb-4">
+					<div class="card-body">
+						<div class="d-flex align-items-center mb-3">
+							<i class="bx bx-phone fs-4 text-warning me-2"></i>
+							<h5 class="mb-0">Contact Information</h5>
+						</div>
+						<div class="mb-3">
+							<strong class="d-block mb-1">Phone</strong>
+							<p class="text-muted mb-0">0807 208 8794</p>
+						</div>
+						<div class="mb-3">
+							<strong class="d-block mb-1">Email</strong>
+							<p class="text-muted mb-0">info@hqacademy.com</p>
+						</div>
+						<div>
+							<strong class="d-block mb-1">Office Hours</strong>
+							<p class="text-muted mb-0">Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+						</div>
+					</div>
 				</div>
 
-				<div class="quick-actions">
-					<div class="quick-action schedule" role="button" tabindex="0" id="openSchedule" aria-label="Schedule Visit">
+				<div class="d-flex gap-2">
+					<button class="btn btn-outline-primary flex-grow-1 d-flex align-items-center justify-content-center gap-2" id="openSchedule">
 						<i class="bx bx-calendar"></i>
-						<div>Schedule Visit</div>
-					</div>
-					<div class="quick-action livechat" role="button" tabindex="0" id="openLiveChat" aria-label="Live Chat">
+						<span>Schedule Visit</span>
+					</button>
+					<button class="btn btn-outline-primary flex-grow-1 d-flex align-items-center justify-content-center gap-2" id="openLiveChat">
 						<i class="bx bx-chat"></i>
-						<div>Live Chat</div>
-					</div>
+						<span>Live Chat</span>
+					</button>
 				</div>
 	</aside>
 </div>
 
 <!-- Frequently Asked Questions (row 1) -->
-<section class="faq-section" style="margin-top:48px;background:#fbf9f7;">
+<section class="py-5 bg-light">
 	<div class="container">
-		<h2 class="section-title">Frequently Asked <span style="color:var(--hq-yellow);">Questions</span></h2>
-		<p class="lead">Find answers to common questions about our programs and services.</p>
+		<div class="text-center mb-5">
+			<h2 class="display-5 fw-bold mb-3">Frequently Asked <span class="text-warning">Questions</span></h2>
+			<p class="lead text-muted mb-0">Find answers to common questions about our programs and services.</p>
+		</div>
 
-		<div class="faq-grid">
-			<div class="faq-card">
-				<h4>What programs do you offer?</h4>
-				<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
+		<div class="row g-4">
+			<div class="col-md-6">
+				<div class="card h-100 border-0 shadow-sm">
+					<div class="card-body p-4">
+						<h4 class="fw-bold mb-3">What programs do you offer?</h4>
+						<p class="text-muted mb-0">We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
+					</div>
+				</div>
 			</div>
 
-			<div class="faq-card">
-				<h4>How much do your programs cost?</h4>
-				<p>Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
+			<div class="col-md-6">
+				<div class="card h-100 border-0 shadow-sm">
+					<div class="card-body p-4">
+						<h4 class="fw-bold mb-3">How much do your programs cost?</h4>
+						<p class="text-muted mb-0">Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
