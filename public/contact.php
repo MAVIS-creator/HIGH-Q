@@ -96,7 +96,7 @@ include __DIR__ . '/includes/header.php';
 						</div>
 					<?php endif; ?>
 
-					<form method="post">
+					<form method="post" class="needs-validation" novalidate>
 						<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 						<div class="row g-3 mb-3">
 							<div class="col-md-6">
