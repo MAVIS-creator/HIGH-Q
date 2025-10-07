@@ -395,24 +395,28 @@ $csrf = generateToken('signup_form');
 			<p style="color:var(--hq-gray); margin-top:8px;">After submitting your registration, here's what you can expect from us.</p>
 		</div>
 
-		<div class="achievements-grid">
-				<div class="next-stat yellow">
-					<div class="next-icon"><i class="bx bx-check-circle" style="font-size:26px;color:#d99a00"></i></div>
-				<strong>1. Confirmation</strong>
-				<span>You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
-			</div>
-
-				<div class="next-stat yellow">
-					<div class="next-icon"><i class="bx bx-book-open" style="font-size:26px;color:#d99a00"></i></div>
-				<strong>2. Assessment</strong>
-				<span>We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
-			</div>
-
-				<div class="next-stat red">
-					<div class="next-icon"><i class="bx bx-rocket" style="font-size:26px;color:#d9534f"></i></div>
-				<strong>3. Start Learning</strong>
-				<span>Begin your journey with our expert tutors and join the ranks of our successful students.</span>
-			</div>
+		<div class="row g-4 justify-content-center">
+				<div class="col-md-4 col-sm-6">
+					<div class="next-stat yellow h-100">
+						<div class="next-icon"><i class="bx bx-check-circle" style="font-size:26px;color:#d99a00"></i></div>
+						<strong>1. Confirmation</strong>
+						<span>You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
+					</div>
+				</div>
+				<div class="col-md-4 col-sm-6">
+					<div class="next-stat yellow h-100">
+						<div class="next-icon"><i class="bx bx-book-open" style="font-size:26px;color:#d99a00"></i></div>
+						<strong>2. Assessment</strong>
+						<span>We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
+					</div>
+				</div>
+				<div class="col-md-4 col-sm-6">
+					<div class="next-stat red h-100">
+						<div class="next-icon"><i class="bx bx-rocket" style="font-size:26px;color:#d9534f"></i></div>
+						<strong>3. Start Learning</strong>
+						<span>Begin your journey with our expert tutors and join the ranks of our successful students.</span>
+					</div>
+				</div>
 		</div>
 	</div>
 </section>
