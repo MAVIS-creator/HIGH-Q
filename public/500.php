@@ -2,16 +2,12 @@
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<div class="container min-vh-75 py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6 text-center">
-            <h1 class="display-1 text-danger fw-bold mb-3">500</h1>
-            <h2 class="h3 mb-4">Server Error</h2>
-            <p class="text-muted mb-4">Something went wrong on our end. Please try again later.</p>
-            <div>
-                <a href="/HIGH-Q/public/home.php" class="btn btn-primary px-4 py-2">Go Home</a>
-            </div>
-        </div>
+<div class="container" style="min-height:60vh;padding:40px 20px;text-align:center;">
+    <h1 style="font-size:72px;color:var(--hq-red);margin:0 0 20px">500</h1>
+    <h2>Server Error</h2>
+    <p style="color:#666;margin:20px 0 30px">Something went wrong on our end. Please try again later.</p>
+    <div>
+        <a href="/HIGH-Q/public/home.php" class="btn-primary">Go Home</a>
     </div>
 </div>
 
