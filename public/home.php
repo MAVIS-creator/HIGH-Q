@@ -108,29 +108,29 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
 
         <!-- Quote Box -->
-        <div class="ceo-quote">
-          <i class="fas fa-quote-left mb-2"></i>
-          <p class="mb-3">
+        <div class="ceo-quote bg-white rounded-3 shadow-sm p-4">
+          <i class="fas fa-quote-left fs-3 mb-3 text-warning"></i>
+          <p class="mb-3 fs-5 fw-light">
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span class="d-block text-end">- Master Adebule Quam</span>
+          <span class="d-block text-end fw-semibold">- Master Adebule Quam</span>
         </div>
       </div>
 
-      <div class="ceo-right-column">
+      <div class="ceo-right-column col-lg-7">
         <!-- Right Content -->
-        <div class="ceo-content">
-          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
+        <div class="ceo-content bg-white rounded-3 shadow-sm p-4 mb-4">
+          <h3 class="h4 fw-bold mb-3">Seasoned Educator & Mentor</h3>
           <div class="mb-4">
-            <p class="mb-3">
+            <p class="mb-3 text-muted">
               Master Adebule Quam is a seasoned tutor versed in the teaching profession.
               Over the years, he has produced students who have achieved breathtaking
               academic excellence and excelled in various examinations including GCE,
               WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
             </p>
-            <p>
+            <p class="text-muted">
               He believes in the school of thought that education is the force to push
               one ahead of others. Under his guidance, High Q Academy has blossomed into
               a hub of academic excellence and technological proficiency.
@@ -139,15 +139,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
 
         <!-- Stats Grid -->
-        <div class="ceo-stats">
-          <div class="stat yellow">
-            <i class="fas fa-trophy"></i>
-            <strong>305</strong>
-            <span>Highest JAMB Score</span>
+        <div class="ceo-stats d-flex flex-wrap gap-3">
+          <div class="stat yellow rounded-3 p-4 d-flex flex-column align-items-center text-center">
+            <i class="fas fa-trophy fs-2 mb-2"></i>
+            <strong class="fs-3 fw-bold mb-1">305</strong>
+            <span class="text-muted">Highest JAMB Score</span>
           </div>
-          <div class="stat red">
-            <i class="fas fa-users"></i>
-            <strong>1000+</strong>
+          <div class="stat red rounded-3 p-4 d-flex flex-column align-items-center text-center">
+            <i class="fas fa-users fs-2 mb-2"></i>
+            <strong class="fs-3 fw-bold mb-1">1000+</strong>
             <span>Students Mentored</span>
           </div>
           <div class="stat gray">
