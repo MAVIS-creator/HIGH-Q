@@ -6,10 +6,48 @@ $postId = (int)($_GET['id'] ?? 0);
 if (!$postId) { header('Location: index.php'); exit; }
 
 // fetch post
-$stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT p.*, u.name as author_name, c.name as category_name FROM posts p LEFT JOIN users u ON p.created_by = u.id LEFT JOIN categories c ON p.category_id = c.id WHERE p.id = ? LIMIT 1');
 $stmt->execute([$postId]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$post) { echo "<p>Post not found.</p>"; exit; }
+if (!$post) { header('Location: /404.php'); exit; }
+
+include __DIR__ . '/includes/header.php';
+?>
+
+<article class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <?php if ($post['featured_image']): ?>
+        <div class="rounded-3 overflow-hidden mb-4">
+          <img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="img-fluid w-100">
+        </div>
+        <?php endif; ?>
+
+        <header class="mb-4">
+          <?php if ($post['category_name']): ?>
+          <div class="text-primary mb-2"><?= htmlspecialchars($post['category_name']) ?></div>
+          <?php endif; ?>
+          
+          <h1 class="display-4 fw-bold mb-3"><?= htmlspecialchars($post['title']) ?></h1>
+          
+          <div class="d-flex align-items-center text-muted mb-4">
+            <?php if ($post['author_name']): ?>
+            <div class="me-3">
+              <i class="bx bx-user me-1"></i>
+              <?= htmlspecialchars($post['author_name']) ?>
+            </div>
+            <?php endif; ?>
+            <div class="me-3">
+              <i class="bx bx-calendar me-1"></i>
+              <?= date('F j, Y', strtotime($post['created_at'])) ?>
+            </div>
+            <div>
+              <i class="bx bx-message me-1"></i>
+              <?= $comments_count ?> comments
+            </div>
+          </div>
+        </header>
 
 // fetch approved comments (top-level)
 $cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
