@@ -160,15 +160,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<!-- Programs Section -->
-<section class="programs-section">
+<section class="programs-section py-5">
   <div class="container">
-    <div class="ceo-heading">
-      <h2>Our <span class="high">Programs & Services</span></h2>
-      <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
+    <div class="programs-header text-center mb-5">
+      <h2>Our <span class="highlight">Programs</span></h2>
+      <p>Explore the various programs we offer to help students excel academically and professionally.</p>
     </div>
 
-    <div class="programs-grid">
+    <!-- Responsive grid applied here -->
+    <div class="programs-grid row g-4">
       <?php if (empty($programs)): ?>
         <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
@@ -192,59 +192,46 @@ if (isset($pdo) && $pdo instanceof PDO) {
           $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
-          <article class="program-card">
-            <div class="program-card-inner">
-              <div class="program-icon">
-                <?php
-                // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
-                if ($icon !== '') {
-                  if (strpos($icon, 'bx') !== false) {
-                    echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
-                  } else {
-                    $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                    if (is_readable($iconPath)) {
-                      echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
-                    } else {
-                      // fallback default icon
-                      echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                    }
-                  }
+          <article class="program-card col-12 col-md-6 col-lg-4 d-flex flex-column text-center">
+            <div class="program-icon mb-3">
+              <?php
+              if ($icon !== '') {
+                if (strpos($icon, 'bx') !== false) {
+                  echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
                 } else {
-                  echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                  $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
+                  if (is_readable($iconPath)) {
+                    echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+                  } else {
+                    echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                  }
                 }
-                ?>
-              </div>
-
-              <div class="program-body">
-                <h4>
-                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
-                    <?= $title ?>
-                  </a>
-
-                </h4>
-
-                <?php if (!empty($desc)): ?>
-                  <p class="program-summary"><?= htmlspecialchars($desc) ?></p>
-                <?php endif; ?>
-
-                <?php if (!empty($features_lines)): ?>
-                  <ul class="program-features">
-                    <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
-                      <?php $li = trim($line);
-                      if ($li === '') continue; ?>
-                      <li><?= htmlspecialchars($li) ?></li>
-                    <?php endforeach; ?>
-                  </ul>
-                <?php endif; ?>
-
-              </div>
+              } else {
+                echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+              }
+              ?>
             </div>
 
-            <div class="program-card-footer">
+            <h3 class="h5"><?= $title ?></h3>
+            <?php if (!empty($desc)): ?>
+              <p class="text-muted small"><?= htmlspecialchars($desc) ?></p>
+            <?php endif; ?>
+
+            <?php if (!empty($features_lines)): ?>
+              <ul class="list-unstyled small mt-auto">
+                <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
+                  <?php $li = trim($line);
+                  if ($li === '') continue; ?>
+                  <li>• <?= htmlspecialchars($li) ?></li>
+                <?php endforeach; ?>
+              </ul>
+            <?php endif; ?>
+
+            <div class="mt-3">
               <?php if ($highlight_badge !== ''): ?>
-                <div class="program-highlight"><span class="highlight-icon">✺</span> <?= htmlspecialchars($highlight_badge) ?></div>
+                <div class="badge bg-warning text-dark"><?= htmlspecialchars($highlight_badge) ?></div>
               <?php else: ?>
-                <span class="badge">Learn More</span>
+                <a href="programs.php?slug=<?= $slug ?>" class="btn btn-sm btn-outline-primary">Learn More</a>
               <?php endif; ?>
             </div>
           </article>
