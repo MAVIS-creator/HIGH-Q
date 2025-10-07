@@ -241,25 +241,29 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 <body>
   <header>
     <!-- Top bar -->
-    <div class="top-bar">
+    <div class="top-bar py-2 d-none d-sm-block">
       <div class="container">
-  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
-        <span class="motto">"Always Ahead of Others"</span>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-3">
+            <span class="d-flex align-items-center gap-2"><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+            <span class="d-flex align-items-center gap-2"><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+          </div>
+          <span class="motto fw-bold">"Always Ahead of Others"</span>
+        </div>
       </div>
     </div>
 
     <!-- Main nav -->
-    <div class="main-header">
+    <div class="main-header py-2 py-lg-3 shadow-sm">
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100 position-relative">
+        <nav class="navbar navbar-expand-lg w-100 position-relative align-items-center">
           <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
-            <div class="logo">
-              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-              <div>
-                <h1>HIGH Q SOLID ACADEMY</h1>
-                <small>Limited</small>
+          <a class="navbar-brand d-flex align-items-center" href="index.php">
+            <div class="logo d-flex align-items-center gap-2">
+              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo img-fluid">
+              <div class="d-flex flex-column">
+                <h1 class="mb-0 fs-5 fw-bold">HIGH Q SOLID ACADEMY</h1>
+                <small class="text-muted">Limited</small>
               </div>
             </div>
           </a>
@@ -267,12 +271,12 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           <!-- Desktop Navigation -->
           <div class="collapse navbar-collapse" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="navbar-nav mx-auto d-none d-lg-flex">
+            <ul class="navbar-nav mx-auto d-none d-lg-flex align-items-center gap-1">
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
+                <a class="nav-link px-3 py-2 rounded-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
+                <a class="nav-link px-3 py-2 rounded-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
               </li>
 
               <!-- Programs Dropdown -->
