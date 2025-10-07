@@ -54,26 +54,26 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
     </div>
 
-    <aside class="hero-right">
-      <div class="feature-card">
-        <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
+    <aside class="hero-right d-none d-lg-flex flex-column gap-4 p-4">
+      <div class="feature-card p-4 rounded-3 shadow-sm">
+        <div class="feature-icon yellow rounded-circle d-flex align-items-center justify-content-center mb-3"><i class='bx bxs-award fs-3'></i></div>
         <div class="feature-body">
-          <h5>Top JAMB Scores</h5>
-          <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
+          <h5 class="fw-bold mb-2">Top JAMB Scores</h5>
+          <p class="mb-0">Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon red"><i class='bx bxs-chalkboard'></i></div>
+      <div class="feature-card p-4 rounded-3 shadow-sm">
+        <div class="feature-icon red rounded-circle d-flex align-items-center justify-content-center mb-3"><i class='bx bxs-chalkboard fs-3'></i></div>
         <div class="feature-body">
-          <h5>Expert Tutors</h5>
-          <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
+          <h5 class="fw-bold mb-2">Expert Tutors</h5>
+          <p class="mb-0">Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon yellow"><i class='bx bxs-book-open'></i></div>
+      <div class="feature-card p-4 rounded-3 shadow-sm">
+        <div class="feature-icon yellow rounded-circle d-flex align-items-center justify-content-center mb-3"><i class='bx bxs-book-open fs-3'></i></div>
         <div class="feature-body">
-          <h5>Comprehensive Programs</h5>
-          <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
+          <h5 class="fw-bold mb-2">Comprehensive Programs</h5>
+          <p class="mb-0">From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
         </div>
       </div>
     </aside>
@@ -81,29 +81,29 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="ceo-hero">
+<section class="ceo-hero py-5 my-4">
   <div class="container">
 
     <!-- Top Heading -->
-    <div class="ceo-heading">
-      <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
-      <p>
+    <div class="ceo-heading text-center mb-5">
+      <h2 class="display-5 fw-bold mb-3">Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
+      <p class="lead text-muted mx-auto" style="max-width: 700px;">
         Under the visionary leadership of Master Adebule Quam, High Q Solid Academy
         has become a beacon of educational excellence.
       </p>
     </div>
 
     <!-- Two Column Layout with Bootstrap -->
-    <div class="ceo-grid">
-      <div class="ceo-left-column">
+    <div class="ceo-grid row g-4">
+      <div class="ceo-left-column col-lg-5">
         <!-- Left Card -->
-        <div class="ceo-card">
+        <div class="ceo-card bg-white rounded-3 shadow-sm overflow-hidden mb-4">
           <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid w-100 object-fit-cover">
           </div>
-          <div class="ceo-info">
-            <h3 class="mb-1">Master Adebule Quam</h3>
-            <p class="role mb-0">CEO & Lead Tutor</p>
+          <div class="ceo-info p-4 text-center">
+            <h3 class="h4 mb-2">Master Adebule Quam</h3>
+            <p class="text-muted mb-0">CEO & Lead Tutor</p>
           </div>
         </div>
 
