@@ -103,14 +103,16 @@ $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER B
             <!-- Reply form -->
             <form method="post" class="forum-reply-form px-4 pb-4" data-qid="<?= $qq['id'] ?>" style="display:none;">
               <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
-              <div class="form-row">
-                <input class="form-input" type="text" name="rname" placeholder="Name (optional)">
+              <div class="mb-3">
+                <input class="form-control" type="text" name="rname" placeholder="Name (optional)">
               </div>
-              <div class="form-row">
-                <textarea class="form-textarea" name="rcontent" rows="3" placeholder="Write your reply..." required></textarea>
+              <div class="mb-3">
+                <textarea class="form-control" name="rcontent" rows="3" placeholder="Write your reply..." required></textarea>
               </div>
-              <div class="form-actions">
-                <button class="btn-approve" type="submit">Post Reply</button>
+              <div class="text-end">
+                <button class="btn btn-primary btn-sm px-3" type="submit">
+                  <i class='bx bx-send me-1'></i> Post Reply
+                </button>
               </div>
             </form>
           </div>
