@@ -246,9 +246,6 @@ include __DIR__ . '/includes/header.php';
 				} else {
 						$errors[] = 'Failed to send your message. Please try again later.';
 				}
-		}
-}
-
 
 $csrf = generateToken('contact_form');
 include __DIR__ . '/includes/header.php';
