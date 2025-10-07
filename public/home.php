@@ -160,15 +160,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="programs-section py-5">
+<!-- Programs Section -->
+<section class="programs-section">
   <div class="container">
-    <div class="programs-header text-center mb-5">
-      <h2>Our <span class="highlight">Programs</span></h2>
-      <p>Explore the various programs we offer to help students excel academically and professionally.</p>
+    <div class="ceo-heading">
+      <h2>Our <span class="high">Programs & Services</span></h2>
+      <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
-    <!-- Responsive grid applied here -->
-    <div class="programs-grid row g-4">
+    <div class="programs-grid">
       <?php if (empty($programs)): ?>
         <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
@@ -192,46 +192,59 @@ if (isset($pdo) && $pdo instanceof PDO) {
           $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
-          <article class="program-card col-12 col-md-6 col-lg-4 d-flex flex-column text-center">
-            <div class="program-icon mb-3">
-              <?php
-              if ($icon !== '') {
-                if (strpos($icon, 'bx') !== false) {
-                  echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
-                } else {
-                  $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                  if (is_readable($iconPath)) {
-                    echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+          <article class="program-card">
+            <div class="program-card-inner">
+              <div class="program-icon">
+                <?php
+                // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
+                if ($icon !== '') {
+                  if (strpos($icon, 'bx') !== false) {
+                    echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
                   } else {
-                    echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                    $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
+                    if (is_readable($iconPath)) {
+                      echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+                    } else {
+                      // fallback default icon
+                      echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                    }
                   }
+                } else {
+                  echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
                 }
-              } else {
-                echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-              }
-              ?>
+                ?>
+              </div>
+
+              <div class="program-body">
+                <h4>
+                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
+                    <?= $title ?>
+                  </a>
+
+                </h4>
+
+                <?php if (!empty($desc)): ?>
+                  <p class="program-summary"><?= htmlspecialchars($desc) ?></p>
+                <?php endif; ?>
+
+                <?php if (!empty($features_lines)): ?>
+                  <ul class="program-features">
+                    <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
+                      <?php $li = trim($line);
+                      if ($li === '') continue; ?>
+                      <li><?= htmlspecialchars($li) ?></li>
+                    <?php endforeach; ?>
+                  </ul>
+                <?php endif; ?>
+
+              </div>
             </div>
 
-            <h3 class="h5"><?= $title ?></h3>
-            <?php if (!empty($desc)): ?>
-              <p class="text-muted small"><?= htmlspecialchars($desc) ?></p>
-            <?php endif; ?>
-
-            <?php if (!empty($features_lines)): ?>
-              <ul class="list-unstyled small mt-auto">
-                <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
-                  <?php $li = trim($line);
-                  if ($li === '') continue; ?>
-                  <li>• <?= htmlspecialchars($li) ?></li>
-                <?php endforeach; ?>
-              </ul>
-            <?php endif; ?>
-
-            <div class="mt-3">
+            <div class="program-card-footer">
               <?php if ($highlight_badge !== ''): ?>
-                <div class="badge bg-warning text-dark"><?= htmlspecialchars($highlight_badge) ?></div>
+                <div class="program-highlight"><span class="highlight-icon">✺</span> <?= htmlspecialchars($highlight_badge) ?></div>
               <?php else: ?>
-                <a href="programs.php?slug=<?= $slug ?>" class="btn btn-sm btn-outline-primary">Learn More</a>
+                <span class="badge">Learn More</span>
               <?php endif; ?>
             </div>
           </article>
@@ -281,32 +294,26 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="news-section py-5">
+<section class="news-section">
   <div class="container">
-    <div class="ceo-heading text-center mb-4">
+    <div class="ceo-heading">
       <h2>Latest <span class="highlight">News & Updates</span></h2>
-      <p class="text-muted">Stay informed with our latest announcements and blog posts.</p>
+      <p class="muted">Stay informed with our latest announcements and blog posts.</p>
     </div>
 
     <?php if (empty($latestPosts)): ?>
       <p class="no-posts">No news posts available at the moment. Check back later for updates!</p>
     <?php else: ?>
-      <!-- Added Bootstrap row + gutter while keeping .news-grid -->
-      <div class="news-grid row g-4">
+      <div class="news-grid">
         <?php foreach ($latestPosts as $post): ?>
-          <!-- Each card gets responsive column classes + flex column so content aligns nicely -->
-          <article class="news-card col-12 col-md-6 col-lg-3 d-flex flex-column">
+          <article class="news-card">
             <?php if (!empty($post['featured_image'])): ?>
-              <div class="news-thumb">
-                <img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="img-fluid rounded">
-              </div>
+              <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
             <?php endif; ?>
-            <!-- keep content structure, add flex column so meta can sit at bottom -->
-            <div class="news-body d-flex flex-column">
+            <div class="news-body">
               <h4><a href="./post.php?id=<?= intval($post['id']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?? '') ?></p>
-              <!-- make meta sit at bottom of the card -->
-              <div class="news-meta mt-auto"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
+              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
                 <span class="news-count" style="margin-left:12px;"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
                 <span class="news-count" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
               </div>
@@ -314,9 +321,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </article>
         <?php endforeach; ?>
       </div>
-
-      <div class="news-cta text-center mt-4">
-        <a href="news.php" class="btn btn-outline-secondary">View All News</a>
+      <div class="news-cta" style="text-align:center;margin-top:18px;">
+        <a href="news.php" class="btn-ghost">View All News</a>
       </div>
     <?php endif; ?>
   </div>
