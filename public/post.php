@@ -95,7 +95,7 @@ if ($contentForDoc !== '') {
   $doc = new DOMDocument();
   // Wrap in a div to get fragment handling and set UTF-8
   $wrapped = '<div>' . $contentForDoc . '</div>';
-  $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped);
+  $doc->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $wrapped);
   $xpath = new DOMXPath($doc);
   $nodes = $xpath->query('//h2|//h3|//h4');
   if ($nodes->length > 0) {
@@ -140,7 +140,7 @@ if ($contentForDoc !== '') {
                 if (tocAside.classList.contains("active")) {
                     tocToggle.innerHTML = \'<i class="bx bx-x"></i> Close\';
                 } else {
-                    tocToggle.innerHTML = \'<i class="bx bx-list-ul"></i> Contents\';
+                    tocToggle.innerHTML = '<i class="bx bx-list-ul"></i> Contents';
                 }
             });
         }
