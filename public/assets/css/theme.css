@@ -43,3 +43,19 @@ a {
 a:hover {
   color: var(--bs-primary-rgb);
 }
+
+/* HQ ghost button: white background, HQ yellow border/text */
+.btn-hq-ghost {
+  background-color: #ffffff;
+  color: var(--hq-yellow);
+  border: 2px solid var(--hq-yellow);
+  box-shadow: none;
+}
+.btn-hq-ghost:hover,
+.btn-hq-ghost:focus {
+  background-color: var(--hq-yellow);
+  color: #111;
+  border-color: var(--hq-yellow);
+  text-decoration: none;
+}
+
