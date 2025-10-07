@@ -52,44 +52,62 @@ $csrf = generateToken('contact_form');
 include __DIR__ . '/includes/header.php';
 ?>
 
-<section class="about-hero">
-	<div class="about-hero-overlay"></div>
-	<div class="container about-hero-inner">
-		<h1>Contact Us</h1>
-		<p class="lead">Get in touch with our team. We're here to help you start your journey towards academic excellence.</p>
+<section class="position-relative bg-dark text-white py-5 mb-5">
+	<div class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-50"></div>
+	<div class="container position-relative py-5">
+		<div class="text-center py-4">
+			<h1 class="display-4 fw-bold mb-3">Contact Us</h1>
+			<p class="lead mb-0 mx-auto" style="max-width: 600px;">Get in touch with our team. We're here to help you start your journey towards academic excellence.</p>
+		</div>
 	</div>
 </section>
 
-<div class="container register-layout contact-layout" style="margin-top:28px;">
-	<main class="register-main">
-		<div class="card">
-			<h3>Send Us a <span style="color:var(--hq-yellow);">Message</span></h3>
-			<p class="card-desc">Fill out the form below and we'll get back to you within 24 hours.</p>
+<div class="container py-5">
+	<div class="row justify-content-center">
+		<div class="col-lg-8">
+			<div class="card border-0 shadow-sm">
+				<div class="card-body p-4 p-md-5">
+					<h2 class="card-title h3 mb-2">Send Us a <span class="text-warning">Message</span></h2>
+					<p class="text-muted mb-4">Fill out the form below and we'll get back to you within 24 hours.</p>
 
-			<?php if (!empty($errors)): ?>
-				<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
-					<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
-				</div>
-			<?php endif; ?>
-			<?php if ($success): ?>
-				<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
-					<?= htmlspecialchars($success) ?>
-				</div>
-			<?php endif; ?>
+					<?php if (!empty($errors)): ?>
+						<div class="alert alert-warning" role="alert">
+							<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+					<?php if ($success): ?>
+						<div class="alert alert-success" role="alert">
+							<?= htmlspecialchars($success) ?>
+						</div>
+					<?php endif; ?>
 
-			<form method="post">
-				<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-				<div class="form-row form-inline">
-					<div style="flex:1"><label>First Name</label><input name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
-					<div style="flex:1"><label>Last Name</label><input name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
-				</div>
+					<form method="post">
+						<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+						<div class="row g-3 mb-3">
+							<div class="col-md-6">
+								<label class="form-label">First Name</label>
+								<input type="text" class="form-control" name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>">
+							</div>
+							<div class="col-md-6">
+								<label class="form-label">Last Name</label>
+								<input type="text" class="form-control" name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>">
+							</div>
+						</div>
 
-				<div class="form-row"><label>Email Address</label><input type="email" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
-				<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>"></div>
+						<div class="mb-3">
+							<label class="form-label">Email Address</label>
+							<input type="email" class="form-control" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>">
+						</div>
 
-				<div class="form-row"><label>Program of Interest</label>
-					<select name="program">
-						<option value="">Select a program</option>
+						<div class="mb-3">
+							<label class="form-label">Phone Number</label>
+							<input type="tel" class="form-control" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>">
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Program of Interest</label>
+							<select class="form-select" name="program">
+								<option value="">Select a program</option>
 						<?php
 						try { $courses = $pdo->query("SELECT id,title FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC); }
 						catch(Throwable $e) { $courses = []; }
