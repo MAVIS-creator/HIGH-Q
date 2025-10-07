@@ -93,7 +93,7 @@ include __DIR__ . '/includes/header.php';
 
 <div class="container py-4 py-lg-5 mb-4">
     <main class="row gy-4">
-        <div class="col-lg-8">
+        <div class="col-lg-8 col-md-7">
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-body p-4 p-lg-5">
                     <h3 class="fw-bold mb-2">Send Us a <span class="text-warning">Message</span></h3>
@@ -180,7 +180,7 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <aside class="col-lg-4">
+        <aside class="col-lg-4 col-md-5">
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
