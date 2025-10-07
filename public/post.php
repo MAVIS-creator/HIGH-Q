@@ -216,7 +216,6 @@ require_once __DIR__ . '/includes/header.php';
       </div>
     </div>
 
-
     <div class="row mt-5">
       <div class="col-lg-8">
         <section id="commentsSection" class="card border-0 shadow-sm">
@@ -243,7 +242,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                     <p class="mb-0"><?= nl2br(htmlspecialchars($c['content'])) ?></p>
 
-                    <?php
+          <?php
             // fetch replies for this comment
             $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
             $rstmt->execute([$c['id']]);
@@ -270,6 +269,9 @@ require_once __DIR__ . '/includes/header.php';
           <?php
             }
           ?>
+                  </div>
+                </div>
+
                   </div>
                 </div>
               <?php } ?>
