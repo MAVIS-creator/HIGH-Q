@@ -1,33 +1,32 @@
 /* HQ Theme Colors */
 :root {
     --hq-yellow: #f5b904;
-    --hq-yellow-light: #fff6d9;
+    --hq-red: #dc3545;
     --hq-text: #333;
 }
 
 /* Offcanvas Mobile Navigation Styles */
 .custom-offcanvas {
     width: 280px !important;
-    background-color: var(--hq-yellow-light) !important;
-    box-shadow: -5px 0 15px rgba(245, 185, 4, 0.1) !important;
+    background-color: white !important;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1) !important;
 }
 
 .custom-offcanvas .offcanvas-header {
-    background: var(--hq-yellow);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    background: white;
+    border-bottom: 1px solid #eee;
 }
 
 .custom-offcanvas .offcanvas-title {
-    color: white;
+    color: var(--hq-yellow);
 }
 
 .custom-offcanvas .btn-close {
-    background-color: white;
-    opacity: 1;
+    opacity: 0.75;
 }
 
 .custom-offcanvas .offcanvas-body {
-    background: var(--hq-yellow-light);
+    background: white;
 }
 
 .custom-offcanvas .nav-link {
@@ -45,14 +44,13 @@
 
 /* Mobile toggle button styling */
 .mobile-toggle {
-    color: var(--hq-yellow) !important;
-    border: 2px solid var(--hq-yellow) !important;
-    border-radius: 8px;
+    color: rgba(0, 0, 0, 0.65) !important;
+    border: none !important;
     padding: 0.5rem 0.75rem;
 }
 
 .mobile-toggle:focus {
-    box-shadow: 0 0 0 3px rgba(245, 185, 4, 0.25) !important;
+    box-shadow: none !important;
 }
 
 .mobile-toggle .bx {
@@ -62,8 +60,8 @@
 
 /* Register button in offcanvas */
 .custom-offcanvas .btn-primary {
-    background-color: var(--hq-yellow) !important;
-    border-color: var(--hq-yellow) !important;
+    background-color: var(--hq-red) !important;
+    border-color: var(--hq-red) !important;
     color: white !important;
     border-radius: 8px;
     font-weight: 600;
@@ -72,5 +70,5 @@
 
 .custom-offcanvas .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(245, 185, 4, 0.25);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
 }
