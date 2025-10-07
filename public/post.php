@@ -42,6 +42,10 @@ $comments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
 $ccstmt = $pdo->prepare('SELECT COUNT(1) FROM comments WHERE post_id = ? AND status = "approved"');
 $ccstmt->execute([$postId]);
 $comments_count = (int)$ccstmt->fetchColumn();
+
+// Ensure TOC/content variables exist for the template
+$tocHtml = '';
+$renderedContent = '';
 ?>
 
 <article class="py-5">
