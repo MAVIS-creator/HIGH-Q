@@ -2,11 +2,11 @@
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<section class="about-hero">
-  <div class="about-hero-overlay"></div>
-  <div class="container about-hero-inner">
-    <h1>About HQ Academy</h1>
-    <p class="lead">Building Excellence in Education Through Dedication and Innovation</p>
+<section class="about-hero position-relative py-5">
+  <div class="about-hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="container about-hero-inner position-relative text-center py-5">
+    <h1 class="display-4 fw-bold mb-3">About HQ Academy</h1>
+    <p class="lead mb-0 mx-auto" style="max-width: 700px;">Building Excellence in Education Through Dedication and Innovation</p>
   </div>
 </section>
 
@@ -37,17 +37,24 @@
 
 
 <!-- Vision & Mission -->
-<section class="values-section">
+<section class="values-section py-5">
   <div class="container">
-    <div class="values-grid">
-      <article class="value-card">
-        <div class="value-icon"><i class='bx bxs-bullseye'></i></div>
-        <h4>Our Vision</h4>
-        <p>To be the leading tutorial academy that transforms students into confident, well-prepared individuals ready to excel in their academic pursuits and achieve their educational goals with excellence.</p>
+    <div class="row g-4">
+      <article class="col-md-6">
+        <div class="value-card h-100 bg-white rounded-3 shadow-sm p-4 text-center">
+          <div class="value-icon d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
+            <i class='bx bxs-bullseye fs-3'></i>
+          </div>
+          <h4 class="fw-bold mb-3">Our Vision</h4>
+          <p class="text-muted mb-0">To be the leading tutorial academy that transforms students into confident, well-prepared individuals ready to excel in their academic pursuits and achieve their educational goals with excellence.</p>
+        </div>
       </article>
 
-      <article class="value-card">
-        <div class="value-icon"><i class='bx bxs-rocket'></i></div>
+      <article class="col-md-6">
+        <div class="value-card h-100 bg-white rounded-3 shadow-sm p-4 text-center">
+          <div class="value-icon d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
+            <i class='bx bxs-rocket fs-3'></i>
+          </div>
         <h4>Our Mission</h4>
         <p>To provide high-quality, personalized education that empowers students to achieve academic excellence through innovative teaching methods, experienced tutors, and comprehensive exam preparation programs.</p>
       </article>
