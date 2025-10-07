@@ -9,7 +9,6 @@ $recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/co
 
 // The actual page output is above; include footer now.
 require_once __DIR__ . '/includes/footer.php';
-<?php
 // public/contact.php - contact form that emails using sendEmail()
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
@@ -249,6 +248,7 @@ include __DIR__ . '/includes/header.php';
 				}
 		}
 }
+
 
 $csrf = generateToken('contact_form');
 include __DIR__ . '/includes/header.php';
