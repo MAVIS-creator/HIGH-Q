@@ -320,7 +320,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   </header>
 
   <!-- Bootstrap JS Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
     // Toggle nav dropdown open/close on click and close when clicking outside
