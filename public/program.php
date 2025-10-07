@@ -61,13 +61,9 @@ $programs = [
 if (!array_key_exists($slug, $programs)) {
   include __DIR__ . '/includes/header.php';
   ?>
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 text-center">
-        <h2 class="display-5 fw-bold mb-4">Program Not Found</h2>
-        <p class="lead text-muted mb-4">The program you're looking for was not found. Please <a href="programs.php" class="text-warning text-decoration-none">browse all programs</a>.</p>
-      </div>
-    </div>
+  <div class="container" style="padding: 48px 0">
+    <h2>Program Not Found</h2>
+    <p>The program you're looking for was not found. Please <a href="programs.php">browse all programs</a>.</p>
   </div>
   <?php
   include __DIR__ . '/includes/footer.php';
@@ -78,84 +74,79 @@ $p = $programs[$slug];
 include __DIR__ . '/includes/header.php';
 ?>
 
-<section class="py-5">
+<section class="program-detail" style="padding: 48px 0;">
   <div class="container">
-    <!-- Breadcrumb -->
-    <nav class="mb-4">
-      <a href="programs.php" class="text-decoration-none d-inline-flex align-items-center gap-2 text-muted hover-warning">
-        <i class='bx bx-arrow-left'></i> Back to Programs
-      </a>
+
+    <!-- Optional Breadcrumb -->
+    <nav style="margin-bottom: 24px;">
+      <a href="programs.php" style="color: var(--hq-gray); text-decoration: none;">← Back to Programs</a>
     </nav>
 
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="text-center mb-5">
-          <h1 class="display-5 fw-bold mb-3"><?= htmlspecialchars($p['title']) ?></h1>
-        </div>
+    <div class="ceo-heading">
+      <h2><?= htmlspecialchars($p['title']) ?></h2>
+    </div>
 
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-body p-4 p-md-5">
-            <section class="mb-5">
-              <h3 class="h4 fw-bold mb-4">Overview</h3>
-              <p class="text-muted mb-0"><?= htmlspecialchars($p['overview']) ?></p>
-            </section>
+    <div class="program-detail-grid">
+      <div class="program-detail-main">
+        <section class="program-section">
+          <h3 id="overview">Overview</h3>
+          <p><?= htmlspecialchars($p['overview']) ?></p>
+        </section>
 
-            <section class="mb-5">
-              <h3 class="h4 fw-bold mb-4">Curriculum / Modules</h3>
-              <ul class="list-unstyled mb-0">
-                <?php foreach ($p['curriculum'] as $item): ?>
-                  <li class="d-flex align-items-center mb-3">
-                    <i class='bx bx-check-circle text-warning me-2 fs-5'></i>
-                    <span class="text-muted"><?= htmlspecialchars($item) ?></span>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
-            </section>
+        <section class="program-section">
+          <h3 id="curriculum">Curriculum / Modules</h3>
+          <ul>
+            <?php foreach ($p['curriculum'] as $item): ?>
+              <li><?= htmlspecialchars($item) ?></li>
+            <?php endforeach; ?>
+          </ul>
+        </section>
 
-            <section class="mb-5">
-              <h3 class="h4 fw-bold mb-4">Who It's For</h3>
-              <ul class="list-unstyled mb-0">
-                <?php foreach ($p['who'] as $aud): ?>
-                  <li class="d-flex align-items-center mb-3">
-                    <i class='bx bx-user text-warning me-2 fs-5'></i>
-                    <span class="text-muted"><?= htmlspecialchars($aud) ?></span>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
-            </section>
+        <section class="program-section">
+          <h3 id="who">Who It's For</h3>
+          <ul>
+            <?php foreach ($p['who'] as $aud): ?>
+              <li><?= htmlspecialchars($aud) ?></li>
+            <?php endforeach; ?>
+          </ul>
+        </section>
 
-            <section class="mb-5">
-              <h3 class="h4 fw-bold mb-4">Duration & Fees</h3>
-              <div class="row g-4">
-                <div class="col-md-6">
-                  <div class="p-4 bg-light rounded-3 text-center h-100">
-                    <i class='bx bx-time-five text-warning fs-1 mb-3'></i>
-                    <h4 class="h5 fw-bold mb-2">Duration</h4>
-                    <p class="text-muted mb-0"><?= htmlspecialchars($p['duration']) ?></p>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="p-4 bg-light rounded-3 text-center h-100">
-                    <i class='bx bx-money text-warning fs-1 mb-3'></i>
-                    <h4 class="h5 fw-bold mb-2">Fees</h4>
-                    <p class="text-muted mb-0"><?= htmlspecialchars($p['fees']) ?></p>
-                  </div>
-                </div>
-              </div>
-            </section>
+        <section class="program-section">
+          <h3 id="fees">Duration & Fees</h3>
+          <p><strong>Duration:</strong> <?= htmlspecialchars($p['duration']) ?></p>
+          <p><strong>Fees:</strong> <?= htmlspecialchars($p['fees']) ?></p>
+        </section>
 
-            <div class="text-center pt-4">
-              <a href="register.php?ref=<?= rawurlencode($slug) ?>" class="btn btn-primary btn-lg px-5">
-                Register for <?= htmlspecialchars($p['title']) ?>
-              </a>
-            </div>
-          </div>
-        </div>
+        <p style="margin-top: 28px;">
+          <a href="register.php?ref=<?= rawurlencode($slug) ?>" class="btn-primary">
+            Register for <?= htmlspecialchars($p['title']) ?>
+          </a>
+        </p>
       </div>
     </div>
   </div>
 </section>
+ <nav class="back-nav" style="margin-bottom: 24px;">
+  <a href="programs.php" class="back-link">
+    <i class='bx bx-arrow-back'></i> Back to Programs
+  </a>
+</nav>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
+<style>
+    .back-link {
+  color: var(--hq-gray);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--hq-yellow);
+  text-decoration: underline;
+}
 
 </style>

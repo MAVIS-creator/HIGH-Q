@@ -52,62 +52,44 @@ $csrf = generateToken('contact_form');
 include __DIR__ . '/includes/header.php';
 ?>
 
-<section class="position-relative bg-dark text-white py-5 mb-5">
-	<div class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-50"></div>
-	<div class="container position-relative py-5">
-		<div class="text-center py-4">
-			<h1 class="display-4 fw-bold mb-3">Contact Us</h1>
-			<p class="lead mb-0 mx-auto" style="max-width: 600px;">Get in touch with our team. We're here to help you start your journey towards academic excellence.</p>
-		</div>
+<section class="about-hero">
+	<div class="about-hero-overlay"></div>
+	<div class="container about-hero-inner">
+		<h1>Contact Us</h1>
+		<p class="lead">Get in touch with our team. We're here to help you start your journey towards academic excellence.</p>
 	</div>
 </section>
 
-<div class="container py-5">
-	<div class="row justify-content-center">
-		<div class="col-lg-8">
-			<div class="card border-0 shadow-sm">
-				<div class="card-body p-4 p-md-5">
-					<h2 class="card-title h3 mb-2">Send Us a <span class="text-warning">Message</span></h2>
-					<p class="text-muted mb-4">Fill out the form below and we'll get back to you within 24 hours.</p>
+<div class="container register-layout contact-layout" style="margin-top:28px;">
+	<main class="register-main">
+		<div class="card">
+			<h3>Send Us a <span style="color:var(--hq-yellow);">Message</span></h3>
+			<p class="card-desc">Fill out the form below and we'll get back to you within 24 hours.</p>
 
-					<?php if (!empty($errors)): ?>
-						<div class="alert alert-warning" role="alert">
-							<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
-						</div>
-					<?php endif; ?>
-					<?php if ($success): ?>
-						<div class="alert alert-success" role="alert">
-							<?= htmlspecialchars($success) ?>
-						</div>
-					<?php endif; ?>
+			<?php if (!empty($errors)): ?>
+				<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
+					<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+			<?php if ($success): ?>
+				<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
+					<?= htmlspecialchars($success) ?>
+				</div>
+			<?php endif; ?>
 
-					<form method="post">
-						<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-						<div class="row g-3 mb-3">
-							<div class="col-md-6">
-								<label class="form-label">First Name</label>
-								<input type="text" class="form-control" name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>">
-							</div>
-							<div class="col-md-6">
-								<label class="form-label">Last Name</label>
-								<input type="text" class="form-control" name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>">
-							</div>
-						</div>
+			<form method="post">
+				<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+				<div class="form-row form-inline">
+					<div style="flex:1"><label>First Name</label><input name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
+					<div style="flex:1"><label>Last Name</label><input name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
+				</div>
 
-						<div class="mb-3">
-							<label class="form-label">Email Address</label>
-							<input type="email" class="form-control" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>">
-						</div>
+				<div class="form-row"><label>Email Address</label><input type="email" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
+				<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>"></div>
 
-						<div class="mb-3">
-							<label class="form-label">Phone Number</label>
-							<input type="tel" class="form-control" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>">
-						</div>
-
-						<div class="mb-3">
-							<label class="form-label">Program of Interest</label>
-							<select class="form-select" name="program">
-								<option value="">Select a program</option>
+				<div class="form-row"><label>Program of Interest</label>
+					<select name="program">
+						<option value="">Select a program</option>
 						<?php
 						try { $courses = $pdo->query("SELECT id,title FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC); }
 						catch(Throwable $e) { $courses = []; }
@@ -119,55 +101,33 @@ include __DIR__ . '/includes/header.php';
 					</select>
 				</div>
 
-						<div class="mb-4">
-							<label class="form-label">Message</label>
-							<textarea class="form-control" id="contact_message" name="message" rows="5" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea>
-						</div>
+				<div class="form-row"><label>Message</label><textarea id="contact_message" name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
 
-						<div class="mb-3">
-							<button class="btn btn-primary d-flex align-items-center gap-2" type="submit">
-								<i class="bx bx-send"></i> Send Message
-							</button>
-						</div>
-					</form>
-
-					<?php if (!empty($recfg['site_key'])): ?>
-						<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-						<script>
-							(function(){
-								var f = document.querySelector('form'); if(!f) return;
-								var w = document.createElement('div'); w.className='g-recaptcha mt-3'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); f.insertBefore(w, f.querySelector('button').parentNode);
-							})();
-						</script>
-					<?php endif; ?>
-				</div>
-			</div>
+				<div style="margin-top:12px;"><button class="btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
+			</form>
+				<?php if (!empty($recfg['site_key'])): ?>
+					<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+					<script>
+						(function(){
+							var f = document.querySelector('form'); if(!f) return;
+							var w = document.createElement('div'); w.className='g-recaptcha'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); w.style.marginTop='12px'; f.insertBefore(w, f.querySelector('button'));
+						})();
+					</script>
+				<?php endif; ?>
 		</div>
+	</main>
 
-		<div class="col-lg-4">
-			<div class="row g-4">
-				<div class="col-12">
-					<div class="card border-0 shadow-sm h-100">
-						<div class="card-body p-4">
-							<div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 p-3 mb-4" style="width: 64px; height: 64px;">
-								<i class="bx bx-book-open fs-2"></i>
-							</div>
-							<h4 class="card-title h5 mb-3">Tutorial Center</h4>
-							<p class="card-text text-muted mb-0">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
-						</div>
-					</div>
+	<aside class="register-sidebar">
+				<div class="sidebar-card" data-icon="tutor">
+					<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
+					<h4>Tutorial Center</h4>
+					<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
 				</div>
 
-				<div class="col-12">
-					<div class="card border-0 shadow-sm h-100">
-						<div class="card-body p-4">
-							<div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 p-3 mb-4" style="width: 64px; height: 64px;">
-								<i class="bx bx-map fs-2"></i>
-							</div>
-							<h4 class="card-title h5 mb-3">Area Office</h4>
-							<p class="card-text text-muted mb-0">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
-						</div>
-					</div>
+				<div class="sidebar-card" data-icon="office">
+					<div class="card-icon"><i class="bx bx-map" style="font-size:28px;color:var(--hq-yellow);"></i></div>
+					<h4>Area Office</h4>
+					<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
 				</div>
 
 				<div class="sidebar-card" data-icon="contact">

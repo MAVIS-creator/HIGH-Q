@@ -25,89 +25,75 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 ?>
 
-<section class="py-5">
+<section class="tutors-section">
   <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold mb-3">Meet Our Expert <span class="text-primary">Tutors</span></h2>
-      <p class="lead text-muted">Our dedicated team of experienced educators is committed to your academic success</p>
+    <div class="ceo-heading">
+      <h2>Meet Our Expert <span class="highlight">Tutors</span></h2>
+      <p class="lead">Our dedicated team of experienced educators is committed to your academic success</p>
     </div>
 
     <?php if (empty($tutors)): ?>
-      <div class="text-center text-muted my-5">
-        <p class="mb-0">No tutors available at this time. (If you're testing, create a tutor in the admin area.)</p>
-      </div>
+      <p class="no-posts">No tutors available at this time. (If you're testing, create a tutor in the admin area.)</p>
       <!-- Placeholder tutor so layout can be previewed -->
-      <div class="row g-4">
-        <div class="col-md-6 col-lg-4">
-          <div class="card h-100 border-0 shadow-sm">
-            <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" class="card-img-top" alt="Placeholder" style="height: 240px; object-fit: cover;">
-            <div class="card-body p-4">
-              <h4 class="card-title h5 mb-2">Sample Tutor</h4>
-              <p class="text-muted small mb-3">B.Sc, M.Ed</p>
-              <p class="card-text mb-3">Experienced educator in Mathematics and Sciences.</p>
-              <div class="d-flex flex-wrap gap-2">
-                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">Mathematics</span>
-                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">Physics</span>
-              </div>
-            </div>
+      <div class="tutors-grid">
+        <article class="tutor-card">
+      <div class="tutor-thumb"><img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Placeholder"></div>
+          <div class="tutor-body">
+            <h3>Sample Tutor</h3>
+            <p class="role">B.Sc, M.Ed</p>
+            <p class="tutor-short">Experienced educator in Mathematics and Sciences.</p>
+            <div class="subjects"><span class="tag">Mathematics</span><span class="tag">Physics</span></div>
           </div>
-        </div>
+        </article>
       </div>
     <?php else: ?>
       <?php
         // Static lead card for Adebule Quam (CEO) — manually inserted so it always appears first
       ?>
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-8">
-          <div class="card border-0 shadow-lg overflow-hidden">
-            <div class="row g-0">
-              <div class="col-md-5">
-                <img src="/HIGH-Q/public/assets/images/quam.jpg" class="w-100 h-100" alt="Adebule Quam" style="object-fit: cover;">
-              </div>
-              <div class="col-md-7">
-                <div class="card-body p-4 p-md-5">
-                  <h3 class="card-title h2 mb-2">Adebule Quam</h3>
-                  <p class="text-primary fw-bold mb-3">CEO of HIGH Q SOLID ACADEMY</p>
-                  <p class="card-text lead mb-0">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
-                </div>
-              </div>
-            </div>
+      <div class="tutor-lead-wrap">
+        <article class="tutor-card tutor-lead">
+          <div class="tutor-thumb">
+            <img src="/HIGH-Q/public/assets/images/quam.jpg" alt="Adebule Quam">
           </div>
-        </div>
+          <div class="tutor-body">
+            <h3>Adebule Quam</h3>
+            <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
+            <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
+          </div>
+        </article>
       </div>
 
-      <div class="row g-4">
+      <div class="tutors-grid">
         <?php foreach ($tutors as $t): ?>
-          <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-              <img src="/HIGH-Q/public/<?= htmlspecialchars($t['photo'] ?: 'assets/images/hq-logo.jpeg') ?>" 
-                   class="card-img-top" alt="<?= htmlspecialchars($t['name']) ?>" 
-                   style="height: 240px; object-fit: cover;">
-              <div class="card-body p-4">
-                <h4 class="card-title h5 mb-2"><?= htmlspecialchars($t['name']) ?></h4>
+          <article class="tutor-card">
+            <div class="tutor-thumb">
+              <img src="/HIGH-Q/public/<?= htmlspecialchars($t['photo'] ?: 'assets/images/hq-logo.jpeg') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+            </div>
+            <div class="tutor-body">
+              <h3><?= htmlspecialchars($t['name']) ?></h3>
 
               <?php
                 // qualifications: show as single line or 'Not specified'
                 $quals = array_filter(array_map('trim', explode(',', $t['qualifications'] ?? '')));
                 if (!empty($quals)):
               ?>
-                <p class="text-muted small mb-3"><?= htmlspecialchars(implode(', ', $quals)) ?></p>
+                <p class="qualification-line"><?= htmlspecialchars(implode(', ', $quals)) ?></p>
               <?php else: ?>
-                <p class="text-muted small mb-3">Not specified</p>
+                <p class="qualification-line">Not specified</p>
               <?php endif; ?>
 
               <!-- Long bio (full description) next -->
               <?php if (!empty($t['long_bio'])): ?>
-                <p class="card-text mb-3"><?= nl2br(htmlspecialchars($t['long_bio'])) ?></p>
+                <div class="tutor-long-bio"><?= nl2br(htmlspecialchars($t['long_bio'])) ?></div>
               <?php endif; ?>
 
               <!-- Subjects with label as requested -->
               <?php $subs = json_decode($t['subjects'] ?? '[]', true); if (!empty($subs)): ?>
-                <div class="mt-auto">
-                  <p class="text-muted small mb-2"><strong>Subjects:</strong></p>
-                  <div class="d-flex flex-wrap gap-2">
+                <div class="subjects">
+                  <div class="subjects-label"><strong>Subjects:</strong></div>
+                  <div class="subjects-list">
                     <?php foreach ($subs as $s): ?>
-                      <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2"><?= htmlspecialchars($s) ?></span>
+                      <span class="tag"><?= htmlspecialchars($s) ?></span>
                     <?php endforeach; ?>
                   </div>
                 </div>
