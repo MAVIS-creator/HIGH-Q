@@ -230,7 +230,7 @@ require_once __DIR__ . '/includes/header.php';
             <h2 class="h3 fw-bold mb-4">Comments</h2>
 
             <div id="commentsList">
-              <?php foreach($comments as $c): ?>
+              <?php foreach($comments as $c) { ?>
                 <div class="comment card bg-light border-0 mb-4" data-id="<?= $c['id'] ?>">
                   <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -284,7 +284,7 @@ require_once __DIR__ . '/includes/header.php';
 
                   </div>
                 </div>
-              <?php endforeach; ?>
+              <?php } ?>
             </div>
 
             <div class="card border-0 shadow-sm mt-5">
