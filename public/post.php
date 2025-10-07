@@ -215,13 +215,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
       </div>
     </div>
-      <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
-        <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
-        <div class="meta small muted"><i class="fa-regular fa-heart"></i> <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span></div>
-        <button id="commentToggle" class="btn btn-comment"><i class="fa-regular fa-comment-dots"></i> Comment</button>
-        <div class="meta small muted" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></div>
-      </div>
-  </article>
+
 
     <div class="row mt-5">
       <div class="col-lg-8">
@@ -276,11 +270,10 @@ require_once __DIR__ . '/includes/header.php';
           <?php
             }
           ?>
-          <?php endforeach; ?>
-
-        </div>
-      <?php endforeach; ?>
-    </div>
+                  </div>
+                </div>
+              <?php } ?>
+            </div>
 
                   </div>
                 </div>
