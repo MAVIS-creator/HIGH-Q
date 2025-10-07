@@ -11,7 +11,15 @@ $stmt->execute([$postId]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$post) { header('Location: /404.php'); exit; }
 
-include __DIR__ . '/includes/header.php';
+// fetch approved comments (top-level) and count so they are available for the template
+$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
+$cstmt->execute([$postId]);
+$comments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
+
+// compute total approved comments count for display
+$ccstmt = $pdo->prepare('SELECT COUNT(1) FROM comments WHERE post_id = ? AND status = "approved"');
+$ccstmt->execute([$postId]);
+$comments_count = (int)$ccstmt->fetchColumn();
 ?>
 
 <article class="py-5">
@@ -128,24 +136,25 @@ if ($contentForDoc !== '') {
     $tocHtml .= '</ul></aside>';
     
     // Add TOC toggle script
-    $tocHtml .= '
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const tocToggle = document.querySelector(".toc-toggle");
-        const tocAside = document.querySelector(".post-toc");
+  $tocHtml .= <<<'HTML'
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const tocToggle = document.querySelector(".toc-toggle");
+    const tocAside = document.querySelector(".post-toc");
         
-        if (tocToggle && tocAside) {
-            tocToggle.addEventListener("click", function() {
-                tocAside.classList.toggle("active");
-                if (tocAside.classList.contains("active")) {
-                    tocToggle.innerHTML = '<i class="bx bx-x"></i> Close';
-                } else {
-                    tocToggle.innerHTML = '<i class="bx bx-list-ul"></i> Contents';
-                }
-            });
+    if (tocToggle && tocAside) {
+      tocToggle.addEventListener("click", function() {
+        tocAside.classList.toggle("active");
+        if (tocAside.classList.contains("active")) {
+          tocToggle.innerHTML = '<i class="bx bx-x"></i> Close';
+        } else {
+          tocToggle.innerHTML = '<i class="bx bx-list-ul"></i> Contents';
         }
-    });
-    </script>';
+      });
+    }
+  });
+  </script>
+HTML;
   }
 
   // extract inner HTML of wrapped div as rendered content
@@ -181,7 +190,7 @@ function format_plain_text_to_html($txt) {
   }
   return $out;
 }
-
+// Page title and header include
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
