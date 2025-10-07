@@ -254,7 +254,7 @@ require_once __DIR__ . '/includes/header.php';
             $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
             $rstmt->execute([$c['id']]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach($replies as $rep):
+            foreach($replies as $rep) {
           ?>
                     <div class="border-start border-4 ms-4 ps-4 mt-4">
                       <div class="d-flex align-items-center mb-2">
@@ -273,6 +273,9 @@ require_once __DIR__ . '/includes/header.php';
                         <p class="mb-0"><?= nl2br(htmlspecialchars($rep['content'])) ?></p>
                       </div>
                     </div>
+          <?php
+            }
+          ?>
           <?php endforeach; ?>
 
         </div>
