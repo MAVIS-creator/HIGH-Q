@@ -138,7 +138,7 @@ if ($contentForDoc !== '') {
             tocToggle.addEventListener("click", function() {
                 tocAside.classList.toggle("active");
                 if (tocAside.classList.contains("active")) {
-                    tocToggle.innerHTML = \'<i class="bx bx-x"></i> Close\';
+                    tocToggle.innerHTML = '<i class="bx bx-x"></i> Close';
                 } else {
                     tocToggle.innerHTML = '<i class="bx bx-list-ul"></i> Contents';
                 }
