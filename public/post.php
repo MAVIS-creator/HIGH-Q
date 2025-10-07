@@ -274,15 +274,6 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
               <?php } ?>
             </div>
-                  </div>
-                </div>
-              <?php } ?>
-            </div>
-
-                  </div>
-                </div>
-              <?php } ?>
-            </div>
 
             <div class="card border-0 shadow-sm mt-5">
               <div class="card-body p-4">
