@@ -36,7 +36,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
       <div class="hero-ctas d-flex flex-wrap gap-3 mb-5">
         <a href="register.php" class="btn-primary px-4 py-2">Register Now</a>
-        <a href="programs.php" class="btn-warning hq-yellow px-4 py-2">See Our Programs</a>
+        <a href="programs.php" class="btn-warning px-4 py-2">See Our Programs</a>
       </div>
       <div class="hero-stats d-flex flex-wrap gap-4 gap-lg-5">
         <div class="text-center text-lg-start">
