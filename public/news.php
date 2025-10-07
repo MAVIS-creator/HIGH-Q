@@ -45,6 +45,67 @@ include __DIR__ . '/includes/header.php';
       </div>
     </div>
 
+    <!-- News Grid -->
+    <div class="row g-4">
+      <?php while ($post = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+      <div class="col-md-6 col-lg-4">
+        <article class="card h-100 border-0 shadow-sm hover-lift">
+          <?php if ($post['featured_image']): ?>
+          <div class="card-img-top overflow-hidden" style="max-height: 200px;">
+            <img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="img-fluid w-100 object-cover">
+          </div>
+          <?php endif; ?>
+          
+          <div class="card-body">
+            <?php if ($post['category_name']): ?>
+            <div class="text-primary mb-2 small"><?= htmlspecialchars($post['category_name']) ?></div>
+            <?php endif; ?>
+            
+            <h3 class="h4 card-title">
+              <a href="post.php?id=<?= $post['id'] ?>" class="text-decoration-none text-dark stretched-link">
+                <?= htmlspecialchars($post['title']) ?>
+              </a>
+            </h3>
+            
+            <p class="card-text text-muted">
+              <?= htmlspecialchars(substr(strip_tags($post['content']), 0, 120)) ?>...
+            </p>
+          </div>
+          
+          <div class="card-footer bg-white border-0 pt-0">
+            <div class="d-flex align-items-center text-muted small">
+              <div class="me-3">
+                <i class="bx bx-calendar me-1"></i>
+                <?= date('M j, Y', strtotime($post['created_at'])) ?>
+              </div>
+              <?php if ($hasTags && !empty($post['tags'])): ?>
+              <div>
+                <i class="bx bx-purchase-tag me-1"></i>
+                <?= htmlspecialchars($post['tags']) ?>
+              </div>
+              <?php endif; ?>
+            </div>
+          </div>
+        </article>
+      </div>
+      <?php endwhile; ?>
+    </div>
+
+    <!-- Pagination -->
+    <?php if ($totalPages > 1): ?>
+    <nav class="mt-5" aria-label="News pagination">
+      <ul class="pagination justify-content-center">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <li class="page-item <?= $i === $page ? 'active' : '' ?>">
+          <a class="page-link" href="?page=<?= $i ?><?= $selectedCategory ? '&category=' . $selectedCategory : '' ?><?= $selectedTag ? '&tag=' . urlencode($selectedTag) : '' ?><?= $q ? '&q=' . urlencode($q) : '' ?>">
+            <?= $i ?>
+          </a>
+        </li>
+        <?php endfor; ?>
+      </ul>
+    </nav>
+    <?php endif; ?>
+
 // filters
 $selectedCategory = (int)($_GET['category'] ?? 0);
 $selectedTag = trim($_GET['tag'] ?? '');
