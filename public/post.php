@@ -80,14 +80,15 @@ if ($contentForDoc !== '') {
       $tocItems[] = ['id' => $id, 'text' => $text, 'tag' => $n->nodeName];
     }
     // build TOC HTML
-    $tocHtml .= '<button class="toc-toggle d-md-none"><i class="bx bx-list-ul"></i> Contents</button>';
-    $tocHtml .= '<aside class="post-toc" aria-label="Table of Contents">';
-    $tocHtml .= '<h4>Table of Contents</h4><ul>';
+    $tocHtml .= '<button class="btn btn-outline-primary d-lg-none w-100 mb-3"><i class="bx bx-list-ul me-2"></i> Show Contents</button>';
+    $tocHtml .= '<aside class="card bg-light border-0" aria-label="Table of Contents">';
+    $tocHtml .= '<div class="card-body">';
+    $tocHtml .= '<h4 class="h5 fw-bold mb-3">Table of Contents</h4><ul class="list-unstyled mb-0">';
     foreach ($tocItems as $it) {
-      $indent = $it['tag'] === 'h3' ? ' style="margin-left:8px;"' : ($it['tag'] === 'h4' ? ' style="margin-left:14px;"' : '');
-      $tocHtml .= '<li' . $indent . '><a href="#' . htmlspecialchars($it['id']) . '">' . htmlspecialchars($it['text']) . '</a></li>';
+      $indent = $it['tag'] === 'h3' ? ' ps-3' : ($it['tag'] === 'h4' ? ' ps-4' : '');
+      $tocHtml .= '<li class="mb-2' . $indent . '"><a href="#' . htmlspecialchars($it['id']) . '" class="text-decoration-none text-body">' . htmlspecialchars($it['text']) . '</a></li>';
     }
-    $tocHtml .= '</ul></aside>';
+    $tocHtml .= '</ul></div></aside>';
     
     // Add TOC toggle script
     $tocHtml .= '
