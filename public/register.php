@@ -350,7 +350,6 @@ $csrf = generateToken('signup_form');
 								<p><strong>Visit Us</strong><br><?= nl2br(htmlspecialchars($siteSettings['contact_address'] ?? "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu")) ?></p>
 					</div>
 
-					<link rel="stylesheet" href="/HIGH-Q/public/assets/css/why-choose-us.css">
 					<div class="sidebar-card why-box" id="whyChooseUs">
 						<h4>Why Choose Us?</h4>
 						<div class="why-stats">

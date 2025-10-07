@@ -232,9 +232,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="./assets/css/social-icons.css">
   <link rel="stylesheet" href="./assets/css/post-toc.css">
   <link rel="stylesheet" href="./assets/css/hero.css">
-  <link rel="stylesheet" href="./assets/css/navbar.css">
-  <link rel="stylesheet" href="./assets/css/modal.css">
-  <link rel="stylesheet" href="./assets/css/features.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -256,25 +253,20 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <div class="container">
         <nav class="navbar navbar-expand-lg w-100 position-relative">
           <!-- Logo + Name -->
-          <div class="d-flex align-items-center justify-content-between w-100">
-            <a class="navbar-brand" href="index.php">
-              <div class="logo">
-                <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-                <div>
-                  <h1>HIGH Q SOLID ACADEMY</h1>
-                  <small>Limited</small>
-                </div>
+          <a class="navbar-brand" href="index.php">
+            <div class="logo">
+              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+              <div>
+                <h1>HIGH Q SOLID ACADEMY</h1>
+                <small>Limited</small>
               </div>
-            </a>
-            <!-- Mobile Toggle Button -->
-                        <!-- Navbar Toggler -->
-            <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-expanded="false" aria-controls="mainNav">
-              <i class="bx bx-menu open-icon"></i>
-              <i class="bx bx-x close-icon d-none"></i>
-            </button>
-          </div>
+            </div>
+          </a>
 
-
+          <!-- Mobile Toggle Button - Positioned Absolutely -->
+          <button class="navbar-toggler mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <i class="bx bx-menu"></i>
+          </button>
 
           <!-- Navigation -->
           <div class="collapse navbar-collapse" id="mainNav">
@@ -327,53 +319,20 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     </div>
   </header>
 
-  <!-- Bootstrap JS Bundle -->
+  <!-- Bootstrap JS Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+  
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const navbarToggler = document.querySelector('.navbar-toggler');
-      const navbarCollapse = document.getElementById('mainNav');
-      const openIcon = navbarToggler.querySelector('.open-icon');
-      const closeIcon = navbarToggler.querySelector('.close-icon');
-
-      // Show/hide icons when collapse state changes
-      navbarCollapse.addEventListener('show.bs.collapse', function () {
-        openIcon.classList.add('d-none');
-        closeIcon.classList.remove('d-none');
-      });
-
-      navbarCollapse.addEventListener('hide.bs.collapse', function () {
-        openIcon.classList.remove('d-none');
-        closeIcon.classList.add('d-none');
-      });
-
-      // Close menu when clicking nav links
-      navbarCollapse.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-          // Prevent event from bubbling up
-          e.stopPropagation();
-          const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-          if (bsCollapse) {
-            bsCollapse.hide();
-          }
-        });
-      });
-    });
     // Toggle nav dropdown open/close on click and close when clicking outside
     (function(){
       document.addEventListener('DOMContentLoaded', function(){
-        // Mobile menu toggle - using Bootstrap's Collapse API instead of manual toggle
+        // Mobile menu toggle
         const mobileMenuBtn = document.querySelector('.navbar-toggler');
         const mobileMenu = document.querySelector('.navbar-collapse');
         
         if(mobileMenuBtn && mobileMenu) {
-          mobileMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent event bubbling
-            const bsCollapse = bootstrap.Collapse.getInstance(mobileMenu);
-            if (bsCollapse) {
-              bsCollapse.toggle();
-            }
+          mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
           });
         }
 
@@ -493,7 +452,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         } catch (ioErr) { /* ignore IntersectionObserver errors on old browsers */ }
       });
     })();
-  });
   </script>
 
   <main class="public-main">

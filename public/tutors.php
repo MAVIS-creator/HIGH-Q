@@ -176,15 +176,11 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   </div>
 </section>
 
-<!-- Include testimonials CSS -->
-<link rel="stylesheet" href="/HIGH-Q/public/assets/css/testimonials.css">
-
 <!-- Testimonials / What Our Students Say -->
 <section class="testimonials-section">
   <div class="container">
     <div class="ceo-heading">
       <h2>What Our <span class="highlight">Students Say</span></h2>
-      <p class="lead">Hear what people have to say about our education at HIGH-Q</p>
     </div>
 
     <div class="testimonials-grid">

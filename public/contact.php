@@ -213,7 +213,7 @@ include __DIR__ . '/includes/header.php';
 
 <!-- Calendar modal for scheduling visits -->
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
-	<div class="modal" role="document" aria-modal="true" style="display: block;">
+	<div class="modal" role="document" aria-modal="true">
 		<h3>Schedule a Visit</h3>
 		<div class="field">
 			<label>Date</label>
@@ -272,18 +272,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	var modal = document.getElementById('modalBackdrop');
 	var cancel = document.getElementById('cancelSchedule');
 	var confirm = document.getElementById('confirmSchedule');
-	if(openSchedule && modal){ 
-		openSchedule.addEventListener('click', function(){ 
-			modal.classList.add('open'); 
-			modal.setAttribute('aria-hidden','false'); 
-			// Set min date to today
-			var today = new Date().toISOString().split('T')[0];
-			document.getElementById('visit_date').min = today;
-		}); 
-		openSchedule.addEventListener('keypress', function(e){ 
-			if(e.key==='Enter') openSchedule.click(); 
-		}); 
-	}
+	if(openSchedule && modal){ openSchedule.addEventListener('click', function(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }); openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter') openSchedule.click(); }); }
 	if(cancel){ cancel.addEventListener('click', function(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }); }
 	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ if (typeof Swal !== 'undefined') Swal.fire('Oops','Please pick a date','warning'); else alert('Please pick a date'); return; } var msg = 'Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'; if (typeof Swal !== 'undefined') Swal.fire('Request Sent', msg, 'success'); else alert(msg); modal.classList.remove('open'); }); }
 
