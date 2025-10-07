@@ -148,42 +148,72 @@ function format_plain_text_to_html($txt) {
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
-<div class="container" style="max-width:1150px;margin:24px auto;padding:0 12px;">
-  <article class="post-article">
-    <h1><?= htmlspecialchars($post['title']) ?></h1>
-    <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <article class="card border-0 shadow-sm">
+          <?php if (!empty($post['featured_image'])): ?>
+            <?php
+              $fi = $post['featured_image'];
+              if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
+                $imgSrc = $fi;
+              } else {
+                $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
+              }
+            ?>
+            <img src="<?= htmlspecialchars($imgSrc) ?>" 
+                 class="card-img-top" 
+                 alt="<?= htmlspecialchars($post['title']) ?>" 
+                 style="max-height: 400px; object-fit: cover;">
+          <?php endif; ?>
+          
+          <div class="card-body p-4 p-md-5">
+            <header class="text-center mb-5">
+              <h1 class="display-4 fw-bold mb-3"><?= htmlspecialchars($post['title']) ?></h1>
+              <div class="text-muted d-flex align-items-center justify-content-center gap-2">
+                <i class='bx bx-calendar'></i>
+                <time datetime="<?= $post['published_at'] ?? $post['created_at'] ?>">
+                  <?= date('F j, Y', strtotime($post['published_at'] ?? $post['created_at'])) ?>
+                </time>
+              </div>
+            </header>
 
-    <div class="post-top" style="display:flex;gap:20px;align-items:flex-start;margin-top:12px;">
-      <div class="post-main" style="flex:1;">
-        <div class="post-content">
-      <?php if (!empty($post['featured_image'])): ?>
-        <?php
-          $fi = $post['featured_image'];
-          if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
-            $imgSrc = $fi;
-          } else {
-            $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
-          }
-        ?>
-        <div class="post-thumb" style="margin-bottom:12px;">
-          <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover">
-        </div>
-      <?php endif; ?>
+            <div class="post-content">
+              <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
+            </div>
 
-  <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
-        </div>
+          </div>
+
+          <div class="card-footer bg-white border-0 p-4">
+            <div class="d-flex align-items-center gap-4">
+              <button id="likeBtn" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                <i class='bx bx-heart'></i> <span class="btn-label">Like</span>
+                <span class="badge bg-primary rounded-pill ms-1"><?= htmlspecialchars($post['likes'] ?? 0) ?></span>
+              </button>
+              <button id="commentToggle" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                <i class='bx bx-comment'></i> Comment
+                <span class="badge bg-primary rounded-pill ms-1"><?= intval($comments_count ?? 0) ?></span>
+              </button>
+            </div>
+          </div>
+        </article>
       </div>
 
-      <aside class="post-toc" style="width:260px;">
-        <?php if ($tocHtml !== ''): ?>
-          <?= $tocHtml ?>
-        <?php else: ?>
-          <div class="post-toc">
-            <h4>Table of Contents</h4>
-            <p class="muted">No sections found for this article.</p>
-          </div>
-        <?php endif; ?>
-      </aside>
+      <div class="col-lg-4">
+        <div class="sticky-top pt-4">
+          <?php if ($tocHtml !== ''): ?>
+            <?= $tocHtml ?>
+          <?php else: ?>
+            <div class="card bg-light border-0">
+              <div class="card-body">
+                <h4 class="h5 fw-bold mb-3">Table of Contents</h4>
+                <p class="text-muted mb-0">No sections found for this article.</p>
+              </div>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
     </div>
       <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
         <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
@@ -193,19 +223,31 @@ require_once __DIR__ . '/includes/header.php';
       </div>
   </article>
 
-  <section id="commentsSection" style="margin-top:28px;">
-    <h2>Comments</h2>
+    <div class="row mt-5">
+      <div class="col-lg-8">
+        <section id="commentsSection" class="card border-0 shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <h2 class="h3 fw-bold mb-4">Comments</h2>
 
-    <div id="commentsList">
-      <?php foreach($comments as $c): ?>
-        <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
-          <div class="comment-header">
-            <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
-            <div>
-              <button class="reply-btn small" data-id="<?= $c['id'] ?>">Reply</button>
-            </div>
-          </div>
-          <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+            <div id="commentsList">
+              <?php foreach($comments as $c): ?>
+                <div class="comment card bg-light border-0 mb-4" data-id="<?= $c['id'] ?>">
+                  <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                          <?= strtoupper(substr($c['name'] ?: 'A', 0, 1)) ?>
+                        </div>
+                        <div>
+                          <h6 class="mb-1 fw-bold"><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></h6>
+                          <small class="text-muted"><?= date('F j, Y g:i A', strtotime($c['created_at'])) ?></small>
+                        </div>
+                      </div>
+                      <button class="btn btn-sm btn-outline-primary reply-btn" data-id="<?= $c['id'] ?>">
+                        <i class='bx bx-reply me-1'></i> Reply
+                      </button>
+                    </div>
+                    <p class="mb-0"><?= nl2br(htmlspecialchars($c['content'])) ?></p>
 
           <?php
             // fetch replies for this comment
@@ -214,29 +256,70 @@ require_once __DIR__ . '/includes/header.php';
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
             foreach($replies as $rep):
           ?>
-            <div class="comment reply">
-              <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
-              <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-            </div>
+                    <div class="border-start border-4 ms-4 ps-4 mt-4">
+                      <div class="d-flex align-items-center mb-2">
+                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px; font-size: 0.875rem;">
+                          <?= strtoupper(substr($rep['name'] ?: 'A', 0, 1)) ?>
+                        </div>
+                        <div>
+                          <h6 class="mb-1 fw-bold">
+                            <?= $rep['user_id'] ? '<span class="badge bg-primary me-2">Admin</span>' : '' ?>
+                            <?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?>
+                          </h6>
+                          <small class="text-muted"><?= date('F j, Y g:i A', strtotime($rep['created_at'])) ?></small>
+                        </div>
+                      </div>
+                      <div class="ps-5">
+                        <p class="mb-0"><?= nl2br(htmlspecialchars($rep['content'])) ?></p>
+                      </div>
+                    </div>
           <?php endforeach; ?>
 
         </div>
       <?php endforeach; ?>
     </div>
 
-    <div style="margin-top:18px;">
-      <h3>Leave a comment</h3>
-      <form id="commentForm" class="comment-form-wrap">
-        <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
-        <input type="hidden" name="parent_id" id="parent_id" value="">
-        <div class="form-row"><label class="form-label">Name</label><input class="form-input" type="text" name="name"></div>
-        <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
-        <div class="form-row"><label class="form-label">Comment</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
-  <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
-      </form>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+
+            <div class="card border-0 shadow-sm mt-5">
+              <div class="card-body p-4">
+                <h3 class="h4 fw-bold mb-4">Leave a comment</h3>
+                <form id="commentForm">
+                  <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
+                  <input type="hidden" name="parent_id" id="parent_id" value="">
+                  
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Name</label>
+                      <input class="form-control" type="text" name="name" placeholder="Your name">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Email</label>
+                      <input class="form-control" type="email" name="email" placeholder="your@email.com">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Comment</label>
+                      <textarea class="form-control" name="content" rows="5" required placeholder="Write your comment here..."></textarea>
+                    </div>
+                    <div class="col-12 text-end">
+                      <button type="button" id="cancelReply" class="btn btn-light me-2" style="display:none;">Cancel Reply</button>
+                      <button type="submit" class="btn btn-primary px-4">
+                        <i class='bx bx-send me-2'></i> Submit Comment
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 <!-- comment and like handling moved to external script to reduce inline JS -->
 <script>window.POST_ID = <?= (int)$postId ?>;</script>
