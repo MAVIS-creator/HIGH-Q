@@ -25,28 +25,31 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero">
+<section class="hero py-5">
   <div class="container">
-    <div class="hero-left">
-      <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
-      <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead">
+    <div class="hero-left py-4 py-lg-5">
+      <div class="hero-badge d-inline-flex align-items-center gap-2 mb-4"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
+      <h1 class="display-4 fw-bold mb-3">Excellence in <span class="accent">Education</span></h1>
+      <p class="lead mb-4">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
-      <div class="hero-ctas">
-        <a href="register.php" class="btn-primary">Register Now</a>
-        <a href="programs.php" class="btn-ghost">See Our Programs</a>
+      <div class="hero-ctas d-flex flex-wrap gap-3 mb-5">
+        <a href="register.php" class="btn-primary px-4 py-2">Register Now</a>
+        <a href="programs.php" class="btn-ghost px-4 py-2">See Our Programs</a>
       </div>
-      <div class="hero-stats">
-        <div><strong>6+</strong>
-          <div>Years Experience</div>
+      <div class="hero-stats d-flex flex-wrap gap-4 gap-lg-5">
+        <div class="text-center text-lg-start">
+          <strong class="d-block fs-3 mb-1">6+</strong>
+          <div class="text-muted">Years Experience</div>
         </div>
-        <div><strong>1000+</strong>
-          <div>Students Trained</div>
+        <div class="text-center text-lg-start">
+          <strong class="d-block fs-3 mb-1">1000+</strong>
+          <div class="text-muted">Students Trained</div>
         </div>
-        <div><strong>305</strong>
-          <div>Highest JAMB Score</div>
+        <div class="text-center text-lg-start">
+          <strong class="d-block fs-3 mb-1">305</strong>
+          <div class="text-muted">Highest JAMB Score</div>
         </div>
       </div>
     </div>
