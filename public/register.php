@@ -387,72 +387,7 @@ $csrf = generateToken('signup_form');
 	</div>
 </section>
 
-<!-- What Happens Next
-
-<section class="next-steps py-5">
-    <div class="container">
-        <h3 class="text-center mb-4">What Happens Next?</h3>
-        <p class="text-center mb-5">After submitting your registration, here's what you can expect from us:</p>
-        
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle mb-3 mx-auto">
-                            <i class="bx bx-check-circle"></i>
-                        </div>
-                        <h5 class="card-title">1. Confirmation</h5>
-                        <p class="card-text">You'll receive an email confirmation and a call from our team within 24 hours.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle mb-3 mx-auto">
-                            <i class="bx bx-book"></i>
-                        </div>
-                        <h5 class="card-title">2. Assessment</h5>
-                        <p class="card-text">We'll schedule a brief assessment to understand your current level and customize your learning path.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center p-4">
-                        <div class="icon-circle mb-3 mx-auto">
-                            <i class="bx bx-rocket"></i>
-                        </div>
-                        <h5 class="card-title">3. Start Learning</h5>
-                        <p class="card-text">Begin your journey with our expert tutors and join the ranks of our successful students.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<style>
-.next-steps .icon-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--hq-yellow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.next-steps .icon-circle i {
-    font-size: 28px;
-    color: #fff;
-}
-@media (max-width: 768px) {
-    .next-steps .card {
-        max-width: 320px;
-        margin: 0 auto;
-    }
-}
-</style>? -->
+<!-- What Happens Next? -->
 <section class="next-section">
 	<div class="container">
 		<div class="ceo-heading" style="text-align:center;">
