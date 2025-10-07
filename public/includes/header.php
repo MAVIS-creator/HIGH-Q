@@ -264,12 +264,57 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </a>
 
+          <!-- Desktop Navigation -->
+          <div class="collapse navbar-collapse" id="mainNav">
+            <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
+            <ul class="navbar-nav mx-auto d-none d-lg-flex">
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
+              </li>
+
+              <!-- Programs Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  Programs
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                </ul>
+              </li>
+
+              <!-- News Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  News
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
+              </li>
+            </ul>
+
+            <!-- Register Button -->
+            <div class="d-none d-lg-block">
+              <a href="register.php" class="btn btn-primary">Register Now</a>
+            </div>
+          </div>
+
           <!-- Toggle for mobile - opens offcanvas -->
-          <button class="navbar-toggler border-0 ms-auto mobile-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
             <i class="bx bx-menu"></i>
           </button>
-
-          <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
         </nav>
       </div>
     </div>
