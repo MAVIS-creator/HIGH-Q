@@ -83,11 +83,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="ceo-hero">
+<section class="ceo-hero py-5">
   <div class="container">
 
-    <!-- Top Heading -->
-    <div class="ceo-heading">
+    <div class="ceo-heading text-center mb-5">
       <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
       <p>
         Under the visionary leadership of Master Adebule Quam, High Q Solid Academy
@@ -95,13 +94,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
-    <!-- Two Column Layout with Bootstrap -->
-    <div class="ceo-grid">
-      <div class="ceo-left-column">
-        <!-- Left Card -->
-        <div class="ceo-card">
-          <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
+    <div class="ceo-grid row align-items-start g-4">
+      <div class="ceo-left-column col-12 col-lg-5 d-flex flex-column align-items-center align-items-lg-start">
+        <div class="ceo-card text-center text-lg-start mb-4">
+          <div class="ceo-photo mb-3">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
           </div>
           <div class="ceo-info">
             <h3 class="mb-1">Master Adebule Quam</h3>
@@ -109,8 +106,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </div>
         </div>
 
-        <!-- Quote Box -->
-        <div class="ceo-quote">
+        <div class="ceo-quote text-center text-lg-start">
           <i class="fas fa-quote-left mb-2"></i>
           <p class="mb-3">
             "Education is the force to push one ahead of others. Our unwavering
@@ -121,46 +117,42 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
       </div>
 
-      <div class="ceo-right-column">
-        <!-- Right Content -->
-        <div class="ceo-content">
+      <div class="ceo-right-column col-12 col-lg-7">
+        <div class="ceo-content mb-4">
           <h3 class="mb-3">Seasoned Educator & Mentor</h3>
-          <div class="mb-4">
-            <p class="mb-3">
-              Master Adebule Quam is a seasoned tutor versed in the teaching profession.
-              Over the years, he has produced students who have achieved breathtaking
-              academic excellence and excelled in various examinations including GCE,
-              WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
-            </p>
-            <p>
-              He believes in the school of thought that education is the force to push
-              one ahead of others. Under his guidance, High Q Academy has blossomed into
-              a hub of academic excellence and technological proficiency.
-            </p>
-          </div>
+          <p class="mb-3">
+            Master Adebule Quam is a seasoned tutor versed in the teaching profession.
+            Over the years, he has produced students who have achieved breathtaking
+            academic excellence and excelled in various examinations including GCE,
+            WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
+          </p>
+          <p>
+            He believes in the school of thought that education is the force to push
+            one ahead of others. Under his guidance, High Q Academy has blossomed into
+            a hub of academic excellence and technological proficiency.
+          </p>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="ceo-stats">
-          <div class="stat yellow">
+        <div class="ceo-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-4 mb-4">
+          <div class="stat yellow text-center">
             <i class="fas fa-trophy"></i>
             <strong>305</strong>
             <span>Highest JAMB Score</span>
           </div>
-          <div class="stat red">
+          <div class="stat red text-center">
             <i class="fas fa-users"></i>
             <strong>1000+</strong>
             <span>Students Mentored</span>
           </div>
-          <div class="stat gray">
+          <div class="stat gray text-center">
             <i class="fas fa-user-tie"></i>
             <strong>6+</strong>
             <span>Years Leading</span>
           </div>
         </div>
 
-        <div class="ceo-btn">
-          <a href="about.php" class="btn-dark">Learn More About Our Story</a>
+        <div class="ceo-btn text-center text-lg-start">
+          <a href="about.php" class="btn btn-dark">Learn More About Our Story</a>
         </div>
       </div>
     </div>
