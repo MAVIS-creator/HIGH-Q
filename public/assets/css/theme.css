@@ -27,25 +27,13 @@
   --bs-body-bg: #ffffff;
 }
 
-/* Primary button: HQ yellow background with white text for contrast */
+/* Small helpers to ensure good contrast for primary buttons */
 .btn-primary {
-  background-color: var(--hq-yellow) !important;
-  border-color: var(--hq-yellow) !important;
-  color: #ffffff !important;
-  box-shadow: none;
+  color: #111; /* dark text on yellow buttons for readability */
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-  background-color: var(--hq-yellow-600) !important;
-  border-color: var(--hq-yellow-600) !important;
-  color: #ffffff !important;
-}
-
-.btn-primary:active {
-  background-color: #d99e00 !important;
-  border-color: #d99e00 !important;
-}
+/* If you want primary buttons to use white text instead, uncomment below */
+/* .btn-primary { color: #fff; } */
 
 /* Link color mapping */
 a {
