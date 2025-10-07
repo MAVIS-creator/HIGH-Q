@@ -149,6 +149,15 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     margin-top: 1.5rem;
 }
 </style>
+<style>
+/* Ensure when we use Bootstrap .row together with existing site classes,
+   the row behavior (flex) wins so columns stack correctly on mobile. */
+.achievements-grid.row, .testimonials-grid.row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+.achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
+</style>
 <!-- Achievements -->
 <section class="achievements">
   <div class="container">
