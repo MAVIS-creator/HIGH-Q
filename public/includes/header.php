@@ -281,37 +281,37 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
               <!-- Programs Dropdown -->
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <a class="nav-link dropdown-toggle px-3 py-2 rounded-2" href="#" role="button" data-bs-toggle="dropdown">
                   Programs
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
-                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                <ul class="dropdown-menu border-0 shadow-sm">
+                  <li><a class="dropdown-item px-3 py-2" href="programs.php">Programs</a></li>
+                  <li><a class="dropdown-item px-3 py-2" href="exams.php">Exams</a></li>
                 </ul>
               </li>
 
               <!-- News Dropdown -->
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <a class="nav-link dropdown-toggle px-3 py-2 rounded-2" href="#" role="button" data-bs-toggle="dropdown">
                   News
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
-                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                <ul class="dropdown-menu border-0 shadow-sm">
+                  <li><a class="dropdown-item px-3 py-2" href="news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item px-3 py-2" href="community.php">Community</a></li>
                 </ul>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
+                <a class="nav-link px-3 py-2 rounded-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
+                <a class="nav-link px-3 py-2 rounded-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
               </li>
             </ul>
 
             <!-- Register Button -->
-            <div class="d-none d-lg-block">
-              <a href="register.php" class="btn btn-primary">Register Now</a>
+            <div class="d-none d-lg-block ms-2">
+              <a href="register.php" class="btn btn-primary px-4 py-2 fw-semibold">Register Now</a>
             </div>
           </div>
 
