@@ -119,33 +119,55 @@ include __DIR__ . '/includes/header.php';
 					</select>
 				</div>
 
-				<div class="form-row"><label>Message</label><textarea id="contact_message" name="message" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea></div>
+						<div class="mb-4">
+							<label class="form-label">Message</label>
+							<textarea class="form-control" id="contact_message" name="message" rows="5" placeholder="Tell us about your educational goals and any questions you have..." required><?= htmlspecialchars($message ?? '') ?></textarea>
+						</div>
 
-				<div style="margin-top:12px;"><button class="btn-primary" type="submit"><i class="bx bx-send"></i> Send Message</button></div>
-			</form>
-				<?php if (!empty($recfg['site_key'])): ?>
-					<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-					<script>
-						(function(){
-							var f = document.querySelector('form'); if(!f) return;
-							var w = document.createElement('div'); w.className='g-recaptcha'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); w.style.marginTop='12px'; f.insertBefore(w, f.querySelector('button'));
-						})();
-					</script>
-				<?php endif; ?>
+						<div class="mb-3">
+							<button class="btn btn-primary d-flex align-items-center gap-2" type="submit">
+								<i class="bx bx-send"></i> Send Message
+							</button>
+						</div>
+					</form>
+
+					<?php if (!empty($recfg['site_key'])): ?>
+						<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+						<script>
+							(function(){
+								var f = document.querySelector('form'); if(!f) return;
+								var w = document.createElement('div'); w.className='g-recaptcha mt-3'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); f.insertBefore(w, f.querySelector('button').parentNode);
+							})();
+						</script>
+					<?php endif; ?>
+				</div>
+			</div>
 		</div>
-	</main>
 
-	<aside class="register-sidebar">
-				<div class="sidebar-card" data-icon="tutor">
-					<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-					<h4>Tutorial Center</h4>
-					<p class="sidebar-text">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
+		<div class="col-lg-4">
+			<div class="row g-4">
+				<div class="col-12">
+					<div class="card border-0 shadow-sm h-100">
+						<div class="card-body p-4">
+							<div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 p-3 mb-4" style="width: 64px; height: 64px;">
+								<i class="bx bx-book-open fs-2"></i>
+							</div>
+							<h4 class="card-title h5 mb-3">Tutorial Center</h4>
+							<p class="card-text text-muted mb-0">8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA,<br>Maya, Ikorodu</p>
+						</div>
+					</div>
 				</div>
 
-				<div class="sidebar-card" data-icon="office">
-					<div class="card-icon"><i class="bx bx-map" style="font-size:28px;color:var(--hq-yellow);"></i></div>
-					<h4>Area Office</h4>
-					<p class="sidebar-text">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
+				<div class="col-12">
+					<div class="card border-0 shadow-sm h-100">
+						<div class="card-body p-4">
+							<div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 p-3 mb-4" style="width: 64px; height: 64px;">
+								<i class="bx bx-map fs-2"></i>
+							</div>
+							<h4 class="card-title h5 mb-3">Area Office</h4>
+							<p class="card-text text-muted mb-0">Shop 18, World Star Complex<br>Opposite London Street,<br>Aiyetoro Maya, Ikorodu, Lagos State</p>
+						</div>
+					</div>
 				</div>
 
 				<div class="sidebar-card" data-icon="contact">
