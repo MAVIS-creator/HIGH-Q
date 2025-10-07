@@ -253,7 +253,7 @@ img {
    - position the logo card to the top-right on narrow screens
    - ensure Achievements are visible and readable on mobile
    - improve Testimonials stacking and spacing on mobile */
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   /* Make room and allow absolute positioning for the logo */
   .history-section {
     position: relative;
