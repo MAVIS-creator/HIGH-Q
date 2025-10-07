@@ -324,138 +324,32 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
-    // Toggle nav dropdown open/close on click and close when clicking outside
-    (function(){
-      document.addEventListener('DOMContentLoaded', function(){
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.navbar-toggler');
-        const mobileMenu = document.querySelector('.navbar-collapse');
-        
-        if(mobileMenuBtn && mobileMenu) {
-          mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('show');
-          });
-        }
-
-        var dropToggles = document.querySelectorAll('.nav-dropdown .drop-toggle');
-        dropToggles.forEach(function(toggle){
-          toggle.addEventListener('click', function(e){
-            e.preventDefault();
-            var parent = toggle.closest('.nav-dropdown');
-            // toggle open on this parent, close others
-            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ if(n !== parent) n.classList.remove('open'); });
-            parent.classList.toggle('open');
-          });
-        });
-
-        // close dropdowns on outside click
-        document.addEventListener('click', function(e){
-          if (!e.target.closest('.nav-dropdown')) {
-            document.querySelectorAll('.nav-dropdown.open').forEach(function(n){ n.classList.remove('open'); });
-          }
-        });
-
-        // Add .is-loaded after first paint so CSS animations trigger after initial paint
-        try {
-          if ('requestAnimationFrame' in window) {
-            requestAnimationFrame(function(){
-              requestAnimationFrame(function(){
-                document.documentElement.classList.add('is-loaded');
-                // After we mark the page as loaded, assign stagger classes to common groups
-                try {
-                  var groups = [
-                    {selector: '.programs-grid .program-card', base: 'stagger'},
-                    {selector: '.tutors-grid .tutor-card', base: 'stagger'},
-                    {selector: '.core-grid .value-card', base: 'stagger'},
-                    {selector: '.ceo-stats .stat', base: 'stagger'}
-                  ];
-                  groups.forEach(function(g){
-                    var nodes = Array.prototype.slice.call(document.querySelectorAll(g.selector));
-                    nodes.forEach(function(n, i){
-                      var idx = Math.min(4, Math.max(1, Math.ceil((i+1)/1)));
-                      n.classList.add(g.base + '-' + idx);
-                      // add a hover-zoom for nice mouse interaction on interactive cards
-                      n.classList.add('hover-zoom');
-                    });
-                  });
-                } catch (innerErr) { /* ignore */ }
-
-                // Icon fallback: if Boxicons didn't render (font not available), replace bx <i> tags with a simple inline SVG square so UI stays usable.
-                try {
-                  // Test whether boxicons are rendering by checking computed font-family of a test element
-                  var test = document.createElement('i');
-                  test.className = 'bx bx-test-icon';
-                  test.style.display = 'none';
-                  document.body.appendChild(test);
-                  var ff = window.getComputedStyle(test).fontFamily || '';
-                  document.body.removeChild(test);
-                  if (!/boxicons/i.test(ff)) {
-                    // Replace visible .bx icons with inline fallback SVG (small square with inner glyph look)
-                    document.querySelectorAll('i.bx, i.bxs, i.bxl').forEach(function(icon){
-                      try {
-                        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-                        svg.setAttribute('width','20'); svg.setAttribute('height','20'); svg.setAttribute('viewBox','0 0 24 24');
-                        svg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="4" fill="#fff6d9" stroke="#f5b904" stroke-width="1.2"></rect>';
-                        icon.parentNode.replaceChild(svg, icon);
-                      } catch(e){}
-                    });
-                  }
-                } catch(e){}
+    // Add .is-loaded after first paint for CSS animations
+    document.addEventListener('DOMContentLoaded', function(){
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          document.documentElement.classList.add('is-loaded');
+          // Add stagger classes to common groups
+          try {
+            var groups = [
+              {selector: '.programs-grid .program-card', base: 'stagger'},
+              {selector: '.tutors-grid .tutor-card', base: 'stagger'},
+              {selector: '.core-grid .value-card', base: 'stagger'},
+              {selector: '.ceo-stats .stat', base: 'stagger'}
+            ];
+            groups.forEach(function(g){
+              document.querySelectorAll(g.selector).forEach(function(n, i){
+                var idx = Math.min(4, Math.max(1, Math.ceil((i+1)/1)));
+                n.classList.add(g.base + '-' + idx, 'hover-zoom');
               });
             });
-          } else {
-            // fallback
-            setTimeout(function(){ document.documentElement.classList.add('is-loaded'); }, 50);
-          }
-        } catch (e) {
-          // if anything goes wrong, still try a small timeout
-          setTimeout(function(){ try { document.documentElement.classList.add('is-loaded'); } catch (_){} }, 100);
-        }
-        // IntersectionObserver: reveal elements as they scroll into view with staggered delays
-        try {
-          var revealContainers = [
-            {container: '.programs-grid', item: '.program-card'},
-            {container: '.tutors-grid', item: '.tutor-card'},
-            {container: '.core-grid', item: '.value-card'},
-            {container: '.posts-grid', item: '.post-card'},
-            {container: '.ceo-stats', item: '.stat'},
-            {container: '.register-sidebar', item: '.card'},
-            {container: '.sidebar-card', item: '.sidebar-card'}
-          ];
-
-          var observerOptions = { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.06 };
-          var revealObserver = new IntersectionObserver(function(entries){
-            entries.forEach(function(entry){
-              var el = entry.target;
-              if (entry.isIntersecting) {
-                // mark visible
-                el.classList.add('in-view');
-                // small safety: ensure hover-zoom exists
-                el.classList.add('hover-zoom');
-                revealObserver.unobserve(el);
-              }
-            });
-          }, observerOptions);
-
-          revealContainers.forEach(function(group){
-            var containers = document.querySelectorAll(group.container);
-            containers.forEach(function(parent){
-              var items = parent.querySelectorAll(group.item);
-              items.forEach(function(item, idx){
-                // compute a small stagger delay based on index
-                var delay = Math.min(0.28, Math.max(0, idx * 0.06));
-                item.style.transitionDelay = delay + 's';
-                // if using CSS variables instead, set here as fallback
-                revealObserver.observe(item);
-              });
-            });
-          });
-        } catch (ioErr) { /* ignore IntersectionObserver errors on old browsers */ }
+          } catch (err) { /* ignore */ }
+        });
       });
-    })();
+    });
   </script>
 
-  <!-- Offcanvas Side Nav for Mobile -->
+  <main class="public-main">  <!-- Offcanvas Side Nav for Mobile -->
     <div class="offcanvas offcanvas-start custom-offcanvas" tabindex="-1" id="mobileNav">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title fw-bold text-primary">Menu</h5>
