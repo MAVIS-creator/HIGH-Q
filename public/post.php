@@ -2,7 +2,7 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-// Helper: if DOM processing did not produce rendered HTML, format plain text reliably
+// Helper: format plain-text (or simple Markdown) into safe HTML blocks
 function format_plain_text_to_html($txt) {
   $txt = (string)$txt;
   if ($txt === '') return '';
