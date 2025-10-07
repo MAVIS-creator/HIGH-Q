@@ -57,16 +57,6 @@ $comments_count = (int)$ccstmt->fetchColumn();
           </div>
         </header>
 
-// fetch approved comments (top-level)
-$cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
-$cstmt->execute([$postId]);
-$comments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
-
-// compute total approved comments count for display
-$ccstmt = $pdo->prepare('SELECT COUNT(1) FROM comments WHERE post_id = ? AND status = "approved"');
-$ccstmt->execute([$postId]);
-$comments_count = (int)$ccstmt->fetchColumn();
-
 // Build a server-side Table of Contents by scanning headings in the post content (if present)
 $tocHtml = '';
 $renderedContent = '';
