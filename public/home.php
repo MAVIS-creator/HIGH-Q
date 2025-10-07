@@ -281,26 +281,32 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="news-section">
+<section class="news-section py-5">
   <div class="container">
-    <div class="ceo-heading">
+    <div class="ceo-heading text-center mb-4">
       <h2>Latest <span class="highlight">News & Updates</span></h2>
-      <p class="muted">Stay informed with our latest announcements and blog posts.</p>
+      <p class="text-muted">Stay informed with our latest announcements and blog posts.</p>
     </div>
 
     <?php if (empty($latestPosts)): ?>
       <p class="no-posts">No news posts available at the moment. Check back later for updates!</p>
     <?php else: ?>
-      <div class="news-grid">
+      <!-- Added Bootstrap row + gutter while keeping .news-grid -->
+      <div class="news-grid row g-4">
         <?php foreach ($latestPosts as $post): ?>
-          <article class="news-card">
+          <!-- Each card gets responsive column classes + flex column so content aligns nicely -->
+          <article class="news-card col-12 col-md-6 col-lg-3 d-flex flex-column">
             <?php if (!empty($post['featured_image'])): ?>
-              <div class="news-thumb"><img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>"></div>
+              <div class="news-thumb">
+                <img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="img-fluid rounded">
+              </div>
             <?php endif; ?>
-            <div class="news-body">
+            <!-- keep content structure, add flex column so meta can sit at bottom -->
+            <div class="news-body d-flex flex-column">
               <h4><a href="./post.php?id=<?= intval($post['id']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?? '') ?></p>
-              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
+              <!-- make meta sit at bottom of the card -->
+              <div class="news-meta mt-auto"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
                 <span class="news-count" style="margin-left:12px;"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
                 <span class="news-count" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
               </div>
@@ -308,8 +314,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </article>
         <?php endforeach; ?>
       </div>
-      <div class="news-cta" style="text-align:center;margin-top:18px;">
-        <a href="news.php" class="btn-ghost">View All News</a>
+
+      <div class="news-cta text-center mt-4">
+        <a href="news.php" class="btn btn-outline-secondary">View All News</a>
       </div>
     <?php endif; ?>
   </div>
