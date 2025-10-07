@@ -46,43 +46,6 @@ $comments_count = (int)$ccstmt->fetchColumn();
 // Ensure TOC/content variables exist for the template
 $tocHtml = '';
 $renderedContent = '';
-?>
-
-<article class="py-5">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <?php if ($post['featured_image']): ?>
-        <div class="rounded-3 overflow-hidden mb-4">
-          <img src="<?= htmlspecialchars($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="img-fluid w-100">
-        </div>
-        <?php endif; ?>
-
-        <header class="mb-4">
-          <?php if ($post['category_name']): ?>
-          <div class="text-primary mb-2"><?= htmlspecialchars($post['category_name']) ?></div>
-          <?php endif; ?>
-          
-          <h1 class="display-4 fw-bold mb-3"><?= htmlspecialchars($post['title']) ?></h1>
-          
-          <div class="d-flex align-items-center text-muted mb-4">
-            <?php if ($post['author_name']): ?>
-            <div class="me-3">
-              <i class="bx bx-user me-1"></i>
-              <?= htmlspecialchars($post['author_name']) ?>
-            </div>
-            <?php endif; ?>
-            <div class="me-3">
-              <i class="bx bx-calendar me-1"></i>
-              <?= date('F j, Y', strtotime($post['created_at'])) ?>
-            </div>
-            <div>
-              <i class="bx bx-message me-1"></i>
-              <?= $comments_count ?> comments
-            </div>
-          </div>
-        </header>
-
 <?php
 // Build a server-side Table of Contents by scanning headings in the post content (if present)
  $tocHtml = '';
@@ -186,28 +149,7 @@ HTML;
   libxml_clear_errors();
 }
 ?>
-
-// Helper: if DOM processing did not produce rendered HTML, format plain text reliably
-function format_plain_text_to_html($txt) {
-  $txt = (string)$txt;
-  if ($txt === '') return '';
-  // Convert simple Markdown headings
-  $txt = preg_replace(['/^###\s*(.+)$/m','/^##\s*(.+)$/m','/^#\s*(.+)$/m'], ['<h4>$1</h4>','<h3>$1</h3>','<h2>$1</h2>'], $txt);
-  // Split by blank lines into blocks
-  $blocks = preg_split('/\n\s*\n/', $txt);
-  $out = '';
-  foreach ($blocks as $b) {
-    $b = trim($b);
-    if ($b === '') continue;
-    if (preg_match('/<[^>]+>/', $b)) {
-      // includes HTML tag — trust it
-      $out .= $b;
-    } else {
-      $out .= '<p>' . nl2br(htmlspecialchars($b)) . '</p>';
-    }
-  }
-  return $out;
-}
+ 
 // Page title and header include
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
