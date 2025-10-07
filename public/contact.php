@@ -1,7 +1,24 @@
 <?php
 // public/contact.php - contact form that emails using sendEmail()
-require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/con						<div class="mb-3">
+							<label class="form-label">Program of Interest</label>
+							<select class="form-select" name="program">
+								<option value="">Select a program</option>
+								<?php
+								try { $courses = $pdo->query("SELECT id,title FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC); }
+								catch(Throwable $e) { $courses = []; }
+								foreach($courses as $c) {
+									$sel = (isset($program) && $program == $c['title']) ? 'selected' : '';
+									echo '<option value="' . htmlspecialchars($c['title']) . '" ' . $sel . '>' . htmlspecialchars($c['title']) . '</option>';
+								}
+								?>
+							</select>
+						</div>
+
+						<div class="mb-4">
+							<label class="form-label">Message</label>
+							<textarea class="form-control" name="message" rows="5" placeholder="Your message" required><?= htmlspecialchars($message ?? '') ?></textarea>
+						</div>equire_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
 // recaptcha config
 $recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/config/recaptcha.php' : ['site_key'=>'','secret'=>''];
