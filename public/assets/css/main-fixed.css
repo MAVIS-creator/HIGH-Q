@@ -147,14 +147,26 @@
     display: block;
     font-size: 24px;
     margin-bottom: 5px;
-}
-
 .why-stats .stat span {
     font-size: 14px;
 }
 
 @media screen and (max-width: 768px) {
     .why-stats {
+
+/* Single post visibility guard
+    Some global animation rules hide card-like elements until JS marks them in-view.
+    Force post content and TOC to be visible by default so users always see the article. */
+.post-article,
+.post-article *,
+.post-main .post-content,
+.post-thumb,
+.post-toc,
+.post-toc * {
+     opacity: 1 !important;
+     transform: none !important;
+     visibility: visible !important;
+}
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
     }
