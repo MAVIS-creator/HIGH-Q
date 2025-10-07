@@ -70,7 +70,7 @@ include __DIR__ . '/includes/header.php';
 <div class="container py-4 py-lg-5 mb-4">
     <main class="row gy-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-3 mb-4" style="height: fit-content;">
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-body p-4 p-lg-5">
                     <h3 class="fw-bold mb-2">Send Us a <span class="text-warning">Message</span></h3>
                     <p class="text-muted mb-4">Fill out the form below and we'll get back to you within 24 hours.</p>
