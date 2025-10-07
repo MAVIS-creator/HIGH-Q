@@ -12,11 +12,12 @@
 
 <!-- Core Values -->
 
-<section class="history-section">
-  <div class="container history-grid">
-    <div class="history-content">
-      <h3>History About High Q Solid Academy</h3>
-      <p>High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
+<section class="py-5">
+  <div class="container">
+    <div class="row flex-column-reverse flex-md-row g-4">
+      <div class="col-md-8">
+        <h3 class="h2 fw-bold mb-4">History About High Q Solid Academy</h3>
+        <p class="mb-4">High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
 
       <p>Following Mr. Ibrahim's departure for overseas opportunities, Mr. Adebule Quam assumed sole leadership, steering the tutorial toward remarkable success. Under Mr. Adebule Quam's guidance, High Q Tutorial has blossomed into a hub of academic excellence and technological proficiency.</p>
 
