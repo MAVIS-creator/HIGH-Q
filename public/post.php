@@ -2,38 +2,16 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-// Helper: format plain-text (or simple Markdown) into safe HTML blocks
-function format_plain_text_to_html($txt) {
-  $txt = (string)$txt;
-  if ($txt === '') return '';
-  // Convert simple Markdown headings
-  $txt = preg_replace(['/^###\s*(.+)$/m','/^##\s*(.+)$/m','/^#\s*(.+)$/m'], ['<h4>$1</h4>','<h3>$1</h3>','<h2>$1</h2>'], $txt);
-  // Split by blank lines into blocks
-  $blocks = preg_split('/\n\s*\n/', $txt);
-  $out = '';
-  foreach ($blocks as $b) {
-    $b = trim($b);
-    if ($b === '') continue;
-    if (preg_match('/<[^>]+>/', $b)) {
-      // includes HTML tag — trust it
-      $out .= $b;
-    } else {
-      $out .= '<p>' . nl2br(htmlspecialchars($b)) . '</p>';
-    }
-  }
-  return $out;
-}
-
 $postId = (int)($_GET['id'] ?? 0);
 if (!$postId) { header('Location: index.php'); exit; }
 
 // fetch post
-$stmt = $pdo->prepare('SELECT p.*, u.name as author_name, c.name as category_name FROM posts p LEFT JOIN users u ON p.created_by = u.id LEFT JOIN categories c ON p.category_id = c.id WHERE p.id = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
 $stmt->execute([$postId]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$post) { header('Location: /404.php'); exit; }
+if (!$post) { echo "<p>Post not found.</p>"; exit; }
 
-// fetch approved comments (top-level) and count so they are available for the template
+// fetch approved comments (top-level)
 $cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
 $cstmt->execute([$postId]);
 $comments = $cstmt->fetchAll(PDO::FETCH_ASSOC);
@@ -43,10 +21,9 @@ $ccstmt = $pdo->prepare('SELECT COUNT(1) FROM comments WHERE post_id = ? AND sta
 $ccstmt->execute([$postId]);
 $comments_count = (int)$ccstmt->fetchColumn();
 
-// Ensure TOC/content variables exist for the template
+// Build a server-side Table of Contents by scanning headings in the post content (if present)
 $tocHtml = '';
 $renderedContent = '';
-// Build a server-side Table of Contents by scanning headings in the post content (if present)
 $contentRaw = $post['content'] ?? '';
 // If the content is plain text (no HTML tags), convert simple Markdown-style headings (#, ##, ###)
 // into <h2>/<h3>/<h4> and wrap paragraphs in <p> blocks so the TOC and spacing work.
@@ -80,7 +57,7 @@ if ($contentForDoc !== '') {
   $doc = new DOMDocument();
   // Wrap in a div to get fragment handling and set UTF-8
   $wrapped = '<div>' . $contentForDoc . '</div>';
-  $doc->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $wrapped);
+  $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped);
   $xpath = new DOMXPath($doc);
   $nodes = $xpath->query('//h2|//h3|//h4');
   if ($nodes->length > 0) {
@@ -111,27 +88,26 @@ if ($contentForDoc !== '') {
       $tocHtml .= '<li' . $indent . '><a href="#' . htmlspecialchars($it['id']) . '">' . htmlspecialchars($it['text']) . '</a></li>';
     }
     $tocHtml .= '</ul></aside>';
-
+    
     // Add TOC toggle script
-    $tocHtml .= <<<'HTML'
-  <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const tocToggle = document.querySelector(".toc-toggle");
-    const tocAside = document.querySelector(".post-toc");
+    $tocHtml .= '
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tocToggle = document.querySelector(".toc-toggle");
+        const tocAside = document.querySelector(".post-toc");
         
-    if (tocToggle && tocAside) {
-      tocToggle.addEventListener("click", function() {
-        tocAside.classList.toggle("active");
-        if (tocAside.classList.contains("active")) {
-          tocToggle.innerHTML = '<i class="bx bx-x"></i> Close';
-        } else {
-          tocToggle.innerHTML = '<i class="bx bx-list-ul"></i> Contents';
+        if (tocToggle && tocAside) {
+            tocToggle.addEventListener("click", function() {
+                tocAside.classList.toggle("active");
+                if (tocAside.classList.contains("active")) {
+                    tocToggle.innerHTML = \'<i class="bx bx-x"></i> Close\';
+                } else {
+                    tocToggle.innerHTML = \'<i class="bx bx-list-ul"></i> Contents\';
+                }
+            });
         }
-      });
-    }
-  });
-  </script>
-HTML;
+    });
+    </script>';
   }
 
   // extract inner HTML of wrapped div as rendered content
@@ -146,11 +122,31 @@ HTML;
   libxml_clear_errors();
 }
 
-// Page title and header include
+// Helper: if DOM processing did not produce rendered HTML, format plain text reliably
+function format_plain_text_to_html($txt) {
+  $txt = (string)$txt;
+  if ($txt === '') return '';
+  // Convert simple Markdown headings
+  $txt = preg_replace(['/^###\s*(.+)$/m','/^##\s*(.+)$/m','/^#\s*(.+)$/m'], ['<h4>$1</h4>','<h3>$1</h3>','<h2>$1</h2>'], $txt);
+  // Split by blank lines into blocks
+  $blocks = preg_split('/\n\s*\n/', $txt);
+  $out = '';
+  foreach ($blocks as $b) {
+    $b = trim($b);
+    if ($b === '') continue;
+    if (preg_match('/<[^>]+>/', $b)) {
+      // includes HTML tag — trust it
+      $out .= $b;
+    } else {
+      $out .= '<p>' . nl2br(htmlspecialchars($b)) . '</p>';
+    }
+  }
+  return $out;
+}
+
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
-
 <div class="container" style="max-width:1150px;margin:24px auto;padding:0 12px;">
   <article class="post-article">
     <h1><?= htmlspecialchars($post['title']) ?></h1>
@@ -235,7 +231,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="form-row"><label class="form-label">Name</label><input class="form-input" type="text" name="name"></div>
         <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
         <div class="form-row"><label class="form-label">Comment</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
-        <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
+  <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
       </form>
     </div>
   </section>

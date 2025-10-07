@@ -177,54 +177,27 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 </section>
 
 <!-- Testimonials / What Our Students Say -->
-<section class="py-5 bg-light">
+<section class="testimonials-section">
   <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold mb-3">What Our <span class="text-warning">Students Say</span></h2>
-      <p class="lead text-muted">Hear from our successful students and their experiences</p>
+    <div class="ceo-heading">
+      <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="row g-4">
-      <div class="col-md-4">
-        <article class="card h-100 border-0 shadow-sm hover-lift">
-          <div class="card-body p-4">
-            <div class="text-warning mb-3 fs-5">★★★★★</div>
-            <blockquote class="mb-4 fs-6">
-              <p class="fst-italic mb-0">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
-            </blockquote>
-            <div class="d-flex align-items-center">
-              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">AD</div>
-              <div>
-                <h6 class="fw-bold mb-1">Akintunde Dolapo</h6>
-                <p class="text-muted small mb-0">Studying Cybersecurity at LAUTECH</p>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
+    <div class="testimonials-grid">
+      <article class="testimonial-card">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
+        <p class="attribution"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
+      </article>
 
-      <div class="col-md-4">
-        <article class="card h-100 border-0 shadow-sm hover-lift">
-          <div class="card-body p-4">
-            <div class="text-warning mb-3 fs-5">★★★★★</div>
-            <blockquote class="mb-4 fs-6">
-              <p class="fst-italic mb-0">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
-            </blockquote>
-            <div class="d-flex align-items-center">
-              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">SM</div>
-              <div>
-                <h6 class="fw-bold mb-1">Sanni Micheal</h6>
-                <p class="text-muted small mb-0">JAMB Score: 305</p>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
+      <article class="testimonial-card">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
+        <p class="attribution"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
+      </article>
 
-      <div class="col-md-4">
-        <article class="card h-100 border-0 shadow-sm hover-lift">
-          <div class="card-body p-4">
-            <div class="text-warning mb-3 fs-5">★★★★★</div>
+      <article class="testimonial-card">
+        <div class="rating">★★★★★</div>
         <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
         <p class="attribution"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
       </article>

@@ -2,42 +2,38 @@
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<section class="about-hero position-relative py-5">
-	<div class="about-hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
-	<div class="container about-hero-inner position-relative text-center py-5">
-		<h1 class="display-4 fw-bold mb-3">Our Programs</h1>
-		<p class="lead mb-0 mx-auto" style="max-width: 700px;">Comprehensive educational programs designed to help you excel in your studies</p>
+<section class="about-hero">
+	<div class="about-hero-overlay"></div>
+	<div class="container about-hero-inner">
+		<h1>Our Programs</h1>
+		<p class="lead">Comprehensive educational programs designed to help you excel in your studies</p>
 	</div>
 </section>
 
 <!-- Programs listing (placeholder) -->
-<section class="programs-content py-5">
+<section class="programs-content">
 	<div class="container">
-		<div class="ceo-heading text-center mb-5">
-			<h2 class="display-5 fw-bold mb-3">Explore Our <span class="high">Programs</span></h2>
-			<p class="lead text-muted mx-auto" style="max-width: 700px;">Choose a course tailored to your needs — from exam prep to digital skills.</p>
+		<div class="ceo-heading">
+			<h2>Explore Our <span class="high">Programs</span></h2>
+			<p class="lead">Choose a course tailored to your needs — from exam prep to digital skills.</p>
 		</div>
 			<!-- Static program cards (not pulled from SQL) -->
-			<div class="programs-grid row g-4">
-				<article class="program-card col-md-6 col-lg-4">
-					<div class="card h-100 border-0 shadow-sm">
-						<div class="program-card-head p-4 text-center">
-							<div class="program-icon d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
-								<i class="bx bx-target-lock fs-3"></i>
-							</div>
+			<div class="programs-grid">
+				<article class="program-card">
+					<div class="program-card-head">
+						<div class="program-icon"><i class="bx bx-target-lock"></i></div>
+					</div>
+					<div class="program-card-body">
+						<h4>JAMB Preparation</h4>
+						<p class="muted">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
+						<div class="subjects">
+							<span class="tag">English Language</span>
+							<span class="tag">Mathematics</span>
+							<span class="tag">Sciences</span>
+							<span class="tag">Arts</span>
 						</div>
-						<div class="program-card-body p-4">
-							<h4 class="fw-bold mb-3">JAMB Preparation</h4>
-							<p class="text-muted mb-4">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
-							<div class="subjects d-flex flex-wrap gap-2 mb-3">
-								<span class="tag badge bg-light text-dark">English Language</span>
-								<span class="tag badge bg-light text-dark">Mathematics</span>
-								<span class="tag badge bg-light text-dark">Sciences</span>
-								<span class="tag badge bg-light text-dark">Arts</span>
-							</div>
-							<p class="duration text-muted mb-4">Duration: 4-6 months</p>
-							<a href="program.php?slug=jamb-preparation" class="btn-primary d-block text-center py-2">Learn More</a>
-						</div>
+						<p class="duration">Duration: 4-6 months</p>
+						<a href="program.php?slug=jamb-preparation" class="btn-primary">Learn More</a>
 					</div>
 				</article>
 

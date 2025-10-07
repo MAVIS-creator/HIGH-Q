@@ -2,27 +2,21 @@
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<section class="about-hero position-relative py-5">
-  <div class="about-hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
-  <div class="container about-hero-inner position-relative text-center py-5">
-    <h1 class="display-4 fw-bold mb-3">About HQ Academy</h1>
-    <p class="lead mb-0 mx-auto" style="max-width: 700px;">Building Excellence in Education Through Dedication and Innovation</p>
+<section class="about-hero">
+  <div class="about-hero-overlay"></div>
+  <div class="container about-hero-inner">
+    <h1>About HQ Academy</h1>
+    <p class="lead">Building Excellence in Education Through Dedication and Innovation</p>
   </div>
 </section>
 
-<!-- History Section -->
+<!-- Core Values -->
 
-<section class="py-5">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4 order-md-2 mb-4 mb-md-0">
-        <div class="card border-0 shadow-sm p-3">
-          <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="img-fluid rounded">
-        </div>
-      </div>
-      <div class="col-md-8 order-md-1">
-        <h3 class="h2 fw-bold mb-4">History About High Q Solid Academy</h3>
-        <p class="mb-4">High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
+<section class="history-section">
+  <div class="container history-grid">
+    <div class="history-content">
+      <h3>History About High Q Solid Academy</h3>
+      <p>High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
 
       <p>Following Mr. Ibrahim's departure for overseas opportunities, Mr. Adebule Quam assumed sole leadership, steering the tutorial toward remarkable success. Under Mr. Adebule Quam's guidance, High Q Tutorial has blossomed into a hub of academic excellence and technological proficiency.</p>
 
@@ -43,24 +37,17 @@
 
 
 <!-- Vision & Mission -->
-<section class="values-section py-5">
+<section class="values-section">
   <div class="container">
-    <div class="row g-4">
-      <article class="col-md-6">
-        <div class="value-card h-100 bg-white rounded-3 shadow-sm p-4 text-center">
-          <div class="value-icon d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
-            <i class='bx bxs-bullseye fs-3'></i>
-          </div>
-          <h4 class="fw-bold mb-3">Our Vision</h4>
-          <p class="text-muted mb-0">To be the leading tutorial academy that transforms students into confident, well-prepared individuals ready to excel in their academic pursuits and achieve their educational goals with excellence.</p>
-        </div>
+    <div class="values-grid">
+      <article class="value-card">
+        <div class="value-icon"><i class='bx bxs-bullseye'></i></div>
+        <h4>Our Vision</h4>
+        <p>To be the leading tutorial academy that transforms students into confident, well-prepared individuals ready to excel in their academic pursuits and achieve their educational goals with excellence.</p>
       </article>
 
-      <article class="col-md-6">
-        <div class="value-card h-100 bg-white rounded-3 shadow-sm p-4 text-center">
-          <div class="value-icon d-inline-flex align-items-center justify-content-center rounded-circle mb-3">
-            <i class='bx bxs-rocket fs-3'></i>
-          </div>
+      <article class="value-card">
+        <div class="value-icon"><i class='bx bxs-rocket'></i></div>
         <h4>Our Mission</h4>
         <p>To provide high-quality, personalized education that empowers students to achieve academic excellence through innovative teaching methods, experienced tutors, and comprehensive exam preparation programs.</p>
       </article>
