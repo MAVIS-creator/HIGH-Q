@@ -200,3 +200,12 @@
         padding: 15px;
     }
 }
+
+/* Ensure Why Choose stats are visible even if global animations hide .stat by default
+   (global animation rules set .stat { opacity:0 } until JS marks them in-view). */
+.why-box .why-stats .stat,
+.why-box .why-stats .stat * {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+}
