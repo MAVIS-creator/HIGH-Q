@@ -155,20 +155,20 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <div class="ceo-heading">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="achievements-grid">
-      <div class="achievement">
+    <div class="row achievements-grid gy-3">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="achievement">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="achievement">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="achievement">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
@@ -183,20 +183,20 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="testimonials-grid">
-      <article class="testimonial-card">
+    <div class="row testimonials-grid gy-3">
+      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
         <div class="rating">★★★★★</div>
         <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
         <p class="attribution"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
       </article>
 
-      <article class="testimonial-card">
+      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
         <div class="rating">★★★★★</div>
         <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
         <p class="attribution"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
       </article>
 
-      <article class="testimonial-card">
+      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
         <div class="rating">★★★★★</div>
         <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
         <p class="attribution"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
