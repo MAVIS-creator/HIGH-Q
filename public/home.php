@@ -25,7 +25,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero py-5 btn-primary">
+<section class="hero py-5">
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
     <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
       <div class="hero-badge mb-3">
