@@ -5,13 +5,16 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 6;
 $offset = ($page - 1) * $perPage;
 
-include __DIR__ . '/includes/header.php';
-?>
+// filters
+$selectedCategory = (int)($_GET['category'] ?? 0);
+$selectedTag = trim($_GET['tag'] ?? '');
+$q = trim($_GET['q'] ?? '');
 
-<section class="about-hero position-relative py-5">
-  <div class="about-hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
-  <div class="container about-hero-inner position-relative text-center py-5">
-    <h1 class="display-4 fw-bold mb-3">Latest News</h1>
+// fetch categories for filter UI
+try {
+  $catsStmt = $pdo->query("SELECT id,name,slug FROM categories ORDER BY name");
+  $categories = $catsStmt->fetchAll(PDO::FETCH_ASSOC);
+// ...filters and query logic moved above to ensure variables are defined before template output
     <p class="lead mb-0 mx-auto" style="max-width: 700px;">Stay updated with our latest announcements, events, and success stories.</p>
   </div>
 </section>
