@@ -67,6 +67,30 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
+<style>
+@media (max-width: 768px) {
+    .contact-card {
+        padding: 1.5rem !important;
+    }
+    .contact-card p {
+        margin-bottom: 0;
+        font-size: 0.9rem;
+    }
+    .contact-card .card-body {
+        padding: 1rem !important;
+    }
+    aside .card {
+        margin-bottom: 1rem !important;
+    }
+    .contact-info > div {
+        margin-bottom: 0.5rem !important;
+    }
+    .contact-info > div:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+</style>
+
 <div class="container py-4 py-lg-5 mb-4">
     <main class="row gy-4">
         <div class="col-lg-8">
@@ -183,17 +207,19 @@ include __DIR__ . '/includes/header.php';
                         <i class="bx bx-phone fs-4 text-warning me-2"></i>
                         <h5 class="mb-0">Contact Information</h5>
                     </div>
-                    <div class="mb-3">
-                        <strong class="d-block mb-1">Phone</strong>
-                        <p class="text-muted mb-0">0807 208 8794</p>
-                    </div>
-                    <div class="mb-3">
-                        <strong class="d-block mb-1">Email</strong>
-                        <p class="text-muted mb-0">info@hqacademy.com</p>
-                    </div>
-                    <div>
-                        <strong class="d-block mb-1">Office Hours</strong>
-                        <p class="text-muted mb-0">Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+                    <div class="contact-info">
+                        <div class="mb-2">
+                            <strong class="d-block mb-1">Phone</strong>
+                            <p class="text-muted mb-0">0807 208 8794</p>
+                        </div>
+                        <div class="mb-2">
+                            <strong class="d-block mb-1">Email</strong>
+                            <p class="text-muted mb-0">info@hqacademy.com</p>
+                        </div>
+                        <div>
+                            <strong class="d-block mb-1">Office Hours</strong>
+                            <p class="text-muted mb-0">Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+                        </div>
                     </div>
                 </div>
             </div>
