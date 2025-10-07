@@ -12,7 +12,7 @@ $programs = [
       'Timed practice tests and past questions',
     ],
     'who' => ['Senior secondary students preparing for JAMB', 'Students seeking university admission through UTME or Post-UTME'],
-    'fees' => '₦50,000.00',
+    'fees' => '₦9,000/month',
     'duration' => '4–6 months',
   ],
   'waec-preparation' => [
@@ -20,7 +20,7 @@ $programs = [
     'overview' => 'Complete WAEC preparation including theory, practicals, and mock exams to secure high grades.',
     'curriculum' => ['Core subject mastery', 'Practical skill sessions', 'Mock exams and marking'],
     'who' => ['Secondary school students sitting WAEC'],
-    'fees' => 'Negotiable (based on package)',
+    'fees' => '₦8,000/month',
     'duration' => '6–12 months',
   ],
   'neco-preparation' => [
@@ -28,7 +28,7 @@ $programs = [
     'overview' => 'Focused NECO preparation with extensive practice tests and study materials.',
     'curriculum' => ['Complete syllabus coverage', 'Mock exams', 'Exam technique workshops'],
     'who' => ['Students taking NECO examinations'],
-    'fees' => 'Negotiable',
+    'fees' => '₦8,000/month',
     'duration' => '6–12 months',
   ],
   'post-utme' => [
@@ -36,7 +36,7 @@ $programs = [
     'overview' => 'University-specific Post-UTME preparation tailored to faculties and institutions.',
     'curriculum' => ['University-specific past questions', 'Interview prep', 'Subject depth training'],
     'who' => ['UTME candidates applying to university'],
-    'fees' => 'Varies by institution',
+    'fees' => '₦7,000/month',
     'duration' => '2–4 months',
   ],
   'special-tutorials' => [
@@ -48,6 +48,14 @@ $programs = [
     'duration' => 'Flexible',
   ],
   'computer-training' => [
+    'title' => 'Computer Training',
+    'overview' => 'Comprehensive computer skills training covering essential software and digital literacy.',
+    'curriculum' => ['Microsoft Office Suite', 'Basic Programming', 'Digital Design Tools', 'Internet and Web Skills'],
+    'who' => ['Students and professionals seeking digital skills', 'Anyone looking to enhance their computer literacy'],
+    'fees' => '₦80,000',
+    'duration' => 'Based on chosen modules',
+  ],
+  'other-programs' => [
     'title' => 'Computer Training',
     'overview' => 'Digital literacy and computer skills training including Office tools, internet usage, and basic programming.',
     'curriculum' => ['MS Office Suite (Word, Excel, PowerPoint)', 'Internet & research skills', 'Introduction to coding'],
