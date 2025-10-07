@@ -5,6 +5,46 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 6;
 $offset = ($page - 1) * $perPage;
 
+include __DIR__ . '/includes/header.php';
+?>
+
+<section class="about-hero position-relative py-5">
+  <div class="about-hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="container about-hero-inner position-relative text-center py-5">
+    <h1 class="display-4 fw-bold mb-3">Latest News</h1>
+    <p class="lead mb-0 mx-auto" style="max-width: 700px;">Stay updated with our latest announcements, events, and success stories.</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <!-- Filters -->
+    <div class="row g-3 mb-5">
+      <div class="col-md-4">
+        <select class="form-select" name="category" onchange="this.form.submit()">
+          <option value="0">All Categories</option>
+          <?php foreach($categories as $cat): ?>
+            <option value="<?= $cat['id'] ?>" <?= $selectedCategory == $cat['id'] ? 'selected' : '' ?>>
+              <?= htmlspecialchars($cat['name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <?php if ($hasTags): ?>
+      <div class="col-md-4">
+        <input type="text" class="form-control" name="tag" placeholder="Filter by tag..." value="<?= htmlspecialchars($selectedTag) ?>">
+      </div>
+      <?php endif; ?>
+      <div class="col-md-4">
+        <div class="input-group">
+          <input type="text" class="form-control" name="q" placeholder="Search news..." value="<?= htmlspecialchars($q) ?>">
+          <button class="btn btn-primary" type="submit">
+            <i class="bx bx-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
 // filters
 $selectedCategory = (int)($_GET['category'] ?? 0);
 $selectedTag = trim($_GET['tag'] ?? '');
