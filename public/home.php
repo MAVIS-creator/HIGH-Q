@@ -25,7 +25,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero py-5">
+<section class="hero py-5 bg-warning">
   <div class="container">
     <div class="hero-left py-4 py-lg-5">
       <div class="hero-badge d-inline-flex align-items-center gap-2 mb-4"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
