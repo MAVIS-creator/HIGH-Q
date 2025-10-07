@@ -59,16 +59,16 @@ $csrf = generateToken('contact_form');
 include __DIR__ . '/includes/header.php';
 ?>
 
-<section class="about-hero position-relative py-5">
+<section class="about-hero position-relative py-4 py-md-5">
     <div class="about-hero-overlay position-absolute top-0 start-0 w-100 h-100"></div>
-    <div class="container about-hero-inner position-relative text-center py-5">
+    <div class="container about-hero-inner position-relative text-center py-3 py-md-5">
         <h1 class="display-4 fw-bold mb-3">Contact Us</h1>
         <p class="lead mb-0 mx-auto" style="max-width: 700px;">Get in touch with our team. We're here to help you start your journey towards academic excellence.</p>
     </div>
 </section>
 
-<div class="container py-5">
-    <main class="row">
+<div class="container py-4 py-lg-5 mb-4">
+    <main class="row gy-4">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-body p-4 p-lg-5">
@@ -198,7 +198,7 @@ include __DIR__ . '/includes/header.php';
                 </div>
             </div>
 
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 mb-4 mb-lg-0">
                 <button class="btn btn-outline-primary flex-grow-1 d-flex align-items-center justify-content-center gap-2" id="openSchedule">
                     <i class="bx bx-calendar"></i>
                     <span>Schedule Visit</span>
@@ -213,15 +213,15 @@ include __DIR__ . '/includes/header.php';
 </div>
 
 <!-- FAQ and CTA sections kept simple to avoid duplication; they can be extracted to partials later -->
-<section class="py-5 bg-light">
+<section class="py-4 py-lg-5 bg-light mb-4 mb-lg-5">
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="display-5 fw-bold mb-3">Frequently Asked <span class="text-warning">Questions</span></h2>
             <p class="lead text-muted mb-0">Find answers to common questions about our programs and services.</p>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-6">
+        <div class="row gy-4 mb-4">
+            <div class="col-12 col-md-6">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body p-4">
                         <h4 class="fw-bold mb-3">What programs do you offer?</h4>
