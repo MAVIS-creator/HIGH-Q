@@ -27,27 +27,16 @@ require_once __DIR__ . '/includes/header.php';
 // fetch recent questions
 $q = $pdo->query('SELECT id,name,content,created_at FROM forum_questions ORDER BY created_at DESC LIMIT 50')->fetchAll();
 ?>
-<section class="py-5">
+<section style="padding:40px 0;">
   <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="text-center mb-5">
-          <h1 class="display-5 fw-bold mb-3">Community</h1>
-          <p class="lead text-muted">Ask questions anonymously — no account needed.</p>
-        </div>
-
-        <div class="card border-0 shadow-sm mb-5">
-          <div class="card-body p-4 p-md-5">
-            <form method="post">
-              <div class="mb-4">
-                <label class="form-label">Name (optional)</label>
-                <input type="text" class="form-control" name="name" placeholder="Your name">
-              </div>
-              <div class="mb-4">
-                <label class="form-label">Your question</label>
-                <textarea class="form-control" name="content" rows="5" required placeholder="What would you like to ask?"></textarea>
-              </div>
-              <div class="text-end">
+    <h1>Community</h1>
+    <p class="muted">Ask questions anonymously — no account needed.</p>
+    <div style="margin-top:20px;">
+      <div style="max-width:720px;">
+        <form method="post" class="comment-form-wrap">
+          <div class="form-row"><label class="form-label">Name (optional)</label><input class="form-input" type="text" name="name"></div>
+          <div class="form-row"><label class="form-label">Your question</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
+          <div class="form-actions">
                 <button class="btn btn-primary px-4" type="submit">Post Question</button>
               </div>
             </form>
