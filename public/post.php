@@ -83,10 +83,11 @@ $renderedContent = '';
           </div>
         </header>
 
+<?php
 // Build a server-side Table of Contents by scanning headings in the post content (if present)
-$tocHtml = '';
-$renderedContent = '';
-$contentRaw = $post['content'] ?? '';
+ $tocHtml = '';
+ $renderedContent = '';
+ $contentRaw = $post['content'] ?? '';
 // If the content is plain text (no HTML tags), convert simple Markdown-style headings (#, ##, ###)
 // into <h2>/<h3>/<h4> and wrap paragraphs in <p> blocks so the TOC and spacing work.
 if ($contentRaw !== '' && strpos($contentRaw, '<') === false) {
@@ -184,6 +185,7 @@ HTML;
   }
   libxml_clear_errors();
 }
+?>
 
 // Helper: if DOM processing did not produce rendered HTML, format plain text reliably
 function format_plain_text_to_html($txt) {
