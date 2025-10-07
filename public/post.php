@@ -145,8 +145,6 @@ HTML;
   }
   libxml_clear_errors();
 }
-?>
- 
 // Page title and header include
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
@@ -194,38 +192,35 @@ require_once __DIR__ . '/includes/header.php';
         <button id="commentToggle" class="btn btn-comment"><i class="fa-regular fa-comment-dots"></i> Comment</button>
         <div class="meta small muted" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></div>
       </div>
-  </article>
+              <div class="comment reply">
+                <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
+                <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+              </div>
+            <?php endforeach; ?>
 
-  <section id="commentsSection" style="margin-top:28px;">
-    <h2>Comments</h2>
-
-    <div id="commentsList">
-      <?php foreach($comments as $c): ?>
-        <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
-          <div class="comment-header">
-            <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
-            <div>
-              <button class="reply-btn small" data-id="<?= $c['id'] ?>">Reply</button>
-            </div>
           </div>
-          <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+        <?php endforeach; ?>
+      </div>
 
-          <?php
-            // fetch replies for this comment
-            $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
-            $rstmt->execute([$c['id']]);
-            $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach($replies as $rep):
-          ?>
-            <div class="comment reply">
-              <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
-              <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-            </div>
-          <?php endforeach; ?>
+      <div style="margin-top:18px;">
+        <h3>Leave a comment</h3>
+        <form id="commentForm" class="comment-form-wrap">
+          <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
+          <input type="hidden" name="parent_id" id="parent_id" value="">
+          <div class="form-row"><label class="form-label">Name</label><input class="form-input" type="text" name="name"></div>
+          <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
+          <div class="form-row"><label class="form-label">Comment</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
+    <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
+        </form>
+      </div>
+    </section>
+  </div>
 
-        </div>
-      <?php endforeach; ?>
-    </div>
+  <!-- comment and like handling moved to external script to reduce inline JS -->
+  <script>window.POST_ID = <?= (int)$postId ?>;</script>
+  <script src="./assets/js/post.js"></script>
+
+  <?php require_once __DIR__ . '/includes/footer.php';
 
     <div style="margin-top:18px;">
       <h3>Leave a comment</h3>
