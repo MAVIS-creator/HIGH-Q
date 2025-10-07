@@ -2,52 +2,57 @@
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<section class="about-hero">
-	<div class="about-hero-overlay"></div>
-	<div class="container about-hero-inner">
-		<h1>Our Programs</h1>
-		<p class="lead">Comprehensive educational programs designed to help you excel in your studies</p>
+<section class="position-relative bg-dark text-white py-5 mb-5">
+	<div class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-50"></div>
+	<div class="container position-relative py-5">
+		<div class="text-center py-4">
+			<h1 class="display-4 fw-bold mb-3">Our Programs</h1>
+			<p class="lead mb-0 mx-auto" style="max-width: 600px;">Comprehensive educational programs designed to help you excel in your studies</p>
+		</div>
 	</div>
 </section>
 
 <!-- Programs listing (placeholder) -->
-<section class="programs-content">
+<section class="py-5">
 	<div class="container">
-		<div class="ceo-heading">
-			<h2>Explore Our <span class="high">Programs</span></h2>
-			<p class="lead">Choose a course tailored to your needs — from exam prep to digital skills.</p>
+		<div class="text-center mb-5">
+			<h2 class="display-5 fw-bold mb-3">Explore Our <span class="text-warning">Programs</span></h2>
+			<p class="lead text-muted mx-auto" style="max-width: 700px;">Choose a course tailored to your needs — from exam prep to digital skills.</p>
 		</div>
-			<!-- Static program cards (not pulled from SQL) -->
-			<div class="programs-grid">
-				<article class="program-card">
-					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-target-lock"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>JAMB Preparation</h4>
-						<p class="muted">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
-						<div class="subjects">
-							<span class="tag">English Language</span>
-							<span class="tag">Mathematics</span>
-							<span class="tag">Sciences</span>
-							<span class="tag">Arts</span>
+		<!-- Static program cards (not pulled from SQL) -->
+		<div class="row g-4">
+			<div class="col-md-6 col-lg-4">
+				<div class="card h-100 border-0 shadow-sm hover-lift">
+					<div class="card-body p-4">
+						<div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 p-3 mb-4" style="width: 64px; height: 64px;">
+							<i class="bx bx-target-lock fs-2"></i>
 						</div>
-						<p class="duration">Duration: 4-6 months</p>
-						<a href="program.php?slug=jamb-preparation" class="btn-primary">Learn More</a>
+						<h4 class="card-title mb-3">JAMB Preparation</h4>
+						<p class="card-text text-muted mb-4">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
+						<div class="d-flex flex-wrap gap-2 mb-4">
+							<span class="badge bg-light text-dark">English Language</span>
+							<span class="badge bg-light text-dark">Mathematics</span>
+							<span class="badge bg-light text-dark">Sciences</span>
+							<span class="badge bg-light text-dark">Arts</span>
+						</div>
+						<p class="text-muted small mb-4">Duration: 4-6 months</p>
+						<a href="program.php?slug=jamb-preparation" class="btn btn-primary w-100">Learn More</a>
 					</div>
-				</article>
+				</div>
+			</div>
 
-				<article class="program-card">
-					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-book"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>WAEC Preparation</h4>
-						<p class="muted">Complete preparation for West African Senior School Certificate Examination</p>
-						<div class="subjects">
-							<span class="tag">Core Subjects</span>
-							<span class="tag">Electives</span>
-							<span class="tag">Practicals</span>
+			<div class="col-md-6 col-lg-4">
+				<div class="card h-100 border-0 shadow-sm hover-lift">
+					<div class="card-body p-4">
+						<div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 p-3 mb-4" style="width: 64px; height: 64px;">
+							<i class="bx bx-book fs-2"></i>
+						</div>
+						<h4 class="card-title mb-3">WAEC Preparation</h4>
+						<p class="card-text text-muted mb-4">Complete preparation for West African Senior School Certificate Examination</p>
+						<div class="d-flex flex-wrap gap-2 mb-4">
+							<span class="badge bg-light text-dark">Core Subjects</span>
+							<span class="badge bg-light text-dark">Electives</span>
+							<span class="badge bg-light text-dark">Practicals</span>
 						</div>
 						<p class="duration">Duration: 6-12 months</p>
 						<a href="program.php?slug=waec-preparation" class="btn-primary">Learn More</a>
