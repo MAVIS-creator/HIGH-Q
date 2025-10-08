@@ -179,16 +179,21 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 
 <!-- Programs Section -->
-<section class="programs-section">
+<section class="py-5 bg-light">
   <div class="container">
-    <div class="ceo-heading">
-      <h2>Our <span class="high">Programs & Services</span></h2>
-      <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold mb-3">Our <span class="text-primary">Programs & Services</span></h2>
+      <p class="lead text-secondary mx-auto" style="max-width: 800px;">
+        We offer comprehensive educational programs designed to ensure our students excel academically 
+        and develop essential digital skills for the modern world.
+      </p>
     </div>
 
-    <div class="programs-grid">
+    <div class="row g-4">
       <?php if (empty($programs)): ?>
-        <p>No programs have been published yet. Check back later.</p>
+        <div class="col-12 text-center">
+          <p class="text-secondary">No programs have been published yet. Check back later.</p>
+        </div>
       <?php else: ?>
         <?php foreach ($programs as $p): ?>
           <?php
