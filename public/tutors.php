@@ -156,58 +156,74 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   }
 }
 </style>
-<!-- Achievements -->
 <!-- Achievements Section -->
-<section class="achievements py-5">
+<section class="achievements py-5 bg-white">
   <div class="container">
-    <div class="ceo-heading text-center mb-4">
+    <div class="text-center mb-4">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="row achievements-grid gy-4 gx-3">
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-        <strong>500+</strong>
-        <span>Students Graduated</span>
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="text-center p-3">
+          <div class="fs-2 fw-bold text-warning mb-2">500+</div>
+          <div class="text-secondary">Students Graduated</div>
+        </div>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-        <strong>98%</strong>
-        <span>Success Rate</span>
+      <div class="col-6 col-lg-3">
+        <div class="text-center p-3">
+          <div class="fs-2 fw-bold text-warning mb-2">98%</div>
+          <div class="text-secondary">Success Rate</div>
+        </div>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-        <strong>15+</strong>
-        <span>Expert Tutors</span>
+      <div class="col-6 col-lg-3">
+        <div class="text-center p-3">
+          <div class="fs-2 fw-bold text-warning mb-2">15+</div>
+          <div class="text-secondary">Expert Tutors</div>
+        </div>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-        <strong>5+</strong>
-        <span>Years Experience</span>
+      <div class="col-6 col-lg-3">
+        <div class="text-center p-3">
+          <div class="fs-2 fw-bold text-warning mb-2">5+</div>
+          <div class="text-secondary">Years Experience</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-
-<!-- Testimonials / What Our Students Say -->
-<section class="testimonials-section py-5">
-  <div class="container px-3 px-md-0">
-    <div class="ceo-heading text-center mb-4">
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-4">
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="row testimonials-grid gy-4 justify-content-center">
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
-          <p class="attribution mb-0"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
+    <div class="row g-4 justify-content-center">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body p-4">
+            <div class="text-warning mb-2">★★★★★</div>
+            <p class="mb-4">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
+            <div class="text-secondary">
+              <div class="fw-bold">Akintunde Dolapo</div>
+              <small>Studying Cybersecurity at LAUTECH</small>
+            </div>
+          </div>
         </div>
-      </article>
+      </div>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
-          <p class="attribution mb-0"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body p-4">
+            <div class="text-warning mb-2">★★★★★</div>
+            <p class="mb-4">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
+            <div class="text-secondary">
+              <div class="fw-bold">Sanni Micheal</div>
+              <small>JAMB Score: 305</small>
+            </div>
+          </div>
         </div>
-      </article>
+      </div>
 
       <article class="testimonial-card col-12 col-md-6 col-lg-4">
         <div class="p-3 h-100 border rounded shadow-sm">
