@@ -117,42 +117,48 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
       </div>
 
-  <div class="ceo-right-column">
-        <div class="ceo-content mb-4">
-          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
-          <p class="mb-3">
+  <div class="col-12 col-lg-7">
+        <div class="mb-4">
+          <h3 class="h2 fw-bold mb-3">Seasoned Educator & Mentor</h3>
+          <p class="lead mb-3">
             Master Adebule Quam is a seasoned tutor versed in the teaching profession.
             Over the years, he has produced students who have achieved breathtaking
             academic excellence and excelled in various examinations including GCE,
             WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
           </p>
-          <p>
+          <p class="text-secondary">
             He believes in the school of thought that education is the force to push
             one ahead of others. Under his guidance, High Q Academy has blossomed into
             a hub of academic excellence and technological proficiency.
           </p>
         </div>
 
-        <div class="ceo-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-4 mb-4">
-          <div class="stat yellow text-center">
-            <i class="fas fa-trophy"></i>
-            <strong>305</strong>
-            <span>Highest JAMB Score</span>
+        <div class="row g-4 mb-4">
+          <div class="col-12 col-sm-4">
+            <div class="p-3 bg-warning bg-opacity-10 rounded-3 text-center">
+              <i class="fas fa-trophy text-warning mb-2 fs-3"></i>
+              <div class="fw-bold fs-4 mb-1">305</div>
+              <div class="text-secondary small">Highest JAMB Score</div>
+            </div>
           </div>
-          <div class="stat red text-center">
-            <i class="fas fa-users"></i>
-            <strong>1000+</strong>
-            <span>Students Mentored</span>
+          <div class="col-12 col-sm-4">
+            <div class="p-3 bg-danger bg-opacity-10 rounded-3 text-center">
+              <i class="fas fa-users text-danger mb-2 fs-3"></i>
+              <div class="fw-bold fs-4 mb-1">1000+</div>
+              <div class="text-secondary small">Students Mentored</div>
+            </div>
           </div>
-          <div class="stat gray text-center">
-            <i class="fas fa-user-tie"></i>
-            <strong>6+</strong>
-            <span>Years Leading</span>
+          <div class="col-12 col-sm-4">
+            <div class="p-3 bg-secondary bg-opacity-10 rounded-3 text-center">
+              <i class="fas fa-user-tie text-secondary mb-2 fs-3"></i>
+              <div class="fw-bold fs-4 mb-1">6+</div>
+              <div class="text-secondary small">Years Leading</div>
+            </div>
           </div>
         </div>
 
-        <div class="ceo-btn text-center text-lg-start">
-          <a href="about.php" class="btn btn-dark">Learn More About Our Story</a>
+        <div class="text-center text-lg-start">
+          <a href="about.php" class="btn btn-dark rounded-pill px-4">Learn More About Our Story</a>
         </div>
       </div>
     </div>
