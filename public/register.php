@@ -224,18 +224,16 @@ $csrf = generateToken('signup_form');
 										} catch (Throwable $e) { $courses = []; }
 										?>
 
-										<div class="container py-4">
-										<div class="row g-4">
-											<main class="col-12 col-lg-8">
-												<div class="card border-0 shadow-sm">
-													<div class="card-body p-4">
-														<h3 class="h4 fw-bold mb-2">Student Registration Form</h3>
-														<p class="text-secondary mb-4">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
-														<?php if (!empty($errors)): ?>
-															<div class="alert alert-warning border-start border-warning border-4">
-																<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
-															</div>
-														<?php endif; ?>
+										<div class="container register-layout">
+										<main class="register-main">
+											<div class="card">
+												<h3>Student Registration Form</h3>
+												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
+												<?php if (!empty($errors)): ?>
+													<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
+														<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+													</div>
+												<?php endif; ?>
 												<?php if ($success): ?>
 													<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
 														<?= htmlspecialchars($success) ?>
@@ -268,138 +266,41 @@ $csrf = generateToken('signup_form');
 												<?php else: ?>
 													<form method="post">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-													<div class="mb-4">
-														<h4 class="h5 fw-bold d-flex align-items-center gap-2 mb-3">
-															<i class="bx bxs-user fs-4"></i> Personal Information
-														</h4>
-														<div class="row g-3">
-															<div class="col-12 col-sm-6">
-																<div class="form-floating">
-																	<input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" value="<?= htmlspecialchars($first_name ?? '') ?>" required>
-																	<label for="first_name">First Name *</label>
-																</div>
-															</div>
-															<div class="col-12 col-sm-6">
-																<div class="form-floating">
-																	<input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" value="<?= htmlspecialchars($last_name ?? '') ?>" required>
-																	<label for="last_name">Last Name *</label>
-																</div>
-															</div>
-															<div class="col-12 col-sm-6">
-																<div class="form-floating">
-																	<input type="email" class="form-control" id="email_contact" name="email_contact" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>">
-																	<label for="email_contact">Contact Email</label>
-																</div>
-															</div>
-															<div class="col-12 col-sm-6">
-																<div class="form-floating">
-																	<input type="tel" class="form-control" id="phone" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
-																	<label for="phone">Phone Number</label>
-																</div>
-															</div>
-															<div class="col-12">
-																<div class="form-floating">
-																	<input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="<?= htmlspecialchars($date_of_birth ?? '') ?>">
-																	<label for="date_of_birth">Date of Birth</label>
-																</div>
-															</div>
-															<div class="col-12">
-																<div class="form-floating">
-																	<textarea class="form-control" id="home_address" name="home_address" placeholder="Enter your complete home address" style="height:100px"><?= htmlspecialchars($home_address ?? '') ?></textarea>
-																	<label for="home_address">Home Address</label>
-																</div>
-															</div>
-														</div>
+													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
+													<div class="section-body">
+																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
+																									<div class="form-row form-inline"><div style="flex:1"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div style="flex:1"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
+																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
+																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
+
+													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
+													<div class="programs-grid">
+														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
+														<?php foreach ($courses as $c): ?>
+																<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
+																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
+																	<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
+																</label>
+															<?php endforeach; ?>
 													</div>
 
-													<div class="mb-4">
-														<h4 class="h5 fw-bold d-flex align-items-center gap-2 mb-3">
-															<i class="bx bx-collection fs-4"></i> Program Selection
-														</h4>
-														<div class="row g-3">
-															<?php if (empty($courses)): ?>
-																<div class="col-12">
-																	<p class="text-secondary">No programs available currently.</p>
-																</div>
-															<?php else: ?>
-																<?php foreach ($courses as $c): ?>
-																	<div class="col-12">
-																		<div class="form-check card">
-																			<div class="card-body">
-																				<input type="checkbox" class="form-check-input me-2" name="programs[]" id="program_<?= $c['id'] ?>" value="<?= $c['id'] ?>">
-																				<label class="form-check-label w-100" for="program_<?= $c['id'] ?>">
-																					<div class="fw-bold"><?= htmlspecialchars($c['title']) ?></div>
-																					<div class="small text-secondary">
-																						<span class="badge bg-warning text-dark"><?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?></span>
-																						<?php if (!empty($c['duration'])): ?>
-																							<span class="ms-2"><?= htmlspecialchars($c['duration']) ?></span>
-																						<?php endif; ?>
-																					</div>
-																				</label>
-																			</div>
-																		</div>
-																	</div>
-																<?php endforeach; ?>
-															<?php endif; ?>
-														</div>
+													<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
+													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
+
+													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
+													<div class="section-body">
+													<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
+													<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
 													</div>
 
-													<div class="mb-4">
-														<div class="row g-3">
-															<div class="col-12">
-																<div class="form-floating">
-																	<textarea class="form-control" id="previous_education" name="previous_education" placeholder="Tell us about your educational background" style="height:120px"><?= htmlspecialchars($previous_education ?? '') ?></textarea>
-																	<label for="previous_education">Previous Education</label>
-																	<div class="form-text">Schools attended, certificates obtained, etc.</div>
-																</div>
-															</div>
-															<div class="col-12">
-																<div class="form-floating">
-																	<textarea class="form-control" id="academic_goals" name="academic_goals" placeholder="What are your academic and career aspirations?" style="height:120px"><?= htmlspecialchars($academic_goals ?? '') ?></textarea>
-																	<label for="academic_goals">Academic Goals</label>
-																	<div class="form-text">Tell us how we can help you achieve your goals</div>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div class="mb-4">
-														<h4 class="h5 fw-bold d-flex align-items-center gap-2 mb-3">
-															<i class="bx bxs-phone fs-4"></i> Emergency Contact
-														</h4>
-														<div class="row g-3">
-															<div class="col-12">
-																<div class="form-floating">
-																	<input type="text" class="form-control" id="emergency_name" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>">
-																	<label for="emergency_name">Parent/Guardian Name</label>
-																</div>
-															</div>
-															<div class="col-12 col-sm-6">
-																<div class="form-floating">
-																	<input type="tel" class="form-control" id="emergency_phone" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>">
-																	<label for="emergency_phone">Parent/Guardian Phone</label>
-																</div>
-															</div>
-															<div class="col-12 col-sm-6">
-																<div class="form-floating">
-																	<input type="text" class="form-control" id="emergency_relationship" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>">
-																	<label for="emergency_relationship">Relationship to Student</label>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div class="mb-4">
+													<div class="form-row terms-row">
 														<div class="form-check">
 															<input class="form-check-input" type="checkbox" name="agreed_terms" id="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
-															<label class="form-check-label" for="agreed_terms">
-																I agree to the <a href="/terms.php" class="text-decoration-underline" target="_blank">terms and conditions</a>
-															</label>
+															<label class="form-check-label ms-2" for="agreed_terms">I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></label>
 														</div>
 													</div>
-													<div class="d-grid">
-														<button class="btn btn-primary btn-lg" type="submit">Submit Registration</button>
-													</div>
+													<div style="margin-top:12px;"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
 												</form>
 											</div>
 										</main>

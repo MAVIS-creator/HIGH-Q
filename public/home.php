@@ -25,69 +25,57 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="bg-light py-5">
+<section class="hero py-5">
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
-    <div class="text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
-      <div class="bg-primary bg-opacity-10 text-primary px-4 py-2 rounded-pill d-inline-block mb-3">
-        <i class='bx bxs-star me-2'></i> Nigeria's Premier Tutorial Academy
+    <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
+      <div class="hero-badge mb-3">
+        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
       </div>
-      <h1 class="display-4 fw-bold mb-3">Excellence in <span class="text-primary">Education</span></h1>
-      <p class="lead text-secondary mb-4">
+      <h1>Excellence in <span class="accent">Education</span></h1>
+      <p class="lead">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
-      <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 mb-4">
-        <a href="register.php" class="btn btn-primary btn-lg px-4">Register Now</a>
-        <a href="programs.php" class="btn btn-outline-secondary btn-lg px-4">See Our Programs</a>
+      <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
+        <a href="register.php" class="btn btn-primary">Register Now</a>
+        <a href="programs.php" class="btn btn-light text-dark border">See Our Programs</a>
       </div>
-      <div class="d-flex flex-wrap justify-content-center justify-content-lg-start gap-4">
-        <div class="text-center px-3">
-          <div class="h2 fw-bold text-primary mb-1">6+</div>
-          <div class="text-secondary">Years Experience</div>
+      <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
+        <div class="text-center">
+          <strong>6+</strong>
+          <div>Years Experience</div>
         </div>
-        <div class="text-center px-3">
-          <div class="h2 fw-bold text-primary mb-1">1000+</div>
-          <div class="text-secondary">Students Trained</div>
+        <div class="text-center">
+          <strong>1000+</strong>
+          <div>Students Trained</div>
         </div>
-        <div class="text-center px-3">
-          <div class="h2 fw-bold text-primary mb-1">305</div>
-          <div class="text-secondary">Highest JAMB Score</div>
+        <div class="text-center">
+          <strong>305</strong>
+          <div>Highest JAMB Score</div>
         </div>
       </div>
     </div>
 
-    <aside class="col-12 col-lg-5 d-flex flex-column gap-4">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex p-4">
-          <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3 align-self-start">
-            <i class='bx bxs-award fs-3'></i>
-          </div>
-          <div>
-            <h5 class="card-title mb-2">Top JAMB Scores</h5>
-            <p class="card-text text-secondary mb-0">Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
-          </div>
+    <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3">
+      <div class="feature-card d-flex">
+        <div class="feature-icon yellow me-3"><i class='bx bxs-award'></i></div>
+        <div class="feature-body">
+          <h5>Top JAMB Scores</h5>
+          <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
         </div>
       </div>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex p-4">
-          <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3 align-self-start">
-            <i class='bx bxs-chalkboard fs-3'></i>
-          </div>
-          <div>
-            <h5 class="card-title mb-2">Expert Tutors</h5>
-            <p class="card-text text-secondary mb-0">Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
-          </div>
+      <div class="feature-card d-flex">
+        <div class="feature-icon red me-3"><i class='bx bxs-chalkboard'></i></div>
+        <div class="feature-body">
+          <h5>Expert Tutors</h5>
+          <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
         </div>
       </div>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body d-flex p-4">
-          <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3 align-self-start">
-            <i class='bx bxs-book-open fs-3'></i>
-          </div>
-          <div>
-            <h5 class="card-title mb-2">Comprehensive Programs</h5>
-            <p class="card-text text-secondary mb-0">From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
-          </div>
+      <div class="feature-card d-flex">
+        <div class="feature-icon yellow me-3"><i class='bx bxs-book-open'></i></div>
+        <div class="feature-body">
+          <h5>Comprehensive Programs</h5>
+          <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
         </div>
       </div>
     </aside>
@@ -95,82 +83,76 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="py-5 bg-white">
+<section class="ceo-hero py-5">
   <div class="container">
 
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold mb-3">Meet Our <span class="text-primary">CEO & Lead Tutor</span></h2>
-      <p class="lead text-secondary mx-auto" style="max-width: 700px;">
+    <div class="ceo-heading text-center mb-5">
+      <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
+      <p>
         Under the visionary leadership of Master Adebule Quam, High Q Solid Academy
         has become a beacon of educational excellence.
       </p>
     </div>
 
-    <div class="row g-4">
-      <div class="col-12 col-lg-6 d-flex flex-column align-items-center align-items-lg-start">
-        <div class="text-center text-lg-start mb-4">
-          <div class="position-relative mb-4">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded-3 shadow-lg" style="max-width: 400px;">
+    <div class="ceo-grid align-items-start g-4">
+      <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
+        <div class="ceo-card text-center text-lg-start mb-4">
+          <div class="ceo-photo mb-3">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
           </div>
-          <div class="text-lg-start">
-            <h3 class="h2 fw-bold mb-2">Master Adebule Quam</h3>
-            <p class="text-primary fs-5 mb-0">CEO & Lead Tutor</p>
+          <div class="ceo-info">
+            <h3 class="mb-1">Master Adebule Quam</h3>
+            <p class="role mb-0">CEO & Lead Tutor</p>
           </div>
         </div>
 
-        <div class="bg-light p-4 rounded-3 text-center text-lg-start mb-4">
-          <i class="fas fa-quote-left text-primary opacity-50 fs-3 mb-3"></i>
-          <p class="lead mb-3">
+        <div class="ceo-quote text-center text-lg-start">
+          <i class="fas fa-quote-left mb-2"></i>
+          <p class="mb-3">
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span class="d-block text-end fst-italic">- Master Adebule Quam</span>
+          <span class="d-block text-end">- Master Adebule Quam</span>
         </div>
       </div>
 
-      <div class="col-12 col-lg-6">
-        <div class="mb-5">
-          <h3 class="h2 fw-bold mb-3">Seasoned Educator & Mentor</h3>
-          <p class="lead text-primary mb-3">
+  <div class="ceo-right-column">
+        <div class="ceo-content mb-4">
+          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
+          <p class="mb-3">
             Master Adebule Quam is a seasoned tutor versed in the teaching profession.
             Over the years, he has produced students who have achieved breathtaking
             academic excellence and excelled in various examinations including GCE,
             WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
           </p>
-          <p class="text-secondary">
+          <p>
             He believes in the school of thought that education is the force to push
             one ahead of others. Under his guidance, High Q Academy has blossomed into
             a hub of academic excellence and technological proficiency.
           </p>
         </div>
 
-        <div class="row g-4 mb-4">
-          <div class="col-12 col-sm-4">
-            <div class="p-3 bg-warning bg-opacity-10 rounded-3 text-center">
-              <i class="fas fa-trophy text-warning mb-2 fs-3"></i>
-              <div class="fw-bold fs-4 mb-1">305</div>
-              <div class="text-secondary small">Highest JAMB Score</div>
-            </div>
+        <div class="ceo-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-4 mb-4">
+          <div class="stat yellow text-center">
+            <i class="fas fa-trophy"></i>
+            <strong>305</strong>
+            <span>Highest JAMB Score</span>
           </div>
-          <div class="col-12 col-sm-4">
-            <div class="p-3 bg-danger bg-opacity-10 rounded-3 text-center">
-              <i class="fas fa-users text-danger mb-2 fs-3"></i>
-              <div class="fw-bold fs-4 mb-1">1000+</div>
-              <div class="text-secondary small">Students Mentored</div>
-            </div>
+          <div class="stat red text-center">
+            <i class="fas fa-users"></i>
+            <strong>1000+</strong>
+            <span>Students Mentored</span>
           </div>
-          <div class="col-12 col-sm-4">
-            <div class="p-3 bg-secondary bg-opacity-10 rounded-3 text-center">
-              <i class="fas fa-user-tie text-secondary mb-2 fs-3"></i>
-              <div class="fw-bold fs-4 mb-1">6+</div>
-              <div class="text-secondary small">Years Leading</div>
-            </div>
+          <div class="stat gray text-center">
+            <i class="fas fa-user-tie"></i>
+            <strong>6+</strong>
+            <span>Years Leading</span>
           </div>
         </div>
 
-        <div class="text-center text-lg-start">
-          <a href="about.php" class="btn btn-dark rounded-pill px-4">Learn More About Our Story</a>
+        <div class="ceo-btn text-center text-lg-start">
+          <a href="about.php" class="btn btn-dark">Learn More About Our Story</a>
         </div>
       </div>
     </div>
@@ -179,21 +161,16 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 
 <!-- Programs Section -->
-<section class="py-5 bg-light">
+<section class="programs-section">
   <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold mb-3">Our <span class="text-primary">Programs & Services</span></h2>
-      <p class="lead text-secondary mx-auto" style="max-width: 800px;">
-        We offer comprehensive educational programs designed to ensure our students excel academically 
-        and develop essential digital skills for the modern world.
-      </p>
+    <div class="ceo-heading">
+      <h2>Our <span class="high">Programs & Services</span></h2>
+      <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
-    <div class="row g-4">
+    <div class="programs-grid">
       <?php if (empty($programs)): ?>
-        <div class="col-12 text-center">
-          <p class="text-secondary">No programs have been published yet. Check back later.</p>
-        </div>
+        <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
         <?php foreach ($programs as $p): ?>
           <?php
@@ -215,54 +192,47 @@ if (isset($pdo) && $pdo instanceof PDO) {
           $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
-          <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm hover-shadow-lg transition-all">
-              <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-4">
-                  <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
-                    <?php
-                    // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
-                    if ($icon !== '') {
-                      if (strpos($icon, 'bx') !== false) {
-                        echo "<i class='" . htmlspecialchars($icon) . " fs-3 text-primary' aria-hidden='true'></i>";
-                      } else {
-                        $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                        if (is_readable($iconPath)) {
-                          echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\" class=\"img-fluid\" style=\"width: 32px; height: 32px;\">";
-                        } else {
-                          // fallback default icon
-                          echo "<i class='bx bxs-book-open fs-3 text-primary' aria-hidden='true'></i>";
-                        }
-                      }
+          <article class="program-card">
+            <div class="program-card-inner">
+              <div class="program-icon">
+                <?php
+                // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
+                if ($icon !== '') {
+                  if (strpos($icon, 'bx') !== false) {
+                    echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
+                  } else {
+                    $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
+                    if (is_readable($iconPath)) {
+                      echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
                     } else {
-                      echo "<i class='bx bxs-book-open fs-3 text-primary' aria-hidden='true'></i>";
+                      // fallback default icon
+                      echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
                     }
-                    ?>
-                  </div>
-                  <?php if (!empty($highlight_badge)): ?>
-                    <span class="badge bg-warning text-dark"><?= htmlspecialchars($highlight_badge) ?></span>
-                  <?php endif; ?>
-                </div>
+                  }
+                } else {
+                  echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                }
+                ?>
+              </div>
 
-                <h4 class="card-title h5 mb-3">
-                  <a href="programs.php?slug=<?= $slug ?>" class="text-decoration-none text-dark stretched-link">
+              <div class="program-body">
+                <h4>
+                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
                     <?= $title ?>
                   </a>
+
                 </h4>
 
                 <?php if (!empty($desc)): ?>
-                  <p class="card-text text-secondary mb-0"><?= htmlspecialchars($desc) ?></p>
+                  <p class="program-summary"><?= htmlspecialchars($desc) ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($features_lines)): ?>
-                  <ul class="list-unstyled mt-3 mb-0">
+                  <ul class="program-features">
                     <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
                       <?php $li = trim($line);
                       if ($li === '') continue; ?>
-                      <li class="d-flex align-items-center mb-2">
-                        <i class="bx bx-check-circle text-success me-2"></i>
-                        <span class="text-secondary small"><?= htmlspecialchars($li) ?></span>
-                      </li>
+                      <li><?= htmlspecialchars($li) ?></li>
                     <?php endforeach; ?>
                   </ul>
                 <?php endif; ?>
@@ -286,18 +256,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 <!-- CTA Banner under Programs -->
-<section class="py-5 bg-primary text-white">
+<section class="programs-cta">
   <div class="container">
-    <div class="text-center py-4">
-        <h3 class="display-6 fw-bold mb-3">Ready to Start Your Success Journey?</h3>
-        <p class="lead mb-4 mx-auto opacity-75" style="max-width: 700px;">
+    <div class="programs-cta-inner">
+        <h3 class="mb-3">Ready to Start Your Success Journey?</h3>
+        <p class="mb-4 mx-auto" style="max-width: 700px;">
           Join our proven programs and take the first step towards academic excellence. 
           Our expert tutors are ready to guide you to success.
         </p>
 
-        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-          <a href="register.php" class="btn btn-light btn-lg px-4">Register for Programs</a>
-          <a href="programs.php" class="btn btn-outline-light btn-lg px-4">View All Programs</a>
+        <div class="programs-cta-actions d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3">
+          <a href="register.php" class="btn btn-primary">Register for Programs</a>
+    <a href="programs.php" class="btn btn-light text-dark border">View All Programs</a>
         </div>
     </div>
   </div>

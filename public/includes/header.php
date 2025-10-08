@@ -3,17 +3,8 @@
 // Attempt to load site settings (contact phone, bank details, etc.) from database
 $contact_phone = '0807 208 8794';
 $siteSettings = [
-  'site' => [
-    'name' => 'HIGH Q SOLID ACADEMY',
-    'bank_name' => '',
-    'bank_account_name' => '',
-    'bank_account_number' => ''
-  ],
-  'contact' => [
-    'phone' => $contact_phone,
-    'email' => 'info@hqacademy.com',
-    'address' => "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu"
-  ]
+  'site' => ['name' => 'HIGH Q SOLID ACADEMY', 'bank_name' => '', 'bank_account_name' => '', 'bank_account_number' => ''],
+  'contact' => ['phone' => $contact_phone, 'email' => 'info@hqacademy.com', 'address' => "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu"]
 ];
 // include DB connection if available
 if (file_exists(__DIR__ . '/../config/db.php')) {
@@ -254,33 +245,33 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 <body>
   <header>
     <!-- Top bar -->
-    <div class="bg-primary text-white py-2">
-      <div class="container d-flex justify-content-between align-items-center">
-        <div class="d-flex gap-4">
-          <span><i class="fas fa-phone me-2"></i><?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-          <span><i class="fas fa-envelope me-2"></i><?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
-        </div>
-        <span class="fw-bold">"Always Ahead of Others"</span>
+    <div class="top-bar">
+      <div class="container">
+  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
 
     <!-- Main nav -->
-    <div class="bg-white py-3 shadow-sm">
+    <div class="main-header">
       <div class="container">
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg w-100 position-relative">
           <!-- Logo + Name -->
-          <a class="navbar-brand d-flex align-items-center gap-3" href="index.php">
-            <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" width="60" height="60" class="rounded">
-            <div>
-              <h1 class="fs-4 mb-0">HIGH Q SOLID ACADEMY</h1>
-              <small class="text-muted">Limited</small>
+          <a class="navbar-brand" href="index.php">
+            <div class="logo">
+              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+              <div>
+                <h1>HIGH Q SOLID ACADEMY</h1>
+                <small>Limited</small>
+              </div>
             </div>
           </a>
 
           <!-- Desktop Navigation -->
           <div class="collapse navbar-collapse" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="navbar-nav mx-auto">
+            <ul class="navbar-nav mx-auto d-none d-lg-flex">
               <li class="nav-item">
                 <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
               </li>
@@ -363,24 +354,24 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   </script>
 
   <!-- Offcanvas Side Nav for Mobile -->
-    <div class="offcanvas offcanvas-start d-lg-none bg-light" tabindex="-1" id="mobileNav">
-        <div class="offcanvas-header border-bottom">
+    <div class="offcanvas offcanvas-start custom-offcanvas d-lg-none" tabindex="-1" id="mobileNav">
+        <div class="offcanvas-header py-3">
             <h5 class="offcanvas-title fw-bold mb-0">Menu</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
-            <ul class="navbar-nav mb-4">
-                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3" href="programs.php">Programs</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3" href="exams.php">Exams</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3" href="news.php">News & Blog</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3" href="community.php">Community</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
-                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+        <div class="offcanvas-body p-3">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="programs.php">Programs</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="exams.php">Exams</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="news.php">News & Blog</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="community.php">Community</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
             </ul>
-            <div class="px-3">
-                <a href="register.php" class="btn btn-primary w-100 py-3 fw-bold">Register Now</a>
+            <div class="mt-4 px-3">
+                <a href="register.php" class="btn btn-primary w-100 py-2">Register Now</a>
             </div>
         </div>
     </div>
