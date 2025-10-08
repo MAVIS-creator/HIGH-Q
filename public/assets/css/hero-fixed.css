@@ -99,3 +99,16 @@
 
 /* Ensure the offcanvas menu highlights the active page (class applied server-side) */
 .custom-offcanvas .nav-link.active { background-color: var(--hq-yellow) !important; color: #111 !important; }
+
+/* Strengthen program icon/header spacing and force 2-column programs on small phones */
+.program-card .program-icon,
+.programs-grid .program-icon { margin-bottom: 8px !important; }
+.program-card .program-body h4,
+.program-body h4 { margin-top: 6px !important; }
+
+@media (max-width: 700px) {
+    .programs-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+    .program-card { padding: 12px !important; }
+    .program-card .program-icon { width: 44px; height:44px; min-width:44px; }
+    .program-body h4 { font-size: 15px !important; }
+}
