@@ -56,26 +56,38 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
     </div>
 
-    <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3">
-      <div class="feature-card d-flex">
-        <div class="feature-icon yellow me-3"><i class='bx bxs-award'></i></div>
-        <div class="feature-body">
-          <h5>Top JAMB Scores</h5>
-          <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
+    <aside class="col-12 col-lg-5 d-flex flex-column gap-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body d-flex p-4">
+          <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3 align-self-start">
+            <i class='bx bxs-award fs-3'></i>
+          </div>
+          <div>
+            <h5 class="card-title mb-2">Top JAMB Scores</h5>
+            <p class="card-text text-secondary mb-0">Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
+          </div>
         </div>
       </div>
-      <div class="feature-card d-flex">
-        <div class="feature-icon red me-3"><i class='bx bxs-chalkboard'></i></div>
-        <div class="feature-body">
-          <h5>Expert Tutors</h5>
-          <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body d-flex p-4">
+          <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3 align-self-start">
+            <i class='bx bxs-chalkboard fs-3'></i>
+          </div>
+          <div>
+            <h5 class="card-title mb-2">Expert Tutors</h5>
+            <p class="card-text text-secondary mb-0">Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
+          </div>
         </div>
       </div>
-      <div class="feature-card d-flex">
-        <div class="feature-icon yellow me-3"><i class='bx bxs-book-open'></i></div>
-        <div class="feature-body">
-          <h5>Comprehensive Programs</h5>
-          <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body d-flex p-4">
+          <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3 align-self-start">
+            <i class='bx bxs-book-open fs-3'></i>
+          </div>
+          <div>
+            <h5 class="card-title mb-2">Comprehensive Programs</h5>
+            <p class="card-text text-secondary mb-0">From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
+          </div>
         </div>
       </div>
     </aside>
@@ -83,21 +95,21 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="ceo-hero py-5">
+<section class="py-5 bg-white">
   <div class="container">
 
-    <div class="ceo-heading text-center mb-5">
-      <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
-      <p>
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold mb-3">Meet Our <span class="text-primary">CEO & Lead Tutor</span></h2>
+      <p class="lead text-secondary mx-auto" style="max-width: 700px;">
         Under the visionary leadership of Master Adebule Quam, High Q Solid Academy
         has become a beacon of educational excellence.
       </p>
     </div>
 
-    <div class="ceo-grid align-items-start g-4">
-      <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
-        <div class="ceo-card text-center text-lg-start mb-4">
-          <div class="ceo-photo mb-3">
+    <div class="row g-4">
+      <div class="col-12 col-lg-6 d-flex flex-column align-items-center align-items-lg-start">
+        <div class="text-center text-lg-start mb-4">
+          <div class="position-relative mb-4">
             <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
           </div>
           <div class="ceo-info">
