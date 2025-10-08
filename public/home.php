@@ -38,7 +38,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
       <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
         <a href="register.php" class="btn btn-primary">Register Now</a>
-        <a href="programs.php" class="btn btn-outline-secondary">See Our Programs</a>
+        <a href="programs.php" class="btn btn-light text-dark border">See Our Programs</a>
       </div>
       <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
         <div class="text-center">
@@ -94,8 +94,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
-    <div class="ceo-grid row align-items-start g-4">
-      <div class="ceo-left-column col-12 col-lg-5 d-flex flex-column align-items-center align-items-lg-start">
+    <div class="ceo-grid align-items-start g-4">
+      <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
         <div class="ceo-card text-center text-lg-start mb-4">
           <div class="ceo-photo mb-3">
             <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
@@ -117,7 +117,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
       </div>
 
-      <div class="ceo-right-column col-12 col-lg-7">
+  <div class="ceo-right-column">
         <div class="ceo-content mb-4">
           <h3 class="mb-3">Seasoned Educator & Mentor</h3>
           <p class="mb-3">
