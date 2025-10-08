@@ -256,24 +256,22 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     </div>
 
     <!-- Main nav -->
-    <div class="main-header">
+    <div class="bg-white py-3 shadow-sm">
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100 position-relative">
+        <nav class="navbar navbar-expand-lg">
           <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
-            <div class="logo">
-              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-              <div>
-                <h1>HIGH Q SOLID ACADEMY</h1>
-                <small>Limited</small>
-              </div>
+          <a class="navbar-brand d-flex align-items-center gap-3" href="index.php">
+            <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" width="60" height="60" class="rounded">
+            <div>
+              <h1 class="fs-4 mb-0">HIGH Q SOLID ACADEMY</h1>
+              <small class="text-muted">Limited</small>
             </div>
           </a>
 
           <!-- Desktop Navigation -->
           <div class="collapse navbar-collapse" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="navbar-nav mx-auto d-none d-lg-flex">
+            <ul class="navbar-nav mx-auto">
               <li class="nav-item">
                 <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
               </li>
