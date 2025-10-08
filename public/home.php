@@ -215,39 +215,43 @@ if (isset($pdo) && $pdo instanceof PDO) {
           $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
           ?>
 
-          <article class="program-card">
-            <div class="program-card-inner">
-              <div class="program-icon">
-                <?php
-                // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
-                if ($icon !== '') {
-                  if (strpos($icon, 'bx') !== false) {
-                    echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
-                  } else {
-                    $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                    if (is_readable($iconPath)) {
-                      echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm hover-shadow-lg transition-all">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                  <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
+                    <?php
+                    // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
+                    if ($icon !== '') {
+                      if (strpos($icon, 'bx') !== false) {
+                        echo "<i class='" . htmlspecialchars($icon) . " fs-3 text-primary' aria-hidden='true'></i>";
+                      } else {
+                        $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
+                        if (is_readable($iconPath)) {
+                          echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\" class=\"img-fluid\" style=\"width: 32px; height: 32px;\">";
+                        } else {
+                          // fallback default icon
+                          echo "<i class='bx bxs-book-open fs-3 text-primary' aria-hidden='true'></i>";
+                        }
+                      }
                     } else {
-                      // fallback default icon
-                      echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
+                      echo "<i class='bx bxs-book-open fs-3 text-primary' aria-hidden='true'></i>";
                     }
-                  }
-                } else {
-                  echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                }
-                ?>
-              </div>
+                    ?>
+                  </div>
+                  <?php if (!empty($highlight_badge)): ?>
+                    <span class="badge bg-warning text-dark"><?= htmlspecialchars($highlight_badge) ?></span>
+                  <?php endif; ?>
+                </div>
 
-              <div class="program-body">
-                <h4>
-                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
+                <h4 class="card-title h5 mb-3">
+                  <a href="programs.php?slug=<?= $slug ?>" class="text-decoration-none text-dark stretched-link">
                     <?= $title ?>
                   </a>
-
                 </h4>
 
                 <?php if (!empty($desc)): ?>
-                  <p class="program-summary"><?= htmlspecialchars($desc) ?></p>
+                  <p class="card-text text-secondary mb-0"><?= htmlspecialchars($desc) ?></p>
                 <?php endif; ?>
 
                 <?php if (!empty($features_lines)): ?>
