@@ -1195,12 +1195,7 @@ nav a.active::after {
 }
 
 /* Make sidebar cards sticky for large screens */
-@media (min-width: 1000px) {
-  .register-sidebar {
-    position: sticky;
-    top: 96px;
-  }
-}
+
 
 .register-main .card {
   background: #fff;
@@ -1260,20 +1255,7 @@ nav a.active::after {
   margin-top: 28px;
 }
 
-@media (max-width: 1100px) {
-  .programs-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 22px;
-  }
-}
 
-@media (max-width: 700px) {
-  .programs-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .programs-content { margin-bottom: 36px; }
-}
 
 /* Give breathing room below the programs listing so the next sections don't crowd it */
 .programs-content {
@@ -2577,22 +2559,7 @@ input.form-input {
   background: rgba(255, 255, 255, 0.9);
 }
 
-@media (max-width: 700px) {
-  .programs-cta-inner {
-    padding: 20px;
-  }
 
-  .programs-cta-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .programs-cta .btn-primary,
-  .programs-cta .btn-ghost {
-    width: 100%;
-    text-align: center;
-  }
-}
 
 /* News / Blog preview section */
 .news-section {
