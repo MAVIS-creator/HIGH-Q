@@ -224,16 +224,18 @@ $csrf = generateToken('signup_form');
 										} catch (Throwable $e) { $courses = []; }
 										?>
 
-										<div class="container register-layout">
-										<main class="register-main">
-											<div class="card">
-												<h3>Student Registration Form</h3>
-												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
-												<?php if (!empty($errors)): ?>
-													<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
-														<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
-													</div>
-												<?php endif; ?>
+										<div class="container py-4">
+										<div class="row g-4">
+											<main class="col-12 col-lg-8">
+												<div class="card border-0 shadow-sm">
+													<div class="card-body p-4">
+														<h3 class="h4 fw-bold mb-2">Student Registration Form</h3>
+														<p class="text-secondary mb-4">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
+														<?php if (!empty($errors)): ?>
+															<div class="alert alert-warning border-start border-warning border-4">
+																<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
+															</div>
+														<?php endif; ?>
 												<?php if ($success): ?>
 													<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
 														<?= htmlspecialchars($success) ?>
