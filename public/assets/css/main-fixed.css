@@ -290,3 +290,33 @@
 }
 
 /* end mobile polish fixes */
+
+/* Tablet / small laptop adjustments (improve centering and spacing) */
+@media (max-width: 992px) {
+    .container { padding-left: 20px; padding-right: 20px; }
+
+    /* Hero: ensure left column collapses visually and headline centers well */
+    .hero-left { padding-right: 0; }
+    .hero h1 { text-align: center; }
+
+    /* CEO: moderate size and bring name closer to image on tablets */
+    .ceo-photo img { width: 110px; height: 110px; }
+    .ceo-card h3 { margin-top: 6px; margin-bottom: 4px; }
+
+    /* History: center on tablet and add spacing */
+    .history-grid { grid-template-columns: 1fr; }
+    .history-section .logo-card { margin: 14px auto 10px; }
+
+    /* Achievements: two columns for tablet widths as well */
+    .achievements-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
+
+    /* Programs: small space between icon and header */
+    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon { margin-right: 12px; }
+
+    /* Tutors: ensure tutor cards are balanced and lead aligns nicely */
+    .tutor-lead .tutor-thumb img, .tutor-card .tutor-thumb img { max-width: 96px; }
+    .tutor-card .tutor-body h3 { margin-top: 6px; }
+
+    /* Slightly reduce hero cta button width at tablet sizes so it doesn't overflow */
+    .hero-ctas .btn { min-width: 140px; }
+}
