@@ -263,10 +263,10 @@
         .achievements-grid .achievement { text-align: left !important; padding-left: 8px; }
     }
 
-    /* Programs: small space between icon and heading inside program-card */
-    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon {
-        margin-right: 10px;
-    }
+        /* Programs: small space between icon and heading inside program-card (mobile only) */
+        .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon {
+            margin-right: 10px;
+        }
 
     /* Tutors: ensure lead card is centered and the name isn't too far from the photo */
     .tutor-lead .tutor-thumb img, .tutor-card .tutor-thumb img { max-width: 84px; height: auto; }
@@ -288,6 +288,11 @@
     .container { padding-left: 12px; padding-right: 12px; }
     .ceo-photo img { width: 92px !important; height: 92px !important; }
     .ceo-card { padding: 18px !important; }
+}
+
+/* Program icon gap only for small screens (avoid affecting desktop) */
+@media (max-width: 768px) {
+    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon { margin-right: 10px; }
 }
 
 /* end mobile polish fixes */
