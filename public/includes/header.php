@@ -357,24 +357,24 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   </script>
 
   <!-- Offcanvas Side Nav for Mobile -->
-    <div class="offcanvas offcanvas-start custom-offcanvas d-lg-none" tabindex="-1" id="mobileNav">
-        <div class="offcanvas-header py-3">
+    <div class="offcanvas offcanvas-start d-lg-none bg-light" tabindex="-1" id="mobileNav">
+        <div class="offcanvas-header border-bottom">
             <h5 class="offcanvas-title fw-bold mb-0">Menu</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body p-3">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="programs.php">Programs</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="exams.php">Exams</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="news.php">News & Blog</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="community.php">Community</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav mb-4">
+                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3" href="programs.php">Programs</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3" href="exams.php">Exams</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3" href="news.php">News & Blog</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3" href="community.php">Community</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+                <li class="nav-item border-bottom"><a class="nav-link py-3 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
             </ul>
-            <div class="mt-4 px-3">
-                <a href="register.php" class="btn btn-primary w-100 py-2">Register Now</a>
+            <div class="px-3">
+                <a href="register.php" class="btn btn-primary w-100 py-3 fw-bold">Register Now</a>
             </div>
         </div>
     </div>
