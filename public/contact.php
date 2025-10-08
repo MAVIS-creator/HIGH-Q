@@ -157,15 +157,19 @@ include __DIR__ . '/includes/header.php';
 		<h2 class="section-title">Frequently Asked <span style="color:var(--hq-yellow);">Questions</span></h2>
 		<p class="lead">Find answers to common questions about our programs and services.</p>
 
-		<div class="faq-grid">
-			<div class="faq-card">
-				<h4>What programs do you offer?</h4>
-				<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
+		<div class="row gx-3 gy-3">
+			<div class="col-12 col-md-6">
+				<div class="faq-card">
+					<h4>What programs do you offer?</h4>
+					<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
+				</div>
 			</div>
 
-			<div class="faq-card">
-				<h4>How much do your programs cost?</h4>
-				<p>Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
+			<div class="col-12 col-md-6">
+				<div class="faq-card">
+					<h4>How much do your programs cost?</h4>
+					<p>Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
+				</div>
 			</div>
 		</div>
 	</div>
