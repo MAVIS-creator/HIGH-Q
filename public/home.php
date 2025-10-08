@@ -255,11 +255,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
                 <?php endif; ?>
 
                 <?php if (!empty($features_lines)): ?>
-                  <ul class="program-features">
+                  <ul class="list-unstyled mt-3 mb-0">
                     <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
                       <?php $li = trim($line);
                       if ($li === '') continue; ?>
-                      <li><?= htmlspecialchars($li) ?></li>
+                      <li class="d-flex align-items-center mb-2">
+                        <i class="bx bx-check-circle text-success me-2"></i>
+                        <span class="text-secondary small"><?= htmlspecialchars($li) ?></span>
+                      </li>
                     <?php endforeach; ?>
                   </ul>
                 <?php endif; ?>
