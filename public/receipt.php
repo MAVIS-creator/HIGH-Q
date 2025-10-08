@@ -20,6 +20,7 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Receipt - <?= htmlspecialchars($siteName) ?></title>
   <link rel="stylesheet" href="assets/css/public.css">
+  <link rel="stylesheet" href="./assets/css/responsive-utils.css">
   <style>
     .receipt-card{max-width:800px;margin:24px auto;padding:24px;border:1px solid #eee;border-radius:8px;background:#fff}
     .receipt-header{display:flex;align-items:center;gap:12px}
