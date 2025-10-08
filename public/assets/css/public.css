@@ -941,31 +941,7 @@ nav a.active::after {
   min-width: 300px;
 }
 
-@media (max-width: 991px) {
-  .hero .container {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .hero-left, .hero-right {
-    width: 100%;
-  }
-  
-  .hero-stats {
-    justify-content: center;
-  }
-}
 
-@media (max-width: 576px) {
-  .hero {
-    padding: 40px 0;
-  }
-  
-  .hero-stats {
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-}
 
 .hero-badge {
   display: inline-flex;
