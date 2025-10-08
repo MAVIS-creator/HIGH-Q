@@ -245,11 +245,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 <body>
   <header>
     <!-- Top bar -->
-    <div class="top-bar">
-      <div class="container">
-  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
-        <span class="motto">"Always Ahead of Others"</span>
+    <div class="bg-primary text-white py-2">
+      <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex gap-4">
+          <span><i class="fas fa-phone me-2"></i><?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+          <span><i class="fas fa-envelope me-2"></i><?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        </div>
+        <span class="fw-bold">"Always Ahead of Others"</span>
       </div>
     </div>
 
