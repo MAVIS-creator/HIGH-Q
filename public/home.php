@@ -110,29 +110,29 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <div class="col-12 col-lg-6 d-flex flex-column align-items-center align-items-lg-start">
         <div class="text-center text-lg-start mb-4">
           <div class="position-relative mb-4">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded-3 shadow-lg" style="max-width: 400px;">
           </div>
-          <div class="ceo-info">
-            <h3 class="mb-1">Master Adebule Quam</h3>
-            <p class="role mb-0">CEO & Lead Tutor</p>
+          <div class="text-lg-start">
+            <h3 class="h2 fw-bold mb-2">Master Adebule Quam</h3>
+            <p class="text-primary fs-5 mb-0">CEO & Lead Tutor</p>
           </div>
         </div>
 
-        <div class="ceo-quote text-center text-lg-start">
-          <i class="fas fa-quote-left mb-2"></i>
-          <p class="mb-3">
+        <div class="bg-light p-4 rounded-3 text-center text-lg-start mb-4">
+          <i class="fas fa-quote-left text-primary opacity-50 fs-3 mb-3"></i>
+          <p class="lead mb-3">
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span class="d-block text-end">- Master Adebule Quam</span>
+          <span class="d-block text-end fst-italic">- Master Adebule Quam</span>
         </div>
       </div>
 
-  <div class="col-12 col-lg-7">
-        <div class="mb-4">
+      <div class="col-12 col-lg-6">
+        <div class="mb-5">
           <h3 class="h2 fw-bold mb-3">Seasoned Educator & Mentor</h3>
-          <p class="lead mb-3">
+          <p class="lead text-primary mb-3">
             Master Adebule Quam is a seasoned tutor versed in the teaching profession.
             Over the years, he has produced students who have achieved breathtaking
             academic excellence and excelled in various examinations including GCE,
