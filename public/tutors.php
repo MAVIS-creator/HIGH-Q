@@ -191,24 +191,6 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         <span>Years Experience</span>
       </div>
     </div>
-      <div class="row achievements-grid gy-4 gx-3">
-        <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-          <strong>500+</strong>
-          <span>Students Graduated</span>
-        </div>
-        <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-          <strong>98%</strong>
-          <span>Success Rate</span>
-        </div>
-        <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-          <strong>15+</strong>
-          <span>Expert Tutors</span>
-        </div>
-        <div class="col-6 col-md-6 col-lg-3 achievement text-center">
-          <strong>5+</strong>
-          <span>Years Experience</span>
-        </div>
-      </div>
   </div>
 </section>
 
