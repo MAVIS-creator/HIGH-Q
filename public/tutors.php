@@ -150,13 +150,15 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 </style>
 <style>
-/* Ensure when we use Bootstrap .row together with existing site classes,
-   the row behavior (flex) wins so columns stack correctly on mobile. */
-.achievements-grid.row, .testimonials-grid.row {
-  display: flex !important;
-  flex-wrap: wrap !important;
+/* Keep flex row behavior on medium+ screens; allow mobile to use grid-based layout
+   so our mobile 2-column overrides can apply. */
+@media (min-width: 768px) {
+  .achievements-grid.row, .testimonials-grid.row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+  .achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 }
-.achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 </style>
 <style>
 /* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view

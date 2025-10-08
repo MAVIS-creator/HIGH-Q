@@ -83,3 +83,19 @@
     /* Ensure achievements remain two-column on small phones (if space allows) */
     .achievements-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
+
+/* Program cards: add a small gap between icon and header for better visual separation */
+.program-icon { margin-bottom: 8px !important; }
+.program-body h4 { margin-top: 6px !important; }
+
+/* Header: ensure logo+name on left and mobile toggle on right */
+@media (max-width: 991px) {
+    .main-header .container { display:flex; align-items:center; justify-content:space-between; }
+    .main-header .logo { order: 0; }
+    .navbar-toggler.mobile-toggle { order: 1; margin-left: auto; }
+    /* Hide large desktop-only nav on mobile (offcanvas will be used) */
+    .collapse.navbar-collapse { display: none !important; }
+}
+
+/* Ensure the offcanvas menu highlights the active page (class applied server-side) */
+.custom-offcanvas .nav-link.active { background-color: var(--hq-yellow) !important; color: #111 !important; }
