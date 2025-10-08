@@ -10,32 +10,36 @@
 	</div>
 </section>
 
-<!-- Programs listing (placeholder) -->
-<section class="programs-content">
+<!-- Programs Section -->
+<section class="py-5">
 	<div class="container">
-		<div class="ceo-heading">
-			<h2>Explore Our <span class="high">Programs</span></h2>
+		<div class="text-center mb-4">
+			<h2>Explore Our <span class="highlight">Programs</span></h2>
 			<p class="lead">Choose a course tailored to your needs — from exam prep to digital skills.</p>
 		</div>
-			<!-- Static program cards (not pulled from SQL) -->
-			<div class="programs-grid">
-				<article class="program-card">
-					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-target-lock"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>JAMB Preparation</h4>
-						<p class="muted">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
-						<div class="subjects">
-							<span class="tag">English Language</span>
-							<span class="tag">Mathematics</span>
-							<span class="tag">Sciences</span>
-							<span class="tag">Arts</span>
+		
+		<div class="row g-4">
+			<div class="col-12 col-md-6 col-lg-4">
+				<div class="card h-100 border-0 shadow-sm">
+					<div class="card-body p-4">
+						<div class="d-flex align-items-center mb-3">
+							<div class="rounded-3 bg-warning bg-opacity-10 p-3 me-3">
+								<i class="bx bx-target-lock fs-4 text-warning"></i>
+							</div>
+							<h4 class="card-title mb-0 fw-bold">JAMB Preparation</h4>
 						</div>
-						<p class="duration">Duration: 4-6 months</p>
-						<a href="program.php?slug=jamb-preparation" class="btn-primary">Learn More</a>
+						<p class="text-secondary mb-3">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
+						<div class="d-flex flex-wrap gap-2 mb-3">
+							<span class="badge rounded-pill bg-dark px-3 py-2">English Language</span>
+							<span class="badge rounded-pill bg-dark px-3 py-2">Mathematics</span>
+							<span class="badge rounded-pill bg-dark px-3 py-2">Sciences</span>
+							<span class="badge rounded-pill bg-dark px-3 py-2">Arts</span>
+						</div>
+						<p class="text-secondary small mb-3">Duration: 4-6 months</p>
+						<a href="program.php?slug=jamb-preparation" class="btn btn-warning text-dark">Learn More</a>
 					</div>
-				</article>
+				</div>
+			</div>
 
 				<article class="program-card">
 					<div class="program-card-head">
