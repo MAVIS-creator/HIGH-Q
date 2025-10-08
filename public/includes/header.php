@@ -360,16 +360,16 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body p-3">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= in_array($cur, ['programs.php','program.php']) ? 'active' : '' ?>" href="programs.php">Programs</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'exams.php' ? 'active' : '' ?>" href="exams.php">Exams</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'news.php' ? 'active' : '' ?>" href="news.php">News & Blog</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'community.php' ? 'active' : '' ?>" href="community.php">Community</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
-        <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
-      </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="programs.php">Programs</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="exams.php">Exams</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="news.php">News & Blog</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="community.php">Community</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+            </ul>
             <div class="mt-4 px-3">
                 <a href="register.php" class="btn btn-primary w-100 py-2">Register Now</a>
             </div>
