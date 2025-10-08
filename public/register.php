@@ -268,12 +268,49 @@ $csrf = generateToken('signup_form');
 												<?php else: ?>
 													<form method="post">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
-													<div class="section-body">
-																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
-																									<div class="form-row form-inline"><div style="flex:1"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div style="flex:1"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
-																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
-																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
+													<div class="mb-4">
+														<h4 class="h5 fw-bold d-flex align-items-center gap-2 mb-3">
+															<i class="bx bxs-user fs-4"></i> Personal Information
+														</h4>
+														<div class="row g-3">
+															<div class="col-12 col-sm-6">
+																<div class="form-floating">
+																	<input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" value="<?= htmlspecialchars($first_name ?? '') ?>" required>
+																	<label for="first_name">First Name *</label>
+																</div>
+															</div>
+															<div class="col-12 col-sm-6">
+																<div class="form-floating">
+																	<input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" value="<?= htmlspecialchars($last_name ?? '') ?>" required>
+																	<label for="last_name">Last Name *</label>
+																</div>
+															</div>
+															<div class="col-12 col-sm-6">
+																<div class="form-floating">
+																	<input type="email" class="form-control" id="email_contact" name="email_contact" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>">
+																	<label for="email_contact">Contact Email</label>
+																</div>
+															</div>
+															<div class="col-12 col-sm-6">
+																<div class="form-floating">
+																	<input type="tel" class="form-control" id="phone" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
+																	<label for="phone">Phone Number</label>
+																</div>
+															</div>
+															<div class="col-12">
+																<div class="form-floating">
+																	<input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="<?= htmlspecialchars($date_of_birth ?? '') ?>">
+																	<label for="date_of_birth">Date of Birth</label>
+																</div>
+															</div>
+															<div class="col-12">
+																<div class="form-floating">
+																	<textarea class="form-control" id="home_address" name="home_address" placeholder="Enter your complete home address" style="height:100px"><?= htmlspecialchars($home_address ?? '') ?></textarea>
+																	<label for="home_address">Home Address</label>
+																</div>
+															</div>
+														</div>
+													</div>
 
 													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
 													<div class="programs-grid">
