@@ -145,16 +145,6 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 </style>
 <style>
-/* Ensure when we use Bootstrap .row together with existing site classes,
-   the row behavior (flex) wins so columns stack correctly on mobile. */
-.achievements-grid.row, .testimonials-grid.row {
-  display: flex !important;
-  flex-wrap: wrap !important;
-}
-.testimonials-grid.row > .col-12 { display: block; }
-
-</style>
-<style>
 /* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view
    On small screens we want Achievements visible even if JS does not run, so override there. */
 @media (max-width: 768px) {

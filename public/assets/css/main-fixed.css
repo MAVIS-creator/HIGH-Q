@@ -326,3 +326,29 @@
     /* Slightly reduce hero cta button width at tablet sizes so it doesn't overflow */
     .hero-ctas .btn { min-width: 140px; }
 }
+
+/* Specific overrides to fix registration checkbox alignment when legacy rules are present
+   Use high-specificity selector scoped to the register page layout to override register-fixed.css. */
+.register-layout .terms-row .form-check {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.register-layout .terms-row .form-check .form-check-label {
+    margin: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Reduce desktop spacing between program icon and title: override large min-width/margins
+   without breaking mobile spacing. This targets desktop and larger screens only. */
+@media (min-width: 992px) {
+    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon {
+        margin-right: 8px !important;
+        min-width: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .program-card .program-card-inner, .program-card-inner {
+        gap: 10px !important;
+    }
+}
