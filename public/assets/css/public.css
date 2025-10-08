@@ -1736,15 +1736,7 @@ nav a.active::after {
   background: transparent;
 }
 
-@media (max-width: 900px) {
-  .register-layout {
-    grid-template-columns: 1fr;
-  }
 
-  .register-sidebar {
-    order: 2;
-  }
-}
 
 .ceo-hero {
   padding: 80px 0 100px;
@@ -2327,15 +2319,7 @@ input.form-input {
   margin: 0;
 }
 
-@media (min-width: 1100px) {
-  .contact-layout .register-sidebar {
-    width: 420px;
-  }
 
-  .register-layout .register-main {
-    max-width: 920px;
-  }
-}
 
 .achievement {
   padding: 12px 8px;
