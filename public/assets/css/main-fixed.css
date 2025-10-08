@@ -257,9 +257,14 @@
     .history-section .logo-card { margin: 12px auto 6px; }
     .history-content h3 { margin-top: 12px; }
 
-    /* Achievements: show two columns on small/medium mobile widths for density */
-    @media (min-width: 480px) and (max-width: 768px) {
-        .achievements-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 18px !important; }
+    /* Achievements: prefer Bootstrap row/col behavior so .col-6 produces two columns on mobile.
+       Use a scoped flex fallback when legacy grid rules try to override the layout. */
+    @media (min-width: 320px) and (max-width: 992px) {
+        .achievements-grid.row { display: flex !important; flex-wrap: wrap !important; gap: 18px !important; }
+        .achievements-grid.row > .col-6, .achievements-grid.row > [class*="col-"] {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+        }
         .achievements-grid .achievement { text-align: left !important; padding-left: 8px; }
     }
 
@@ -313,8 +318,9 @@
     .history-grid { grid-template-columns: 1fr; }
     .history-section .logo-card { margin: 14px auto 10px; }
 
-    /* Achievements: two columns for tablet widths as well */
-    .achievements-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; }
+    /* Achievements: keep Bootstrap-based two-column layout on tablet widths */
+    .achievements-grid.row { display: flex !important; flex-wrap: wrap !important; }
+    .achievements-grid.row > .col-md-6, .achievements-grid.row > .col-6 { flex: 0 0 50% !important; max-width: 50% !important; }
 
     /* Programs: small space between icon and header */
     .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon { margin-right: 12px; }
