@@ -1,16 +1,20 @@
-</style>
-<!-- Use Bootstrap column classes for achievements/testimonials so layout follows bootstrap breakpoints -->
-<style>
-/* Ensure achievements are visible on small screens if JS animations haven't run */
-@media (max-width: 768px) {
-  .achievements .achievement,
-  .achievements .achievement * {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-  }
-}
-</style>
+<?php
+// public/tutors.php - load tutors safely; keep page usable if DB missing
+$tutors = [];
+if (file_exists(__DIR__ . '/config/db.php')) {
+  try {
+    require_once __DIR__ . '/config/db.php';
+    if (isset($pdo)) {
+      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
+      $stmt->execute();
+      $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      if (empty($tutors)) {
+        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC");
+        $stmt2->execute();
+        $tutors = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+      }
+    }
+  } catch (Throwable $e) {
     $tutors = [];
   }
 }
