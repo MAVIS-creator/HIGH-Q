@@ -1,25 +1,16 @@
-<?php
-// public/tutors.php - partial for displaying featured tutors
-$tutors = [];
-// load DB connection if available
-if (file_exists(__DIR__ . '/config/db.php')) {
-  try {
-    require_once __DIR__ . '/config/db.php';
-    if (isset($pdo)) {
-      // Try featured tutors first (preserve featured if any), but when falling back or listing ensure tutors are ordered by id ascending per UX request
-      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
-      $stmt->execute();
-      $tutors = $stmt->fetchAll();
-      // If none are featured, fall back to any tutors so the section is visible for testing
-      if (empty($tutors)) {
-        // order by id ascending as requested
-        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC");
-        $stmt2->execute();
-        $tutors = $stmt2->fetchAll();
-      }
-    }
-  } catch (Throwable $e) {
-    // swallow DB errors and render an empty state
+</style>
+<!-- Use Bootstrap column classes for achievements/testimonials so layout follows bootstrap breakpoints -->
+<style>
+/* Ensure achievements are visible on small screens if JS animations haven't run */
+@media (max-width: 768px) {
+  .achievements .achievement,
+  .achievements .achievement * {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+}
+</style>
     $tutors = [];
   }
 }
