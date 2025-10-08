@@ -2813,11 +2813,7 @@ input.form-input {
   line-height: 1.7;
 }
 
-@media (max-width: 900px) {
-  .values-grid {
-    grid-template-columns: 1fr;
-  }
-}
+
 
 /* Core Values */
 .core-values {
@@ -2865,17 +2861,7 @@ input.form-input {
   font-size: 14px;
 }
 
-@media (max-width: 1100px) {
-  .core-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (max-width: 700px) {
-  .core-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* Tutors section */
 .tutors-section {
@@ -2928,17 +2914,7 @@ input.form-input {
   margin-bottom: 12px;
 }
 
-@media (max-width:1100px) {
-  .posts-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (max-width:700px) {
-  .posts-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 .tutors-grid {
   display: flex;
