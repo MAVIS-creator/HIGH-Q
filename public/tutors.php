@@ -156,7 +156,6 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   display: flex !important;
   flex-wrap: wrap !important;
 }
-.achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 </style>
 <style>
 /* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view
