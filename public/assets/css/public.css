@@ -2071,28 +2071,9 @@ input.form-input {
   margin: 6px 0;
 }
 
-@media (max-width: 900px) {
-  .post-top {
-    flex-direction: column;
-  }
 
-  .post-toc {
-    position: static;
-    width: auto;
-  }
-}
 
-@media (max-width: 1000px) {
-  .news-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (max-width: 600px) {
-  .news-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 .ceo-content h3 {
   font-size: 22px;
@@ -2464,36 +2445,7 @@ input.form-input {
   transform: translateY(-2px);
 }
 
-@media (max-width: 900px) {
-  .ceo-grid {
-    grid-template-columns: 1fr;
-  }
 
-  .ceo-card {
-    flex-direction: row;
-    gap: 18px;
-    align-items: center;
-    padding: 18px;
-  }
-
-  .ceo-photo img {
-    width: 88px;
-    height: 88px;
-    border-width: 4px;
-  }
-
-  .ceo-card h3 {
-    font-size: 16px;
-  }
-
-  .ceo-heading h2 {
-    font-size: 24px;
-  }
-
-  .ceo-quote {
-    max-width: none;
-  }
-}
 
 /* Programs & Services grid: (styles consolidated earlier) */
 
