@@ -25,33 +25,33 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero py-5">
+<section class="bg-light py-5">
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
-    <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
-      <div class="hero-badge mb-3">
-        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
+    <div class="text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
+      <div class="bg-primary bg-opacity-10 text-primary px-4 py-2 rounded-pill d-inline-block mb-3">
+        <i class='bx bxs-star me-2'></i> Nigeria's Premier Tutorial Academy
       </div>
-      <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead">
+      <h1 class="display-4 fw-bold mb-3">Excellence in <span class="text-primary">Education</span></h1>
+      <p class="lead text-secondary mb-4">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
-      <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
-        <a href="register.php" class="btn btn-primary">Register Now</a>
-        <a href="programs.php" class="btn btn-light text-dark border">See Our Programs</a>
+      <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 mb-4">
+        <a href="register.php" class="btn btn-primary btn-lg px-4">Register Now</a>
+        <a href="programs.php" class="btn btn-outline-secondary btn-lg px-4">See Our Programs</a>
       </div>
-      <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
-        <div class="text-center">
-          <strong>6+</strong>
-          <div>Years Experience</div>
+      <div class="d-flex flex-wrap justify-content-center justify-content-lg-start gap-4">
+        <div class="text-center px-3">
+          <div class="h2 fw-bold text-primary mb-1">6+</div>
+          <div class="text-secondary">Years Experience</div>
         </div>
-        <div class="text-center">
-          <strong>1000+</strong>
-          <div>Students Trained</div>
+        <div class="text-center px-3">
+          <div class="h2 fw-bold text-primary mb-1">1000+</div>
+          <div class="text-secondary">Students Trained</div>
         </div>
-        <div class="text-center">
-          <strong>305</strong>
-          <div>Highest JAMB Score</div>
+        <div class="text-center px-3">
+          <div class="h2 fw-bold text-primary mb-1">305</div>
+          <div class="text-secondary">Highest JAMB Score</div>
         </div>
       </div>
     </div>
