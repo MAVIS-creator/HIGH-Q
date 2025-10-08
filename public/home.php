@@ -267,7 +267,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
         <div class="programs-cta-actions d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3">
           <a href="register.php" class="btn btn-primary">Register for Programs</a>
-          <a href="programs.php" class="btn btn-hq-ghost">View All Programs</a>
+    <a href="programs.php" class="btn btn-light text-dark border">View All Programs</a>
         </div>
     </div>
   </div>
