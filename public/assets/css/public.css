@@ -515,13 +515,7 @@ nav a.active::after {
 }
 .sidebar-card.in-view, .register-sidebar .card.in-view, .is-loaded .sidebar-card, .is-loaded .register-sidebar .card { opacity: 1; transform: none; }
 
-/* reduce animation motion on small screens to avoid jank */
-@media (max-width: 700px) {
-  .program-card, .tutor-card, .value-card, .post-card, .card, .stat { transform: none; transition: opacity .42s ease; }
-  .sidebar-card, .register-sidebar .card { transform: none; }
-}
-
-  /* Testimonials */
+/* Testimonials */
   .testimonials-section {
     padding: 48px 0;
     background: #f0f0f0;
@@ -559,19 +553,7 @@ nav a.active::after {
     color: var(--hq-gray);
   }
 
-  @media (max-width: 1100px) {
-    .testimonials-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 700px) {
-    .testimonials-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-}
+  
 
 /* Floating live chat button */
 .floating-chat {
