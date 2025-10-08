@@ -177,26 +177,27 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     <div class="ceo-heading text-center mb-4">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="row achievements-grid gy-4">
-      <div class="col-6 col-md-3 achievement text-center">
+    <div class="row achievements-grid gy-4 gx-3">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="col-6 col-md-3 achievement text-center">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="col-6 col-md-3 achievement text-center">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="col-6 col-md-3 achievement text-center">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
     </div>
   </div>
 </section>
+
 
 <!-- Testimonials / What Our Students Say -->
 <section class="testimonials-section py-5">
