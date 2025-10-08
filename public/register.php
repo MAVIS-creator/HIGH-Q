@@ -344,14 +344,49 @@ $csrf = generateToken('signup_form');
 														</div>
 													</div>
 
-													<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
-													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
+													<div class="mb-4">
+														<div class="row g-3">
+															<div class="col-12">
+																<div class="form-floating">
+																	<textarea class="form-control" id="previous_education" name="previous_education" placeholder="Tell us about your educational background" style="height:120px"><?= htmlspecialchars($previous_education ?? '') ?></textarea>
+																	<label for="previous_education">Previous Education</label>
+																	<div class="form-text">Schools attended, certificates obtained, etc.</div>
+																</div>
+															</div>
+															<div class="col-12">
+																<div class="form-floating">
+																	<textarea class="form-control" id="academic_goals" name="academic_goals" placeholder="What are your academic and career aspirations?" style="height:120px"><?= htmlspecialchars($academic_goals ?? '') ?></textarea>
+																	<label for="academic_goals">Academic Goals</label>
+																	<div class="form-text">Tell us how we can help you achieve your goals</div>
+																</div>
+															</div>
+														</div>
+													</div>
 
-													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
-													<div class="section-body">
-													<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
-													<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
-													<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
+													<div class="mb-4">
+														<h4 class="h5 fw-bold d-flex align-items-center gap-2 mb-3">
+															<i class="bx bxs-phone fs-4"></i> Emergency Contact
+														</h4>
+														<div class="row g-3">
+															<div class="col-12">
+																<div class="form-floating">
+																	<input type="text" class="form-control" id="emergency_name" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>">
+																	<label for="emergency_name">Parent/Guardian Name</label>
+																</div>
+															</div>
+															<div class="col-12 col-sm-6">
+																<div class="form-floating">
+																	<input type="tel" class="form-control" id="emergency_phone" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>">
+																	<label for="emergency_phone">Parent/Guardian Phone</label>
+																</div>
+															</div>
+															<div class="col-12 col-sm-6">
+																<div class="form-floating">
+																	<input type="text" class="form-control" id="emergency_relationship" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>">
+																	<label for="emergency_relationship">Relationship to Student</label>
+																</div>
+															</div>
+														</div>
 													</div>
 
 													<div class="form-row terms-row">
