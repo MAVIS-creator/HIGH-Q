@@ -38,6 +38,7 @@ if ($token) {
     <meta charset="utf-8">
     <title>Email Verification</title>
     <link rel="stylesheet" href="/public/assets/css/public.css">
+    <link rel="stylesheet" href="/public/assets/css/responsive-utils.css">
     <style>.container{max-width:720px;margin:40px auto;padding:20px}</style>
 </head>
 <body>
