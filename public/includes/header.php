@@ -229,13 +229,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/public.css">
   <!-- <link rel="stylesheet" href="./assets/css/responsive.css"> -->
-  <link rel="stylesheet" href="./assets/css/ceo-responsive.css">
+  <!-- <link rel="stylesheet" href="./assets/css/ceo-responsive.css"> -->
   <link rel="stylesheet" href="./assets/css/animations.css">
   <link rel="stylesheet" href="./assets/css/social-icons.css">
-  <link rel="stylesheet" href="./assets/css/post-toc.css">
+  <!-- <link rel="stylesheet" href="./assets/css/post-toc.css"> -->
   <link rel="stylesheet" href="./assets/css/hero.css">
   <!-- Small site-specific hero overrides (loaded after hero.css) -->
-  <link rel="stylesheet" href="./assets/css/hero-fixed.css">
+  <!-- <link rel="stylesheet" href="./assets/css/hero-fixed.css"> -->
   <link rel="stylesheet" href="./assets/css/offcanvas.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
