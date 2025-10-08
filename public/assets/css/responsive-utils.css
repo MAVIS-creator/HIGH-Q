@@ -20,12 +20,35 @@
   .text-sm-right { text-align: right !important; }
 }
 
+/* common display helpers for sm */
+@media (max-width: 575.98px) {
+  .w-sm-100 { width: 100% !important; }
+  .w-sm-auto { width: auto !important; }
+  .flex-sm-row { flex-direction: row !important; }
+  .flex-sm-column { flex-direction: column !important; }
+  .flex-sm-nowrap { flex-wrap: nowrap !important; }
+  .flex-sm-wrap { flex-wrap: wrap !important; }
+  .justify-sm-center { justify-content: center !important; }
+  .justify-sm-between { justify-content: space-between !important; }
+  .align-sm-center { align-items: center !important; }
+  .align-sm-start { align-items: flex-start !important; }
+}
+
 /* ====== Small (up to 767.98px) ====== */
 @media (max-width: 767.98px) {
   .d-md-none { display: none !important; }
   .d-md-block { display: block !important; }
   .d-md-flex { display: flex !important; }
   .text-md-center { text-align: center !important; }
+}
+
+@media (max-width: 767.98px) {
+  .w-md-100 { width: 100% !important; }
+  .w-md-auto { width: auto !important; }
+  .flex-md-column { flex-direction: column !important; }
+  .flex-md-row { flex-direction: row !important; }
+  .justify-md-center { justify-content: center !important; }
+  .align-md-center { align-items: center !important; }
 }
 
 /* ====== Medium (up to 991.98px) ====== */
@@ -36,6 +59,14 @@
   .text-lg-center { text-align: center !important; }
 }
 
+@media (max-width: 991.98px) {
+  .w-lg-100 { width: 100% !important; }
+  .w-lg-auto { width: auto !important; }
+  .flex-lg-column { flex-direction: column !important; }
+  .justify-lg-center { justify-content: center !important; }
+  .align-lg-center { align-items: center !important; }
+}
+
 /* ====== Large (up to 1199.98px) ====== */
 @media (max-width: 1199.98px) {
   .d-xl-none { display: none !important; }
@@ -43,10 +74,21 @@
   .d-xl-flex { display: flex !important; }
 }
 
+@media (max-width: 1199.98px) {
+  .w-xl-100 { width: 100% !important; }
+}
+
 /* Tiny spacing helpers scoped to small screens only */
 @media (max-width: 767.98px) {
+  /* spacing scale: 0, 1 (4px), 2 (8px), 3 (16px) - tweak as needed */
   .m-sm-0 { margin: 0 !important; }
+  .m-sm-1 { margin: 0.25rem !important; }
+  .m-sm-2 { margin: 0.5rem !important; }
+  .m-sm-3 { margin: 1rem !important; }
   .p-sm-0 { padding: 0 !important; }
+  .p-sm-1 { padding: 0.25rem !important; }
+  .p-sm-2 { padding: 0.5rem !important; }
+  .p-sm-3 { padding: 1rem !important; }
 }
 
 /* Utility to keep offcanvas available but slightly tweak spacing on mobile */
