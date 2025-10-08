@@ -1,0 +1,27 @@
+/* Overrides for hero buttons to ensure correct background and text color */
+.hero-ctas .btn.btn-light,
+.hero-ctas .btn.btn-light:focus,
+.hero-ctas .btn.btn-light:hover {
+    background: #fff !important;
+    color: #111 !important;
+    border-color: rgba(0,0,0,0.08) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+/* Also ensure btn-ghost in hero gets proper contrast */
+.hero-ctas .btn-ghost {
+    background: rgba(255,255,255,0.95) !important;
+    color: #111 !important;
+}
+
+/* If the button uses .programs-cta or other container classes, target them too */
+.programs-cta .btn.btn-light {
+    background: #fff !important;
+    color: #111 !important;
+}
+
+/* Minor responsive tweak to ensure hero ctas don't overflow on small screens */
+@media (max-width: 768px) {
+    .hero-ctas { justify-content: center; flex-wrap: wrap; }
+    .hero-ctas .btn { width: auto; }
+}
