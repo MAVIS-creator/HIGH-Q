@@ -25,3 +25,61 @@
     .hero-ctas { justify-content: center; flex-wrap: wrap; }
     .hero-ctas .btn { width: auto; }
 }
+
+/* Mobile centering & spacing fixes for hero, CEO, history, achievements and icon spacing */
+@media (max-width: 991px) {
+    /* Make hero content centered and reduce asymmetric padding */
+    .hero .container { grid-template-columns: 1fr !important; justify-items: center; text-align: center; }
+    .hero-left, .hero-right { padding: 0 !important; }
+    .hero h1, .hero .lead { margin-left: auto; margin-right: auto; text-align: center; }
+    .hero-ctas { justify-content: center !important; gap: .75rem; }
+    .hero-stats { justify-content: center !important; gap: 1.25rem; }
+}
+
+@media (max-width: 768px) {
+    /* Keep hero title readable and centered on narrow screens */
+    .hero .container { gap: 1rem !important; }
+    .hero h1 { font-size: 2.4rem !important; }
+    .hero .lead { max-width: 100% !important; padding: 0 12px !important; }
+    .hero .hero-badge { margin-left: auto !important; margin-right: auto !important; display: inline-flex; }
+
+    /* Achievements: display in two columns on phones for better use of vertical space */
+    .achievements-grid,
+    .achievements-grid.row,
+    .achievements-grid .row {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        align-items: start !important;
+    }
+    .achievements-grid .achievement,
+    .achievements-grid .achievement * { text-align: center !important; }
+
+    /* CEO section: reduce distance between photo and name, and center the quote and author */
+    .ceo-card { padding: 16px !important; }
+    .ceo-photo img { width: 110px !important; height: 110px !important; margin-bottom: 8px !important; border-width: 6px !important; }
+    .ceo-heading, .ceo-heading h2, .ceo-heading h3 { margin-top: 6px !important; text-align: center !important; }
+    .ceo-quote { text-align: center !important; padding: 12px !important; }
+    /* If author/name element exists inside the quote, try to center it */
+    .ceo-quote .author, .ceo-quote .quote-author, .ceo-quote p.author { text-align: center !important; display: block !important; margin-top: 8px !important; font-weight: 700 !important; color: #d9534f !important; }
+
+    /* History (HQ logo + title) - center and add breathing room */
+    .history-logo, .history-logo img { display: block !important; margin: 0 auto 10px auto !important; }
+    .history-title, .history-about-title { text-align: center !important; margin-top: 6px !important; }
+
+    /* Small spacing between icons and headers across several sections */
+    .feature-icon, .course-icon, .stat .icon, .tutor-card .tutor-icon { margin-bottom: 8px !important; }
+    .course-title, .feature-body h5, .stat strong { margin-top: 6px !important; }
+
+    /* Small adjustments for tag/pill spacing in course cards */
+    .course-features { margin-top: 10px !important; }
+    .course-features li { margin-bottom: 6px !important; padding-left: 18px !important; }
+}
+
+@media (max-width: 576px) {
+    /* Slightly smaller hero text on very small screens */
+    .hero h1 { font-size: 2rem !important; }
+    .ceo-photo img { width: 96px !important; height: 96px !important; }
+    /* Ensure achievements remain two-column on small phones (if space allows) */
+    .achievements-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
