@@ -286,18 +286,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 <!-- CTA Banner under Programs -->
-<section class="programs-cta">
+<section class="py-5 bg-primary text-white">
   <div class="container">
-    <div class="programs-cta-inner">
-        <h3 class="mb-3">Ready to Start Your Success Journey?</h3>
-        <p class="mb-4 mx-auto" style="max-width: 700px;">
+    <div class="text-center py-4">
+        <h3 class="display-6 fw-bold mb-3">Ready to Start Your Success Journey?</h3>
+        <p class="lead mb-4 mx-auto opacity-75" style="max-width: 700px;">
           Join our proven programs and take the first step towards academic excellence. 
           Our expert tutors are ready to guide you to success.
         </p>
 
-        <div class="programs-cta-actions d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3">
-          <a href="register.php" class="btn btn-primary">Register for Programs</a>
-    <a href="programs.php" class="btn btn-light text-dark border">View All Programs</a>
+        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+          <a href="register.php" class="btn btn-light btn-lg px-4">Register for Programs</a>
+          <a href="programs.php" class="btn btn-outline-light btn-lg px-4">View All Programs</a>
         </div>
     </div>
   </div>
