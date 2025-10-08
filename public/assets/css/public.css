@@ -3070,31 +3070,7 @@ input.form-input {
   gap: 8px;
 }
 
-@media (max-width: 800px) {
-  .tutor-card {
-    width: 100%;
-  }
 
-  .tutor-thumb {
-    height: 120px;
-  }
-
-  .tutor-thumb img {
-    width: 64px;
-    height: 64px;
-    bottom: -32px;
-  }
-
-  .tutor-lead .tutor-thumb {
-    height: 160px;
-  }
-
-  .tutor-lead .tutor-thumb img {
-    width: 96px;
-    height: 96px;
-    bottom: -48px;
-  }
-}
 
 .tutor-body h3 {
   margin: 0;
@@ -3131,17 +3107,7 @@ input.form-input {
   margin-bottom: 8px;
 }
 
-@media (max-width: 1100px) {
-  .tutors-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (max-width: 700px) {
-  .tutors-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 .program-title-link {
   text-decoration: none;
