@@ -3,11 +3,17 @@
 // Attempt to load site settings (contact phone, bank details, etc.) from database
 $contact_phone = '0807 208 8794';
 $siteSettings = [
-  'site' => ['name' => 'HIGH Q SOLID ACADEMY', 'bank_name' => '', 'bank_account_name' => '', 'bank_account_number' =>           <!-- Toggle for mobile - opens offcanvas -->
-          <button class="navbar-toggler ms-auto d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-expanded="false" aria-label="Toggle navigation">
-            <i class='bx bx-menu fs-3'></i>
-          </button>
-  'contact' => ['phone' => $contact_phone, 'email' => 'info@hqacademy.com', 'address' => "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu"]
+  'site' => [
+    'name' => 'HIGH Q SOLID ACADEMY',
+    'bank_name' => '',
+    'bank_account_name' => '',
+    'bank_account_number' => ''
+  ],
+  'contact' => [
+    'phone' => $contact_phone,
+    'email' => 'info@hqacademy.com',
+    'address' => "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu"
+  ]
 ];
 // include DB connection if available
 if (file_exists(__DIR__ . '/../config/db.php')) {
