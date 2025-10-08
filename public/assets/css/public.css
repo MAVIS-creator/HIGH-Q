@@ -39,29 +39,11 @@ body {
   width: 100%;
 }
 
-/* Responsive spacing utilities */
-.my-sm-2 { margin-block: 0.5rem; }
-.my-md-3 { margin-block: 1rem; }
-.my-lg-4 { margin-block: 1.5rem; }
-.my-xl-5 { margin-block: 2rem; }
-
-.px-sm-2 { padding-inline: 0.5rem; }
-.px-md-3 { padding-inline: 1rem; }
-.px-lg-4 { padding-inline: 1.5rem; }
-.px-xl-5 { padding-inline: 2rem; }
-
-/* Responsive text utilities */
-@media (max-width: 768px) {
-  h1 { font-size: calc(1.5rem + 1.5vw); }
-  h2 { font-size: calc(1.3rem + 1vw); }
-  h3 { font-size: calc(1.2rem + 0.5vw); }
-  p { font-size: 1rem; }
-}
-
-@media (max-width: 576px) {
-  .container { padding: 0 15px; }
-  .hide-sm { display: none; }
-}
+/* Base text sizes - not responsive */
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+p { font-size: 1rem; }
 
 /* Top bar */
 .top-bar {
