@@ -118,38 +118,6 @@ nav {
   align-items: center;
 }
 
-/* Mobile navigation */
-@media (max-width: 991px) {
-  .main-header .container {
-    flex-wrap: wrap;
-  }
-  
-  nav {
-    order: 3;
-    width: 100%;
-    flex-direction: column;
-    gap: 10px;
-    display: none;
-    padding: 1rem 0;
-  }
-
-  nav.show {
-    display: flex;
-  }
-
-  .navbar-toggler {
-    display: block;
-    background: none;
-    border: none;
-    padding: 0.5rem;
-    cursor: pointer;
-  }
-
-  .navbar-toggler i {
-    font-size: 1.5rem;
-  }
-}
-
 /* Nav dropdown for News/Blog */
 .nav-dropdown {
   position: relative;
@@ -389,21 +357,6 @@ nav a.active::after {
   font-weight: 700;
 }
 
-@media (max-width: 700px) {
-  .news-filters input[type="text"] {
-    min-width: 160px;
-    width: 100%;
-  }
-
-  .news-filters select {
-    width: 100%;
-  }
-
-  .news-filters {
-    gap: 10px;
-  }
-}
-
 .footer-links ul,
 .footer-programs ul {
   list-style: none;
@@ -466,51 +419,7 @@ nav a.active::after {
 }
 
 /* Responsive */
-@media (max-width: 900px) {
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  /* Achievements */
-  .achievements {
-    padding: 48px 0;
-    background: #fff;
-  }
-
-  .achievements-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    text-align: center;
-    align-items: center;
-  }
-
-  .achievement strong {
-    display: block;
-    font-size: 28px;
-    color: var(--hq-yellow);
-    font-weight: 800;
-  }
-
-  .achievement span {
-    display: block;
-    color: var(--hq-gray);
-    margin-top: 6px;
-  }
-
-  @media (max-width: 900px) {
-    .achievements-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 600px) {
-    .achievements-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* ------------------ Animation utilities ------------------ */
+/* ------------------ Animation utilities ------------------ */
   /* Lightweight, tasteful animations for the public site. Use classes like
      .fade-in, .slide-up, .hover-zoom, .stagger-N to compose effects. */
 
