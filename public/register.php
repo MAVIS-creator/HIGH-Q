@@ -312,15 +312,36 @@ $csrf = generateToken('signup_form');
 														</div>
 													</div>
 
-													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
-													<div class="programs-grid">
-														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
-														<?php foreach ($courses as $c): ?>
-																<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
-																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
-																	<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
-																</label>
-															<?php endforeach; ?>
+													<div class="mb-4">
+														<h4 class="h5 fw-bold d-flex align-items-center gap-2 mb-3">
+															<i class="bx bx-collection fs-4"></i> Program Selection
+														</h4>
+														<div class="row g-3">
+															<?php if (empty($courses)): ?>
+																<div class="col-12">
+																	<p class="text-secondary">No programs available currently.</p>
+																</div>
+															<?php else: ?>
+																<?php foreach ($courses as $c): ?>
+																	<div class="col-12">
+																		<div class="form-check card">
+																			<div class="card-body">
+																				<input type="checkbox" class="form-check-input me-2" name="programs[]" id="program_<?= $c['id'] ?>" value="<?= $c['id'] ?>">
+																				<label class="form-check-label w-100" for="program_<?= $c['id'] ?>">
+																					<div class="fw-bold"><?= htmlspecialchars($c['title']) ?></div>
+																					<div class="small text-secondary">
+																						<span class="badge bg-warning text-dark"><?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?></span>
+																						<?php if (!empty($c['duration'])): ?>
+																							<span class="ms-2"><?= htmlspecialchars($c['duration']) ?></span>
+																						<?php endif; ?>
+																					</div>
+																				</label>
+																			</div>
+																		</div>
+																	</div>
+																<?php endforeach; ?>
+															<?php endif; ?>
+														</div>
 													</div>
 
 													<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
