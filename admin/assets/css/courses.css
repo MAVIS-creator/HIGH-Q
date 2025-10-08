@@ -257,3 +257,13 @@
   background: #eef0f1;
   transform: translateY(-1px);
 }
+
+/* Responsive columns: 2 columns on medium desktops/tablets, 1 on mobile */
+@media (max-width: 1200px) {
+  .courses-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .courses-grid { grid-template-columns: 1fr; }
+  .courses-page { padding-left: 12px; padding-right: 12px }
+}
