@@ -157,47 +157,6 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   flex-wrap: wrap !important;
 }
 .testimonials-grid.row > .col-12 { display: block; }
-.achievements-grid {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.achievement {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #fff;
-  border: 1px solid #eee;
-  padding: 20px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.achievement strong {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #222;
-}
-
-.achievement span {
-  font-size: 0.9rem;
-  color: #555;
-}
-
-/* 🌀 Hover effect */
-.achievement:hover {
-  background: linear-gradient(135deg, #0d6efd, #6610f2);
-  color: #fff;
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.achievement:hover strong,
-.achievement:hover span {
-  color: #fff;
-}
 
 </style>
 <style>
