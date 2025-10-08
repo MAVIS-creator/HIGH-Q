@@ -1,0 +1,360 @@
+/* Mobile-first styles for all pages */
+:root {
+    --hq-yellow: #ffc107;
+    --hq-yellow-light: #FFE082;
+    --hq-red: #d9534f;
+}
+
+/* Hero section mobile fix */
+.hero {
+    background: var(--hq-yellow) !important;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+    .hero {
+        text-align: center;
+    }
+    
+    .hero-left {
+        padding: 20px 0;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
+
+/* Schedule Visit Modal Fix */
+.schedule-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.schedule-modal .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.schedule-modal .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .schedule-modal {
+        padding: 15px;
+    }
+    
+    .schedule-modal .modal-content {
+        padding: 15px;
+    }
+    
+    .schedule-modal .close-modal {
+        padding: 10px;
+        font-size: 28px; /* Larger touch target */
+    }
+}
+
+/* Registration Form Fixes */
+.register-layout {
+    padding: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.register-main {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+/* Form Layout Fix */
+.form-row {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.form-inline > div {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 250px;
+}
+
+/* Why Choose Us Section Fix */
+.why-box {
+    background: var(--hq-yellow);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.why-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.why-stats .stat {
+    text-align: center;
+}
+
+.why-stats .stat .icon {
+    font-size: 24px;
+    color: #d9534f;
+    margin-bottom: 10px;
+}
+
+.why-stats .stat strong {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+.why-stats .stat span {
+    font-size: 14px;
+}
+
+@media screen and (max-width: 768px) {
+    .why-stats {
+
+/* Single post visibility guard
+    Some global animation rules hide card-like elements until JS marks them in-view.
+    Force post content and TOC to be visible by default so users always see the article. */
+.post-article,
+.post-article *,
+.post-main .post-content,
+.post-thumb,
+.post-toc,
+.post-toc * {
+     opacity: 1 !important;
+     transform: none !important;
+     visibility: visible !important;
+}
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .why-stats .stat strong {
+        font-size: 20px;
+    }
+    
+    .why-stats .stat span {
+        font-size: 12px;
+    }
+}
+
+/* Terms Checkbox Fix */
+.terms-checkbox {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px 0;
+}
+
+.terms-checkbox input[type="checkbox"] {
+    margin: 3px 8px 0 0;
+}
+
+.terms-checkbox label {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Responsive Fixes */
+@media screen and (max-width: 768px) {
+    .form-row input,
+    .form-row textarea,
+    .form-row select {
+        width: 100%;
+    }
+    
+    .register-layout {
+        padding: 15px;
+    }
+    
+    .card {
+        padding: 15px;
+    }
+}
+
+/* Ensure Why Choose stats are visible even if global animations hide .stat by default
+   (global animation rules set .stat { opacity:0 } until JS marks them in-view). */
+.why-box .why-stats .stat,
+.why-box .why-stats .stat * {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+}
+
+/* --------------------- Mobile polish fixes --------------------- */
+/* Center page container on small screens and reduce left-bias padding */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    /* Hero: tighten text block and ensure centered layout */
+    .hero .lead, .hero h1 {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* CEO: reduce space between photo and name, center name on mobile */
+    .ceo-card h3, .ceo-card .role {
+        margin-top: 8px;
+        margin-bottom: 6px;
+        text-align: center;
+    }
+
+    /* CEO quote author alignment: keep closer to the photo */
+    .ceo-quote span {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* History: center logo card and add spacing between logo and heading */
+    .history-grid { grid-template-columns: 1fr; }
+    .history-section .logo-card { margin: 12px auto 6px; }
+    .history-content h3 { margin-top: 12px; }
+
+    /* Achievements: prefer Bootstrap row/col behavior so .col-6 produces two columns on mobile.
+       Use a scoped flex fallback when legacy grid rules try to override the layout. */
+    @media (min-width: 320px) and (max-width: 992px) {
+        .achievements-grid.row { display: flex !important; flex-wrap: wrap !important; gap: 18px !important; }
+        .achievements-grid.row > .col-6, .achievements-grid.row > [class*="col-"] {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+        }
+        .achievements-grid .achievement { text-align: left !important; padding-left: 8px; }
+    }
+
+        /* Programs: small space between icon and heading inside program-card (mobile only) */
+        .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon {
+            margin-right: 10px;
+        }
+
+    /* Tutors: ensure lead card is centered and the name isn't too far from the photo */
+    .tutor-lead .tutor-thumb img, .tutor-card .tutor-thumb img { max-width: 84px; height: auto; }
+    .tutor-card .tutor-body h3 { margin-top: 8px; margin-bottom: 4px; }
+
+    /* CTA header style for image 7: make heading pill-like with shadow */
+    .ceo-heading h2 {
+        background: #fff;
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 999px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        margin-bottom: 14px;
+    }
+}
+
+/* Minor extra small screens tweaks */
+@media (max-width: 480px) {
+    .container { padding-left: 12px; padding-right: 12px; }
+    .ceo-photo img { width: 92px !important; height: 92px !important; }
+    .ceo-card { padding: 18px !important; }
+}
+
+/* Program icon gap only for small screens (avoid affecting desktop) */
+@media (max-width: 768px) {
+    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon { margin-right: 10px; }
+}
+
+/* end mobile polish fixes */
+
+/* Tablet / small laptop adjustments (improve centering and spacing) */
+@media (max-width: 992px) {
+    .container { padding-left: 20px; padding-right: 20px; }
+
+    /* Hero: ensure left column collapses visually and headline centers well */
+    .hero-left { padding-right: 0; }
+    .hero h1 { text-align: center; }
+
+    /* CEO: moderate size and bring name closer to image on tablets */
+    .ceo-photo img { width: 110px; height: 110px; }
+    .ceo-card h3 { margin-top: 6px; margin-bottom: 4px; }
+
+    /* History: center on tablet and add spacing */
+    .history-grid { grid-template-columns: 1fr; }
+    .history-section .logo-card { margin: 14px auto 10px; }
+
+    /* Achievements: keep Bootstrap-based two-column layout on tablet widths */
+    .achievements-grid.row { display: flex !important; flex-wrap: wrap !important; }
+    .achievements-grid.row > .col-md-6, .achievements-grid.row > .col-6 { flex: 0 0 50% !important; max-width: 50% !important; }
+
+    /* Programs: small space between icon and header */
+    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon { margin-right: 12px; }
+
+    /* Tutors: ensure tutor cards are balanced and lead aligns nicely */
+    .tutor-lead .tutor-thumb img, .tutor-card .tutor-thumb img { max-width: 96px; }
+    .tutor-card .tutor-body h3 { margin-top: 6px; }
+
+    /* Slightly reduce hero cta button width at tablet sizes so it doesn't overflow */
+    .hero-ctas .btn { min-width: 140px; }
+}
+
+/* Specific overrides to fix registration checkbox alignment when legacy rules are present
+   Use high-specificity selector scoped to the register page layout to override register-fixed.css. */
+.register-layout .terms-row .form-check {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.register-layout .terms-row .form-check .form-check-label {
+    margin: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Reduce desktop spacing between program icon and title: override large min-width/margins
+   without breaking mobile spacing. This targets desktop and larger screens only. */
+@media (min-width: 992px) {
+    .program-card .program-icon, .program-card .program-thumb, .program-card .course-icon {
+        margin-right: 8px !important;
+        min-width: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .program-card .program-card-inner, .program-card-inner {
+        gap: 10px !important;
+    }
+}
