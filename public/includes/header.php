@@ -233,7 +233,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="./assets/css/animations.css">
   <link rel="stylesheet" href="./assets/css/social-icons.css">
   <!-- <link rel="stylesheet" href="./assets/css/post-toc.css"> -->
-  <link rel="stylesheet" href="./assets/css/hero.css">
+  <!-- <link rel="stylesheet" href="./assets/css/hero.css"> -->
   <!-- Small site-specific hero overrides (loaded after hero.css) -->
   <!-- <link rel="stylesheet" href="./assets/css/hero-fixed.css"> -->
   <link rel="stylesheet" href="./assets/css/offcanvas.css">
