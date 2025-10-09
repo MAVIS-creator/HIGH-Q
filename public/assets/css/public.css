@@ -495,7 +495,7 @@ nav a.active::after {
 .form-row input[type="number"],
 .form-row select,
 .form-row textarea {
-  width: 380px;
+  width: 320px;
   padding: 12px;
   border: 1px solid #e6e6e6;
   border-radius: 6px;
@@ -1247,19 +1247,19 @@ nav a.active::after {
 /* Register two-column layout */
 .register-layout {
   display: grid;
-  grid-template-columns: 660px 280px;
+  grid-template-columns: 1fr 380px;
   /* roomy left, slightly narrower sidebar for better visual balance */
   gap: 28px;
   align-items: start;
   margin: 24px auto 48px;
-  width: 960px;
+  width: 1140px;
   padding-left: 20px;
   padding-right: 20px;
 }
 
 .register-layout .register-main {
   justify-self: start;
-  width: 660px;
+  width: 880px;
 }
 
 .register-layout .register-sidebar {
