@@ -83,10 +83,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="ceo-hero py-5">
+<section class="ceo-hero">
   <div class="container">
 
-    <div class="ceo-heading text-center mb-5">
+    <div class="ceo-heading">
       <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
       <p>
         Under the visionary leadership of Master Adebule Quam, High Q Solid Academy
@@ -94,15 +94,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
-    <div class="ceo-grid align-items-start g-4">
-      <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
-        <div class="ceo-card text-center text-lg-start mb-4">
-          <div class="ceo-photo mb-3">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
+    <div class="ceo-grid">
+      <div class="ceo-left-column">
+        <div class="ceo-card">
+          <div class="ceo-photo">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam">
           </div>
           <div class="ceo-info">
-            <h3 class="mb-1">Master Adebule Quam</h3>
-            <p class="role mb-0">CEO & Lead Tutor</p>
+            <h3>Master Adebule Quam</h3>
+            <p class="role">CEO & Lead Tutor</p>
           </div>
         </div>
 
