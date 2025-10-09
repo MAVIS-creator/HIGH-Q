@@ -151,7 +151,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 </style>
 <!-- Achievements -->
 <!-- Achievements Section -->
-<section class="achievements py-5">
+<section class="achievements">
   <div class="container">
     <div class="section-heading">
       <h2>Our <span class="highlight">Achievements</span></h2>
@@ -179,8 +179,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
 
 <!-- Testimonials / What Our Students Say -->
-<section class="testimonials-section py-5">
-  <div class="container px-3 px-md-0">
+<section class="testimonials-section">
+  <div class="container">
     <div class="section-heading">
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
