@@ -517,13 +517,6 @@ nav a.active::after {
 .achievements-section,
 .achievements {
   padding: 60px 0;
-  background: #fff;
-}
-
-.achievements-section .container,
-.achievements .container {
-  width: 1140px;
-  margin: 0 auto;
 }
 
 .achievements-section h2,
