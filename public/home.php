@@ -168,7 +168,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
-    <div class="programs-grid">
+    <div class="programs-grid fixed-width">
       <?php if (empty($programs)): ?>
         <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
