@@ -22,9 +22,9 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
 <section class="tutors-section">
   <div class="container">
-    <div class="ceo-heading">
+    <div class="section-heading">
       <h2>Meet Our Expert <span class="highlight">Tutors</span></h2>
-      <p class="lead">Our dedicated team of experienced educators is committed to your academic success</p>
+      <p>Our dedicated team of experienced educators is committed to your academic success</p>
     </div>
 
     <?php if (empty($tutors)): ?>
