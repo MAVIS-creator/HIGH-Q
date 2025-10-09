@@ -567,6 +567,81 @@ nav a.active::after {
   line-height: 1.4;
 }
 
+/* Form Enhancements */
+.form-row.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.form-row.checkbox input[type="checkbox"] {
+  margin-top: 4px;
+  width: auto !important;
+}
+
+.form-row.checkbox label {
+  margin-bottom: 0;
+  font-size: 14px;
+  color: var(--hq-gray);
+}
+
+/* Form grid for side-by-side inputs */
+.form-grid {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-grid .form-row {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-grid .form-row input[type="text"],
+.form-grid .form-row input[type="email"],
+.form-grid .form-row input[type="tel"] {
+  width: 280px !important;
+}
+
+/* Program options grid */
+.program-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.program-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.program-option:hover {
+  background: var(--hq-yellow-pale);
+  border-color: var(--hq-yellow);
+}
+
+.program-option input[type="checkbox"] {
+  margin-top: 4px;
+}
+
+.program-option label {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.program-option .price {
+  color: var(--hq-gray);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
 /* Global card animation rules (apply to main page cards but exclude sidebar/asides)
    - default: subtle fade+slide on load
    - hover: different hover style per card type is possible via hover-zoom
