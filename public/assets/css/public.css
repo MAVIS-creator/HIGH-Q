@@ -940,42 +940,44 @@ nav a.active::after {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--hq-yellow-light);
-  padding: 6px 14px;
-  border-radius: 20px;
+  background: var(--hq-yellow);
+  color: var(--hq-black);
+  padding: 8px 16px;
+  border-radius: 50px;
   font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  font-weight: 500;
+  margin-bottom: 24px;
 }
 
 .hero-badge i {
-  color: var(--hq-yellow);
+  font-size: 18px;
+  color: var(--hq-black);
 }
 
 .hero h1 {
-  font-size: 36px;
-  /* slightly reduced */
-  margin: 0 0 14px;
+  font-size: 56px;
+  line-height: 1.1;
+  margin: 0 0 20px;
   font-weight: 800;
   color: var(--hq-black);
-  letter-spacing: 0.4px;
+  letter-spacing: -0.5px;
 }
 
 .hero h1 .accent {
-  color: var(--hq-red);
+  color: var(--hq-yellow);
 }
 
-.hero .lead {
-  font-size: 15px;
-  line-height: 1.55;
+.hero-text {
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--hq-black);
-  max-width: 560px;
+  margin: 0 0 20px;
 }
 
 .hero-ctas {
   display: flex;
   gap: 16px;
-  margin-top: 20px;
+  margin: 32px 0;
 }
 
 .btn-primary {
