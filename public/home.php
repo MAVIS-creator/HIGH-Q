@@ -26,13 +26,13 @@ if (isset($pdo) && $pdo instanceof PDO) {
 ?>
 
 <section class="hero">
-  <div class="container">
-    <div class="hero-left">
+  <div class="hero-inner">
+    <div class="hero-content">
       <div class="hero-badge">
         <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
       </div>
       <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead">
+      <p class="hero-text">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
@@ -56,7 +56,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
     </div>
 
-    <aside class="hero-right">
+    <aside class="hero-features">
       <div class="feature-card">
         <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
