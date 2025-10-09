@@ -250,9 +250,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100 position-relative">
+        <nav class="main-nav">
           <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
+          <a class="brand" href="index.php">
             <div class="logo">
               <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
               <div>
@@ -263,9 +263,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           </a>
 
           <!-- Desktop Navigation -->
-          <div class="collapse navbar-collapse" id="mainNav">
+          <div class="nav-menu" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="navbar-nav mx-auto d-none d-lg-flex">
+            <ul class="nav-list desktop-nav">
               <li class="nav-item">
                 <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
               </li>
