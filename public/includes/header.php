@@ -250,12 +250,12 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100 position-relative">
+        <nav class="site-nav">
           <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
+          <a class="site-logo" href="index.php">
             <div class="logo">
-              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-              <div>
+              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo">
+              <div class="logo-text">
                 <h1>HIGH Q SOLID ACADEMY</h1>
                 <small>Limited</small>
               </div>
@@ -263,48 +263,48 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           </a>
 
           <!-- Desktop Navigation -->
-          <div class="collapse navbar-collapse" id="mainNav">
+          <div class="nav-menu-desktop" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="navbar-nav mx-auto d-none d-lg-flex">
-              <li class="nav-item">
+            <ul class="nav-menu">
+              <li>
                 <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
               </li>
-              <li class="nav-item">
+              <li>
                 <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
               </li>
 
               <!-- Programs Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <li class="has-dropdown">
+                <a class="nav-link" href="#" data-bs-toggle="dropdown">
                   Programs
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
-                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                <ul class="dropdown">
+                  <li><a href="programs.php">Programs</a></li>
+                  <li><a href="exams.php">Exams</a></li>
                 </ul>
               </li>
 
               <!-- News Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <li class="has-dropdown">
+                <a class="nav-link" href="#" data-bs-toggle="dropdown">
                   News
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
-                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                <ul class="dropdown">
+                  <li><a href="news.php">News & Blog</a></li>
+                  <li><a href="community.php">Community</a></li>
                 </ul>
               </li>
 
-              <li class="nav-item">
+              <li>
                 <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
               </li>
-              <li class="nav-item">
+              <li>
                 <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
               </li>
             </ul>
 
             <!-- Register Button -->
-            <div class="header-cta">
+            <div class="nav-cta">
               <a href="register.php" class="btn-primary">Register Now</a>
             </div>
           </div>
