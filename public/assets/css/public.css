@@ -349,8 +349,7 @@ nav a.active::after {
 }
 
 .news-filters input[type="text"] {
-  min-width: 220px;
-  max-width: 380px;
+  width: 320px;
 }
 
 .news-filters .btn-ghost,
