@@ -9,9 +9,7 @@ if (!$token) {
     // show a simple form to paste token/email
     ?>
     <!doctype html>
-    <html><head><meta charset="utf-8"><title>Unsubscribe</title>
-    <link rel="stylesheet" href="./assets/css/responsive-utils.css">
-    </head><body>
+    <html><head><meta charset="utf-8"><title>Unsubscribe</title></head><body>
     <h2>Unsubscribe from newsletter</h2>
     <form method="post">
     <label>Email (optional): <input type="email" name="email" value="<?= htmlspecialchars($email) ?>"></label><br>

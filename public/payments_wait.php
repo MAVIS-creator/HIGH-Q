@@ -44,7 +44,6 @@ $csrf = generateToken('signup_form');
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="./assets/css/payment.css">
-  <link rel="stylesheet" href="./assets/css/responsive-utils.css">
 </head>
 <body>
   <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">

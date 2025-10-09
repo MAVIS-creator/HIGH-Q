@@ -125,7 +125,6 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Chat</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/responsive-utils.css">
     <style>
         :root {
             --hq-yellow: #f5b904;
