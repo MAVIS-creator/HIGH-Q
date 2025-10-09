@@ -1237,14 +1237,21 @@ nav a.active::after {
 
 .programs-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 24px;
+  grid-template-columns: repeat(3, 360px);
+  gap: 30px;
+  margin: 24px auto 30px;
+}
+
+.programs-grid.fixed-width {
+  width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Space above programs so the hero and the programs heading feel separated */
 .programs-content {
-  margin-top: 28px;
+  width: 1140px;
+  margin: 28px auto 0;
 }
 
 
