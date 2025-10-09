@@ -1466,7 +1466,7 @@ nav a.active::after {
   border-radius: 12px;
   box-shadow: 0 12px 34px rgba(11, 37, 64, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  width: 100%;
+  width: 280px;
 }
 
 .sidebar-card .card-icon {
