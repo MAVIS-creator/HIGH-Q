@@ -1164,8 +1164,7 @@ nav a.active::after {
 
 .register-layout .register-main {
   justify-self: start;
-  max-width: 880px;
-  width: 100%;
+  width: 880px;
 }
 
 .register-layout .register-sidebar {
