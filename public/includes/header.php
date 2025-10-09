@@ -250,9 +250,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main nav -->
     <div class="main-header">
       <div class="container">
-        <nav class="main-nav">
+        <nav class="navbar navbar-expand-lg w-100 position-relative">
           <!-- Logo + Name -->
-          <a class="brand" href="index.php">
+          <a class="navbar-brand" href="index.php">
             <div class="logo">
               <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
               <div>
@@ -263,9 +263,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           </a>
 
           <!-- Desktop Navigation -->
-          <div class="nav-menu" id="mainNav">
+          <div class="collapse navbar-collapse" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="nav-list desktop-nav">
+            <ul class="navbar-nav mx-auto d-none d-lg-flex">
               <li class="nav-item">
                 <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
               </li>
@@ -274,24 +274,24 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </li>
 
               <!-- Programs Dropdown -->
-              <li class="nav-item has-dropdown">
-                <a class="nav-link" href="#" data-toggle="dropdown">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                   Programs
                 </a>
-                <ul class="nav-dropdown">
-                  <li><a href="programs.php">Programs</a></li>
-                  <li><a href="exams.php">Exams</a></li>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
                 </ul>
               </li>
 
               <!-- News Dropdown -->
-              <li class="nav-item has-dropdown">
-                <a class="nav-link" href="#" data-toggle="dropdown">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                   News
                 </a>
-                <ul class="nav-dropdown">
-                  <li><a href="news.php">News & Blog</a></li>
-                  <li><a href="community.php">Community</a></li>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="community.php">Community</a></li>
                 </ul>
               </li>
 
@@ -304,13 +304,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </ul>
 
             <!-- Register Button -->
-            <div class="register-btn desktop-only">
-              <a href="register.php" class="btn">Register Now</a>
+            <div class="d-none d-lg-block">
+              <a href="register.php" class="btn btn-primary">Register Now</a>
             </div>
           </div>
 
           <!-- Toggle for mobile - opens offcanvas -->
-          <button class="menu-toggle mobile-only" type="button" data-offcanvas="#mobileNav">
+          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
             <i class="bx bx-menu"></i>
           </button>
         </nav>
