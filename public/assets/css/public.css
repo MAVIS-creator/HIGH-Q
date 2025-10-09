@@ -1157,7 +1157,7 @@ nav a.active::after {
   gap: 28px;
   align-items: start;
   margin: 24px auto 48px;
-  max-width: 1150px;
+  width: 1140px;
   padding-left: 20px;
   padding-right: 20px;
 }
@@ -1450,7 +1450,7 @@ nav a.active::after {
   flex: 1 1 auto;
   min-width: 0;
   /* allow flex items to shrink properly */
-  width: 100%;
+  width: 460px;
   box-sizing: border-box;
 }
 
