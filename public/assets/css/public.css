@@ -1406,7 +1406,7 @@ nav a.active::after {
 
 .register-main textarea {
   min-height: 110px;
-  width: calc(100% - 20px);
+  width: 460px;
   padding: 10px 12px;
   box-sizing: border-box;
 }
