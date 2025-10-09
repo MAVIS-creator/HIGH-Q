@@ -292,13 +292,16 @@ $csrf = generateToken('signup_form');
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
 
 													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
-													<div class="programs-grid">
+													<div class="program-options">
 														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
 														<?php foreach ($courses as $c): ?>
-																<label style="display:block;padding:10px;border:1px solid #eee;border-radius:6px;margin-bottom:8px;">
-																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small style="color:#666">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
-																	<div style="font-size:12px;color:#777;"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
-																</label>
+                              <div class="program-option">
+																<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>">
+                                <div>
+                                  <label><?= htmlspecialchars($c['title']) ?></label>
+                                  <div class="price"><?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?> • <?= htmlspecialchars($c['duration'] ?? '') ?></div>
+                                </div>
+                              </div>
 															<?php endforeach; ?>
 													</div>
 
