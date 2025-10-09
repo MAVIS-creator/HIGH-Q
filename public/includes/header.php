@@ -213,27 +213,22 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/favicon-16x16.png">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- HQ Theme overrides (must come after Bootstrap) -->
-  <link rel="stylesheet" href="./assets/css/theme.css">
-  <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
-  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
-  <!-- Fallback to CDN if local not available -->
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <!-- Font Awesome (fallback for admin/backwards compatibility) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- BoxIcons CSS -->
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- Core CSS for offcanvas functionality -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.onerror=null; this.href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'; this.onload=null;">
 
-  <!-- Custom CSS - Minimal set -->
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="stylesheet" href="./assets/css/animations.css">
   <link rel="stylesheet" href="./assets/css/social-icons.css">
   <link rel="stylesheet" href="./assets/css/offcanvas.css">
-  <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
+  
   <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 </head>
 
 <body>
