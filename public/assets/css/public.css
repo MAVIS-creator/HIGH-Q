@@ -920,7 +920,7 @@ nav a.active::after {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #fff 0%, #fff6d9 100%);
+  background: var(--hq-yellow);
   padding: 60px 0;
 }
 
