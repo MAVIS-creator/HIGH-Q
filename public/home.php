@@ -25,10 +25,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero py-5">
-  <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
-    <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
-      <div class="hero-badge mb-3">
+<section class="hero">
+  <div class="container">
+    <div class="hero-left">
+      <div class="hero-badge">
         <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
       </div>
       <h1>Excellence in <span class="accent">Education</span></h1>
@@ -36,11 +36,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
-      <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
-        <a href="register.php" class="btn btn-primary">Register Now</a>
-        <a href="programs.php" class="btn btn-light text-dark border">See Our Programs</a>
+      <div class="hero-ctas">
+        <a href="register.php" class="btn-primary">Register Now</a>
+        <a href="programs.php" class="btn-ghost">See Our Programs</a>
       </div>
-      <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
+      <div class="hero-stats">
         <div class="text-center">
           <strong>6+</strong>
           <div>Years Experience</div>
