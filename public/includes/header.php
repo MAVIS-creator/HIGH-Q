@@ -217,8 +217,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <!-- Core CSS for offcanvas functionality -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
   
-  <!-- Icons -->
-  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.onerror=null; this.href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css';">
+  <!-- Icons: Prefer local Boxicons if available -->
+  <link rel="stylesheet" href="./assets/vendor/boxicons/css/boxicons.min.css">
+  <!-- Fallback to CDN if local not available -->
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" media="print" onload="this.media='all'; this.onload=null;">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="./assets/vendor/fontawesome/css/all.min.css">
+  <!-- Fallback to CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'; this.onload=null;">
 
   <!-- Custom CSS -->
