@@ -304,22 +304,19 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </ul>
 
             <!-- Register Button -->
-            <div class="d-none d-lg-block">
-              <a href="register.php" class="btn btn-primary">Register Now</a>
+            <div class="header-cta">
+              <a href="register.php" class="btn-primary">Register Now</a>
             </div>
           </div>
 
           <!-- Toggle for mobile - opens offcanvas -->
-          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+          <button class="nav-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
             <i class="bx bx-menu"></i>
           </button>
         </nav>
       </div>
     </div>
   </header>
-
-  <!-- Bootstrap JS Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
   <script>
     // Add .is-loaded after first paint for CSS animations
