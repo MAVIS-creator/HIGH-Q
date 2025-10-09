@@ -106,21 +106,21 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </div>
         </div>
 
-        <div class="ceo-quote text-center text-lg-start">
-          <i class="fas fa-quote-left mb-2"></i>
-          <p class="mb-3">
+        <div class="ceo-quote">
+          <i class="fas fa-quote-left"></i>
+          <p>
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span class="d-block text-end">- Master Adebule Quam</span>
+          <span class="quote-attribution">- Master Adebule Quam</span>
         </div>
       </div>
 
   <div class="ceo-right-column">
-        <div class="ceo-content mb-4">
-          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
-          <p class="mb-3">
+        <div class="ceo-content">
+          <h3>Seasoned Educator & Mentor</h3>
+          <p>
             Master Adebule Quam is a seasoned tutor versed in the teaching profession.
             Over the years, he has produced students who have achieved breathtaking
             academic excellence and excelled in various examinations including GCE,
@@ -133,18 +133,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </p>
         </div>
 
-        <div class="ceo-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-4 mb-4">
-          <div class="stat yellow text-center">
+        <div class="ceo-stats">
+          <div class="stat yellow">
             <i class="fas fa-trophy"></i>
             <strong>305</strong>
             <span>Highest JAMB Score</span>
           </div>
-          <div class="stat red text-center">
+          <div class="stat red">
             <i class="fas fa-users"></i>
             <strong>1000+</strong>
             <span>Students Mentored</span>
           </div>
-          <div class="stat gray text-center">
+          <div class="stat gray">
             <i class="fas fa-user-tie"></i>
             <strong>6+</strong>
             <span>Years Leading</span>
