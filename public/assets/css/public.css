@@ -3351,17 +3351,3 @@ input.form-input {
 }
 
 /* End of file */
-  color: #fff;
-  border: 0;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer
-}
-
-.btn-approve:hover {
-  opacity: 0.95
-}
-
-.forum-reply-form .form-row {
-  margin-bottom: 6px
-}
