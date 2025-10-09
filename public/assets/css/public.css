@@ -514,14 +514,22 @@ nav a.active::after {
 }
 
 /* Achievements Section */
-.achievements-section {
+.achievements-section,
+.achievements {
   padding: 60px 0;
   background: #fff;
 }
 
-.achievements-section .container {
+.achievements-section .container,
+.achievements .container {
   width: 1140px;
   margin: 0 auto;
+}
+
+.achievements-section h2,
+.achievements h2 {
+  text-align: center;
+  margin-bottom: 40px;
 }
 
 .achievements-grid {
@@ -531,13 +539,23 @@ nav a.active::after {
   margin-top: 40px;
 }
 
-.achievement-card {
+.achievement-card,
+.achievement {
   background: #fff;
   padding: 30px;
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 8px 24px rgba(11, 37, 64, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.06);
+  opacity: 1 !important;
+  transform: none !important;
+  transition: transform 0.2s ease;
+}
+
+.achievement-card:hover,
+.achievement:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 12px 30px rgba(11, 37, 64, 0.08);
 }
 
 .achievement-card .icon {
