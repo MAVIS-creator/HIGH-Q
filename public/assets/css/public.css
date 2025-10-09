@@ -3329,6 +3329,32 @@ input.form-input {
 
 .btn-approve {
   background: #111827;
+}
+
+/* News meta stats */
+.meta-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.meta-likes, .meta-comments {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-likes i, .meta-comments i {
+  font-size: 14px;
+  color: var(--hq-gray);
+}
+
+.news-footer {
+  width: 1140px;
+  margin: 32px auto 0;
+  text-align: center;
+}
+
+/* End of file */
   color: #fff;
   border: 0;
   padding: 8px 12px;
