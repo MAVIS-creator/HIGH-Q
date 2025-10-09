@@ -274,24 +274,24 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </li>
 
               <!-- Programs Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#" data-toggle="dropdown">
                   Programs
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
-                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                <ul class="nav-dropdown">
+                  <li><a href="programs.php">Programs</a></li>
+                  <li><a href="exams.php">Exams</a></li>
                 </ul>
               </li>
 
               <!-- News Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#" data-toggle="dropdown">
                   News
                 </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
-                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                <ul class="nav-dropdown">
+                  <li><a href="news.php">News & Blog</a></li>
+                  <li><a href="community.php">Community</a></li>
                 </ul>
               </li>
 
@@ -304,13 +304,13 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </ul>
 
             <!-- Register Button -->
-            <div class="d-none d-lg-block">
-              <a href="register.php" class="btn btn-primary">Register Now</a>
+            <div class="register-btn desktop-only">
+              <a href="register.php" class="btn">Register Now</a>
             </div>
           </div>
 
           <!-- Toggle for mobile - opens offcanvas -->
-          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+          <button class="menu-toggle mobile-only" type="button" data-offcanvas="#mobileNav">
             <i class="bx bx-menu"></i>
           </button>
         </nav>
