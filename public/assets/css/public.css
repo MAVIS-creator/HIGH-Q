@@ -488,14 +488,19 @@ nav a.active::after {
   font-weight: 500;
 }
 
-.form-row input[type="text"],
-.form-row input[type="email"],
-.form-row input[type="password"],
-.form-row input[type="tel"],
-.form-row input[type="number"],
-.form-row select,
-.form-row textarea {
-  width: 320px;
+.register-main .form-row input[type="text"],
+.register-main .form-row input[type="email"],
+.register-main .form-row input[type="password"],
+.register-main .form-row input[type="tel"],
+.register-main .form-row input[type="number"],
+.register-main .form-row select,
+.register-main .form-row textarea,
+.contact-form .form-row input[type="text"],
+.contact-form .form-row input[type="email"],
+.contact-form .form-row input[type="tel"],
+.contact-form .form-row select,
+.contact-form .form-row textarea {
+  width: 320px !important;
   padding: 12px;
   border: 1px solid #e6e6e6;
   border-radius: 6px;
