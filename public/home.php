@@ -300,9 +300,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 <section class="news-section">
   <div class="container">
-    <div class="ceo-heading">
+    <div class="section-header">
       <h2>Latest <span class="highlight">News & Updates</span></h2>
-      <p class="muted">Stay informed with our latest announcements and blog posts.</p>
+      <p>Stay informed with our latest announcements and blog posts.</p>
     </div>
 
     <?php if (empty($latestPosts)): ?>
@@ -317,15 +317,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
             <div class="news-body">
               <h4><a href="./post.php?id=<?= intval($post['id']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?? '') ?></p>
-              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
-                <span class="news-count" style="margin-left:12px;"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
-                <span class="news-count" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
+              <div class="news-meta">
+                <time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
+                <div class="meta-stats">
+                  <span class="meta-likes"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
+                  <span class="meta-comments"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
+                </div>
               </div>
             </div>
           </article>
         <?php endforeach; ?>
       </div>
-      <div class="news-cta" style="text-align:center;margin-top:18px;">
+      <div class="news-footer">
         <a href="news.php" class="btn-ghost">View All News</a>
       </div>
     <?php endif; ?>
