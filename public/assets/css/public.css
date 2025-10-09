@@ -467,6 +467,101 @@ nav a.active::after {
 
   /* End animation utilities */
 
+/* Form styles */
+.register-form,
+.contact-form {
+  width: 720px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(11, 37, 64, 0.04);
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+.form-row label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="password"],
+.form-row input[type="tel"],
+.form-row input[type="number"],
+.form-row select,
+.form-row textarea {
+  width: 460px;
+  padding: 12px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-row textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+/* Achievements Section */
+.achievements-section {
+  padding: 60px 0;
+  background: #fff;
+}
+
+.achievements-section .container {
+  width: 1140px;
+  margin: 0 auto;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.achievement-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(11, 37, 64, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.achievement-card .icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--hq-yellow-pale);
+  border-radius: 12px;
+  color: var(--hq-yellow);
+  font-size: 28px;
+}
+
+.achievement-card h3 {
+  color: var(--hq-black);
+  font-size: 36px;
+  margin: 0 0 10px;
+  font-weight: 800;
+}
+
+.achievement-card p {
+  color: var(--hq-gray);
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 /* Global card animation rules (apply to main page cards but exclude sidebar/asides)
    - default: subtle fade+slide on load
    - hover: different hover style per card type is possible via hover-zoom
