@@ -1083,17 +1083,6 @@ nav a.active::after {
   color: #666;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .hero {
-    flex-direction: column;
-  }
-
-  .hero-right {
-    width: 100%;
-  }
-}
-
 .brand-logo {
   width: 40px;
   height: 40px;
