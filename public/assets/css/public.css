@@ -191,12 +191,16 @@ nav a.active::after {
 
 /* CEO grid (outside nav) */
 .ceo-grid {
-  display: grid;
-  grid-template-columns: 520px 1fr;
-  /* wider left card like reference */
-  gap: 48px;
-  align-items: start;
-  margin-bottom: 30px;
+  display: flex;
+  width: 1160px;
+  margin: 0 auto 30px;
+}
+.ceo-left-column {
+  width: 520px;
+  margin-right: 48px;
+}
+.ceo-right-column {
+  width: 592px;
 }
 
 .ceo-left-column {
