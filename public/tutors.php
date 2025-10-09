@@ -153,23 +153,23 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 <!-- Achievements Section -->
 <section class="achievements py-5">
   <div class="container">
-    <div class="ceo-heading text-center mb-4">
+    <div class="section-heading">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="row achievements-grid gy-4 gx-3">
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+    <div class="achievements-grid">
+      <div class="achievement">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+      <div class="achievement">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+      <div class="achievement">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+      <div class="achievement">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
