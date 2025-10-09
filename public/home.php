@@ -151,8 +151,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </div>
         </div>
 
-        <div class="ceo-btn text-center text-lg-start">
-          <a href="about.php" class="btn btn-dark">Learn More About Our Story</a>
+        <div class="ceo-btn">
+          <a href="about.php" class="btn-dark">Learn More About Our Story</a>
         </div>
       </div>
     </div>
