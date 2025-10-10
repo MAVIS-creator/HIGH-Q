@@ -251,28 +251,53 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
     <!-- Main Navigation -->
     <nav class="main-nav">
+      <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
       <div class="container">
         <!-- Logo -->
-        <a href="index.php" class="logo">
-          <img src="./assets/img/hq-logo.png" alt="HIGH Q Logo">
+        <a href="index.php" class="site-logo logo">
+          <img src="./assets/images/hq-logo.jpeg" alt="HIGH Q Logo" style="width:40px;height:40px;object-fit:contain;margin-right:8px;">
           <div class="logo-text">
             <h1>HIGH Q SOLID ACADEMY</h1>
             <small>Limited</small>
           </div>
         </a>
 
-        <!-- Navigation Menu -->
-        <ul class="nav-menu">
-          <li><a href="index.php" class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>">Home</a></li>
-          <li><a href="about.php" class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a></li>
-          <li><a href="programs.php" class="nav-link <?= $cur === 'programs.php' ? 'active' : '' ?>">Programs</a></li>
-          <li><a href="news.php" class="nav-link <?= $cur === 'news.php' ? 'active' : '' ?>">News</a></li>
-          <li><a href="admission.php" class="nav-link <?= $cur === 'admission.php' ? 'active' : '' ?>">Admission</a></li>
-          <li><a href="contact.php" class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a></li>
-        </ul>
+        <!-- Desktop Navigation (with dropdowns) -->
+        <div class="nav-menu-desktop" id="mainNav">
+          <ul class="nav-menu">
+            <li><a href="index.php" class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>">Home</a></li>
+            <li><a href="about.php" class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a></li>
 
-        <!-- Register Button -->
-        <a href="register.php" class="register-btn">Register Now</a>
+            <li class="has-dropdown">
+              <a class="nav-link" href="#" data-bs-toggle="dropdown">Programs</a>
+              <ul class="dropdown">
+                <li><a href="programs.php">Programs</a></li>
+                <li><a href="exams.php">Exams</a></li>
+              </ul>
+            </li>
+
+            <li class="has-dropdown">
+              <a class="nav-link" href="#" data-bs-toggle="dropdown">News</a>
+              <ul class="dropdown">
+                <li><a href="news.php">News & Blog</a></li>
+                <li><a href="community.php">Community</a></li>
+              </ul>
+            </li>
+
+            <li><a href="register.php" class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>">Admission</a></li>
+            <li><a href="contact.php" class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a></li>
+          </ul>
+
+          <!-- Register Button -->
+          <div class="nav-cta">
+            <a href="register.php" class="btn-primary">Register Now</a>
+          </div>
+        </div>
+
+        <!-- Toggle for mobile - opens offcanvas -->
+        <button class="nav-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+          <i class="bx bx-menu"></i>
+        </button>
       </div>
     </nav>
 
