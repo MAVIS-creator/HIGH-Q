@@ -33,6 +33,10 @@ body {
   overflow-x: hidden;
 }
 
+/* global typographic tone-down: headings slightly bold but not ultra-heavy */
+h1, h2, h3 { font-weight: 700; }
+body, p, .muted, .lead { font-weight: 400; }
+
 /* Container */
 .container {
   display: flex;
@@ -2920,19 +2924,18 @@ input.form-input {
 }
 
 .programs-cta .btn-primary {
-  background: #fff;
-  color: var(--hq-orange);
-  padding: 12px 20px;
-  border-radius: 10px;
+  background: #d84040; /* red */
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: 800;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
 
 .programs-cta .btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.24);
-  color: rgba(255,255,255,0.92);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.12);
+  color: var(--hq-black);
   padding: 10px 18px;
   border-radius: 8px;
   text-decoration: none;
