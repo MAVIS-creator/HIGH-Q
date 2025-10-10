@@ -250,54 +250,50 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     </div>
 
     <!-- Main Navigation -->
-    <nav class="main-nav">
+    <nav class="main-nav navbar navbar-expand-lg">
       <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
       <div class="container">
-        <!-- Logo -->
-        <a href="index.php" class="site-logo logo">
-          <img src="./assets/images/hq-logo.jpeg" alt="HIGH Q Logo" style="width:40px;height:40px;object-fit:contain;margin-right:8px;">
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+          <img src="/assets/images/hq-logo.jpeg" alt="HIGH Q Logo" style="width:40px;height:40px;object-fit:contain;margin-right:10px;">
           <div class="logo-text">
-            <h1>HIGH Q SOLID ACADEMY</h1>
-            <small>Limited</small>
+            <h1 style="font-size:16px;margin:0;">HIGH Q SOLID ACADEMY</h1>
+            <small style="font-size:12px;color:var(--hq-gray);">Limited</small>
           </div>
         </a>
 
-        <!-- Desktop Navigation (with dropdowns) -->
-        <div class="nav-menu-desktop" id="mainNav">
-          <ul class="nav-menu">
-            <li><a href="index.php" class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>">Home</a></li>
-            <li><a href="about.php" class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a></li>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavCollapse" aria-controls="mainNavCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <li class="has-dropdown">
-              <a class="nav-link" href="#" data-bs-toggle="dropdown">Programs</a>
-              <ul class="dropdown">
-                <li><a href="programs.php">Programs</a></li>
-                <li><a href="exams.php">Exams</a></li>
+        <div class="collapse navbar-collapse" id="mainNavCollapse">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+            <li class="nav-item"><a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="programsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Programs</a>
+              <ul class="dropdown-menu" aria-labelledby="programsDropdown">
+                <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                <li><a class="dropdown-item" href="exams.php">Exams</a></li>
               </ul>
             </li>
 
-            <li class="has-dropdown">
-              <a class="nav-link" href="#" data-bs-toggle="dropdown">News</a>
-              <ul class="dropdown">
-                <li><a href="news.php">News & Blog</a></li>
-                <li><a href="community.php">Community</a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">News</a>
+              <ul class="dropdown-menu" aria-labelledby="newsDropdown">
+                <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                <li><a class="dropdown-item" href="community.php">Community</a></li>
               </ul>
             </li>
 
-            <li><a href="register.php" class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>">Admission</a></li>
-            <li><a href="contact.php" class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a></li>
+            <li class="nav-item"><a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+            <li class="nav-item"><a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
           </ul>
 
-          <!-- Register Button -->
-          <div class="nav-cta">
-            <a href="register.php" class="btn-primary">Register Now</a>
+          <div class="d-flex ms-auto">
+            <a href="register.php" class="btn register-btn">Register Now</a>
           </div>
         </div>
-
-        <!-- Toggle for mobile - opens offcanvas -->
-        <button class="nav-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
-          <i class="bx bx-menu"></i>
-        </button>
       </div>
     </nav>
 
