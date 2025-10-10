@@ -255,7 +255,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="index.php">
           <span class="logo-badge" aria-hidden="true">
-            <img src="/assets/images/hq-logo.jpeg" alt="HIGH Q Logo" />
+            <img src="./assets/images/hq-logo.jpeg" alt="HIGH Q Logo" />
           </span>
           <div class="logo-text">
             <h1 style="font-size:16px;margin:0;">HIGH Q SOLID ACADEMY</h1>
