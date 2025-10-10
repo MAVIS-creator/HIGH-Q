@@ -226,8 +226,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/public.css">
-  <link rel="stylesheet" href="./assets/css/responsive.css">
-  <link rel="stylesheet" href="./assets/css/ceo-responsive.css">
+  <!-- <link rel="stylesheet" href="./assets/css/responsive.css">
+  <link rel="stylesheet" href="./assets/css/ceo-responsive.css"> -->
   <link rel="stylesheet" href="./assets/css/animations.css">
   <link rel="stylesheet" href="./assets/css/social-icons.css">
   <link rel="stylesheet" href="./assets/css/post-toc.css">
