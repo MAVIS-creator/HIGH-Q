@@ -350,7 +350,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       </div>
     </div>
   </header>
-  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- WOW.js + Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
   <script>
     // Add .is-loaded after first paint for CSS animations
     document.addEventListener('DOMContentLoaded', function(){
