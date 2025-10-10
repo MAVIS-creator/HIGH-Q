@@ -35,30 +35,29 @@ body {
 
 /* Container */
 .container {
-  width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Base text sizes */
-h1 { font-size: 40px; }
-h2 { font-size: 32px; }
-h3 { font-size: 28px; }
-p { font-size: 16px; }
-
-/* Top bar */
-.top-bar {
-  background: var(--hq-black);
-  color: #fff;
-  font-size: 14px;
-  padding: 5px 0;
-}
-
-.top-bar .container {
   display: flex;
-  justify-content: flex-start;
-  gap: 20px;
-  align-items: center;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.stat-item {
+  background: transparent; /* remove white block */
+  padding: 18px 22px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 140px;
+}
+
+.stat-item strong {
+  font-size: 26px;
+  display: block;
+  color: var(--hq-yellow-dark, var(--hq-yellow));
+  font-weight: 700;
+}
+
+.stat-item div {
+  color: rgba(23,23,22,0.7);
+  font-size: 13px;
 }
 
 .top-bar .motto {
@@ -3395,6 +3394,31 @@ input.form-input {
   flex-direction: column;
   border-radius: 12px;
   text-align: center;
+}
+
+/* Slightly lighter card title weight and subject/tag pill styling */
+.tutor-card .tutor-body h3,
+.post-card h3,
+.program-card h4 {
+  font-weight: 700;
+  color: #111;
+}
+
+.tutor-card .subjects,
+.post-card .tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.tutor-card .subjects .pill,
+.post-card .tags .pill {
+  background: #111;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 24px;
+  font-size: 13px;
 }
 
 /* Two-column inline form rows */
