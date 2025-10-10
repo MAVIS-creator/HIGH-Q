@@ -26,13 +26,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
 ?>
 
 <section class="hero">
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
-      </div>
+  <div class="container">
+    <div class="hero-left">
+      <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
       <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="hero-text">
+      <p class="lead">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
@@ -41,22 +39,19 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <a href="programs.php" class="btn-ghost">See Our Programs</a>
       </div>
       <div class="hero-stats">
-        <div class="stat-item">
-          <strong>6+</strong>
+        <div><strong>6+</strong>
           <div>Years Experience</div>
         </div>
-        <div class="stat-item">
-          <strong>1000+</strong>
+        <div><strong>1000+</strong>
           <div>Students Trained</div>
         </div>
-        <div class="stat-item">
-          <strong>305</strong>
+        <div><strong>305</strong>
           <div>Highest JAMB Score</div>
         </div>
       </div>
     </div>
 
-    <aside class="hero-features">
+    <aside class="hero-right">
       <div class="feature-card">
         <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
@@ -86,6 +81,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <section class="ceo-hero">
   <div class="container">
 
+    <!-- Top Heading -->
     <div class="ceo-heading">
       <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
       <p>
@@ -94,45 +90,52 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
+    <!-- Two Column Layout with Bootstrap -->
     <div class="ceo-grid">
       <div class="ceo-left-column">
+        <!-- Left Card -->
         <div class="ceo-card">
           <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
           </div>
           <div class="ceo-info">
-            <h3>Master Adebule Quam</h3>
-            <p class="role">CEO & Lead Tutor</p>
+            <h3 class="mb-1">Master Adebule Quam</h3>
+            <p class="role mb-0">CEO & Lead Tutor</p>
           </div>
         </div>
 
+        <!-- Quote Box -->
         <div class="ceo-quote">
-          <i class="fas fa-quote-left"></i>
-          <p>
+          <i class="fas fa-quote-left mb-2"></i>
+          <p class="mb-3">
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span class="quote-attribution">- Master Adebule Quam</span>
+          <span class="d-block text-end">- Master Adebule Quam</span>
         </div>
       </div>
 
-  <div class="ceo-right-column">
+      <div class="ceo-right-column">
+        <!-- Right Content -->
         <div class="ceo-content">
-          <h3>Seasoned Educator & Mentor</h3>
-          <p>
-            Master Adebule Quam is a seasoned tutor versed in the teaching profession.
-            Over the years, he has produced students who have achieved breathtaking
-            academic excellence and excelled in various examinations including GCE,
-            WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
-          </p>
-          <p>
-            He believes in the school of thought that education is the force to push
-            one ahead of others. Under his guidance, High Q Academy has blossomed into
-            a hub of academic excellence and technological proficiency.
-          </p>
+          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
+          <div class="mb-4">
+            <p class="mb-3">
+              Master Adebule Quam is a seasoned tutor versed in the teaching profession.
+              Over the years, he has produced students who have achieved breathtaking
+              academic excellence and excelled in various examinations including GCE,
+              WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
+            </p>
+            <p>
+              He believes in the school of thought that education is the force to push
+              one ahead of others. Under his guidance, High Q Academy has blossomed into
+              a hub of academic excellence and technological proficiency.
+            </p>
+          </div>
         </div>
 
+        <!-- Stats Grid -->
         <div class="ceo-stats">
           <div class="stat yellow">
             <i class="fas fa-trophy"></i>
@@ -168,7 +171,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <p>We offer comprehensive educational programs designed to ensure our students excel academically and develop essential digital skills for the modern world.</p>
     </div>
 
-    <div class="programs-grid fixed-width">
+    <div class="programs-grid">
       <?php if (empty($programs)): ?>
         <p>No programs have been published yet. Check back later.</p>
       <?php else: ?>
@@ -259,16 +262,12 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <section class="programs-cta">
   <div class="container">
     <div class="programs-cta-inner">
-        <h3>Ready to Start Your Success Journey?</h3>
-        <p class="cta-text">
-          Join our proven programs and take the first step towards academic excellence. 
-          Our expert tutors are ready to guide you to success.
-        </p>
-
-        <div class="cta-buttons">
-          <a href="register.php" class="btn-primary">Register for Programs</a>
-          <a href="programs.php" class="btn-outline">View All Programs</a>
-        </div>
+      <h3>Ready to Start Your Success Journey?</h3>
+      <p>Join our proven programs and take the first step towards academic excellence. Our expert tutors are ready to guide you to success.</p>
+      <div class="programs-cta-actions">
+        <a href="register.php" class="btn-primary">Register for Programs</a>
+        <a href="programs.php" class="btn-ghost">View All Programs</a>
+      </div>
     </div>
   </div>
 </section>
@@ -300,9 +299,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 <section class="news-section">
   <div class="container">
-    <div class="section-header">
+    <div class="ceo-heading">
       <h2>Latest <span class="highlight">News & Updates</span></h2>
-      <p>Stay informed with our latest announcements and blog posts.</p>
+      <p class="muted">Stay informed with our latest announcements and blog posts.</p>
     </div>
 
     <?php if (empty($latestPosts)): ?>
@@ -317,18 +316,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
             <div class="news-body">
               <h4><a href="./post.php?id=<?= intval($post['id']) ?>"><?= htmlspecialchars($post['title']) ?></a></h4>
               <p class="news-excerpt"><?= htmlspecialchars($post['excerpt'] ?? '') ?></p>
-              <div class="news-meta">
-                <time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
-                <div class="meta-stats">
-                  <span class="meta-likes"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
-                  <span class="meta-comments"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
-                </div>
+              <div class="news-meta"><time><?= date('M j, Y', strtotime($post['created_at'])) ?></time>
+                <span class="news-count" style="margin-left:12px;"><i class="fa-regular fa-heart"></i> <?= intval($post['likes'] ?? 0) ?></span>
+                <span class="news-count" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <?= intval($post['comments_count'] ?? 0) ?></span>
               </div>
             </div>
           </article>
         <?php endforeach; ?>
       </div>
-      <div class="news-footer">
+      <div class="news-cta" style="text-align:center;margin-top:18px;">
         <a href="news.php" class="btn-ghost">View All News</a>
       </div>
     <?php endif; ?>
