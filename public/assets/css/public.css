@@ -70,33 +70,51 @@ p { font-size: 16px; }
   background: #fff;
   position: relative;
   z-index: 1000;
+  border-bottom: 1px solid #eee;
 }
 
 .main-nav {
-  border-bottom: 2px solid var(--hq-yellow);
-  padding: 15px 0;
+  padding: 10px 0;
 }
 
 .main-nav .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.nav-section {
+/* Logo styles */
+.logo {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  flex: 1;
+  gap: 10px;
+  padding: 0;
+  margin-right: 30px;
 }
 
-.nav-left {
-  justify-content: flex-end;
+.logo img {
+  width: 40px;
+  height: 40px;
 }
 
-.nav-right {
-  justify-content: flex-start;
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-text h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.logo-text small {
+  font-size: 12px;
+  color: var(--hq-gray);
 }
 
 .nav-link {
