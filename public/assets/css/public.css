@@ -3268,7 +3268,6 @@ input.form-input {
   object-fit: cover;
   border-radius: 6px;
   display: block;
-  margin-bottom: 10px;
 }
 
 /* ensure all thumb images are block-level and responsive */
@@ -3357,6 +3356,8 @@ input.form-input {
   flex-direction: column;
   border-radius: 12px;
   text-align: center;
+}
+
 /* Two-column inline form rows */
 .form-row.form-inline {
   display: flex;
@@ -3400,346 +3401,32 @@ input.form-input {
 .doc-page ul { margin-left: 20px; }
 .doc-page a { color: #c0392b; text-decoration: underline; }
 .doc-page time { color: #666; display: block; margin-bottom: 12px; }
-  margin: 0 auto; /* ensure centered in older browsers */
-}
 
-.tutor-lead .tutor-thumb {
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-
-.tutor-lead .tutor-thumb img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  box-shadow: 0 6px 18px rgba(11, 37, 64, 0.06);
+/* Toggler icon fallback (if Bootstrap icons not loaded) */
+.navbar-toggler {
   border: none;
-  bottom: -60px;
 }
-
-.tutor-lead .tutor-body {
-  padding: 72px 16px 20px;
-}
-
-.qualification-line {
-  margin: 2px 0;
-  color: #d99a00;
-  /* gold-like color */
-  font-weight: 600;
-}
-
-/* Ensure thumbnails center the circular avatar similar to provided image */
-.tutor-thumb {
-  background-position: center;
-}
-
-.tutor-body {
-  padding: 48px 16px 16px;
-  /* leave room at top for floating avatar */
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-
-
-.tutor-body h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #111;
-  font-weight: 700;
-}
-
-.tutor-body .role {
-  margin: 0;
-  color: #d99a00;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.tutor-short {
-  color: #666;
-  font-size: 0.95rem;
-  line-height: 1.35
-}
-
-.subjects {
-  margin-top: 8px
-}
-
-.subjects .tag {
+.navbar-toggler-icon {
   display: inline-block;
-  background: #111;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  margin-right: 8px;
-  margin-bottom: 8px;
+  width: 24px;
+  height: 2px;
+  background: var(--hq-black);
+  position: relative;
 }
-
-
-
-.program-title-link {
-  text-decoration: none;
-  color: var(--hq-black);
-  font-weight: 800;
-  transition: all 0.25s ease-in-out;
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: var(--hq-black);
 }
+.navbar-toggler-icon::before { top: -7px; }
+.navbar-toggler-icon::after { top: 7px; }
 
-.program-title-link:hover {
-  color: var(--hq-yellow);
-  text-decoration: underline;
-  text-underline-offset: 4px;
+/* dropdown shadow & z-index */
+.dropdown-menu {
+  box-shadow: 0 8px 24px rgba(11,37,64,0.08);
+  border: 1px solid rgba(0,0,0,0.06);
 }
-
-/* Comment tree styling */
-.comment {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 12px 0
-}
-
-.comment .comment-head {
-  display: flex;
-  align-items: center;
-  gap: 8px
-}
-
-.comment .comment-body {
-  margin-top: 8px;
-  color: #333
-}
-
-.comment .comment-actions {
-  margin-top: 8px
-}
-
-.comment.reply {
-  margin-left: 28px;
-  border-left: 2px solid #f4f4f4;
-  padding-left: 12px;
-  background: #fbfbfb
-}
-
-.comment .like-btn {
-  background: none;
-  border: 0;
-  color: #666;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px
-}
-
-.comment .reply-btn {
-  background: none;
-  border: 0;
-  color: #666;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  margin-left:6px;
-}
-
-.comment .like-btn.liked {
-  color: crimson
-}
-
-.comment .meta {
-  font-size: 13px;
-  color: #888
-}
-
-/* small avatar circle */
-.comment .avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--hq-yellow-pale);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: var(--hq-black)
-}
-
-.pending-comment {
-  opacity: 0.7;
-}
-
-/* Question cards */
-.forum-question {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  background: #fff;
-}
-
-#pending-notice.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Header row */
-.post-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-/* Avatar */
-.post-header .avatar,
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--hq-yellow-pale);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: var(--hq-black);
-}
-
-/* Username + time */
-.post-meta .username {
-  font-weight: 600;
-  color: var(--hq-black);
-}
-
-.post-meta .time {
-  font-size: 13px;
-  color: var(--hq-gray);
-  margin-left: 4px;
-}
-
-/* Content */
-.post-body {
-  color: #222;
-  line-height: 1.5;
-  margin-bottom: 10px;
-}
-
-/* Reply button */
-.post-actions {
-  margin-top: 6px;
-}
-
-.post-actions button {
-  border: none;
-  background: none;
-  color: var(--hq-blue-white);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.post-actions button:hover {
-  background: #f4f4f4;
-}
-
-/* Replies */
-.forum-reply {
-  margin-left: 50px;
-  margin-top: 12px;
-  border-left: 3px solid #f4f4f4;
-  padding-left: 12px;
-  background: #fbfbfb;
-  border-radius: 6px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-/* Reply form */
-.forum-reply-form {
-  margin-left: 50px;
-  margin-top: 12px;
-  padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  background: #fafafa;
-}
-
-.forum-reply-form .form-input,
-.forum-reply-form .form-textarea {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-/* Forum / community styles */
-.forum-question {
-  border: 1px solid #eee;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  background: #fff
-}
-
-.forum-question .fq-head {
-  font-weight: 700;
-  margin-bottom: 6px
-}
-
-.forum-question .fq-body {
-  margin-bottom: 8px;
-  color: #333
-}
-
-.forum-reply {
-  margin-left: 20px;
-  border-left: 2px solid #f4f4f4;
-  padding-left: 12px;
-  margin-top: 8px;
-  background: #fbfbfb;
-  padding: 10px;
-  border-radius: 6px
-}
-
-.reply-toggle {
-  background: none;
-  border: 0;
-  color: #666;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 6px
-}
-
-.reply-toggle:hover {
-  background: rgba(0, 0, 0, 0.03)
-}
-
-.btn-approve {
-  background: #111827;
-}
-
-/* News meta stats */
-.meta-stats {
-  display: flex;
-  gap: 12px;
-}
-
-.meta-likes, .meta-comments {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.meta-likes i, .meta-comments i {
-  font-size: 14px;
-  color: var(--hq-gray);
-}
-
-.news-footer {
-  width: 1140px;
-  margin: 32px auto 0;
-  text-align: center;
-}
-
-/* End of file */
