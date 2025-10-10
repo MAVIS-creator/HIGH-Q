@@ -2,6 +2,25 @@
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
+<style>
+  /* Mobile-only: center history logo and add small gap under it without affecting desktop */
+  @media (max-width: 767.98px) {
+    .history-logo {
+      display: flex !important;
+      justify-content: center !important; /* center horizontally */
+      align-items: center !important;
+      text-align: center;
+      margin-bottom: 0.75rem; /* small gap similar to a <br> */
+    }
+
+    /* make the logo-card slightly smaller on very small screens if needed */
+    .history-logo .logo-card img {
+      max-width: 140px;
+      height: auto;
+    }
+  }
+</style>
+
 <section class="about-hero">
   <div class="about-hero-overlay"></div>
   <div class="container about-hero-inner">
