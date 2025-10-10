@@ -2870,29 +2870,33 @@ input.form-input {
 
 /* Programs CTA banner */
 .programs-cta {
-  background: var(--hq-yellow-pale);
+  background: transparent; /* make the section itself transparent so the inner card can float */
   padding: 60px 0;
 }
 
 .programs-cta-inner {
-  width: 800px;
+  width: 820px;
   margin: 0 auto;
   text-align: center;
+  background: linear-gradient(180deg, var(--hq-orange) 0%, var(--hq-orange-dark) 100%);
+  border-radius: 18px;
+  padding: 36px 40px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
 .programs-cta h3 {
-  color: var(--hq-black);
-  font-size: 32px;
-  margin: 0 0 20px;
+  color: #fff;
+  font-size: 34px;
+  margin: 0 0 10px;
   font-weight: 800;
 }
 
 .programs-cta .cta-text {
-  color: var(--hq-gray);
-  font-size: 18px;
+  color: rgba(255,255,255,0.92);
+  font-size: 16px;
   line-height: 1.6;
-  margin: 0 0 32px;
-  width: 700px;
+  margin: 0 0 22px;
+  max-width: 760px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -2916,29 +2920,30 @@ input.form-input {
 }
 
 .programs-cta .btn-primary {
-  background: var(--hq-red);
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 8px;
+  background: #fff;
+  color: var(--hq-orange);
+  padding: 12px 20px;
+  border-radius: 10px;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
 
 .programs-cta .btn-ghost {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.7);
-  color: var(--hq-black);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.24);
+  color: rgba(255,255,255,0.92);
   padding: 10px 18px;
   border-radius: 8px;
   text-decoration: none;
 }
 
 .programs-cta .btn-primary:hover {
-  background: #d13a20;
+  transform: translateY(-2px);
 }
 
 .programs-cta .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 
