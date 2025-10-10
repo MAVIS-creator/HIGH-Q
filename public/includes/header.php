@@ -252,31 +252,27 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <!-- Main Navigation -->
     <nav class="main-nav">
       <div class="container">
-        <!-- Left Navigation -->
-        <div class="nav-section nav-left">
-          <a href="index.php" class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>">Home</a>
-          <a href="about.php" class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a>
-          <a href="programs.php" class="nav-link <?= $cur === 'programs.php' ? 'active' : '' ?>">Programs</a>
-        </div>
-
         <!-- Logo -->
         <a href="index.php" class="logo">
-          <div class="logo-wrap">
-            <img src="./assets/img/hq-logo.png" alt="HIGH Q Logo" class="logo-img">
-            <div class="logo-text">
-              <h1>HIGH Q SOLID ACADEMY</h1>
-              <small>Limited</small>
-            </div>
+          <img src="./assets/img/hq-logo.png" alt="HIGH Q Logo">
+          <div class="logo-text">
+            <h1>HIGH Q SOLID ACADEMY</h1>
+            <small>Limited</small>
           </div>
         </a>
 
-        <!-- Right Navigation -->
-        <div class="nav-section nav-right">
-          <a href="news.php" class="nav-link <?= $cur === 'news.php' ? 'active' : '' ?>">News</a>
-          <a href="admission.php" class="nav-link <?= $cur === 'admission.php' ? 'active' : '' ?>">Admission</a>
-          <a href="contact.php" class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a>
-          <a href="register.php" class="register-btn">Register Now</a>
-        </div>
+        <!-- Navigation Menu -->
+        <ul class="nav-menu">
+          <li><a href="index.php" class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>">Home</a></li>
+          <li><a href="about.php" class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>">About Us</a></li>
+          <li><a href="programs.php" class="nav-link <?= $cur === 'programs.php' ? 'active' : '' ?>">Programs</a></li>
+          <li><a href="news.php" class="nav-link <?= $cur === 'news.php' ? 'active' : '' ?>">News</a></li>
+          <li><a href="admission.php" class="nav-link <?= $cur === 'admission.php' ? 'active' : '' ?>">Admission</a></li>
+          <li><a href="contact.php" class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>">Contact</a></li>
+        </ul>
+
+        <!-- Register Button -->
+        <a href="register.php" class="register-btn">Register Now</a>
       </div>
     </nav>
 
