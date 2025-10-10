@@ -280,75 +280,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       </div>
     </nav>
 
-    <!-- Main nav -->
-    <div class="main-header">
-      <div class="container">
-        <nav class="site-nav">
-          <!-- Logo + Name -->
-          <a class="site-logo" href="index.php">
-            <div class="logo">
-              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo">
-              <div class="logo-text">
-                <h1>HIGH Q SOLID ACADEMY</h1>
-                <small>Limited</small>
-              </div>
-            </div>
-          </a>
 
-          <!-- Desktop Navigation -->
-          <div class="nav-menu-desktop" id="mainNav">
-            <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="nav-menu">
-              <li>
-                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
-              </li>
-              <li>
-                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
-              </li>
-
-              <!-- Programs Dropdown -->
-              <li class="has-dropdown">
-                <a class="nav-link" href="#" data-bs-toggle="dropdown">
-                  Programs
-                </a>
-                <ul class="dropdown">
-                  <li><a href="programs.php">Programs</a></li>
-                  <li><a href="exams.php">Exams</a></li>
-                </ul>
-              </li>
-
-              <!-- News Dropdown -->
-              <li class="has-dropdown">
-                <a class="nav-link" href="#" data-bs-toggle="dropdown">
-                  News
-                </a>
-                <ul class="dropdown">
-                  <li><a href="news.php">News & Blog</a></li>
-                  <li><a href="community.php">Community</a></li>
-                </ul>
-              </li>
-
-              <li>
-                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
-              </li>
-              <li>
-                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
-              </li>
-            </ul>
-
-            <!-- Register Button -->
-            <div class="nav-cta">
-              <a href="register.php" class="btn-primary">Register Now</a>
-            </div>
-          </div>
-
-          <!-- Toggle for mobile - opens offcanvas -->
-          <button class="nav-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
-            <i class="bx bx-menu"></i>
-          </button>
-        </nav>
-      </div>
-    </div>
   </header>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
