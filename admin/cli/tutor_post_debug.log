@@ -459,3 +459,98 @@ CSRF_OK: 1
 CSRF_PROVIDED: 21734f303b2e113ff.EDQPu3xJPvVy6MB8maghSMGm8wFau1lYjc-aqj9TlaI.WFBolgsoYZM2pPcX0vhyBI_vgjkA0REH96zM5WcbxJNAZWnfDgQOh0Skrw
 CSRF_OK: 1
 ---
+{
+    "ts": "2025-10-08T09:05:15+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": true,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1032",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+        "Accept": "application/json",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryW81F9x3XvZwgMPDe",
+        "sec-ch-ua-mobile": "?0",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=9t7hrgh06msrce47busb6jbtab"
+    },
+    "cookies": {
+        "PHPSESSID": "9t7hrgh06msrce47busb6jbtab"
+    },
+    "post": {
+        "csrf_token": "d0c51039a0f98ba.bmIMcg8qfrfnruLgu97s1GugZn18jqORq4_JKP1wXng.CA9mQEBlEuKC-q2G3Iepuw3nAxoz9pLL2Oihfo0VOxYXVTQ_Ol0P45Odrw",
+        "name": "Osuntogun Opeyemi D",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/ope.jpg"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: d0c51039a0f98ba.bmIMcg8qfrfnruLgu97s1GugZn18jqORq4_JKP1wXng.CA9mQEBlEuKC-q2G3Iepuw3nAxoz9pLL2Oihfo0VOxYXVTQ_Ol0P45Odrw
+CSRF_OK: 1
+---
+{
+    "ts": "2025-10-08T09:05:15+02:00",
+    "remote_addr": "::1",
+    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "is_ajax": false,
+    "method": "POST",
+    "action_param": "edit",
+    "id_param": 12,
+    "headers": {
+        "Host": "localhost",
+        "Connection": "keep-alive",
+        "Content-Length": "1032",
+        "Authorization": "Basic YWRtaW46aGlnaHFfc29saWRfYWNhZGVteSMuMTw+MjAxOA==",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryYjrp2IvWbMXO6z6R",
+        "sec-ch-ua-mobile": "?0",
+        "Accept": "*/*",
+        "Origin": "http://localhost",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
+        "Cookie": "PHPSESSID=9t7hrgh06msrce47busb6jbtab"
+    },
+    "cookies": {
+        "PHPSESSID": "9t7hrgh06msrce47busb6jbtab"
+    },
+    "post": {
+        "csrf_token": "d0c51039a0f98ba.bmIMcg8qfrfnruLgu97s1GugZn18jqORq4_JKP1wXng.CA9mQEBlEuKC-q2G3Iepuw3nAxoz9pLL2Oihfo0VOxYXVTQ_Ol0P45Odrw",
+        "name": "Osuntogun Opeyemi D",
+        "title": "OND in Electrical and Electronic Engineering",
+        "subjects": "Mathematics",
+        "years_experience": "3 years of experience",
+        "bio": "Competent maths teacher with a solid foundation in electrical and electronic engineering.",
+        "image_url": "uploads/tutors/ope.jpg"
+    },
+    "files": [],
+    "raw": ""
+}
+
+CSRF_PROVIDED: d0c51039a0f98ba.bmIMcg8qfrfnruLgu97s1GugZn18jqORq4_JKP1wXng.CA9mQEBlEuKC-q2G3Iepuw3nAxoz9pLL2Oihfo0VOxYXVTQ_Ol0P45Odrw
+CSRF_OK: 1
+---

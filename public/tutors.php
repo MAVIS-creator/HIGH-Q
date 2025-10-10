@@ -158,26 +158,39 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 .achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 </style>
+<style>
+/* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view
+   On small screens we want Achievements visible even if JS does not run, so override there. */
+@media (max-width: 768px) {
+  .achievements .achievement,
+  .achievements .achievement * {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+}
+</style>
 <!-- Achievements -->
-<section class="achievements">
+<!-- Achievements Section -->
+<section class="achievements py-5">
   <div class="container">
-    <div class="ceo-heading">
+    <div class="ceo-heading text-center mb-4">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="row achievements-grid gy-3">
-      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
+    <div class="row achievements-grid gy-4">
+      <div class="col-6 col-md-3 achievement text-center">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
+      <div class="col-6 col-md-3 achievement text-center">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
+      <div class="col-6 col-md-3 achievement text-center">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
+      <div class="col-6 col-md-3 achievement text-center">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
@@ -186,29 +199,35 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 </section>
 
 <!-- Testimonials / What Our Students Say -->
-<section class="testimonials-section">
-  <div class="container">
-    <div class="ceo-heading">
+<section class="testimonials-section py-5">
+  <div class="container px-3 px-md-0">
+    <div class="ceo-heading text-center mb-4">
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="row testimonials-grid gy-3">
-      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
-        <div class="rating">★★★★★</div>
-        <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
-        <p class="attribution"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
+    <div class="row testimonials-grid gy-4 justify-content-center">
+      <article class="testimonial-card col-12 col-md-6 col-lg-4">
+        <div class="p-3 h-100 border rounded shadow-sm">
+          <div class="rating mb-2">★★★★★</div>
+          <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
+          <p class="attribution mb-0"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
+        </div>
       </article>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
-        <div class="rating">★★★★★</div>
-        <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
-        <p class="attribution"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
+      <article class="testimonial-card col-12 col-md-6 col-lg-4">
+        <div class="p-3 h-100 border rounded shadow-sm">
+          <div class="rating mb-2">★★★★★</div>
+          <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
+          <p class="attribution mb-0"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
+        </div>
       </article>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
-        <div class="rating">★★★★★</div>
-        <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
-        <p class="attribution"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
+      <article class="testimonial-card col-12 col-md-6 col-lg-4">
+        <div class="p-3 h-100 border rounded shadow-sm">
+          <div class="rating mb-2">★★★★★</div>
+          <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
+          <p class="attribution mb-0"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
+        </div>
       </article>
     </div>
   </div>

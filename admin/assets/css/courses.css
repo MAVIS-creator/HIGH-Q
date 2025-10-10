@@ -38,10 +38,10 @@
 }
 .btn-add:hover { background: var(--hq-yellow-light); }
 
-/* Grid (two per row) */
+/* Grid: 3 columns on wide screens, 2 on medium, 1 on small */
 .courses-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
   align-items: start;
 }
@@ -86,7 +86,7 @@
 
 .courses-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px; /* a little breathing room between course cards */
   margin-top: 8px;
 }
@@ -256,4 +256,14 @@
 .course-header .btn-delete:hover {
   background: #eef0f1;
   transform: translateY(-1px);
+}
+
+/* Responsive columns: 2 columns on medium desktops/tablets, 1 on mobile */
+@media (max-width: 1200px) {
+  .courses-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .courses-grid { grid-template-columns: 1fr; }
+  .courses-page { padding-left: 12px; padding-right: 12px }
 }
