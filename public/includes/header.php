@@ -213,116 +213,99 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/favicon-16x16.png">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
-  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
+  
+  <!-- Core CSS for offcanvas functionality -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
+  
+  <!-- Icons: Prefer local Boxicons if available -->
+  <link rel="stylesheet" href="./assets/vendor/boxicons/css/boxicons.min.css">
   <!-- Fallback to CDN if local not available -->
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <!-- Font Awesome (fallback for admin/backwards compatibility) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- BoxIcons CSS -->
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" media="print" onload="this.media='all'; this.onload=null;">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="./assets/vendor/fontawesome/css/all.min.css">
+  <!-- Fallback to CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'; this.onload=null;">
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/public.css">
-  <!-- <link rel="stylesheet" href="./assets/css/responsive.css">
-  <link rel="stylesheet" href="./assets/css/ceo-responsive.css"> -->
   <link rel="stylesheet" href="./assets/css/animations.css">
   <link rel="stylesheet" href="./assets/css/social-icons.css">
-  <link rel="stylesheet" href="./assets/css/post-toc.css">
-  <link rel="stylesheet" href="./assets/css/hero.css">
   <link rel="stylesheet" href="./assets/css/offcanvas.css">
-  <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
+  
   <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 </head>
 
 <body>
-  <header>
+  <header class="site-header">
     <!-- Top bar -->
     <div class="top-bar">
       <div class="container">
-  <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
-  <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
-        <span class="motto">"Always Ahead of Others"</span>
+        <div class="contact-info">
+          <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
+          <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        </div>
+        <div class="motto">"Always Ahead of Others"</div>
       </div>
     </div>
 
-    <!-- Main nav -->
-    <div class="main-header">
+    <!-- Main Navigation -->
+    <nav class="main-nav navbar navbar-expand-lg">
+      <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
       <div class="container">
-        <nav class="navbar navbar-expand-lg w-100 position-relative">
-          <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
-            <div class="logo">
-              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-              <div>
-                <h1>HIGH Q SOLID ACADEMY</h1>
-                <small>Limited</small>
-              </div>
-            </div>
-          </a>
-
-          <!-- Desktop Navigation -->
-          <div class="collapse navbar-collapse" id="mainNav">
-            <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
-            <ul class="navbar-nav mx-auto d-none d-lg-flex">
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
-              </li>
-
-              <!-- Programs Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                  Programs
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
-                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
-                </ul>
-              </li>
-
-              <!-- News Dropdown -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                  News
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
-                  <li><a class="dropdown-item" href="community.php">Community</a></li>
-                </ul>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
-              </li>
-            </ul>
-
-            <!-- Register Button -->
-            <div class="d-none d-lg-block">
-              <a href="register.php" class="btn btn-primary">Register Now</a>
-            </div>
+        <a class="navbar-brand d-flex align-items-center" href="index.php">
+          <span class="logo-badge" aria-hidden="true">
+            <img src="./assets/images/hq-logo.jpeg" alt="HIGH Q Logo" />
+          </span>
+          <div class="logo-text">
+            <h1 style="font-size:16px;margin:0;">HIGH Q SOLID ACADEMY</h1>
+            <small style="font-size:12px;color:var(--hq-gray);">Limited</small>
           </div>
+        </a>
 
-          <!-- Toggle for mobile - opens offcanvas -->
-          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
-            <i class="bx bx-menu"></i>
-          </button>
-        </nav>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavCollapse" aria-controls="mainNavCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavCollapse">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+            <li class="nav-item"><a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="programsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Programs</a>
+              <ul class="dropdown-menu" aria-labelledby="programsDropdown">
+                <li><a class="dropdown-item" href="programs.php">Programs</a></li>
+                <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">News</a>
+              <ul class="dropdown-menu" aria-labelledby="newsDropdown">
+                <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
+                <li><a class="dropdown-item" href="community.php">Community</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+            <li class="nav-item"><a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+          </ul>
+
+          <div class="d-flex ms-auto">
+            <a href="register.php" class="btn register-btn">Register Now</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </header>
+    </nav>
 
-  <!-- Bootstrap JS Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
+
+  </header>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- WOW.js + Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
   <script>
     // Add .is-loaded after first paint for CSS animations
     document.addEventListener('DOMContentLoaded', function(){
@@ -350,24 +333,24 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   </script>
 
   <!-- Offcanvas Side Nav for Mobile -->
-    <div class="offcanvas offcanvas-start custom-offcanvas d-lg-none" tabindex="-1" id="mobileNav">
-        <div class="offcanvas-header py-3">
-            <h5 class="offcanvas-title fw-bold mb-0">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="mobile-nav" tabindex="-1" id="mobileNav">
+        <div class="mobile-nav-header">
+            <h5>Menu</h5>
+            <button type="button" class="close-nav" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body p-3">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="programs.php">Programs</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="exams.php">Exams</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="news.php">News & Blog</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="community.php">Community</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+        <div class="mobile-nav-body">
+            <ul class="nav-menu">
+                <li><a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
+                <li><a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
+                <li><a class="nav-link" href="programs.php">Programs</a></li>
+                <li><a class="nav-link" href="exams.php">Exams</a></li>
+                <li><a class="nav-link" href="news.php">News & Blog</a></li>
+                <li><a class="nav-link" href="community.php">Community</a></li>
+                <li><a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
+                <li><a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
             </ul>
-            <div class="mt-4 px-3">
-                <a href="register.php" class="btn btn-primary w-100 py-2">Register Now</a>
+            <div class="mobile-nav-cta">
+                <a href="register.php" class="btn-primary">Register Now</a>
             </div>
         </div>
     </div>
