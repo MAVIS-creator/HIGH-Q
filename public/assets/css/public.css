@@ -2713,8 +2713,29 @@ input.form-input {
   padding: 20px 22px;
   border-radius: 10px;
   min-height: 100px;
+.contact-layout .sidebar-card {
+  /* existing rules above */
 }
 
+/* Compatibility aliases: some templates use older class names (logo-wrap, logo-img, site-logo)
+   Map them to the new logo styles so pages don't break when class names differ. */
+.site-logo img,
+.logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-logo .logo-text,
+.logo-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-layout .sidebar-card h4 {
