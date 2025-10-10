@@ -2215,6 +2215,24 @@ nav a.active::after {
   color: var(--hq-gray-dark);
 }
 
+/* Logo badge to match reference image */
+.logo-badge {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--hq-yellow), #f0a800);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(11,37,64,0.08);
+  margin-right: 12px;
+}
+.logo-badge img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 /* Form controls used across post, community and newsletter */
 .form-input,
 input.form-input {
@@ -2695,6 +2713,8 @@ input.form-input {
   padding: 20px 22px;
   border-radius: 10px;
   min-height: 100px;
+}
+
 }
 
 .contact-layout .sidebar-card h4 {
