@@ -22,9 +22,9 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
 <section class="tutors-section">
   <div class="container">
-    <div class="section-heading">
+    <div class="ceo-heading">
       <h2>Meet Our Expert <span class="highlight">Tutors</span></h2>
-      <p>Our dedicated team of experienced educators is committed to your academic success</p>
+      <p class="lead">Our dedicated team of experienced educators is committed to your academic success</p>
     </div>
 
     <?php if (empty($tutors)): ?>
@@ -102,8 +102,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     </div>
 
     <!-- Tutors footer text -->
-    <div class="tutors-footer">
-      <p class="footer-lead">And many other experienced tutors dedicated to your academic success...</p>
+    <div class="tutors-footer text-center mt-4">
+      <p class="lead">And many other experienced tutors dedicated to your academic success...</p>
       <p class="tutor-description">Working together with our team of dedicated educators to nurture the next generation of academic achievers.</p>
     </div>
     <?php endif; ?>
@@ -132,8 +132,15 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     margin-top: 0.5rem;
 }
 
-.tutors-footer {
+.text-center {
     text-align: center;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
     margin-top: 1.5rem;
 }
 </style>
@@ -151,25 +158,25 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 </style>
 <!-- Achievements -->
 <!-- Achievements Section -->
-<section class="achievements">
+<section class="achievements py-5">
   <div class="container">
-    <div class="section-heading">
+    <div class="ceo-heading text-center mb-4">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="achievements-grid">
-      <div class="achievement">
+    <div class="row achievements-grid gy-4 gx-3">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="achievement">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="achievement">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="achievement">
+      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
@@ -179,34 +186,34 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
 
 <!-- Testimonials / What Our Students Say -->
-<section class="testimonials-section">
-  <div class="container">
-    <div class="section-heading">
+<section class="testimonials-section py-5">
+  <div class="container px-3 px-md-0">
+    <div class="ceo-heading text-center mb-4">
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="testimonials-grid">
-      <article class="testimonial-card">
-        <div class="testimonial-inner">
-          <div class="rating">★★★★★</div>
+    <div class="row testimonials-grid gy-4 justify-content-center">
+      <article class="testimonial-card col-12 col-md-6 col-lg-4">
+        <div class="p-3 h-100 border rounded shadow-sm">
+          <div class="rating mb-2">★★★★★</div>
           <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
-          <p class="attribution"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
+          <p class="attribution mb-0"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
         </div>
       </article>
 
-      <article class="testimonial-card">
-        <div class="testimonial-inner">
-          <div class="rating">★★★★★</div>
+      <article class="testimonial-card col-12 col-md-6 col-lg-4">
+        <div class="p-3 h-100 border rounded shadow-sm">
+          <div class="rating mb-2">★★★★★</div>
           <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
-          <p class="attribution"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
+          <p class="attribution mb-0"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
         </div>
       </article>
 
-      <article class="testimonial-card">
-        <div class="testimonial-inner">
-          <div class="rating">★★★★★</div>
+      <article class="testimonial-card col-12 col-md-6 col-lg-4">
+        <div class="p-3 h-100 border rounded shadow-sm">
+          <div class="rating mb-2">★★★★★</div>
           <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
-          <p class="attribution"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
+          <p class="attribution mb-0"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
         </div>
       </article>
     </div>

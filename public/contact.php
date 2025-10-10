@@ -77,29 +77,17 @@ include __DIR__ . '/includes/header.php';
 				</div>
 			<?php endif; ?>
 
-      <form method="post">
-        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-        <div class="form-grid">
-          <div class="form-row">
-            <label>First Name</label>
-            <input type="text" name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>">
-          </div>
-          <div class="form-row">
-            <label>Last Name</label>
-            <input type="text" name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>">
-          </div>
-        </div>
-        
-        <div class="form-grid">
-          <div class="form-row">
-            <label>Email Address</label>
-            <input type="email" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>">
-          </div>
-          <div class="form-row">
-            <label>Phone Number</label>
-            <input type="tel" name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>">
-          </div>
-        </div>				<div class="form-row"><label>Program of Interest</label>
+			<form method="post">
+				<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+				<div class="form-row form-inline">
+					<div style="flex:1"><label>First Name</label><input name="first_name" placeholder="Your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div>
+					<div style="flex:1"><label>Last Name</label><input name="last_name" placeholder="Your last name" value="<?= htmlspecialchars($last_name ?? '') ?>"></div>
+				</div>
+
+				<div class="form-row"><label>Email Address</label><input type="email" name="email" placeholder="your.email@example.com" required value="<?= htmlspecialchars($email ?? '') ?>"></div>
+				<div class="form-row"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($phone ?? '') ?>"></div>
+
+				<div class="form-row"><label>Program of Interest</label>
 					<select name="program">
 						<option value="">Select a program</option>
 						<?php

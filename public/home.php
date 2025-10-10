@@ -25,49 +25,54 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 ?>
 
-<section class="hero">
-  <div class="container">
-    <div class="hero-left">
-      <div class="hero-badge"><i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy</div>
+<section class="hero py-5">
+  <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
+    <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
+      <div class="hero-badge mb-3">
+        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
+      </div>
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
-      <div class="hero-ctas">
-        <a href="register.php" class="btn-primary">Register Now</a>
-        <a href="programs.php" class="btn-ghost">See Our Programs</a>
+      <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
+        <a href="register.php" class="btn btn-primary">Register Now</a>
+        <a href="programs.php" class="btn btn-light text-dark border">See Our Programs</a>
       </div>
-      <div class="hero-stats">
-        <div><strong>6+</strong>
+      <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
+        <div class="text-center">
+          <strong>6+</strong>
           <div>Years Experience</div>
         </div>
-        <div><strong>1000+</strong>
+        <div class="text-center">
+          <strong>1000+</strong>
           <div>Students Trained</div>
         </div>
-        <div><strong>305</strong>
+        <div class="text-center">
+          <strong>305</strong>
           <div>Highest JAMB Score</div>
         </div>
       </div>
     </div>
 
-    <aside class="hero-right">
-      <div class="feature-card">
-        <div class="feature-icon yellow"><i class='bx bxs-award'></i></div>
+    <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3">
+      <div class="feature-card d-flex">
+        <div class="feature-icon yellow me-3"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
           <h5>Top JAMB Scores</h5>
           <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon red"><i class='bx bxs-chalkboard'></i></div>
+      <div class="feature-card d-flex">
+        <div class="feature-icon red me-3"><i class='bx bxs-chalkboard'></i></div>
         <div class="feature-body">
           <h5>Expert Tutors</h5>
           <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
         </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon yellow"><i class='bx bxs-book-open'></i></div>
+      <div class="feature-card d-flex">
+        <div class="feature-icon yellow me-3"><i class='bx bxs-book-open'></i></div>
         <div class="feature-body">
           <h5>Comprehensive Programs</h5>
           <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
@@ -78,11 +83,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </section>
 
 
-<section class="ceo-hero">
+<section class="ceo-hero py-5">
   <div class="container">
 
-    <!-- Top Heading -->
-    <div class="ceo-heading">
+    <div class="ceo-heading text-center mb-5">
       <h2>Meet Our <span class="highlight">CEO & Lead Tutor</span></h2>
       <p>
         Under the visionary leadership of Master Adebule Quam, High Q Solid Academy
@@ -90,13 +94,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
-    <!-- Two Column Layout with Bootstrap -->
-    <div class="ceo-grid">
-      <div class="ceo-left-column">
-        <!-- Left Card -->
-        <div class="ceo-card">
-          <div class="ceo-photo">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid">
+    <div class="ceo-grid align-items-start g-4">
+      <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
+        <div class="ceo-card text-center text-lg-start mb-4">
+          <div class="ceo-photo mb-3">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
           </div>
           <div class="ceo-info">
             <h3 class="mb-1">Master Adebule Quam</h3>
@@ -104,8 +106,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </div>
         </div>
 
-        <!-- Quote Box -->
-        <div class="ceo-quote">
+        <div class="ceo-quote text-center text-lg-start">
           <i class="fas fa-quote-left mb-2"></i>
           <p class="mb-3">
             "Education is the force to push one ahead of others. Our unwavering
@@ -116,46 +117,42 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
       </div>
 
-      <div class="ceo-right-column">
-        <!-- Right Content -->
-        <div class="ceo-content">
+  <div class="ceo-right-column">
+        <div class="ceo-content mb-4">
           <h3 class="mb-3">Seasoned Educator & Mentor</h3>
-          <div class="mb-4">
-            <p class="mb-3">
-              Master Adebule Quam is a seasoned tutor versed in the teaching profession.
-              Over the years, he has produced students who have achieved breathtaking
-              academic excellence and excelled in various examinations including GCE,
-              WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
-            </p>
-            <p>
-              He believes in the school of thought that education is the force to push
-              one ahead of others. Under his guidance, High Q Academy has blossomed into
-              a hub of academic excellence and technological proficiency.
-            </p>
-          </div>
+          <p class="mb-3">
+            Master Adebule Quam is a seasoned tutor versed in the teaching profession.
+            Over the years, he has produced students who have achieved breathtaking
+            academic excellence and excelled in various examinations including GCE,
+            WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
+          </p>
+          <p>
+            He believes in the school of thought that education is the force to push
+            one ahead of others. Under his guidance, High Q Academy has blossomed into
+            a hub of academic excellence and technological proficiency.
+          </p>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="ceo-stats">
-          <div class="stat yellow">
+        <div class="ceo-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-4 mb-4">
+          <div class="stat yellow text-center">
             <i class="fas fa-trophy"></i>
             <strong>305</strong>
             <span>Highest JAMB Score</span>
           </div>
-          <div class="stat red">
+          <div class="stat red text-center">
             <i class="fas fa-users"></i>
             <strong>1000+</strong>
             <span>Students Mentored</span>
           </div>
-          <div class="stat gray">
+          <div class="stat gray text-center">
             <i class="fas fa-user-tie"></i>
             <strong>6+</strong>
             <span>Years Leading</span>
           </div>
         </div>
 
-        <div class="ceo-btn">
-          <a href="about.php" class="btn-dark">Learn More About Our Story</a>
+        <div class="ceo-btn text-center text-lg-start">
+          <a href="about.php" class="btn btn-dark">Learn More About Our Story</a>
         </div>
       </div>
     </div>
@@ -262,12 +259,16 @@ if (isset($pdo) && $pdo instanceof PDO) {
 <section class="programs-cta">
   <div class="container">
     <div class="programs-cta-inner">
-      <h3>Ready to Start Your Success Journey?</h3>
-      <p>Join our proven programs and take the first step towards academic excellence. Our expert tutors are ready to guide you to success.</p>
-      <div class="programs-cta-actions">
-        <a href="register.php" class="btn-primary">Register for Programs</a>
-        <a href="programs.php" class="btn-ghost">View All Programs</a>
-      </div>
+        <h3 class="mb-3">Ready to Start Your Success Journey?</h3>
+        <p class="mb-4 mx-auto" style="max-width: 700px;">
+          Join our proven programs and take the first step towards academic excellence. 
+          Our expert tutors are ready to guide you to success.
+        </p>
+
+        <div class="programs-cta-actions d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3">
+          <a href="register.php" class="btn btn-primary">Register for Programs</a>
+    <a href="programs.php" class="btn btn-light text-dark border">View All Programs</a>
+        </div>
     </div>
   </div>
 </section>
