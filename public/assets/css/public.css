@@ -82,6 +82,50 @@ p { font-size: 16px; }
   padding: 0.5rem 1rem;
 }
 
+/* Desktop Navigation */
+.nav-menu-desktop {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Mobile Navigation Toggle */
+.nav-toggle {
+  display: none;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  display: none;
+}
+
+/* Media Queries */
+@media (max-width: 991px) {
+  .nav-menu-desktop {
+    display: none;
+  }
+  
+  .nav-toggle {
+    display: block;
+  }
+  
+  .mobile-nav {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: #fff;
+    transition: 0.3s;
+    z-index: 1002;
+  }
+  
+  .mobile-nav.show {
+    right: 0;
+  }
+}
+
 /* Ensure dropdowns appear above other content */
 .navbar .dropdown-menu {
   z-index: 1001;
