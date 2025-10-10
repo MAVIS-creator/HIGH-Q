@@ -157,19 +157,15 @@ include __DIR__ . '/includes/header.php';
 		<h2 class="section-title">Frequently Asked <span style="color:var(--hq-yellow);">Questions</span></h2>
 		<p class="lead">Find answers to common questions about our programs and services.</p>
 
-		<div class="row gx-3 gy-3">
-			<div class="col-12 col-md-6">
-				<div class="faq-card">
-					<h4>What programs do you offer?</h4>
-					<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
-				</div>
+		<div class="faq-grid">
+			<div class="faq-card">
+				<h4>What programs do you offer?</h4>
+				<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
 			</div>
 
-			<div class="col-12 col-md-6">
-				<div class="faq-card">
-					<h4>How much do your programs cost?</h4>
-					<p>Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
-				</div>
+			<div class="faq-card">
+				<h4>How much do your programs cost?</h4>
+				<p>Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
 			</div>
 		</div>
 	</div>
@@ -177,33 +173,25 @@ include __DIR__ . '/includes/header.php';
 
 <section class="faq-section alt">
 	<div class="container">
-		<div class="row gx-3 gy-3" style="margin-top:8px;">
-			<div class="col-12 col-md-6">
-				<div class="faq-card">
-					<h4>What is your success rate?</h4>
-					<p>We maintain a 99% pass rate in WAEC/NECO examinations and our highest JAMB score in 2024 was 292, with the student now studying Medicine at LAUTECH.</p>
-				</div>
+		<div class="faq-grid" style="margin-top:8px;">
+			<div class="faq-card">
+				<h4>What is your success rate?</h4>
+				<p>We maintain a 99% pass rate in WAEC/NECO examinations and our highest JAMB score in 2024 was 292, with the student now studying Medicine at LAUTECH.</p>
 			</div>
 
-			<div class="col-12 col-md-6">
-				<div class="faq-card">
-					<h4>Do you offer online classes?</h4>
-					<p>Yes, we offer both in-person and online classes to accommodate different learning preferences and schedules. Our CBT training is particularly effective online.</p>
-				</div>
+			<div class="faq-card">
+				<h4>Do you offer online classes?</h4>
+				<p>Yes, we offer both in-person and online classes to accommodate different learning preferences and schedules. Our CBT training is particularly effective online.</p>
 			</div>
 
-			<div class="col-12 col-md-6">
-				<div class="faq-card">
-					<h4>How can I register for a program?</h4>
-					<p>You can register by visiting our offices, calling 0807 208 8794, or filling out our online registration form. We also offer consultation to help you choose the right program.</p>
-				</div>
+			<div class="faq-card">
+				<h4>How can I register for a program?</h4>
+				<p>You can register by visiting our offices, calling 0807 208 8794, or filling out our online registration form. We also offer consultation to help you choose the right program.</p>
 			</div>
 
-			<div class="col-12 col-md-6">
-				<div class="faq-card">
-					<h4>What makes High Q Academy different?</h4>
-					<p>Our experienced tutors, proven track record, personalized attention, and comprehensive approach to both academic and digital skills development set us apart.</p>
-				</div>
+			<div class="faq-card">
+				<h4>What makes High Q Academy different?</h4>
+				<p>Our experienced tutors, proven track record, personalized attention, and comprehensive approach to both academic and digital skills development set us apart.</p>
 			</div>
 		</div>
 	</div>

@@ -1,20 +1,25 @@
 <?php
-// public/tutors.php - load tutors safely; keep page usable if DB missing
+// public/tutors.php - partial for displaying featured tutors
 $tutors = [];
+// load DB connection if available
 if (file_exists(__DIR__ . '/config/db.php')) {
   try {
     require_once __DIR__ . '/config/db.php';
     if (isset($pdo)) {
+      // Try featured tutors first (preserve featured if any), but when falling back or listing ensure tutors are ordered by id ascending per UX request
       $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
       $stmt->execute();
-      $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $tutors = $stmt->fetchAll();
+      // If none are featured, fall back to any tutors so the section is visible for testing
       if (empty($tutors)) {
+        // order by id ascending as requested
         $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC");
         $stmt2->execute();
-        $tutors = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $tutors = $stmt2->fetchAll();
       }
     }
   } catch (Throwable $e) {
+    // swallow DB errors and render an empty state
     $tutors = [];
   }
 }
@@ -145,38 +150,34 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 </style>
 <style>
-/* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view
-   On small screens we want Achievements visible even if JS does not run, so override there. */
-@media (max-width: 768px) {
-  .achievements .achievement,
-  .achievements .achievement * {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-  }
+/* Ensure when we use Bootstrap .row together with existing site classes,
+   the row behavior (flex) wins so columns stack correctly on mobile. */
+.achievements-grid.row, .testimonials-grid.row {
+  display: flex !important;
+  flex-wrap: wrap !important;
 }
+.achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 </style>
 <!-- Achievements -->
-<!-- Achievements Section -->
-<section class="achievements py-5">
+<section class="achievements">
   <div class="container">
-    <div class="ceo-heading text-center mb-4">
+    <div class="ceo-heading">
       <h2>Our <span class="highlight">Achievements</span></h2>
     </div>
-    <div class="row achievements-grid gy-4 gx-3">
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+    <div class="row achievements-grid gy-3">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>500+</strong>
         <span>Students Graduated</span>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>98%</strong>
         <span>Success Rate</span>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>15+</strong>
         <span>Expert Tutors</span>
       </div>
-      <div class="col-6 col-md-6 col-lg-3 achievement text-center">
+      <div class="col-12 col-sm-6 col-lg-3 achievement text-center">
         <strong>5+</strong>
         <span>Years Experience</span>
       </div>
@@ -184,37 +185,30 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   </div>
 </section>
 
-
 <!-- Testimonials / What Our Students Say -->
-<section class="testimonials-section py-5">
-  <div class="container px-3 px-md-0">
-    <div class="ceo-heading text-center mb-4">
+<section class="testimonials-section">
+  <div class="container">
+    <div class="ceo-heading">
       <h2>What Our <span class="highlight">Students Say</span></h2>
     </div>
 
-    <div class="row testimonials-grid gy-4 justify-content-center">
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
-          <p class="attribution mb-0"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
-        </div>
+    <div class="row testimonials-grid gy-3">
+      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
+        <p class="attribution"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
       </article>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
-          <p class="attribution mb-0"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
-        </div>
+      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
+        <p class="attribution"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
       </article>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
-          <p class="attribution mb-0"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
-        </div>
+      <article class="testimonial-card col-12 col-md-6 col-lg-4 mb-3">
+        <div class="rating">★★★★★</div>
+        <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
+        <p class="attribution"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
       </article>
     </div>
   </div>

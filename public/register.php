@@ -206,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $csrf = generateToken('signup_form');
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
+<link rel="stylesheet" href="./assets/css/main-fixed.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <!-- Hero (reuse about-hero styling used across the site) -->
@@ -294,9 +295,17 @@ $csrf = generateToken('signup_form');
 													</div>
 
 													<div class="form-row terms-row">
-														<div class="form-check">
-															<input class="form-check-input" type="checkbox" name="agreed_terms" id="agreed_terms" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
-															<label class="form-check-label ms-2" for="agreed_terms">I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></label>
+														<div class="checkbox-wrapper">
+															<input 
+																type="checkbox" 
+																name="agreed_terms" 
+																id="agreed_terms" 
+																<?= !empty($agreed_terms) ? 'checked' : '' ?> 
+																required
+															>
+															<label for="agreed_terms" class="terms-label">
+																<span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span>
+															</label>
 														</div>
 													</div>
 													<div style="margin-top:12px;"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>

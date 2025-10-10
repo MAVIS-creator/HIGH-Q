@@ -226,10 +226,14 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <!-- BoxIcons CSS -->
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-  <!-- Custom CSS - Minimal set -->
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="./assets/css/public.css">
+  <link rel="stylesheet" href="./assets/css/responsive.css">
+  <link rel="stylesheet" href="./assets/css/ceo-responsive.css">
   <link rel="stylesheet" href="./assets/css/animations.css">
   <link rel="stylesheet" href="./assets/css/social-icons.css">
+  <link rel="stylesheet" href="./assets/css/post-toc.css">
+  <link rel="stylesheet" href="./assets/css/hero.css">
   <link rel="stylesheet" href="./assets/css/offcanvas.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->

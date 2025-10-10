@@ -14,12 +14,6 @@
   max-width: 1200px;
 }
 
-/* Ensure the left column doesn't expand beyond the intended grid cell on large desktops */
-.ceo-left-column {
-  max-width: 520px;
-  width: 100%;
-}
-
 .ceo-card {
   background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%);
   padding: clamp(24px, 4vw, 48px);

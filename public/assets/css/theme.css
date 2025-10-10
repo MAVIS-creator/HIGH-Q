@@ -1,0 +1,61 @@
+/* HQ theme mapping to Bootstrap CSS variables
+   This file maps site-specific colors to Bootstrap's CSS variables so
+   you can use Bootstrap classes while retaining HQ brand colors.
+*/
+:root {
+  /* HQ palette */
+  --hq-yellow: #f5b904; /* primary brand yellow */
+  --hq-yellow-600: #f1ad00;
+  --hq-yellow-100: #fdcc2b;
+  --hq-red: #dc3545;    /* register / danger */
+  --hq-dark: #0d1b2a;
+  --hq-text: #333333;
+
+  /* Bootstrap variable mappings */
+  --bs-primary: var(--hq-yellow);
+  --bs-primary-rgb: 245, 185, 4;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: var(--hq-yellow);
+  --bs-danger: var(--hq-red);
+  --bs-light: #f8f9fa;
+  --bs-dark: var(--hq-dark);
+
+  /* Body colors */
+  --bs-body-color: var(--hq-text);
+  --bs-body-bg: #ffffff;
+}
+
+/* Small helpers to ensure good contrast for primary buttons */
+.btn-primary {
+  color: #111; /* dark text on yellow buttons for readability */
+}
+
+/* If you want primary buttons to use white text instead, uncomment below */
+/* .btn-primary { color: #fff; } */
+
+/* Link color mapping */
+a {
+  color: var(--bs-primary);
+}
+
+a:hover {
+  color: var(--bs-primary-rgb);
+}
+
+/* HQ ghost button: white background, HQ yellow border/text */
+.btn-hq-ghost {
+  background-color: #ffffff;
+  color: var(--hq-yellow);
+  border: 2px solid var(--hq-yellow);
+  box-shadow: none;
+}
+.btn-hq-ghost:hover,
+.btn-hq-ghost:focus {
+  background-color: var(--hq-yellow);
+  color: #111;
+  border-color: var(--hq-yellow);
+  text-decoration: none;
+}
+

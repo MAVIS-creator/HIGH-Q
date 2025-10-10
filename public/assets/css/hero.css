@@ -208,8 +208,10 @@
 
 @media (max-width: 768px) {
     .hero {
-        background: #fff;
-        padding: 3rem 0;
+        /* Use HQ light yellow on mobile for a softer branded background */
+        background: var(--hq-yellow-100, #fed240);
+        /* Slightly thicker spacing on mobile for better presence */
+        padding: 4.5rem 0;
     }
     
     .hero .container {
