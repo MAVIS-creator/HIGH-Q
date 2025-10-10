@@ -254,7 +254,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="index.php">
-          <img src="./assets/images/hq-logo.jpeg" alt="HIGH Q Logo" style="width:40px;height:40px;object-fit:contain;margin-right:10px;">
+          <img src="./assets/images/hq-logo.jpeg" alt="HIGH Q Logo" style="width:40px;height:40px;object-fit:contain;margin-right:10px;" class="site-logo">
           <div class="logo-text">
             <h1 style="font-size:16px;margin:0;">HIGH Q SOLID ACADEMY</h1>
             <small style="font-size:12px;color:var(--hq-gray);">Limited</small>
