@@ -2714,8 +2714,8 @@ input.form-input {
   border-radius: 10px;
   min-height: 100px;
 }
-/* existing rules above */
-   Map them to the new logo styles so pages don't break when class names differ. */
+./* existing rules above */
+/* Map them to the new logo styles so pages don't break when class names differ. */
 .site-logo img,
 .logo-img {
   width: 40px;
