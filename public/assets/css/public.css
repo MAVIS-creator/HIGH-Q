@@ -1314,8 +1314,9 @@ nav a.active::after {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(90deg, #f6c300 0%, #e6a800 100%);
-  padding: 72px 0 80px;
+  /* softer hero background, avoid the heavy full-bleed yellow */
+  background: linear-gradient(90deg, rgba(246,195,0,0.18) 0%, rgba(230,168,0,0.12) 100%);
+  padding: 64px 0 72px;
 }
 
 .hero-inner {
@@ -1350,12 +1351,12 @@ nav a.active::after {
 }
 
 .hero h1 {
-  font-size: 72px;
-  line-height: 0.98;
-  margin: 0 0 18px;
-  font-weight: 900;
+  font-size: 56px;
+  line-height: 1.02;
+  margin: 0 0 14px;
+  font-weight: 700; /* reduce thickness */
   color: var(--hq-black);
-  letter-spacing: -1px;
+  letter-spacing: -0.6px;
 }
 
 .hero h1 .accent {
