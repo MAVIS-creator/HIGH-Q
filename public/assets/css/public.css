@@ -1419,6 +1419,53 @@ nav a.active::after {
   margin-top: 36px;
 }
 
+/* --- HQ Compatibility Overrides ---
+   These rules ensure key page components (tutor cards, post cards, hero) keep a consistent
+   appearance even if other CSS files are missing or older class names are used across pages. */
+
+/* Make hero neutral (no heavy yellow block) so content reads well on all pages */
+.hero {
+  background: #fff; /* neutral background to avoid unexpected yellow container */
+  padding: 56px 0 64px;
+}
+
+/* Hero stats: ensure no white box appears and numbers remain prominent */
+.hero-stats { display:flex; gap:18px; margin-top:28px; }
+.hero-stats .stat-item { background: transparent; padding: 14px 18px; border-radius:10px; }
+.hero-stats .stat-item strong { color: var(--hq-yellow); font-weight:700; }
+
+/* Post / News card: simple white card with subtle shadow */
+.post-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.post-card .thumb { width:100%; height:160px; object-fit:cover; border-radius:6px; display:block; }
+
+/* Tutor cards: pale top banner with centered avatar and clear body spacing */
+.tutor-card { background:#fff; border-radius:12px; overflow:hidden; }
+.tutor-thumb { background: linear-gradient(180deg,#f7f5f2 0%,#f3f1ee 100%); height:140px; display:flex; align-items:center; justify-content:center; }
+.tutor-thumb img { width:84px; height:84px; border-radius:50%; border:3px solid #fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.tutor-card .tutor-body { padding:18px; }
+.tutor-card .qualification-line, .tutor-card .role { color: var(--hq-yellow); font-weight:600; }
+.tutor-card .subjects .tag, .tutor-card .tag { background:#111; color:#fff; padding:6px 10px; border-radius:20px; font-size:13px; display:inline-block; margin-right:8px; }
+
+/* Reduce overall heading boldness where pages looked too heavy */
+h1, h2, h3 { font-weight:700; }
+body, p, .muted, .lead { font-weight:400; }
+
+/* small responsive tweak so tutors grid doesn't overflow on narrow screens */
+@media (max-width: 900px) {
+  .tutors-grid { justify-content: stretch; }
+  .tutor-card { width: 100%; }
+  .hero-inner { width: auto; padding: 0 16px; }
+  .programs-cta-inner { width: auto; padding: 28px; }
+}
+
+/* End compatibility overrides */
+
 .stat-item {
   text-align: center;
   background: rgba(255,255,255,0.95);
