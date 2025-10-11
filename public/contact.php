@@ -117,7 +117,7 @@ include __DIR__ . '/includes/header.php';
 		</div>
 	</main>
 
-	<aside class="register-sidebar">
+	<aside class="register-sidebar hq-aside-target">
 				<div class="sidebar-card" data-icon="tutor">
 					<div class="card-icon"><i class="bx bx-book-open" style="font-size:28px;color:var(--hq-yellow);"></i></div>
 					<h4>Tutorial Center</h4>

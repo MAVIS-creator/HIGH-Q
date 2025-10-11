@@ -56,7 +56,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
     </div>
 
-    <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3">
+  <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3 hq-aside-target">
       <div class="feature-card d-flex">
         <div class="feature-icon yellow me-3"><i class='bx bxs-award'></i></div>
         <div class="feature-body">
@@ -117,7 +117,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </div>
       </div>
 
-  <div class="ceo-right-column">
+  <div class="ceo-right-column hq-aside-target">
         <div class="ceo-content mb-4">
           <h3 class="mb-3">Seasoned Educator & Mentor</h3>
           <p class="mb-3">

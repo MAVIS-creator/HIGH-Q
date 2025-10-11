@@ -9,6 +9,10 @@ $cfg = require __DIR__ . '/../config/payments.php';
 $errors = [];
 $success = '';
 
+// Fixed additional processing fees applied to any registration
+$form_fee = 1000; // ₦1,000 form processing
+$card_fee = 1500; // ₦1,500 card fee
+
 // Load site settings to respect registration toggle (structured site_settings preferred)
 $siteSettings = [];
 try {
@@ -63,6 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				}
 	}
 	$amount = round($amount, 2);
+
+	// Add fixed form/card fees to the amount server-side if programs selected and payment is being created
+	// Note: If verification before payment is required the registration will be pending and no payment created
+	if (!empty($programs) && !$selectedHasVaries) {
+		// Add form & card fees to the payable amount
+		$amount += floatval($form_fee) + floatval($card_fee);
+		$amount = round($amount,2);
+	}
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
 
 	// Registration form fields
@@ -313,7 +325,7 @@ $csrf = generateToken('signup_form');
 											</div>
 										</main>
 
-										<aside class="register-sidebar">
+										<aside class="register-sidebar hq-aside-target">
 					<div class="sidebar-card admission-box">
 						<h4>Admission Requirements</h4>
 						<ul>
@@ -340,6 +352,19 @@ $csrf = generateToken('signup_form');
 						<div class="payment-method">
 							<strong>Online Payment</strong>
 							<p>Secure online payment portal. Credit/Debit card accepted.</p>
+						</div>
+
+						<!-- Payment summary: subtotal of selected programs + fixed form/card fees -->
+						<div class="payment-summary" style="margin-top:14px;padding:10px;border-top:1px dashed #eee;">
+							<h5 style="margin:0 0 6px 0">Payment Summary</h5>
+							<div style="font-size:14px;color:#444;">
+								<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
+								<div>Form fee: <strong id="ps-form">₦<?= number_format($form_fee,2) ?></strong></div>
+								<div>Card fee: <strong id="ps-card">₦<?= number_format($card_fee,2) ?></strong></div>
+								<hr style="margin:8px 0;border:none;border-top:1px solid #f0f0f0">
+								<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
+							</div>
+							<p style="font-size:12px;color:#666;margin-top:8px;">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
 						</div>
 					</div>
 
@@ -420,3 +445,38 @@ $csrf = generateToken('signup_form');
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
 <?php endif; ?>
+
+<script>
+// Live payment summary for registration page
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		const formatN = (n) => '₦' + Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+		const checkboxes = Array.from(document.querySelectorAll('input[name="programs[]"]'));
+		const subtotalEl = document.getElementById('ps-subtotal');
+		const formEl = document.getElementById('ps-form');
+		const cardEl = document.getElementById('ps-card');
+		const totalEl = document.getElementById('ps-total');
+		const formFee = <?= intval($form_fee) ?>;
+		const cardFee = <?= intval($card_fee) ?>;
+
+		function compute(){
+			let sub = 0;
+			checkboxes.forEach(cb => { if(cb.checked){ const priceText = cb.closest('label') ? cb.closest('label').querySelector('small') : null; if(priceText){ const m = priceText.textContent.match(/₦([0-9,\.]+)/); if(m){ sub += parseFloat(m[1].replace(/,/g,'')); } } } });
+			// if any program selected and subtotal > 0, include fixed fees
+			let total = sub;
+			if (checkboxes.some(cb=>cb.checked)) {
+				total += formFee + cardFee;
+			}
+			subtotalEl.textContent = formatN(sub);
+			formEl.textContent = formatN(formFee);
+			cardEl.textContent = formatN(cardFee);
+			totalEl.textContent = formatN(total);
+		}
+
+		// Attach listeners
+		checkboxes.forEach(cb => cb.addEventListener('change', compute));
+		// init
+		compute();
+	}catch(e){/* ignore */}
+});
+</script>
