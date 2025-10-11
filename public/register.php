@@ -463,16 +463,54 @@ document.addEventListener('DOMContentLoaded', function(){
 
 		function compute(){
 			let sub = 0;
-			checkboxes.forEach(cb => { if(cb.checked){ const priceText = cb.closest('label') ? cb.closest('label').querySelector('small') : null; if(priceText){ const m = priceText.textContent.match(/₦([0-9,\.]+)/); if(m){ sub += parseFloat(m[1].replace(/,/g,'')); } } } });
-			// if any program selected and subtotal > 0, include fixed fees
+			let hasVaries = false;
+			checkboxes.forEach(cb => {
+				if (!cb.checked) return;
+				const label = cb.closest('label');
+				const priceText = label ? label.querySelector('small') : null;
+				if (priceText) {
+					const txt = priceText.textContent || '';
+					if (/Varies/i.test(txt)) { hasVaries = true; }
+					const m = txt.match(/₦([0-9,\.]+)/);
+					if (m) { sub += parseFloat(m[1].replace(/,/g,'')); }
+				}
+			});
+
+			// if any program selected, include fixed fees (even if subtotal 0 for safety)
 			let total = sub;
 			if (checkboxes.some(cb=>cb.checked)) {
 				total += formFee + cardFee;
 			}
+
 			subtotalEl.textContent = formatN(sub);
 			formEl.textContent = formatN(formFee);
 			cardEl.textContent = formatN(cardFee);
 			totalEl.textContent = formatN(total);
+
+			// persist client-side total to hidden input for server-side recheck
+			try {
+				var clientInput = document.getElementById('client_total_input');
+				if (clientInput) clientInput.value = total.toFixed(2);
+			} catch(e) {}
+
+			// if any selected program is 'Varies', inform the user via toast
+			if (hasVaries) {
+				if (typeof Swal !== 'undefined') {
+					Swal.fire({
+						icon: 'info',
+						title: 'Price varies',
+						text: 'One or more selected programs have variable pricing. An administrator will contact you to confirm pricing before payment.',
+						toast: true,
+						position: 'top-end',
+						timer: 6000,
+						showConfirmButton: false
+					});
+				} else {
+					// fallback alert
+					console.log('Selected program(s) have variable pricing; admin will contact the student.');
+					// avoid annoying alert popup; console log only when Swal not available
+				}
+			}
 		}
 
 		// Attach listeners
