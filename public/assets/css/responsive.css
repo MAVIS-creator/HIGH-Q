@@ -141,6 +141,29 @@
     width: 100%;
     margin-top: 1rem;
   }
+
+  /* Ensure brand (logo + text) stays left and mobile toggle sits to the right */
+  .navbar {
+    align-items: center;
+  }
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 0 1 auto;
+    order: 1;
+  }
+
+  .navbar .mobile-toggle {
+    order: 2;
+    margin-left: auto; /* push toggle to the far right */
+    z-index: 1050;
+  }
+
+  /* Tighter logo text for small screens */
+  .navbar-brand .logo h1 { font-size: 1rem; margin:0; line-height:1; }
+  .navbar-brand .logo small { display:block; font-size:0.6rem; color:var(--hq-yellow); margin-top:2px; }
 }
 
 /* Card Responsiveness */
