@@ -699,6 +699,17 @@
 
 /* End of HIGH-Q extra animations */
 
+/* Minor helper: disabled payment block appearance */
+.payment-method.disabled {
+  opacity: 0.5;
+  filter: grayscale(0.15);
+  pointer-events: none;
+}
+.payment-method.disabled .method-note {
+  color: #b33;
+  font-size: 13px;
+}
+
 /* Aside-specific slide-in tweaks (apply to asides marked with .hq-aside-target)
    Desktop: slide in from right with slightly longer duration and subtle scale
    Mobile: slide in from below with faster timing
