@@ -716,9 +716,11 @@
   .container.register-layout,
   .container.register-layout.contact-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px; /* tighter sidebar */
+    /* constrain main column max width so columns are centered and close together */
+    grid-template-columns: minmax(320px, 820px) 300px;
     gap: 8px; /* very small gap to match contact layout */
     align-items: start;
+    justify-content: center; /* center the two-column group within container */
     padding-left: 6px;
     padding-right: 6px;
   }
