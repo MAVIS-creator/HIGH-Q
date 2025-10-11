@@ -159,6 +159,54 @@
     .faq-card { flex: 1 1 calc(50% - 12px); min-width:140px; background:#fff; border-radius:10px; padding:12px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
     .faq-card h4 { font-size:16px; margin-bottom:6px; }
     .faq-card p { font-size:13px; color:#444; line-height:1.4; }
+    
+    /* Register page: ensure checkbox and terms label sit on the same row on narrow screens
+         Specificity ensures this rule applies even if register.css is not loaded on the page. */
+    .register-layout .terms-row .checkbox-wrapper,
+    .register-main .terms-row .checkbox-wrapper {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    .register-layout .terms-row .checkbox-wrapper input[type="checkbox"],
+    .register-main .terms-row .checkbox-wrapper input[type="checkbox"] {
+        flex: 0 0 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+    }
+    .register-layout .terms-row .checkbox-wrapper label.terms-label,
+    .register-main .terms-row .checkbox-wrapper label.terms-label {
+        display: inline-block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.3 !important;
+        cursor: pointer !important;
+    }
+
+    /* FAQ cards: make them visually balanced and not overly tall on mobile */
+    .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; align-items: start; }
+    .faq-card { display: flex; flex-direction: column; justify-content: flex-start; min-height: 110px; padding: 14px; }
+    .faq-card h4 { margin-bottom: 8px; font-size: 15px; }
+    .faq-card p { font-size: 13px; color: var(--hq-gray); }
+
+    @media (max-width: 520px) {
+        .faq-grid { grid-template-columns: repeat(1, 1fr); }
+        .faq-card { min-height: auto; }
+    }
+
+    /* Ensure 'What Happens Next' (.next-stat) boxes render as compact cards on all pages */
+    .next-stat { background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(11,37,64,0.04); padding: 12px; margin: 8px 0; }
+    .next-stat .next-icon { margin-bottom: 8px; }
+    .next-stat strong { display: block; font-size: 15px; margin-bottom: 6px; }
+    .next-stat span { font-size: 13px; color: #555; line-height: 1.35; }
+
+    @media (min-width: 720px) {
+        /* On wider screens allow the next-stats to sit inline if desired */
+        .next-section .achievements-grid { display:flex; gap:12px; align-items:stretch; }
+        .next-section .next-stat { flex: 1 1 0; }
+    }
 
     /* Post visibility should be handled by the viewport scripts; avoid global forced visibility here */
 }
