@@ -516,6 +516,32 @@ document.addEventListener('DOMContentLoaded', function(){
 				if (clientInput) clientInput.value = total.toFixed(2);
 			} catch(e) {}
 
+			// Enable/disable online payment UI when variable-priced programs are selected
+			try {
+				var onlineBlock = document.getElementById('payment-method-online');
+				var paymentSummary = document.querySelector('.payment-summary');
+				// add/remove disabled class
+				if (onlineBlock) {
+					if (hasVaries) onlineBlock.classList.add('disabled'); else onlineBlock.classList.remove('disabled');
+				}
+				// show a small inline note in payment summary if varies
+				if (paymentSummary) {
+					var existing = paymentSummary.querySelector('.varies-note');
+					if (hasVaries) {
+						if (!existing) {
+							var n = document.createElement('div');
+							n.className = 'varies-note';
+							n.style.color = '#a33';
+							n.style.marginTop = '8px';
+							n.textContent = 'Online payment disabled for variable-priced programs. An admin will confirm final pricing.';
+							paymentSummary.appendChild(n);
+						}
+					} else {
+						if (existing) existing.remove();
+					}
+				}
+			} catch(e) {}
+
 			// if any selected program is 'Varies', inform the user via toast
 			if (hasVaries) {
 				if (typeof Swal !== 'undefined') {
