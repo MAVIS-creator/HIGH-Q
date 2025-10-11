@@ -198,6 +198,30 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   </div>
 </section>
 
+<style>
+  /* Mobile-only: keep achievements in two columns and centered for small screens */
+  @media (max-width: 575.98px) {
+    .achievements-grid {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: center; /* center the grid */
+      gap: 0.5rem 1rem;
+    }
+
+    .achievements-grid .achievement {
+      flex: 0 0 45%; /* two columns with small gutter */
+      max-width: 45%;
+      box-sizing: border-box;
+      text-align: center;
+      padding: 0.5rem 0;
+    }
+
+    /* Make numbers slightly larger and keep span on its own line for readability */
+    .achievements-grid .achievement strong { display: block; font-size: 1.6rem; color: var(--hq-yellow, #f4c542); }
+    .achievements-grid .achievement span { display: block; color: var(--hq-gray, #666); font-size: 0.9rem; }
+  }
+</style>
+
 <!-- Testimonials / What Our Students Say -->
 <section class="testimonials-section py-5">
   <div class="container px-3 px-md-0">
