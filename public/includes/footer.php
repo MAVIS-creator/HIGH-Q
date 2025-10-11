@@ -148,4 +148,4 @@
 <a href="contact.php#livechat" class="floating-chat" aria-label="Live Chat with us">
   <i class="bx bx-chat"></i>
 </a>
-<script src=""></script>
+<script src="./assets/js/viewport-inview.js"></script>
