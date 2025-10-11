@@ -151,12 +151,15 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 </style>
 <style>
 /* Ensure when we use Bootstrap .row together with existing site classes,
-   the row behavior (flex) wins so columns stack correctly on mobile. */
-.achievements-grid.row, .testimonials-grid.row {
-  display: flex !important;
-  flex-wrap: wrap !important;
+   the row behavior (flex) wins on small screens so columns stack correctly.
+   On desktop we prefer the site-wide grid (4 columns) defined in public.css. */
+@media (max-width: 991.98px) {
+  .achievements-grid.row, .testimonials-grid.row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+  .achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 }
-.achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 </style>
 <!-- Achievements -->
 <!-- Achievements Section -->
