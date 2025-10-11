@@ -150,4 +150,4 @@
 </a>
 
 <!-- viewport-inview script (moved to external file) -->
-<script src="/public/assets/js/viewport-inview.js"></script>
+<script src="./assets/js/viewport-inview.js"></script>
