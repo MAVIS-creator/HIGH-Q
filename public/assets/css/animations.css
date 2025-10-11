@@ -715,22 +715,27 @@
 @media (min-width: 1025px) {
   .container.register-layout,
   .container.register-layout.contact-layout {
-    display: grid;
-    /* constrain main column max width so columns are centered and close together */
-  grid-template-columns: minmax(320px, 820px) 300px;
-  gap: 8px; /* very small gap to match contact layout */
-  align-items: start;
-  justify-content: start; /* align columns to left so they sit closer to form content */
-  padding-left: 4px;
-  padding-right: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px; /* small gutter */
+    padding-left: 4px;
+    padding-right: 4px;
   }
 
-  .register-main { margin-right: 0 !important; }
-  .register-sidebar { margin-left: 0 !important; width: 100%; }
+  .register-main {
+    flex: 1 1 auto;
+    margin-right: 0 !important;
+    max-width: none;
+  }
+
+  .register-sidebar {
+    flex: 0 0 320px; /* fixed sidebar width that matches contact layout */
+    margin-left: 0 !important;
+  }
 
   /* Slightly increase sidebar on very wide screens while keeping gap small */
-  @media (min-width: 1300px) {
-    .container.register-layout { grid-template-columns: minmax(0, 1fr) 340px; }
+  @media (min-width: 1400px) {
+    .register-sidebar { flex-basis: 360px; }
   }
 }
 
