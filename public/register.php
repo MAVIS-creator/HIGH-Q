@@ -264,6 +264,11 @@ $csrf = generateToken('signup_form');
 														<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
 													</div>
 												<?php endif; ?>
+												<?php if (!empty($varies_notice)): ?>
+													<div class="admin-notice" style="background:#fff5f5;border-left:4px solid #d9534f;padding:12px;margin-bottom:12px;color:#a33;">
+														<?= htmlspecialchars($varies_notice) ?>
+													</div>
+												<?php endif; ?>
 												<?php if ($success): ?>
 													<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
 														<?= htmlspecialchars($success) ?>
