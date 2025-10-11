@@ -193,7 +193,7 @@
 
     @media (max-width: 520px) {
         .faq-grid { grid-template-columns: repeat(1, 1fr); }
-        .faq-card { min-height: auto; }
+        .faq-card { min-height: 0; }
     }
 
     /* Ensure 'What Happens Next' (.next-stat) boxes render as compact cards on all pages */
