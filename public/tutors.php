@@ -158,11 +158,6 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 .achievements-grid.row > .col-12, .testimonials-grid.row > .col-12 { display: block; }
 </style>
-<style>
-/* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view
-   On small screens we want Achievements visible even if JS does not run, so override there. */
-
-</style>
 <!-- Achievements -->
 <!-- Achievements Section -->
 <section class="achievements py-5">
