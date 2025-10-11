@@ -164,21 +164,6 @@ require_once __DIR__ . '/includes/header.php';
 </section>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-
-<!-- Mobile-only fix: ensure post cards are visible even if JS 'in-view' class isn't applied -->
-<style>
-  @media (max-width: 767.98px) {
-    .posts-grid .post-card,
-    .posts-grid .post-card * {
-      opacity: 1 !important;
-      transform: none !important;
-      visibility: visible !important;
-    }
-    /* Also make sure grid itself isn't hidden on small devices */
-    .posts-grid { display: block !important; }
-  }
-</style>
-
 <script>
 document.getElementById('newsletterForm').addEventListener('submit', function(e){
   e.preventDefault();
