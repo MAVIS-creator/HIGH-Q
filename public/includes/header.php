@@ -259,16 +259,23 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     <div class="main-header">
       <div class="container">
         <nav class="navbar navbar-expand-lg w-100 position-relative">
-          <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
-            <div class="logo">
-              <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
-              <div>
-                <h1>HIGH Q SOLID ACADEMY</h1>
-                <small>Limited</small>
+          <div class="d-flex w-100 align-items-center justify-content-between">
+            <!-- Logo + Name -->
+            <a class="navbar-brand" href="index.php">
+              <div class="logo d-flex align-items-center gap-2">
+                <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+                <div>
+                  <h1 class="mb-0">HIGH Q SOLID ACADEMY</h1>
+                  <small>Limited</small>
+                </div>
               </div>
-            </div>
-          </a>
+            </a>
+
+            <!-- Toggle for mobile - opens offcanvas -->
+            <button class="navbar-toggler border-0 mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-label="Toggle navigation">
+              <i class="bx bx-menu"></i>
+            </button>
+          </div>
 
           <!-- Desktop Navigation -->
           <div class="collapse navbar-collapse" id="mainNav">
@@ -317,10 +324,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </div>
 
-          <!-- Toggle for mobile - opens offcanvas -->
-          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
-            <i class="bx bx-menu"></i>
-          </button>
+          
         </nav>
       </div>
     </div>
