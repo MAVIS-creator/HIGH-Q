@@ -270,6 +270,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             </div>
           </a>
 
+          <!-- Toggle for mobile - opens offcanvas -->
+          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+            <i class="bx bx-menu"></i>
+          </button>
+
           <!-- Desktop Navigation -->
           <div class="collapse navbar-collapse" id="mainNav">
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
