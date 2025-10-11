@@ -187,87 +187,37 @@
 }
 
 /* Why Choose Us section - Fixed zoom issues */
+/* Simplified Why Choose Us styles for register (avoid excessive !important rules)
+   and responsive 'What Happens Next' stats to be card-like on mobile. */
 .why-box {
-    display: block !important;
-    margin: 20px -15px !important;
-    padding: 20px 15px !important;
-    background: var(--hq-yellow) !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    width: auto !important;
-    min-width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    z-index: 1 !important;
+    display: block;
+    margin: 20px -15px;
+    padding: 20px 15px;
+    background: var(--hq-yellow);
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-.why-box h4 {
-    color: #000 !important;
-    font-size: 18px !important;
-    margin-bottom: 20px !important;
-    font-weight: bold !important;
-    text-align: left !important;
-}
+.why-box h4 { color: #000; font-size: 18px; margin-bottom: 12px; font-weight: 700; }
 
-.why-stats {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 10px !important;
-    margin: 0 !important;
-    width: 100% !important;
-    position: relative !important;
-    z-index: 2 !important;
-}
+.why-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
+.why-stats .stat { display:flex; flex-direction:column; align-items:center; text-align:center; padding:10px 5px; background:transparent; }
+.why-stats .stat .icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+.why-stats .stat .icon i { font-size:24px; color:#d9534f; }
+.why-stats .stat strong { display:block; font-size:20px; margin-bottom:4px; font-weight:700; }
+.why-stats .stat span { font-size:13px; color:#222; }
 
-.why-stats .stat {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    text-align: center !important;
-    padding: 10px 5px !important;
-    background: transparent !important;
-    position: relative !important;
-    z-index: 2 !important;
-    min-width: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
+/* Next-stat (What Happens Next) card-like appearance on mobile */
+.next-stat { background:#fff; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,0.06); padding:14px; margin:8px 6px; }
+.next-stat .next-icon { margin-bottom:8px; }
+.next-stat strong { display:block; font-size:16px; margin-bottom:6px; }
+.next-stat span { display:block; font-size:13px; color:#555; line-height:1.4; }
 
-.why-stats .stat .icon {
-    width: 40px !important;
-    height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-bottom: 8px !important;
-}
-
-.why-stats .stat .icon i {
-    font-size: 24px !important;
-    color: #d9534f !important; /* Red color for icons */
-}
-
-.why-stats .stat .stat-body {
-    width: 100% !important;
-    text-align: center !important;
-}
-
-.why-stats .stat strong {
-    display: block !important;
-    font-size: 24px !important;
-    color: #000 !important;
-    margin-bottom: 4px !important;
-    font-weight: bold !important;
-    line-height: 1.2 !important;
-}
-
-.why-stats .stat span {
-    display: block !important;
-    font-size: 14px !important;
-    color: #000 !important;
-    line-height: 1.2 !important;
+@media (max-width: 720px) {
+    .why-stats { grid-template-columns: repeat(1, 1fr); }
+    .why-stats .stat { padding: 12px; }
+    .next-stat { margin: 8px 0; }
 }
 
 /* Ensure mobile layout */
