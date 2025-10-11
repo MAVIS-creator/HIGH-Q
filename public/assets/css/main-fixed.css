@@ -210,23 +210,24 @@
 
     /* Mobile header adjustments to match requested compact layout */
     @media (max-width: 576px) {
-        .top-bar { padding: 6px 0; }
+        /* compact top bar */
+        .top-bar { padding: 6px 0; background:#111; }
         .top-bar .container { display:flex; gap:8px; align-items:center; justify-content:space-between; }
         .top-bar span { font-size:12px; color:#fff; display:inline-block; margin-right:8px; }
+        .top-bar .motto { color: var(--hq-yellow); font-weight:700; font-size:12px; }
 
+        /* Brand area: small logo and compact title */
         .main-header .logo { display:flex; gap:8px; align-items:center; }
-        .main-header .brand-logo { width:36px; height:36px; border-radius:8px; object-fit:cover; }
-        .main-header .logo h1 { font-size:14px; margin:0; line-height:1; }
-        .main-header .logo small { display:block; font-size:11px; color:rgba(0,0,0,0.6); }
+        .main-header .brand-logo { width:36px; height:36px; border-radius:8px; object-fit:cover; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+        .main-header .logo h1 { font-size:13px; margin:0; line-height:1; font-weight:700; color:#111; }
+        .main-header .logo small { display:block; font-size:11px; color:rgba(0,0,0,0.5); }
 
-        /* Hide desktop nav and show compact toggle (already d-lg-none) */
+        /* Hide desktop nav and ensure offcanvas toggle visible */
         .navbar-nav.d-none.d-lg-flex { display:none !important; }
+        .navbar-brand { display:flex; align-items:center; gap:8px; padding:6px 0; flex:0 0 auto; }
 
-        /* Make nav brand area occupy available space and align left */
-        .navbar-brand { display:flex; align-items:center; gap:8px; padding:6px 0; }
-
-        /* Position toggle on the right and make it visually small */
-        .mobile-toggle { font-size:20px; padding:6px 10px; }
+        .mobile-toggle { font-size:20px; padding:6px 10px; margin-left:auto; color: #111; }
+        .mobile-toggle .bx { vertical-align:middle; }
 
         /* Reduce container horizontal padding on small screens */
         .main-header .container, .top-bar .container { padding-left:8px; padding-right:8px; }
