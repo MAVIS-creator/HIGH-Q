@@ -200,6 +200,68 @@
   }
 }
 
+/* Mobile-specific fixes: next-stat (what happens next), FAQ cards and terms checkbox */
+@media (max-width: 768px) {
+  /* What Happens Next: stack as single column and make cards well-rounded */
+  .next-section .next-stat,
+  .next-stat {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    margin: 10px 0 !important;
+    box-shadow: 0 12px 30px rgba(11,37,64,0.06) !important;
+    display: block;
+    box-sizing: border-box;
+  }
+
+  .next-stat .next-icon {
+    margin-bottom: 10px;
+  }
+
+  /* FAQ grid: keep two columns but make cards closer to square size */
+  .faq-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    align-items: start;
+  }
+
+  .faq-card {
+    min-height: 160px;
+    height: 160px;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .faq-card h4 { font-size: 14px; margin-bottom: 6px; }
+  .faq-card p { font-size: 12px; color: var(--hq-gray); overflow: hidden; }
+
+  /* Terms checkbox alignment in register form */
+  .terms-row .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .terms-row .checkbox-wrapper input[type="checkbox"] {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+  }
+
+  .terms-row .terms-label { margin: 0; }
+  .terms-row .terms-label span { display: inline; }
+}
+
 /* Section Spacing */
 section {
   padding: clamp(40px, 8vw, 80px) 0;
