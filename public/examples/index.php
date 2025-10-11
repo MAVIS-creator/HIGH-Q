@@ -1,7 +1,7 @@
 <?php
 // Simple demo page to preview HQ animations
 $pageTitle = 'HQ Animations Demo';
-include __DIR__ . '/public\includes\header.php';
+include __DIR__ . '/public/includes/header.php';
 ?>
 <main class="container py-5">
   <h1 class="mb-4">HQ Animations — Demo</h1>
