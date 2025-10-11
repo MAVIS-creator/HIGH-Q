@@ -152,24 +152,16 @@
 }
 
 @media screen and (max-width: 768px) {
-    .why-stats {
+    .why-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    
+    /* Make FAQ cards compact and balanced on narrow screens */
+    .faq-grid { display:flex; flex-wrap:wrap; gap:12px; }
+    .faq-card { flex: 1 1 calc(50% - 12px); min-width:140px; background:#fff; border-radius:10px; padding:12px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+    .faq-card h4 { font-size:16px; margin-bottom:6px; }
+    .faq-card p { font-size:13px; color:#444; line-height:1.4; }
 
-/* Single post visibility guard
-    Some global animation rules hide card-like elements until JS marks them in-view.
-    Force post content and TOC to be visible by default so users always see the article. */
-.post-article,
-.post-article *,
-.post-main .post-content,
-.post-thumb,
-.post-toc,
-.post-toc * {
-     opacity: 1 !important;
-     transform: none !important;
-     visibility: visible !important;
+    /* Post visibility should be handled by the viewport scripts; avoid global forced visibility here */
 }
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
     
     .why-stats .stat strong {
         font-size: 20px;
