@@ -715,21 +715,19 @@
 @media (min-width: 1025px) {
   .container.register-layout {
     display: grid;
-    grid-template-columns: 1fr 360px;
-    /* main area + sidebar */
-    gap: 28px;
-    /* tighten gap from large values */
+    grid-template-columns: 1fr 320px; /* main + narrower sidebar */
+    gap: 16px; /* much tighter gap */
     align-items: start;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
-  .register-main {
-    margin-right: 0;
-    /* ensure no extra margin pushes aside further */
-  }
+  .register-main { margin-right: 0 !important; }
+  .register-sidebar { margin-left: 0 !important; width: 100%; }
 
-  .register-sidebar {
-    margin-left: 0;
-    width: 100%;
+  /* Slightly increase sidebar on very wide screens while keeping gap small */
+  @media (min-width: 1400px) {
+    .container.register-layout { grid-template-columns: 1fr 360px; }
   }
 }
 
