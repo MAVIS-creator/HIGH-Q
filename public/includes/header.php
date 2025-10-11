@@ -242,9 +242,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- HQ Animations helper -->
   <script defer src="./assets/js/hq-animations.js"></script>
-</head>
+  </head>
 
-<body>
+  <body class="hq-public">
   <header>
     <!-- Top bar -->
     <div class="top-bar">
