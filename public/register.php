@@ -75,6 +75,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$amount += floatval($form_fee) + floatval($card_fee);
 		$amount = round($amount,2);
 	}
+
+	// Server-side: re-check client-submitted total (if provided) to prevent tampering
+	if (isset($_POST['client_total']) && $_POST['client_total'] !== '') {
+		$posted_client_total = (float) str_replace(',', '', $_POST['client_total']);
+		if (abs($posted_client_total - $amount) > 0.01) {
+			$errors[] = 'Payment total does not match server calculation. Please refresh the page and try again.';
+			error_log('Registration payment mismatch: posted=' . $posted_client_total . ' computed=' . $amount . ' programs=' . json_encode($programs));
+		}
+	}
+
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
 
 	// Registration form fields
