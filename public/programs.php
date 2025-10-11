@@ -39,7 +39,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-book"></i></div>
+						<div class="program-icon program-waec"><i class="bx bx-book"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>WAEC Preparation</h4>
@@ -56,7 +56,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-book-open"></i></div>
+						<div class="program-icon program-neco"><i class="bx bx-book-open"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>NECO Preparation</h4>
@@ -107,7 +107,7 @@
 
 				<article class="program-card">
 					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-laptop"></i></div>
+						<div class="program-icon program-computer"><i class="bx bx-laptop"></i></div>
 					</div>
 					<div class="program-card-body">
 						<h4>Computer Training</h4>
@@ -208,3 +208,28 @@
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
 <!-- Call to Action: Ready to Excel -->
+
+<style>
+	/* Mobile-only: small vertical gap between icon and body to mimic a <br> without affecting desktop */
+	@media (max-width: 575.98px) {
+		.program-card .program-card-head { display: block; text-align: center; }
+		.program-card .program-icon { margin-bottom: 0.6rem; }
+	}
+
+	/* Desktop-only adjustments: reduce excessive space for specific program cards */
+	@media (min-width: 992px) {
+		/* Target WAEC, NECO and Computer Training specifically */
+		.program-card .program-icon.program-waec,
+		.program-card .program-icon.program-neco,
+		.program-card .program-icon.program-computer {
+			margin-bottom: 0.25rem; /* reduce the gap on desktop for these cards only */
+		}
+
+		/* If icons have large padding, reduce it just on these cards */
+		.program-card .program-icon.program-waec i,
+		.program-card .program-icon.program-neco i,
+		.program-card .program-icon.program-computer i {
+			font-size: 20px; /* keep icon visually balanced */
+		}
+	}
+</style>
