@@ -278,6 +278,8 @@ $csrf = generateToken('signup_form');
 												<?php else: ?>
 													<form method="post">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
+													<input type="hidden" name="client_total" id="client_total_input" value="">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
 																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
