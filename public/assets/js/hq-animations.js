@@ -17,8 +17,20 @@
       });
     }, { threshold: 0.12 });
 
+    // Observe generic reveal elements
     document.querySelectorAll('.hq-reveal-left, .hq-reveal-right, .hq-slide-in').forEach(el => {
       observer.observe(el);
+    });
+
+    // Observe aside targets specially so we can choose mobile/desktop class variants
+    document.querySelectorAll('aside.hq-aside-target').forEach(aside => {
+      // choose initial class based on viewport
+      if (window.matchMedia('(min-width: 1025px)').matches) {
+        aside.classList.add('hq-slide-in','hq-right');
+      } else {
+        aside.classList.add('hq-slide-in','hq-up');
+      }
+      observer.observe(aside);
     });
   }
 

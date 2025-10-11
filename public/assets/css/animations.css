@@ -698,3 +698,42 @@
 }
 
 /* End of HIGH-Q extra animations */
+
+/* Aside-specific slide-in tweaks (apply to asides marked with .hq-aside-target)
+   Desktop: slide in from right with slightly longer duration and subtle scale
+   Mobile: slide in from below with faster timing
+*/
+aside.hq-aside-target {
+  will-change: transform, opacity;
+  opacity: 0; /* baseline until revealed */
+}
+
+@media (min-width: 1025px) {
+  aside.hq-aside-target.hq-slide-in.hq-right {
+    animation-name: hq-slideInRight;
+    animation-duration: 920ms;
+    animation-timing-function: var(--hq-ease);
+    animation-fill-mode: both;
+    transform-origin: 100% 50%;
+    transition: transform 420ms var(--hq-ease), box-shadow 420ms var(--hq-ease);
+  }
+
+  aside.hq-aside-target.hq-glass {
+    transform: translateY(0); /* ensure glass hover rules apply after reveal */
+  }
+}
+
+@media (max-width: 1024px) {
+  aside.hq-aside-target.hq-slide-in.hq-up {
+    animation-name: hq-slideInUp;
+    animation-duration: 480ms;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+    transform-origin: 50% 100%;
+  }
+
+  /* slightly reduce shadow on mobile for performance */
+  aside.hq-aside-target.hq-glass {
+    box-shadow: 0 8px 28px rgba(8,15,30,0.14);
+  }
+}
