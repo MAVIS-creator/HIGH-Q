@@ -55,10 +55,47 @@
     });
   }
 
+  function autoApplyClasses() {
+    // Only operate on public pages that include the body.hq-public marker
+    if (!document.body.classList.contains('hq-public')) return;
+
+    try {
+      // Cards: add glass + slide-in + tilt + hover glow
+      document.querySelectorAll('.card:not(.hq-applied)').forEach((el, i) => {
+        // skip admin area cards (rough heuristic)
+        if (el.closest('#admin')) return;
+        el.classList.add('hq-glass', 'hq-slide-in', 'hq-up', 'hq-tilt', 'hq-hover-glow', 'hq-applied');
+        // if card has a body, mark for stagger
+        const body = el.querySelector('.card-body');
+        if (body) body.classList.add('hq-stagger');
+      });
+
+      // Hero CTAs and primary site buttons
+      document.querySelectorAll('.hero-ctas a, .hero-ctas .btn, .btn-primary, .btn-hq-ghost, .btn-enroll').forEach(btn => {
+        if (btn.classList.contains('hq-applied')) return;
+        btn.classList.add('hq-cta', 'hq-delay-2', 'hq-applied');
+      });
+
+      // Program cards / grids
+      document.querySelectorAll('.program-card, .programs-grid .program-card, .tutor-card, .value-card').forEach((el, i) => {
+        if (el.classList.contains('hq-applied')) return;
+        el.classList.add('hq-slide-in', 'hq-up', 'hq-applied');
+        const cb = el.querySelector('.card-body'); if (cb) cb.classList.add('hq-stagger');
+      });
+
+      // CEO card specifically (homepage)
+      document.querySelectorAll('.ceo-card:not(.hq-applied)').forEach(el=>{
+        el.classList.add('hq-slide-in','hq-right','hq-applied');
+        const cb = el.querySelector('.card-body'); if (cb) cb.classList.add('hq-stagger');
+      });
+
+    } catch (e) { /* fail silently */ }
+  }
+
   // init after DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { setupObserver(); setupTilt(); });
+    document.addEventListener('DOMContentLoaded', () => { setupObserver(); setupTilt(); autoApplyClasses(); });
   } else {
-    setupObserver(); setupTilt();
+    setupObserver(); setupTilt(); autoApplyClasses();
   }
 })();
