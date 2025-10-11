@@ -5,7 +5,7 @@
     <!-- Logo & About -->
   <div class="footer-about">
       <div class="logo">
-  <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+      <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
         <div>
           <h2>HIGH Q SOLID ACADEMY</h2>
           <small>Limited</small>
@@ -150,4 +150,4 @@
 </a>
 
 <!-- viewport-inview script (moved to external file) -->
-<script src="./assets/js/viewport-inview.js"></script>
+<script src="/HIGH-Q/public/assets/js/viewport-inview.js"></script>
