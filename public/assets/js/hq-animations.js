@@ -90,21 +90,34 @@
       });
 
       // FAQ clamp / read-more: apply to .faq-card paragraphs on mobile
-      document.querySelectorAll('.faq-card p').forEach(p => {
-        // only on small screens
+      // configurable lines: set to 4 (mobile) by default, can be adjusted
+      const faqClampLines = 4; // change to 3 for tighter clamp
+      document.querySelectorAll('.faq-card p').forEach((p, idx) => {
         if (!window.matchMedia('(max-width: 768px)').matches) return;
-        // create clamp helper via JS to detect overflow
-        const maxHeight = 160; // px - matches .faq-card height
+        const lineHeight = parseFloat(getComputedStyle(p).lineHeight) || 16;
+        const maxHeight = Math.round(lineHeight * faqClampLines);
         if (p.scrollHeight > maxHeight) {
           p.classList.add('faq-clamped');
+          p.setAttribute('aria-hidden', 'false');
           // add toggle button if not present
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'faq-readmore';
+          btn.setAttribute('aria-expanded', 'false');
+          const rid = 'faq-read-' + idx;
+          btn.setAttribute('aria-controls', rid);
+          p.id = rid + '-text';
           btn.textContent = 'Read more';
           btn.addEventListener('click', () => {
             const expanded = p.classList.toggle('faq-clamped--expanded');
+            btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
             btn.textContent = expanded ? 'Show less' : 'Read more';
+            if (expanded) {
+              // smooth scroll to make sure expanded text is visible
+              setTimeout(()=> {
+                p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }, 60);
+            }
           });
           // append after paragraph
           p.insertAdjacentElement('afterend', btn);
