@@ -89,6 +89,28 @@
         const cb = el.querySelector('.card-body'); if (cb) cb.classList.add('hq-stagger');
       });
 
+      // FAQ clamp / read-more: apply to .faq-card paragraphs on mobile
+      document.querySelectorAll('.faq-card p').forEach(p => {
+        // only on small screens
+        if (!window.matchMedia('(max-width: 768px)').matches) return;
+        // create clamp helper via JS to detect overflow
+        const maxHeight = 160; // px - matches .faq-card height
+        if (p.scrollHeight > maxHeight) {
+          p.classList.add('faq-clamped');
+          // add toggle button if not present
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'faq-readmore';
+          btn.textContent = 'Read more';
+          btn.addEventListener('click', () => {
+            const expanded = p.classList.toggle('faq-clamped--expanded');
+            btn.textContent = expanded ? 'Show less' : 'Read more';
+          });
+          // append after paragraph
+          p.insertAdjacentElement('afterend', btn);
+        }
+      });
+
     } catch (e) { /* fail silently */ }
   }
 

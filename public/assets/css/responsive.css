@@ -262,6 +262,45 @@
   .terms-row .terms-label span { display: inline; }
 }
 
+/* FAQ clamp styles and read more button */
+@media (max-width: 768px) {
+  .faq-clamped {
+    display: block;
+    max-height: 104px; /* roughly 4 lines */
+    overflow: hidden;
+    position: relative;
+  }
+
+  .faq-clamped::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 40px;
+    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));
+    pointer-events: none;
+  }
+
+  .faq-clamped--expanded { max-height: none !important; }
+
+  .faq-readmore {
+    display: inline-block;
+    margin-top: 8px;
+    background: transparent;
+    border: none;
+    color: var(--hq-yellow);
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+  }
+}
+
+/* Hide brand text on very small screens to save space */
+@media (max-width: 420px) {
+  .navbar-brand .logo h1,
+  .navbar-brand .logo small { display: none !important; }
+  .navbar-brand .brand-logo { width: 36px; height: 36px; object-fit:contain; }
+}
+
 /* Section Spacing */
 section {
   padding: clamp(40px, 8vw, 80px) 0;
