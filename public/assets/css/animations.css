@@ -710,6 +710,25 @@
   font-size: 13px;
 }
 
+/* Tweak: reduce spacing between registration form and aside on large screens */
+@media (min-width: 1025px) {
+  .container.register-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px; /* main area + sidebar */
+    gap: 28px; /* tighten gap from large values */
+    align-items: start;
+  }
+
+  .register-main {
+    margin-right: 0; /* ensure no extra margin pushes aside further */
+  }
+
+  .register-sidebar {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
 /* Aside-specific slide-in tweaks (apply to asides marked with .hq-aside-target)
    Desktop: slide in from right with slightly longer duration and subtle scale
    Mobile: slide in from below with faster timing
