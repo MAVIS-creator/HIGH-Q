@@ -114,7 +114,40 @@ include __DIR__ . '/includes/header.php';
         <section class="program-section">
           <h3 id="fees">Duration & Fees</h3>
           <p><strong>Duration:</strong> <?= htmlspecialchars($p['duration']) ?></p>
-          <p><strong>Fees:</strong> <?= htmlspecialchars($p['fees']) ?></p>
+          <?php
+          // Standard additional fixed fees
+          $form_fee = 1000; // ₦1,000
+          $card_fee = 1500; // ₦1,500
+
+          // Default note
+          $fees_note = "These are tutorial fees only and do not include third-party registration fees (e.g. JAMB/WAEC/NECO registration). Other external charges are excluded.";
+
+          // Determine fee display logic per slug
+          $slugFees = '';
+          if (in_array($slug, ['jamb-preparation'])) {
+            // JAMB class: 9k per month
+            $monthly = 9000;
+            $slugFees = "₦" . number_format($monthly) . " per month (tutorial fee). + Form: ₦" . number_format($form_fee) . ", Card: ₦" . number_format($card_fee) . ".";
+          } elseif (in_array($slug, ['waec-preparation','neco-preparation'])) {
+            // WAEC and NECO: 8k per month
+            $monthly = 8000;
+            $slugFees = "₦" . number_format($monthly) . " per month (tutorial fee). + Form: ₦" . number_format($form_fee) . ", Card: ₦" . number_format($card_fee) . ".";
+          } elseif ($slug === 'post-utme') {
+            $monthly = 7000;
+            $slugFees = "₦" . number_format($monthly) . " per month (tutorial fee). + Form: ₦" . number_format($form_fee) . ", Card: ₦" . number_format($card_fee) . ".";
+          } elseif ($slug === 'computer-training') {
+            // Computer training is a fixed program fee
+            $ct_fee = 80000;
+            $slugFees = "₦" . number_format($ct_fee) . " (one-off). Includes: Certificate, Digital CV ready, Logbook, Conducive learning environment, and more. + Form: ₦" . number_format($form_fee) . ", Card: ₦" . number_format($card_fee) . ".";
+          } elseif ($slug === 'special-tutorials') {
+            $slugFees = "Special tutorial pricing varies; contact us for a tailored quote. + Form: ₦" . number_format($form_fee) . ", Card: ₦" . number_format($card_fee) . ".";
+          } else {
+            // fallback to provided fee text but also append form/card
+            $slugFees = htmlspecialchars($p['fees']) . " + Form: ₦" . number_format($form_fee) . ", Card: ₦" . number_format($card_fee) . ".";
+          }
+          ?>
+          <p><strong>Fees:</strong> <?= $slugFees ?></p>
+          <p style="font-size:0.95rem;color:var(--hq-gray);"><?= $fees_note ?></p>
         </section>
 
         <p style="margin-top: 28px;">
