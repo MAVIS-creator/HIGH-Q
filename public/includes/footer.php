@@ -149,47 +149,5 @@
   <i class="bx bx-chat"></i>
 </a>
 
-<!-- Auto in-view observer: mark card-like elements visible when they enter viewport. Fallbacks for mobile/old browsers. -->
-<script>
-  (function(){
-    var selectors = ['.program-card', '.tutor-card', '.value-card', '.post-card', '.card', '.stat', '.achievement', '.sidebar-card', '.register-sidebar .card'];
-    var nodes = [];
-    selectors.forEach(function(sel){ document.querySelectorAll(sel).forEach(function(n){ nodes.push(n); }); });
-
-    if (!nodes.length) return;
-
-    // Helper to add in-view class
-    function markInView(el){ if(!el.classList.contains('in-view')) el.classList.add('in-view'); }
-
-    // If IntersectionObserver supported, use it. Otherwise, on small screens add immediately.
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(ent){
-          if (ent.isIntersecting) {
-            markInView(ent.target);
-            // once visible, we can unobserve
-            try { io.unobserve(ent.target); } catch(e){}
-          }
-        });
-      }, { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
-      nodes.forEach(function(n){ io.observe(n); });
-    } else {
-      // Fallback: older browsers or when observer can't be created
-      // On mobile we want immediate visibility so users don't see hidden cards
-      var isSmall = window.innerWidth <= 768;
-      if (isSmall) {
-        nodes.forEach(function(n){ markInView(n); });
-      } else {
-        // Desktop fallback: add on load after a short delay so animations still show
-        window.addEventListener('load', function(){ setTimeout(function(){ nodes.forEach(markInView); }, 240); });
-      }
-    }
-
-    // Also ensure document root has is-loaded shortly after paint (already present in header but double-safe)
-    try {
-      if (!document.documentElement.classList.contains('is-loaded')) {
-        requestAnimationFrame(function(){ requestAnimationFrame(function(){ document.documentElement.classList.add('is-loaded'); }); });
-      }
-    } catch(e){}
-  })();
-</script>
+<!-- viewport-inview script (moved to external file) -->
+<script src="/public/assets/js/viewport-inview.js"></script>
