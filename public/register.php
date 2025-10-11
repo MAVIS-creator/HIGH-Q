@@ -87,6 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
 
+	// If any selected program has variable pricing, disable online methods server-side and force bank transfer
+	$varies_notice = '';
+	if (!empty($selectedHasVaries)) {
+		$varies_notice = 'Note: One or more selected programs have variable pricing. Online payment methods are disabled for these selections; an administrator will contact you with the final amount.';
+		// Force bank as the payment method to avoid online payment attempts
+		$method = 'bank';
+	}
+
 	// Registration form fields
 	$first_name = trim($_POST['first_name'] ?? '');
 	$last_name = trim($_POST['last_name'] ?? '');
@@ -351,17 +359,17 @@ $csrf = generateToken('signup_form');
 
 							<div class="sidebar-card payment-box">
 						<h4>Payment Options</h4>
-						<div class="payment-method">
+						<div class="payment-method" data-method="bank">
 							<strong>Bank Transfer</strong>
 									<p>Account Name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
 									Bank: <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
 									Account Number: <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
 						</div>
-						<div class="payment-method">
+						<div class="payment-method" data-method="cash">
 							<strong>Cash Payment</strong>
 							<p>Visit our office locations<br>8 Pineapple Avenue, Aiyetoro, Maya<br>Shop 18, World Star Complex, Aiyetoro</p>
 						</div>
-						<div class="payment-method">
+						<div class="payment-method" data-method="online" id="payment-method-online">
 							<strong>Online Payment</strong>
 							<p>Secure online payment portal. Credit/Debit card accepted.</p>
 						</div>
