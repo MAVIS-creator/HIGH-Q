@@ -5,7 +5,7 @@
     <!-- Logo & About -->
   <div class="footer-about">
       <div class="logo">
-      <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+  <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
         <div>
           <h2>HIGH Q SOLID ACADEMY</h2>
           <small>Limited</small>
@@ -148,6 +148,3 @@
 <a href="contact.php#livechat" class="floating-chat" aria-label="Live Chat with us">
   <i class="bx bx-chat"></i>
 </a>
-
-<!-- viewport-inview script (moved to external file) -->
-<script src="/HIGH-Q/public/assets/js/viewport-inview.js"></script>
