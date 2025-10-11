@@ -713,21 +713,22 @@
 
 /* Tweak: reduce spacing between registration form and aside on large screens */
 @media (min-width: 1025px) {
-  .container.register-layout {
+  .container.register-layout,
+  .container.register-layout.contact-layout {
     display: grid;
-    grid-template-columns: 1fr 320px; /* main + narrower sidebar */
-    gap: 16px; /* much tighter gap */
+    grid-template-columns: minmax(0, 1fr) 300px; /* tighter sidebar */
+    gap: 8px; /* very small gap to match contact layout */
     align-items: start;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: 6px;
+    padding-right: 6px;
   }
 
   .register-main { margin-right: 0 !important; }
   .register-sidebar { margin-left: 0 !important; width: 100%; }
 
   /* Slightly increase sidebar on very wide screens while keeping gap small */
-  @media (min-width: 1400px) {
-    .container.register-layout { grid-template-columns: 1fr 360px; }
+  @media (min-width: 1300px) {
+    .container.register-layout { grid-template-columns: minmax(0, 1fr) 340px; }
   }
 }
 
