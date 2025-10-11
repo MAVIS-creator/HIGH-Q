@@ -1,3 +1,51 @@
+/*
+  HIGH-Q Animations (README snippet)
+
+  Quick class reference (namespaced `hq-`):
+
+  Utilities:
+    .hq-glass            - glassmorphism card background + blur
+    .hq-glass--soft      - softer blur
+    .hq-glass--strong    - stronger blur
+    .hq-tilt             - lightweight 3D tilt on hover (desktop)
+    .hq-hover-glow       - extravagant glow on hover
+    .hq-cta              - CTA styling helper (gradient + shadow)
+
+  Animations / reveals:
+    .hq-slide-in.hq-up   - slide in from below
+    .hq-slide-in.hq-left - slide in from left
+    .hq-slide-in.hq-right- slide in from right
+    .hq-stagger > *      - staggered child reveals
+    .hq-float            - gentle bobbing animation
+    .hq-neon             - neon pulse/glow animation
+    .hq-shimmer          - shimmer highlight (text or surfaces)
+    .hq-reveal-left / .hq-reveal-right
+                         - utility reveal classes; add .hq-in to trigger
+
+  Helpers:
+    .hq-delay-1/2/3      - add animation delays
+    .hq-ripple           - small active ripple (on :active)
+
+  Accessibility:
+    Respects prefers-reduced-motion: heavy animations disabled for users
+
+  Small examples:
+    <div class="card hq-glass hq-slide-in hq-up hq-tilt hq-hover-glow hq-delay-1">
+      <div class="card-body hq-stagger">
+        <h3>Title</h3>
+        <p>Copy</p>
+        <a class="btn hq-cta hq-neon">Get started</a>
+      </div>
+    </div>
+
+    <a class="hq-cta hq-shimmer hq-neon hq-delay-2">Try it</a>
+
+  Notes:
+    - This file is loaded by `public/includes/header.php` so the classes are
+      available site-wide. IntersectionObserver helper is at
+      `public/assets/js/hq-animations.js` (auto toggles `.hq-in`).
+*/
+
 /* Animations for different devices */
 
 /* Common Keyframes */

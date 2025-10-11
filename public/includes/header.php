@@ -240,6 +240,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- HQ Animations helper -->
+  <script defer src="./assets/js/hq-animations.js"></script>
 </head>
 
 <body>
