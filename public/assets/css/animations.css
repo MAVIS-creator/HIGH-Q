@@ -717,12 +717,12 @@
   .container.register-layout.contact-layout {
     display: grid;
     /* constrain main column max width so columns are centered and close together */
-    grid-template-columns: minmax(320px, 820px) 300px;
-    gap: 8px; /* very small gap to match contact layout */
-    align-items: start;
-    justify-content: center; /* center the two-column group within container */
-    padding-left: 6px;
-    padding-right: 6px;
+  grid-template-columns: minmax(320px, 820px) 300px;
+  gap: 8px; /* very small gap to match contact layout */
+  align-items: start;
+  justify-content: start; /* align columns to left so they sit closer to form content */
+  padding-left: 4px;
+  padding-right: 4px;
   }
 
   .register-main { margin-right: 0 !important; }
