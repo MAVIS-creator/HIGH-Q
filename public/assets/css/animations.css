@@ -6,6 +6,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -17,6 +18,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -28,6 +30,7 @@
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -39,6 +42,7 @@
     opacity: 0;
     transform: rotate(-10deg) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: rotate(0) scale(1);
@@ -50,14 +54,17 @@
     opacity: 0;
     transform: scale(0.3);
   }
+
   50% {
     opacity: 0.9;
     transform: scale(1.1);
   }
+
   80% {
     opacity: 1;
     transform: scale(0.89);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -69,6 +76,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -105,12 +113,29 @@
     opacity: 0;
   }
 
-  .nav-item:nth-child(1) { animation-delay: 0.1s; }
-  .nav-item:nth-child(2) { animation-delay: 0.2s; }
-  .nav-item:nth-child(3) { animation-delay: 0.3s; }
-  .nav-item:nth-child(4) { animation-delay: 0.4s; }
-  .nav-item:nth-child(5) { animation-delay: 0.5s; }
-  .nav-item:nth-child(6) { animation-delay: 0.6s; }
+  .nav-item:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+
+  .nav-item:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .nav-item:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .nav-item:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+
+  .nav-item:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+
+  .nav-item:nth-child(6) {
+    animation-delay: 0.6s;
+  }
 
   .ceo-card {
     animation: scaleIn 0.6s ease forwards;
@@ -152,12 +177,29 @@
     opacity: 0;
   }
 
-  .nav-item:nth-child(1) { animation-delay: 0.1s; }
-  .nav-item:nth-child(2) { animation-delay: 0.2s; }
-  .nav-item:nth-child(3) { animation-delay: 0.3s; }
-  .nav-item:nth-child(4) { animation-delay: 0.4s; }
-  .nav-item:nth-child(5) { animation-delay: 0.5s; }
-  .nav-item:nth-child(6) { animation-delay: 0.6s; }
+  .nav-item:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+
+  .nav-item:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .nav-item:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .nav-item:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+
+  .nav-item:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+
+  .nav-item:nth-child(6) {
+    animation-delay: 0.6s;
+  }
 
   .nav-link:hover {
     transform: translateY(-2px);
@@ -186,7 +228,7 @@
 /* Enhanced Hover Effects */
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -230,14 +272,22 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(255,214,0,0.15) 0%, rgba(255,214,0,0) 100%);
+  background: linear-gradient(45deg, rgba(255, 214, 0, 0.15) 0%, rgba(255, 214, 0, 0) 100%);
   animation: gradientShift 8s ease infinite;
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Preloader Animation */
@@ -262,3 +312,341 @@
     visibility: hidden;
   }
 }
+
+/* ==========================
+   HIGH-Q: Extra Animations
+   Namespaced with `hq-` to avoid clashes
+   Includes: variables, glassmorphism utilities,
+   hover extravaganza, card slide-ins, stagger utilities,
+   and reduced-motion support
+   ========================== */
+
+:root {
+  --hq-anim-fast: 180ms;
+  --hq-anim-medium: 360ms;
+  --hq-anim-long: 800ms;
+  --hq-ease: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --hq-glass-bg: rgba(255, 255, 255, 0.06);
+  --hq-glass-border: rgba(255, 255, 255, 0.12);
+  --hq-glow-color: rgba(255, 214, 0, 0.9);
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .hq-animate,
+  .hq-slide-in,
+  .hq-float,
+  .hq-neon,
+  .hq-shimmer {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Glassmorphism utilities */
+.hq-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--hq-glass-border);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: 0 6px 24px rgba(8, 15, 30, 0.35);
+  border-radius: 12px;
+  color: inherit;
+  transition: transform var(--hq-anim-medium) var(--hq-ease), box-shadow var(--hq-anim-medium) var(--hq-ease);
+}
+
+.hq-glass:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 18px 50px rgba(8, 15, 30, 0.45);
+}
+
+.hq-glass--soft {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.hq-glass--strong {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+/* Card slide-in with simple utility classes */
+@keyframes hq-slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hq-slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes hq-slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hq-slide-in {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.hq-slide-in.hq-up {
+  animation: hq-slideInUp var(--hq-anim-long) var(--hq-ease) forwards;
+}
+
+.hq-slide-in.hq-left {
+  animation: hq-slideInLeft var(--hq-anim-long) var(--hq-ease) forwards;
+}
+
+.hq-slide-in.hq-right {
+  animation: hq-slideInRight var(--hq-anim-long) var(--hq-ease) forwards;
+}
+
+/* Stagger helpers for children */
+.hq-stagger>* {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: hq-slideInUp 520ms var(--hq-ease) forwards;
+}
+
+.hq-stagger>*:nth-child(1) {
+  animation-delay: 80ms;
+}
+
+.hq-stagger>*:nth-child(2) {
+  animation-delay: 160ms;
+}
+
+.hq-stagger>*:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.hq-stagger>*:nth-child(4) {
+  animation-delay: 320ms;
+}
+
+.hq-stagger>*:nth-child(5) {
+  animation-delay: 400ms;
+}
+
+.hq-stagger>*:nth-child(6) {
+  animation-delay: 480ms;
+}
+
+/* Float / gentle bob */
+@keyframes hq-float {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.hq-float {
+  animation: hq-float 4.2s ease-in-out infinite;
+}
+
+/* Neon / glow pulse for CTA */
+@keyframes hq-neonPulse {
+  0% {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+
+  50% {
+    box-shadow: 0 6px 30px rgba(255, 214, 0, 0.14), 0 0 60px rgba(255, 214, 0, 0.06);
+  }
+
+  100% {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.hq-neon {
+  animation: hq-neonPulse 2.8s ease-in-out infinite;
+}
+
+/* Shimmer (text or card highlight) */
+@keyframes hq-shimmer {
+  0% {
+    background-position: -150% 0;
+  }
+
+  100% {
+    background-position: 150% 0;
+  }
+}
+
+.hq-shimmer {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0.02) 100%);
+  background-size: 200% 100%;
+  animation: hq-shimmer 1.6s linear infinite;
+}
+
+/* Extravagant hover effects for cards/buttons */
+.hq-hover-glow {
+  position: relative;
+  transition: transform var(--hq-anim-medium) var(--hq-ease), box-shadow var(--hq-anim-medium) var(--hq-ease);
+}
+
+.hq-hover-glow::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  background: radial-gradient(600px 200px at 10% 10%, rgba(255, 214, 0, 0.06), transparent 10%), radial-gradient(400px 140px at 90% 90%, rgba(0, 174, 255, 0.035), transparent 15%);
+  opacity: 0;
+  transition: opacity var(--hq-anim-medium) var(--hq-ease), transform var(--hq-anim-medium) var(--hq-ease);
+  pointer-events: none;
+}
+
+.hq-hover-glow:hover {
+  transform: translateY(-8px) scale(1.01);
+}
+
+.hq-hover-glow:hover::after {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+/* 3D tilt on hover (lightweight: transform only) */
+.hq-tilt {
+  transform-style: preserve-3d;
+  transition: transform 400ms var(--hq-ease);
+}
+
+.hq-tilt:hover {
+  transform: perspective(800px) rotateX(3deg) rotateY(-3deg) translateY(-6px);
+}
+
+/* Slide-in variants tuned per viewport */
+@media (max-width: 768px) {
+  .hq-slide-in.hq-up {
+    animation-duration: 520ms;
+  }
+
+  .hq-float {
+    animation-duration: 5.2s;
+  }
+
+  .hq-shimmer {
+    animation-duration: 1.2s;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hq-slide-in.hq-up {
+    animation-duration: 640ms;
+  }
+
+  .hq-glass {
+    border-radius: 14px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .hq-slide-in.hq-up {
+    animation-duration: 820ms;
+  }
+
+  .hq-glass {
+    border-radius: 16px;
+  }
+}
+
+/* Utility: appear with delay (for hero CTAs) */
+.hq-delay-1 {
+  animation-delay: 120ms !important;
+}
+
+.hq-delay-2 {
+  animation-delay: 300ms !important;
+}
+
+.hq-delay-3 {
+  animation-delay: 520ms !important;
+}
+
+/* Subtle ripple for clickable elements */
+@keyframes hq-ripple {
+  from {
+    box-shadow: 0 0 0 0 rgba(255, 214, 0, 0.14);
+  }
+
+  to {
+    box-shadow: 0 0 0 24px rgba(255, 214, 0, 0);
+  }
+}
+
+.hq-ripple:active {
+  animation: hq-ripple 520ms var(--hq-ease);
+}
+
+/* Small helpers for slide-left/slide-right reveals */
+.hq-reveal-left {
+  opacity: 0;
+  transform: translateX(-22px);
+  transition: all var(--hq-anim-long) var(--hq-ease);
+}
+
+.hq-reveal-left.hq-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.hq-reveal-right {
+  opacity: 0;
+  transform: translateX(22px);
+  transition: all var(--hq-anim-long) var(--hq-ease);
+}
+
+.hq-reveal-right.hq-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Quick example CTA class combining effects */
+.hq-cta {
+  display: inline-block;
+  padding: 0.65rem 1.05rem;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ffd600, #ffb200);
+  color: #0b0b0b;
+  font-weight: 700;
+  box-shadow: 0 8px 28px rgba(255, 166, 0, 0.14);
+  transform: translateY(0);
+}
+
+.hq-cta.hq-neon:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* End of HIGH-Q extra animations */
