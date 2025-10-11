@@ -161,14 +161,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 <style>
 /* Fix: some global card animation rules set .achievement to opacity:0 until JS adds .in-view
    On small screens we want Achievements visible even if JS does not run, so override there. */
-@media (max-width: 768px) {
-  .achievements .achievement,
-  .achievements .achievement * {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-  }
-}
+
 </style>
 <!-- Achievements -->
 <!-- Achievements Section -->
