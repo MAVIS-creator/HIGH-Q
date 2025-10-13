@@ -823,6 +823,13 @@ nav a.active::after {
     .testimonial-card .attribution { margin-top: 12px !important; }
   }
 
+  /* Debug/test overrides to mimic supplied screenshot (can be removed after verification) */
+  .testimonials-section { background: #f2f2f2 !important; }
+  .testimonials-grid { max-width: 1200px; margin: 0 auto; }
+  .testimonial-card { border-radius: 8px !important; padding: 22px !important; }
+  .testimonial-card .rating { font-size: 18px !important; color: var(--hq-yellow) !important; }
+  .testimonial-card .quote { color: #444 !important; }
+
 
 
   @media (max-width: 1100px) {
