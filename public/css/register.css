@@ -282,3 +282,48 @@
 .section-title i {
     color: var(--hq-yellow);
 }
+
+/* Admin notice variants (moved from inline styles) */
+.admin-notice {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--hq-yellow);
+    border-radius: 4px;
+}
+.admin-warning { background: #fff7e6; color: #b33; border-left-color: var(--hq-yellow); }
+.admin-error { background: #fff5f5; color: #a33; border-left-color: #d9534f; }
+.admin-success { background: #e6fff0; color: #094; border-left-color: #3cb371; }
+
+/* Form two-column helpers */
+.form-col { flex: 1; }
+
+/* Program label styles (moved from inline) */
+.program-label {
+    display: block;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+.program-label input[type="checkbox"] { margin-right: 8px; }
+.program-price { color: #666; font-size: 0.95rem; }
+.program-duration { font-size: 12px; color: #777; margin-top: 6px; }
+
+/* Submit row spacing */
+.submit-row { margin-top: 12px; }
+
+/* Payment summary moved styles */
+.payment-summary { margin-top: 14px; padding: 10px; border-top: 1px dashed #eee; background: #fff; border-radius: 6px; }
+.payment-summary-title { margin: 0 0 6px 0; }
+.payment-summary-body { font-size: 14px; color: #444; }
+.ps-divider { margin: 8px 0; border: none; border-top: 1px solid #f0f0f0; }
+.payment-note { font-size: 12px; color: #666; margin-top: 8px; }
+
+/* CEO heading centering */
+.ceo-heading--center { text-align: center; }
+
+/* Next icons uniform size and colors via utility classes */
+.next-icon i { font-size: 26px; }
+.next-stat.yellow .next-icon i, .next-stat .next-icon i { color: #d99a00; }
+.next-stat.red .next-icon i { color: #d9534f; }
