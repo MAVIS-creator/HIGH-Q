@@ -118,38 +118,7 @@
     min-width: 250px;
 }
 
-/* Why Choose Us Section Fix */
-.why-box {
-    background: var(--hq-yellow);
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-}
-
-.why-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.why-stats .stat {
-    text-align: center;
-}
-
-.why-stats .stat .icon {
-    font-size: 24px;
-    color: #d9534f;
-    margin-bottom: 10px;
-}
-
-.why-stats .stat strong {
-    display: block;
-    font-size: 24px;
-    margin-bottom: 5px;
-.why-stats .stat span {
-    font-size: 14px;
-}
+/* Why Choose Us styles consolidated in public/assets/css/public.css */
 
 @media screen and (max-width: 768px) {
     .why-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; }
