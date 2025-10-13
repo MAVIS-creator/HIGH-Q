@@ -698,6 +698,46 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <script>
+// Program label selection visuals
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		document.querySelectorAll('.program-label').forEach(label => {
+			const input = label.querySelector('input[type="checkbox"]');
+			if (!input) return;
+			// sync initial state
+			if (input.checked) label.classList.add('selected');
+			input.addEventListener('change', function(){
+				if (this.checked) label.classList.add('selected'); else label.classList.remove('selected');
+			});
+			// also toggle when label clicked
+			label.addEventListener('click', function(e){
+				// let input handle it normally
+				setTimeout(()=>{ if (input.checked) label.classList.add('selected'); else label.classList.remove('selected'); }, 30);
+			});
+		});
+	}catch(e){}
+});
+
+// Desktop: make payment summary appear as popup (reuse mobile panel)
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		const viewBtn = document.getElementById('viewSummaryBtn');
+		const mobile = document.getElementById('mobilePaymentSummary');
+		if (!viewBtn || !mobile) return;
+		viewBtn.addEventListener('click', function(){
+			// ensure mobile panel has current content
+			const paymentSummary = document.querySelector('.payment-summary');
+			const mpsContent = mobile.querySelector('.mps-content');
+			if (paymentSummary && mpsContent) mpsContent.innerHTML = paymentSummary.innerHTML;
+			mobile.style.display = 'block';
+			mobile.setAttribute('aria-hidden','false');
+			viewBtn.setAttribute('aria-expanded','true');
+		});
+		// close behavior already wired in initMobilePaymentSummary (close button)
+	}catch(e){}
+});
+</script>
+<script>
 // FAQ read-more toggle: attach to buttons with .faq-readmore
 document.addEventListener('DOMContentLoaded', function(){
 	try{
