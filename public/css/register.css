@@ -296,6 +296,12 @@ Mobile-first responsive styles for registration form
     .why-stats {
         grid-template-columns: repeat(1, 1fr);
     }
+    /* Override site-wide desktop flex layout for why-box: force stacked single-column stats for register pages */
+    .register-main .why-box .why-stats {
+        display: grid !important;
+        grid-template-columns: repeat(1, 1fr) !important;
+        gap: 12px !important;
+    }
 }
 
 /* Section titles */
