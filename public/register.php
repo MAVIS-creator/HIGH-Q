@@ -364,8 +364,6 @@ $csrf = generateToken('signup_form');
 
 							<div class="sidebar-card payment-box">
 								<h4>Payment Options</h4>
-								<!-- Visual toggle for testing mobile payment panel behavior -->
-								<button id="mps-toggle" type="button" class="mps-toggle" aria-pressed="false">Show mobile payment panel</button>
 						<div class="payment-method" data-method="bank">
 							<strong>Bank Transfer</strong>
 									<p>Account Name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
