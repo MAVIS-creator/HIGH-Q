@@ -367,6 +367,20 @@ Mobile-first responsive styles for registration form
 .ps-divider { margin: 8px 0; border: none; border-top: 1px solid #f0f0f0; }
 .payment-note { font-size: 12px; color: #666; margin-top: 8px; }
 
+/* DEBUG: Hide the inline payment summary so the floating panel is the single visible UI.
+    Keep DOM in place for accessibility/clone operations; this just visually removes it. */
+.register-main .payment-summary { display: none; }
+
+/* DEBUG: Force-contained why-box for testing: prevent overflow and ensure proper padding
+    These are intentionally specific and can be relaxed after verification. */
+.register-main .why-box { overflow: hidden; box-shadow: none; border-radius: 8px; padding: 18px; }
+.register-main .why-box .why-stats { grid-auto-rows: 1fr; }
+
+/* DEBUG: Testimonials - force grid layout for consistent debug visuals */
+.testimonials-section .testimonials-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important; gap: 18px !important; }
+.testimonials-section .testimonial-card { height: 100% !important; display: flex !important; flex-direction: column !important; }
+.testimonials-section .testimonial-card .quote { flex: 1 1 auto !important; }
+
 /* CEO heading centering */
 .ceo-heading--center { text-align: center; }
 
