@@ -1315,26 +1315,6 @@ nav a.active::after {
   opacity: 0.95;
 }
 
-/* SweetAlert2 HQ theme overrides */
-.swal2-popup {
-  border-radius: 12px !important;
-  font-family: inherit !important;
-  color: var(--hq-gray-dark, #171717) !important;
-}
-.swal2-title { color: var(--hq-black) !important; font-weight:700; }
-.swal2-confirm {
-  background: var(--hq-yellow) !important;
-  color: #111 !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
-}
-.swal2-cancel {
-  background: transparent !important;
-  color: var(--hq-gray-dark) !important;
-}
-.swal2-popup .swal2-actions .swal2-styled:focus { box-shadow: 0 0 0 4px rgba(245,185,4,0.12) !important; }
-
-
 /* Register two-column layout */
 .register-layout {
   display: grid;
