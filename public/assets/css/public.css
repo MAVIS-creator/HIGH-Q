@@ -2943,6 +2943,18 @@ input.form-input {
   color: var(--hq-black);
 }
 
+/* Neutralize page-level negative margins and Bootstrap row/col interference */
+.why-box { margin: 0 !important; }
+
+/* When templates use `row testimonials-grid` with Bootstrap cols, force grid behavior */
+.testimonials-grid.row {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)) !important;
+  gap: 22px !important;
+}
+.testimonials-grid.row > * { width: auto !important; }
+
+
 .cta-join .container {
   display: flex;
   flex-direction: column;
