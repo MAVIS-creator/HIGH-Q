@@ -4027,3 +4027,43 @@ input.form-input {
 .forum-reply-form .form-row {
   margin-bottom: 6px
 }
+
+/* --- Mobile override: hide register sidebar and make main content full width --- */
+@media (max-width: 700px) {
+  /* collapse grid-based register layout to a single column */
+  .container.register-layout,
+  .register-layout {
+    display: block !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+    margin: 1rem auto !important;
+    padding: 0 0.75rem !important;
+  }
+
+  .register-layout .register-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* hide the sidebar and any sidebar cards on mobile devices */
+  .register-layout .register-sidebar,
+  .register-sidebar,
+  .sidebar-card,
+  .register-sidebar .card,
+  .payment-summary {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  /* ensure program cards stack in single column on mobile */
+  .programs-grid.register-select,
+  .programs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
