@@ -660,6 +660,125 @@ document.addEventListener('DOMContentLoaded', function(){
 	}catch(e){/* ignore */}
 });
 </script>
+<!-- Mobile payment summary and computed-style logger -->
+<style>
+/* Mobile payment summary panel */
+#mobilePaymentSummary {
+	display: none;
+	position: fixed;
+	left: 12px;
+	right: 12px;
+	bottom: 12px;
+	background: #fff;
+	border-radius: 10px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+	z-index: 1500;
+	padding: 12px;
+	max-height: 60vh;
+	overflow: auto;
+}
+#mobilePaymentSummary .mps-close { position:absolute; right:12px; top:8px; background:transparent; border:none; font-size:18px; cursor:pointer }
+@media (min-width: 901px) {
+	#mobilePaymentSummary { display:none !important; }
+}
+</style>
+
+<div id="mobilePaymentSummary" aria-hidden="true">
+	<button class="mps-close" aria-label="Close">✕</button>
+	<div class="mps-content"></div>
+</div>
+
+<script>
+// Computed-style logger for debugging: logs computed values and attempts to find matching stylesheet rules
+function hqLogComputedStyles() {
+	const selectors = ['.container.register-layout', '.register-layout .register-main', '.register-layout .register-sidebar', '.payment-summary', '.why-box .why-stats'];
+	selectors.forEach(sel => {
+		const el = document.querySelector(sel);
+		console.groupCollapsed('Computed style for ' + sel);
+		if (!el) { console.log('Element not found: ' + sel); console.groupEnd(); return; }
+		const cs = getComputedStyle(el);
+		console.log('inline style:', el.style && el.style.cssText);
+		console.log('display:', cs.getPropertyValue('display'));
+		console.log('width:', cs.getPropertyValue('width'));
+		console.log('max-width:', cs.getPropertyValue('max-width'));
+		console.log('grid-template-columns:', cs.getPropertyValue('grid-template-columns'));
+		console.log('flex:', cs.getPropertyValue('flex'));
+		console.log('box-sizing:', cs.getPropertyValue('box-sizing'));
+		// Try to find rules in document stylesheets that mention the selector or class
+		try {
+			const rulesFound = [];
+			Array.from(document.styleSheets).forEach(sheet => {
+				try {
+					Array.from(sheet.cssRules || []).forEach(r => {
+						if (r.selectorText && r.selectorText.indexOf(sel.replace(/\s+/g,' ')) !== -1) rulesFound.push(r.cssText);
+						// also match class fragments
+						if (r.selectorText && sel.split(' ').some(s => s.startsWith('.') && r.selectorText.indexOf(s) !== -1)) rulesFound.push(r.cssText);
+					});
+				} catch(e) { /* cross-origin or inaccessible stylesheet */ }
+			});
+			if (rulesFound.length) { console.log('Matching rules (first 20):', rulesFound.slice(0,20)); }
+			else { console.log('No matching stylesheet rules found (or CORS blocked).'); }
+		} catch(e) { console.log('Error scanning stylesheets:', e); }
+		console.groupEnd();
+	});
+}
+
+// Add a console-friendly helper
+window.hqLogComputedStyles = hqLogComputedStyles;
+
+// Mobile payment summary: clone payment-summary content into the mobile panel and show when programs are tapped (mobile only)
+function initMobilePaymentSummary() {
+	const mobile = document.getElementById('mobilePaymentSummary');
+	const mpsContent = mobile.querySelector('.mps-content');
+	const paymentSummary = document.querySelector('.payment-summary');
+	const closeBtn = mobile.querySelector('.mps-close');
+	function updateMobileContent() {
+		if (!paymentSummary) return;
+		mpsContent.innerHTML = paymentSummary.innerHTML;
+	}
+	// show panel
+	function showMobilePanel() {
+		updateMobileContent();
+		mobile.style.display = 'block';
+		mobile.setAttribute('aria-hidden','false');
+	}
+	function hideMobilePanel() {
+		mobile.style.display = 'none';
+		mobile.setAttribute('aria-hidden','true');
+	}
+	closeBtn.addEventListener('click', hideMobilePanel);
+
+	// show when any program checkbox or label clicked on small screens
+	function attachShowHandlers() {
+		const programInputs = Array.from(document.querySelectorAll('input[name="programs[]"]'));
+		const programLabels = Array.from(document.querySelectorAll('.program-label'));
+		const showIfMobile = (e) => {
+			if (window.innerWidth <= 900) {
+				// small delay to let compute update values
+				setTimeout(showMobilePanel, 120);
+			}
+		};
+		programInputs.forEach(i => i.addEventListener('change', showIfMobile));
+		programLabels.forEach(l => l.addEventListener('click', showIfMobile));
+	}
+
+	// keep mobile content in sync when compute() runs: override compute to also update mobile panel if visible
+	const originalCompute = window.compute;
+	if (typeof originalCompute === 'function') {
+		window.compute = function(){
+			try { originalCompute(); } catch(e){}
+			try { if (mobile.style.display !== 'none') updateMobileContent(); } catch(e){}
+		};
+	}
+
+	attachShowHandlers();
+}
+
+// Initialize mobile summary after DOM ready
+document.addEventListener('DOMContentLoaded', function(){
+	try { initMobilePaymentSummary(); } catch(e) { console.warn('Mobile payment summary init failed', e); }
+});
+</script>
 <!-- FINAL DEBUG OVERRIDE: force registration layout widths (remove when done) -->
 <style id="hq-register-override-final">
 html body.hq-public .container.register-layout,
