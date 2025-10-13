@@ -663,6 +663,68 @@ document.addEventListener('DOMContentLoaded', function(){
 	}catch(e){/* ignore */}
 });
 </script>
+<script>
+// Debug: log computed styles for key layout elements
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		const toLog = ['.container.register-layout', '.register-layout .register-main', '.register-layout .register-sidebar', '.why-box .why-stats'];
+		toLog.forEach(sel => {
+			const el = document.querySelector(sel);
+			if (!el) return console.warn('Logger: selector not found', sel);
+			const cs = window.getComputedStyle(el);
+			console.group('Computed styles for ' + sel);
+			console.log('display:', cs.display);
+			console.log('grid-template-columns:', cs.gridTemplateColumns);
+			console.log('width:', cs.width, 'max-width:', cs.maxWidth, 'flex-basis:', cs.flexBasis, 'flex:', cs.flex);
+			console.log('margin:', cs.margin);
+			console.groupEnd();
+		});
+	}catch(e){console.error('Computed-style logger failed', e)}
+
+	// Move payment-summary to mobile wrapper on small screens and show when a program is tapped
+	try{
+		const mobileWrap = document.getElementById('mobilePaymentWrap');
+		const paymentSummary = document.querySelector('.payment-summary');
+		const programCheckboxes = Array.from(document.querySelectorAll('input[name="programs[]"]'));
+		const isSmall = () => window.matchMedia('(max-width:900px)').matches;
+
+		function placePayment() {
+			if (!paymentSummary || !mobileWrap) return;
+			if (isSmall()) {
+				// move into mobile wrapper
+				if (!mobileWrap.contains(paymentSummary)) {
+					mobileWrap.innerHTML = '';
+					mobileWrap.appendChild(paymentSummary);
+					mobileWrap.style.display = 'block';
+					mobileWrap.setAttribute('aria-hidden','false');
+				}
+			} else {
+				// ensure paymentSummary returns to sidebar payment-box (desktop)
+				const sidebar = document.querySelector('.sidebar-card.payment-box');
+				if (sidebar && !sidebar.contains(paymentSummary)) {
+					mobileWrap.style.display = 'none';
+					sidebar.appendChild(paymentSummary);
+				}
+			}
+		}
+
+		programCheckboxes.forEach(cb => {
+			cb.addEventListener('change', function(){
+				if (isSmall()) {
+					// show mobile payment summary briefly
+					placePayment();
+					paymentSummary.scrollIntoView({behavior:'smooth', block:'center'});
+					paymentSummary.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+				}
+			});
+		});
+
+		// place initially and on resize
+		placePayment();
+		window.addEventListener('resize', placePayment);
+	}catch(e){console.error('mobile payment move failed', e)}
+});
+</script>
 <!-- FINAL DEBUG OVERRIDE: force registration layout widths (remove when done) -->
 <style id="hq-register-override-final">
 html body.hq-public .container.register-layout,
