@@ -743,6 +743,27 @@ nav a.active::after {
     color: var(--hq-gray);
   }
 
+  /* Ensure testimonial cards don't collapse and read nicely on desktop */
+  .testimonial-card {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .testimonial-card .quote { flex: 1 1 auto; overflow: hidden; }
+
+  /* Why box polish: larger icon, darker text on yellow background */
+  .why-box {
+    background: var(--hq-yellow) !important;
+    color: #111;
+    border-radius: 10px;
+  }
+  .why-box .why-stats .stat { background: transparent; }
+  .why-box .why-stats .stat .icon { width:56px; height:56px; background: rgba(0,0,0,0.04); border-radius: 10px; display:flex; align-items:center; justify-content:center; }
+  .why-box .why-stats .stat .icon i { color: #d9534f; font-size: 22px; }
+  .why-box h4 { color: rgba(0,0,0,0.8); }
+
+
   @media (max-width: 1100px) {
     .testimonials-grid {
       grid-template-columns: repeat(2, 1fr);

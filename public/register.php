@@ -693,4 +693,21 @@ document.addEventListener('DOMContentLoaded', function(){
 	try { initMobilePaymentSummary(); } catch(e) { console.warn('Mobile payment summary init failed', e); }
 });
 </script>
+<script>
+// FAQ read-more toggle: attach to buttons with .faq-readmore
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		Array.from(document.querySelectorAll('.faq-readmore')).forEach(btn => {
+			btn.addEventListener('click', function(e){
+				const target = this.closest('.faq-card') || document.querySelector(this.getAttribute('data-target'));
+				if (!target) return;
+				const clamped = target.querySelector('.faq-clamped');
+				if (!clamped) return;
+				const expanded = clamped.classList.toggle('faq-clamped--expanded');
+				this.textContent = expanded ? 'Show less' : 'Read more';
+			});
+		});
+	}catch(e){/* ignore */}
+});
+</script>
 <!-- Debug overrides removed: styles are consolidated into public/css/register.css -->
