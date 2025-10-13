@@ -44,6 +44,9 @@ html body .container.register-layout .register-sidebar {
   }
 }
 
+/* For debugging: hide the inline payment-summary (we'll use popup only) */
+.payment-summary { display: none !important; }
+
 :root {
   --hq-yellow: #f5b904;
   --hq-yellow-light: #ffe566;
