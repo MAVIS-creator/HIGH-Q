@@ -859,13 +859,13 @@ nav a.active::after {
 /* Testimonials: slightly wider cards and reduced height for compact layout */
 .testimonials-section .testimonials-grid {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important; /* wider columns */
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)) !important; /* increased width */
   gap: 22px !important;
   max-width: 1200px !important;
   margin: 0 auto !important;
 }
 .testimonials-section .testimonial-card {
-  min-height: 160px !important; /* reduced height */
+  min-height: 140px !important; /* decreased height */
   display: flex !important;
   flex-direction: column !important;
   padding: 18px !important;
