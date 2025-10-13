@@ -646,18 +646,6 @@ function initMobilePaymentSummary() {
 	const mpsContent = mobile.querySelector('.mps-content');
 	const paymentSummary = document.querySelector('.payment-summary');
 	const closeBtn = mobile.querySelector('.mps-close');
-	const toggleBtn = document.getElementById('mps-toggle');
-	// toggle state: when true, clicking programs will show the mobile panel on small screens
-	let toggleEnabled = true;
-	if (toggleBtn) {
-		toggleEnabled = toggleBtn.getAttribute('aria-pressed') !== 'true';
-		toggleBtn.addEventListener('click', function(){
-			// flip state and update label
-			toggleEnabled = !toggleEnabled;
-			this.setAttribute('aria-pressed', String(!toggleEnabled));
-			this.textContent = toggleEnabled ? 'Show mobile payment panel' : 'Disable mobile panel';
-		});
-	}
 	function updateMobileContent() {
 		if (!paymentSummary) return;
 		mpsContent.innerHTML = paymentSummary.innerHTML;
@@ -679,7 +667,7 @@ function initMobilePaymentSummary() {
 		const programInputs = Array.from(document.querySelectorAll('input[name="programs[]"]'));
 		const programLabels = Array.from(document.querySelectorAll('.program-label'));
 		const showIfMobile = (e) => {
-			if (window.innerWidth <= 900 && toggleEnabled) {
+			if (window.innerWidth <= 900) {
 				// small delay to let compute update values
 				setTimeout(showMobilePanel, 120);
 			}
