@@ -377,3 +377,16 @@ Mobile-first responsive styles for registration form
 /* Small utility styles */
 .swal-footer-link { color: #444; text-decoration: underline; }
 .ceo-subtext { color: var(--hq-gray); margin-top: 8px; }
+
+/* Mobile payment panel toggle (testing helper) */
+.mps-toggle {
+    display: inline-block;
+    background: transparent;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+.mps-toggle[aria-pressed="true"] { background: rgba(0,0,0,0.04); }
