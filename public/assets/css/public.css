@@ -904,6 +904,7 @@ nav a.active::after {
       grid-template-columns: 1fr;
     }
   }
+  
 
 /* Floating live chat button */
 .floating-chat {
