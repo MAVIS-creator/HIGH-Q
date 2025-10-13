@@ -200,7 +200,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$subject = 'New registration: ' . ($first_name . ' ' . $last_name);
 					$html = "<p>A new student has registered.</p><p><strong>Name:</strong> " . htmlspecialchars($first_name . ' ' . $last_name) . "</p>";
 					$html .= "<p><strong>Email:</strong> " . htmlspecialchars($email_contact ?: '') . "</p>";
-					$html .= "<p><strong>Reference:</strong> " . htmlspecialchars($reference) . "</p>";					// Use helper sendEmail (declared in public/config/functions.php)
+					$html .= "<p><strong>Reference:</strong> " . htmlspecialchars($reference) . "</p>";
+					// Use helper sendEmail (declared in public/config/functions.php)
 					@sendEmail($adminEmail, $subject, $html);
 				}
 			} catch (Throwable $e) {
