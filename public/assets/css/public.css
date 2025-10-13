@@ -4040,6 +4040,7 @@ input.form-input {
     padding: 0 0.75rem !important;
   }
 
+  /* make the main content full width and stack the sidebar under it */
   .register-layout .register-main {
     width: 100% !important;
     max-width: 100% !important;
@@ -4047,18 +4048,28 @@ input.form-input {
     padding-right: 0 !important;
   }
 
-  /* hide the sidebar and any sidebar cards on mobile devices */
+  /* show the sidebar below the main form as a full-width block on mobile */
   .register-layout .register-sidebar,
-  .register-sidebar,
+  .register-sidebar {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 12px 0 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  /* keep sidebar cards visible but full width */
   .sidebar-card,
   .register-sidebar .card,
   .payment-summary {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 0 12px 0 !important;
   }
 
   /* ensure program cards stack in single column on mobile */
