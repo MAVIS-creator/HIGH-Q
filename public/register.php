@@ -662,3 +662,26 @@ html body[class] .container.register-layout,
 .container.register-layout .register-main { outline: 2px dashed rgba(0,0,0,0.06) !important; }
 .container.register-layout .register-sidebar { outline: 2px dashed rgba(0,0,0,0.06) !important; }
 </style>
+<style id="hq-register-override-final-extra">
+/* Final override for checkbox and why-box */
+.container.register-layout .program-label input[type="checkbox"],
+.container.register-layout .checkbox-wrapper input[type="checkbox"] {
+	width: 18px !important;
+	height: 18px !important;
+	accent-color: var(--hq-yellow, #f5b904) !important;
+}
+
+@media (min-width: 768px) {
+	.container.register-layout .terms-row .checkbox-wrapper {
+		display: flex !important;
+		align-items: center !important;
+		gap: 12px !important;
+	}
+}
+
+.container.register-layout .why-box .why-stats {
+	display: flex !important;
+	flex-direction: column !important;
+}
+
+</style>
