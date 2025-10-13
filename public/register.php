@@ -362,6 +362,9 @@ $csrf = generateToken('signup_form');
 						</ul>
 					</div>
 
+					<!-- Mobile payment summary placeholder (visible on small screens) -->
+					<div id="mobilePaymentWrap" class="mobile-payment-summary" aria-hidden="true" style="display:none"></div>
+
 							<div class="sidebar-card payment-box">
 						<h4>Payment Options</h4>
 						<div class="payment-method" data-method="bank">
