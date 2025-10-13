@@ -601,3 +601,33 @@ document.addEventListener('DOMContentLoaded', function(){
 	}catch(e){/* ignore */}
 });
 </script>
+<!-- FINAL DEBUG OVERRIDE: force registration layout widths (remove when done) -->
+<style id="hq-register-override-final">
+html body.hq-public .container.register-layout,
+html body[class] .container.register-layout,
+.container.register-layout {
+	display: grid !important;
+	grid-template-columns: 2.2fr 0.8fr !important;
+	gap: 28px !important;
+	max-width: 1200px !important;
+	margin: 3rem auto !important;
+	padding: 0 1rem !important;
+}
+
+.container.register-layout .register-main {
+	width: auto !important;
+	max-width: none !important;
+	flex: none !important;
+}
+
+.container.register-layout .register-sidebar {
+	flex: none !important;
+	width: 320px !important;
+	max-width: 320px !important;
+	min-width: 240px !important;
+}
+
+/* Visual outlines for debugging - remove later */
+.container.register-layout .register-main { outline: 2px dashed rgba(0,0,0,0.06) !important; }
+.container.register-layout .register-sidebar { outline: 2px dashed rgba(0,0,0,0.06) !important; }
+</style>
