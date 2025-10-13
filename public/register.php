@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function(){
 }
 #mobilePaymentSummary .mps-close { position:absolute; right:12px; top:8px; background:transparent; border:none; font-size:18px; cursor:pointer }
 @media (min-width: 901px) {
-	#mobilePaymentSummary { display:none !important; }
+	#mobilePaymentSummary { display:none; }
 }
 </style>
 
