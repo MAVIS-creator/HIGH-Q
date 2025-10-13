@@ -2093,10 +2093,10 @@ nav a.active::after {
   color: rgba(0, 0, 0, 0.7) !important;
   line-height: 1.4 !important;
 }
-  color: var(--hq-red);
-  background: transparent;
-  flex: 0 0 26px;
-  padding: 0;
+  color: var(--hq-red) !important;
+  background: transparent !important;
+  flex: 0 0 26px !important;
+  padding: 0 !important;
 }
 
 .why-stats .stat .icon img {
