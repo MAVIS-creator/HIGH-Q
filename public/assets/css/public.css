@@ -877,7 +877,6 @@ nav a.active::after {
   line-height: 1.6 !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 5 !important;
-  line-clamp: 5 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -904,6 +903,8 @@ nav a.active::after {
       grid-template-columns: 1fr;
     }
   }
+
+}
   
 
 /* Floating live chat button */
