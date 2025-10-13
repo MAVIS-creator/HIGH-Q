@@ -2914,6 +2914,7 @@ input.form-input {
   line-height: 1.6 !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 5 !important;
+  line-clamp: 5 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
