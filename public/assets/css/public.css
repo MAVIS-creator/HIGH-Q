@@ -904,8 +904,6 @@ nav a.active::after {
     }
   }
 
-}
-
 /* Floating live chat button */
 .floating-chat {
   position: fixed;
