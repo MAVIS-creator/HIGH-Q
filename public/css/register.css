@@ -287,6 +287,48 @@ Mobile-first responsive styles for registration form
     color: var(--hq-yellow);
 }
 
+/* ===== MOVED FROM register.php ===== */
+/* Final overrides for register layout and components (migrated from internal debug styles) */
+/* Layout overrides */
+.container.register-layout {
+    display: grid;
+    grid-template-columns: 2.2fr 0.8fr;
+    gap: 28px;
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+.container.register-layout .register-main { width: auto; max-width: none; }
+.container.register-layout .register-sidebar { width: 320px; max-width: 320px; min-width: 240px; }
+
+/* Checkbox & terms layout */
+.program-label input[type="checkbox"], .checkbox-wrapper input[type="checkbox"] { width:18px; height:18px; accent-color:var(--hq-yellow); }
+@media (min-width:768px) { .terms-row .checkbox-wrapper { display:flex; align-items:center; gap:12px; } }
+
+/* Why Choose Us: stacked vertical list but each stat is a horizontal row */
+.why-box .why-stats { display:flex; flex-direction:column; gap:14px; }
+.why-box .why-stats .stat { display:flex; align-items:center; gap:16px; padding:12px 10px; border-radius:8px; }
+.why-box .why-stats .stat .icon { width:48px; height:48px; display:flex; align-items:center; justify-content:center; color:#d9534f; font-size:20px; }
+.why-box .why-stats .stat .stat-body { display:flex; flex-direction:column; }
+.why-box .why-stats .stat .stat-body strong { font-size:20px; margin-bottom:6px; }
+.why-box .why-stats .stat .stat-body span { font-size:13px; color:var(--hq-gray); }
+
+/* Mobile payment summary panel (moved) */
+#mobilePaymentSummary { display:none; position:fixed; left:12px; right:12px; bottom:12px; background:#fff; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.15); z-index:1500; padding:12px; max-height:60vh; overflow:auto }
+#mobilePaymentSummary .mps-close { position:absolute; right:12px; top:8px; background:transparent; border:none; font-size:18px; cursor:pointer }
+@media (min-width:901px) { #mobilePaymentSummary { display:none !important; } }
+
+/* SweetAlert2 theming for HQ colors */
+.swal2-popup { border-radius: 12px !important; font-family: inherit; }
+.swal2-title { color: var(--hq-black); }
+.swal2-content { color: var(--hq-gray); }
+.swal2-success .swal2-success-ring, .swal2-icon.swal2-success .swal2-success-ring { color: var(--hq-yellow); }
+.swal2-icon.swal2-info { color: var(--hq-yellow); }
+.swal2-confirm { background: var(--hq-yellow) !important; color: #111 !important; border-radius:8px !important; }
+.swal2-cancel { border-radius:8px !important; }
+
+/* End moved styles */
+
 /* Admin notice variants (moved from inline styles) */
 .admin-notice {
     padding: 12px;
