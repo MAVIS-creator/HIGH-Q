@@ -327,3 +327,7 @@
 .next-icon i { font-size: 26px; }
 .next-stat.yellow .next-icon i, .next-stat .next-icon i { color: #d99a00; }
 .next-stat.red .next-icon i { color: #d9534f; }
+
+/* Small utility styles */
+.swal-footer-link { color: #444; text-decoration: underline; }
+.ceo-subtext { color: var(--hq-gray); margin-top: 8px; }
