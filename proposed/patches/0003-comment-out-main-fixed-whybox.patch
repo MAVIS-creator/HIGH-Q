@@ -1,0 +1,76 @@
+Proposal: Comment out `why-box` block in `public/assets/css/main-fixed.css`.
+
+Rationale:
+- `main-fixed.css` contains a `Why Choose Us Section Fix` block that duplicates site-wide styles. To prevent multiple competing rules, comment it out and rely on the canonical `public/assets/css/public.css` block.
+
+--- BEGIN PATCH (for review) ---
+*** In file: public/assets/css/main-fixed.css
+@@
+-/* Why Choose Us Section Fix */
+-.why-box {
+-    background: var(--hq-yellow);
+-    padding: 20px;
+-    margin: 20px 0;
+-    border-radius: 8px;
+-}
+-
+-.why-stats {
+-    display: grid;
+-    grid-template-columns: repeat(3, 1fr);
+-    gap: 15px;
+-    margin-top: 15px;
+-}
+-
+-.why-stats .stat {
+-    text-align: center;
+-}
+-
+-.why-stats .stat .icon {
+-    font-size: 24px;
+-    color: #d9534f;
+-    margin-bottom: 10px;
+-}
+-
+-.why-stats .stat strong {
+-    display: block;
+-    font-size: 24px;
+-    margin-bottom: 5px;
+-.why-stats .stat span {
+-    font-size: 14px;
+-}
++
++/* PROPOSED: Commented out - why-box duplication (moved to public/assets/css/public.css)
++.why-box {
++    background: var(--hq-yellow);
++    padding: 20px;
++    margin: 20px 0;
++    border-radius: 8px;
++}
++
++.why-stats {
++    display: grid;
++    grid-template-columns: repeat(3, 1fr);
++    gap: 15px;
++    margin-top: 15px;
++}
++
++.why-stats .stat {
++    text-align: center;
++}
++
++.why-stats .stat .icon {
++    font-size: 24px;
++    color: #d9534f;
++    margin-bottom: 10px;
++}
++
++.why-stats .stat strong {
++    display: block;
++    font-size: 24px;
++    margin-bottom: 5px;
++.why-stats .stat span {
++    font-size: 14px;
++}
++*/
+
+--- END PATCH ---

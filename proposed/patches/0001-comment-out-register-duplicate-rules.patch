@@ -1,0 +1,91 @@
+Proposal: Comment out duplicate/conflicting rules in `public/css/register.css`.
+
+Rationale:
+- `public/assets/css/public.css` now contains the canonical styles for testimonials, why-box, and program selection.
+- `register.css` contains several duplicate blocks that conflict (different layout modes, !important, debug overrides). Commenting them out keeps the file intact and reversible while removing conflicts.
+
+Proposed edits (comment-out blocks). The reviewer can either apply these by removing the comments or I can apply them for you after approval.
+
+--- BEGIN PATCH (for review) ---
+*** In file: public/css/register.css
+@@
+-/* Why Choose Us section - Fixed zoom issues */
+-.why-box {
+-    display: block;
+-    margin: 20px -15px;
+-    padding: 20px 15px;
+-    background: var(--hq-yellow);
+-    position: relative;
+-    box-sizing: border-box;
+-    overflow: hidden;
+-}
+-
+-.why-box h4 { color: #000; font-size: 18px; margin-bottom: 12px; font-weight: 700; }
+-
+-.why-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
+-.why-stats .stat { display:flex; flex-direction:column; align-items:center; text-align:center; padding:10px 5px; background:transparent; }
+-.why-stats .stat .icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+-.why-stats .stat .icon i { font-size:24px; color:#d9534f; }
+-.why-stats .stat strong { display:block; font-size:20px; margin-bottom:4px; font-weight:700; }
+-.why-stats .stat span { font-size:13px; color:#222; }
++
++/* PROPOSED: Commented out - Why Choose Us section (moved to public/assets/css/public.css)
++.why-box {
++    display: block;
++    margin: 20px -15px;
++    padding: 20px 15px;
++    background: var(--hq-yellow);
++    position: relative;
++    box-sizing: border-box;
++    overflow: hidden;
++}
++
++.why-box h4 { color: #000; font-size: 18px; margin-bottom: 12px; font-weight: 700; }
++
++.why-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
++.why-stats .stat { display:flex; flex-direction:column; align-items:center; text-align:center; padding:10px 5px; background:transparent; }
++.why-stats .stat .icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
++.why-stats .stat .icon i { font-size:24px; color:#d9534f; }
++.why-stats .stat strong { display:block; font-size:20px; margin-bottom:4px; font-weight:700; }
++.why-stats .stat span { font-size:13px; color:#222; }
++*/
+@@
+-/* DEBUG: Testimonials - force grid layout for consistent debug visuals */
+-.testimonials-section .testimonials-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important; gap: 18px !important; }
+-.testimonials-section .testimonial-card { height: 100% !important; display: flex !important; flex-direction: column !important; }
+-.testimonials-section .testimonial-card .quote { flex: 1 1 auto !important; }
++
++/* PROPOSED: Commented out - debug testimonial overrides (canonical rules live in public/assets/css/public.css)
++.testimonials-section .testimonials-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important; gap: 18px !important; }
++.testimonials-section .testimonial-card { height: 100% !important; display: flex !important; flex-direction: column !important; }
++.testimonials-section .testimonial-card .quote { flex: 1 1 auto !important; }
++*/
+@@
+-/* Program label styles (moved from inline) */
+-.program-label {
+-    display: block;
+-    padding: 10px;
+-    border: 1px solid #eee;
+-    border-radius: 6px;
+-    margin-bottom: 8px;
+-    cursor: pointer;
+-}
+-.program-label input[type="checkbox"] { margin-right: 8px; }
+-.program-price { color: #666; font-size: 0.95rem; }
+-.program-duration { font-size: 12px; color: #777; margin-top: 6px; }
++
++/* PROPOSED: Commented out - program-label duplicates (canonical styles in public/assets/css/public.css)
++.program-label {
++    display: block;
++    padding: 10px;
++    border: 1px solid #eee;
++    border-radius: 6px;
++    margin-bottom: 8px;
++    cursor: pointer;
++}
++.program-label input[type="checkbox"] { margin-right: 8px; }
++.program-price { color: #666; font-size: 0.95rem; }
++.program-duration { font-size: 12px; color: #777; margin-top: 6px; }
++*/
+
+--- END PATCH ---
