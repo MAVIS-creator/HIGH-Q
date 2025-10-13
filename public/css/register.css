@@ -318,15 +318,6 @@ Mobile-first responsive styles for registration form
 #mobilePaymentSummary .mps-close { position:absolute; right:12px; top:8px; background:transparent; border:none; font-size:18px; cursor:pointer }
 @media (min-width:901px) { #mobilePaymentSummary { display:none !important; } }
 
-/* SweetAlert2 theming for HQ colors */
-.swal2-popup { border-radius: 12px !important; font-family: inherit; }
-.swal2-title { color: var(--hq-black); }
-.swal2-content { color: var(--hq-gray); }
-.swal2-success .swal2-success-ring, .swal2-icon.swal2-success .swal2-success-ring { color: var(--hq-yellow); }
-.swal2-icon.swal2-info { color: var(--hq-yellow); }
-.swal2-confirm { background: var(--hq-yellow) !important; color: #111 !important; border-radius:8px !important; }
-.swal2-cancel { border-radius:8px !important; }
-
 /* End moved styles */
 
 /* Admin notice variants (moved from inline styles) */
