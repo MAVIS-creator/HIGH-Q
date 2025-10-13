@@ -653,6 +653,9 @@ document.addEventListener('DOMContentLoaded', function(){
 			}
 		}
 
+		// Expose compute globally so other scripts (mobile panel, debug helpers) can call or wrap it
+		try { window.compute = compute; } catch(e) { /* ignore */ }
+
 		// Attach listeners
 		checkboxes.forEach(cb => cb.addEventListener('change', compute));
 		// init
