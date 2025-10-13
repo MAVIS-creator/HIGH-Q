@@ -26,6 +26,53 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 ?>
 
 <section class="tutors-section">
+  <!-- Page-scoped overrides: force tutors/testimonials and why-box visuals to match intended layout
+       These styles are intentionally specific and scoped here so they override heavy site CSS while
+       we perform a gradual audit of global styles. Remove or move to central CSS after verification. -->
+  <style>
+    /* Tutors grid: card-like responsive grid */
+    .tutors-section .tutors-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+      gap: 18px !important;
+      align-items: start !important;
+    }
+    .tutors-section .tutor-card {
+      background: #fff !important;
+      border-radius: 12px !important;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+    }
+    .tutors-section .tutor-card .tutor-thumb { flex: 0 0 auto !important; }
+    .tutors-section .tutor-card .tutor-thumb img { width: 100% !important; height: auto !important; display: block !important; object-fit: cover !important; }
+    .tutors-section .tutor-body { padding: 14px !important; flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; }
+    .tutors-section .tutor-body h3 { margin: 0 0 6px !important; font-size: 1.1rem !important; }
+    .tutors-section .tutor-body .tutor-short { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
+    .tutors-section .subjects .tag { display: inline-block !important; margin-right: 8px !important; background: #f3f3f3 !important; padding: 6px 8px !important; border-radius: 6px !important; font-size: 0.85rem !important; }
+
+    /* Testimonials: force grid and card stretch so text aligns across rows */
+    .testimonials-section .testimonials-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important; gap: 18px !important; }
+    .testimonials-section .testimonial-card { padding: 0 !important; border: none !important; }
+    .testimonials-section .testimonial-card > div { height: 100% !important; display: flex !important; flex-direction: column !important; padding: 18px !important; }
+    .testimonials-section .rating { color: #f3c33a !important; font-size: 1rem !important; }
+    .testimonials-section .quote { flex: 1 1 auto !important; margin-bottom: 12px !important; color: #333 !important; }
+    .testimonials-section .attribution { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
+
+    /* Why-box containment: keep content contained, consistent padding and icons */
+    .why-box { overflow: hidden !important; box-shadow: none !important; border-radius: 12px !important; padding: 18px !important; }
+    .why-box .why-stats { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important; gap: 12px !important; }
+    .why-box .why-stats .stat { background: rgba(255,255,255,0.06) !important; border-radius: 8px !important; padding: 12px !important; display:flex !important; gap:12px !important; align-items:flex-start !important; }
+    .why-box .why-stats .stat .icon { width:48px !important; height:48px !important; display:flex !important; align-items:center !important; justify-content:center !important; font-size:22px !important; }
+    .why-box .why-stats .stat strong { font-size:18px !important; }
+
+    /* Small screens keep stacked cards */
+    @media (max-width: 720px) {
+      .tutors-section .tutors-grid, .testimonials-section .testimonials-grid { grid-template-columns: repeat(1, 1fr) !important; }
+    }
+  </style>
   <div class="container">
     <div class="ceo-heading">
       <h2>Meet Our Expert <span class="highlight">Tutors</span></h2>
