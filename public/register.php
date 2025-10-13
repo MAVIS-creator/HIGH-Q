@@ -503,6 +503,37 @@ body .container.register-layout {
 .register-layout .register-sidebar { outline: 2px dashed rgba(0,0,0,0.06) !important; }
 </style>
 
+<style id="hq-register-controls">
+/* Checkbox visual fixes */
+.program-label input[type="checkbox"],
+.checkbox-wrapper input[type="checkbox"] {
+	width: 18px !important;
+	height: 18px !important;
+	accent-color: var(--hq-yellow, #f5b904) !important; /* modern browsers */
+	vertical-align: middle !important;
+	margin-right: 8px !important;
+}
+
+/* Terms row: align checkbox and label on one line for desktop */
+@media (min-width: 768px) {
+	.terms-row .checkbox-wrapper {
+		display: flex !important;
+		align-items: center !important;
+		gap: 12px !important;
+	}
+	.terms-row .terms-label { margin: 0 !important; }
+}
+
+/* Why Choose Us: stack stats into one column (vertical) */
+.why-box .why-stats {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 12px !important;
+}
+.why-box .why-stats .stat { display:flex !important; align-items:center !important; gap:12px !important; }
+
+</style>
+
 <script>
 // Live payment summary for registration page
 document.addEventListener('DOMContentLoaded', function(){
