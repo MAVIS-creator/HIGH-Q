@@ -31,6 +31,19 @@ html body .container.register-layout .register-sidebar {
   .payment-summary { display: none !important; }
 }
 
+/* When the payment summary lives inside the main form DOM, show it as a sticky block on desktop */
+@media (min-width: 901px) {
+  .register-main .payment-summary {
+    position: sticky;
+    top: 120px; /* sits below the header */
+    margin-top: 8px;
+    width: 100%;
+    max-width: 340px;
+    align-self: start;
+    margin-left: auto; /* keep it to the right side of main column */
+  }
+}
+
 :root {
   --hq-yellow: #f5b904;
   --hq-yellow-light: #ffe566;
