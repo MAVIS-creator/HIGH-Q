@@ -1656,7 +1656,7 @@ nav a.active::after {
 }
 .programs-grid.register-select:hover {
   /* slightly more compact */
-  box sha
+  box-shadow: 0 12px 36px var();
 }
 
 .program-label {
