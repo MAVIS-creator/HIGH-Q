@@ -819,20 +819,39 @@ nav a.active::after {
     }
   }
 
-  /* Testimonials: ensure consistent 3-column layout on wide screens and sane card heights */
-  @media (min-width: 1100px) {
-    .testimonials-grid { grid-template-columns: repeat(3, 1fr) !important; }
-    .testimonial-card { min-height: 240px !important; display:flex !important; flex-direction:column !important; }
-    .testimonial-card .quote { flex: 1 1 auto !important; overflow: hidden !important; }
-    .testimonial-card .attribution { margin-top: 12px !important; }
-  }
+/* Testimonials base styles */
+.testimonials-section {
+  background: #f2f2f2;
+}
 
-  /* Debug/test overrides to mimic supplied screenshot (can be removed after verification) */
-  .testimonials-section { background: #f2f2f2 !important; }
-  .testimonials-grid { max-width: 1200px; margin: 0 auto; }
-  .testimonial-card { border-radius: 8px !important; padding: 22px !important; }
-  .testimonial-card .rating { font-size: 18px !important; color: var(--hq-yellow) !important; }
-  .testimonial-card .quote { color: #444 !important; }
+.testimonials-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.testimonial-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 22px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-card .rating {
+  font-size: 18px;
+  color: var(--hq-yellow);
+  margin-bottom: 10px;
+}
+
+.testimonial-card .quote {
+  color: #444;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
 
 /* Page-level overrides moved from tutors.php: tutors grid, testimonials, and why-box
    These are the cleaned rules to persist site-wide and avoid inline/page-scoped hacks. */
@@ -856,33 +875,33 @@ nav a.active::after {
 .tutors-section .tutor-body { padding: 14px !important; display:flex !important; flex-direction:column !important; }
 .tutors-section .tutor-body h3 { margin: 0 0 6px !important; font-size: 1.1rem !important; }
 
-/* Testimonials: slightly wider cards and reduced height for compact layout */
-.testimonials-section .testimonials-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important; /* wider columns */
-  gap: 22px !important;
-  max-width: 1200px !important;
-  margin: 0 auto !important;
-}
+/* Testimonials detailed styles */
 .testimonials-section .testimonial-card {
-  min-height: 160px !important; /* reduced height */
-  display: flex !important;
-  flex-direction: column !important;
-  padding: 18px !important;
+  min-height: 160px;
 }
-.testimonials-section .testimonial-card > div { height: 100% !important; display:flex !important; flex-direction:column !important; }
+
+.testimonials-section .testimonial-card > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .testimonials-section .testimonial-card .quote {
-  color: #333 !important;
-  font-size: 14px !important;
-  line-height: 1.6 !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 5 !important;
-  line-clamp: 5 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.testimonials-section .testimonial-card .attribution { margin-top: auto !important; color: var(--hq-gray) !important; }
+
+.testimonials-section .testimonial-card .attribution {
+  margin-top: auto;
+  color: var(--hq-gray);
+}
 
 /* Why-box: prefer stacked single-column stats on pages where used (overrides heavier rules) */
 .why-box { background: var(--hq-yellow) !important; color: #111 !important; border-radius: 10px !important; }
