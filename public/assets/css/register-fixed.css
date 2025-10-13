@@ -77,53 +77,53 @@
 
 /* Why Choose Us section - Fixed zoom issues */
 .why-box {
-    display: block !important;
-    margin: 20px -15px !important;
-    padding: 20px 15px !important;
-    background: var(--hq-yellow) !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    width: auto !important;
-    min-width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    z-index: 1 !important;
+    display: block;
+    margin: 20px -15px;
+    padding: 20px 15px;
+    background: var(--hq-yellow);
+    visibility: visible;
+    opacity: 1;
+    position: relative;
+    width: auto;
+    min-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 1;
 }
 
 .why-box h4 {
-    color: #000 !important;
-    font-size: 18px !important;
-    margin-bottom: 20px !important;
-    font-weight: bold !important;
-    text-align: left !important;
-    position: relative !important;
-    z-index: 2 !important;
+    color: #000;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: left;
+    position: relative;
+    z-index: 2;
 }
 
 .why-stats {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-    margin: 0 !important;
-    width: 100% !important;
-    position: relative !important;
-    z-index: 2 !important;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    width: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .why-stats .stat {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    text-align: center !important;
-    padding: 10px 5px !important;
-    background: transparent !important;
-    position: relative !important;
-    z-index: 2 !important;
-    min-width: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 10px 5px;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .why-stats .stat .icon {
