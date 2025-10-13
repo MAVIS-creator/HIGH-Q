@@ -254,14 +254,18 @@
         gap: 30px;
     }
     
+    /* Make the form wider and sidebar narrower on desktop */
     .register-main {
-        flex: 2;
+        flex: 3 1 0%; /* increase main ratio */
         margin-bottom: 0;
+        max-width: calc(100% - 360px); /* attempt to cap main width while reserving space for sidebar */
     }
     
     .register-sidebar {
-        flex: 1;
+        flex: 1 1 0%;
         margin-top: 0;
+        max-width: 320px; /* narrower sidebar */
+        min-width: 240px;
     }
     
     .why-stats {
