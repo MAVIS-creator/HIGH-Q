@@ -58,9 +58,19 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   .testimonials-section .testimonial-card { padding: 0 !important; border: none !important; }
   .testimonials-section .testimonial-card > div { height: 100% !important; display: flex !important; flex-direction: column !important; padding: 18px !important; }
   .testimonials-section .rating { color: #f3c33a !important; font-size: 1rem !important; }
-  .testimonials-section .quote { flex: 1 1 auto !important; margin-bottom: 12px !important; color: #333 !important; max-height: 7.5rem !important; overflow: hidden !important; }
-  .testimonials-section .quote::after { content: ' ...'; display:block; }
-  .testimonials-section .attribution { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
+    /* Clamp testimonial quotes to ~5 lines and show ellipsis (works in WebKit/Blink) */
+    .testimonials-section .quote {
+      flex: 1 1 auto !important;
+      margin-bottom: 12px !important;
+      color: #333 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 5 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+    /* ensure attribution anchors to bottom */
+    .testimonials-section .attribution { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
 
     /* Why-box containment: keep content contained, consistent padding and icons */
     .why-box { overflow: hidden !important; box-shadow: none !important; border-radius: 12px !important; padding: 18px !important; }
