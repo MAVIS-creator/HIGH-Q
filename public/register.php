@@ -285,7 +285,7 @@ $csrf = generateToken('signup_form');
 															showCancelButton: true,
 															confirmButtonText: 'Go to Dashboard',
 															cancelButtonText: 'Stay on this page',
-															footer: '<a href="/public/terms.php" target="_blank" style="color:#444">Terms & Privacy</a>',
+															footer: '<a href="/public/terms.php" target="_blank" class="swal-footer-link">Terms & Privacy</a>',
 															didClose: () => {
 																// optional: focus return
 															}
@@ -442,7 +442,7 @@ $csrf = generateToken('signup_form');
 	<div class="container">
 	<div class="ceo-heading ceo-heading--center">
 			<h2>What Happens <span class="highlight">Next?</span></h2>
-			<p style="color:var(--hq-gray); margin-top:8px;">After submitting your registration, here's what you can expect from us.</p>
+			<p class="ceo-subtext">After submitting your registration, here's what you can expect from us.</p>
 		</div>
 
 		<div class="achievements-grid">
