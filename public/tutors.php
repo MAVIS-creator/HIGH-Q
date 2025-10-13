@@ -173,6 +173,48 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   </div>
 </section>
 
+<script>
+// Force visual overrides at runtime so site-wide CSS with !important cannot keep reverting the layout.
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    // Force Why-box stacked one-column
+    document.querySelectorAll('.why-box .why-stats').forEach(function(ws){
+      ws.style.setProperty('display', 'grid', 'important');
+      ws.style.setProperty('grid-template-columns', 'repeat(1, 1fr)', 'important');
+      ws.style.setProperty('gap', '12px', 'important');
+    });
+
+    // Ensure each stat has consistent padding and alignment
+    document.querySelectorAll('.why-box .why-stats .stat').forEach(function(st){
+      st.style.setProperty('display','flex','important');
+      st.style.setProperty('align-items','flex-start','important');
+      st.style.setProperty('gap','12px','important');
+      st.style.setProperty('padding','12px','important');
+      st.style.setProperty('background','transparent','important');
+    });
+
+    // Testimonials: make cards stretch and clamp quotes
+    document.querySelectorAll('.testimonials-grid .testimonial-card').forEach(function(card){
+      // target inner wrapper (the first child div) if present
+      var inner = card.querySelector('> div') || card;
+      inner.style.setProperty('display','flex','important');
+      inner.style.setProperty('flex-direction','column','important');
+      inner.style.setProperty('height','100%','important');
+    });
+
+    // Clamp quotes to ~5 lines and ensure ellipsis where supported
+    document.querySelectorAll('.testimonials-section .quote').forEach(function(q){
+      q.style.setProperty('display','-webkit-box','important');
+      q.style.setProperty('-webkit-box-orient','vertical','important');
+      q.style.setProperty('-webkit-line-clamp','5','important');
+      q.style.setProperty('overflow','hidden','important');
+      q.style.setProperty('text-overflow','ellipsis','important');
+      q.style.setProperty('max-height','7.5rem','important');
+    });
+  }catch(e){ console.warn('Runtime layout override failed', e); }
+});
+</script>
+
 <style>
 .tutors-footer {
     margin-top: 3rem;
