@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function(){
       padding: 0.5rem 0;
     }
 
-    /* Make numbers slightly larger and keep span on its own line for readability */
+    Make numbers slightly larger and keep span on its own line for readability
     .achievements-grid .achievement strong { display: block; font-size: 1.6rem; color: var(--hq-yellow, #f4c542); }
     .achievements-grid .achievement span { display: block; color: var(--hq-gray, #666); font-size: 0.9rem; }
   }
