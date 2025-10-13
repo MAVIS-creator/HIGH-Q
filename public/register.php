@@ -346,6 +346,18 @@ $csrf = generateToken('signup_form');
 														</div>
 													</div>
 													<div class="submit-row"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
+													<!-- Move payment summary here (desktop will show it; mobile panel clones this content) -->
+													<div class="payment-summary">
+														<h5 class="payment-summary-title">Payment Summary</h5>
+														<div class="payment-summary-body">
+															<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
+															<div>Form fee: <strong id="ps-form">₦<?= number_format($form_fee,2) ?></strong></div>
+															<div>Card fee: <strong id="ps-card">₦<?= number_format($card_fee,2) ?></strong></div>
+															<hr class="ps-divider">
+															<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
+														</div>
+														<p class="payment-note">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
+													</div>
 												</form>
 											</div>
 										</main>
