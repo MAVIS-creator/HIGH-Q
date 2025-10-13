@@ -1654,7 +1654,10 @@ nav a.active::after {
   gap: 18px;
   margin: 18px 0 24px 0;
 }
-.programs-grid .re
+.programs-grid.register-select:hover {
+  /* slightly more compact */
+  box sha
+}
 
 .program-label {
   display: flex;
