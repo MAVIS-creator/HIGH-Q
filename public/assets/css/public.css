@@ -1668,7 +1668,7 @@ nav a.active::after {
 
 .program-label:hover {
   border-color: var(--hq-yellow);
-  box-shadow: 0 6px 20px var(--hq-yellow);
+  box-shadow: 0 6px 12px var(--hq-yellow);
   transform: translateY(-2px);
 }
 
