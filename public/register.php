@@ -718,24 +718,34 @@ document.addEventListener('DOMContentLoaded', function(){
 	}catch(e){}
 });
 
-// Desktop: make payment summary appear as popup (reuse mobile panel)
-document.addEventListener('DOMContentLoaded', function(){
+// Desktop/Mobile: show the floating payment panel when a program with a fixed price is selected
+function programClickShowsPanel() {
 	try{
-		const viewBtn = document.getElementById('viewSummaryBtn');
 		const mobile = document.getElementById('mobilePaymentSummary');
-		if (!viewBtn || !mobile) return;
-		viewBtn.addEventListener('click', function(){
-			// ensure mobile panel has current content
-			const paymentSummary = document.querySelector('.payment-summary');
+		const paymentSummary = document.querySelector('.payment-summary');
+		if (!mobile || !paymentSummary) return;
+
+		function maybeShow(e) {
+			const target = e.target.closest('.program-label') || e.target.closest('label');
+			if (!target) return;
+			// detect if program has a fixed price (not 'Varies')
+			const priceEl = target.querySelector('.program-price');
+			const txt = priceEl ? priceEl.textContent || '' : '';
+			if (/Varies/i.test(txt)) return; // don't show for 'Varies'
+			// update content and show
 			const mpsContent = mobile.querySelector('.mps-content');
-			if (paymentSummary && mpsContent) mpsContent.innerHTML = paymentSummary.innerHTML;
+			mpsContent.innerHTML = paymentSummary.innerHTML;
 			mobile.style.display = 'block';
 			mobile.setAttribute('aria-hidden','false');
-			viewBtn.setAttribute('aria-expanded','true');
+		}
+
+		document.querySelectorAll('.program-label').forEach(l => {
+			l.addEventListener('click', maybeShow);
 		});
-		// close behavior already wired in initMobilePaymentSummary (close button)
-	}catch(e){}
-});
+		document.querySelectorAll('input[name="programs[]"]').forEach(i => i.addEventListener('change', maybeShow));
+	}catch(e){ console.warn(e); }
+}
+document.addEventListener('DOMContentLoaded', programClickShowsPanel);
 </script>
 <script>
 // FAQ read-more toggle: attach to buttons with .faq-readmore
