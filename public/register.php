@@ -471,6 +471,38 @@ $csrf = generateToken('signup_form');
 
 <?php endif; ?>
 
+<!-- Strong debug overrides to ensure site CSS doesn't win during tests -->
+<style id="hq-register-override">
+/* Force layout and widths for debugging — high specificity + !important */
+body .container.register-layout {
+	display: grid !important;
+	grid-template-columns: 2.2fr 0.8fr !important; /* wider form, narrower sidebar */
+	gap: 28px !important;
+	max-width: 1200px !important;
+	margin: 3rem auto !important;
+	padding: 0 1rem !important;
+}
+
+/* Ensure main area stretches — override any max-width from other files */
+.register-layout .register-main {
+	width: auto !important;
+	max-width: none !important;
+	flex: none !important;
+}
+
+/* Narrow the sidebar and fix its basis */
+.register-layout .register-sidebar {
+	flex: none !important;
+	width: 320px !important;
+	max-width: 320px !important;
+	min-width: 240px !important;
+}
+
+/* As a visual aid during debugging, outline the areas (remove later) */
+.register-layout .register-main { outline: 2px dashed rgba(0,0,0,0.06) !important; }
+.register-layout .register-sidebar { outline: 2px dashed rgba(0,0,0,0.06) !important; }
+</style>
+
 <script>
 // Live payment summary for registration page
 document.addEventListener('DOMContentLoaded', function(){
