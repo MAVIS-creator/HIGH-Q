@@ -70,6 +70,9 @@ Mobile-first responsive styles for registration form
 
 /* Program selection card styles (match screenshot) */
 .programs-grid { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 992px) {
+    .programs-grid { grid-template-columns: repeat(3, 1fr); }
+}
 .program-label {
     display: flex;
     flex-direction: column;
@@ -82,6 +85,9 @@ Mobile-first responsive styles for registration form
 }
 .program-label:hover { border-color: var(--hq-yellow); box-shadow: 0 6px 20px rgba(217,154,0,0.08); transform: translateY(-2px); }
 .program-label.selected { border-color: var(--hq-yellow); box-shadow: 0 10px 30px rgba(217,154,0,0.12); }
+.program-label .program-title { font-weight: 600; color: #111; }
+.program-label .meta { display:flex; gap:12px; color:var(--hq-gray); font-size:13px; align-items:center }
+.program-label .meta i { color:var(--hq-yellow); }
 .program-label .program-duration { color: var(--hq-gray); font-size: 13px; }
 .program-label .program-price { color: #666; font-size: 13px; }
 .program-label input[type="checkbox"] { accent-color: var(--hq-yellow); }
