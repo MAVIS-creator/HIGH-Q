@@ -875,6 +875,7 @@ nav a.active::after {
   font-size: 14px !important;
   line-height: 1.6 !important;
   display: -webkit-box !important;
+  line-clamp: 5 !important;
   -webkit-line-clamp: 5 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
