@@ -1,3 +1,36 @@
+.swal2-popup .swal2-styled.swal2-cancel {
+  background: transparent !important;
+  color: var(--hq-gray) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  border-radius: 8px !important;
+}
+
+/* Register layout overrides (site-wide) - ensure register page layout persists across site CSS */
+html body .container.register-layout {
+  display: grid !important;
+  grid-template-columns: 2.2fr 0.8fr !important; /* wider form, narrower sidebar */
+  gap: 28px !important;
+  max-width: 1200px !important;
+  margin: 3rem auto !important;
+  padding: 0 1rem !important;
+}
+html body .container.register-layout .register-main {
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+}
+html body .container.register-layout .register-sidebar {
+  flex: none !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  min-width: 240px !important;
+}
+
+/* For smaller screens hide the full sidebar payment summary — mobile uses the floating panel instead */
+@media (max-width: 900px) {
+  .payment-summary { display: none !important; }
+}
+
 :root {
   --hq-yellow: #f5b904;
   --hq-yellow-light: #ffe566;

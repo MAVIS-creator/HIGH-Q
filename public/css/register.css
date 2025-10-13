@@ -287,21 +287,6 @@ Mobile-first responsive styles for registration form
     color: var(--hq-yellow);
 }
 
-/* ===== MOVED FROM register.php ===== */
-/* Final overrides for register layout and components (migrated from internal debug styles) */
-/* Layout overrides */
-.container.register-layout {
-    display: grid;
-    grid-template-columns: 2.2fr 0.8fr;
-    gap: 28px;
-    max-width: 1200px;
-    margin: 3rem auto;
-    padding: 0 1rem;
-}
-.container.register-layout .register-main { width: auto; max-width: none; }
-.container.register-layout .register-sidebar { width: 320px; max-width: 320px; min-width: 240px; }
-
-/* Checkbox & terms layout */
 .program-label input[type="checkbox"], .checkbox-wrapper input[type="checkbox"] { width:18px; height:18px; accent-color:var(--hq-yellow); }
 @media (min-width:768px) { .terms-row .checkbox-wrapper { display:flex; align-items:center; gap:12px; } }
 
