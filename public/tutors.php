@@ -53,13 +53,14 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     .tutors-section .tutor-body .tutor-short { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
     .tutors-section .subjects .tag { display: inline-block !important; margin-right: 8px !important; background: #f3f3f3 !important; padding: 6px 8px !important; border-radius: 6px !important; font-size: 0.85rem !important; }
 
-    /* Testimonials: force grid and card stretch so text aligns across rows */
-    .testimonials-section .testimonials-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important; gap: 18px !important; }
-    .testimonials-section .testimonial-card { padding: 0 !important; border: none !important; }
-    .testimonials-section .testimonial-card > div { height: 100% !important; display: flex !important; flex-direction: column !important; padding: 18px !important; }
-    .testimonials-section .rating { color: #f3c33a !important; font-size: 1rem !important; }
-    .testimonials-section .quote { flex: 1 1 auto !important; margin-bottom: 12px !important; color: #333 !important; }
-    .testimonials-section .attribution { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
+  /* Testimonials: force grid and card stretch so text aligns across rows */
+  .testimonials-section .testimonials-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important; gap: 18px !important; }
+  .testimonials-section .testimonial-card { padding: 0 !important; border: none !important; }
+  .testimonials-section .testimonial-card > div { height: 100% !important; display: flex !important; flex-direction: column !important; padding: 18px !important; }
+  .testimonials-section .rating { color: #f3c33a !important; font-size: 1rem !important; }
+  .testimonials-section .quote { flex: 1 1 auto !important; margin-bottom: 12px !important; color: #333 !important; max-height: 7.5rem !important; overflow: hidden !important; }
+  .testimonials-section .quote::after { content: ' ...'; display:block; }
+  .testimonials-section .attribution { margin-top: auto !important; color: var(--hq-gray, #666) !important; }
 
     /* Why-box containment: keep content contained, consistent padding and icons */
     .why-box { overflow: hidden !important; box-shadow: none !important; border-radius: 12px !important; padding: 18px !important; }
