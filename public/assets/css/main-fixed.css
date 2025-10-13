@@ -208,8 +208,9 @@
         font-size: 20px;
     }
     
-    .why-stats .stat span {
-        font-size: 12px;
+        .why-stats .stat span {
+            font-size: 12px;
+        }
     }
 
 /* Terms Checkbox Fix */
