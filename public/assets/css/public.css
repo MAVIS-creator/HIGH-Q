@@ -5,48 +5,15 @@
   border-radius: 8px !important;
 }
 
-/* Register layout overrides (site-wide) - ensure register page layout persists across site CSS */
-html body .container.register-layout {
-  display: grid !important;
-  grid-template-columns: 2.2fr 0.8fr !important; /* wider form, narrower sidebar */
-  gap: 28px !important;
-  max-width: 1200px !important;
-  margin: 3rem auto !important;
-  padding: 0 1rem !important;
-  min-height: 140px !important; /* reduced height */
-}
-html body .container.register-layout .register-main {
-  width: auto !important;
-  max-width: none !important;
-  flex: none !important;
-}
-html body .container.register-layout .register-sidebar {
-  flex: none !important;
-  width: 320px !important;
-  max-width: 320px !important;
-  min-width: 240px !important;
+/* Register core styles - responsive layout moved to responsive.css */
+.register-layout {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* For smaller screens hide the full sidebar payment summary — mobile uses the floating panel instead */
-@media (max-width: 900px) {
-  .payment-summary { display: none !important; }
-}
-
-/* When the payment summary lives inside the main form DOM, show it as a sticky block on desktop */
-@media (min-width: 901px) {
-  .register-main .payment-summary {
-    position: sticky;
-    top: 120px; /* sits below the header */
-    margin-top: 8px;
-    width: 100%;
-    max-width: 340px;
-    align-self: start;
-    margin-left: auto; /* keep it to the right side of main column */
-  }
-}
-
-/* For debugging: hide the inline payment-summary (we'll use popup only) */
-.payment-summary { display: none !important; }
+/* Hide inline payment-summary by default - shown conditionally by JS/responsive rules */
+.payment-summary { display: none; }
 
 :root {
   --hq-yellow: #f5b904;
