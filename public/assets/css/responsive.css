@@ -379,6 +379,15 @@ img {
    - Mobile (<768px): Full-width stacked layout
 */
 
+/* Base register layout styles with transitions */
+.register-layout,
+.register-layout .register-main,
+.register-layout .register-sidebar,
+.register-sidebar .card,
+.programs-grid.register-select {
+  transition: all 0.3s ease-in-out;
+}
+
 /* Desktop Layout (>992px) */
 @media (min-width: 992px) {
   .container.register-layout {
