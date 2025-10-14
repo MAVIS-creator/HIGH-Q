@@ -237,6 +237,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <!-- Small site-specific hero overrides (loaded after hero.css) -->
   <link rel="stylesheet" href="./assets/css/hero-fixed.css">
   <link rel="stylesheet" href="./assets/css/offcanvas.css">
+  <link rel="stylesheet" href="./assets/css/contact-fixes.css">
   <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
