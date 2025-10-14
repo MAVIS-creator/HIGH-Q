@@ -110,7 +110,14 @@ include __DIR__ . '/includes/header.php';
 					<script>
 						(function(){
 							var f = document.querySelector('form'); if(!f) return;
-							var w = document.createElement('div'); w.className='g-recaptcha'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); w.style.marginTop='12px'; f.insertBefore(w, f.querySelector('button'));
+							var w = document.createElement('div'); w.className='g-recaptcha'; w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>'); w.style.marginTop='12px';
+							// Try to insert before the button's parent div if possible
+							var btn = f.querySelector('button');
+							if (btn && btn.parentNode && btn.parentNode.parentNode === f) {
+								f.insertBefore(w, btn.parentNode);
+							} else {
+								f.appendChild(w);
+							}
 						})();
 					</script>
 				<?php endif; ?>
