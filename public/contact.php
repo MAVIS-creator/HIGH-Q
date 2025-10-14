@@ -372,8 +372,29 @@ if (!window.hq_contact_enhanced) {
 				var modal = document.getElementById('modalBackdrop');
 				var cancel = document.getElementById('cancelSchedule');
 				var confirm = document.getElementById('confirmSchedule');
-				function showModal(){ if(!modal) return; modal.classList.add('open'); modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); }
-				function hideModal(){ if(!modal) return; modal.classList.remove('open'); modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+				function showModal(){
+					if(!modal) return;
+					modal.classList.add('open');
+					modal.style.display='flex';
+					modal.setAttribute('aria-hidden','false');
+					// ensure inner modal content is visible and interactive
+					var inner = modal.querySelector('.modal');
+					if(inner){ inner.style.transform='none'; inner.style.opacity='1'; inner.style.pointerEvents='auto'; }
+					// lock body scroll
+					document.documentElement.style.overflow = 'hidden';
+					document.body.style.overflow = 'hidden';
+				}
+				function hideModal(){
+					if(!modal) return;
+					modal.classList.remove('open');
+					modal.style.display='none';
+					modal.setAttribute('aria-hidden','true');
+					var inner = modal.querySelector('.modal');
+					if(inner){ inner.style.transform='translateY(0)'; inner.style.opacity='1'; inner.style.pointerEvents='auto'; }
+					// restore body scroll
+					document.documentElement.style.overflow = '';
+					document.body.style.overflow = '';
+				}
 				if (openSchedule) {
 					openSchedule.addEventListener('click', function(e){ e.preventDefault(); showModal(); });
 					openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); showModal(); } });
