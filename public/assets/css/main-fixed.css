@@ -29,58 +29,7 @@
     }
 }
 
-/* Schedule Visit Modal Fix */
-.schedule-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
-}
-
-.schedule-modal .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-}
-
-.schedule-modal .close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px;
-    z-index: 1;
-}
-
-@media screen and (max-width: 768px) {
-    .schedule-modal {
-        padding: 15px;
-    }
-    
-    .schedule-modal .modal-content {
-        padding: 15px;
-    }
-    
-    .schedule-modal .close-modal {
-        padding: 10px;
-        font-size: 28px; /* Larger touch target */
-    }
-}
+/* Schedule Visit Modal Fix removed — handled via contact-fixes.css to avoid duplication */
 
 /* Registration Form Fixes */
 .register-layout {
