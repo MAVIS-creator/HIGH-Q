@@ -149,3 +149,4 @@
   <i class="bx bx-chat"></i>
 </a>
 <script src="./assets/js/viewport-inview.js"></script>
+<script src="./assets/js/contact-helpers.js"></script>
