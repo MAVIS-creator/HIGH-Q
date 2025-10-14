@@ -1,24 +1,8 @@
-Mobile-first responsive styles for registration form
-.register-layout {
-    padding: 20px;
-    max-width: 100%;
-}
+/* Register form-specific styles - responsive layout moved to responsive.css */
 
-.register-main {
-    width: 100%;
-    margin-bottom: 30px;
-}
-
-.card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 20px;
-}
-
+/* Form elements base styles */
 .form-row {
     margin-bottom: 15px;
-    width: 100%;
 }
 
 .form-row label {
@@ -33,21 +17,21 @@ Mobile-first responsive styles for registration form
 .form-row input[type="tel"],
 .form-row textarea,
 .form-row select {
-    width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px; /* Better for mobile */
-}
-
-/* Fix for relationship field */
-.form-row input[name="emergency_relationship"] {
     width: 100%;
-    max-width: 100%;
 }
 
-.form-inline {
-    display: block; /* Stack on mobile */
+/* Form validation states */
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+    border-color: var(--hq-yellow);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(245,185,4,0.1);
+}
 }
 
 @media (min-width: 768px) {
