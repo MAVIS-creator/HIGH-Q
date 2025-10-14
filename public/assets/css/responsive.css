@@ -372,3 +372,141 @@ img {
 @media (max-width: 1200px) {
   .hide-lg { display: none !important; }
 }
+
+/* Register Page Responsive Layout
+   - Desktop (>992px): Two-column grid with sidebar
+   - Tablet (768px-992px): Stacked with contained sidebar
+   - Mobile (<768px): Full-width stacked layout
+*/
+
+/* Desktop Layout (>992px) */
+@media (min-width: 992px) {
+  .container.register-layout {
+    display: grid;
+    grid-template-columns: 2.2fr 0.8fr;
+    gap: 28px;
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+
+  .register-layout .register-main {
+    width: auto;
+    max-width: none;
+  }
+
+  .register-layout .register-sidebar {
+    width: 320px;
+    max-width: 320px;
+    min-width: 240px;
+  }
+
+  /* Sticky payment summary in main area */
+  .register-main .payment-summary {
+    position: sticky;
+    top: 120px;
+    margin-top: 8px;
+    width: 100%;
+    max-width: 340px;
+    align-self: start;
+    margin-left: auto;
+  }
+}
+
+/* Tablet Layout (768px-992px) */
+@media (max-width: 992px) {
+  .container.register-layout {
+    display: block;
+    max-width: 768px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .register-layout .register-main {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .register-layout .register-sidebar {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Program selection grid: 2 columns */
+  .programs-grid.register-select {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Mobile Layout (<768px) */
+@media (max-width: 768px) {
+  .container.register-layout {
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+
+  .register-layout .register-main {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Full-width form elements */
+  .register-main .form-row {
+    margin-bottom: 1rem;
+  }
+
+  .register-main input,
+  .register-main select,
+  .register-main textarea {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Stack program selection cards */
+  .programs-grid.register-select {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Compact sidebar cards */
+  .register-sidebar .card {
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  /* Mobile-optimized payment summary */
+  #mobilePaymentSummary {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    padding: 1rem;
+    z-index: 1000;
+  }
+}
+
+/* Very Small Screens (<576px) */
+@media (max-width: 576px) {
+  .container.register-layout {
+    padding: 0 0.75rem;
+  }
+
+  .register-main .card {
+    padding: 1rem;
+  }
+
+  /* Stack inline form groups */
+  .register-main .form-inline {
+    flex-direction: column;
+  }
+
+  .register-main .form-inline > * {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+}
