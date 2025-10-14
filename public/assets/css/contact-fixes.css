@@ -30,9 +30,9 @@
   z-index: 13001 !important;
   opacity: 1 !important;
   visibility: visible !important;
+  -webkit-transform: none !important;
   transform: none !important;
   pointer-events: auto !important;
-  -webkit-transform: none !important;
 }
 
 /* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
