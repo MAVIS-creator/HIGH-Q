@@ -1,0 +1,72 @@
+/* contact-fixes.css
+   High-specificity overrides for contact page interactions:
+   - Ensure schedule modal/backdrop are visible, interactive and above any stacking contexts
+   - Ensure FAQ "Read more" toggle is visible and clickable
+   This file intentionally uses !important and specific selectors to overcome conflicting rules.
+*/
+
+/* Modal/backdrop overrides */
+#modalBackdrop,
+.modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  display: none !important; /* shown only when .open present */
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0,0,0,0.55) !important;
+  z-index: 13000 !important;
+  pointer-events: auto !important;
+}
+
+.modal-backdrop.open,
+#modalBackdrop.open {
+  display: flex !important;
+}
+
+/* Ensure the inner modal dialog is visible and interactive */
+#modalBackdrop .modal,
+.modal-backdrop .modal,
+.modal {
+  z-index: 13001 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  -webkit-transform: none !important;
+}
+
+/* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
+.faq-clamped::after {
+  pointer-events: none !important;
+}
+
+/* FAQ read-more/show-less overrides */
+.faq-readmore {
+  display: inline-block !important;
+  margin-top: 8px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--hq-yellow) !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.faq-clamped {
+  overflow: hidden !important;
+  max-height: 104px !important; /* approx 4 lines */
+  position: relative !important;
+}
+
+.faq-clamped--expanded {
+  max-height: none !important;
+}
+
+/* Small utilities: ensure modal inputs are usable on mobile */
+#modalBackdrop .modal input,
+#modalBackdrop .modal select,
+#modalBackdrop .modal textarea {
+  pointer-events: auto !important;
+}
+
+/* End of contact-fixes.css */
