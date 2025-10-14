@@ -293,6 +293,7 @@
     padding: 0;
   }
 }
+/* FAQ clamp/readmore moved to contact-fixes.css to avoid duplication */
 
 /* Hide brand text on very small screens to save space */
 @media (max-width: 420px) {
