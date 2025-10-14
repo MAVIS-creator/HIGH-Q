@@ -1,6 +1,15 @@
 /* Register form-specific styles - responsive layout moved to responsive.css */
 
-/* Form elements base styles */
+/* Form elements base styles with transitions */
+.form-row,
+.form-row input,
+.form-row textarea,
+.form-row select,
+.program-label,
+.checkbox-wrapper {
+    transition: all 0.2s ease-in-out;
+}
+
 .form-row {
     margin-bottom: 15px;
 }
@@ -31,7 +40,6 @@
     border-color: var(--hq-yellow);
     outline: none;
     box-shadow: 0 0 0 2px rgba(245,185,4,0.1);
-}
 }
 
 @media (min-width: 768px) {
