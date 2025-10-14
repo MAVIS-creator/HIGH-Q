@@ -203,6 +203,20 @@
 /* Mobile-specific fixes: next-stat (what happens next), FAQ cards and terms checkbox */
 @media (max-width: 768px) {
   /* What Happens Next: stack as single column and make cards well-rounded */
+  .next-section .achievements-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  
+  .next-stat {
+    padding: 20px 16px;
+    text-align: center;
+  }
+  
+  .next-stat .next-icon {
+    margin: 0 auto 12px;
+  }
+  
   .next-section .next-stat,
   .next-stat {
     flex: 0 0 100% !important;
