@@ -32,8 +32,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
       </div>
       <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead text-center" style="text-align: justify;">
-        At High Q Solid Academy, we are committed to making our students excel academically and mentally. Join thousands of successful students who have achieved their dreams with our proven teaching methods.
+      <p class="lead">
+        At High Q Solid Academy, we are committed to making our students excel academically and mentally.
+        Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
       <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
         <a href="register.php" class="btn btn-primary">Register Now</a>
@@ -56,26 +57,26 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
   <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3 hq-aside-target">
-      <div class="feature-card">
-        <div class="d-flex align-items-center mb-2">
-          <div class="feature-icon yellow me-2"><i class='bx bxs-award'></i></div>
-          <h5 class="mb-0">Top JAMB Scores</h5>
+      <div class="feature-card d-flex">
+        <div class="feature-icon yellow me-3"><i class='bx bxs-award'></i></div>
+        <div class="feature-body">
+          <h5>Top JAMB Scores</h5>
+          <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
         </div>
-        <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
       </div>
-      <div class="feature-card">
-        <div class="d-flex align-items-center mb-2">
-          <div class="feature-icon red me-2"><i class='bx bxs-chalkboard'></i></div>
-          <h5 class="mb-0">Expert Tutors</h5>
+      <div class="feature-card d-flex">
+        <div class="feature-icon red me-3"><i class='bx bxs-chalkboard'></i></div>
+        <div class="feature-body">
+          <h5>Expert Tutors</h5>
+          <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
         </div>
-        <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
       </div>
-      <div class="feature-card">
-        <div class="d-flex align-items-center mb-2">
-          <div class="feature-icon yellow me-2"><i class='bx bxs-book-open'></i></div>
-          <h5 class="mb-0">Comprehensive Programs</h5>
+      <div class="feature-card d-flex">
+        <div class="feature-icon yellow me-3"><i class='bx bxs-book-open'></i></div>
+        <div class="feature-body">
+          <h5>Comprehensive Programs</h5>
+          <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
         </div>
-        <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
       </div>
     </aside>
   </div>
