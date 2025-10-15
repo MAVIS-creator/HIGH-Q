@@ -3726,6 +3726,18 @@ input.form-input {
     height: 96px;
     bottom: -48px;
   }
+  /* Stronger override for tutors section to beat earlier !important rules */
+  .tutors-section .tutor-body {
+    /* give enough top space for the floating avatar on small screens */
+    padding-top: 84px !important;
+    padding-right: 16px !important;
+    padding-left: 16px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .tutors-section .tutor-lead .tutor-body {
+    padding-top: 112px !important;
+  }
   /* Ensure lead and regular tutor bodies leave enough top space on mobile */
   .tutor-lead .tutor-body {
     padding: 88px 16px 20px;
