@@ -3698,6 +3698,14 @@ input.form-input {
     height: 96px;
     bottom: -48px;
   }
+  /* Ensure lead and regular tutor bodies leave enough top space on mobile */
+  .tutor-lead .tutor-body {
+    padding: 88px 16px 20px;
+  }
+
+  .tutor-body {
+    padding-top: 56px;
+  }
 }
 
 .tutor-body h3 {
