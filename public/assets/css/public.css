@@ -3904,15 +3904,6 @@ input.form-input {
   color: var(--hq-black)
 }
 
-@media (max-width: 480px) {
-  /* Larger avatars on phones for better touch/readability */
-  .comment .avatar, .post-header .avatar, .avatar {
-    width: 48px !important;
-    height: 48px !important;
-    font-size: 18px !important;
-  }
-}
-
 .pending-comment {
   opacity: 0.7;
 }

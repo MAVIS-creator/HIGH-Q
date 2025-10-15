@@ -90,8 +90,7 @@ try {
     // debug log insertion
     try { @file_put_contents(__DIR__ . '/../storage/comments-debug.log', date('c') . " INSERT post={$postId} parent={$parentId} status={$status}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $e) {}
     if ($status === 'pending') {
-        // Provide a friendly info message instead of sounding like an error
-        echo json_encode(['status'=>'ok','message'=>'Thanks — your comment was received and is awaiting moderation']);
+        echo json_encode(['status'=>'ok','message'=>'Comment submitted and awaiting moderation']);
     } else {
         echo json_encode(['status'=>'ok','message'=>'Comment submitted']);
     }
