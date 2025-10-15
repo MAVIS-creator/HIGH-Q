@@ -3745,6 +3745,16 @@ input.form-input {
   .tutors-section .tutor-body {
     padding-top: 12px !important;
   }
+  /* Extra safety: push the name lower and increase avatar spacing so they never overlap */
+  .tutors-section .tutor-thumb img,
+  .tutor-card .tutor-thumb img {
+    margin-bottom: 20px !important;
+  }
+
+  .tutors-section .tutor-body h3,
+  .tutor-card .tutor-body h3 {
+    margin-top: 10px !important;
+  }
   /* Final mobile adjustments for tutor cards (avatars now in flow) */
   .tutors-section .tutor-body {
     padding: 16px 16px 16px !important;
