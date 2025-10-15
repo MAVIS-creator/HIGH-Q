@@ -3708,7 +3708,9 @@ input.form-input {
   }
 
   .tutor-thumb {
-    height: 120px;
+    /* let the banner expand and provide padding so avatar fits inside without overlapping */
+    height: auto !important;
+    padding: 22px 0 !important;
   }
 
   .tutor-thumb img {
@@ -3729,17 +3731,19 @@ input.form-input {
   /* Remove absolute positioning for avatars on small screens so they don't overlap names */
   .tutors-section .tutor-thumb img,
   .tutor-card .tutor-thumb img {
-    position: relative !important;
+    /* place avatar in normal flow and center it */
+    position: static !important;
     bottom: auto !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    margin: 8px auto 12px !important;
+    left: auto !important;
+    transform: none !important;
+    display: block !important;
+    margin: 0 auto 12px !important;
     box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
   }
 
   /* Reduce the top padding now that avatar sits inside flow */
   .tutors-section .tutor-body {
-    padding-top: 16px !important;
+    padding-top: 12px !important;
   }
   /* Final mobile adjustments for tutor cards (avatars now in flow) */
   .tutors-section .tutor-body {
