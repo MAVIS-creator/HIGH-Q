@@ -32,7 +32,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
       </div>
       <h1>Excellence in <span class="accent">Education</span></h1>
-      <p class="lead text-center">
+      <p class="lead text-center" style="text-align: justify;">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally. Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
       <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
