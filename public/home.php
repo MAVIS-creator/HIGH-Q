@@ -57,26 +57,20 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
   <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3 hq-aside-target">
-      <div class="feature-card d-flex">
-        <div class="feature-icon yellow me-3"><i class='bx bxs-award'></i></div>
-        <div class="feature-body">
-          <h5>Top JAMB Scores</h5>
-          <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
-        </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon yellow mb-2"><i class='bx bxs-award'></i></div>
+        <h5>Top JAMB Scores</h5>
+        <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
       </div>
-      <div class="feature-card d-flex">
-        <div class="feature-icon red me-3"><i class='bx bxs-chalkboard'></i></div>
-        <div class="feature-body">
-          <h5>Expert Tutors</h5>
-          <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
-        </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon red mb-2"><i class='bx bxs-chalkboard'></i></div>
+        <h5>Expert Tutors</h5>
+        <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
       </div>
-      <div class="feature-card d-flex">
-        <div class="feature-icon yellow me-3"><i class='bx bxs-book-open'></i></div>
-        <div class="feature-body">
-          <h5>Comprehensive Programs</h5>
-          <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
-        </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon yellow mb-2"><i class='bx bxs-book-open'></i></div>
+        <h5>Comprehensive Programs</h5>
+        <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
       </div>
     </aside>
   </div>
