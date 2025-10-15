@@ -1,6 +1,7 @@
 /* CEO Section Responsive Styles */
 .ceo-hero {
-  padding: clamp(40px, 6vw, 80px) 0;
+  /* reduce the vertical padding so the heading sits closer to the CEO card on mobile */
+  padding: clamp(20px, 5vw, 60px) 0;
   background: #fff;
   overflow: hidden;
 }
@@ -8,7 +9,8 @@
 .ceo-grid {
   display: grid;
   grid-template-columns: minmax(300px, 520px) 1fr;
-  gap: clamp(24px, 4vw, 48px);
+  /* make the gap slightly smaller by default to tighten up vertical spacing */
+  gap: clamp(18px, 3.5vw, 40px);
   align-items: start;
   margin: 0 auto;
   max-width: 1200px;
@@ -29,8 +31,9 @@
 }
 
 .ceo-photo img {
-  width: clamp(100px, 15vw, 140px);
-  height: clamp(100px, 15vw, 140px);
+  /* slightly larger base size and flexible scaling */
+  width: clamp(110px, 14vw, 160px);
+  height: clamp(110px, 14vw, 160px);
   border-radius: 50%;
   object-fit: cover;
   border: 8px solid var(--hq-white);
@@ -89,16 +92,22 @@
     font-size: clamp(24px, 5vw, 36px);
   }
 
+
+  /* On narrow screens make the CEO card more compact but increase the photo so it fills the space */
   .ceo-card {
     flex-direction: row;
     text-align: left;
     align-items: center;
-    gap: 24px;
-    padding: 24px;
+    gap: 18px;
+    padding: 16px 18px;
   }
 
   .ceo-photo img {
     margin-bottom: 0;
+    /* force a larger mobile avatar and override other smaller rules */
+    width: 140px !important;
+    height: 140px !important;
+    border-width: 6px !important;
   }
 
   .ceo-right-column {
@@ -118,8 +127,12 @@
     padding: 24px;
   }
 
+  /* On small phones stack the card and make the photo larger to fill the vertical space */
   .ceo-photo img {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    width: 160px !important;
+    height: 160px !important;
+    border-width: 6px !important;
   }
 
   .ceo-stats {
