@@ -3726,6 +3726,21 @@ input.form-input {
     height: 96px;
     bottom: -48px;
   }
+  /* Remove absolute positioning for avatars on small screens so they don't overlap names */
+  .tutors-section .tutor-thumb img,
+  .tutor-card .tutor-thumb img {
+    position: relative !important;
+    bottom: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 8px auto 12px !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+  }
+
+  /* Reduce the top padding now that avatar sits inside flow */
+  .tutors-section .tutor-body {
+    padding-top: 16px !important;
+  }
   /* Stronger override for tutors section to beat earlier !important rules */
   .tutors-section .tutor-body {
     /* give enough top space for the floating avatar on small screens */
