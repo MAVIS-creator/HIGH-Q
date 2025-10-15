@@ -92,6 +92,12 @@
     font-size: clamp(24px, 5vw, 36px);
   }
 
+  /* reduce space below heading paragraph so card sits closer on phones */
+  .ceo-heading p {
+    margin-top: 6px;
+    max-width: 520px;
+  }
+
 
   /* On narrow screens make the CEO card more compact but increase the photo so it fills the space */
   .ceo-card {
