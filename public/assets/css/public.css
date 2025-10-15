@@ -3649,7 +3649,8 @@ input.form-input {
 }
 
 .tutor-lead .tutor-body {
-  padding: 72px 16px 20px;
+  /* Leave extra top padding for the larger lead avatar so it doesn't overlap content */
+  padding: 96px 16px 20px;
 }
 
 .qualification-line {
@@ -3665,7 +3666,8 @@ input.form-input {
 }
 
 .tutor-body {
-  padding: 48px 16px 16px;
+  /* increase top padding so the floating avatar (positioned absolute) doesn't cover the tutor name */
+  padding: 72px 16px 16px;
   /* leave room at top for floating avatar */
   display: flex;
   flex-direction: column;
