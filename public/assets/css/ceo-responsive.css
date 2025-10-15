@@ -141,6 +141,18 @@
     border-width: 6px !important;
   }
 
+  /* add extra spacing under the avatar so it doesn't overlap the name */
+  .ceo-photo {
+    margin-bottom: 10px !important;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .ceo-card .ceo-info {
+    padding-top: 10px;
+  }
+
   .ceo-stats {
     grid-template-columns: repeat(2, 1fr);
   }
