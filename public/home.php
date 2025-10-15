@@ -56,19 +56,25 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
   <aside class="hero-right col-12 col-lg-5 d-flex flex-column gap-3 hq-aside-target">
-      <div class="feature-card text-center">
-        <div class="feature-icon yellow mb-2"><i class='bx bxs-award'></i></div>
-        <h5>Top JAMB Scores</h5>
+      <div class="feature-card">
+        <div class="d-flex align-items-center mb-2">
+          <div class="feature-icon yellow me-2"><i class='bx bxs-award'></i></div>
+          <h5 class="mb-0">Top JAMB Scores</h5>
+        </div>
         <p>Our students consistently achieve exceptional JAMB scores, with our highest scorer achieving 305 in 2025.</p>
       </div>
-      <div class="feature-card text-center">
-        <div class="feature-icon red mb-2"><i class='bx bxs-chalkboard'></i></div>
-        <h5>Expert Tutors</h5>
+      <div class="feature-card">
+        <div class="d-flex align-items-center mb-2">
+          <div class="feature-icon red me-2"><i class='bx bxs-chalkboard'></i></div>
+          <h5 class="mb-0">Expert Tutors</h5>
+        </div>
         <p>Led by Master Adebule Quam and a team of experienced educators dedicated to your academic success.</p>
       </div>
-      <div class="feature-card text-center">
-        <div class="feature-icon yellow mb-2"><i class='bx bxs-book-open'></i></div>
-        <h5>Comprehensive Programs</h5>
+      <div class="feature-card">
+        <div class="d-flex align-items-center mb-2">
+          <div class="feature-icon yellow me-2"><i class='bx bxs-book-open'></i></div>
+          <h5 class="mb-0">Comprehensive Programs</h5>
+        </div>
         <p>From WAEC to JAMB, Post-UTME to digital skills - we offer complete educational solutions for your success.</p>
       </div>
     </aside>
