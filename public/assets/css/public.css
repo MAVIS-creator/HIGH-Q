@@ -3132,7 +3132,7 @@ input.form-input {
 
     /* Ensure the 'why' stat cards have a thin border on mobile so they read as cards */
     .why-stats .stat, .ceo-stats .stat {
-      border: 1px solid rgba(0,0,0,0.06);
+      border: 3px solid rgba(0,0,0,0.06);
       background: #fff;
     }
   }
