@@ -209,6 +209,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$pdo->commit();
 
+			// If an online payment method was selected and a payment record was created,
+			// initialize the payment with the gateway (Paystack) and redirect the user
+			if (!empty($paymentId) && !empty($method) && in_array(strtolower($method), ['paystack','online'])) {
+				try {
+					require_once __DIR__ . '/../vendor/autoload.php';
+					$paymentsHelper = new \Src\Helpers\Payments($cfg);
+					// Paystack requires an email; prefer the contact email provided
+					$initEmail = $email_contact ?: ($siteSettings['contact_email'] ?? null);
+					if ($initEmail) {
+						$initOpts = [
+							'amount' => (int) round($amount * 100), // kobo
+							'email' => $initEmail,
+							'reference' => $reference,
+							'metadata' => ['registration_id' => $registrationId, 'payment_id' => $paymentId]
+						];
+						$res = $paymentsHelper->initializePaystack($initOpts);
+						if (!empty($res['status']) && !empty($res['data']['authorization_url'])) {
+							// update payments record with gateway and include paystack init data in metadata
+							$allMeta = json_encode(array_merge(['fixed_programs' => $selectedFixedIds, 'varies_programs' => $selectedVariesIds], ['paystack_init' => $res['data']]), JSON_UNESCAPED_SLASHES);
+							$upd = $pdo->prepare('UPDATE payments SET gateway = ?, updated_at = NOW(), metadata = ? WHERE id = ?');
+							$upd->execute(['paystack', $allMeta, $paymentId]);
+							// Redirect user to Paystack authorization URL
+							header('Location: ' . $res['data']['authorization_url']);
+							exit;
+						}
+					}
+				} catch (Throwable $e) {
+					// log and continue to default flow (bank waiting or pending)
+					error_log('Paystack init failed: ' . $e->getMessage());
+				}
+			}
+
 			// Create an admin notification and send email to admins about new registration
 			try {
 				// Fetch admin email from site_settings (fallback to settings table)
