@@ -743,7 +743,7 @@ nav a.active::after {
     border-radius: 10px;
   }
   .why-box .why-stats .stat { background: transparent; }
-  .why-box .why-stats .stat .icon { width:56px; height:56px; background: rgba(255,255,255,0.08); border-radius: 10px; display:flex; align-items:center; justify-content:center; }
+  .why-box .why-stats .stat .icon { width:56px; height:56px; background: transparent; border-radius: 10px; display:flex; align-items:center; justify-content:center; }
   .why-box .why-stats .stat .icon i { color: #d9534f; font-size: 22px; }
   .why-box h4 { color: rgba(0,0,0,0.8); }
 
@@ -769,7 +769,7 @@ nav a.active::after {
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      background: rgba(255,255,255,0.08) !important;
+      background: transparent !important;
       border-radius: 10px !important;
     }
     .why-box .why-stats .stat .icon i {
