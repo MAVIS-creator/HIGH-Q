@@ -244,6 +244,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				error_log('Registration notification error: ' . $e->getMessage());
 			}
 
+			// If the selected payment method is an online gateway (e.g. paystack),
+			// and a payment reference was created for fixed-priced items, initialize
+			// an online transaction and redirect the user to the provider's auth URL.
+			if ($method !== 'bank') {
+				if ($reference) {
+					try {
+						// Ensure autoload is available for the Payments helper
+						if (file_exists(__DIR__ . '/../vendor/autoload.php')) require_once __DIR__ . '/../vendor/autoload.php';
+						$paymentsHelper = new \Src\Helpers\Payments($cfg);
+						$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+						$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+						$base = $proto . '://' . $host;
+						$callback = $base . '/public/payments_callback.php';
+						$init = $paymentsHelper->initializePaystack([
+							'email' => $email_contact ?: '',
+							'amount' => (int) round($amount * 100), // paystack expects kobo
+							'reference' => $reference,
+							'callback_url' => $callback,
+						]);
+						if (!empty($init['status']) && !empty($init['data']['authorization_url'])) {
+							header('Location: ' . $init['data']['authorization_url']);
+							exit;
+						} else {
+							// fallback to bank wait page so admin can verify (safe default)
+							$_SESSION['last_payment_id'] = $paymentId;
+							$_SESSION['last_payment_reference'] = $reference;
+							header('Location: payments_wait.php?ref=' . urlencode($reference));
+							exit;
+						}
+					} catch (Throwable $e) {
+						error_log('Paystack init error: ' . $e->getMessage());
+						// fallback to waiting page
+						$_SESSION['last_payment_id'] = $paymentId;
+						$_SESSION['last_payment_reference'] = $reference;
+						header('Location: payments_wait.php?ref=' . urlencode($reference));
+						exit;
+					}
+				} else {
+					// no reference created (e.g. verify before payment case)
+					$_SESSION['registration_pending_id'] = $registrationId;
+					header('Location: register.php?pending=1');
+					exit;
+				}
+			}
+
 			// bank transfer: redirect to dedicated waiting page only if a payment reference was created.
 			// If verify-before-payment is enabled, no payment/reference was created and we should show an awaiting-verification message.
 			if ($method === 'bank') {
