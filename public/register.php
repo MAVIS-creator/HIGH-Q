@@ -287,14 +287,42 @@ $csrf = generateToken('signup_form');
 													</script>
 												<?php endif; ?>
 												<?php if (!empty($varies_notice)): ?>
-													<div class="admin-notice admin-error">
-														<?= htmlspecialchars($varies_notice) ?>
-													</div>
+													<script>
+													document.addEventListener('DOMContentLoaded', function(){
+														try {
+															var html = <?= json_encode($varies_notice) ?>;
+															if (typeof Swal !== 'undefined') {
+																Swal.fire({
+																	icon: 'info',
+																	title: 'Note',
+																	html: html,
+																	confirmButtonText: 'OK'
+																});
+															} else {
+																alert(html.replace(/<br\s*\/?>/g,'\n'));
+															}
+														} catch(e) { console.error(e); }
+													});
+													</script>
 												<?php endif; ?>
 												<?php if ($success): ?>
-													<div class="admin-notice admin-success">
-														<?= htmlspecialchars($success) ?>
-													</div>
+													<script>
+													document.addEventListener('DOMContentLoaded', function(){
+														try {
+															var html = <?= json_encode($success) ?>;
+															if (typeof Swal !== 'undefined') {
+																Swal.fire({
+																	icon: 'success',
+																	title: 'Success',
+																	html: html,
+																	confirmButtonText: 'OK'
+																});
+															} else {
+																alert(html);
+															}
+														} catch(e) { console.error(e); }
+													});
+													</script>
 												<?php endif; ?>
 
 												<?php if (!empty($_GET['pending']) || !empty($_SESSION['registration_pending_id'])): ?>
