@@ -4,3 +4,5 @@ Stack trace:
 #0 C:\xampp\htdocs\HIGH-Q\tmp_debug_export.php(9): include()
 #1 {main}
   thrown in C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:19
+[2025-10-16T13:47:00+02:00] PHP Error: htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:42 (errno=8192)
+[2025-10-16T13:47:00+02:00] PHP Error: htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:42 (errno=8192)
