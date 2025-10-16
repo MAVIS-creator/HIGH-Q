@@ -3890,6 +3890,16 @@ input.form-input {
   color: var(--hq-black) !important;
   border-radius: 6px !important;
 }
+.swal2-container .swal2-toast, .swal2-toast {
+  background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light, #ffd86b)) !important;
+  color: var(--hq-black) !important;
+  border: 0 !important;
+  box-shadow: 0 10px 30px rgba(11,37,64,0.12) !important;
+  border-radius: 10px !important;
+}
+.swal2-toast .swal2-icon {
+  color: var(--hq-black) !important;
+}
 .swal2-popup .swal2-title {
   color: var(--hq-black) !important;
 }
