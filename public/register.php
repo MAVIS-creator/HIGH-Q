@@ -426,16 +426,13 @@ $csrf = generateToken('signup_form');
 												<?php else: ?>
 													<form method="post" enctype="multipart/form-data">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<div class="form-row"><label>Passport Photo (passport-size, face visible)</label><input type="file" name="passport" accept="image/*"></div>
 													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
 													<input type="hidden" name="client_total" id="client_total_input" value="">
 													<input type="hidden" name="method" id="method_input" value="bank">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
 																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
-																									<div class="form-row"><label>Passport Photo (passport-size, face visible)</label>
-																										<input type="file" name="passport" id="passport_input" class="hq-file" accept="image/*">
-																										<div class="help-text" style="font-size:12px;color:#666;margin-top:6px">Please upload a clear passport photograph (face visible, no sunglasses). File types: JPG, PNG. Max 5MB.</div>
-																									</div>
 																									<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
@@ -640,7 +637,8 @@ document.addEventListener('DOMContentLoaded', function(){
 				total += formFee + cardFee;
 			}
 
-					// keep method as bank by default; paystack remains available for future use
+					// Set the payment method for the server: if there are any fixed-priced items, prefer online (Paystack)
+					try { var methodInput = document.getElementById('method_input'); if (methodInput) { methodInput.value = anyFixed ? 'paystack' : 'bank'; } } catch(e) {}
 
 			subtotalEl.textContent = formatN(subtotalFixed);
 			formEl.textContent = formatN(formFee);
@@ -846,7 +844,31 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <script>
-// No client-side change to payment method; bank transfer is used by default for now.
+// Ensure the registration form sets the correct payment method before submit
+(function(){
+	var form = document.querySelector('form[method="post"][enctype]');
+	if (!form) return;
+	form.id = form.id || 'registrationForm';
+	form.addEventListener('submit', function(e){
+		try { if (typeof window.compute === 'function') window.compute(); } catch(e){}
+		var state = window.hqPaymentState || {};
+		var methodInput = document.getElementById('method_input');
+		if (methodInput) {
+			// prefer online when there are fixed-priced items
+			if (state.anyFixed) methodInput.value = 'paystack'; else methodInput.value = 'bank';
+		}
+		// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
+		if (methodInput && methodInput.value === 'paystack') {
+			// allow the form to submit but intercept to show confirmation
+			e.preventDefault();
+			if (typeof Swal !== 'undefined') {
+				Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
+			} else {
+				if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
+			}
+		}
+	});
+})();
 </script>
 <script>
 // Program label selection visuals
