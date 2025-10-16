@@ -57,20 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		foreach ($programs as $i => $pid) { $stmt->bindValue($i+1, $pid, PDO::PARAM_INT); }
 		$stmt->execute();
 				$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-				$selectedHasVaries = false;
+				$selectedHasAnyVaries = false;
+				$selectedHasAnyFixed = false;
 				foreach ($rows as $r) {
-					// if price is null or empty treat as 'Varies' and require admin verification before payment
+					// if price is null or empty treat as 'Varies'
 					if (!isset($r['price']) || $r['price'] === null || $r['price'] === '') {
-						$selectedHasVaries = true;
+						$selectedHasAnyVaries = true;
+					} else {
+						$selectedHasAnyFixed = true;
+						$amount += floatval($r['price']);
 					}
-					$amount += floatval($r['price']);
 				}
+				// if all selected are 'Varies' then we have no fixed-priced items
+				$selectedAllVaries = ($selectedHasAnyVaries && !$selectedHasAnyFixed);
 	}
 	$amount = round($amount, 2);
 
-	// Add fixed form/card fees to the amount server-side if programs selected and payment is being created
-	// Note: If verification before payment is required the registration will be pending and no payment created
-	if (!empty($programs) && !$selectedHasVaries) {
+	// Add fixed form/card fees to the amount server-side if there are any fixed-priced selections
+	// Note: If all selected programs are variable-priced the registration will require admin verification before payment
+	if (!empty($programs) && $selectedHasAnyFixed) {
 		// Add form & card fees to the payable amount
 		$amount += floatval($form_fee) + floatval($card_fee);
 		$amount = round($amount,2);
@@ -87,12 +92,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	$method = $_POST['method'] ?? 'bank'; // 'bank' or 'paystack'
 
-	// If any selected program has variable pricing, disable online methods server-side and force bank transfer
+	// If all selected programs are variable-priced, disable online methods server-side and force bank transfer
 	$varies_notice = '';
-	if (!empty($selectedHasVaries)) {
+	if (!empty($selectedAllVaries)) {
 		$varies_notice = 'Note: One or more selected programs have variable pricing. Online payment methods are disabled for these selections; an administrator will contact you with the final amount.';
-		// Force bank as the payment method to avoid online payment attempts
+		// Force bank as the payment method to avoid online payment attempts when no fixed-price items exist
 		$method = 'bank';
+	} elseif (!empty($selectedHasAnyVaries)) {
+		// Mixed selection: warn the user but allow online payment for fixed-price items
+		$varies_notice = 'Note: Some selected programs have variable pricing. Online payment will proceed for fixed-priced items; an administrator will confirm pricing for the variable items.';
 	}
 
 	// Registration form fields
