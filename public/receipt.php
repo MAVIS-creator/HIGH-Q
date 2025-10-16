@@ -1,4 +1,61 @@
 <?php
+// public/receipt.php - simple colored receipt page
+require_once __DIR__ . '/config/db.php';
+$ref = $_GET['ref'] ?? '';
+if (!$ref) { http_response_code(400); echo "Missing reference"; exit; }
+$stmt = $pdo->prepare('SELECT p.*, sr.first_name, sr.last_name, sr.email AS reg_email, sr.passport_path FROM payments p LEFT JOIN student_registrations sr ON sr.id = p.student_id WHERE p.reference = ? LIMIT 1');
+$stmt->execute([$ref]); $p = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$p) { http_response_code(404); echo "Receipt not found"; exit; }
+?>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Receipt - <?= htmlspecialchars($p['reference']) ?></title>
+<link rel="stylesheet" href="./assets/css/public.css">
+<style>
+.receipt { max-width:900px;margin:24px auto;background:linear-gradient(180deg,#fff,#fff);padding:24px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);} 
+.header { display:flex;gap:12px;align-items:center;}
+.logo img{height:56px}
+.amount { font-size:28px;color:var(--hq-black);font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="receipt">
+    <div class="header">
+      <div class="logo"><img src="./assets/images/hq-logo.jpeg" alt="HQ"></div>
+      <div>
+        <h2>Payment Receipt</h2>
+        <div>Reference: <strong><?= htmlspecialchars($p['reference']) ?></strong></div>
+        <div>Date: <?= htmlspecialchars($p['created_at']) ?></div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="amount">₦<?= number_format($p['amount'],2) ?></div>
+        <div style="font-size:12px;color:#666">Status: <?= htmlspecialchars($p['status']) ?></div>
+      </div>
+    </div>
+    <hr>
+    <h3>Payer</h3>
+    <div><strong>Name:</strong> <?= htmlspecialchars($p['payer_account_name'] ?? $p['name'] ?? '') ?></div>
+    <div><strong>Email:</strong> <?= htmlspecialchars($p['reg_email'] ?? $p['email'] ?? '') ?></div>
+    <div><strong>Account:</strong> <?= htmlspecialchars($p['payer_account_number'] ?? '') ?> (<?= htmlspecialchars($p['payer_bank_name'] ?? '') ?>)</div>
+    <?php if (!empty($p['receipt_path'])): ?>
+      <p><a href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download receipt file</a></p>
+    <?php endif; ?>
+    <?php if (!empty($p['passport_path'])): ?>
+      <hr>
+      <h4>Passport</h4>
+      <img src="<?= htmlspecialchars($p['passport_path']) ?>" alt="passport" style="width:140px;border-radius:4px;border:1px solid #eee">
+    <?php endif; ?>
+    <hr>
+    <p style="margin-top:12px"><a class="btn" href="javascript:window.print()">Print / Save as PDF</a> <a class="btn" href="index.php">Return to site</a></p>
+  </div>
+</div>
+</body>
+</html>
+<?php
 // public/receipt.php - styled receipt view after payment confirmed
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
