@@ -129,6 +129,16 @@ $csrf = generateToken('signup_form');
                         }
                         // trigger an immediate check so the page can react to a quick admin confirmation
                         try { if (typeof check === 'function') check(); } catch(e){}
+                        // show checking transaction modal
+                        if (typeof Swal !== 'undefined') {
+                          Swal.fire({
+                            title: 'Checking transaction status',
+                            html: '<div style="text-align:center"><div class="swal-spinner" style="margin:12px auto 0;width:36px;height:36px;border:4px solid rgba(0,0,0,0.08);border-top-color:var(--hq-black);border-radius:50%;animation:spin 1s linear infinite"></div></div>',
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            customClass: { popup: 'hq-swal' }
+                          });
+                        }
                         document.getElementById('pageSpinner').style.display = 'none';
                       } else {
                         // show raw server message when available to make debugging easier
@@ -197,9 +207,17 @@ $csrf = generateToken('signup_form');
                   if (r.status==='ok' && r.payment) {
                     var st = r.payment.status || '';
                     if (st === 'confirmed') {
-                      // redirect to receipt when confirmed
-                      if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                      else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                      // close any checking modal then show success then redirect
+                      try { if (typeof Swal !== 'undefined') Swal.close(); } catch(e){}
+                      if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'success', title: 'Payment Successful', html: 'Your payment has been confirmed. Redirecting to your receipt...', showConfirmButton: false, timer: 2200, customClass: { popup: 'hq-swal' } }).then(()=>{
+                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                        });
+                      } else {
+                        if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                        else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                      }
                     } else if (st === 'expired') {
                       // backend marked expired
                       if (form) form.style.display = 'none';
