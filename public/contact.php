@@ -72,8 +72,8 @@ include __DIR__ . '/includes/header.php';
 					try {
 						var html = <?= json_encode(implode('<br>', array_map('htmlspecialchars', $errors))) ?>;
 						if (typeof Swal !== 'undefined') {
-							Swal.fire({ icon: 'error', title: 'Please fix these issues', html: html, confirmButtonText: 'OK' });
-						} else { alert(html.replace(/<br\s*\/?>/g,'\n')); }
+							Swal.fire({ icon: 'error', title: 'Please fix these issues', html: html, confirmButtonText: 'OK', customClass: { popup: 'hq-swal' } });
+						} else { alert(html.replace(/<br\s*\/?\>/g,'\n')); }
 					} catch(e){ console.error(e); }
 				});
 				</script>
@@ -84,7 +84,7 @@ include __DIR__ . '/includes/header.php';
 					try {
 						var html = <?= json_encode($success) ?>;
 						if (typeof Swal !== 'undefined') {
-							Swal.fire({ icon: 'success', title: 'Message sent', html: html, confirmButtonText: 'OK' });
+							Swal.fire({ icon: 'success', title: 'Message sent', html: html, confirmButtonText: 'OK', customClass: { popup: 'hq-swal' } });
 						} else { alert(html); }
 					} catch(e){ console.error(e); }
 				});
