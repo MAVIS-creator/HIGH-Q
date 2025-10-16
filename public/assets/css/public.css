@@ -3900,6 +3900,10 @@ input.form-input {
 .swal2-toast .swal2-icon {
   color: var(--hq-black) !important;
 }
+.hq-swal {
+  background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light, #ffd86b) 100%) !important;
+  color: var(--hq-black) !important;
+}
 .swal2-popup .swal2-title {
   color: var(--hq-black) !important;
 }
