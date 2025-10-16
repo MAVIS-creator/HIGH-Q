@@ -1,0 +1,6 @@
+[2025-10-16T13:45:13+02:00] PHP Error: require_once(C:\xampp\htdocs\HIGH-Q\admin\api/../../includes/auth.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:19 (errno=2)
+[2025-10-16T13:45:13+02:00] Shutdown: Uncaught Error: Failed opening required 'C:\xampp\htdocs\HIGH-Q\admin\api/../../includes/auth.php' (include_path='\xampp\php\PEAR') in C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:19
+Stack trace:
+#0 C:\xampp\htdocs\HIGH-Q\tmp_debug_export.php(9): include()
+#1 {main}
+  thrown in C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:19
