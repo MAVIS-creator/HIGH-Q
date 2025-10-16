@@ -151,6 +151,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			]);
 			$registrationId = $pdo->lastInsertId();
 
+			// handle passport upload if present
+			if (!empty($_FILES['passport']) && $_FILES['passport']['error'] === UPLOAD_ERR_OK) {
+				$u = $_FILES['passport'];
+				$ext = pathinfo($u['name'], PATHINFO_EXTENSION);
+				$allowed = ['jpg','jpeg','png'];
+				if (!in_array(strtolower($ext), $allowed)) {
+					// ignore invalid types but log
+					error_log('Passport upload rejected: invalid type ' . $ext);
+				} else {
+					$dstDir = __DIR__ . '/uploads/passports';
+					if (!is_dir($dstDir)) @mkdir($dstDir, 0755, true);
+					$fname = 'passport_' . $registrationId . '_' . time() . '.' . $ext;
+					$dst = $dstDir . '/' . $fname;
+					if (move_uploaded_file($u['tmp_name'], $dst)) {
+						$rel = '/HIGH-Q/public/uploads/passports/' . $fname;
+						$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
+						$upd->execute([$rel, $registrationId]);
+					}
+				}
+			}
+
 			// associate selected programs
 			if (!empty($programs) && is_array($programs)) {
 				$sp = $pdo->prepare('INSERT INTO student_programs (registration_id, course_id) VALUES (?, ?)');
