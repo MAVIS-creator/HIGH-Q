@@ -169,8 +169,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					}
 				}
 			} catch (Throwable $e) { /* ignore */ }
-			// If any selected program is 'Varies' (no fixed price), require verification before payment
-			if (!empty($selectedHasVaries)) $verifyBeforePayment = true;
+			// If all selected programs are 'Varies' (no fixed price), require verification before payment
+			if (!empty($selectedAllVaries)) $verifyBeforePayment = true;
 
 			$reference = null; $paymentId = null;
 			if (!$verifyBeforePayment) {
