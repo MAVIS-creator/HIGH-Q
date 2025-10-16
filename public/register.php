@@ -358,8 +358,9 @@ $csrf = generateToken('signup_form');
 													</script>
 													<?php unset($_SESSION['registration_pending_id']); ?>
 												<?php else: ?>
-													<form method="post">
+													<form method="post" enctype="multipart/form-data">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<div class="form-row"><label>Passport Photo (passport-size, face visible)</label><input type="file" name="passport" accept="image/*"></div>
 													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
 													<input type="hidden" name="client_total" id="client_total_input" value="">
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
