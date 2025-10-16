@@ -615,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		const formFee = <?= intval($form_fee) ?>;
 		const cardFee = <?= intval($card_fee) ?>;
 
-		function compute(){
+	function compute(){
 			let subtotalFixed = 0;
 			let anyVaries = false;
 			let anyFixed = false;
@@ -711,8 +711,11 @@ document.addEventListener('DOMContentLoaded', function(){
 			}
 		}
 
-		// Expose compute globally so other scripts (mobile panel, debug helpers) can call or wrap it
-		try { window.compute = compute; } catch(e) { /* ignore */ }
+			// Expose compute globally so other scripts (mobile panel, debug helpers) can call or wrap it
+			try { window.compute = compute; } catch(e) { /* ignore */ }
+
+			// expose last computed state for use on submit
+			try { window.hqPaymentState = { anyVaries: anyVaries, anyFixed: anyFixed, subtotalFixed: subtotalFixed, total: total }; } catch(e) {}
 
 		// Attach listeners
 		checkboxes.forEach(cb => cb.addEventListener('change', compute));
@@ -839,6 +842,33 @@ function initMobilePaymentSummary() {
 document.addEventListener('DOMContentLoaded', function(){
 	try { initMobilePaymentSummary(); } catch(e) { console.warn('Mobile payment summary init failed', e); }
 });
+</script>
+<script>
+// Ensure the registration form sets the correct payment method before submit
+(function(){
+	var form = document.querySelector('form[method="post"][enctype]');
+	if (!form) return;
+	form.id = form.id || 'registrationForm';
+	form.addEventListener('submit', function(e){
+		try { if (typeof window.compute === 'function') window.compute(); } catch(e){}
+		var state = window.hqPaymentState || {};
+		var methodInput = document.getElementById('method_input');
+		if (methodInput) {
+			// prefer online when there are fixed-priced items
+			if (state.anyFixed) methodInput.value = 'paystack'; else methodInput.value = 'bank';
+		}
+		// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
+		if (methodInput && methodInput.value === 'paystack') {
+			// allow the form to submit but intercept to show confirmation
+			e.preventDefault();
+			if (typeof Swal !== 'undefined') {
+				Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
+			} else {
+				if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
+			}
+		}
+	});
+})();
 </script>
 <script>
 // Program label selection visuals
