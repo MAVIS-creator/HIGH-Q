@@ -3807,6 +3807,43 @@ input.form-input {
   }
 }
 
+/* Consolidated tablet breakpoint (landscape & portrait tablets) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Hero adjustments: center and slightly reduce headline size for tablets */
+  .hero-left .lead {
+    text-align: center;
+    max-width: 88%;
+    margin: 0 auto;
+    font-size: 1.02rem;
+  }
+
+  .hero-ctas { justify-content: center; gap: 10px; }
+
+  /* Feature cards: allow two-up but increase vertical rhythm */
+  .feature-card { flex-direction: column; align-items: center; text-align: center; padding: 18px; }
+
+  /* Tutors: slightly larger avatars and padding for tablets */
+  .tutor-thumb { height: auto !important; padding: 26px 0 !important; }
+  .tutor-thumb img { width: 110px !important; height: 110px !important; position: static !important; margin: 0 auto 14px !important; }
+  .tutor-lead .tutor-thumb img { width: 150px !important; height: 150px !important; }
+  .tutors-section .tutor-body { padding-top: 18px !important; }
+
+  /* CEO section: tighten gaps and scale photo a bit down from desktop */
+  .ceo-grid { grid-template-columns: 420px 1fr; gap: 28px; }
+  .ceo-photo img { width: clamp(100px, 12vw, 140px); height: auto; }
+
+  /* Why-box / stats: make icon backgrounds blend (no separate background) and add subtle card spacing */
+  .why-box .why-stats .stat { border-radius: 10px; margin-bottom: 12px; }
+  .why-box .why-stats .stat .icon { background: transparent !important; }
+
+  /* CTA: make primary CTA slightly larger and centered on tablets */
+  .programs-cta, .cta-section { display: flex; justify-content: center; align-items: center; }
+  .programs-cta .btn, .cta-section .btn { padding: 12px 20px; font-size: 1.02rem; }
+
+  /* SweetAlert: ensure buttons stack nicely on tablets when necessary */
+  .swal2-popup .swal2-actions { display:flex; gap:10px; justify-content:center; }
+}
+
 .tutor-body h3 {
   margin: 0;
   font-size: 16px;
