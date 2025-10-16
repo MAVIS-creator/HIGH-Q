@@ -276,7 +276,8 @@ $csrf = generateToken('signup_form');
 																	icon: 'error',
 																	title: 'There was a problem',
 																	html: errHtml,
-																	confirmButtonText: 'OK'
+																	confirmButtonText: 'OK',
+																	customClass: { popup: 'hq-swal' }
 																});
 															} else {
 																// fallback: alert with joined errors
@@ -296,7 +297,8 @@ $csrf = generateToken('signup_form');
 																	icon: 'info',
 																	title: 'Note',
 																	html: html,
-																	confirmButtonText: 'OK'
+																	confirmButtonText: 'OK',
+																	customClass: { popup: 'hq-swal' }
 																});
 															} else {
 																alert(html.replace(/<br\s*\/?>/g,'\n'));
@@ -315,7 +317,8 @@ $csrf = generateToken('signup_form');
 																	icon: 'success',
 																	title: 'Success',
 																	html: html,
-																	confirmButtonText: 'OK'
+																	confirmButtonText: 'OK',
+																	customClass: { popup: 'hq-swal' }
 																});
 															} else {
 																alert(html);
