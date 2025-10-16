@@ -1045,5 +1045,31 @@ document.addEventListener('click', function(e){
 });
 </script>
 
+<script>
+// Export registration button handler
+document.addEventListener('click', function(e){
+  var btn = e.target.closest && e.target.closest('[data-id]') && (e.target.closest('[data-id]').classList.contains('btn') || e.target.classList.contains('btn')) ? e.target.closest('[data-id]') : null;
+  // safer: find elements with explicit btn-export class or data-export attribute
+  if (!btn) btn = e.target.closest('.btn-export');
+  if (!btn) return;
+  if (!btn.classList.contains('btn-export')) return; // only handle export buttons
+  e.preventDefault();
+  var id = btn.getAttribute('data-id');
+  if (!id) return Swal.fire('Error','Registration id missing','error');
+  Swal.fire({
+    title: 'Export registration',
+    text: 'This will download a ZIP containing the registration details and passport (if available). Continue?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Export',
+  }).then(function(res){
+    if (!res.isConfirmed) return;
+    // Open export endpoint in new tab so the file download begins
+    var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id);
+    window.open(url, '_blank');
+  });
+});
+</script>
+
 </body>
 </html>
