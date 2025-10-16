@@ -3858,6 +3858,38 @@ input.form-input {
   border-radius: 12px !important;
   box-shadow: 0 18px 48px rgba(11,37,64,0.12) !important;
 }
+
+/* Make Bootstrap popovers/tooltips match the SweetAlert site theme */
+.popover, .tooltip {
+  background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light, #ffd86b) 100%) !important;
+  color: var(--hq-black) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 34px rgba(11,37,64,0.10) !important;
+}
+
+.popover .popover-header, .popover .popover-body {
+  background: transparent !important;
+  color: var(--hq-black) !important;
+}
+
+/* popover arrow */
+.popover.bs-popover-top .arrow::after,
+.popover.bs-popover-bottom .arrow::after,
+.popover.bs-popover-left .arrow::after,
+.popover.bs-popover-right .arrow::after {
+  border-top-color: var(--hq-yellow) !important;
+  border-bottom-color: var(--hq-yellow) !important;
+  border-left-color: var(--hq-yellow) !important;
+  border-right-color: var(--hq-yellow) !important;
+}
+
+/* Tooltip specific: ensure proper text contrast */
+.tooltip .tooltip-inner {
+  background: linear-gradient(180deg, var(--hq-yellow) 0%, var(--hq-yellow-light, #ffd86b) 100%) !important;
+  color: var(--hq-black) !important;
+  border-radius: 6px !important;
+}
 .swal2-popup .swal2-title {
   color: var(--hq-black) !important;
 }
