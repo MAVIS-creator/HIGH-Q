@@ -39,7 +39,7 @@ try {
     // create a simple HTML copy
     $html = '<html><body>';
     $html .= '<h1>Registration #' . $r['id'] . '</h1>';
-    foreach ($r as $k=>$v) { $html .= '<p><strong>' . htmlspecialchars($k) . ':</strong> ' . htmlspecialchars($v) . '</p>'; }
+    foreach ($r as $k=>$v) { $val = is_null($v) ? '' : (string)$v; $html .= '<p><strong>' . htmlspecialchars((string)$k) . ':</strong> ' . htmlspecialchars($val) . '</p>'; }
     $html .= '</body></html>';
     file_put_contents($tmp . '/registration.html', $html);
     // copy passport if exists
