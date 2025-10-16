@@ -637,8 +637,7 @@ document.addEventListener('DOMContentLoaded', function(){
 				total += formFee + cardFee;
 			}
 
-					// Set the payment method for the server: if there are any fixed-priced items, prefer online (Paystack)
-					try { var methodInput = document.getElementById('method_input'); if (methodInput) { methodInput.value = anyFixed ? 'paystack' : 'bank'; } } catch(e) {}
+					// keep method as bank by default; paystack remains available for future use
 
 			subtotalEl.textContent = formatN(subtotalFixed);
 			formEl.textContent = formatN(formFee);
@@ -844,31 +843,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <script>
-// Ensure the registration form sets the correct payment method before submit
-(function(){
-	var form = document.querySelector('form[method="post"][enctype]');
-	if (!form) return;
-	form.id = form.id || 'registrationForm';
-	form.addEventListener('submit', function(e){
-		try { if (typeof window.compute === 'function') window.compute(); } catch(e){}
-		var state = window.hqPaymentState || {};
-		var methodInput = document.getElementById('method_input');
-		if (methodInput) {
-			// prefer online when there are fixed-priced items
-			if (state.anyFixed) methodInput.value = 'paystack'; else methodInput.value = 'bank';
-		}
-		// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
-		if (methodInput && methodInput.value === 'paystack') {
-			// allow the form to submit but intercept to show confirmation
-			e.preventDefault();
-			if (typeof Swal !== 'undefined') {
-				Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
-			} else {
-				if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
-			}
-		}
-	});
-})();
+// No client-side change to payment method; bank transfer is used by default for now.
 </script>
 <script>
 // Program label selection visuals
