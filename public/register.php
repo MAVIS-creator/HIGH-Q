@@ -259,9 +259,24 @@ $csrf = generateToken('signup_form');
 												<h3>Student Registration Form</h3>
 												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
 												<?php if (!empty($errors)): ?>
-													<div class="admin-notice admin-warning">
-														<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
-													</div>
+													<script>
+													document.addEventListener('DOMContentLoaded', function(){
+														try {
+															var errHtml = <?= json_encode(implode('<br>', array_map('htmlspecialchars', $errors))) ?>;
+															if (typeof Swal !== 'undefined') {
+																Swal.fire({
+																	icon: 'error',
+																	title: 'There was a problem',
+																	html: errHtml,
+																	confirmButtonText: 'OK'
+																});
+															} else {
+																// fallback: alert with joined errors
+																alert(errHtml.replace(/<br\s*\/?>/g, "\n"));
+															}
+														} catch(e) { console.error(e); }
+													});
+													</script>
 												<?php endif; ?>
 												<?php if (!empty($varies_notice)): ?>
 													<div class="admin-notice admin-error">
