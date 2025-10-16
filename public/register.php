@@ -59,12 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 				$selectedHasAnyVaries = false;
 				$selectedHasAnyFixed = false;
+				$selectedFixedIds = [];
+				$selectedVariesIds = [];
 				foreach ($rows as $r) {
 					// if price is null or empty treat as 'Varies'
 					if (!isset($r['price']) || $r['price'] === null || $r['price'] === '') {
 						$selectedHasAnyVaries = true;
+						$selectedVariesIds[] = (int)$r['id'];
 					} else {
 						$selectedHasAnyFixed = true;
+						$selectedFixedIds[] = (int)$r['id'];
 						$amount += floatval($r['price']);
 					}
 				}
@@ -173,10 +177,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if (!empty($selectedAllVaries)) $verifyBeforePayment = true;
 
 			$reference = null; $paymentId = null;
-			if (!$verifyBeforePayment) {
+			if (!$verifyBeforePayment && $selectedHasAnyFixed) {
+				// create a payment record for fixed-priced items only (partial payment)
 				$reference = generatePaymentReference('REG');
-				$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
-				$stmt->execute([$amount, $method, $reference]);
+				$metadata = json_encode(['fixed_programs' => $selectedFixedIds, 'varies_programs' => $selectedVariesIds]);
+				$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?)');
+				$stmt->execute([$amount, $method, $reference, $metadata]);
 				$paymentId = $pdo->lastInsertId();
 			}
 
