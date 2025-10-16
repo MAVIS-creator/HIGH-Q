@@ -511,27 +511,28 @@ document.addEventListener('DOMContentLoaded', function(){
 		const cardFee = <?= intval($card_fee) ?>;
 
 		function compute(){
-			let sub = 0;
-			let hasVaries = false;
+			let subtotalFixed = 0;
+			let anyVaries = false;
+			let anyFixed = false;
 			checkboxes.forEach(cb => {
 				if (!cb.checked) return;
 				const label = cb.closest('label');
 				const priceText = label ? label.querySelector('small') : null;
 				if (priceText) {
 					const txt = priceText.textContent || '';
-					if (/Varies/i.test(txt)) { hasVaries = true; }
+					if (/Varies/i.test(txt)) { anyVaries = true; }
 					const m = txt.match(/₦([0-9,\.]+)/);
-					if (m) { sub += parseFloat(m[1].replace(/,/g,'')); }
+					if (m) { subtotalFixed += parseFloat(m[1].replace(/,/g,'')); anyFixed = true; }
 				}
 			});
 
-			// if any program selected, include fixed fees (even if subtotal 0 for safety)
-			let total = sub;
-			if (checkboxes.some(cb=>cb.checked)) {
+			// total payable on the client: only fixed-priced items + fees (if any fixed items selected)
+			let total = subtotalFixed;
+			if (anyFixed) {
 				total += formFee + cardFee;
 			}
 
-			subtotalEl.textContent = formatN(sub);
+			subtotalEl.textContent = formatN(subtotalFixed);
 			formEl.textContent = formatN(formFee);
 			cardEl.textContent = formatN(cardFee);
 			totalEl.textContent = formatN(total);
@@ -542,24 +543,28 @@ document.addEventListener('DOMContentLoaded', function(){
 				if (clientInput) clientInput.value = total.toFixed(2);
 			} catch(e) {}
 
-			// Enable/disable online payment UI when variable-priced programs are selected
+			// Enable/disable online payment UI: only disable when ALL selected are variable-priced
 			try {
 				var onlineBlock = document.getElementById('payment-method-online');
 				var paymentSummary = document.querySelector('.payment-summary');
 				// add/remove disabled class
 				if (onlineBlock) {
-					if (hasVaries) onlineBlock.classList.add('disabled'); else onlineBlock.classList.remove('disabled');
+					if (anyVaries && !anyFixed) onlineBlock.classList.add('disabled'); else onlineBlock.classList.remove('disabled');
 				}
-				// show a small inline note in payment summary if varies
+				// show a small inline note in payment summary if there are variable-priced items
 				if (paymentSummary) {
 					var existing = paymentSummary.querySelector('.varies-note');
-					if (hasVaries) {
+					if (anyVaries) {
 						if (!existing) {
 							var n = document.createElement('div');
 							n.className = 'varies-note';
 							n.style.color = '#a33';
 							n.style.marginTop = '8px';
-							n.textContent = 'Online payment disabled for variable-priced programs. An admin will confirm final pricing.';
+							if (anyVaries && !anyFixed) {
+								n.textContent = 'Online payment disabled for variable-priced programs. An admin will confirm final pricing.';
+							} else {
+								n.textContent = 'Some selected programs have variable pricing. Online payment will proceed for fixed-priced items; an admin will confirm the variable items.';
+							}
 							paymentSummary.appendChild(n);
 						}
 					} else {
@@ -568,22 +573,32 @@ document.addEventListener('DOMContentLoaded', function(){
 				}
 			} catch(e) {}
 
-			// if any selected program is 'Varies', inform the user via toast
-			if (hasVaries) {
+			// Inform the user appropriately
+			if (anyVaries) {
 				if (typeof Swal !== 'undefined') {
-					Swal.fire({
-						icon: 'info',
-						title: 'Price varies',
-						text: 'One or more selected programs have variable pricing. An administrator will contact you to confirm pricing before payment.',
-						toast: true,
-						position: 'top-end',
-						timer: 6000,
-						showConfirmButton: false
-					});
+					if (anyVaries && !anyFixed) {
+						Swal.fire({
+							icon: 'info',
+							title: 'Price varies',
+							text: 'All selected programs have variable pricing. An administrator will contact you to confirm pricing before payment.',
+							toast: true,
+							position: 'top-end',
+							timer: 6000,
+							showConfirmButton: false
+						});
+					} else {
+						Swal.fire({
+							icon: 'info',
+							title: 'Mixed selection',
+							text: 'Some selected programs have variable pricing. Online payment will proceed for fixed-priced items.',
+							toast: true,
+							position: 'top-end',
+							timer: 6000,
+							showConfirmButton: false
+						});
+					}
 				} else {
-					// fallback alert
-					console.log('Selected program(s) have variable pricing; admin will contact the student.');
-					// avoid annoying alert popup; console log only when Swal not available
+					console.log('Selected program(s) include variable-priced items; admin will contact the student.');
 				}
 			}
 		}
