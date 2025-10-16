@@ -67,14 +67,28 @@ include __DIR__ . '/includes/header.php';
 			<p class="card-desc">Fill out the form below and we'll get back to you within 24 hours.</p>
 
 			<?php if (!empty($errors)): ?>
-				<div class="admin-notice" style="background:#fff7e6;border-left:4px solid var(--hq-yellow);padding:12px;margin-bottom:12px;color:#b33;">
-					<?php foreach($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>
-				</div>
+				<script>
+				document.addEventListener('DOMContentLoaded', function(){
+					try {
+						var html = <?= json_encode(implode('<br>', array_map('htmlspecialchars', $errors))) ?>;
+						if (typeof Swal !== 'undefined') {
+							Swal.fire({ icon: 'error', title: 'Please fix these issues', html: html, confirmButtonText: 'OK' });
+						} else { alert(html.replace(/<br\s*\/?>/g,'\n')); }
+					} catch(e){ console.error(e); }
+				});
+				</script>
 			<?php endif; ?>
 			<?php if ($success): ?>
-				<div class="admin-notice" style="background:#e6fff0;border-left:4px solid #3cb371;padding:12px;margin-bottom:12px;color:#094;">
-					<?= htmlspecialchars($success) ?>
-				</div>
+				<script>
+				document.addEventListener('DOMContentLoaded', function(){
+					try {
+						var html = <?= json_encode($success) ?>;
+						if (typeof Swal !== 'undefined') {
+							Swal.fire({ icon: 'success', title: 'Message sent', html: html, confirmButtonText: 'OK' });
+						} else { alert(html); }
+					} catch(e){ console.error(e); }
+				});
+				</script>
 			<?php endif; ?>
 
 			<form method="post">
