@@ -3775,6 +3775,38 @@ input.form-input {
   }
 }
 
+/* Tablet breakpoint: prevent avatar overlap for mid-width devices (~884px devices) */
+@media (max-width: 920px) and (min-width: 801px) {
+  .tutor-card { width: 100%; }
+
+  .tutor-thumb {
+    height: auto !important;
+    padding: 28px 0 !important;
+  }
+
+  .tutor-thumb img {
+    width: 110px !important;
+    height: 110px !important;
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    display: block !important;
+    margin: 0 auto 14px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08) !important;
+  }
+
+  .tutor-lead .tutor-thumb img {
+    width: 150px !important;
+    height: 150px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .tutors-section .tutor-body {
+    padding-top: 18px !important;
+  }
+}
+
 .tutor-body h3 {
   margin: 0;
   font-size: 16px;
