@@ -77,119 +77,128 @@ function resizeAndCrop($srcPath, $destPath, $targetWidth = 300, $targetHeight = 
 
 // Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = $_POST['_csrf_token'] ?? '';
+    try {
+        $token = $_POST['_csrf_token'] ?? '';
 
-    // reCAPTCHA
-    if (!empty($recfg['secret'])) {
-        $rc = $_POST['g-recaptcha-response'] ?? '';
-        if (!$rc) {
-            $errors[] = 'Please complete the I am not a robot check.';
-        } else {
-            $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
-            $params = http_build_query([
-                'secret' => $recfg['secret'],
-                'response' => $rc,
-                'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
-            ]);
-            $ctx = stream_context_create(['http' => [
-                'method' => 'POST',
-                'header' => 'Content-type: application/x-www-form-urlencoded',
-                'content' => $params,
-                'timeout' => 5
-            ]]);
-            $res = @file_get_contents($verifyUrl, false, $ctx);
-            $j = $res ? json_decode($res, true) : null;
-            if (!$j || empty($j['success'])) {
-                $errors[] = 'reCAPTCHA validation failed. Please try again.';
-            }
-        }
-    }
-
-    $name = trim($_POST['name'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $avatar = $_FILES['avatar'] ?? null;
-
-    if (!verifyToken('signup_form', $token)) {
-        $errors[] = "Invalid CSRF token. Please refresh and try again.";
-    }
-
-    if (!$name || !$email || !$password) $errors[] = "Name, Email, and Password are required.";
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email address.";
-
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    if ($stmt->fetch()) $errors[] = "Email already registered.";
-
-    // Avatar upload
-    $avatarPath = null;
-    if ($avatar && $avatar['error'] === 0) {
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        $maxSize = 2 * 1024 * 1024;
-
-        if (!in_array($avatar['type'], $allowedTypes)) {
-            $errors[] = "Only JPG, PNG, and WEBP images are allowed.";
-        } elseif ($avatar['size'] > $maxSize) {
-            $errors[] = "Avatar too large. Max 2MB allowed.";
-        } else {
-            $uploadDir = __DIR__ . "/assets/avatars/";
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
-            $ext = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
-            $fileName = uniqid("avatar_") . "." . $ext;
-            $targetPath = $uploadDir . $fileName;
-
-            if (move_uploaded_file($avatar['tmp_name'], $targetPath)) {
-                resizeAndCrop($targetPath, $targetPath, 300, 300);
-                $avatarPath = "uploads/avatars/" . $fileName;
+        // reCAPTCHA
+        if (!empty($recfg['secret'])) {
+            $rc = $_POST['g-recaptcha-response'] ?? '';
+            if (!$rc) {
+                $errors[] = 'Please complete the I am not a robot check.';
             } else {
-                $errors[] = "Failed to upload avatar.";
+                $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+                $params = http_build_query([
+                    'secret' => $recfg['secret'],
+                    'response' => $rc,
+                    'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
+                ]);
+                $ctx = stream_context_create(['http' => [
+                    'method' => 'POST',
+                    'header' => 'Content-type: application/x-www-form-urlencoded',
+                    'content' => $params,
+                    'timeout' => 5
+                ]]);
+                $res = @file_get_contents($verifyUrl, false, $ctx);
+                $j = $res ? json_decode($res, true) : null;
+                if (!$j || empty($j['success'])) {
+                    $errors[] = 'reCAPTCHA validation failed. Please try again.';
+                }
             }
         }
-    }
 
-    if (empty($errors)) {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $name = trim($_POST['name'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $avatar = $_FILES['avatar'] ?? null;
 
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role_id = 1");
-        $stmt->execute();
-        $isFirstAdmin = $stmt->fetchColumn() == 0;
-
-        $role_id = $isFirstAdmin ? 1 : null;
-        $is_active = $isFirstAdmin ? 1 : 0;
-
-        $verificationToken = $is_active ? null : bin2hex(random_bytes(32));
-        $verifiedAt = $is_active ? date('Y-m-d H:i:s') : null;
-        $sentAt = $is_active ? null : date('Y-m-d H:i:s');
-
-        $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, avatar, is_active, email_verification_token, email_verified_at) 
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
-
-        if (!$is_active) {
-            $uid = $pdo->lastInsertId();
-            $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
-            $uupd->execute([$sentAt, $uid]);
-
-            $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
-            $verifyUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin/verify_email.php?token=' . urlencode($verificationToken);
-
-            $subject = "Verify your email for HIGH Q SOLID ACADEMY";
-            $html = "<p>Hello $name,</p>
-                     <p>Thanks for registering with HIGH Q SOLID ACADEMY.</p>
-                     <p>Please verify your email address by clicking the link below:</p>
-                     <p><a href=\"{$verifyUrl}\">Verify my email</a></p>";
-            @sendEmail($email, $subject, $html);
-
-            $success = "Account created successfully! Please check your email to verify your account.";
-        } else {
-            $subject = "Welcome to HIGH Q SOLID ACADEMY";
-            $html = "<p>Hello $name,</p>
-                     <p>Your account has been created with Main Admin privileges.</p>";
-            sendEmail($email, $subject, $html);
-            $success = "Account created successfully! You can now log in.";
+        if (!verifyToken('signup_form', $token)) {
+            $errors[] = "Invalid CSRF token. Please refresh and try again.";
         }
+
+        if (!$name || !$email || !$password) $errors[] = "Name, Email, and Password are required.";
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email address.";
+
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        if ($stmt->fetch()) $errors[] = "Email already registered.";
+
+        // Avatar upload
+        $avatarPath = null;
+        if ($avatar && $avatar['error'] === 0) {
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            $maxSize = 2 * 1024 * 1024;
+
+            if (!in_array($avatar['type'], $allowedTypes)) {
+                $errors[] = "Only JPG, PNG, and WEBP images are allowed.";
+            } elseif ($avatar['size'] > $maxSize) {
+                $errors[] = "Avatar too large. Max 2MB allowed.";
+            } else {
+                $uploadDir = __DIR__ . "/assets/avatars/";
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+                $ext = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
+                $fileName = uniqid("avatar_") . "." . $ext;
+                $targetPath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($avatar['tmp_name'], $targetPath)) {
+                    resizeAndCrop($targetPath, $targetPath, 300, 300);
+                    $avatarPath = "uploads/avatars/" . $fileName;
+                } else {
+                    $errors[] = "Failed to upload avatar.";
+                }
+            }
+        }
+
+        if (empty($errors)) {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role_id = 1");
+            $stmt->execute();
+            $isFirstAdmin = $stmt->fetchColumn() == 0;
+
+            $role_id = $isFirstAdmin ? 1 : null;
+            $is_active = $isFirstAdmin ? 1 : 0;
+
+            $verificationToken = $is_active ? null : bin2hex(random_bytes(32));
+            $verifiedAt = $is_active ? date('Y-m-d H:i:s') : null;
+            $sentAt = $is_active ? null : date('Y-m-d H:i:s');
+
+            $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, avatar, is_active, email_verification_token, email_verified_at) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
+
+            if (!$is_active) {
+                $uid = $pdo->lastInsertId();
+                $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
+                $uupd->execute([$sentAt, $uid]);
+
+                $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+                $verifyUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin/verify_email.php?token=' . urlencode($verificationToken);
+
+                $subject = "Verify your email for HIGH Q SOLID ACADEMY";
+                $html = "<p>Hello $name,</p>
+                         <p>Thanks for registering with HIGH Q SOLID ACADEMY.</p>
+                         <p>Please verify your email address by clicking the link below:</p>
+                         <p><a href=\"{$verifyUrl}\">Verify my email</a></p>";
+                @sendEmail($email, $subject, $html);
+
+                $success = "Account created successfully! Please check your email to verify your account.";
+            } else {
+                $subject = "Welcome to HIGH Q SOLID ACADEMY";
+                $html = "<p>Hello $name,</p>
+                         <p>Your account has been created with Main Admin privileges.</p>";
+                sendEmail($email, $subject, $html);
+                $success = "Account created successfully! You can now log in.";
+            }
+        }
+    } catch (Throwable $e) {
+        // Ensure logs dir exists and write exception details for debugging
+        $logDir = __DIR__ . '/../storage/logs';
+        if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+        @file_put_contents($logDir . '/admin_signup_errors.log', "[" . date('c') . "] " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString() . "\n\n", FILE_APPEND | LOCK_EX);
+        // Provide a friendly error to the UI (avoid exposing internals)
+        $errors[] = "Server error occurred while creating account. Please check the admin logs or contact the site administrator.";
     }
 }
 
