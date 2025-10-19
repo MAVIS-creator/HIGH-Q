@@ -620,10 +620,16 @@ if ($hasRegistrations) {
       <?php foreach ($students as $s):
         $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
         $roleClass = 'role-student';
+        // Try to find a registration linked to this user so we can show passport and allow export
+        $regStmt = $pdo->prepare('SELECT id, passport_path, status FROM student_registrations WHERE user_id = ? LIMIT 1');
+        $regStmt->execute([$s['id']]);
+        $regRow = $regStmt->fetch(PDO::FETCH_ASSOC);
+        $linkedRegId = $regRow['id'] ?? null;
+        $passportThumb = $regRow['passport_path'] ?? ($s['avatar'] ?? null);
       ?>
       <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
         <div class="card-left">
-          <img src="<?= $s['avatar'] ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg' ?>" class="avatar-sm card-avatar">
+          <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
             <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
             <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
@@ -636,7 +642,7 @@ if ($hasRegistrations) {
         <div class="card-right">
           <div class="card-actions">
             <!-- view icon removed as requested -->
-            <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
+              <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
                 <form method="post" action="/HIGH-Q/admin/pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
@@ -652,6 +658,9 @@ if ($hasRegistrations) {
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
+              <?php endif; ?>
+              <?php if (!empty($linkedRegId)): ?>
+                <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>">Export</button>
               <?php endif; ?>
               <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
