@@ -42,10 +42,46 @@ try {
     foreach ($r as $k=>$v) { $val = is_null($v) ? '' : (string)$v; $html .= '<p><strong>' . htmlspecialchars((string)$k) . ':</strong> ' . htmlspecialchars($val) . '</p>'; }
     $html .= '</body></html>';
     file_put_contents($tmp . '/registration.html', $html);
-    // copy passport if exists
+    // copy passport if exists. passport_path may be an absolute URL or a local path.
     if (!empty($r['passport_path'])) {
-        $src = __DIR__ . '/../../' . ltrim($r['passport_path'],'/');
-        if (file_exists($src)) copy($src, $tmp . '/passport' . strrchr($src,'.'));
+        $pp = $r['passport_path'];
+        $ext = '';
+        if (preg_match('#^https?://#i', $pp)) {
+            // download remote file
+            $tmpFile = $tmp . '/passport_download';
+            $ch = curl_init($pp);
+            $fp = fopen($tmpFile, 'w');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            fclose($fp);
+            if ($httpCode >= 200 && $httpCode < 300 && filesize($tmpFile) > 0) {
+                // try to detect extension from MIME
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $tmpFile);
+                finfo_close($finfo);
+                $map = ['image/jpeg'=>'jpg','image/png'=>'png','image/jpg'=>'jpg'];
+                $ext = isset($map[$mime]) ? $map[$mime] : pathinfo(parse_url($pp, PHP_URL_PATH), PATHINFO_EXTENSION);
+                if (!$ext) $ext = 'jpg';
+                rename($tmpFile, $tmp . '/passport.' . $ext);
+            } else {
+                @unlink($tmpFile);
+            }
+        } else {
+            // treat as local path (may be absolute or site-relative)
+            $candidate = $pp;
+            // if starts with /HIGH-Q, try realpath relative to project root
+            if (strpos($candidate, '/HIGH-Q') === 0) {
+                $candidate = __DIR__ . '/../../' . ltrim($candidate, '/');
+            }
+            if (file_exists($candidate)) {
+                $ext = pathinfo($candidate, PATHINFO_EXTENSION);
+                copy($candidate, $tmp . '/passport.' . $ext);
+            }
+        }
     }
     $zipPath = $tmp . '.zip';
     $zip = new ZipArchive();
