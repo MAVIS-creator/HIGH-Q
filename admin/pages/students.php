@@ -588,10 +588,10 @@ if ($hasRegistrations) {
               <?php if (!empty($s['status'])): ?>
                 <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
                 <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
-              
-                <!-- Export registration (zip) -->
-                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
               <?php endif; ?>
+
+                <!-- Export registration (zip) - always available for registrations -->
+                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
               <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
