@@ -568,8 +568,8 @@ if ($hasRegistrations) {
 
   <div class="users-list" id="studentsList">
     <?php if (!empty($hasRegistrations)): ?>
-      <?php foreach ($students as $s): ?>
-        <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>">
+    <?php foreach ($students as $s): ?>
+      <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>">
           <div class="card-left">
             <?php $passportThumb = $s['passport_path'] ?? null; ?>
             <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
@@ -621,13 +621,19 @@ if ($hasRegistrations) {
         $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
         $roleClass = 'role-student';
         // Try to find a registration linked to this user so we can show passport and allow export
-        $regStmt = $pdo->prepare('SELECT id, passport_path, status FROM student_registrations WHERE user_id = ? LIMIT 1');
+        $regStmt = $pdo->prepare('SELECT id, passport_path, status, email FROM student_registrations WHERE user_id = ? LIMIT 1');
         $regStmt->execute([$s['id']]);
         $regRow = $regStmt->fetch(PDO::FETCH_ASSOC);
+        // If no registration linked by user_id (older/guest registrations), try matching by email
+        if (!$regRow) {
+          $regStmt2 = $pdo->prepare('SELECT id, passport_path, status FROM student_registrations WHERE email = ? LIMIT 1');
+          $regStmt2->execute([$s['email']]);
+          $regRow = $regStmt2->fetch(PDO::FETCH_ASSOC);
+        }
         $linkedRegId = $regRow['id'] ?? null;
         $passportThumb = $regRow['passport_path'] ?? ($s['avatar'] ?? null);
       ?>
-      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>">
+      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>">
         <div class="card-left">
           <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
