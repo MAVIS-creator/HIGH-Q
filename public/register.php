@@ -165,9 +165,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$fname = 'passport_' . $registrationId . '_' . time() . '.' . $ext;
 					$dst = $dstDir . '/' . $fname;
 					if (move_uploaded_file($u['tmp_name'], $dst)) {
-						$rel = '/HIGH-Q/public/uploads/passports/' . $fname;
-						$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
-						$upd->execute([$rel, $registrationId]);
+							// store a full absolute URL so admin views will render correctly when hosted
+							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+							$baseUrl = rtrim($proto . '://' . $host, '/');
+							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
+							$fullUrl = $baseUrl . $publicRel;
+							$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
+							$upd->execute([$fullUrl, $registrationId]);
 					}
 				}
 			}
@@ -710,6 +715,20 @@ document.addEventListener('DOMContentLoaded', function(){
 	#mobilePaymentSummary { display:none; }
 }
 </style>
+
+<script>
+// Passport file input wiring
+document.addEventListener('DOMContentLoaded', function(){
+	var btn = document.querySelector('.hq-file-input button');
+	var input = document.getElementById('passport_input');
+	var chosen = document.getElementById('passport_chosen');
+	if (!btn || !input) return;
+	btn.addEventListener('click', function(){ input.click(); });
+	input.addEventListener('change', function(){
+		if (input.files && input.files.length) chosen.textContent = input.files[0].name; else chosen.textContent = 'No file chosen';
+	});
+});
+</script>
 
 <div id="mobilePaymentSummary" aria-hidden="true">
 	<button class="mps-close" aria-label="Close">✕</button>
