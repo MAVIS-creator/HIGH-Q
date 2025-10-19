@@ -571,7 +571,8 @@ if ($hasRegistrations) {
       <?php foreach ($students as $s): ?>
         <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>">
           <div class="card-left">
-            <img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" class="avatar-sm card-avatar">
+            <?php $passportThumb = $s['passport_path'] ?? null; ?>
+            <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
             <div class="card-meta">
               <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
               <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
