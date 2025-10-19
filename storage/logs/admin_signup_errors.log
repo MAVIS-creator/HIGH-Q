@@ -1,0 +1,4 @@
+[2025-10-20T01:58:33+02:00] Call to undefined function imagecreatefromjpeg() in C:\xampp\htdocs\HIGH-Q\admin\signup.php:24
+#0 C:\xampp\htdocs\HIGH-Q\admin\signup.php(145): resizeAndCrop('C:\\xampp\\htdocs...', 'C:\\xampp\\htdocs...', 300, 300)
+#1 {main}
+
