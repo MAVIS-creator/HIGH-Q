@@ -287,8 +287,8 @@ $users = $pdo->query("
       </div>
       <div class="user-actions">
         <div class="card-actions">
-          <button class="btn-secondary" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
-          <button class="btn-primary" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
+          <button class="btn-secondary btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+          <button class="btn-primary btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
               <?php if($u['is_active']===0): ?>
               <form method="post" action="?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
