@@ -10,7 +10,7 @@ $recfg = file_exists(__DIR__ . '/config/recaptcha.php')
     ? require __DIR__ . '/config/recaptcha.php'
     : (file_exists(__DIR__ . '/../config/recaptcha.php')
         ? require __DIR__ . '/../config/recaptcha.php'
-        : ['site_key' => '', 'secret' => '']);
+        : ['site_key' => '', 'secret' => '', 'enabled' => false]);
 
 $errors = [];
 $success = '';
@@ -348,10 +348,9 @@ input[type="file"]:focus {
     <div class="signup-card">
         <h2>Create Account</h2>
 
-        <?php if (!empty($errors)): ?>
-            <div class="error"><?php foreach ($errors as $err) echo htmlspecialchars($err) . "<br>"; ?></div>
-        <?php elseif ($success): ?>
-            <div class="success"><?= htmlspecialchars($success) ?></div>
+        <?php if (!empty($errors) || $success): ?>
+            <!-- Errors and success are shown via SweetAlert below -->
+            <div id="serverMessages" style="display:none" data-errors="<?= htmlspecialchars(json_encode($errors)) ?>" data-success="<?= htmlspecialchars($success) ?>"></div>
         <?php endif; ?>
 
         <form method="POST" enctype="multipart/form-data">
@@ -365,7 +364,7 @@ input[type="file"]:focus {
             <label>Password</label>
             <input type="password" name="password" placeholder="********" required>
             <label>Upload Passport Photo</label>
-            <input type="file" name="avatar" accept="image/png, image/jpeg, image/webp" required>
+            <input type="file" name="avatar" accept="image/png, image/jpeg, image/webp" <?php if (!empty($recfg['enabled'])) echo 'required'; ?>>
             <button type="submit">Create Account</button>
         </form>
 
@@ -378,20 +377,44 @@ input[type="file"]:focus {
         © <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED - Admin Panel
     </div>
 
-    <?php if (!empty($recfg['site_key'])): ?>
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <!-- SweetAlert2 for nicer alerts -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            // Show server-side messages (errors or success) using SweetAlert
             (function(){
-                const f = document.querySelector('form');
-                if (!f) return;
-                const w = document.createElement('div');
-                w.className = 'g-recaptcha';
-                w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>');
-                w.style.marginTop = '12px';
-                f.insertBefore(w, f.querySelector('button'));
+                var container = document.getElementById('serverMessages');
+                if (!container) return;
+                try {
+                    var errors = JSON.parse(container.getAttribute('data-errors') || '[]');
+                } catch(e){ errors = []; }
+                var success = container.getAttribute('data-success') || '';
+                if (errors && errors.length) {
+                    Swal.fire({
+                        title: 'Error',
+                        html: errors.map(e=>"<div>"+e+"</div>").join(''),
+                        icon: 'error',
+                        customClass: { popup: 'hq-swal' }
+                    });
+                } else if (success) {
+                    Swal.fire({ title: 'Success', html: success, icon: 'success', customClass: { popup: 'hq-swal' } });
+                }
             })();
         </script>
-    <?php endif; ?>
+
+        <?php if (!empty($recfg['enabled']) && !empty($recfg['site_key'])): ?>
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                <script>
+                        (function(){
+                                const f = document.querySelector('form');
+                                if (!f) return;
+                                const w = document.createElement('div');
+                                w.className = 'g-recaptcha';
+                                w.setAttribute('data-sitekey','<?= htmlspecialchars($recfg['site_key']) ?>');
+                                w.style.marginTop = '12px';
+                                f.insertBefore(w, f.querySelector('button'));
+                        })();
+                </script>
+        <?php endif; ?>
 
 </body>
 </html>
