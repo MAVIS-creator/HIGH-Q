@@ -17,6 +17,13 @@ $success = '';
 
 function resizeAndCrop($srcPath, $destPath, $targetWidth = 300, $targetHeight = 300)
 {
+    // If GD image functions are not available, skip resizing to avoid fatal errors
+    if (!function_exists('imagecreatetruecolor') || (!function_exists('imagecreatefromjpeg') && !function_exists('imagecreatefrompng') && !function_exists('imagecreatefromwebp'))) {
+        // Log a warning to admin logs so the server admin can enable the GD extension if desired
+        try { @file_put_contents(__DIR__ . '/../storage/logs/admin_signup_errors.log', "[" . date('c') . "] GD extension not available — skipping avatar resize for: $srcPath\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+        return true; // treat as success so upload continues without resizing
+    }
+
     [$srcWidth, $srcHeight, $srcType] = getimagesize($srcPath);
 
     switch ($srcType) {
