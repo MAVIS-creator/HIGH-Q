@@ -164,7 +164,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
             $isFirstAdmin = $stmt->fetchColumn() == 0;
 
-            $role_id = $isFirstAdmin ? 1 : null;
+            // Default role assignment:
+            // If this is the first admin, give role_id=1 (Main Admin). Otherwise try to find
+            // a sensible fallback role from the `roles` table (sub-admin/user/student) and use that.
+            // This avoids inserting NULL into a non-nullable role_id column.
+            if ($isFirstAdmin) {
+                $role_id = 1;
+            } else {
+                $role_id = null;
+                try {
+                    $roleStmt = $pdo->prepare('SELECT id FROM roles WHERE slug = ? LIMIT 1');
+                    foreach (['sub-admin','user','student'] as $slug) {
+                        $roleStmt->execute([$slug]);
+                        $r = $roleStmt->fetch(PDO::FETCH_ASSOC);
+                        if ($r && !empty($r['id'])) { $role_id = (int)$r['id']; break; }
+                    }
+                    if (!$role_id) {
+                        // pick the first role as fallback
+                        $r2 = $pdo->query('SELECT id FROM roles ORDER BY id ASC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+                        $role_id = $r2['id'] ?? 2;
+                    }
+                } catch (Throwable $_) {
+                    // If roles table is missing or query fails, fallback to 2
+                    $role_id = 2;
+                }
+            }
             $is_active = $isFirstAdmin ? 1 : 0;
 
             $verificationToken = $is_active ? null : bin2hex(random_bytes(32));
