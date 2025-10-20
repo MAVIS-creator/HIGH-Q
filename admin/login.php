@@ -79,6 +79,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmtDel->execute([$ip, $email]);
                 } catch (Throwable $e) { error_log('clear login attempts failed: ' . $e->getMessage()); }
 
+                // If a return_to parameter was provided, validate it and redirect back
+                $returnTo = $_GET['return_to'] ?? $_POST['return_to'] ?? null;
+                if ($returnTo) {
+                    // basic safety: ensure same-origin and starts with '/'
+                    $parsed = parse_url($returnTo);
+                    $allowed = false;
+                    if ($parsed === false) $allowed = false;
+                    else {
+                        if (empty($parsed['host']) && isset($parsed['path']) && strpos($parsed['path'], '/') === 0) $allowed = true;
+                        // allow absolute same-origin URLs
+                        if (!empty($parsed['host']) && ($parsed['host'] === ($_SERVER['HTTP_HOST'] ?? '') || $parsed['host'] === ($_SERVER['SERVER_NAME'] ?? ''))) $allowed = true;
+                    }
+                    if ($allowed) {
+                        header('Location: ' . $returnTo);
+                        exit;
+                    }
+                }
+
                 header("Location: pages/index.php");
                 exit;
             }
