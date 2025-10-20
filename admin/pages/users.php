@@ -430,8 +430,20 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await fetch(`index.php?pages=users&action=view&id=${id}`);
-  const data = await res.json();
+  const res = await fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' });
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (e) {
+    // Probably an auth redirect or HTML response; show friendly message and redirect to login
+    const text = await res.text();
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = '/HIGH-Q/admin/login.php');
+    } else {
+      alert('Session expired. Please login again.'); window.location = '/HIGH-Q/admin/login.php';
+    }
+    return;
+  }
   if(data.error) {
     if (typeof Swal !== 'undefined') Swal.fire('Error', data.error, 'error'); else alert(data.error);
     return;
