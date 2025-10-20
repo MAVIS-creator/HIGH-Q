@@ -12,3 +12,4 @@
 #0 C:\xampp\htdocs\HIGH-Q\admin\signup.php(176): PDOStatement->execute(Array)
 #1 {main}
 
+[2025-10-20T02:23:28+02:00] GD extension not available — skipping avatar resize for: C:\xampp\htdocs\HIGH-Q\admin/assets/avatars/avatar_68f5810003ae9.jpg
