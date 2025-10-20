@@ -201,6 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
 
             if (!$is_active) {
+                // Application flow: user is inactive. Send verification email AND notify main admins to review.
                 $uid = $pdo->lastInsertId();
                 $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
                 $uupd->execute([$sentAt, $uid]);
@@ -210,12 +211,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $subject = "Verify your email for HIGH Q SOLID ACADEMY";
                 $html = "<p>Hello $name,</p>
-                         <p>Thanks for registering with HIGH Q SOLID ACADEMY.</p>
+                         <p>Thanks for registering with HIGH Q SOLID ACADEMY. Your application is pending admin approval.</p>
                          <p>Please verify your email address by clicking the link below:</p>
                          <p><a href=\"{$verifyUrl}\">Verify my email</a></p>";
                 @sendEmail($email, $subject, $html);
 
-                $success = "Account created successfully! Please check your email to verify your account.";
+                // Notify all main admins (role_id=1) about the new application with a review link
+                try {
+                    $admins = $pdo->prepare('SELECT email, name FROM users WHERE role_id = 1');
+                    $admins->execute();
+                    $reviewUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin/pages/students.php';
+                    $notifySubject = "New admin application submitted";
+                    $notifyHtml = "<p>A new admin application was submitted by <strong>" . htmlspecialchars($name) . "</strong> (" . htmlspecialchars($email) . ").</p><p>Review applications: <a href=\"{$reviewUrl}\">Admin applications</a></p>";
+                    while ($a = $admins->fetch(PDO::FETCH_ASSOC)) {
+                        sendEmail($a['email'], $notifySubject, $notifyHtml);
+                    }
+                } catch (Throwable $_) {}
+
+                $success = "Application submitted. Please check your email to verify your account; admins will review your application.";
             } else {
                 $subject = "Welcome to HIGH Q SOLID ACADEMY";
                 $html = "<p>Hello $name,</p>
