@@ -87,15 +87,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $token = $_POST['_csrf_token'] ?? '';
 
-        // reCAPTCHA
-        if (!empty($recfg['secret'])) {
+        // reCAPTCHA - only validate when explicitly enabled in admin config
+        if (!empty($recfg['enabled'])) {
             $rc = $_POST['g-recaptcha-response'] ?? '';
             if (!$rc) {
                 $errors[] = 'Please complete the I am not a robot check.';
             } else {
                 $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
                 $params = http_build_query([
-                    'secret' => $recfg['secret'],
+                    'secret' => $recfg['secret'] ?? '',
                     'response' => $rc,
                     'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
                 ]);
