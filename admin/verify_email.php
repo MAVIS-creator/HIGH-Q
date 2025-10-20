@@ -57,7 +57,7 @@ require_once __DIR__ . '/includes/header.php';
   <div class="admin-notice" style="background:<?= $success ? '#e6fff0' : '#fff7e6' ?>;border-left:4px solid <?= $success ? '#3cb371' : '#ffd166' ?>;padding:12px;">
     <?= htmlspecialchars($message) ?>
   </div>
-  <p><a href="index.php?pages=users">Back to Users</a></p>
+  <p><a href="./index.php">Back to Home</a></p>
 </div>
 
 <div class="footer" style="position:fixed;left:0;bottom:0;width:100%;background:#fff;color:#555;padding:10px 0;text-align:center;z-index:1000;box-shadow:0 -2px 12px rgba(0,0,0,0.07);font-size:0.95rem;">
