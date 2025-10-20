@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 // AJAX: return JSON for a single user view
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
   $id = (int)$_GET['id'];
-  $stmt = $pdo->prepare('SELECT u.*, r.name AS role_name, r.slug AS role_slug,
+  $stmt = $pdo->prepare('SELECT u.*, u.role_id AS role_id, r.name AS role_name, r.slug AS role_slug,
   (SELECT COUNT(*) FROM posts WHERE author_id = u.id) AS posts_count,
     (SELECT COUNT(*) FROM comments WHERE user_id = u.id) AS comments_count
     FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?');
