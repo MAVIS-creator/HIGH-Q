@@ -110,3 +110,64 @@
         });
     };
 </script>
+
+<script>
+// Polyfill: intercept global fetch and XHR responses so we can handle auth HTML/JSON centrally.
+(function(){
+    // helper to decide if a JSON payload is an auth error
+    function isAuthJson(j){
+        if (!j) return false; if (j.code && (j.code === 'unauthenticated' || j.code === 'no_users' || j.code === 'access_denied')) return true; if (j.error && (j.error.toLowerCase().indexOf('unauth') !== -1 || j.error.toLowerCase().indexOf('access denied') !== -1)) return true; return false;
+    }
+
+    // Save original fetch if present
+    var _fetch = window.fetch;
+    if (_fetch) {
+        window.fetch = function(input, init){
+            return _fetch(input, init).then(function(resp){
+                var ct = resp.headers.get('Content-Type') || '';
+                if (resp.status === 401 || resp.status === 403) {
+                    // try parse JSON, else redirect
+                    return resp.clone().text().then(function(txt){
+                        try { var j = JSON.parse(txt); if (isAuthJson(j)) { window.hqAjaxAuthHandler.redirectToLoginWithReturn(); throw new Error('auth'); } } catch(e) {}
+                        // if non-json or not auth json, still redirect on 401/403
+                        window.hqAjaxAuthHandler.redirectToLoginWithReturn(); throw new Error('auth');
+                    });
+                }
+                if (ct.indexOf('application/json') !== -1) return resp.json();
+                return resp.text().then(function(txt){
+                    var trimmed = txt.trim();
+                    if (trimmed && trimmed.indexOf('<!DOCTYPE') === 0 && trimmed.indexOf('<form') !== -1 && trimmed.toLowerCase().indexOf('name="login"') !== -1) {
+                        window.hqAjaxAuthHandler.redirectToLoginWithReturn(); throw new Error('auth-html');
+                    }
+                    return txt;
+                });
+            });
+        };
+    }
+
+    // Patch XMLHttpRequest send to detect auth HTML responses
+    try {
+        var XHR = window.XMLHttpRequest;
+        var origSend = XHR.prototype.send;
+        XHR.prototype.send = function(body){
+            this.addEventListener('load', function(){
+                try {
+                    var ct = (this.getResponseHeader('Content-Type') || '').toLowerCase();
+                    if (this.status === 401 || this.status === 403) {
+                        var txt = this.responseText || '';
+                        try { var j = JSON.parse(txt); if (isAuthJson(j)) { window.hqAjaxAuthHandler.redirectToLoginWithReturn(); return; } } catch(e) {}
+                        window.hqAjaxAuthHandler.redirectToLoginWithReturn(); return;
+                    }
+                    if (ct.indexOf('application/json') === -1) {
+                        var txt = (this.responseText || '').trim();
+                        if (txt && txt.indexOf('<!DOCTYPE') === 0 && txt.indexOf('<form') !== -1 && txt.toLowerCase().indexOf('name="login"') !== -1) {
+                            window.hqAjaxAuthHandler.redirectToLoginWithReturn(); return;
+                        }
+                    }
+                } catch(e) { /* swallow */ }
+            });
+            return origSend.call(this, body);
+        };
+    } catch(e) { /* environment may disallow */ }
+})();
+</script>
