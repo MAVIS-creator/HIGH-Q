@@ -12,6 +12,14 @@
         if (typeof Swal === 'undefined') return; // SweetAlert required
 
         function ajaxJson(method, url, data, cb){
+            // Prefer hqFetch for central auth handling
+            if (typeof hqFetch === 'function') {
+                var opts = { method: method, headers: { 'X-Requested-With': 'XMLHttpRequest' } };
+                if (method.toUpperCase() === 'POST' && data) opts.body = data;
+                hqFetch(url, opts).then(function(parsed){ cb(null, parsed); }).catch(function(err){ cb(err); });
+                return;
+            }
+            // Fallback to XHR
             var xhr = new XMLHttpRequest();
             xhr.open(method, url, true);
             xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
