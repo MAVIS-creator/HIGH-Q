@@ -47,6 +47,27 @@ $csrf = generateToken('signup_form');
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+    /* Paystack-like checkout styling (local to this page) */
+    .hq-checkout { display:flex; gap:18px; align-items:stretch; }
+    .hq-checkout .methods { width:180px; background:#f7f8fb; border-radius:8px; padding:12px; box-shadow:0 4px 18px rgba(0,0,0,0.04); }
+    .hq-checkout .methods .mitem { display:flex; align-items:center; gap:10px; padding:10px; border-radius:6px; cursor:pointer; color:#444; font-weight:600; }
+    .hq-checkout .methods .mitem.active { background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.06); color:#0b5ed7; }
+    .hq-checkout .methods .mitem .icon { width:34px;height:34px;border-radius:6px;background:#fff;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ececec }
+    .hq-checkout .panel { flex:1; background:#fff;border-radius:8px;padding:22px; box-shadow:0 10px 30px rgba(0,0,0,0.06); position:relative }
+    .hq-paycard { max-width:620px; margin:0 auto; }
+    .paybox { background:#fafafa;border-radius:8px;padding:24px;text-align:center;border:1px solid #f1f1f3 }
+    .paybox .bank { font-size:13px;color:#666;margin-bottom:8px }
+    .paybox .acct { font-size:22px;font-weight:700;letter-spacing:1px;margin:8px 0 }
+    .paybox .expires { font-size:12px;color:#888;margin-top:8px }
+    .btn-primary { background:#0b5ed7;color:#fff;padding:10px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer }
+    .btn-primary[disabled]{ opacity:0.6; cursor:not-allowed }
+    /* SweetAlert custom sizing for the checking modal */
+    .swal2-container .swal2-popup.hq-checking { width:480px; max-width:92%; }
+    .swal2-container .swal2-popup.hq-success { width:420px; max-width:92%; }
+    .hq-success .hq-success-icon{ width:90px;height:90px;border-radius:50%;background:#ebf9f0;margin:18px auto;display:flex;align-items:center;justify-content:center }
+    .hq-success .hq-success-icon svg{ width:56px;height:56px; color:#2aa24b }
+  </style>
+  <style>
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .swal-spinner { display:inline-block; }
   </style>
@@ -72,24 +93,48 @@ $csrf = generateToken('signup_form');
   <?php else: ?>
       <div class="card">
         <div class="spinner" id="pageSpinner" style="display:none"></div>
-  <p>Please transfer <strong>₦<?= number_format($payment['amount'],2) ?></strong> to the account below and use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong>.</p>
-  <p><strong>Account Name:</strong> <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
-  <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
-  <strong>Account Number:</strong> <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
+        <div class="hq-checkout">
+          <div class="methods">
+            <div class="mitem"><span class="icon">💳</span><span>Card</span></div>
+            <div class="mitem"><span class="icon">🏦</span><span>Bank</span></div>
+            <div class="mitem active"><span class="icon">🔁</span><span>Transfer</span></div>
+            <div class="mitem"><span class="icon">💱</span><span>USSD</span></div>
+            <div class="mitem"><span class="icon">🔎</span><span>Visa QR</span></div>
+          </div>
+          <div class="panel">
+            <div class="hq-paycard">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <div style="font-size:13px;color:#666">Pay with</div>
+                <div style="font-size:13px;color:#333;font-weight:700"><?= htmlspecialchars($payment['email'] ?? '') ?> &nbsp; <span style="color:#0b5ed7">Pay <strong>NGN <?= number_format($payment['amount'],2) ?></strong></span></div>
+              </div>
 
-    <p>This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details. An admin will verify and confirm your payment.</p>
+              <div class="paybox">
+                <div class="bank">Paystack Checkout</div>
+                <div style="font-size:16px;font-weight:700;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Zenith Bank') ?></div>
+                <div class="acct"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '1190020180') ?> <button onclick="copyAcct(event)" style="margin-left:8px;border:none;background:none;cursor:pointer">📋</button></div>
+                <div class="expires">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong> &nbsp; • Expires in 29:23</div>
+              </div>
 
-  <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">--:--</div>
+              <div style="text-align:center;margin-top:14px">
+                <button class="btn-primary" id="markSentBtn" type="button">I have sent the money</button>
+              </div>
 
-  <form method="post" action="#" id="payer-form">
-          <!-- mark_sent API expects _csrf and payment_id fields -->
-          <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
-          <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-          <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-          <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-          <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-          <div style="margin-top:12px;"><button class="btn-primary" id="markSentBtn" type="submit">I have sent the money</button></div>
-        </form>
+              <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
+
+              <div style="margin-top:14px;color:#666;text-align:center">This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.</div>
+
+              <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-top:12px;">--:--</div>
+
+              <form method="post" action="#" id="payer-form" style="margin-top:12px">
+                <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
+                <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
+                <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
+                <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
+                <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
+              </form>
+            </div>
+          </div>
+        </div>
 
         <script>
           // submit mark-sent via fetch to API endpoint and handle response
