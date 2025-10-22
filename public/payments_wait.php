@@ -53,16 +53,16 @@ $csrf = generateToken('signup_form');
   </style>
 </head>
 <body>
-  <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
+  <header class="main-header">
     <div class="container" style="display:flex;align-items:center;gap:12px;">
-  <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+      <img src="./assets/images/hq-logo.jpeg" alt="HQ" class="brand-logo">
       <div>
-        <strong>HIGH Q SOLID ACADEMY</strong>
-        <div style="font-size:12px;color:#666;">Secure payment</div>
+        <div class="logo"><strong>HIGH Q SOLID ACADEMY</strong></div>
+        <div class="card-desc" style="font-size:12px;color:var(--hq-gray);">Secure payment</div>
       </div>
     </div>
-  </div>
-  <main class="public-main" style="padding:28px 0;">
+  </header>
+  <main class="public-main my-lg-4">
 <?php
 ?>
 <section class="about-hero">
@@ -75,8 +75,8 @@ $csrf = generateToken('signup_form');
         <div class="spinner" id="pageSpinner" style="display:none"></div>
         <div class="hq-pay-wrapper">
           <div class="hq-pay-header">
-            <div style="font-size:13px;color:#666">Pay with</div>
-            <div style="font-size:14px;color:var(--hq-blue);font-weight:700">Pay NGN <?= number_format($payment['amount'],2) ?></div>
+            <div class="card-desc">Pay with</div>
+            <div class="program-price" style="font-weight:700;color:var(--hq-primary)">Pay NGN <?= number_format($payment['amount'],2) ?></div>
           </div>
 
           <div class="hq-paybox">
@@ -222,7 +222,7 @@ $csrf = generateToken('signup_form');
           })();
         </script>
 
-        <p style="margin-top:12px;color:#666;">Reference: <?= htmlspecialchars($payment['reference'] ?? '') ?></p>
+  <p class="card-desc" style="margin-top:12px;">Reference: <?= htmlspecialchars($payment['reference'] ?? '') ?></p>
       </div>
 
       <div id="payerRecordedInfo" style="display:none;"></div>
@@ -325,6 +325,6 @@ $csrf = generateToken('signup_form');
 </section>
 
   </main>
-  <footer style="padding:18px 0;text-align:center;color:#777;font-size:13px;">&copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY</footer>
+  <footer class="card-desc" style="padding:18px 0;text-align:center;color:var(--hq-gray);font-size:13px;">&copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY</footer>
 </body>
 </html>
