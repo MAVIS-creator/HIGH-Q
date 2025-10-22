@@ -27,19 +27,27 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' });
-            if (!res.ok) {
-                console.warn('Notifications endpoint returned HTTP', res.status);
-                return;
-            }
+            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' }));
 
-            // Read as text first so we can show raw HTML errors (PHP notices) in console instead of causing an unhandled JSON parse exception
-            const txt = await res.text();
-            let data;
-            try {
-                data = JSON.parse(txt);
-            } catch (err) {
-                console.error('Notifications API returned non-JSON response:', txt);
+            // Normalize response: hqFetchCompat may return parsed object under _parsed
+            let data = null;
+            if (res && res._parsed) {
+                data = res._parsed;
+            } else if (res && typeof res.text === 'function') {
+                if (!res.ok) {
+                    console.warn('Notifications endpoint returned HTTP', res.status);
+                    return;
+                }
+                const txt = await res.text();
+                try {
+                    data = JSON.parse(txt);
+                } catch (err) {
+                    console.error('Notifications API returned non-JSON response:', txt);
+                    panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                    return;
+                }
+            } else {
+                console.error('Unexpected notifications response', res);
                 panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
                 return;
             }
@@ -97,11 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        await fetch('/HIGH-Q/admin/api/mark_read.php', {
-                            method: 'POST',
-                            body: formData,
-                            credentials: 'same-origin'
-                        });
+                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }));
                         // Add read class for visual feedback
                         item.classList.add('read');
                         // Update the badge count
@@ -134,11 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            return fetch('/HIGH-Q/admin/api/mark_read.php', {
-                                method: 'POST', 
-                                body: fd, 
-                                credentials: 'same-origin'
-                            });
+                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }));
                         });
                         await Promise.all(ops);
                         
