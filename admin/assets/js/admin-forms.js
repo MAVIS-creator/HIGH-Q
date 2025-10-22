@@ -37,12 +37,15 @@ function initAdminForms() {
 
             try {
                 const formData = new FormData(form);
-                const response = await fetch(form.action || window.location.href, {
-                    method: form.method || 'POST',
-                    body: formData
-                });
+                const response = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(form.action || window.location.href, { method: form.method || 'POST', body: formData }) : fetch(form.action || window.location.href, { method: form.method || 'POST', body: formData }));
                 
-                const data = await response.json();
+                // Normalize payload (hqFetchCompat may return parsed object under _parsed)
+                let data = null;
+                try {
+                    if (response && response._parsed) data = response._parsed;
+                    else if (response && typeof response.json === 'function') data = await response.json();
+                    else data = response;
+                } catch (err) { data = null; }
                 
                 if (data.success) {
                     await Swal.fire({
