@@ -266,6 +266,21 @@ $csrf = generateToken('signup_form');
           setInterval(updatePageTimer, 1000);
 
           // polling for admin confirmation and server-side expiry
+          // Expose a global success UI so polling can reuse it
+          window._hqShowPaymentSuccess = function(payment){
+            try { if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                  title: 'Payment Successful',
+                  html: '<div class="hq-success"><div class="hq-success-icon">' +
+                        '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17l-5-5" stroke="#2aa24b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                        '</div><div style="font-size:16px;color:#333;margin-top:8px">You paid NGN ' + (payment?payment.amount.toFixed(2):'') + ' to Paystack</div></div>',
+                  showConfirmButton: false,
+                  timer: 1800,
+                  customClass: { popup: 'hq-success' }
+                });
+              } } catch(e){}
+          };
+
           function check(){
             if (!ref) return;
             var xhr = new XMLHttpRequest();
@@ -278,15 +293,12 @@ $csrf = generateToken('signup_form');
                     if (st === 'confirmed') {
                       // close any checking modal then show success then redirect
                       try { if (typeof Swal !== 'undefined') Swal.close(); } catch(e){}
-                      if (typeof Swal !== 'undefined') {
-                        Swal.fire({ icon: 'success', title: 'Payment Successful', html: 'Your payment has been confirmed. Redirecting to your receipt...', showConfirmButton: false, timer: 2200, customClass: { popup: 'hq-swal' } }).then(()=>{
-                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
-                        });
-                      } else {
+                      try { window._hqShowPaymentSuccess(r.payment); } catch(e){}
+                      // after short delay, redirect to receipt
+                      setTimeout(function(){
                         if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
                         else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
-                      }
+                      }, 1500);
                     } else if (st === 'expired') {
                       // backend marked expired
                       if (form) form.style.display = 'none';
