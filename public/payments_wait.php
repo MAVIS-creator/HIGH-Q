@@ -46,27 +46,7 @@ $csrf = generateToken('signup_form');
   <link rel="stylesheet" href="./assets/css/payment.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    /* Paystack-like checkout styling (local to this page) */
-    .hq-checkout { display:flex; gap:18px; align-items:stretch; }
-    .hq-checkout .methods { width:180px; background:#f7f8fb; border-radius:8px; padding:12px; box-shadow:0 4px 18px rgba(0,0,0,0.04); }
-    .hq-checkout .methods .mitem { display:flex; align-items:center; gap:10px; padding:10px; border-radius:6px; cursor:pointer; color:#444; font-weight:600; }
-    .hq-checkout .methods .mitem.active { background:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.06); color:#0b5ed7; }
-    .hq-checkout .methods .mitem .icon { width:34px;height:34px;border-radius:6px;background:#fff;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ececec }
-    .hq-checkout .panel { flex:1; background:#fff;border-radius:8px;padding:22px; box-shadow:0 10px 30px rgba(0,0,0,0.06); position:relative }
-    .hq-paycard { max-width:620px; margin:0 auto; }
-    .paybox { background:#fafafa;border-radius:8px;padding:24px;text-align:center;border:1px solid #f1f1f3 }
-    .paybox .bank { font-size:13px;color:#666;margin-bottom:8px }
-    .paybox .acct { font-size:22px;font-weight:700;letter-spacing:1px;margin:8px 0 }
-    .paybox .expires { font-size:12px;color:#888;margin-top:8px }
-    .btn-primary { background:#0b5ed7;color:#fff;padding:10px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer }
-    .btn-primary[disabled]{ opacity:0.6; cursor:not-allowed }
-    /* SweetAlert custom sizing for the checking modal */
-    .swal2-container .swal2-popup.hq-checking { width:480px; max-width:92%; }
-    .swal2-container .swal2-popup.hq-success { width:420px; max-width:92%; }
-    .hq-success .hq-success-icon{ width:90px;height:90px;border-radius:50%;background:#ebf9f0;margin:18px auto;display:flex;align-items:center;justify-content:center }
-    .hq-success .hq-success-icon svg{ width:56px;height:56px; color:#2aa24b }
-  </style>
+  <!-- page-specific styles moved to assets/css/payment.css -->
   <style>
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .swal-spinner { display:inline-block; }
