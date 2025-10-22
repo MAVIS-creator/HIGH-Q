@@ -644,9 +644,9 @@ document.querySelectorAll('.edit-link').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const id = link.dataset.id;
-    fetch(`post_edit.php?id=${id}`)
-      .then(res => res.text())
-      .then(html => {
+        (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(`post_edit.php?id=${id}`) : fetch(`post_edit.php?id=${id}`))
+            .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.text === 'function') return r.text(); return Promise.resolve(r); })
+            .then(html => {
         editContent.innerHTML = html;
         overlay.classList.add('open');
         editModal.classList.add('open');
@@ -667,13 +667,9 @@ function bindAjaxForm(id) {
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(form);
-    fetch(`index.php?pages=posts&action=edit&id=${id}`, {
-      method: 'POST',
-      body: formData,
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(res => res.json())
-    .then(data => {
+        (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(`index.php?pages=posts&action=edit&id=${id}`, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }) : fetch(`index.php?pages=posts&action=edit&id=${id}`, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }))
+        .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
+        .then(data => {
             if (data.success) {
                 // Update card in place
                 const card = document.getElementById(`post-row-${id}`);
