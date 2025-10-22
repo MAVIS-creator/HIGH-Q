@@ -430,13 +430,15 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' });
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' }) : fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' }));
   let data = null;
   try {
-    data = await res.json();
+    if (res && res._parsed) data = res._parsed;
+    else if (res && typeof res.json === 'function') data = await res.json();
+    else data = res;
   } catch (e) {
     // Probably an auth redirect or HTML response; show friendly message and redirect to login
-    const text = await res.text();
+    const text = (res && typeof res.text === 'function') ? await res.text() : null;
     if (typeof Swal !== 'undefined') {
       Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = '/HIGH-Q/admin/login.php');
     } else {
