@@ -66,7 +66,7 @@ $csrf = generateToken('signup_form');
   <main class="public-main my-lg-4">
 <?php
 ?>
-<section class="about-hero">
+<section class="payments-section">
   <div class="container">
     <h2>Payment in Progress</h2>
     <?php if (!$payment): ?>
