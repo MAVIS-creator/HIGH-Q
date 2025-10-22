@@ -198,6 +198,49 @@ document.getElementById('closeThreadBtn').addEventListener('click', function(){
 // Add small script to handle delete buttons (placed after footer include so DOM is ready)
 echo "<script>
 document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('btn-delete-attachment')) return;
+  var id = e.target.dataset.id;
+  if (!id) return;
+
+  Swal.fire({
+    title: 'Delete Attachment?',
+    text: 'Are you sure you want to delete this attachment?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it',
+    cancelButtonText: 'Cancel',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      var fd = new FormData();
+      fd.append('id', id);
+      fd.append('_csrf', '" . generateToken('chat_form') . "');
+
+      var promise = (typeof window.hqFetchCompat === 'function') ? window.hqFetchCompat('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd }) : fetch('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd });
+
+      promise.then(function(r){
+        if (r && r._parsed) return Promise.resolve(r._parsed);
+        if (r && typeof r.json === 'function') return r.json();
+        return Promise.resolve(r);
+      })
+      .then(function(j){
+        if (j && j.status === 'ok') {
+          Swal.fire('Deleted!', 'Attachment has been deleted.', 'success')
+          .then(() => location.reload());
+        } else {
+          Swal.fire('Error', 'Delete failed: ' + (j && j.message || 'unknown'), 'error');
+        }
+      })
+      .catch(function(e){
+        Swal.fire('Error', 'Delete failed', 'error');
+      });
+    }
+  });
+}, false);</script>";
+
+// Add small script to handle delete buttons (placed after footer include so DOM is ready)
+echo "<script>
+document.addEventListener('click', function(e) {
     if (!e.target.classList.contains('btn-delete-attachment')) return;
     var id = e.target.dataset.id;
     if (!id) return;
