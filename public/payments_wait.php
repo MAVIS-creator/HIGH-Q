@@ -137,72 +137,90 @@ $csrf = generateToken('signup_form');
         </div>
 
         <script>
-          // submit mark-sent via fetch to API endpoint and handle response
-          // Expose HQ_BASE globally so other scripts (polling) can use it
+          // make a bookmark for base
           window.HQ_BASE = window.location.origin;
+
           (function(){
             var form = document.getElementById('payer-form');
             var btn = document.getElementById('markSentBtn');
-            form.addEventListener('submit', function(e){
+            var info = document.getElementById('payerRecordedInfo');
+
+            function showCheckingModal(){
+              if (typeof Swal === 'undefined') return;
+              Swal.fire({
+                title: 'Checking transaction status',
+                html: '<div style="text-align:center"><div class="swal-spinner" style="margin:12px auto 0;width:36px;height:36px;border:4px solid rgba(0,0,0,0.08);border-top-color:#222;border-radius:50%;animation:spin 1s linear infinite"></div></div>',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                customClass: { popup: 'hq-checking' }
+              });
+            }
+
+            function showSuccessModal(){
+              if (typeof Swal === 'undefined') return;
+              Swal.fire({
+                title: 'Payment Successful',
+                html: '<div class="hq-success"><div class="hq-success-icon">' +
+                      '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17l-5-5" stroke="#2aa24b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                      '</div><div style="font-size:16px;color:#333;margin-top:8px">You paid NGN <?= number_format($payment['amount'],2) ?> to Paystack</div></div>',
+                showConfirmButton: false,
+                timer: 1800,
+                customClass: { popup: 'hq-success' }
+              });
+            }
+
+            async function postMarkSent(fd){
+              var endpoint = (typeof window.hqFetchCompat === 'function') ? window.hqFetchCompat : (typeof hqFetch === 'function' ? hqFetch : null);
+              var url = (window.HQ_BASE||'') + '/public/api/mark_sent.php';
+              try{
+                var resp = null;
+                if (endpoint) resp = await endpoint(url, { method: 'POST', body: fd, credentials: 'same-origin' });
+                else resp = await fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' });
+
+                // normalize
+                var j = null;
+                if (resp && resp._parsed) j = resp._parsed;
+                else if (resp && typeof resp.text === 'function') {
+                  var txt = await resp.text();
+                  try{ j = JSON.parse(txt); } catch(e){ j = { status:'error', raw: txt, message: 'Invalid server response' }; }
+                } else j = resp;
+
+                return j;
+              } catch(e){ return { status: 'error', message: e && e.message ? e.message : 'Network error' }; }
+            }
+
+            btn.addEventListener('click', async function(e){
               e.preventDefault();
+              // read values from inline form fields
+              var fd = new FormData(form);
               btn.disabled = true; btn.textContent = 'Recording...';
               document.getElementById('pageSpinner').style.display = 'block';
-              var fd = new FormData(form);
-              fetch(window.HQ_BASE + './api/mark_sent.php', {
-                method: 'POST',
-                body: fd,
-                credentials: 'same-origin',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-              })
-                .then(function(r){
-                    // Try to parse JSON safely; if not JSON, read as text for debugging
-                    return r.text().then(function(text){
-                        try { return JSON.parse(text); } catch(e) { return { status: 'error', message: 'Invalid server response', raw: text }; }
-                    });
-                })
-                .then(function(j){
-                      if (j.status === 'ok') {
-                        // show success and let polling detect confirmation
-                        btn.textContent = 'Recorded — awaiting admin verification';
-                        btn.disabled = true;
-                        // display recorded payer details
-                        var info = document.getElementById('payerRecordedInfo');
-                        if (info) {
-                          var pay = j.payment || {};
-                          info.innerHTML = '<h4>Recorded transfer details</h4>'+
-                            '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>'+
-                            '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>'+
-                            '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
-                          info.style.border = '1px dashed #ccc';
-                          info.style.padding = '10px';
-                          info.style.marginTop = '12px';
-                          info.style.display = 'block';
-                        }
-                        // trigger an immediate check so the page can react to a quick admin confirmation
-                        try { if (typeof check === 'function') check(); } catch(e){}
-                        // show checking transaction modal
-                        if (typeof Swal !== 'undefined') {
-                          Swal.fire({
-                            title: 'Checking transaction status',
-                            html: '<div style="text-align:center"><div class="swal-spinner" style="margin:12px auto 0;width:36px;height:36px;border:4px solid rgba(0,0,0,0.08);border-top-color:var(--hq-black);border-radius:50%;animation:spin 1s linear infinite"></div></div>',
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                            customClass: { popup: 'hq-swal' }
-                          });
-                        }
-                        document.getElementById('pageSpinner').style.display = 'none';
-                      } else {
-                        // show raw server message when available to make debugging easier
-                        var msg = j.message || 'Failed to record transfer.';
-                        if (j.raw) msg += '\nServer response:\n' + j.raw;
-                        if (typeof Swal !== 'undefined') {
-                          Swal.fire({ icon: 'error', title: 'Failed', text: msg });
-                        } else { alert(msg); }
-                        btn.disabled = false; btn.textContent = 'I have sent the money'; document.getElementById('pageSpinner').style.display = 'none';
-                      }
-                }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); btn.disabled = false; btn.textContent = 'I have sent the money'; });
+
+              var j = await postMarkSent(fd);
+              if (j && j.status === 'ok'){
+                // show recorded details and checking modal
+                var pay = j.payment || {};
+                if (info) {
+                  info.innerHTML = '<h4 style="margin:0 0 8px">Recorded transfer details</h4>' +
+                    '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>' +
+                    '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>' +
+                    '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
+                  info.style.border = '1px dashed #ccc'; info.style.padding = '10px'; info.style.marginTop = '12px'; info.style.display = 'block';
+                }
+                // dispatch event for other listeners and clear page timer
+                document.dispatchEvent(new CustomEvent('hq.payment.recorded', { detail: j }));
+                showCheckingModal();
+                document.getElementById('pageSpinner').style.display = 'none';
+                btn.textContent = 'Recorded — awaiting admin verification';
+                btn.disabled = true;
+                // run immediate check (the existing polling will pick up confirmation)
+                try{ if (typeof check === 'function') check(); } catch(e){}
+              } else {
+                var msg = (j && (j.message || j.raw)) ? (j.message || j.raw) : 'Failed to record transfer.';
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Failed', text: msg }); else alert(msg);
+                btn.disabled = false; btn.textContent = 'I have sent the money'; document.getElementById('pageSpinner').style.display = 'none';
+              }
             });
-            
           })();
         </script>
 
