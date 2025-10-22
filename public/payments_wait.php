@@ -109,10 +109,10 @@ $csrf = generateToken('signup_form');
               </div>
 
               <div class="paybox">
-                <div class="bank">HIGH Q SOLID ACADEMY</div>
+                <div class="bank">HQ Checkout</div>
                 <div style="font-size:16px;font-weight:700;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Zenith Bank') ?></div>
                 <div class="acct"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '1190020180') ?> <button onclick="copyAcct(event)" style="margin-left:8px;border:none;background:none;cursor:pointer">📋</button></div>
-                <div class="expires">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong> &nbsp; • Expires in 29:23</div>
+                <div class="expires">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong> &nbsp;</div>
               </div>
 
               <div style="text-align:center;margin-top:14px">
