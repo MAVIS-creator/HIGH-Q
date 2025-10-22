@@ -1,0 +1,26 @@
+/* Styles for payments_wait page (HQ branded) */
+:root{
+  --hq-blue:#0b5ed7;
+  --hq-bg:#f7f8fb;
+  --hq-panel:#ffffff;
+  --hq-text:#222;
+}
+body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+.hq-pay-wrapper{max-width:920px;margin:18px auto;background:var(--hq-panel);border-radius:10px;padding:18px;box-shadow:0 6px 24px rgba(12,16,24,0.06)}
+.hq-pay-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hq-paybox{background:var(--hq-bg);border-radius:8px;padding:22px;text-align:center;border:1px solid #eef2f6}
+.hq-paybox .bank{font-size:13px;color:#666;margin-bottom:6px}
+.hq-paybox .acct{font-size:24px;font-weight:700;letter-spacing:1px;margin:6px 0}
+.hq-paybox .ref{font-size:12px;color:#666;margin-top:8px}
+.hq-paybox .expires{font-size:12px;color:#888;margin-top:8px}
+.btn-primary{background:var(--hq-blue);color:#fff;padding:10px 16px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.btn-primary[disabled]{opacity:0.6}
+.copy-btn{border:none;background:transparent;cursor:pointer;color:var(--hq-blue);margin-left:6px}
+.small-meta{font-size:13px;color:#666;margin-top:12px}
+.notice-error{color:#b33;background:rgba(179,51,51,0.04);padding:8px;border-radius:6px;margin-top:12px}
+/* SweetAlert override classes */
+.swal2-container .swal2-popup.hq-checking{width:480px;max-width:92%}
+.swal2-container .swal2-popup.hq-success{width:420px;max-width:92%}
+.hq-success .hq-success-icon{width:90px;height:90px;border-radius:50%;background:#ebf9f0;margin:18px auto;display:flex;align-items:center;justify-content:center}
+.hq-success .hq-success-icon svg{width:56px;height:56px;color:#2aa24b}
+@media (max-width:760px){.hq-pay-wrapper{padding:12px}.hq-paybox{padding:16px}}
