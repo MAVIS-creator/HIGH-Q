@@ -82,8 +82,10 @@ $csrf = generateToken('signup_form');
           <div class="hq-paybox">
             <div class="bank">HQ Checkout</div>
             <div style="font-size:16px;font-weight:700;margin-bottom:6px;color:var(--hq-text)"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Moniepoint PBS') ?></div>
-            <div class="acct" id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></div>
-            <button class="copy-btn" id="copyBtn" title="Copy account number" aria-label="Copy account number">&#128203;</button>
+            <div style="display:inline-block">
+              <div class="acct" id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></div>
+            </div>
+            <button class="copy-btn" id="copyBtn" title="Copy account number" aria-label="Copy account number"><i class="bx bx-clipboard"></i></button>
             <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
             <div class="expires">Expires in <span id="payboxCountdown">--:--</span></div>
 
@@ -225,6 +227,7 @@ $csrf = generateToken('signup_form');
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
           var pageTimeout = 10 * 60; // 10 minutes
           var el = document.getElementById('countdown');
+          var payEl = document.getElementById('payboxCountdown');
           var form = document.getElementById('payer-form');
           var storageKey = 'hq_pay_timer_' + ref;
 
@@ -242,11 +245,15 @@ $csrf = generateToken('signup_form');
             var now = Math.floor(Date.now()/1000);
             var remain = pageTimeout - (now - startTs);
             if (remain <= 0) {
-              el.textContent = 'Payment window closed — please request a new link or contact support.';
+              var msg = 'Payment window closed — please request a new link or contact support.';
+              if (el) el.textContent = msg;
+              if (payEl) payEl.textContent = msg;
               if (form) form.style.display = 'none';
               return false;
             }
-            el.textContent = fmt(remain);
+            var f = fmt(remain);
+            if (el) el.textContent = f;
+            if (payEl) payEl.textContent = f;
             return true;
           }
 
