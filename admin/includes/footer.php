@@ -109,6 +109,58 @@
             });
         });
     };
+
+    // Compatibility helper: unified entrypoint for codebases that expect either
+    // the existing `hqFetch()` (which returns parsed JSON/text) or the native
+    // `fetch()` Response object. Call `hqFetchCompat(url, opts)` in new code.
+    // It will prefer `hqFetch` when available and wrap its parsed result into
+    // a Response-like object so existing `fetch(...).then(r=>r.text()/r.json())`
+    // chains continue to work. When `hqFetch` is not present it falls back to
+    // native `fetch` unchanged.
+    window.hqFetchCompat = function(url, opts) {
+        opts = opts || {};
+        // If native fetch is to be used (no hqFetch defined), return its promise
+        if (typeof window.hqFetch !== 'function') {
+            return fetch(url, opts);
+        }
+
+        // Otherwise use hqFetch which returns parsed JSON or text (or may throw
+        // on auth). Wrap parsed value into a Response-like object so callers
+        // using .json()/.text() still work.
+        return Promise.resolve().then(function(){
+            return window.hqFetch(url, opts);
+        }).then(function(parsed){
+            // Build a minimal Response-like object
+            var isObj = parsed !== null && typeof parsed === 'object';
+            var isStr = typeof parsed === 'string';
+            var wrapper = {
+                ok: true,
+                status: 200,
+                // return parsed for json(); if parsed is string, attempt parse
+                json: function() {
+                    return new Promise(function(resolve, reject){
+                        if (isObj) return resolve(parsed);
+                        if (isStr) {
+                            try { resolve(JSON.parse(parsed)); } catch(e){ reject(e); }
+                        } else {
+                            // other types
+                            resolve(parsed);
+                        }
+                    });
+                },
+                // return string representation for text()
+                text: function() {
+                    return new Promise(function(resolve){
+                        if (isStr) return resolve(parsed);
+                        try { resolve(JSON.stringify(parsed)); } catch(e){ resolve(String(parsed)); }
+                    });
+                },
+                // convenience: return the parsed value directly
+                _parsed: parsed
+            };
+            return wrapper;
+        });
+    };
 </script>
 
 <script>
