@@ -80,17 +80,19 @@ $csrf = generateToken('signup_form');
           </div>
 
           <div class="hq-paybox">
-            <div class="bank">HQ Checkout</div>
-            <div style="font-size:16px;font-weight:700;margin-bottom:6px;color:var(--hq-text)"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Moniepoint PBS') ?></div>
-            <div style="display:inline-block">
-              <div class="acct" id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></div>
-            </div>
-            <button class="copy-btn" id="copyBtn" title="Copy account number" aria-label="Copy account number"><i class="bx bx-clipboard"></i></button>
-            <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
-            <div class="expires">Expires in <span id="payboxCountdown">--:--</span></div>
+            <div class="transfer-title">Paystack Checkout</div>
+            <div class="checkout-caption"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Moniepoint PBS') ?></div>
 
-            <div style="text-align:center;margin-top:14px">
-              <button class="btn-primary" id="markSentBtn" type="button">I have sent the money</button>
+            <div class="acct-row" style="margin-top:8px;">
+              <div class="acct" id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></div>
+              <button class="copy-inline" id="copyBtn" title="Copy account number" aria-label="Copy account number"><i class="bx bx-clipboard"></i></button>
+            </div>
+
+            <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
+            <div class="expires"><span class="paybox-countdown" id="payboxCountdown">--:--</span></div>
+
+            <div style="text-align:center;margin-top:18px">
+              <button class="btn-primary fullwidth" id="markSentBtn" type="button">I have sent the money</button>
             </div>
 
             <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
@@ -193,20 +195,26 @@ $csrf = generateToken('signup_form');
               }
             });
 
-            // copy button behavior
-            var copyBtn = document.getElementById('copyBtn');
+            // copy button behavior (now supports .copy-inline)
+            var copyBtn = document.getElementById('copyBtn') || document.querySelector('.copy-inline');
             if (copyBtn) {
               copyBtn.addEventListener('click', function(e){
                 e.preventDefault();
                 var acct = document.getElementById('acctNum');
                 if (!acct) return;
                 var text = acct.textContent.trim();
+                var oldHtml = copyBtn.innerHTML;
                 try {
                   navigator.clipboard.writeText(text).then(function(){
-                    if (typeof Swal !== 'undefined') Swal.fire({ title: 'Copied', text: 'Account number copied to clipboard', icon: 'success', timer: 1200, showConfirmButton: false });
+                    // temporary feedback
+                    copyBtn.innerHTML = '<i class="bx bx-check"></i>';
+                    setTimeout(function(){ copyBtn.innerHTML = oldHtml; }, 1200);
+                    if (typeof Swal !== 'undefined') Swal.fire({ title: 'Copied', text: 'Account number copied', icon: 'success', timer: 900, showConfirmButton: false });
                   }).catch(function(){
                     // fallback
-                    var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} ta.remove(); if (typeof Swal !== 'undefined') Swal.fire({ title: 'Copied', text: 'Account number copied to clipboard', icon: 'success', timer: 1200, showConfirmButton: false });
+                    var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} ta.remove();
+                    copyBtn.innerHTML = '<i class="bx bx-check"></i>'; setTimeout(function(){ copyBtn.innerHTML = oldHtml; }, 1200);
+                    if (typeof Swal !== 'undefined') Swal.fire({ title: 'Copied', text: 'Account number copied', icon: 'success', timer: 900, showConfirmButton: false });
                   });
                 } catch(e){ /* ignore */ }
               });
