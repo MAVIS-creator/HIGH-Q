@@ -216,12 +216,24 @@ document.addEventListener('click', function(e) {
             fd.append('id', id);
             fd.append('_csrf', '".generateToken('chat_form')."');
             
-            fetch('/HIGH-Q/admin/api/delete_attachment.php', {
-                method: 'POST',
-                body: fd
-            })
-            .then(r => r.json())
-            .then(j => {
+      (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd }) : fetch('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd }))
++
++
++            .then(function(r){
++                // hqFetchCompat may return wrapped parsed response under _parsed or a Response-like object
+        if (r && r._parsed) return Promise.resolve(r._parsed);
++                if (r && typeof r.json === 'function') return r.json();
++                return Promise.resolve(r);
++            })
++            .then(j => {
+                 if (j.status === 'ok') {
+                     Swal.fire('Deleted!', 'Attachment has been deleted.', 'success')
+                     .then(() => location.reload());
+                 } else {
+                     Swal.fire('Error', 'Delete failed: ' + (j.message || 'unknown'), 'error');
+                 }
+             })
+*** End Patch
                 if (j.status === 'ok') {
                     Swal.fire('Deleted!', 'Attachment has been deleted.', 'success')
                     .then(() => location.reload());
