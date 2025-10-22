@@ -737,13 +737,8 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  fetch('/HIGH-Q/admin/pages/students.php', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
-      body: body.toString()
-    })
-    .then(res => res.json())
+  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
+    .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
     .then(resp => {
       if (resp.success) {
         const d = resp.data;
@@ -779,13 +774,8 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await fetch('/HIGH-Q/admin/pages/students.php', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
-      body: body.toString()
-    });
-    const data = await res.json();
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
+    const data = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : res);
     if (data.success) {
       Swal.fire({
         title: 'Payment Link Created ✅',
@@ -895,9 +885,9 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 // When confirm form is submitted, POST to confirm_registration
 // Helper to POST action and reload
 async function postAction(url, formData){
-  const res = await fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} });
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }) : fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }));
   let payload = null;
-  try { payload = await res.json(); } catch (e) { payload = null; }
+  try { payload = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : null); } catch (e) { payload = null; }
   if (!res.ok || !payload) {
     const msg = payload && (payload.message || payload.error) ? (payload.message || payload.error) : 'Server error';
     await Swal.fire('Error', msg, 'error');
