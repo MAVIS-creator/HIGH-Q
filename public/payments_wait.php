@@ -73,46 +73,35 @@ $csrf = generateToken('signup_form');
   <?php else: ?>
       <div class="card">
         <div class="spinner" id="pageSpinner" style="display:none"></div>
-        <div class="hq-checkout">
-          <div class="methods">
-            <div class="mitem"><span class="icon">💳</span><span>Card</span></div>
-            <div class="mitem"><span class="icon">🏦</span><span>Bank</span></div>
-            <div class="mitem active"><span class="icon">🔁</span><span>Transfer</span></div>
-            <div class="mitem"><span class="icon">💱</span><span>USSD</span></div>
-            <div class="mitem"><span class="icon">🔎</span><span>Visa QR</span></div>
+        <div class="hq-pay-wrapper">
+          <div class="hq-pay-header">
+            <div style="font-size:13px;color:#666">Pay with</div>
+            <div style="font-size:14px;color:var(--hq-blue);font-weight:700">Pay NGN <?= number_format($payment['amount'],2) ?></div>
           </div>
-          <div class="panel">
-            <div class="hq-paycard">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-                <div style="font-size:13px;color:#666">Pay with</div>
-                <div style="font-size:13px;color:#333;font-weight:700"><?= htmlspecialchars($payment['email'] ?? '') ?> &nbsp; <span style="color:#0b5ed7">Pay <strong>NGN <?= number_format($payment['amount'],2) ?></strong></span></div>
-              </div>
 
-              <div class="paybox">
-                <div class="bank">HQ Checkout</div>
-                <div style="font-size:16px;font-weight:700;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Zenith Bank') ?></div>
-                <div class="acct"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '1190020180') ?> <button onclick="copyAcct(event)" style="margin-left:8px;border:none;background:none;cursor:pointer">📋</button></div>
-                <div class="expires">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong> &nbsp;</div>
-              </div>
+          <div class="hq-paybox">
+            <div class="bank">HQ Checkout</div>
+            <div style="font-size:16px;font-weight:700;margin-bottom:6px;color:var(--hq-text)"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Moniepoint PBS') ?></div>
+            <div class="acct" id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></div>
+            <button class="copy-btn" id="copyBtn" title="Copy account number" aria-label="Copy account number">&#128203;</button>
+            <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
+            <div class="expires">Expires in <span id="payboxCountdown">--:--</span></div>
 
-              <div style="text-align:center;margin-top:14px">
-                <button class="btn-primary" id="markSentBtn" type="button">I have sent the money</button>
-              </div>
-
-              <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
-
-              <div style="margin-top:14px;color:#666;text-align:center">This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.</div>
-
-              <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-top:12px;">--:--</div>
-
-              <form method="post" action="#" id="payer-form" style="margin-top:12px">
-                <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
-                <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-                <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-                <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-                <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-              </form>
+            <div style="text-align:center;margin-top:14px">
+              <button class="btn-primary" id="markSentBtn" type="button">I have sent the money</button>
             </div>
+
+            <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
+
+            <div class="small-meta">This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.</div>
+
+            <form method="post" action="#" id="payer-form" style="margin-top:12px">
+              <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
+              <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
+              <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
+              <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
+              <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
+            </form>
           </div>
         </div>
 
@@ -201,6 +190,25 @@ $csrf = generateToken('signup_form');
                 btn.disabled = false; btn.textContent = 'I have sent the money'; document.getElementById('pageSpinner').style.display = 'none';
               }
             });
+
+            // copy button behavior
+            var copyBtn = document.getElementById('copyBtn');
+            if (copyBtn) {
+              copyBtn.addEventListener('click', function(e){
+                e.preventDefault();
+                var acct = document.getElementById('acctNum');
+                if (!acct) return;
+                var text = acct.textContent.trim();
+                try {
+                  navigator.clipboard.writeText(text).then(function(){
+                    if (typeof Swal !== 'undefined') Swal.fire({ title: 'Copied', text: 'Account number copied to clipboard', icon: 'success', timer: 1200, showConfirmButton: false });
+                  }).catch(function(){
+                    // fallback
+                    var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} ta.remove(); if (typeof Swal !== 'undefined') Swal.fire({ title: 'Copied', text: 'Account number copied to clipboard', icon: 'success', timer: 1200, showConfirmButton: false });
+                  });
+                } catch(e){ /* ignore */ }
+              });
+            }
           })();
         </script>
 
