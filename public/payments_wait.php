@@ -47,10 +47,149 @@ $csrf = generateToken('signup_form');
   <link rel="stylesheet" href="./assets/css/payment.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <!-- page-specific styles moved to assets/css/payment.css -->
   <style>
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .swal-spinner { display:inline-block; }
+    
+    /* Paystack-like modal styling */
+    .payment-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .payment-card {
+      background: white;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+    }
+    
+    .payment-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .payment-header .logo {
+      height: 40px;
+      width: auto;
+    }
+    
+    .payment-header .payment-info {
+      text-align: right;
+    }
+    
+    .payment-header .payment-info .email {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .payment-header .payment-info .amount {
+      color: var(--hq-primary);
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .payment-body {
+      padding: 24px;
+    }
+    
+    .payment-title {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    
+    .payment-details {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    
+    .payment-details .bank-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .payment-details .account-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--hq-primary);
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .payment-details .account-name {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .payer-details {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .payer-form .form-row {
+      margin-bottom: 15px;
+    }
+    
+    .payer-form label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-size: 14px;
+    }
+    
+    .payer-form input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .btn-send-money {
+      width: 100%;
+      padding: 12px;
+      background: var(--hq-primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    
+    .btn-send-money:hover {
+      opacity: 0.9;
+    }
+    
+    .expires {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body class="is-loaded">
