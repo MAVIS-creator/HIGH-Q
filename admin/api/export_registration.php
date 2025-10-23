@@ -88,10 +88,14 @@ try {
                     $candidate = __DIR__ . '/../../' . ltrim(substr($candidate, strlen($basePath)), '/');
                 }
             }
-            // Legacy fallback: if path starts with /HIGH-Q assume project root reference
-            if (strpos($candidate, '/HIGH-Q') === 0) {
-                $candidate = __DIR__ . '/../../' . ltrim($candidate, '/');
-            }
+                // Legacy fallback: if path starts with /HIGH-Q assume project root reference
+                if (strpos($candidate, '/HIGH-Q') === 0) {
+                    // strip legacy prefix and later prefix with runtime base
+                    $candidate = substr($candidate, strlen('/HIGH-Q'));
+                    $hqBase = rtrim($_ENV['APP_URL'] ?? '', '/');
+                    if ($hqBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $hqBase = rtrim($proto . '://' . $host, '/'); }
+                    $candidate = $hqBase . $candidate;
+                }
             if (file_exists($candidate)) {
                 $ext = pathinfo($candidate, PATHINFO_EXTENSION);
                 copy($candidate, $tmp . '/passport.' . $ext);

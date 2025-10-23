@@ -615,7 +615,7 @@ if ($hasRegistrations) {
 <div class="users-page">
 
 <?php
-// Temporary debug banner: enable by visiting /HIGH-Q/admin./pages/students.php?dbg=1
+// Temporary debug banner: enable by visiting the admin debug URL (remove hard-coded path for portability)
 if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
   $hasPostVar = isset($hasPost) ? ($hasPost ? 'yes' : 'no') : 'unknown';
   $studentsCount = isset($students) && is_array($students) ? count($students) : 0;
