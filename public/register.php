@@ -814,6 +814,22 @@ document.addEventListener('DOMContentLoaded', function(){
 	}catch(e){/* ignore */}
 });
 </script>
+<script>
+// Post-UTME toggle wiring
+document.addEventListener('DOMContentLoaded', function(){
+	var btnReg = document.getElementById('regTypeRegular');
+	var btnPost = document.getElementById('regTypePost');
+	var postSec = document.getElementById('postUtmeSection');
+	var regTypeInput = document.getElementById('registration_type_input');
+	if (!btnReg || !btnPost || !postSec || !regTypeInput) return;
+	function setRegular(){ postSec.style.display='none'; regTypeInput.value='regular'; btnReg.style.background='#f8fafc'; btnPost.style.background='#fff'; }
+	function setPost(){ postSec.style.display='block'; regTypeInput.value='post'; btnPost.style.background='#f8fafc'; btnReg.style.background='#fff'; }
+	btnReg.addEventListener('click', setRegular);
+	btnPost.addEventListener('click', setPost);
+	// default regular
+	setRegular();
+});
+</script>
 <!-- Mobile payment summary and computed-style logger -->
 <style>
 /* Mobile payment summary panel */
