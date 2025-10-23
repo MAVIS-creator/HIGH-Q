@@ -139,32 +139,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 				// If post-utme registration save to post_utme_registrations table
 				if ($registration_type === 'post') {
-					// collect post-utme specific fields
-					$pu = [];
-					$pu['institution'] = trim($_POST['pu_institution'] ?? null);
-					$pu['first_name'] = $first_name ?: null;
-					$pu['surname'] = trim($_POST['pu_surname'] ?? $last_name ?? null);
-					$pu['other_name'] = trim($_POST['pu_other_name'] ?? null);
-					$pu['gender'] = trim($_POST['pu_gender'] ?? null);
-					$pu['parent_phone'] = trim($_POST['pu_parent_phone'] ?? null);
-					$pu['nin_number'] = trim($_POST['pu_nin'] ?? null);
-					$pu['state_of_origin'] = trim($_POST['pu_state_of_origin'] ?? null);
-					$pu['local_government'] = trim($_POST['pu_local_government'] ?? null);
-					$pu['jamb_registration_number'] = trim($_POST['pu_jamb_reg'] ?? null);
-					$pu['jamb_score'] = intval($_POST['pu_jamb_score'] ?? 0) ?: null;
-					$pu['jamb_subjects'] = !empty($_POST['pu_jamb_subjects']) ? json_encode(array_map('trim', explode(',', $_POST['pu_jamb_subjects']))) : null;
-					$pu['course_first_choice'] = trim($_POST['pu_course_first'] ?? null);
-					$pu['course_second_choice'] = trim($_POST['pu_course_second'] ?? null);
-					$pu['institution_first_choice'] = trim($_POST['pu_institution_first'] ?? null);
-					$pu['father_name'] = trim($_POST['pu_father_name'] ?? null);
-					$pu['father_phone'] = trim($_POST['pu_father_phone'] ?? null);
-					$pu['mother_name'] = trim($_POST['pu_mother_name'] ?? null);
-					$pu['mother_phone'] = trim($_POST['pu_mother_phone'] ?? null);
-					$pu['exam_type'] = trim($_POST['pu_exam_type'] ?? null);
-					$pu['candidate_name'] = trim($_POST['pu_candidate_name'] ?? null);
-					$pu['exam_number'] = trim($_POST['pu_exam_number'] ?? null);
-					$pu['exam_year_month'] = trim($_POST['pu_exam_year_month'] ?? null);
-					$pu['olevel_results'] = !empty($_POST['pu_olevel_results']) ? $_POST['pu_olevel_results'] : null;
+						// collect post-utme specific fields (map newly added inputs)
+						$pu = [];
+						$pu['institution'] = trim($_POST['pu_institution'] ?? null);
+						$pu['first_name'] = trim($_POST['pu_first_name'] ?? $first_name ?? null);
+						$pu['surname'] = trim($_POST['pu_surname'] ?? $last_name ?? null);
+						$pu['other_name'] = trim($_POST['pu_other_name'] ?? null);
+						$pu['gender'] = trim($_POST['pu_gender'] ?? null);
+						$pu['address'] = trim($_POST['pu_address'] ?? null);
+						$pu['dob'] = trim($_POST['pu_dob'] ?? null);
+						$pu['parent_phone'] = trim($_POST['pu_parent_phone'] ?? null);
+						$pu['email'] = trim($_POST['pu_email'] ?? $email_contact ?? null);
+						$pu['nin_number'] = trim($_POST['pu_nin'] ?? null);
+						$pu['local_government'] = trim($_POST['pu_local_government'] ?? null);
+						$pu['place_of_birth'] = trim($_POST['pu_place_of_birth'] ?? null);
+						$pu['nationality'] = trim($_POST['pu_nationality'] ?? null);
+						$pu['mode_of_entry'] = trim($_POST['pu_mode_of_entry'] ?? null);
+						$pu['notes'] = trim($_POST['pu_notes'] ?? null);
+						$pu['state_of_origin'] = trim($_POST['pu_state_of_origin'] ?? null);
+						$pu['marital_status'] = trim($_POST['pu_marital_status'] ?? null);
+						$pu['disability'] = trim($_POST['pu_disability'] ?? null);
+						$pu['religion'] = trim($_POST['pu_religion'] ?? null);
+						$pu['jamb_registration_number'] = trim($_POST['pu_jamb_reg'] ?? null);
+						$pu['jamb_score'] = intval($_POST['pu_jamb_score'] ?? 0) ?: null;
+						$pu['jamb_subjects'] = !empty($_POST['pu_jamb_subjects']) ? json_encode(array_map('trim', explode(',', $_POST['pu_jamb_subjects']))) : null;
+						$pu['course_first_choice'] = trim($_POST['pu_course_first'] ?? null);
+						$pu['course_second_choice'] = trim($_POST['pu_course_second'] ?? null);
+						$pu['institution_first_choice'] = trim($_POST['pu_institution_first'] ?? null);
+						$pu['father_name'] = trim($_POST['pu_father_name'] ?? null);
+						$pu['father_phone'] = trim($_POST['pu_father_phone'] ?? null);
+						$pu['mother_name'] = trim($_POST['pu_mother_name'] ?? null);
+						$pu['mother_phone'] = trim($_POST['pu_mother_phone'] ?? null);
+						$pu['parent_email'] = trim($_POST['pu_parent_email'] ?? null);
+						$pu['father_occupation'] = trim($_POST['pu_father_occupation'] ?? null);
+						$pu['mother_occupation'] = trim($_POST['pu_mother_occupation'] ?? null);
+						$pu['primary_school'] = trim($_POST['pu_primary_school'] ?? null);
+						$pu['primary_year_ended'] = trim($_POST['pu_primary_year_ended'] ?? null);
+						$pu['secondary_school'] = trim($_POST['pu_secondary_school'] ?? null);
+						$pu['secondary_year_ended'] = trim($_POST['pu_secondary_year_ended'] ?? null);
+						$pu['sponsor_name'] = trim($_POST['pu_sponsor_name'] ?? null);
+						$pu['sponsor_address'] = trim($_POST['pu_sponsor_address'] ?? null);
+						$pu['sponsor_email'] = trim($_POST['pu_sponsor_email'] ?? null);
+						$pu['sponsor_relationship'] = trim($_POST['pu_sponsor_relationship'] ?? null);
+						$pu['sponsor_phone'] = trim($_POST['pu_sponsor_phone'] ?? null);
+						$pu['nok_name'] = trim($_POST['pu_nok_name'] ?? null);
+						$pu['nok_address'] = trim($_POST['pu_nok_address'] ?? null);
+						$pu['nok_email'] = trim($_POST['pu_nok_email'] ?? null);
+						$pu['nok_relationship'] = trim($_POST['pu_nok_relationship'] ?? null);
+						$pu['nok_phone'] = trim($_POST['pu_nok_phone'] ?? null);
+						$pu['exam_type'] = trim($_POST['pu_exam_type'] ?? null);
+						$pu['candidate_name'] = trim($_POST['pu_candidate_name'] ?? null);
+						$pu['exam_number'] = trim($_POST['pu_exam_number'] ?? null);
+						$pu['exam_year_month'] = trim($_POST['pu_exam_year_month'] ?? null);
+						$pu['waec_token'] = trim($_POST['pu_waec_token'] ?? null);
+						$pu['waec_serial'] = trim($_POST['pu_waec_serial'] ?? null);
+
+						// build olevel_results structure from the subject/grade pairs
+						$olevel = [
+							'subjects' => []
+						];
+						for ($i=1;$i<=8;$i++) {
+							$sKey = 'pu_subj_' . $i;
+							$gKey = 'pu_grade_' . $i;
+							$sub = trim($_POST[$sKey] ?? '');
+							$gr = trim($_POST[$gKey] ?? '');
+							if ($sub !== '' || $gr !== '') {
+								$olevel['subjects'][] = ['subject' => $sub, 'grade' => $gr];
+							}
+						}
+						// include token/serial and raw textarea if present
+						$olevel['waec_token'] = $pu['waec_token'];
+						$olevel['waec_serial'] = $pu['waec_serial'];
+						$olevel['raw_text'] = trim($_POST['pu_olevel_results'] ?? '');
+						$pu['olevel_results'] = json_encode($olevel, JSON_UNESCAPED_UNICODE);
 
 					// insert into post_utme_registrations
 					$ins = $pdo->prepare('INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, parent_phone, email, nin_number, state_of_origin, local_government, jamb_registration_number, jamb_score, jamb_subjects, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, mother_name, mother_phone, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
