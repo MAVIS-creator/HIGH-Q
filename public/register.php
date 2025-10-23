@@ -288,8 +288,68 @@ $csrf = generateToken('signup_form');
 		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
 	</div>
 </section>
-										<?php
-										// load available programs from courses table
+
+<!-- Registration Type Toggle -->
+<div class="registration-toggle">
+    <button class="toggle-btn <?= empty($_GET['type']) || $_GET['type'] === 'regular' ? 'active' : '' ?>" 
+            onclick="window.location.href='?type=regular'">
+        Regular Registration
+    </button>
+    <button class="toggle-btn <?= isset($_GET['type']) && $_GET['type'] === 'post-utme' ? 'active' : '' ?>"
+            onclick="window.location.href='?type=post-utme'">
+        POST UTME Registration
+    </button>
+</div>
+
+<style>
+    .registration-toggle {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin: 32px auto;
+        max-width: 500px;
+        padding: 0 20px;
+    }
+
+    .toggle-btn {
+        flex: 1;
+        padding: 12px 24px;
+        border: 2px solid var(--hq-primary);
+        background: none;
+        color: var(--hq-primary);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+        font-size: 15px;
+        white-space: nowrap;
+    }
+
+    .toggle-btn.active {
+        background: var(--hq-primary);
+        color: white;
+    }
+
+    .toggle-btn:hover:not(.active) {
+        background: rgba(0, 102, 255, 0.1);
+    }
+
+    @media (max-width: 576px) {
+        .registration-toggle {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+
+<?php
+// Redirect to POST UTME registration page if that type is selected
+if (isset($_GET['type']) && $_GET['type'] === 'post-utme') {
+    header('Location: register_post_utme.php');
+    exit;
+}
+
+// load available programs from courses table
 										try {
 												$courses = $pdo->query("SELECT id,title,price,duration FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC);
 										} catch (Throwable $e) { $courses = []; }
