@@ -622,8 +622,8 @@ if ($hasRegistrations) {
 
   <div class="users-list" id="studentsList">
     <?php if (!empty($hasRegistrations)): ?>
-    <?php foreach ($students as $s): ?>
-      <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>">
+  <?php foreach ($students as $s): ?>
+  <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>">
           <div class="card-left">
             <?php $passportThumb = $s['passport_path'] ?? null; ?>
             <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
@@ -687,7 +687,7 @@ if ($hasRegistrations) {
         $linkedRegId = $regRow['id'] ?? null;
         $passportThumb = $regRow['passport_path'] ?? ($s['avatar'] ?? null);
       ?>
-      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>">
+  <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>" data-type="<?= isset($linkedRegId) && $linkedRegId ? 'registration' : 'user' ?>">
         <div class="card-left">
           <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
@@ -758,22 +758,27 @@ document.addEventListener('submit', function(e){
 // Client-side search/filter
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
+const registrationTypeFilter = document.getElementById('registrationTypeFilter');
 const studentsList = document.getElementById('studentsList');
 
 function filterStudents(){
   const q = searchInput.value.toLowerCase();
   const status = statusFilter.value;
+  const regType = registrationTypeFilter ? registrationTypeFilter.value : '';
   document.querySelectorAll('#studentsList .user-card').forEach(card=>{
     const name = card.querySelector('.card-name').textContent.toLowerCase();
     const email = card.querySelector('.card-email').textContent.toLowerCase();
     const cardStatus = card.dataset.status;
     const matchesQ = q==='' || name.includes(q) || email.includes(q);
     const matchesStatus = status==='' || cardStatus===status;
-    card.style.display = (matchesQ && matchesStatus) ? '' : 'none';
+    const cardType = card.getAttribute('data-type') || '';
+    const matchesType = regType==='' || cardType === regType;
+    card.style.display = (matchesQ && matchesStatus && matchesType) ? '' : 'none';
   });
 }
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
+if (registrationTypeFilter) registrationTypeFilter.addEventListener('change', filterStudents);
 
 
 searchInput.addEventListener('input', filterStudents);
