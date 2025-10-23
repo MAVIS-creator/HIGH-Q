@@ -162,7 +162,7 @@ function claim(id){
     fd.append('_csrf','<?= generateToken('chat_form') ?>');
 
   var xhr=new XMLHttpRequest();
-  xhr.open('POST','../index.php?pages=chat',true);
+  xhr.open('POST', window.adminUrl('chat'), true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
 
     xhr.onload=function(){
