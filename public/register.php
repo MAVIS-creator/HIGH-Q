@@ -288,16 +288,7 @@ $csrf = generateToken('signup_form');
 		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
 	</div>
 </section>
-						<?php
-// Prominent registration toggle (placed under hero so it's always visible)
-?>
-<div class="registration-toggle" style="margin:18px 0;">
-	<div class="container" style="max-width:760px;display:flex;gap:8px;align-items:center;">
-		<button id="topToggleRegular" class="btn toggle-pill active-toggle" data-target="#regularForm">Regular Registration</button>
-		<button id="topTogglePost" class="btn toggle-pill" data-target="#postUtmeForm">POST UTME Registration</button>
-	</div>
-</div>
-
+										<?php
 										// load available programs from courses table
 										try {
 												$courses = $pdo->query("SELECT id,title,price,duration FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -307,17 +298,7 @@ $csrf = generateToken('signup_form');
 										<div class="container register-layout">
 										<main class="register-main">
 											<div class="card">
-												<!-- Registration type toggle: Regular / POST UTME -->
-												<div class="reg-toggle" style="display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px;">
-													<div style="flex:1">
-														<h3 style="margin:0">Student Registration Form</h3>
-														<p class="card-desc" style="margin:6px 0 0;font-size:0.95rem;color:#6b7280">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
-													</div>
-													<div style="display:flex;gap:8px;margin-left:16px;">
-														<button id="toggleRegular" class="btn toggle-pill active-toggle" data-target="#regularForm" style="padding:8px 12px;">Regular</button>
-														<button id="togglePostUtme" class="btn toggle-pill" data-target="#postUtmeForm" style="padding:8px 12px;">POST UTME</button>
-													</div>
-												</div>
+												<h3>Student Registration Form</h3>
 												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
 												<?php if (!empty($errors)): ?>
 													<script>
@@ -475,15 +456,6 @@ $csrf = generateToken('signup_form');
 														<!-- inline summary hidden; floating panel is used for visible summary -->
 													</div>
 												</form>
-
-												<?php
-												// Include the POST-UTME form as an in-page include so toggling is just show/hide.
-												$post_registration_action = './api/register_post_utme.php';
-												$post_utme_form_fee = 1000;
-												$post_utme_tutor_fee = 8000;
-												$post_csrf = generateToken('registration_form');
-												include __DIR__ . '/includes/post_utme_form.php';
-												?>
 											</div>
 										</main>
 
@@ -755,56 +727,6 @@ document.addEventListener('DOMContentLoaded', function(){
 	input.addEventListener('change', function(){
 		if (input.files && input.files.length) chosen.textContent = input.files[0].name; else chosen.textContent = 'No file chosen';
 	});
-});
-// Toggle behavior for registration forms
-document.addEventListener('DOMContentLoaded', function(){
-	// If the in-page include exists, toggle sections; otherwise fallback to navigation
-	var togReg = document.getElementById('toggleRegular');
-	var togPU = document.getElementById('togglePostUtme');
-	function fallbackNavigate(url){ window.location.href = url; }
-	function handleToggleBtn(btn){
-		if (!btn) return;
-		btn.addEventListener('click', function(e){
-			e.preventDefault();
-			var target = btn.getAttribute('data-target');
-			if (target && document.querySelector(target)) {
-				document.querySelectorAll('.toggle-pill, .toggle-btn').forEach(b => b.classList.remove('active-toggle','active'));
-				btn.classList.add('active-toggle');
-				document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-				var el = document.querySelector(target);
-				if (el) el.classList.add('active');
-			} else {
-				// fallback to separate page
-				if (target === '#postUtmeForm') fallbackNavigate('./register_new.php?type=post-utme');
-				else fallbackNavigate('./register.php?type=regular');
-			}
-		});
-	}
-	handleToggleBtn(togPU);
-	handleToggleBtn(togReg);
-});
-
-// Top toggle handlers
-document.addEventListener('DOMContentLoaded', function(){
-	var tTopReg = document.getElementById('topToggleRegular');
-	var tTopPU = document.getElementById('topTogglePost');
-	function wireTop(btn, targetSelector, fallbackUrl){
-		if (!btn) return;
-		btn.addEventListener('click', function(e){
-			e.preventDefault();
-			if (document.querySelector(targetSelector)) {
-				document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-				document.querySelector(targetSelector).classList.add('active');
-				document.querySelectorAll('.toggle-pill, .toggle-btn').forEach(b => b.classList.remove('active-toggle','active'));
-				var tb = document.querySelector('[data-target="' + targetSelector + '"]');
-				if (tb) tb.classList.add('active-toggle');
-			} else {
-				window.location.href = fallbackUrl;
-			}
-		});
-	}
-	wireTop(tTopPU, '#postUtmeForm', './register_new.php?type=post-utme');
-	wireTop(tTopReg, '#regularForm', './register.php?type=regular');
 });
 </script>
 

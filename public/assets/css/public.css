@@ -3997,33 +3997,6 @@ input.form-input {
   padding: 12px 0
 }
 
-/* POST-UTME include and toggle styles */
-.registration-toggle { display:flex; justify-content:center; }
-.toggle-pill { flex:1; padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); background:#fff; color:var(--hq-black); font-weight:700; cursor:pointer; }
-.toggle-pill + .toggle-pill { margin-left:8px; }
-.toggle-pill.active-toggle { background: linear-gradient(90deg,var(--hq-yellow),var(--hq-yellow-light)); color:var(--hq-black); border:2px solid rgba(0,0,0,0.06); box-shadow:0 10px 28px rgba(245,185,4,0.12); }
-
-/* include form specific */
-.passport-upload { display:flex; flex-direction:column; align-items:center; gap:12px; padding:18px; border:1px dashed rgba(0,0,0,0.06); border-radius:8px; background:#fffaf0; }
-.passport-preview { width:140px; height:140px; object-fit:cover; display:none; border-radius:6px; border:1px solid #eee; }
-.upload-btn { background:transparent; border:1px solid rgba(0,0,0,0.06); padding:8px 12px; border-radius:8px; display:inline-flex; gap:8px; align-items:center; cursor:pointer; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.form-grid .form-group label { display:block; font-weight:700; margin-bottom:6px; }
-.form-grid .form-group input, .form-grid .form-group textarea, .form-grid .form-group select { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #eee; }
-.step-navigation { display:flex; justify-content:space-between; gap:12px; margin-top:18px; }
-.fee-options { background:#fff6df; border:1px solid rgba(245,185,4,0.08); padding:12px; border-radius:8px; }
-.fee-option { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(0,0,0,0.03); }
-.fee-option:last-child { border-bottom:none; }
-
-@media (max-width:768px) {
-  .form-grid { grid-template-columns:1fr; }
-  .toggle-pill { font-size:14px; }
-}
-
-/* small helper to show sections when toggled via JS */
-.form-section { display:none; }
-.form-section.active { display:block; }
-
 .comment .comment-head {
   display: flex;
   align-items: center;
