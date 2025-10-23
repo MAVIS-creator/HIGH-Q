@@ -342,14 +342,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
 
     // Protect main admin and yourself from destructive actions
   if ($id === 1 || $id === $currentUserId) {
-    header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
   }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-    header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
     }
 
     if ($action === 'activate') {
@@ -368,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-      header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
