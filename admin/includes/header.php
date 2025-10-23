@@ -169,11 +169,20 @@ if (!headers_sent()) {
                         </button>
                     </div>
                     <div class="header-avatar">
-                        <img src="<?= $_SESSION['user']['avatar'] ?? '/HIGH-Q/public/assets/images/hq-logo.jpeg'; ?>" alt="Avatar">
+                        <?php
+                        $avatar = $_SESSION['user']['avatar'] ?? null;
+                        if (!$avatar) $avatar = $HQ_BASE_URL . '/public/assets/images/hq-logo.jpeg';
+                        else if (strpos($avatar, 'http') !== 0) $avatar = rtrim($HQ_BASE_URL, '/') . '/' . ltrim($avatar, '/');
+                        ?>
+                        <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
                     </div>
             <?php endif; ?>
         </div>
     </header>
+    <script>
+        // Expose global base for admin JS code
+        window.HQ_BASE_URL = <?= json_encode($HQ_BASE_URL) ?>;
+    </script>
     <?php
     // Render flash messages (if any)
     if (function_exists('getFlash')) {
