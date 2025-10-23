@@ -44,16 +44,15 @@ if ($toBackup > 0) {
     echo "No non-empty values found in `$col`; backup table will remain empty.\n";
 }
 
-// Perform the drop inside a transaction
+// Perform the drop (ALTER TABLE may not be allowed inside transactions in some MySQL setups)
 try {
-    $pdo->beginTransaction();
     echo "Dropping column `$col` from `$table`...\n";
     $pdo->exec("ALTER TABLE `$table` DROP COLUMN `$col`");
-    $pdo->commit();
     echo "Column dropped successfully.\n";
 } catch (Throwable $e) {
-    $pdo->rollBack();
+    // Don't attempt rollBack - ALTER TABLE may auto-commit or not be in a transaction
     echo "Failed to drop column: " . $e->getMessage() . "\n";
+    echo "You can inspect the backup table 'post_utme_waec_serial_no_backup' and run the DROP manually when ready.\n";
     exit(2);
 }
 
