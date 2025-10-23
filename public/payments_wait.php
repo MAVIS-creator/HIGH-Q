@@ -54,38 +54,30 @@ $csrf = generateToken('signup_form');
   </style>
 </head>
 <body class="is-loaded">
-  <div class="payment-page">
-    <div class="payment-backdrop">
-      <div class="payment-header">
-        <div class="header-content">
-          <div class="payment-logo">
-            <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
-          </div>
-          <div class="header-text">
-            <div class="logo-text">HIGH Q SOLID ACADEMY</div>
-            <div class="secure-text">Secure payment</div>
-          </div>
-        </div>
+  <header class="main-header">
+    <div class="container" style="display:flex;align-items:center;gap:12px;">
+      <img src="./assets/images/hq-logo.jpeg" alt="HQ" class="brand-logo">
+      <div>
+        <div class="logo"><strong>HIGH Q SOLID ACADEMY</strong></div>
+        <div class="card-desc" style="font-size:12px;color:var(--hq-gray);">Secure payment</div>
       </div>
-
+    </div>
+  </header>
+  <main class="public-main my-lg-4">
+<?php
+?>
+<section class="payments-section">
+  <div class="container">
+    <h2>Payment in Progress</h2>
     <?php if (!$payment): ?>
-      <div class="payment-container">
-        <div class="payment-content">
-          <div class="payment-title">Payment Not Found</div>
-          <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
-        </div>
-      </div>
-    <?php else: ?>
-      <div class="payment-container">
-        <div class="payment-content">
-          <div class="payment-title">Complete Your Payment</div>
-          <div class="spinner" id="pageSpinner" style="display:none"></div>
-          
-          <div class="payment-details">
-            <div class="amount-row">
-              <span class="amount-label">Amount</span>
-              <span class="amount-value">NGN <?= number_format($payment['amount'],2) ?></span>
-            </div>
+  <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
+  <?php else: ?>
+      <div class="card">
+        <div class="spinner" id="pageSpinner" style="display:none"></div>
+        <div class="hq-pay-wrapper">
+          <div class="hq-pay-header">
+            <div class="card-desc">Pay with</div>
+            <div class="program-price" style="font-weight:700;color:var(--hq-primary)">Pay NGN <?= number_format($payment['amount'],2) ?></div>
           </div>
 
           <div class="hq-paybox">
@@ -100,36 +92,22 @@ $csrf = generateToken('signup_form');
             <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
             <div class="expires"><span class="paybox-countdown" id="payboxCountdown">--:--</span></div>
 
-            <form method="post" action="#" id="payer-form">
+            <div style="text-align:center;margin-top:18px">
+              <button class="btn-primary fullwidth" id="markSentBtn" type="button">I have sent the money</button>
+            </div>
+
+            <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
+
+            <div class="small-meta">This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.</div>
+
+            <form method="post" action="#" id="payer-form" style="margin-top:12px">
               <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
               <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-              <div class="form-row">
-                <label>Name on Payer Account</label>
-                <input name="payer_name" class="form-control" required>
-              </div>
-              <div class="form-row">
-                <label>Account Number</label>
-                <input name="payer_number" class="form-control" required>
-              </div>
-              <div class="form-row">
-                <label>Bank Name</label>
-                <input name="payer_bank" class="form-control" required>
-              </div>
+              <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
+              <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
+              <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
             </form>
           </div>
-
-          <div class="payment-footer">
-            <div id="payerRecordedInfo" style="display:none"></div>
-            <div class="payment-status">Payment expires in <span id="payboxCountdown">--:--</span></div>
-            <div class="payment-actions">
-              <button class="btn btn-secondary" onclick="history.back()">Cancel</button>
-              <button class="btn btn-primary" id="markSentBtn" type="button">I have sent the money</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="small-meta" style="text-align:center;margin-top:12px;color:var(--hq-gray)">
-          This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.
         </div>
 
         <script>
@@ -343,10 +321,11 @@ $csrf = generateToken('signup_form');
         })();
       </script>
 
-    </div>
-    <footer class="text-center" style="margin-top:auto;padding:18px;color:var(--hq-panel)">
-      &copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY
-    </footer>
+    <?php endif; ?>
   </div>
+</section>
+
+  </main>
+  <footer class="card-desc" style="padding:18px 0;text-align:center;color:var(--hq-gray);font-size:13px;">&copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY</footer>
 </body>
 </html>
