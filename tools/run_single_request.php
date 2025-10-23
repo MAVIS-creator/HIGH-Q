@@ -31,6 +31,10 @@ $_SESSION['user'] = [
 $csrfPath = __DIR__ . '/../admin/includes/csrf.php';
 if (file_exists($csrfPath)) require_once $csrfPath;
 
+// Ensure DB connection is available for auth/permission checks
+$dbPath = __DIR__ . '/../admin/includes/db.php';
+if (file_exists($dbPath)) require_once $dbPath;
+
 // Prepare superglobals as an AJAX POST
 $_SERVER['REQUEST_METHOD'] = 'POST';
 $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
