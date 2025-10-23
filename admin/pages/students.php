@@ -613,6 +613,11 @@ if ($hasRegistrations) {
       <option value="pending">Pending</option>
       <option value="banned">Banned</option>
     </select>
+    <select id="registrationTypeFilter" style="margin-left:8px;">
+      <option value="">All Types</option>
+      <option value="registration">Regular</option>
+      <option value="post">Post-UTME</option>
+    </select>
   </div>
 
   <div class="users-list" id="studentsList">
