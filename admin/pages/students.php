@@ -781,29 +781,33 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     e.preventDefault();
     const id = this.dataset.id;
     const body = new URLSearchParams();
-    body.append('action', 'view_registration');
-    body.append('id', id);
+  body.append('action', 'view_registration');
+  body.append('id', id);
+  // include registration type (if provided by link)
+  var type = this.getAttribute('data-type') || 'registration';
+  body.append('type', type);
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
   (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
     .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
     .then(resp => {
-      if (resp.success) {
+        if (resp.success) {
         const d = resp.data;
-        document.getElementById('registrationContent').innerHTML = `
-          <div style="max-height:480px;overflow:auto;">
-            <h4>${d.first_name || ''} ${d.last_name || ''}</h4>
-            <p><strong>Email:</strong> ${d.email || ''}</p>
-            <p><strong>Date of Birth:</strong> ${d.date_of_birth || ''}</p>
-            <p><strong>Home Address:</strong> ${d.home_address || ''}</p>
-            <p><strong>Previous Education:</strong> ${d.previous_education || ''}</p>
-            <p><strong>Academic Goals:</strong> ${d.academic_goals || ''}</p>
-            <p><strong>Emergency Contact:</strong> ${d.emergency_contact_name || ''} (${d.emergency_relationship || ''}) - ${d.emergency_contact_phone || ''}</p>
-            <p><strong>Status:</strong> ${d.status || ''}</p>
-            <p><strong>Registered At:</strong> ${d.created_at || ''}</p>
-          </div>
-        `;
+        var html = '<div style="max-height:480px;overflow:auto;">';
+        // if post-utme returned passport, show it
+        if (d.passport_photo) html += '<div style="text-align:center;margin-bottom:12px;"><img src="'+d.passport_photo+'" style="max-width:160px;border-radius:6px;" onerror="this.style.display=\'none\'"></div>';
+        html += '<h4>'+ (d.first_name||'') + ' ' + (d.last_name||d.surname||'') + '</h4>';
+        html += '<p><strong>Email:</strong> ' + (d.email||'') + '</p>';
+        if (d.date_of_birth) html += '<p><strong>Date of Birth:</strong> ' + d.date_of_birth + '</p>';
+        if (d.home_address) html += '<p><strong>Home Address:</strong> ' + d.home_address + '</p>';
+        if (d.previous_education) html += '<p><strong>Previous Education:</strong> ' + d.previous_education + '</p>';
+        if (d.jamb_registration_number) html += '<p><strong>JAMB Reg No:</strong> ' + d.jamb_registration_number + ' — Score: ' + (d.jamb_score||'') + '</p>';
+        if (d.institution) html += '<p><strong>Institution:</strong> ' + d.institution + '</p>';
+        if (d.status) html += '<p><strong>Status:</strong> ' + d.status + '</p>';
+        if (d.created_at) html += '<p><strong>Registered At:</strong> ' + d.created_at + '</p>';
+        html += '</div>';
+        document.getElementById('registrationContent').innerHTML = html;
         const modal = document.getElementById('registrationViewModal');
         modal.dataset.regId = id;
         modal.style.display = 'flex';
