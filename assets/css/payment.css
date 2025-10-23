@@ -14,15 +14,63 @@
     /* local mappings */
     --hq-primary: var(--hq-yellow);
     --hq-accent: #06a77d;
-    --hq-bg: #f4f6fa;
+    --hq-bg: #1a1b1e;
     --hq-panel: #ffffff;
     --hq-text: var(--hq-black);
 }
 
-body {
+/* Modal-like payment page styles */
+.payment-page {
     font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     color: var(--hq-text);
+    background: var(--hq-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column
+}
+
+.payment-backdrop {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
     background: var(--hq-bg)
+}
+
+.payment-header {
+    width: 100%;
+    max-width: 460px;
+    margin-bottom: 20px
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.payment-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--hq-yellow)
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column
+}
+
+.logo-text {
+    color: var(--hq-panel);
+    font-weight: 600;
+    font-size: 15px
+}
+
+.secure-text {
+    color: var(--hq-gray);
+    font-size: 12px
 }
 
 .hq-pay-wrapper {
