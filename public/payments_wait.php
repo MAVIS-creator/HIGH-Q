@@ -202,34 +202,47 @@ $csrf = generateToken('signup_form');
       </div>
     </div>
   </header>
-  <main class="public-main my-lg-4">
+  <main class="public-main">
 <?php
 ?>
-<section class="payments-section">
-  <div class="container">
-    <h2>Payment in Progress</h2>
+<div class="payment-modal">
+  <div class="payment-card">
     <?php if (!$payment): ?>
-  <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
-  <?php else: ?>
-      <div class="card">
-        <div class="spinner" id="pageSpinner" style="display:none"></div>
-        <div class="hq-pay-wrapper">
-          <div class="hq-pay-header">
-            <div class="card-desc">Pay with</div>
-            <div class="program-price" style="font-weight:700;color:var(--hq-primary)">Pay NGN <?= number_format($payment['amount'],2) ?></div>
-          </div>
+    <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
+    <?php else: ?>
+    <div class="payment-header">
+      <img src="./assets/images/hq-logo.jpeg" alt="HQ" class="logo">
+      <div class="payment-info">
+        <div class="email"><?= htmlspecialchars($payment['email'] ?? '') ?></div>
+        <div class="amount">NGN <?= number_format($payment['amount'],2) ?></div>
+      </div>
+    </div>
 
-          <div class="hq-paybox">
-            <div class="transfer-title">Paystack Checkout</div>
-            <div class="checkout-caption"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Moniepoint PBS') ?></div>
+    <div class="payment-body">
+      <div class="spinner" id="pageSpinner" style="display:none"></div>
+      
+      <div class="payment-title">
+        Transfer NGN <?= number_format($payment['amount'],2) ?>
+      </div>
 
-            <div class="acct-row" style="margin-top:8px;">
-              <div class="acct" id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></div>
-              <button class="copy-inline" id="copyBtn" title="Copy account number" aria-label="Copy account number"><i class="bx bx-clipboard"></i></button>
-            </div>
-
-            <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
-            <div class="expires"><span class="paybox-countdown" id="payboxCountdown">--:--</span></div>
+      <div class="payment-details">
+        <div style="text-align:center;margin-bottom:15px;">
+          <strong>HQ Checkout</strong>
+        </div>
+        <div class="bank-name"><?= htmlspecialchars($siteSettings['bank_name'] ?? 'Moniepoint PBS') ?></div>
+        <div class="account-number">
+          <span id="acctNum"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '5017167271') ?></span>
+          <button class="copy-inline" id="copyBtn" title="Copy account number" aria-label="Copy account number">
+            <i class="bx bx-clipboard"></i>
+          </button>
+        </div>
+        <div class="account-name">
+          <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'HIGH Q SOLID ACADEMY') ?>
+        </div>
+        <div class="expires">
+          Expires in: <span class="paybox-countdown" id="payboxCountdown">--:--</span>
+        </div>
+      </div>
 
             <div style="text-align:center;margin-top:18px">
               <button class="btn-primary fullwidth" id="markSentBtn" type="button">I have sent the money</button>
