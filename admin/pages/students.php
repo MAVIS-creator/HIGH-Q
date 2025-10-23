@@ -582,8 +582,6 @@ if ($hasRegistrations) {
     elseif ($s['is_active']==2) $banned++;
   }
 }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -597,6 +595,17 @@ if ($hasRegistrations) {
 <?php include '../includes/sidebar.php'; ?>
 
 <div class="users-page">
+
+<?php
+// Temporary debug banner: enable by visiting /HIGH-Q/admin/pages/students.php?dbg=1
+if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
+  $hasPostVar = isset($hasPost) ? ($hasPost ? 'yes' : 'no') : 'unknown';
+  $studentsCount = isset($students) && is_array($students) ? count($students) : 0;
+  echo '<div style="background:#fff7cc;border:1px solid #ffe5a1;padding:12px;margin:12px;border-radius:6px;color:#422;">';
+  echo '<strong>DEBUG:</strong> hasRegistrations=' . ($hasRegistrations ? 'yes' : 'no') . ' | hasPost=' . $hasPostVar . ' | total=' . intval($total) . ' | fetched=' . intval($studentsCount);
+  echo '</div>';
+}
+?>
 
   <div class="summary-cards">
     <div class="card"><span class="icon"><i class='bx bx-user'></i></span><div><h3><?= $total ?></h3><p>Total Students</p></div></div>
