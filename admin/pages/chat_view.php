@@ -46,7 +46,7 @@ error_reporting(E_ALL);
                     echo '<div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">';
                     foreach ($atts as $att) {
                       $a = $att['file_url'];
-                      $downloadUrl = '/HIGH-Q/public/download_attachment.php?file=' . urlencode(basename($a));
+                      $downloadUrl = (isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/download_attachment.php?file=' . urlencode(basename($a));
                       $origName = $att['original_name'] ?: basename($a);
                       $mime = $att['mime_type'] ?: '';
                       $created = $att['created_at'] ?? '';
