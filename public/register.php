@@ -121,6 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// $programs already read above
 	$agreed_terms = isset($_POST['agreed_terms']) ? 1 : 0;
 
+		// Determine registration type: 'regular' or 'post'
+		$registration_type = trim($_POST['registration_type'] ?? 'regular');
+
 	// Terms must be accepted
 	if (!$agreed_terms) { $errors[] = 'You must accept the terms and conditions to proceed.'; }
 
@@ -133,6 +136,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// create registration record without creating a site user account
 		try {
 			$pdo->beginTransaction();
+
+				// If post-utme registration save to post_utme_registrations table
+				if ($registration_type === 'post') {
+					// collect post-utme specific fields
+					$pu = [];
+					$pu['institution'] = trim($_POST['pu_institution'] ?? null);
+					$pu['first_name'] = $first_name ?: null;
+					$pu['surname'] = trim($_POST['pu_surname'] ?? $last_name ?? null);
+					$pu['other_name'] = trim($_POST['pu_other_name'] ?? null);
+					$pu['gender'] = trim($_POST['pu_gender'] ?? null);
+					$pu['parent_phone'] = trim($_POST['pu_parent_phone'] ?? null);
+					$pu['nin_number'] = trim($_POST['pu_nin'] ?? null);
+					$pu['state_of_origin'] = trim($_POST['pu_state_of_origin'] ?? null);
+					$pu['local_government'] = trim($_POST['pu_local_government'] ?? null);
+					$pu['jamb_registration_number'] = trim($_POST['pu_jamb_reg'] ?? null);
+					$pu['jamb_score'] = intval($_POST['pu_jamb_score'] ?? 0) ?: null;
+					$pu['jamb_subjects'] = !empty($_POST['pu_jamb_subjects']) ? json_encode(array_map('trim', explode(',', $_POST['pu_jamb_subjects']))) : null;
+					$pu['course_first_choice'] = trim($_POST['pu_course_first'] ?? null);
+					$pu['course_second_choice'] = trim($_POST['pu_course_second'] ?? null);
+					$pu['institution_first_choice'] = trim($_POST['pu_institution_first'] ?? null);
+					$pu['father_name'] = trim($_POST['pu_father_name'] ?? null);
+					$pu['father_phone'] = trim($_POST['pu_father_phone'] ?? null);
+					$pu['mother_name'] = trim($_POST['pu_mother_name'] ?? null);
+					$pu['mother_phone'] = trim($_POST['pu_mother_phone'] ?? null);
+					$pu['exam_type'] = trim($_POST['pu_exam_type'] ?? null);
+					$pu['candidate_name'] = trim($_POST['pu_candidate_name'] ?? null);
+					$pu['exam_number'] = trim($_POST['pu_exam_number'] ?? null);
+					$pu['exam_year_month'] = trim($_POST['pu_exam_year_month'] ?? null);
+					$pu['olevel_results'] = !empty($_POST['pu_olevel_results']) ? $_POST['pu_olevel_results'] : null;
+
+					// insert into post_utme_registrations
+					$ins = $pdo->prepare('INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, parent_phone, email, nin_number, state_of_origin, local_government, jamb_registration_number, jamb_score, jamb_subjects, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, mother_name, mother_phone, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+					$ins->execute([
+						'pending',
+						$pu['institution'], $pu['first_name'], $pu['surname'], $pu['other_name'], $pu['gender'], $pu['parent_phone'], $email_contact ?: null, $pu['nin_number'], $pu['state_of_origin'], $pu['local_government'], $pu['jamb_registration_number'], $pu['jamb_score'], $pu['jamb_subjects'], $pu['course_first_choice'], $pu['course_second_choice'], $pu['institution_first_choice'], $pu['father_name'], $pu['father_phone'], $pu['mother_name'], $pu['mother_phone'], $pu['exam_type'], $pu['candidate_name'], $pu['exam_number'], $pu['exam_year_month'], $pu['olevel_results']
+					]);
+					$registrationId = $pdo->lastInsertId();
+
+					// handle passport upload for post-utme (same logic as regular)
+					if (!empty($_FILES['passport']) && $_FILES['passport']['error'] === UPLOAD_ERR_OK) {
+						$u = $_FILES['passport'];
+						$ext = pathinfo($u['name'], PATHINFO_EXTENSION);
+						$allowed = ['jpg','jpeg','png'];
+						if (in_array(strtolower($ext), $allowed)) {
+							$dstDir = __DIR__ . '/uploads/passports';
+							if (!is_dir($dstDir)) @mkdir($dstDir, 0755, true);
+							$fname = 'postutme_passport_' . $registrationId . '_' . time() . '.' . $ext;
+							$dst = $dstDir . '/' . $fname;
+							if (move_uploaded_file($u['tmp_name'], $dst)) {
+								$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+								$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+								$baseUrl = rtrim($proto . '://' . $host, '/');
+								$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
+								$fullUrl = $baseUrl . $publicRel;
+								$upd = $pdo->prepare('UPDATE post_utme_registrations SET passport_photo = ? WHERE id = ?');
+								$upd->execute([$fullUrl, $registrationId]);
+							}
+						}
+					}
+
+					// create payment for compulsory form fee and optional tutor fee
+					$formFee = 1000; // compulsory
+					$tutorFee = (!empty($_POST['pu_tutor_fee'])) ? 8000 : 0;
+					$total = $formFee + $tutorFee;
+					$reference = generatePaymentReference('PU');
+					$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), 0, 0, ?)');
+					$insP->execute([$total, $method, $reference, 'post']);
+					$paymentId = $pdo->lastInsertId();
+
+					// update post_utme_registrations with initial payment info
+					$upd2 = $pdo->prepare('UPDATE post_utme_registrations SET payment_status = ?, form_fee_paid = ?, tutor_fee_paid = ? WHERE id = ?');
+					$upd2->execute(['pending', 0, (!empty($tutorFee)?0:0), $registrationId]);
+
+					$pdo->commit();
+					// redirect to payment wait page
+					$_SESSION['last_payment_id'] = $paymentId;
+					$_SESSION['last_payment_reference'] = $reference;
+					header('Location: payments_wait.php?ref=' . urlencode($reference)); exit;
+				}
 
 			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, email, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
 			$reg->execute([
