@@ -343,10 +343,6 @@ $csrf = generateToken('signup_form');
         })();
       </script>
 
-    <?php endif; ?>
-  </div>
-</section>
-
     </div>
     <footer class="text-center" style="margin-top:auto;padding:18px;color:var(--hq-panel)">
       &copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY
@@ -354,4 +350,3 @@ $csrf = generateToken('signup_form');
   </div>
 </body>
 </html>
-<?php endif; ?>

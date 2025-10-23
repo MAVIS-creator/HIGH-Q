@@ -166,6 +166,60 @@
     background: rgba(0,0,0,0.05)
 }
 
+/* Account box styling */
+.acct-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--hq-yellow-pale);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 16px 0
+}
+
+.acct {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    flex: 1
+}
+
+.copy-inline {
+    background: none;
+    border: none;
+    color: var(--hq-primary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s
+}
+
+.copy-inline:hover {
+    background: rgba(0,0,0,0.05)
+}
+
+.transfer-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px
+}
+
+.checkout-caption {
+    color: var(--hq-gray);
+    font-size: 14px
+}
+
+.ref {
+    margin: 12px 0;
+    font-size: 14px;
+    color: var(--hq-gray)
+}
+
+.expires {
+    font-size: 14px;
+    color: var(--hq-accent)
+}
+
 /* Form styling */
 .form-row {
     margin-bottom: 16px
