@@ -58,19 +58,9 @@ if (!empty($extra)) {
     echo "No extra columns detected.\n\n";
 }
 
-// Check for common naming mismatches
-$aliases = [
-    'waec_serial' => ['waec_serial_no'],
-    'waec_serial_no' => ['waec_serial']
-];
-foreach ($aliases as $name => $altNames) {
-    if (!in_array($name, $actual)) {
-        foreach ($altNames as $alt) {
-            if (in_array($alt, $actual)) {
-                echo "Note: column expected as '$name' not found, but alternative '$alt' exists. Consider normalizing names.\n";
-            }
-        }
-    }
+// Note legacy column
+if (!in_array('waec_serial', $actual) && in_array('waec_serial_no', $actual)) {
+    echo "Note: 'waec_serial' not found, but legacy 'waec_serial_no' exists. You can run tools/drop_waec_serial_no_and_backup.php after verifying backups.\n";
 }
 
 // Final note
