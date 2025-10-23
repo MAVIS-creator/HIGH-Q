@@ -908,9 +908,23 @@ document.addEventListener('DOMContentLoaded', function(){
 	var btnPost = document.getElementById('regTypePost');
 	var postSec = document.getElementById('postUtmeSection');
 	var regTypeInput = document.getElementById('registration_type_input');
+	var programsGrid = document.querySelector('.programs-grid');
+	var paymentSummary = document.querySelector('.payment-summary');
 	if (!btnReg || !btnPost || !postSec || !regTypeInput) return;
-	function setRegular(){ postSec.style.display='none'; regTypeInput.value='regular'; btnReg.style.background='#f8fafc'; btnPost.style.background='#fff'; }
-	function setPost(){ postSec.style.display='block'; regTypeInput.value='post'; btnPost.style.background='#f8fafc'; btnReg.style.background='#fff'; }
+	function setRegular(){ 
+		postSec.style.display='none'; 
+		regTypeInput.value='regular'; 
+		btnReg.style.background='#f8fafc'; btnPost.style.background='#fff'; 
+		if (programsGrid) programsGrid.style.display = '';
+		if (paymentSummary) paymentSummary.style.display = '';
+	}
+	function setPost(){ 
+		postSec.style.display='block'; 
+		regTypeInput.value='post'; 
+		btnPost.style.background='#f8fafc'; btnReg.style.background='#fff'; 
+		if (programsGrid) programsGrid.style.display = 'none';
+		if (paymentSummary) paymentSummary.style.display = 'none';
+	}
 	btnReg.addEventListener('click', setRegular);
 	btnPost.addEventListener('click', setPost);
 	// default regular
