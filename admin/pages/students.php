@@ -582,6 +582,7 @@ if ($hasRegistrations) {
     elseif ($s['is_active']==2) $banned++;
   }
 }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
