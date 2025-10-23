@@ -201,7 +201,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
           fd.append('id', id);
           fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
           
-          fetch((window.HQ_BASE_URL ? (window.HQ_BASE_URL.replace(/\/$/,'') + '/admin/index.php?pages=comments') : '../index.php?pages=comments'), {
+          fetch(window.adminUrl('comments', { ajax: 1 }), {
             method: 'POST',
             body: fd,
             credentials: 'same-origin',
