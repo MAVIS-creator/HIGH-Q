@@ -775,6 +775,15 @@ document.addEventListener('DOMContentLoaded', function(){
 	togPU.addEventListener('click', function(e){ e.preventDefault(); setActive(true); });
 	togReg.addEventListener('click', function(e){ e.preventDefault(); setActive(false); });
 });
+
+// Top toggle handlers
+document.addEventListener('DOMContentLoaded', function(){
+	var tTopReg = document.getElementById('topToggleRegular');
+	var tTopPU = document.getElementById('topTogglePost');
+	if (!tTopReg || !tTopPU) return;
+	tTopPU.addEventListener('click', function(){ window.location.href = './register_new.php?type=post-utme'; });
+	tTopReg.addEventListener('click', function(){ window.location.href = './register.php?type=regular'; });
+});
 </script>
 
 <div id="mobilePaymentSummary" aria-hidden="true">
