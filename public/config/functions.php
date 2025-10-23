@@ -84,3 +84,66 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         return false;
     }
 }
+
+// --- HQ URL / file helpers (duplicated for public context; keep logic identical to admin helpers)
+if (!function_exists('hq_app_base')) {
+    function hq_app_base(): string {
+        static $b = null;
+        if ($b !== null) return $b;
+        $env = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: '';
+        if (!empty($env)) { $b = rtrim($env, '/'); return $b; }
+        if (!empty($_SERVER['HTTP_HOST'])) {
+            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $b = $proto . '://' . $_SERVER['HTTP_HOST'];
+            return $b;
+        }
+        $b = 'http://localhost';
+        return $b;
+    }
+}
+
+if (!function_exists('hq_project_root')) {
+    function hq_project_root(): string {
+        return realpath(__DIR__ . '/../../') ?: __DIR__ . '/../../';
+    }
+}
+
+if (!function_exists('hq_public_url')) {
+    function hq_public_url(?string $stored): string {
+        if (empty($stored)) return '';
+        $s = (string)$stored;
+        if (preg_match('#^https?://#i', $s)) return $s;
+        if ($s[0] !== '/') return $s;
+        $appPath = parse_url(hq_app_base(), PHP_URL_PATH) ?? '';
+        if ($appPath !== '' && strpos($s, $appPath) === 0) {
+            $rel = substr($s, strlen($appPath));
+        } else {
+            $rel = $s;
+        }
+        $rel = '/' . ltrim($rel, '/');
+        return rtrim(hq_app_base(), '/') . $rel;
+    }
+}
+
+if (!function_exists('hq_fs_path_from_stored')) {
+    function hq_fs_path_from_stored(?string $stored): array {
+        if (empty($stored)) return ['type'=>'notfound'];
+        $s = (string)$stored;
+        if (preg_match('#^https?://#i', $s)) return ['type'=>'remote','url'=>$s];
+        if (preg_match('#^[A-Za-z]:\\#', $s) && is_file($s)) return ['type'=>'file','path'=>$s];
+        if (strpos($s, '/') === 0 && is_file($s)) return ['type'=>'file','path'=>$s];
+
+        $projectRoot = hq_project_root();
+        $appPath = parse_url(hq_app_base(), PHP_URL_PATH) ?? '';
+        $candidateRel = $s;
+        if ($appPath !== '' && strpos($candidateRel, $appPath) === 0) {
+            $candidateRel = substr($candidateRel, strlen($appPath));
+        }
+        $candidateRel = ltrim($candidateRel, '/');
+        $candidateFs = $projectRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $candidateRel);
+        if (is_file($candidateFs)) return ['type'=>'file','path'=>$candidateFs];
+        $candidateFs2 = $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $candidateRel);
+        if (is_file($candidateFs2)) return ['type'=>'file','path'=>$candidateFs2];
+        return ['type'=>'notfound'];
+    }
+}
