@@ -623,7 +623,7 @@ function openPostModal() {
     overlay.classList.add('open');
     postModal.classList.add('open');
     // Ensure form posts to create action
-    postForm.action = 'index.php?pages=posts&action=create';
+    postForm.action = window.adminUrl('posts', { action: 'create' });
 }
 
 function closePostModal() {
@@ -667,7 +667,7 @@ function bindAjaxForm(id) {
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(form);
-        (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(`index.php?pages=posts&action=edit&id=${id}`, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }) : fetch(`index.php?pages=posts&action=edit&id=${id}`, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }))
+    (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(window.adminUrl('posts', { action: 'edit', id: id }), { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }) : fetch(window.adminUrl('posts', { action: 'edit', id: id }), { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }))
         .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
         .then(data => {
             if (data.success) {
