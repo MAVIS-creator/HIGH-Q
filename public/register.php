@@ -388,9 +388,17 @@ $csrf = generateToken('signup_form');
 												<?php else: ?>
 													<form method="post" enctype="multipart/form-data">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<input type="hidden" name="registration_type" id="registration_type_input" value="regular">
 													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
 													<input type="hidden" name="client_total" id="client_total_input" value="">
 													<input type="hidden" name="method" id="method_input" value="bank">
+													<!-- Registration type toggle -->
+													<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+														<button type="button" id="regTypeRegular" class="btn" style="background:#fff;border:1px solid #e6e9ef">Regular Registration</button>
+														<button type="button" id="regTypePost" class="btn" style="background:#fff;border:1px solid #e6e9ef">Post-UTME Registration</button>
+														<div style="margin-left:auto;color:#667085;font-size:13px">Choose form type</div>
+													</div>
+
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
 																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
@@ -401,6 +409,37 @@ $csrf = generateToken('signup_form');
 																											<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
 																											<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
 																										</div>
+
+																											<!-- Post-UTME specific fields (hidden by default) -->
+																											<div id="postUtmeSection" style="display:none;margin-top:12px;border:1px solid #f1f5f9;padding:12px;border-radius:6px;background:#fff;">
+																												<h4 style="margin-top:0;margin-bottom:8px">Post-UTME Details</h4>
+																												<div class="form-row"><label>Institution</label><input type="text" name="pu_institution" placeholder="Name of institution"></div>
+																												<div class="form-row form-inline"><div><label>Surname</label><input type="text" name="pu_surname" placeholder="Surname"></div><div><label>Other Name</label><input type="text" name="pu_other_name" placeholder="Other name(s)"></div></div>
+																												<div class="form-row form-inline"><div><label>Gender</label><select name="pu_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div><div><label>Parent Phone</label><input type="text" name="pu_parent_phone" placeholder="Parent phone number"></div></div>
+																												<div class="form-row"><label>NIN Number</label><input type="text" name="pu_nin" placeholder="NIN"></div>
+																												<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="pu_state_of_origin"></div><div><label>Local Government</label><input type="text" name="pu_local_government"></div></div>
+																												<h5 style="margin-top:8px">JAMB Details</h5>
+																												<div class="form-row"><label>JAMB Registration Number</label><input type="text" name="pu_jamb_reg"></div>
+																												<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="pu_jamb_score" min="0" max="400"></div><div><label>JAMB Subjects (comma separated)</label><input type="text" name="pu_jamb_subjects" placeholder="ENG, MAT, BIO"></div></div>
+																												<h5 style="margin-top:8px">Course Preferences</h5>
+																												<div class="form-row"><label>First Choice</label><input type="text" name="pu_course_first"></div>
+																												<div class="form-row"><label>Second Choice</label><input type="text" name="pu_course_second"></div>
+																												<div class="form-row"><label>Institution First Choice</label><input type="text" name="pu_institution_first"></div>
+
+																												<h5 style="margin-top:8px">Parent Details</h5>
+																												<div class="form-row form-inline"><div><label>Father's Name</label><input type="text" name="pu_father_name"></div><div><label>Father's Phone</label><input type="text" name="pu_father_phone"></div></div>
+																												<div class="form-row form-inline"><div><label>Mother's Name</label><input type="text" name="pu_mother_name"></div><div><label>Mother's Phone</label><input type="text" name="pu_mother_phone"></div></div>
+
+																												<h5 style="margin-top:8px">O'Level Details</h5>
+																												<div class="form-row"><label>Exam Type</label><select name="pu_exam_type"><option value="WAEC">WAEC</option><option value="NECO">NECO</option><option value="GCE">GCE</option></select></div>
+																												<div class="form-row"><label>Candidate Name</label><input type="text" name="pu_candidate_name"></div>
+																												<div class="form-row form-inline"><div><label>Exam Number</label><input type="text" name="pu_exam_number"></div><div><label>Exam Year/Month</label><input type="text" name="pu_exam_year_month" placeholder="e.g. 2024-08"></div></div>
+																												<div class="form-row"><label>O'Level Results (JSON or free text)</label><textarea name="pu_olevel_results" placeholder="{"Mathematics":"A1","English":"B2"}"></textarea></div>
+
+																												<h5 style="margin-top:8px">Fees</h5>
+																												<div class="form-row"><label><input type="checkbox" name="pu_tutor_fee" id="pu_tutor_fee"> Add optional tutor fee (₦8,000)</label></div>
+																												<div class="form-row"><small>Compulsory Post-UTME form fee: ₦1,000 (will be added automatically)</small></div>
+																											</div>
 																									</div>
 																									<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
