@@ -758,31 +758,30 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 // Toggle behavior for registration forms
 document.addEventListener('DOMContentLoaded', function(){
+	// If the in-page include exists, toggle sections; otherwise fallback to navigation
 	var togReg = document.getElementById('toggleRegular');
 	var togPU = document.getElementById('togglePostUtme');
-	if (!togReg || !togPU) return;
-
-	function setActive(isPost) {
-		if (isPost) {
-			togPU.style.background = 'var(--hq-primary)';
-			togPU.style.color = '#fff';
-			togPU.style.borderWidth = '2px';
-			togReg.style.background = '#fff';
-			togReg.style.color = '#374151';
-			// navigate to the new POST UTME registration page if available
-			window.location.href = './register_new.php?type=post-utme';
-		} else {
-			togReg.style.background = 'var(--hq-primary)';
-			togReg.style.color = '#fff';
-			togReg.style.borderWidth = '2px';
-			togPU.style.background = '#fff';
-			togPU.style.color = '#374151';
-			window.location.href = './register.php?type=regular';
-		}
+	function fallbackNavigate(url){ window.location.href = url; }
+	function handleToggleBtn(btn){
+		if (!btn) return;
+		btn.addEventListener('click', function(e){
+			e.preventDefault();
+			var target = btn.getAttribute('data-target');
+			if (target && document.querySelector(target)) {
+				document.querySelectorAll('.toggle-pill, .toggle-btn').forEach(b => b.classList.remove('active-toggle','active'));
+				btn.classList.add('active-toggle');
+				document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+				var el = document.querySelector(target);
+				if (el) el.classList.add('active');
+			} else {
+				// fallback to separate page
+				if (target === '#postUtmeForm') fallbackNavigate('./register_new.php?type=post-utme');
+				else fallbackNavigate('./register.php?type=regular');
+			}
+		});
 	}
-
-	togPU.addEventListener('click', function(e){ e.preventDefault(); setActive(true); });
-	togReg.addEventListener('click', function(e){ e.preventDefault(); setActive(false); });
+	handleToggleBtn(togPU);
+	handleToggleBtn(togReg);
 });
 
 // Top toggle handlers
