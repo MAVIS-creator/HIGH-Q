@@ -108,36 +108,63 @@ $csrf = generateToken('signup_form');
     
     .payment-title {
       text-align: center;
-      font-size: 18px;
+      font-size: 15px;
+      color: #344054;
+      margin-bottom: 16px;
+    }
+    
+    .hq-checkout-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #344054;
       margin-bottom: 20px;
     }
     
     .payment-details {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 6px;
+      background: #f9fafb;
+      padding: 24px;
+      border-radius: 8px;
       margin-bottom: 20px;
+      text-align: center;
     }
     
     .payment-details .bank-name {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: #344054;
     }
     
     .payment-details .account-number {
       font-size: 24px;
-      font-weight: bold;
-      color: var(--hq-primary);
-      margin: 10px 0;
+      font-weight: 600;
+      color: #101828;
+      margin: 12px 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .copy-inline {
+      background: none;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      color: #0066FF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    
+    .copy-inline:hover {
+      background: #f0f7ff;
     }
     
     .payment-details .account-name {
       font-size: 14px;
-      color: #666;
+      color: #344054;
+      margin-bottom: 16px;
     }
     
     .payer-details {
