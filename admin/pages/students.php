@@ -803,21 +803,79 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
     .then(resp => {
         if (resp.success) {
-        const d = resp.data;
-        var html = '<div style="max-height:480px;overflow:auto;">';
-        // if post-utme returned passport, show it
-        if (d.passport_photo) html += '<div style="text-align:center;margin-bottom:12px;"><img src="'+d.passport_photo+'" style="max-width:160px;border-radius:6px;" onerror="this.style.display=\'none\'"></div>';
-        html += '<h4>'+ (d.first_name||'') + ' ' + (d.last_name||d.surname||'') + '</h4>';
-        html += '<p><strong>Email:</strong> ' + (d.email||'') + '</p>';
-        if (d.date_of_birth) html += '<p><strong>Date of Birth:</strong> ' + d.date_of_birth + '</p>';
-        if (d.home_address) html += '<p><strong>Home Address:</strong> ' + d.home_address + '</p>';
-        if (d.previous_education) html += '<p><strong>Previous Education:</strong> ' + d.previous_education + '</p>';
-        if (d.jamb_registration_number) html += '<p><strong>JAMB Reg No:</strong> ' + d.jamb_registration_number + ' — Score: ' + (d.jamb_score||'') + '</p>';
-        if (d.institution) html += '<p><strong>Institution:</strong> ' + d.institution + '</p>';
-        if (d.status) html += '<p><strong>Status:</strong> ' + d.status + '</p>';
-        if (d.created_at) html += '<p><strong>Registered At:</strong> ' + d.created_at + '</p>';
-        html += '</div>';
-        document.getElementById('registrationContent').innerHTML = html;
+            const d = resp.data;
+            var html = '<div style="max-height:640px;overflow:auto;padding-right:6px;">';
+            // passport
+            if (d.passport_photo) html += '<div style="text-align:center;margin-bottom:12px;"><img src="'+d.passport_photo+'" style="max-width:160px;border-radius:6px;" onerror="this.style.display=\'none\'"></div>';
+
+            // Detect post-utme by presence of jamb_registration_number or olevel_results_parsed or institution
+            var isPost = !!(d.jamb_registration_number || d.institution || d.olevel_results_parsed);
+            if (isPost) {
+              html += '<h3 style="margin-top:0">Post-UTME Registration</h3>';
+              html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+              html += '<div><strong>Institution:</strong> ' + (d.institution||'-') + '</div>';
+              html += '<div><strong>Registered At:</strong> ' + (d.created_at||'-') + '</div>';
+              html += '<div><strong>Name:</strong> ' + ((d.first_name||'') + ' ' + (d.surname||'' || '')) + '</div>';
+              html += '<div><strong>Gender:</strong> ' + (d.gender||'-') + '</div>';
+              html += '<div><strong>DOB:</strong> ' + (d.dob||'-') + '</div>';
+              html += '<div><strong>Email:</strong> ' + (d.email||'-') + '</div>';
+              html += '<div style="grid-column:1/3"><strong>Address:</strong> ' + (d.address||'-') + '</div>';
+              html += '</div>';
+
+              // JAMB
+              html += '<h4 style="margin-top:12px">JAMB</h4>';
+              html += '<div><strong>Reg No:</strong> ' + (d.jamb_registration_number||'-') + ' &nbsp; <strong>Score:</strong> ' + (d.jamb_score||'-') + '</div>';
+
+              // Subjects table (O'Level)
+              if (d.olevel_results_parsed && Array.isArray(d.olevel_results_parsed.subjects)) {
+                html += '<h4 style="margin-top:12px">O\'Level Subjects & Grades</h4>';
+                html += '<table style="width:100%;border-collapse:collapse">';
+                html += '<thead><tr style="background:#f6f7fb"><th style="text-align:left;padding:8px;border:1px solid #eee">Subject</th><th style="text-align:left;padding:8px;border:1px solid #eee">Grade</th></tr></thead><tbody>';
+                d.olevel_results_parsed.subjects.forEach(function(s){ html += '<tr><td style="padding:8px;border:1px solid #eee">' + (s.subject||'') + '</td><td style="padding:8px;border:1px solid #eee">' + (s.grade||'') + '</td></tr>'; });
+                html += '</tbody></table>';
+                if (d.olevel_results_parsed.waec_token || d.olevel_results_parsed.waec_serial) {
+                  html += '<div style="margin-top:8px"><strong>WAEC Token:</strong> ' + (d.olevel_results_parsed.waec_token||'-') + ' &nbsp; <strong>Serial:</strong> ' + (d.olevel_results_parsed.waec_serial||'-') + '</div>';
+                }
+                if (d.olevel_results_parsed.raw_text) html += '<div style="margin-top:8px"><strong>Raw O\'Level Text:</strong><pre style="white-space:pre-wrap">' + (d.olevel_results_parsed.raw_text||'') + '</pre></div>';
+              }
+
+              // Schools
+              html += '<h4 style="margin-top:12px">Schools</h4>';
+              html += '<div><strong>Primary:</strong> ' + (d.primary_school||'-') + ' <em>(' + (d.primary_year_ended||'-') + ')</em></div>';
+              html += '<div><strong>Secondary:</strong> ' + (d.secondary_school||'-') + ' <em>(' + (d.secondary_year_ended||'-') + ')</em></div>';
+
+              // Parent / Sponsor / NOK
+              html += '<h4 style="margin-top:12px">Parent / Sponsor / Next of Kin</h4>';
+              html += '<div><strong>Father:</strong> ' + (d.father_name||'-') + ' — ' + (d.father_phone||'-') + ' — ' + (d.father_occupation||'-') + '</div>';
+              html += '<div><strong>Mother:</strong> ' + (d.mother_name||'-') + ' — ' + (d.mother_phone||'-') + ' — ' + (d.mother_occupation||'-') + '</div>';
+              html += '<div><strong>Parent Email:</strong> ' + (d.parent_email||'-') + '</div>';
+              html += '<div><strong>Sponsor:</strong> ' + (d.sponsor_name||'-') + ' — ' + (d.sponsor_phone||'-') + ' — ' + (d.sponsor_relationship||'-') + '</div>';
+              html += '<div><strong>Next of Kin:</strong> ' + (d.nok_name||'-') + ' — ' + (d.nok_phone||'-') + ' — ' + (d.nok_relationship||'-') + '</div>';
+
+              // Course & Institution choices
+              html += '<h4 style="margin-top:12px">Course & Institution Choices</h4>';
+              html += '<div><strong>Course 1:</strong> ' + (d.course_first_choice||'-') + ' &nbsp; <strong>Course 2:</strong> ' + (d.course_second_choice||'-') + '</div>';
+              html += '<div><strong>Institution choice:</strong> ' + (d.institution_first_choice||'-') + '</div>';
+
+              // Extras
+              html += '<div style="margin-top:12px"><strong>JAMB Subjects:</strong> ' + (d.jamb_subjects ? (typeof d.jamb_subjects === 'string' ? d.jamb_subjects : JSON.stringify(d.jamb_subjects)) : '-') + '</div>';
+              html += '<div style="margin-top:8px"><strong>Notes:</strong> ' + (d.notes||'-') + '</div>';
+
+            } else {
+              // regular registration rendering (existing behavior)
+              html += '<h4>'+ (d.first_name||'') + ' ' + (d.last_name||'') + '</h4>';
+              html += '<p><strong>Email:</strong> ' + (d.email||'') + '</p>';
+              if (d.date_of_birth) html += '<p><strong>Date of Birth:</strong> ' + d.date_of_birth + '</p>';
+              if (d.home_address) html += '<p><strong>Home Address:</strong> ' + d.home_address + '</p>';
+              if (d.previous_education) html += '<p><strong>Previous Education:</strong> ' + d.previous_education + '</p>';
+              if (d.jamb_registration_number) html += '<p><strong>JAMB Reg No:</strong> ' + d.jamb_registration_number + ' — Score: ' + (d.jamb_score||'') + '</p>';
+              if (d.institution) html += '<p><strong>Institution:</strong> ' + d.institution + '</p>';
+              if (d.status) html += '<p><strong>Status:</strong> ' + d.status + '</p>';
+              if (d.created_at) html += '<p><strong>Registered At:</strong> ' + d.created_at + '</p>';
+            }
+
+            html += '</div>';
+            document.getElementById('registrationContent').innerHTML = html;
         const modal = document.getElementById('registrationViewModal');
         modal.dataset.regId = id;
         modal.style.display = 'flex';
