@@ -4,9 +4,8 @@
 chdir(__DIR__ . '/..');
 $options = getopt('', ['page:', 'action::', 'id::', 'url::']);
 $page = $options['page'] ?? null;
-action:
 $action = $options['action'] ?? null;
-id = isset($options['id']) ? (int)$options['id'] : 0;
+$id = isset($options['id']) ? (int)$options['id'] : 0;
 $base = $options['url'] ?? 'http://127.0.0.1:8002';
 
 if (!$page) {
