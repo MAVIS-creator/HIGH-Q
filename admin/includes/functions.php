@@ -156,3 +156,54 @@ if (!function_exists('hq_fs_path_from_stored')) {
         return ['type'=>'notfound'];
     }
 }
+
+// surcharge helper and createPayment helper (admin-side)
+if (!function_exists('hq_compute_surcharge')) {
+    function hq_compute_surcharge(float $amount): float {
+        // Random pct between 0.5% and 3.0% of the amount
+        $minPct = 0.005; $maxPct = 0.03;
+        $rand = mt_rand() / mt_getrandmax();
+        $pct = $minPct + ($rand * ($maxPct - $minPct));
+        $s = round($amount * $pct, 2);
+        // enforce bounds
+        if ($s < 0.01) $s = 0.01;
+        if ($s > 167.54) $s = 167.54;
+        return $s;
+    }
+}
+
+if (!function_exists('hq_create_payment')) {
+    function hq_create_payment(PDO $pdo, $studentId, float $amount, string $method, string $reference, $extraMeta = null) {
+        // compute surcharge and final amount
+        $surcharge = hq_compute_surcharge($amount);
+        $final = round($amount + $surcharge, 2);
+        $meta = is_string($extraMeta) ? @json_decode($extraMeta, true) : (is_array($extraMeta) ? $extraMeta : []);
+        if (!is_array($meta)) $meta = [];
+        $meta['original_amount'] = round($amount,2);
+        $meta['surcharge'] = $surcharge;
+        $metaJson = json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        try {
+            $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (?, ?, ?, ?, "pending", NOW(), ?)');
+            $ins->execute([$studentId, $final, $method, $reference, $metaJson]);
+            return (int)$pdo->lastInsertId();
+        } catch (Throwable $e) {
+            // fallback: replicate insertPaymentWithFallback logic (lock and explicit id)
+            try {
+                $pdo->beginTransaction();
+                $pdo->exec('LOCK TABLES payments WRITE');
+                $row = $pdo->query('SELECT MAX(id) AS m FROM payments')->fetch(PDO::FETCH_ASSOC);
+                $next = (int)($row['m'] ?? 0) + 1;
+                $ins2 = $pdo->prepare('INSERT INTO payments (id, student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (?, ?, ?, ?, ?, "pending", NOW(), ?)');
+                $ins2->execute([$next, $studentId, $final, $method, $reference, $metaJson]);
+                $pdo->exec('UNLOCK TABLES');
+                $pdo->commit();
+                return $next;
+            } catch (Throwable $_) {
+                try { $pdo->exec('UNLOCK TABLES'); } catch (Throwable $__){ }
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+            }
+        }
+    }
+}
