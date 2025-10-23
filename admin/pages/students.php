@@ -8,6 +8,10 @@ require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 // --- Early AJAX handling: ensure JSON responses are not contaminated by HTML ---
 // Determine requested action (AJAX clients typically send action via POST)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
 if (!empty($earlyAction)) {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
