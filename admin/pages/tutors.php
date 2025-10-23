@@ -4,8 +4,6 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
-
-define('BASE_URL', '/HIGH-Q');
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
 
@@ -359,7 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
 
             <div class="tutor-photo">
               <?php
-              $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '/HIGH-Q/public/assets/images/hq-logo.jpeg';
+              $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : ((isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/assets/images/hq-logo.jpeg');
               ?>
               <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
             </div>
