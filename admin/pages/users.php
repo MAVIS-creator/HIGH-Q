@@ -431,7 +431,7 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' }) : fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' }));
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(window.adminUrl('users', { action: 'view', id: id }), { credentials: 'same-origin' }) : fetch(window.adminUrl('users', { action: 'view', id: id }), { credentials: 'same-origin' }));
   let data = null;
   try {
     if (res && res._parsed) data = res._parsed;
@@ -467,7 +467,7 @@ async function loadUser(id, mode='view'){
 
   // Fill edit form
   const form = document.getElementById('editForm');
-  form.action = `index.php?pages=users&action=edit&id=${data.id}`;
+  form.action = window.adminUrl('users', { action: 'edit', id: data.id });
   document.getElementById('fName').value = data.name;
   document.getElementById('fEmail').value = data.email;
   document.getElementById('fRole').value = data.role_id ?? '';
