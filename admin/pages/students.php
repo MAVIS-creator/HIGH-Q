@@ -335,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
   if (!verifyToken('students_form', $token)) {
-    header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
   }
 
     $currentUserId = $_SESSION['user']['id'];
@@ -356,7 +356,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
     }
 
   if ($action === 'delete') {
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
     }
-  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
   }
 
   // Custom: send message/approve flow from modal
@@ -408,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
   }
 
   // Confirm registration (admin) - send notification
@@ -417,13 +417,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-  setFlash('error','Registration already confirmed'); header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  setFlash('error','Registration already confirmed'); header('Location: index.php?pages=students'); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
@@ -491,7 +491,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null, 'email'=> $reg['email'] ?? null];
         echo json_encode($resp); exit;
       }
-  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
@@ -515,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
-  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  header('Location: index.php?pages=students'); exit;
   }
 }
 
