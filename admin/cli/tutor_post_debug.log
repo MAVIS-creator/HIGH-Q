@@ -1,7 +1,7 @@
 {
     "ts": "2025-10-06T17:10:49+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -45,7 +45,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:53+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -89,7 +89,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:59+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -137,7 +137,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:59+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -184,7 +184,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:59+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -228,7 +228,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:06+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -276,7 +276,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:06+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -323,7 +323,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:07+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -367,7 +367,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:22+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -415,7 +415,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:22+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -462,7 +462,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-08T09:05:15+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -510,7 +510,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-08T09:05:15+02:00",
     "remote_addr": "::1",
-    "request_uri": "/HIGH-Q/admin/pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",

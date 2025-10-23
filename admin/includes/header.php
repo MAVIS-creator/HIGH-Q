@@ -95,7 +95,7 @@ if (!headers_sent()) {
     }
 
     // Output only the correct admin CSS link for XAMPP
-    echo "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/admin.css\">\n";
+    echo "<link rel=\"stylesheet\" href=\/assets/css/admin.css\">\n";
     if (!empty($pageCss)) echo $pageCss;
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)

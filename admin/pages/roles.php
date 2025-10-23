@@ -221,7 +221,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                   data-menus='<?= json_encode($roleMenus) ?>'>
             <i class='bx bx-edit'></i> Edit
           </button>
-          <form method="post" action="/HIGH-Q/admin/pages/roles.php?action=delete&id=<?= $r['id'] ?>" style="display:inline">
+          <form method="post" action=/pages/roles.php?action=delete&id=<?= $r['id'] ?>" style="display:inline">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <button type="submit" class="btn-banish">
               <i class='bx bx-trash'></i> Delete
@@ -242,7 +242,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <button class="modal-close" id="roleModalClose" aria-label="Close"><i class='bx bx-x'></i></button>
     <h3 id="roleModalTitle">New Role</h3>
 
-  <form id="roleForm" method="post" action="/HIGH-Q/admin/pages/roles.php?action=create">
+  <form id="roleForm" method="post" action=/pages/roles.php?action=create">
       <!-- CSRF token -->
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 

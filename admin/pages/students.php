@@ -673,7 +673,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>" onclick="return false;">Export</button>
-              <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action=/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -692,7 +692,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
         <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
           <?php for ($p=1;$p<=$pages;$p++): ?>
-            <a href="/HIGH-Q/admin/pages/students.php?page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+            <a href=/pages/students.php?page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
           <?php endfor; ?>
         </div>
       <?php endif; ?>
@@ -731,17 +731,17 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
             <!-- view icon removed as requested -->
               <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
-                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action=/pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Deactivate</button>
                 </form>
               <?php elseif ($s['is_active'] == 0): ?>
-                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action=/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Activate</button>
                 </form>
               <?php else: ?>
-                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action=/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
@@ -749,7 +749,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
               <?php if (!empty($linkedRegId)): ?>
                 <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>" data-type="registration">Export</button>
               <?php endif; ?>
-              <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action=/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>

@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <span class="modal-close" id="courseModalClose"><i class='bx bx-x'></i></span>
       <h3 id="courseModalTitle">New Course</h3>
 
-  <form id="courseForm" method="post" action="/HIGH-Q/admin/pages/courses.php?action=create">
+  <form id="courseForm" method="post" action=/pages/courses.php?action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="form-row compact-row">
           <div class="form-group">
