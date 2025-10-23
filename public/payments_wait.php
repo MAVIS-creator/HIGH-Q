@@ -278,6 +278,9 @@ $csrf = generateToken('signup_form');
         <div class="email"><?= htmlspecialchars($payment['email'] ?? '') ?></div>
         <div class="amount">NGN <?= number_format($payment['amount'],2) ?></div>
       </div>
+      <button type="button" class="close-button" id="closePayment" title="Close payment window">
+        <i class="bx bx-x"></i>
+      </button>
     </div>
 
     <div class="payment-body">
@@ -495,6 +498,13 @@ $csrf = generateToken('signup_form');
 
           updatePageTimer();
           setInterval(updatePageTimer, 1000);
+
+          // Handle close button click
+          document.getElementById('closePayment').addEventListener('click', function() {
+            if (confirm('Are you sure you want to cancel this payment?')) {
+              window.location.href = './index.php';
+            }
+          });
 
           // polling for admin confirmation and server-side expiry
           // Expose a global success UI so polling can reuse it
