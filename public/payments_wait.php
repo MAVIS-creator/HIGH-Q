@@ -390,12 +390,10 @@ $csrf = generateToken('signup_form');
           })();
         </script>
 
-  <p class="card-desc" style="margin-top:12px;">Reference: <?= htmlspecialchars($payment['reference'] ?? '') ?></p>
-      </div>
+  </div>
+</div>
 
-      <div id="payerRecordedInfo" style="display:none;"></div>
-
-      <script>
+<script>
         // Page-level timer: 10 minutes per page load (persisted in localStorage per reference)
         // Link-level expiry: server enforces 2 days from payment.created_at (already handled server-side)
         (function(){
