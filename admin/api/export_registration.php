@@ -52,53 +52,105 @@ try {
     if (!empty($r['passport_path'])) {
         $pp = $r['passport_path'];
         $ext = '';
-        if (preg_match('#^https?://#i', $pp)) {
-            // download remote file
-            $tmpFile = $tmp . '/passport_download';
-            $ch = curl_init($pp);
-            $fp = fopen($tmpFile, 'w');
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-            curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            fclose($fp);
-            if ($httpCode >= 200 && $httpCode < 300 && filesize($tmpFile) > 0) {
-                // try to detect extension from MIME
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $mime = finfo_file($finfo, $tmpFile);
-                finfo_close($finfo);
-                $map = ['image/jpeg'=>'jpg','image/png'=>'png','image/jpg'=>'jpg'];
-                $ext = isset($map[$mime]) ? $map[$mime] : pathinfo(parse_url($pp, PHP_URL_PATH), PATHINFO_EXTENSION);
-                if (!$ext) $ext = 'jpg';
-                rename($tmpFile, $tmp . '/passport.' . $ext);
+        // Use helper to map stored value to remote URL or filesystem path
+        if (function_exists('hq_fs_path_from_stored')) {
+            $info = hq_fs_path_from_stored($pp);
+            if ($info['type'] === 'remote') {
+                $downloadUrl = $info['url'];
+                $tmpFile = $tmp . '/passport_download';
+                $ch = curl_init($downloadUrl);
+                $fp = fopen($tmpFile, 'w');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+                curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                fclose($fp);
+                if ($httpCode >= 200 && $httpCode < 300 && filesize($tmpFile) > 0) {
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mime = finfo_file($finfo, $tmpFile);
+                    finfo_close($finfo);
+                    $map = ['image/jpeg'=>'jpg','image/png'=>'png','image/jpg'=>'jpg'];
+                    $ext = isset($map[$mime]) ? $map[$mime] : pathinfo(parse_url($downloadUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
+                    if (!$ext) $ext = 'jpg';
+                    rename($tmpFile, $tmp . '/passport.' . $ext);
+                } else {
+                    @unlink($tmpFile);
+                }
+            } elseif ($info['type'] === 'file') {
+                $candidate = $info['path'];
+                $ext = pathinfo($candidate, PATHINFO_EXTENSION) ?: 'jpg';
+                copy($candidate, $tmp . '/passport.' . $ext);
             } else {
-                @unlink($tmpFile);
-            }
-        } else {
-            // treat as local path (may be absolute or site-relative)
-            $candidate = $pp;
-            // Try to map site-rooted paths to filesystem paths using HQ_BASE_URL if available
-            if (isset($HQ_BASE_URL) && $HQ_BASE_URL !== '') {
-                // If candidate starts with the URL path part of HQ_BASE_URL, strip it
-                $u = parse_url($HQ_BASE_URL);
-                $basePath = isset($u['path']) ? rtrim($u['path'], '/') : '';
-                if ($basePath !== '' && strpos($candidate, $basePath) === 0) {
-                    $candidate = __DIR__ . '/../../' . ltrim(substr($candidate, strlen($basePath)), '/');
+                // Fallback: if the stored value looks like an http URL, attempt download
+                if (preg_match('#^https?://#i', $pp)) {
+                    $tmpFile = $tmp . '/passport_download';
+                    $ch = curl_init($pp);
+                    $fp = fopen($tmpFile, 'w');
+                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+                    curl_exec($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+                    fclose($fp);
+                    if ($httpCode >= 200 && $httpCode < 300 && filesize($tmpFile) > 0) {
+                        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                        $mime = finfo_file($finfo, $tmpFile);
+                        finfo_close($finfo);
+                        $map = ['image/jpeg'=>'jpg','image/png'=>'png','image/jpg'=>'jpg'];
+                        $ext = isset($map[$mime]) ? $map[$mime] : pathinfo(parse_url($pp, PHP_URL_PATH), PATHINFO_EXTENSION);
+                        if (!$ext) $ext = 'jpg';
+                        rename($tmpFile, $tmp . '/passport.' . $ext);
+                    } else {
+                        @unlink($tmpFile);
+                    }
                 }
             }
-                // Legacy fallback: if path starts with /HIGH-Q assume project root reference
+        } else {
+            // No helper available: fall back to original simple behavior
+            if (preg_match('#^https?://#i', $pp)) {
+                $tmpFile = $tmp . '/passport_download';
+                $ch = curl_init($pp);
+                $fp = fopen($tmpFile, 'w');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+                curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                fclose($fp);
+                if ($httpCode >= 200 && $httpCode < 300 && filesize($tmpFile) > 0) {
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mime = finfo_file($finfo, $tmpFile);
+                    finfo_close($finfo);
+                    $map = ['image/jpeg'=>'jpg','image/png'=>'png','image/jpg'=>'jpg'];
+                    $ext = isset($map[$mime]) ? $map[$mime] : pathinfo(parse_url($pp, PHP_URL_PATH), PATHINFO_EXTENSION);
+                    if (!$ext) $ext = 'jpg';
+                    rename($tmpFile, $tmp . '/passport.' . $ext);
+                } else {
+                    @unlink($tmpFile);
+                }
+            } else {
+                $candidate = $pp;
+                if (isset($HQ_BASE_URL) && $HQ_BASE_URL !== '') {
+                    $u = parse_url($HQ_BASE_URL);
+                    $basePath = isset($u['path']) ? rtrim($u['path'], '/') : '';
+                    if ($basePath !== '' && strpos($candidate, $basePath) === 0) {
+                        $candidate = __DIR__ . '/../../' . ltrim(substr($candidate, strlen($basePath)), '/');
+                    }
+                }
                 if (strpos($candidate, '/HIGH-Q') === 0) {
-                    // strip legacy prefix and later prefix with runtime base
                     $candidate = substr($candidate, strlen('/HIGH-Q'));
                     $hqBase = rtrim($_ENV['APP_URL'] ?? '', '/');
                     if ($hqBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $hqBase = rtrim($proto . '://' . $host, '/'); }
                     $candidate = $hqBase . $candidate;
                 }
-            if (file_exists($candidate)) {
-                $ext = pathinfo($candidate, PATHINFO_EXTENSION);
-                copy($candidate, $tmp . '/passport.' . $ext);
+                if (file_exists($candidate)) {
+                    $ext = pathinfo($candidate, PATHINFO_EXTENSION);
+                    copy($candidate, $tmp . '/passport.' . $ext);
+                }
             }
         }
     }
