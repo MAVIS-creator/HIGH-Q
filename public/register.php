@@ -288,7 +288,16 @@ $csrf = generateToken('signup_form');
 		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
 	</div>
 </section>
-										<?php
+						<?php
+// Prominent registration toggle (placed under hero so it's always visible)
+?>
+<div style="display:flex;justify-content:center;margin:18px 0;">
+	<div style="max-width:760px;width:100%;display:flex;gap:8px;align-items:center;">
+		<button id="topToggleRegular" class="btn" style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;color:#374151;font-weight:600">Regular Registration</button>
+		<button id="topTogglePost" class="btn" style="flex:1;padding:10px 14px;border-radius:8px;border:2px solid var(--hq-primary);background:var(--hq-primary);color:#fff;font-weight:700">POST UTME Registration</button>
+	</div>
+</div>
+
 										// load available programs from courses table
 										try {
 												$courses = $pdo->query("SELECT id,title,price,duration FROM courses WHERE is_active=1 ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC);
