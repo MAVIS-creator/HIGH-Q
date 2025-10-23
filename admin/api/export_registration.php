@@ -141,12 +141,7 @@ try {
                         $candidate = __DIR__ . '/../../' . ltrim(substr($candidate, strlen($basePath)), '/');
                     }
                 }
-                if (strpos($candidate, '/HIGH-Q') === 0) {
-                    $candidate = substr($candidate, strlen('/HIGH-Q'));
-                    $hqBase = rtrim($_ENV['APP_URL'] ?? '', '/');
-                    if ($hqBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $hqBase = rtrim($proto . '://' . $host, '/'); }
-                    $candidate = $hqBase . $candidate;
-                }
+                // legacy '/HIGH-Q' prefix handling removed in favor of hq_fs_path_from_stored mapping
                 if (file_exists($candidate)) {
                     $ext = pathinfo($candidate, PATHINFO_EXTENSION);
                     copy($candidate, $tmp . '/passport.' . $ext);
