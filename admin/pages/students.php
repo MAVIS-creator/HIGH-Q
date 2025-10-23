@@ -275,17 +275,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt->execute([$id]);
     $s = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$s) { echo json_encode(['success' => false, 'error' => 'Post-UTME registration not found']); exit; }
-    echo json_encode(['success'=>true,'data'=>[ 
-      'first_name'=>$s['first_name'] ?? null,
-      'surname'=>$s['surname'] ?? null,
-      'email'=>$s['email'] ?? null,
-      'institution'=>$s['institution'] ?? null,
-      'jamb_registration_number'=>$s['jamb_registration_number'] ?? null,
-      'jamb_score'=>$s['jamb_score'] ?? null,
-      'passport_photo'=>$s['passport_photo'] ?? null,
-      'status'=>$s['status'] ?? null,
-      'created_at'=>$s['created_at'] ?? null
-    ]]);
+    // decode olevel_results if present
+    $olevel = null;
+    if (!empty($s['olevel_results'])) {
+      $decoded = @json_decode($s['olevel_results'], true);
+      if (is_array($decoded)) $olevel = $decoded;
+    }
+
+    // return a complete set of fields for the admin modal to render
+    $data = $s;
+    $data['olevel_results_parsed'] = $olevel;
+    echo json_encode(['success'=>true,'data'=>$data]);
     exit;
   }
 
