@@ -579,7 +579,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
 
 <script>
   function deleteTutor(id, name) {
-    const BASE_URL = "<?= BASE_URL ?>";
+    const BASE_URL = <?= json_encode(isset($HQ_BASE_URL) ? $HQ_BASE_URL : rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')) ?>;
     Swal.fire({
       title: "Delete Tutor?",
       text: "Are you sure you want to delete " + name + "?",
@@ -607,7 +607,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
   }
 
   function editTutor(id) {
-    const BASE_URL = "<?= BASE_URL ?>";
+    const BASE_URL = <?= json_encode(isset($HQ_BASE_URL) ? $HQ_BASE_URL : rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')) ?>;
     const card = document.querySelector(`.tutor-card[data-id='${id}']`);
     if (!card) return;
 
