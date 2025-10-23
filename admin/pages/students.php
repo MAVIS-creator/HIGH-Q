@@ -530,16 +530,42 @@ if ($hasRegistrations) {
   $perPage = 12;
   $page = max(1, (int)($_GET['page'] ?? 1));
   $offset = ($page - 1) * $perPage;
+  // If a post_utme_registrations table also exists, merge both tables into a single paginated list
+  try {
+    $hasPost = (bool) $pdo->query("SHOW TABLES LIKE 'post_utme_registrations'")->fetch();
+  } catch (Throwable $e) { $hasPost = false; }
 
-  $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
-  $countStmt->execute();
-  $total = (int)$countStmt->fetchColumn();
+  if ($hasPost) {
+    // count total across both
+    $countStmt = $pdo->prepare("SELECT (SELECT COUNT(*) FROM student_registrations) + (SELECT COUNT(*) FROM post_utme_registrations) AS c");
+    $countStmt->execute();
+    $total = (int)$countStmt->fetchColumn();
 
-  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
-  $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-  $stmt->bindValue(2, $offset, PDO::PARAM_INT);
-  $stmt->execute();
-  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // union both tables selecting common columns
+    $sql = "SELECT * FROM (
+      SELECT sr.id, 'regular' AS registration_type, sr.first_name AS first_name, sr.last_name AS last_name, COALESCE(sr.email, u.email) AS email, sr.status AS status, sr.passport_path AS passport_path, sr.created_at AS created_at
+        FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id
+      UNION ALL
+      SELECT pr.id, 'post' AS registration_type, pr.first_name AS first_name, pr.surname AS last_name, pr.email AS email, pr.status AS status, pr.passport_photo AS passport_path, pr.created_at AS created_at
+        FROM post_utme_registrations pr
+    ) t ORDER BY t.created_at DESC LIMIT ? OFFSET ?";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } else {
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
+    $countStmt->execute();
+    $total = (int)$countStmt->fetchColumn();
+
+    $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 
 } else {
   // Fetch students (users with role slug 'student' or where role is null)
