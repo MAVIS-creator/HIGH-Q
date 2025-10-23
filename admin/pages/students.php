@@ -254,6 +254,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
 
 // Support POST view_registration for AJAX clients
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'view_registration') {
+  // Support POST view_registration for AJAX clients (supports regular and post-utme types)
+  $type = trim($_POST['type'] ?? 'registration');
+  
   $id = intval($_POST['id'] ?? 0);
 
   $stmt = $pdo->prepare("
@@ -265,6 +268,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   ");
   $stmt->execute([$id]);
   $s = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  header('Content-Type: application/json');
+  if ($type === 'post') {
+    $stmt = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $s = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$s) { echo json_encode(['success' => false, 'error' => 'Post-UTME registration not found']); exit; }
+    echo json_encode(['success'=>true,'data'=>[ 
+      'first_name'=>$s['first_name'] ?? null,
+      'surname'=>$s['surname'] ?? null,
+      'email'=>$s['email'] ?? null,
+      'institution'=>$s['institution'] ?? null,
+      'jamb_registration_number'=>$s['jamb_registration_number'] ?? null,
+      'jamb_score'=>$s['jamb_score'] ?? null,
+      'passport_photo'=>$s['passport_photo'] ?? null,
+      'status'=>$s['status'] ?? null,
+      'created_at'=>$s['created_at'] ?? null
+    ]]);
+    exit;
+  }
 
   header('Content-Type: application/json');
   if (!$s) {
