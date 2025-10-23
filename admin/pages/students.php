@@ -826,7 +826,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
+  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(window.adminUrl('students'), { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch(window.adminUrl('students'), { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
     .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
     .then(resp => {
         if (resp.success) {
