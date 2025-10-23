@@ -169,7 +169,7 @@ function doAction(action,id){
   Swal.fire({ title: 'Confirm', text: 'Are you sure?', icon: 'question', showCancelButton: true }).then(function(res){
     if (!res.isConfirmed) return;
   var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', token);
-  var xhr = new XMLHttpRequest(); xhr.open('POST', (window.HQ_BASE_URL ? (window.HQ_BASE_URL.replace(/\/$/,'') + '/admin/index.php?pages=comments') : '../index.php?pages=comments'), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  var xhr = new XMLHttpRequest(); xhr.open('POST', window.adminUrl('comments'), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; }
       if (r.status === 'ok') { Swal.fire('Success','Action completed','success').then(()=> location.reload()); }
       else { Swal.fire('Failed', r.message || 'Operation failed', 'error'); }
@@ -240,7 +240,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
 });
 // Poll the comments fragment every 5 seconds
 setInterval(function(){
-  var xhr = new XMLHttpRequest(); xhr.open('GET', (window.HQ_BASE_URL ? (window.HQ_BASE_URL.replace(/\/$/,'') + '/admin/index.php?pages=comments&ajax=1&_=' + Date.now()) : '../index.php?pages=comments&ajax=1&_=' + Date.now()), true);
+  var xhr = new XMLHttpRequest(); xhr.open('GET', window.adminUrl('comments', { ajax:1, _: Date.now() }), true);
   xhr.onload = function(){
     if (xhr.status !== 200) return;
     // basic check: if response looks like a table fragment (starts with <tr) then replace tbody
@@ -301,7 +301,7 @@ document.getElementById('replySend').addEventListener('click', function(){
   fd.append('content', content);
   fd.append('_csrf', '<?= generateToken('comments_form') ?>');
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', (window.HQ_BASE_URL ? (window.HQ_BASE_URL.replace(/\/$/,'') + '/admin/index.php?pages=comments') : '../index.php?pages=comments'), true);
+  xhr.open('POST', window.adminUrl('comments'), true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; } if (r.status==='ok') { location.reload(); } else { Swal.fire('Failed', r.message || 'Failed to send reply', 'error'); } };
   xhr.send(fd);
