@@ -54,30 +54,38 @@ $csrf = generateToken('signup_form');
   </style>
 </head>
 <body class="is-loaded">
-  <header class="main-header">
-    <div class="container" style="display:flex;align-items:center;gap:12px;">
-      <img src="./assets/images/hq-logo.jpeg" alt="HQ" class="brand-logo">
-      <div>
-        <div class="logo"><strong>HIGH Q SOLID ACADEMY</strong></div>
-        <div class="card-desc" style="font-size:12px;color:var(--hq-gray);">Secure payment</div>
+  <div class="payment-page">
+    <div class="payment-backdrop">
+      <div class="payment-header">
+        <div class="header-content">
+          <div class="payment-logo">
+            <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+          </div>
+          <div class="header-text">
+            <div class="logo-text">HIGH Q SOLID ACADEMY</div>
+            <div class="secure-text">Secure payment</div>
+          </div>
+        </div>
       </div>
-    </div>
-  </header>
-  <main class="public-main my-lg-4">
-<?php
-?>
-<section class="payments-section">
-  <div class="container">
-    <h2>Payment in Progress</h2>
+
     <?php if (!$payment): ?>
-  <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
-  <?php else: ?>
-      <div class="card">
-        <div class="spinner" id="pageSpinner" style="display:none"></div>
-        <div class="hq-pay-wrapper">
-          <div class="hq-pay-header">
-            <div class="card-desc">Pay with</div>
-            <div class="program-price" style="font-weight:700;color:var(--hq-primary)">Pay NGN <?= number_format($payment['amount'],2) ?></div>
+      <div class="payment-container">
+        <div class="payment-content">
+          <div class="payment-title">Payment Not Found</div>
+          <p>We couldn't find your payment reference. If you just registered, return to the registration page.</p>
+        </div>
+      </div>
+    <?php else: ?>
+      <div class="payment-container">
+        <div class="payment-content">
+          <div class="payment-title">Complete Your Payment</div>
+          <div class="spinner" id="pageSpinner" style="display:none"></div>
+          
+          <div class="payment-details">
+            <div class="amount-row">
+              <span class="amount-label">Amount</span>
+              <span class="amount-value">NGN <?= number_format($payment['amount'],2) ?></span>
+            </div>
           </div>
 
           <div class="hq-paybox">
