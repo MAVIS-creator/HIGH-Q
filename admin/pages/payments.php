@@ -354,7 +354,7 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                 <td>
-                    <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
+                    <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars(function_exists('hq_public_url') ? hq_public_url($p['receipt_path']) : $p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
                     <?php if ($displayStatus === 'pending' || $displayStatus === 'sent'): ?>
                         <div style="margin-top:6px;">
                             <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
