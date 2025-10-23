@@ -1120,7 +1120,8 @@ document.addEventListener('click', function(e){
   }).then(function(res){
     if (!res.isConfirmed) return;
     // Open export endpoint in new tab so the file download begins
-    var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id);
+  var type = btn.getAttribute('data-type') || 'registration';
+  var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id) + '&type=' + encodeURIComponent(type);
     window.open(url, '_blank');
   });
 });
