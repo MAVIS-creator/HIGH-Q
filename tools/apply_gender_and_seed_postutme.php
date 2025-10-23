@@ -46,6 +46,9 @@ if ($check->fetch()) {
 echo "Inserting a test Post-UTME registration...\n";
 try {
 
+    // Prepare insert statement (ensure waec_serial used)
+    $ins = $pdo->prepare('INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, parent_phone, email, nin_number, state_of_origin, local_government, place_of_birth, marital_status, disability, nationality, religion, mode_of_entry, jamb_registration_number, jamb_score, jamb_subjects, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, mother_name, mother_phone, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, waec_token, waec_serial, passport_photo, payment_status, form_fee_paid, tutor_fee_paid, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+
     $olevel = json_encode([
         'subjects' => [
             ['subject'=>'English Language','grade'=>'A1'],
