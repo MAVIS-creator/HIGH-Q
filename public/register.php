@@ -265,11 +265,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							$fname = 'postutme_passport_' . $registrationId . '_' . time() . '.' . $ext;
 							$dst = $dstDir . '/' . $fname;
 							if (move_uploaded_file($u['tmp_name'], $dst)) {
-								$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-								$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-								$baseUrl = rtrim($proto . '://' . $host, '/');
-								$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
-								$fullUrl = $baseUrl . $publicRel;
+								$appBase = rtrim($_ENV['APP_URL'] ?? '', '/');
+								if ($appBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $appBase = rtrim($proto . '://' . $host, '/'); }
+								$publicRel = $appBase . '/public/uploads/passports/' . $fname;
+								$fullUrl = $publicRel;
 								$upd = $pdo->prepare('UPDATE post_utme_registrations SET passport_photo = ? WHERE id = ?');
 								$upd->execute([$fullUrl, $registrationId]);
 							}
@@ -328,11 +327,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$dst = $dstDir . '/' . $fname;
 					if (move_uploaded_file($u['tmp_name'], $dst)) {
 							// store a full absolute URL so admin views will render correctly when hosted
-							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-							$baseUrl = rtrim($proto . '://' . $host, '/');
-							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
-							$fullUrl = $baseUrl . $publicRel;
+							$appBase = rtrim($_ENV['APP_URL'] ?? '', '/');
+							if ($appBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $appBase = rtrim($proto . '://' . $host, '/'); }
+							$publicRel = $appBase . '/public/uploads/passports/' . $fname;
+							$fullUrl = $publicRel;
 							$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
 							$upd->execute([$fullUrl, $registrationId]);
 					}

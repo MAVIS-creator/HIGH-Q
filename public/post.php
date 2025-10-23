@@ -161,7 +161,9 @@ require_once __DIR__ . '/includes/header.php';
           if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
             $imgSrc = $fi;
           } else {
-            $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
+            $appBase = rtrim($_ENV['APP_URL'] ?? '', '/');
+            if ($appBase === '') $appBase = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+            $imgSrc = $appBase . '/' . ltrim($fi, '/');
           }
         ?>
         <div class="post-thumb" style="margin-bottom:12px;">
