@@ -546,11 +546,24 @@ if ($hasRegistrations) {
     $total = (int)$countStmt->fetchColumn();
 
     // union both tables selecting common columns
+    // Force a common collation for string columns to avoid 'Illegal mix of collations for operation UNION'
     $sql = "SELECT * FROM (
-      SELECT sr.id, 'regular' AS registration_type, sr.first_name AS first_name, sr.last_name AS last_name, COALESCE(sr.email, u.email) AS email, sr.status AS status, sr.passport_path AS passport_path, sr.created_at AS created_at
+      SELECT sr.id, 'regular' AS registration_type,
+        sr.first_name COLLATE utf8mb4_general_ci AS first_name,
+        sr.last_name COLLATE utf8mb4_general_ci AS last_name,
+        COALESCE(sr.email, u.email) COLLATE utf8mb4_general_ci AS email,
+        sr.status COLLATE utf8mb4_general_ci AS status,
+        sr.passport_path COLLATE utf8mb4_general_ci AS passport_path,
+        sr.created_at AS created_at
         FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id
       UNION ALL
-      SELECT pr.id, 'post' AS registration_type, pr.first_name AS first_name, pr.surname AS last_name, pr.email AS email, pr.status AS status, pr.passport_photo AS passport_path, pr.created_at AS created_at
+      SELECT pr.id, 'post' AS registration_type,
+        pr.first_name COLLATE utf8mb4_general_ci AS first_name,
+        pr.surname COLLATE utf8mb4_general_ci AS last_name,
+        pr.email COLLATE utf8mb4_general_ci AS email,
+        pr.status COLLATE utf8mb4_general_ci AS status,
+        pr.passport_photo COLLATE utf8mb4_general_ci AS passport_path,
+        pr.created_at AS created_at
         FROM post_utme_registrations pr
     ) t ORDER BY t.created_at DESC LIMIT ? OFFSET ?";
 
