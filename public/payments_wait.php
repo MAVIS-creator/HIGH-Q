@@ -80,11 +80,38 @@ $csrf = generateToken('signup_form');
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
     }
     
     .payment-header .logo {
       height: 40px;
       width: auto;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #667085;
+      transition: all 0.2s ease;
+    }
+
+    .close-button:hover {
+      background-color: #f2f4f7;
+      color: #344054;
+    }
+
+    .close-button i {
+      font-size: 20px;
     }
     
     .payment-header .payment-info {
