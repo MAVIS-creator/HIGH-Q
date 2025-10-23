@@ -31,7 +31,7 @@ CREATE TABLE post_utme_registrations (
     -- JAMB Details
     jamb_registration_number VARCHAR(50),
     jamb_score INT,
-    jamb_subjects TEXT, -- JSON array of subjects and scores
+    jamb_subjects NVARCHAR(MAX), -- JSON array of subjects and scores
 
     -- Course Preferences
     course_first_choice VARCHAR(255),
@@ -58,15 +58,15 @@ CREATE TABLE post_utme_registrations (
     candidate_name VARCHAR(255),
     exam_number VARCHAR(50),
     exam_year_month VARCHAR(20),
-    olevel_results TEXT, -- JSON array of subjects and grades
+    olevel_results NVARCHAR(MAX), -- JSON array of subjects and grades
     
     -- System Fields
     passport_photo VARCHAR(255), -- path to uploaded passport
-    payment_status ENUM('pending', 'partial', 'completed') DEFAULT 'pending',
-    form_fee_paid BOOLEAN DEFAULT FALSE,
-    tutor_fee_paid BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    payment_status VARCHAR(10) CHECK (payment_status IN ('pending', 'partial', 'completed')) DEFAULT 'pending',
+    form_fee_paid BIT DEFAULT 0,
+    tutor_fee_paid BIT DEFAULT 0,
+    created_at DATETIME2 DEFAULT GETDATE(),
+    updated_at DATETIME2 DEFAULT GETDATE(),
     
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
