@@ -79,7 +79,16 @@ try {
         } else {
             // treat as local path (may be absolute or site-relative)
             $candidate = $pp;
-            // if starts with /HIGH-Q, try realpath relative to project root
+            // Try to map site-rooted paths to filesystem paths using HQ_BASE_URL if available
+            if (isset($HQ_BASE_URL) && $HQ_BASE_URL !== '') {
+                // If candidate starts with the URL path part of HQ_BASE_URL, strip it
+                $u = parse_url($HQ_BASE_URL);
+                $basePath = isset($u['path']) ? rtrim($u['path'], '/') : '';
+                if ($basePath !== '' && strpos($candidate, $basePath) === 0) {
+                    $candidate = __DIR__ . '/../../' . ltrim(substr($candidate, strlen($basePath)), '/');
+                }
+            }
+            // Legacy fallback: if path starts with /HIGH-Q assume project root reference
             if (strpos($candidate, '/HIGH-Q') === 0) {
                 $candidate = __DIR__ . '/../../' . ltrim($candidate, '/');
             }
