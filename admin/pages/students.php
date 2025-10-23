@@ -653,7 +653,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
   <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>">
           <div class="card-left">
             <?php $passportThumb = $s['passport_path'] ?? null; ?>
-            <img src="<?= htmlspecialchars($passportThumb ?: '../../public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
+            <img src="<?= htmlspecialchars(function_exists('hq_public_url') ? hq_public_url($passportThumb ?: '/assets/images/hq-logo.jpeg') : ($passportThumb ?: '../../public/assets/images/hq-logo.jpeg')) ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
             <div class="card-meta">
               <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
               <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
@@ -716,7 +716,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       ?>
   <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>" data-type="<?= isset($linkedRegId) && $linkedRegId ? 'registration' : 'user' ?>">
         <div class="card-left">
-          <img src="<?= htmlspecialchars($passportThumb ?: '../../public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
+          <img src="<?= htmlspecialchars(function_exists('hq_public_url') ? hq_public_url($passportThumb ?: '/assets/images/hq-logo.jpeg') : ($passportThumb ?: '../../public/assets/images/hq-logo.jpeg')) ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
             <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
             <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
