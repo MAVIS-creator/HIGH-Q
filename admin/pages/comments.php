@@ -1,5 +1,5 @@
 <?php
-// admin/pages/comments.php
+// admin./pages/comments.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('comments');

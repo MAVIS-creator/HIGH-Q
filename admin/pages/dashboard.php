@@ -1,5 +1,5 @@
 <?php
-// admin/pages/dashboard.php
+// admin./pages/dashboard.php
 
 // Page title and subtitle for header
 $pageTitle = 'Dashboard';
@@ -182,7 +182,7 @@ $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'U
                         <li>Website: <strong class="status-<?= $siteStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($siteStatus['message']) ?></strong></li>
                         <li>Admin Panel: <strong class="status-<?= $adminStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($adminStatus['message']) ?></strong></li>
                     </ul>
-                    <p><a href="/admin/pages/settings.php">Open settings</a></p>
+                    <p><a href="/admin./pages/settings.php">Open settings</a></p>
                 </div>
             </div>
         <?php endif; ?>

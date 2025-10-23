@@ -1,5 +1,5 @@
 <?php
-// admin/pages/chat.php
+// admin./pages/chat.php
 require_once __DIR__ . '/../includes/db.php';      // Load DB connection first
 require_once __DIR__ . '/../includes/auth.php';    // Then auth
 require_once __DIR__ . '/../includes/csrf.php';

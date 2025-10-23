@@ -1,5 +1,5 @@
 <?php
-// admin/pages/students.php
+// admin./pages/students.php
 // Remove any visible code output from the top of the page
 // Ensure no script or debug code is rendered at the top of the page
 require_once '../includes/auth.php';
@@ -335,28 +335,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
   if (!verifyToken('students_form', $token)) {
-    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+    header('Location: /HIGH-Q/admin./pages/students.php'); exit;
   }
 
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
   if ($id === 1 || $id === $currentUserId) {
-    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+    header('Location: /HIGH-Q/admin./pages/students.php'); exit;
   }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+    header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     }
 
     if ($action === 'activate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     }
 
   if ($action === 'delete') {
@@ -368,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-      header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+      header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
     }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
   }
 
   // Custom: send message/approve flow from modal
@@ -408,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
   }
 
   // Confirm registration (admin) - send notification
@@ -417,13 +417,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-  setFlash('error','Registration already confirmed'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  setFlash('error','Registration already confirmed'); header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
@@ -491,11 +491,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null, 'email'=> $reg['email'] ?? null];
         echo json_encode($resp); exit;
       }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
-  setFlash('error','Failed to confirm registration'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  setFlash('error','Failed to confirm registration'); header('Location: /HIGH-Q/admin./pages/students.php'); exit;
     }
   }
 
@@ -515,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: /HIGH-Q/admin./pages/students.php'); exit;
   }
 }
 
@@ -615,7 +615,7 @@ if ($hasRegistrations) {
 <div class="users-page">
 
 <?php
-// Temporary debug banner: enable by visiting /HIGH-Q/admin/pages/students.php?dbg=1
+// Temporary debug banner: enable by visiting /HIGH-Q/admin./pages/students.php?dbg=1
 if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
   $hasPostVar = isset($hasPost) ? ($hasPost ? 'yes' : 'no') : 'unknown';
   $studentsCount = isset($students) && is_array($students) ? count($students) : 0;
@@ -673,7 +673,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>" onclick="return false;">Export</button>
-              <form method="post" action=/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action=./pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -692,7 +692,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
         <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
           <?php for ($p=1;$p<=$pages;$p++): ?>
-            <a href=/pages/students.php?page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+            <a href=./pages/students.php?page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
           <?php endfor; ?>
         </div>
       <?php endif; ?>
@@ -731,17 +731,17 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
             <!-- view icon removed as requested -->
               <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
-                <form method="post" action=/pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action=./pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Deactivate</button>
                 </form>
               <?php elseif ($s['is_active'] == 0): ?>
-                <form method="post" action=/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action=./pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Activate</button>
                 </form>
               <?php else: ?>
-                <form method="post" action=/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action=./pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
@@ -749,7 +749,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
               <?php if (!empty($linkedRegId)): ?>
                 <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>" data-type="registration">Export</button>
               <?php endif; ?>
-              <form method="post" action=/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action=./pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -826,7 +826,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
+  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin./pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin./pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
     .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
     .then(resp => {
         if (resp.success) {
@@ -922,7 +922,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin./pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin./pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
     const data = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : res);
     if (data.success) {
       Swal.fire({
@@ -981,7 +981,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `/HIGH-Q/admin/pages/students.php?action=send_message&id=${id}`;
+  modalForm.action = `/HIGH-Q/admin./pages/students.php?action=send_message&id=${id}`;
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
@@ -1069,9 +1069,9 @@ regConfirmForm.addEventListener('submit', async function(e){
   try {
     if (choice.isConfirmed) {
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-  const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+  const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=confirm_registration&id=${id}`, fd);
   // success shown by postAction; reload to reflect changes
-  window.location = '/HIGH-Q/admin/pages/students.php';
+  window.location = '/HIGH-Q/admin./pages/students.php';
     } else if (choice.isDenied) {
       const { value: formValues } = await Swal.fire({
         title: 'Create payment',
@@ -1084,8 +1084,8 @@ regConfirmForm.addEventListener('submit', async function(e){
       const amt = parseFloat(formValues.amount || 0);
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
-  window.location = '/HIGH-Q/admin/pages/students.php';
+  const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=confirm_registration&id=${id}`, fd);
+  window.location = '/HIGH-Q/admin./pages/students.php';
     }
   } catch (err) {
     Swal.fire('Error','Failed to confirm','error');
@@ -1110,7 +1110,7 @@ regRejectBtn.addEventListener('click', ()=>{
       (async ()=>{
         try {
       const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-      const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=reject_registration&id=${id}`, fd);
+      const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=reject_registration&id=${id}`, fd);
           // update UI: remove buttons and mark status
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -1142,7 +1142,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-              const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+              const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=confirm_registration&id=${id}`, fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
@@ -1170,7 +1170,7 @@ document.addEventListener('click', function(e){
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
         try {
-          const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+          const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=confirm_registration&id=${id}`, fd);
           // update UI similar to above
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -1193,7 +1193,7 @@ document.addEventListener('click', function(e){
       inputPlaceholder: 'Reason for rejection',
       showCancelButton: true,
       confirmButtonText: 'Reject'
-  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`/HIGH-Q/admin/pages/students.php?action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`/HIGH-Q/admin./pages/students.php?action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
     return;
   }
 });

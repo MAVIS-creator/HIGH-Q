@@ -270,7 +270,7 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p>Please complete your payment using the secure link below:</p>
 
-[2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p><a href='http://localhost/HIGH-Q/HIGH-Q/admin/pages/../public/payments_wait.php?ref=pay_68e174476aa38'>http://localhost/HIGH-Q/HIGH-Q/admin/pages/../public/payments_wait.php?ref=pay_68e174476aa38</a></p>
+[2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p><a href='http://localhost/HIGH-Q/HIGH-Q/admin./pages/../public/payments_wait.php?ref=pay_68e174476aa38'>http://localhost/HIGH-Q/HIGH-Q/admin./pages/../public/payments_wait.php?ref=pay_68e174476aa38</a></p>
 
 [2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p>Best regards,<br><strong>HIGH Q SOLID ACADEMY</strong></p>
 
@@ -912,7 +912,7 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: 
 
-[2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: <p>A new admin application was submitted by <strong>MAVIS GAMING</strong> (akintundeibunkunoluwa31@gmail.com).</p><p>Review applications: <a href="http://localhost/HIGH-Q/admin/pages/users.php">Admin applications</a></p>
+[2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: <p>A new admin application was submitted by <strong>MAVIS GAMING</strong> (akintundeibunkunoluwa31@gmail.com).</p><p>Review applications: <a href="http://localhost/HIGH-Q/admin./pages/users.php">Admin applications</a></p>
 
 [2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: 
 

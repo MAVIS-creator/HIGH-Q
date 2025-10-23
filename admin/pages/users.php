@@ -1,5 +1,5 @@
 <?php
-// admin/pages/users.php
+// admin./pages/users.php
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';

@@ -1,7 +1,7 @@
 {
     "ts": "2025-10-06T17:10:49+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": ./pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -24,7 +24,7 @@
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -45,7 +45,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:53+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": ./pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -68,7 +68,7 @@ CSRF_OK: 1
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -89,7 +89,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:59+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -110,7 +110,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -137,7 +137,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:59+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -157,7 +157,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -184,7 +184,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:10:59+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": ./pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -207,7 +207,7 @@ CSRF_OK: 1
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -228,7 +228,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:06+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -249,7 +249,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -276,7 +276,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:06+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -296,7 +296,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -323,7 +323,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:07+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=delete&id=13",
+    "request_uri": ./pages/index.php?pages=tutors&action=delete&id=13",
     "is_ajax": false,
     "method": "POST",
     "action_param": "delete",
@@ -346,7 +346,7 @@ CSRF_OK: 1
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors&action=delete&id=13",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -367,7 +367,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:22+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -388,7 +388,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -415,7 +415,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-06T17:11:22+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -435,7 +435,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=u6roure81c0pnr8heu4054hakd"
@@ -462,7 +462,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-08T09:05:15+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": true,
     "method": "POST",
     "action_param": "edit",
@@ -483,7 +483,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=9t7hrgh06msrce47busb6jbtab"
@@ -510,7 +510,7 @@ CSRF_OK: 1
 {
     "ts": "2025-10-08T09:05:15+02:00",
     "remote_addr": "::1",
-    "request_uri": /pages/index.php?pages=tutors&action=edit&id=12",
+    "request_uri": ./pages/index.php?pages=tutors&action=edit&id=12",
     "is_ajax": false,
     "method": "POST",
     "action_param": "edit",
@@ -530,7 +530,7 @@ CSRF_OK: 1
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Dest": "empty",
-        "Referer": "http://localhost/HIGH-Q/admin/pages/index.php?pages=tutors",
+        "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9,en-GB;q=0.8",
         "Cookie": "PHPSESSID=9t7hrgh06msrce47busb6jbtab"

@@ -1,5 +1,5 @@
 <?php
-// admin/pages/chat_view.php
+// admin./pages/chat_view.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
