@@ -475,6 +475,15 @@ $csrf = generateToken('signup_form');
 														<!-- inline summary hidden; floating panel is used for visible summary -->
 													</div>
 												</form>
+
+												<?php
+												// Include the POST-UTME form as an in-page include so toggling is just show/hide.
+												$post_registration_action = './api/register_post_utme.php';
+												$post_utme_form_fee = 1000;
+												$post_utme_tutor_fee = 8000;
+												$post_csrf = generateToken('registration_form');
+												include __DIR__ . '/includes/post_utme_form.php';
+												?>
 											</div>
 										</main>
 
