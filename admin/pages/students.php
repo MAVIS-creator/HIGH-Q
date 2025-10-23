@@ -1193,7 +1193,7 @@ document.addEventListener('click', function(e){
       inputPlaceholder: 'Reason for rejection',
       showCancelButton: true,
       confirmButtonText: 'Reject'
-  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`/HIGH-Q/admin./pages/students.php?action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
     return;
   }
 });
