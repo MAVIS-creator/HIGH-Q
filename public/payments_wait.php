@@ -213,9 +213,17 @@ $csrf = generateToken('signup_form');
     
     .expires {
       text-align: center;
-      color: #666;
+      color: #667085;
       font-size: 14px;
-      margin-top: 15px;
+    }
+    
+    .payment-modal {
+      background: rgba(52, 64, 84, 0.7);
+      backdrop-filter: blur(8px);
+    }
+    
+    .payment-card {
+      max-width: 480px;
     }
   </style>
 </head>
