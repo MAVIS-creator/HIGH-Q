@@ -922,7 +922,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(window.adminUrl('students'), { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch(window.adminUrl('students'), { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
     const data = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : res);
     if (data.success) {
       Swal.fire({
@@ -981,7 +981,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `index.php?pages=students&action=send_message&id=${id}`;
+  modalForm.action = window.adminUrl('students', { action: 'send_message', id: id });
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
@@ -1069,7 +1069,7 @@ regConfirmForm.addEventListener('submit', async function(e){
   try {
     if (choice.isConfirmed) {
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-  const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+  const payload = await postAction(window.adminUrl('students', { action: 'confirm_registration', id: id }), fd);
   // success shown by postAction; reload to reflect changes
   window.location = 'index.php?pages=students';
     } else if (choice.isDenied) {
@@ -1084,7 +1084,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       const amt = parseFloat(formValues.amount || 0);
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+  const payload = await postAction(window.adminUrl('students', { action: 'confirm_registration', id: id }), fd);
   window.location = 'index.php?pages=students';
     }
   } catch (err) {
@@ -1110,7 +1110,7 @@ regRejectBtn.addEventListener('click', ()=>{
       (async ()=>{
         try {
       const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-  const payload = await postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd);
+  const payload = await postAction(window.adminUrl('students', { action: 'reject_registration', id: id }), fd);
           // update UI: remove buttons and mark status
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
