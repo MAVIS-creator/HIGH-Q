@@ -788,7 +788,21 @@ document.addEventListener('DOMContentLoaded', function(){
 document.addEventListener('DOMContentLoaded', function(){
 	var tTopReg = document.getElementById('topToggleRegular');
 	var tTopPU = document.getElementById('topTogglePost');
-	function wireTop(btn, targetSelector, fallbackUrl){ if (!btn) return; btn.addEventListener('click', function(e){ e.preventDefault(); if (document.querySelector(targetSelector)) { document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active')); document.querySelector(targetSelector).classList.add('active'); document.querySelectorAll('.toggle-pill, .toggle-btn').forEach(b=>b.classList.remove('active-toggle','active')); var tb = document.querySelector('[data-target="'+targetSelector+'"); if (tb) tb.classList.add('active-toggle'); } else { window.location.href = fallbackUrl; } }); }
+	function wireTop(btn, targetSelector, fallbackUrl){
+		if (!btn) return;
+		btn.addEventListener('click', function(e){
+			e.preventDefault();
+			if (document.querySelector(targetSelector)) {
+				document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+				document.querySelector(targetSelector).classList.add('active');
+				document.querySelectorAll('.toggle-pill, .toggle-btn').forEach(b => b.classList.remove('active-toggle','active'));
+				var tb = document.querySelector('[data-target="' + targetSelector + '"]');
+				if (tb) tb.classList.add('active-toggle');
+			} else {
+				window.location.href = fallbackUrl;
+			}
+		});
+	}
 	wireTop(tTopPU, '#postUtmeForm', './register_new.php?type=post-utme');
 	wireTop(tTopReg, '#regularForm', './register.php?type=regular');
 });
