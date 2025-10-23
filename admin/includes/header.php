@@ -102,7 +102,34 @@ if (!headers_sent()) {
     }
 
     // Output only the correct admin CSS link for XAMPP
-    echo "<link rel=\"stylesheet\" href=\/assets/css/admin.css\">\n";
+    // Compute an APP_URL-style base. Prefer APP_URL from environment (.env), otherwise derive from request.
+    $appUrl = null;
+    if (!empty($_ENV['APP_URL'])) $appUrl = rtrim($_ENV['APP_URL'], '/');
+    elseif (function_exists('getenv') && getenv('APP_URL')) $appUrl = rtrim(getenv('APP_URL'), '/');
+    else {
+        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $appUrl = $proto . '://' . $host;
+        // If script lives under a subfolder, include it (e.g., http://localhost/HIGH-Q)
+        $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/');
+        if ($scriptDir !== '' && $scriptDir !== '/') {
+            // keep only the workspace root (assumes admin is under /<root>/admin/...)
+            $parts = explode('/', trim($scriptDir, '/'));
+            $pos = array_search('admin', $parts);
+            if ($pos !== false) {
+                $rootParts = array_slice($parts, 0, $pos);
+                if (!empty($rootParts)) $appUrl .= '/' . implode('/', $rootParts);
+            }
+        }
+        $appUrl = rtrim($appUrl, '/');
+    }
+
+    // Expose a global base for PHP and JS use
+    $HQ_BASE_URL = $appUrl;
+    // For compatibility, also expose via global var in case other includes check it
+    $GLOBALS['HQ_BASE_URL'] = $HQ_BASE_URL;
+
+    echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($HQ_BASE_URL) . "/admin/assets/css/admin.css\">\n";
     if (!empty($pageCss)) echo $pageCss;
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)
