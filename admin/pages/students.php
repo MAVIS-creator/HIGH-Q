@@ -692,7 +692,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
         <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
           <?php for ($p=1;$p<=$pages;$p++): ?>
-            <a href=./pages/students.php?page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+            <a href="index.php?pages=students&page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
           <?php endfor; ?>
         </div>
       <?php endif; ?>
