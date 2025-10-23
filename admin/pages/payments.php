@@ -430,7 +430,7 @@ function doAction(action, id) {
     // include CSRF token expected by the server
     if (window.__PAYMENTS_CSRF) fd.append('_csrf', window.__PAYMENTS_CSRF);
 
-    fetch('index.php?pages=payments', {
+    fetch('../index.php?pages=payments', {
         method: 'POST',
         body: fd,
         credentials: 'same-origin',
