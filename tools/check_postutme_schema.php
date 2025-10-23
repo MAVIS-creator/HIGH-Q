@@ -16,7 +16,7 @@ $expected = [
     'sponsor_name','sponsor_address','sponsor_email','sponsor_phone','sponsor_relationship',
     'next_of_kin_name','next_of_kin_address','next_of_kin_email','next_of_kin_phone','next_of_kin_relationship',
     'exam_type','candidate_name','exam_number','exam_year_month',
-    'olevel_results','waec_token','waec_serial_no','waec_serial','passport_photo',
+    'olevel_results','waec_token','waec_serial','passport_photo',
     'payment_status','form_fee_paid','tutor_fee_paid','created_at','updated_at'
 ];
 
