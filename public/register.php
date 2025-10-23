@@ -132,6 +132,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$errors[] = 'Provide a valid contact email address.';
 	}
 
+	// Server-side validation for Post-UTME registrations
+	if ($registration_type === 'post') {
+		// Required basic fields
+		$pu_first = trim($_POST['pu_first_name'] ?? $_POST['first_name'] ?? '');
+		$pu_surname = trim($_POST['pu_surname'] ?? $_POST['last_name'] ?? '');
+		$pu_jamb_reg = trim($_POST['pu_jamb_reg'] ?? '');
+		$pu_jamb_score = trim($_POST['pu_jamb_score'] ?? '');
+		// collect O'Level subject entries
+		$pu_subjects = [];
+		for ($i=1;$i<=8;$i++) {
+			$sub = trim($_POST['pu_subj_' . $i] ?? '');
+			$gr = trim($_POST['pu_grade_' . $i] ?? '');
+			if ($sub !== '' || $gr !== '') $pu_subjects[] = ['subject'=>$sub,'grade'=>$gr];
+		}
+
+		if ($pu_first === '') $errors[] = 'Provide the applicant\'s first name for Post-UTME registration.';
+		if ($pu_surname === '') $errors[] = 'Provide the applicant\'s surname for Post-UTME registration.';
+		if ($pu_jamb_reg === '') $errors[] = 'Provide the applicant\'s JAMB registration number.';
+		if ($pu_jamb_score === '' || !is_numeric($pu_jamb_score)) $errors[] = 'Provide a valid JAMB score (numeric).';
+		// require at least 5 O'Level subjects with grades
+		$subjectCountWithGrade = 0;
+		foreach ($pu_subjects as $s) { if (!empty($s['subject']) && !empty($s['grade'])) $subjectCountWithGrade++; }
+		if ($subjectCountWithGrade < 5) $errors[] = 'Provide at least 5 O\'Level subjects with grades (enter both subject and grade).';
+		// optional: ensure WAEC token & serial if exam type WAEC and raw token provided
+		$examType = trim($_POST['pu_exam_type'] ?? '');
+		$waecToken = trim($_POST['pu_waec_token'] ?? '');
+		$waecSerial = trim($_POST['pu_waec_serial'] ?? '');
+		if (strtoupper($examType) === 'WAEC' && ($waecToken === '' && $waecSerial === '')) {
+			// not strictly required, but warn if missing — treat as notice not hard error (use errors[] for required)
+			// $errors[] = 'WAEC token and serial are recommended for WAEC exam type.';
+		}
+	}
+
 	if (empty($errors)) {
 		// create registration record without creating a site user account
 		try {
