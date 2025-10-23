@@ -495,7 +495,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
-  setFlash('error','Failed to confirm registration'); header('Location: /HIGH-Q/admin./pages/students.php'); exit;
+  setFlash('error','Failed to confirm registration'); header('Location: index.php?pages=students'); exit;
     }
   }
 
