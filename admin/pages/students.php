@@ -716,7 +716,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       ?>
   <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>" data-type="<?= isset($linkedRegId) && $linkedRegId ? 'registration' : 'user' ?>">
         <div class="card-left">
-          <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
+          <img src="<?= htmlspecialchars($passportThumb ?: '../../public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
             <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
             <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
