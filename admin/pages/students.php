@@ -91,8 +91,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   if (in_array(strtolower($method), ['bank', 'bank_transfer', 'transfer'])) $method = 'bank_transfer';
   if (strtolower($method) === 'paystack') $method = 'paystack';
 
-  // Insert payment placeholder using fallback helper
-  $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
+  // Insert payment placeholder using centralized helper (adds random surcharge).
+  // Fall back to the legacy insertion helper if the new helper is not available or fails.
+  try {
+    if (function_exists('hq_create_payment')) {
+      $paymentId = hq_create_payment($pdo, $reg['user_id'] ?: null, $amount, $method, $reference, ['registration_id' => $reg['id']]);
+    } else {
+      $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
+    }
+  } catch (Throwable $e) {
+    // preserve legacy behavior on unexpected errors
+    $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
+  }
 
     // Build link using loaded base URL if available
     // Prefer APP_URL from environment, otherwise build from request host
@@ -184,7 +194,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     if (in_array(strtolower($method), ['bank', 'bank_transfer', 'transfer'])) $method = 'bank_transfer';
     if (strtolower($method) === 'paystack') $method = 'paystack';
 
-  $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
+  // Create payment using centralized helper to ensure surcharge metadata is included
+  try {
+    if (function_exists('hq_create_payment')) {
+      $paymentId = hq_create_payment($pdo, $studentId, $amount, $method, $ref, ['registration_id' => $reg['id']]);
+    } else {
+      $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
+    }
+  } catch (Throwable $e) {
+    $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
+  }
 
     // Build payment link (prefer APP_URL from environment if loaded)
     $base = $GLOBALS['HQ_BASE_URL'] ?? null;
@@ -438,9 +457,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $method = $_POST['method'] ?? 'bank';
         // create payment placeholder and send reference to registrant email
         $ref = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-        $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
-        $ins->execute([$amount, $method, $ref]);
-        $paymentId = $pdo->lastInsertId();
+        try {
+          if (function_exists('hq_create_payment')) {
+            $paymentId = hq_create_payment($pdo, null, $amount, $method, $ref, ['registration_id' => $id]);
+          } else {
+            $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+            $ins->execute([$amount, $method, $ref]);
+            $paymentId = $pdo->lastInsertId();
+          }
+        } catch (Throwable $e) {
+          // fallback to legacy insert
+          $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+          $ins->execute([$amount, $method, $ref]);
+          $paymentId = $pdo->lastInsertId();
+        }
         logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
 
           // send email to registrant with link to payments_wait (if email present)
