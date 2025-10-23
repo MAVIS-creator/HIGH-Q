@@ -70,7 +70,8 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (strpos($type, 'image/') === 0) {
                         $messageHtml .= '<br><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" style="max-width:100%;border-radius:8px">';
                     } else {
-                        $messageHtml .= '<br><a href="/HIGH-Q/public/download_attachment.php?file=' . urlencode($nameSafe) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
+                        $appBase = rtrim($_ENV['APP_URL'] ?? '', '/'); if ($appBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $appBase = rtrim($proto . '://' . $host, '/'); }
+                        $messageHtml .= '<br><a href="' . htmlspecialchars($appBase) . '/public/download_attachment.php?file=' . urlencode($nameSafe) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
                     }
                 }
             }

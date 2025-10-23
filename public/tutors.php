@@ -38,7 +38,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <!-- Placeholder tutor so layout can be previewed -->
       <div class="tutors-grid">
         <article class="tutor-card">
-      <div class="tutor-thumb"><img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Placeholder"></div>
+  <?php $appBase = rtrim($_ENV['APP_URL'] ?? '', '/'); if ($appBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $appBase = rtrim($proto . '://' . $host, '/'); } ?>
+  <div class="tutor-thumb"><img src="<?= htmlspecialchars($appBase) ?>/public/assets/images/hq-logo.jpeg" alt="Placeholder"></div>
           <div class="tutor-body">
             <h3>Sample Tutor</h3>
             <p class="role">B.Sc, M.Ed</p>
@@ -54,7 +55,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       <div class="tutor-lead-wrap">
         <article class="tutor-card tutor-lead">
           <div class="tutor-thumb">
-            <img src="/HIGH-Q/public/assets/images/quam.jpg" alt="Adebule Quam">
+            <img src="<?= htmlspecialchars($appBase) ?>/public/assets/images/quam.jpg" alt="Adebule Quam">
           </div>
           <div class="tutor-body">
             <h3>Adebule Quam</h3>
@@ -68,7 +69,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         <?php foreach ($tutors as $t): ?>
           <article class="tutor-card">
             <div class="tutor-thumb">
-              <img src="/HIGH-Q/public/<?= htmlspecialchars($t['photo'] ?: 'assets/images/hq-logo.jpeg') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+              <img src="<?= htmlspecialchars($appBase) ?>/public/<?= htmlspecialchars($t['photo'] ?: 'assets/images/hq-logo.jpeg') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
             </div>
             <div class="tutor-body">
               <h3><?= htmlspecialchars($t['name']) ?></h3>
