@@ -1,0 +1,228 @@
+REPLACEMENT PREVIEW for literal '/HIGH-Q' occurrences
+Generated: 2025-10-23T21:22:46+02:00
+
+Found 72 matches:
+
+C:\xampp\htdocs\HIGH-Q\.env:26
+    APP_URL=http://localhost/HIGH-Q
+
+C:\xampp\htdocs\HIGH-Q\.htaccess:5
+    RewriteBase /HIGH-Q/
+
+C:\xampp\htdocs\HIGH-Q\.htaccess.bak:5
+    RewriteBase /HIGH-Q/
+
+C:\xampp\htdocs\HIGH-Q\admin\.env:25
+    APP_URL=http://localhost/HIGH-Q
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:4
+    # AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:14
+    ErrorDocument 400 /HIGH-Q/admin/errors/400.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:15
+    ErrorDocument 401 /HIGH-Q/admin/errors/401.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:16
+    ErrorDocument 403 /HIGH-Q/admin/errors/403.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:17
+    ErrorDocument 404 /HIGH-Q/admin/errors/404.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:18
+    ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess:25
+    RewriteBase /HIGH-Q/admin/
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:18
+    RewriteBase /HIGH-Q/admin/
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:27
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/HIGH-Q/admin/$1 [L,R=301]
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:95
+    AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:99
+    ErrorDocument 400 /HIGH-Q/admin/errors/400.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:100
+    ErrorDocument 401 /HIGH-Q/admin/errors/401.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:101
+    ErrorDocument 403 /HIGH-Q/admin/errors/403.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:102
+    ErrorDocument 404 /HIGH-Q/admin/errors/404.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.bak:103
+    ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.new:3
+    AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.new:17
+    ErrorDocument 401 /HIGH-Q/admin/errors/401.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.new:18
+    ErrorDocument 403 /HIGH-Q/admin/errors/403.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.new:19
+    ErrorDocument 404 /HIGH-Q/admin/errors/404.php
+
+C:\xampp\htdocs\HIGH-Q\admin\.htaccess.new:20
+    ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+
+C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:91
+    // Legacy fallback: if path starts with /HIGH-Q assume project root reference
+
+C:\xampp\htdocs\HIGH-Q\admin\api\export_registration.php:92
+    if (strpos($candidate, '/HIGH-Q') === 0) {
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:27
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:71
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:113
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:160
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:210
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:252
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:299
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:349
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors&action=delete&id=13",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:391
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:438
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:486
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
+
+C:\xampp\htdocs\HIGH-Q\admin\cli\tutor_post_debug.log:533
+    "Referer": "http://localhost/HIGH-Q/admin./pages/index.php?pages=tutors",
+
+C:\xampp\htdocs\HIGH-Q\admin\includes\header.php:113
+    // If script lives under a subfolder, include it (e.g., http://localhost/HIGH-Q)
+
+C:\xampp\htdocs\HIGH-Q\admin\pages\.htaccess:4
+    AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+
+C:\xampp\htdocs\HIGH-Q\admin\pages\students.php:618
+    // Temporary debug banner: enable by visiting /HIGH-Q/admin./pages/students.php?dbg=1
+
+C:\xampp\htdocs\HIGH-Q\public\404.php:10
+    <a href="/HIGH-Q/public/home.php" class="btn-primary">Go Home</a>
+
+C:\xampp\htdocs\HIGH-Q\public\500.php:10
+    <a href="/HIGH-Q/public/home.php" class="btn-primary">Go Home</a>
+
+C:\xampp\htdocs\HIGH-Q\public\assets\js\post.js:15
+    fetch('/HIGH-Q/public/api/comments.php?post_id=' + encodeURIComponent(POST_ID))
+
+C:\xampp\htdocs\HIGH-Q\public\assets\js\post.js:59
+    fetch('/HIGH-Q/public/api/comment_like.php', { method: 'POST', body: new URLSearchParams({ comment_id: cid }) })
+
+C:\xampp\htdocs\HIGH-Q\public\assets\js\post.js:103
+    fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
+
+C:\xampp\htdocs\HIGH-Q\public\assets\js\post.js:127
+    fetch('/HIGH-Q/public/api/like_post.php?post_id=' + encodeURIComponent(POST_ID))
+
+C:\xampp\htdocs\HIGH-Q\public\assets\js\post.js:140
+    fetch('/HIGH-Q/public/api/like_post.php', { method: 'POST', body: new URLSearchParams({ post_id: POST_ID }) })
+
+C:\xampp\htdocs\HIGH-Q\public\assets\js\post.js:164
+    fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
+
+C:\xampp\htdocs\HIGH-Q\public\chatbox.php:73
+    $messageHtml .= '<br><a href="/HIGH-Q/public/download_attachment.php?file=' . urlencode($nameSafe) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
+
+C:\xampp\htdocs\HIGH-Q\public\errors\400.php:10
+    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
+
+C:\xampp\htdocs\HIGH-Q\public\errors\401.php:10
+    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
+
+C:\xampp\htdocs\HIGH-Q\public\errors\403.php:10
+    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
+
+C:\xampp\htdocs\HIGH-Q\public\errors\404.php:10
+    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
+
+C:\xampp\htdocs\HIGH-Q\public\errors\500.php:10
+    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
+
+C:\xampp\htdocs\HIGH-Q\public\post.php:164
+    $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
+
+C:\xampp\htdocs\HIGH-Q\public\register.php:271
+    $publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
+
+C:\xampp\htdocs\HIGH-Q\public\register.php:334
+    $publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
+
+C:\xampp\htdocs\HIGH-Q\public\tutors.php:41
+    <div class="tutor-thumb"><img src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Placeholder"></div>
+
+C:\xampp\htdocs\HIGH-Q\public\tutors.php:57
+    <img src="/HIGH-Q/public/assets/images/quam.jpg" alt="Adebule Quam">
+
+C:\xampp\htdocs\HIGH-Q\public\tutors.php:71
+    <img src="/HIGH-Q/public/<?= htmlspecialchars($t['photo'] ?: 'assets/images/hq-logo.jpeg') ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+
+C:\xampp\htdocs\HIGH-Q\scripts\test_newsletter_flow.php:42
+    $unsubscribeUrl = 'http://localhost/HIGH-Q/public/unsubscribe_newsletter.php?token=' . urlencode($sub['unsubscribe_token']);
+
+C:\xampp\htdocs\HIGH-Q\scripts\test_newsletter_flow.php:43
+    $postUrl = 'http://localhost/HIGH-Q/post.php?id=' . $postId;
+
+C:\xampp\htdocs\HIGH-Q\tools\generate_replacements_preview.php:3
+    // Scans the repo for literal "/HIGH-Q" occurrences and writes a preview report and suggested replacements
+
+C:\xampp\htdocs\HIGH-Q\tools\generate_replacements_preview.php:17
+    if (strpos($txt, '/HIGH-Q') !== false) {
+
+C:\xampp\htdocs\HIGH-Q\tools\generate_replacements_preview.php:20
+    if (strpos($line, '/HIGH-Q') !== false) {
+
+C:\xampp\htdocs\HIGH-Q\tools\generate_replacements_preview.php:27
+    $out = "REPLACEMENT PREVIEW for literal '/HIGH-Q' occurrences\n";
+
+C:\xampp\htdocs\HIGH-Q\tools\generate_replacements_preview.php:35
+    $out .= "- In admin PHP files, prefer using server-side \$HQ_BASE_URL: e.g. replace '/HIGH-Q/public/...' with rtrim(\$HQ_BASE_URL,'/') . '/public/...'.\n";
+
+C:\xampp\htdocs\HIGH-Q\tools\home_after.html:8
+    <title>Index of /HIGH-Q</title>
+
+C:\xampp\htdocs\HIGH-Q\tools\home_after.html:11
+    <h1>Index of /HIGH-Q</h1>
+
+C:\xampp\htdocs\HIGH-Q\tools\home_dump.html:4
+    <title>Index of /HIGH-Q</title>
+
+C:\xampp\htdocs\HIGH-Q\tools\home_dump.html:7
+    <h1>Index of /HIGH-Q</h1>
+
+
+SUGGESTED REPLACEMENTS (review before applying):
+- In admin PHP files, prefer using server-side $HQ_BASE_URL: e.g. replace '/HIGH-Q/public/...' with rtrim($HQ_BASE_URL,'/') . '/public/...'.
+- In admin JS, prefer window.adminUrl('pages', { ... }) for router AJAX endpoints or use window.HQ_BASE_URL + '/public/...'.
+- In public-facing PHP files, prefer using APP_URL from .env (read in header) or compute base from request. e.g. APP_URL . '/uploads/...' or rtrim($HQ_BASE_URL,'/') . '/uploads/...'.
+
+I'll create a separate adminurl preview showing concrete JS replacements for admin pages.
