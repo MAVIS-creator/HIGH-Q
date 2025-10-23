@@ -731,17 +731,17 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
             <!-- view icon removed as requested -->
               <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
-                <form method="post" action=./pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Deactivate</button>
                 </form>
               <?php elseif ($s['is_active'] == 0): ?>
-                <form method="post" action=./pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Activate</button>
                 </form>
               <?php else: ?>
-                <form method="post" action=./pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
@@ -749,7 +749,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
               <?php if (!empty($linkedRegId)): ?>
                 <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>" data-type="registration">Export</button>
               <?php endif; ?>
-              <form method="post" action=./pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -1142,7 +1142,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-              const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=confirm_registration&id=${id}`, fd);
+              const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
@@ -1170,7 +1170,7 @@ document.addEventListener('click', function(e){
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
         try {
-          const payload = await postAction(`/HIGH-Q/admin./pages/students.php?action=confirm_registration&id=${id}`, fd);
+          const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
           // update UI similar to above
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
