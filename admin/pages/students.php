@@ -981,7 +981,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `/HIGH-Q/admin./pages/students.php?action=send_message&id=${id}`;
+  modalForm.action = `index.php?pages=students&action=send_message&id=${id}`;
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
