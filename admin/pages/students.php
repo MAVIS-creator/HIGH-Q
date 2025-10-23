@@ -640,7 +640,7 @@ if ($hasRegistrations) {
               <?php endif; ?>
 
                 <!-- Export registration (zip) - always available for registrations -->
-                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
+                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>" onclick="return false;">Export</button>
               <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
@@ -715,7 +715,7 @@ if ($hasRegistrations) {
                 </form>
               <?php endif; ?>
               <?php if (!empty($linkedRegId)): ?>
-                <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>">Export</button>
+                <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>" data-type="registration">Export</button>
               <?php endif; ?>
               <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
