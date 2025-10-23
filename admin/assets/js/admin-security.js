@@ -51,7 +51,7 @@
                 },
                 didOpen: function(){
                     // load list
-                    ajaxJson('GET','/HIGH-Q/admin/api/mac_blocklist.php', null, function(err,res){
+                    ajaxJson('GET','api/mac_blocklist.php', null, function(err,res){
                         var cont = document.getElementById('mac-list');
                         if (err || !res || !res.rows) { cont.innerHTML = '<div class="muted">Failed to load list</div>'; return; }
                         var html = '<table class="hq-table" style="width:100%;"><thead><tr><th>MAC</th><th>Reason</th><th>Enabled</th><th>Actions</th></tr></thead><tbody>';
@@ -67,13 +67,13 @@
                             b.addEventListener('click', function(){
                                 var id = this.getAttribute('data-id');
                                 var fd = new FormData(); fd.append('id', id); fd.append('action','toggle');
-                                ajaxJson('POST','/HIGH-Q/admin/api/mac_blocklist.php', fd, function(err,res){ if (err || res.status!=='ok') return Swal.fire('Error','Failed to toggle','error'); Swal.fire('Updated',res.message||'','success').then(()=> macBtn.click()); });
+                                ajaxJson('POST','api/mac_blocklist.php', fd, function(err,res){ if (err || res.status!=='ok') return Swal.fire('Error','Failed to toggle','error'); Swal.fire('Updated',res.message||'','success').then(()=> macBtn.click()); });
                             });
                         });
                         cont.querySelectorAll('button.del').forEach(function(b){
                             b.addEventListener('click', function(){
                                 var id = this.getAttribute('data-id');
-                                Swal.fire({title:'Delete entry?',text:'This will remove the MAC blocklist entry',icon:'warning',showCancelButton:true}).then(function(r){ if (!r.isConfirmed) return; var fd = new FormData(); fd.append('id',id); fd.append('action','delete'); ajaxJson('POST','/HIGH-Q/admin/api/mac_blocklist.php', fd, function(err,res){ if (err||res.status!=='ok') return Swal.fire('Error','Failed','error'); Swal.fire('Deleted','Entry removed','success').then(()=> macBtn.click()); }); });
+                                Swal.fire({title:'Delete entry?',text:'This will remove the MAC blocklist entry',icon:'warning',showCancelButton:true}).then(function(r){ if (!r.isConfirmed) return; var fd = new FormData(); fd.append('id',id); fd.append('action','delete'); ajaxJson('POST','api/mac_blocklist.php', fd, function(err,res){ if (err||res.status!=='ok') return Swal.fire('Error','Failed','error'); Swal.fire('Deleted','Entry removed','success').then(()=> macBtn.click()); }); });
                             });
                         });
                     });
@@ -81,7 +81,7 @@
             }).then(function(result){
                 if (result.isConfirmed && result.value && result.value.mac){
                     var fd = new FormData(); fd.append('action','add'); fd.append('mac', result.value.mac); fd.append('reason', result.value.reason || ''); fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
-                    ajaxJson('POST','/HIGH-Q/admin/api/mac_blocklist.php', fd, function(err,res){ if (err || res.status!=='ok') return Swal.fire('Error','Failed to add entry','error'); Swal.fire('Added','MAC blocklist entry added','success').then(()=> macBtn.click()); });
+                    ajaxJson('POST','api/mac_blocklist.php', fd, function(err,res){ if (err || res.status!=='ok') return Swal.fire('Error','Failed to add entry','error'); Swal.fire('Added','MAC blocklist entry added','success').then(()=> macBtn.click()); });
                 }
             });
         });
@@ -100,7 +100,7 @@
                     function load(filter){
                         var qs = '';
                         if (filter){ qs = '?'+new URLSearchParams(filter).toString(); }
-                        ajaxJson('GET','/HIGH-Q/admin/api/ip_logs.php'+qs, null, function(err,res){
+                        ajaxJson('GET','api/ip_logs.php'+qs, null, function(err,res){
                             var cont = document.getElementById('ip-rows');
                             if (err||!res||!res.rows) { cont.innerHTML = '<div class="muted">Failed to load</div>'; return; }
                             var html = '<table class="hq-table"><thead><tr><th>ID</th><th>IP</th><th>User</th><th>UA</th><th>Path</th><th>When</th></tr></thead><tbody>';

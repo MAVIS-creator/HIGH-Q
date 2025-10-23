@@ -563,9 +563,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       if (fFeatures) fFeatures.value = data.features || '';
       if (fBadge) fBadge.value = data.badge || '';
       updateIconPreview();
-      courseForm.action = `/HIGH-Q/admin./pages/courses.php?action=edit&id=${data.id}`;
+  courseForm.action = `index.php?pages=courses&action=edit&id=${data.id}`;
     } else {
-      courseForm.action = '/HIGH-Q/admin./pages/courses.php?action=create';
+  courseForm.action = 'index.php?pages=courses&action=create';
     }
   }
   // Auto-generate slug client-side as user types title when slug is empty
