@@ -291,10 +291,10 @@ $csrf = generateToken('signup_form');
 						<?php
 // Prominent registration toggle (placed under hero so it's always visible)
 ?>
-<div style="display:flex;justify-content:center;margin:18px 0;">
-	<div style="max-width:760px;width:100%;display:flex;gap:8px;align-items:center;">
-		<button id="topToggleRegular" class="btn" style="flex:1;padding:10px 14px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;color:#374151;font-weight:600">Regular Registration</button>
-		<button id="topTogglePost" class="btn" style="flex:1;padding:10px 14px;border-radius:8px;border:2px solid var(--hq-primary);background:var(--hq-primary);color:#fff;font-weight:700">POST UTME Registration</button>
+<div class="registration-toggle" style="margin:18px 0;">
+	<div class="container" style="max-width:760px;display:flex;gap:8px;align-items:center;">
+		<button id="topToggleRegular" class="btn toggle-pill active-toggle" data-target="#regularForm">Regular Registration</button>
+		<button id="topTogglePost" class="btn toggle-pill" data-target="#postUtmeForm">POST UTME Registration</button>
 	</div>
 </div>
 
@@ -314,8 +314,8 @@ $csrf = generateToken('signup_form');
 														<p class="card-desc" style="margin:6px 0 0;font-size:0.95rem;color:#6b7280">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
 													</div>
 													<div style="display:flex;gap:8px;margin-left:16px;">
-														<button id="toggleRegular" class="btn" style="padding:8px 12px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#374151;font-weight:600">Regular</button>
-														<button id="togglePostUtme" class="btn" style="padding:8px 12px;border:2px solid var(--hq-primary);border-radius:6px;background:var(--hq-primary);color:#fff;font-weight:700">POST UTME</button>
+														<button id="toggleRegular" class="btn toggle-pill active-toggle" data-target="#regularForm" style="padding:8px 12px;">Regular</button>
+														<button id="togglePostUtme" class="btn toggle-pill" data-target="#postUtmeForm" style="padding:8px 12px;">POST UTME</button>
 													</div>
 												</div>
 												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
