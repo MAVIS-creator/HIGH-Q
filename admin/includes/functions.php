@@ -84,3 +84,75 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         return false;
     }
 }
+
+// --- HQ URL / file helpers (small, safe helpers used across admin/public code)
+if (!function_exists('hq_app_base')) {
+    function hq_app_base(): string {
+        static $b = null;
+        if ($b !== null) return $b;
+        $env = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: '';
+        if (!empty($env)) { $b = rtrim($env, '/'); return $b; }
+        // Fallback to request-derived base when running under webserver
+        if (!empty($_SERVER['HTTP_HOST'])) {
+            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $b = $proto . '://' . $_SERVER['HTTP_HOST'];
+            return $b;
+        }
+        // CLI / unknown: default to localhost
+        $b = 'http://localhost';
+        return $b;
+    }
+}
+
+if (!function_exists('hq_project_root')) {
+    function hq_project_root(): string {
+        // admin/includes is two levels deep from project root
+        return realpath(__DIR__ . '/../../') ?: __DIR__ . '/../../';
+    }
+}
+
+if (!function_exists('hq_public_url')) {
+    function hq_public_url(?string $stored): string {
+        if (empty($stored)) return '';
+        $s = (string)$stored;
+        if (preg_match('#^https?://#i', $s)) return $s;
+        // keep relative paths (./ ../ no leading slash) unchanged
+        if ($s[0] !== '/') return $s;
+        $appPath = parse_url(hq_app_base(), PHP_URL_PATH) ?? '';
+        if ($appPath !== '' && strpos($s, $appPath) === 0) {
+            $rel = substr($s, strlen($appPath));
+        } else {
+            $rel = $s;
+        }
+        $rel = '/' . ltrim($rel, '/');
+        return rtrim(hq_app_base(), '/') . $rel;
+    }
+}
+
+if (!function_exists('hq_fs_path_from_stored')) {
+    /**
+     * Map a stored path value to either a remote URL or a filesystem path inside the project.
+     * Returns: ['type'=>'remote','url'=>...] | ['type'=>'file','path'=>...] | ['type'=>'notfound']
+     */
+    function hq_fs_path_from_stored(?string $stored): array {
+        if (empty($stored)) return ['type'=>'notfound'];
+        $s = (string)$stored;
+        if (preg_match('#^https?://#i', $s)) return ['type'=>'remote','url'=>$s];
+        // Absolute filesystem (Windows drive) or absolute path that exists
+        if (preg_match('#^[A-Za-z]:\\#', $s) && is_file($s)) return ['type'=>'file','path'=>$s];
+        if (strpos($s, '/') === 0 && is_file($s)) return ['type'=>'file','path'=>$s];
+
+        $projectRoot = hq_project_root();
+        $appPath = parse_url(hq_app_base(), PHP_URL_PATH) ?? '';
+        $candidateRel = $s;
+        if ($appPath !== '' && strpos($candidateRel, $appPath) === 0) {
+            $candidateRel = substr($candidateRel, strlen($appPath));
+        }
+        $candidateRel = ltrim($candidateRel, '/');
+        $candidateFs = $projectRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $candidateRel);
+        if (is_file($candidateFs)) return ['type'=>'file','path'=>$candidateFs];
+        $candidateFs2 = $projectRoot . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $candidateRel);
+        if (is_file($candidateFs2)) return ['type'=>'file','path'=>$candidateFs2];
+        return ['type'=>'notfound'];
+    }
+}
