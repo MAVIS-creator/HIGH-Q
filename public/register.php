@@ -298,7 +298,17 @@ $csrf = generateToken('signup_form');
 										<div class="container register-layout">
 										<main class="register-main">
 											<div class="card">
-												<h3>Student Registration Form</h3>
+												<!-- Registration type toggle: Regular / POST UTME -->
+												<div class="reg-toggle" style="display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px;">
+													<div style="flex:1">
+														<h3 style="margin:0">Student Registration Form</h3>
+														<p class="card-desc" style="margin:6px 0 0;font-size:0.95rem;color:#6b7280">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
+													</div>
+													<div style="display:flex;gap:8px;margin-left:16px;">
+														<button id="toggleRegular" class="btn" style="padding:8px 12px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#374151;font-weight:600">Regular</button>
+														<button id="togglePostUtme" class="btn" style="padding:8px 12px;border:2px solid var(--hq-primary);border-radius:6px;background:var(--hq-primary);color:#fff;font-weight:700">POST UTME</button>
+													</div>
+												</div>
 												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
 												<?php if (!empty($errors)): ?>
 													<script>
@@ -727,6 +737,34 @@ document.addEventListener('DOMContentLoaded', function(){
 	input.addEventListener('change', function(){
 		if (input.files && input.files.length) chosen.textContent = input.files[0].name; else chosen.textContent = 'No file chosen';
 	});
+});
+// Toggle behavior for registration forms
+document.addEventListener('DOMContentLoaded', function(){
+	var togReg = document.getElementById('toggleRegular');
+	var togPU = document.getElementById('togglePostUtme');
+	if (!togReg || !togPU) return;
+
+	function setActive(isPost) {
+		if (isPost) {
+			togPU.style.background = 'var(--hq-primary)';
+			togPU.style.color = '#fff';
+			togPU.style.borderWidth = '2px';
+			togReg.style.background = '#fff';
+			togReg.style.color = '#374151';
+			// navigate to the new POST UTME registration page if available
+			window.location.href = './register_new.php?type=post-utme';
+		} else {
+			togReg.style.background = 'var(--hq-primary)';
+			togReg.style.color = '#fff';
+			togReg.style.borderWidth = '2px';
+			togPU.style.background = '#fff';
+			togPU.style.color = '#374151';
+			window.location.href = './register.php?type=regular';
+		}
+	}
+
+	togPU.addEventListener('click', function(e){ e.preventDefault(); setActive(true); });
+	togReg.addEventListener('click', function(e){ e.preventDefault(); setActive(false); });
 });
 </script>
 
