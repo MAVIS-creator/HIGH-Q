@@ -147,3 +147,31 @@ if (!function_exists('hq_fs_path_from_stored')) {
         return ['type'=>'notfound'];
     }
 }
+
+// surcharge helper and createPayment helper (public-side)
+if (!function_exists('hq_compute_surcharge')) {
+    function hq_compute_surcharge(float $amount): float {
+        $minPct = 0.005; $maxPct = 0.03;
+        $rand = mt_rand() / mt_getrandmax();
+        $pct = $minPct + ($rand * ($maxPct - $minPct));
+        $s = round($amount * $pct, 2);
+        if ($s < 0.01) $s = 0.01;
+        if ($s > 167.54) $s = 167.54;
+        return $s;
+    }
+}
+
+if (!function_exists('hq_create_payment')) {
+    function hq_create_payment(PDO $pdo, $studentId, float $amount, string $method, string $reference, $extraMeta = null) {
+        $surcharge = hq_compute_surcharge($amount);
+        $final = round($amount + $surcharge, 2);
+        $meta = is_string($extraMeta) ? @json_decode($extraMeta, true) : (is_array($extraMeta) ? $extraMeta : []);
+        if (!is_array($meta)) $meta = [];
+        $meta['original_amount'] = round($amount,2);
+        $meta['surcharge'] = $surcharge;
+        $metaJson = json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (?, ?, ?, ?, "pending", NOW(), ?)');
+        $ins->execute([$studentId, $final, $method, $reference, $metaJson]);
+        return (int)$pdo->lastInsertId();
+    }
+}
