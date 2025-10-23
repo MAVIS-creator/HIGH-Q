@@ -440,9 +440,9 @@ async function loadUser(id, mode='view'){
     // Probably an auth redirect or HTML response; show friendly message and redirect to login
     const text = (res && typeof res.text === 'function') ? await res.text() : null;
     if (typeof Swal !== 'undefined') {
-      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = '/HIGH-Q/admin/login.php');
+  Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = 'login.php');
     } else {
-      alert('Session expired. Please login again.'); window.location = '/HIGH-Q/admin/login.php';
+  alert('Session expired. Please login again.'); window.location = 'login.php';
     }
     return;
   }

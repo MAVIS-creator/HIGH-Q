@@ -75,7 +75,7 @@
             var data = new FormData(this);
             // Use hqFetch so auth errors are handled centrally (redirect with return_to)
             // Prefer the compatibility wrapper (which calls hqFetch internally if present)
-            const endpoint = '/HIGH-Q/admin/api/save-settings.php';
+            const endpoint = 'api/save-settings.php';
             const opts = { method: 'POST', body: data, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } };
             const resp = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(endpoint, opts) : (typeof hqFetch === 'function' ? hqFetch(endpoint, opts) : fetch(endpoint, opts)));
 
@@ -110,7 +110,7 @@
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            var endpoint = (action === 'runScan') ? '/HIGH-Q/admin/api/run-scan.php' : '/HIGH-Q/admin/index.php?pages=settings';
+            var endpoint = (action === 'runScan') ? 'api/run-scan.php' : 'index.php?pages=settings';
             if (typeof hqFetch !== 'function') {
                 fetch(endpoint, { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                     .then(function(r){ return r.text(); })
