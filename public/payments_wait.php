@@ -244,23 +244,38 @@ $csrf = generateToken('signup_form');
         </div>
       </div>
 
-            <div style="text-align:center;margin-top:18px">
-              <button class="btn-primary fullwidth" id="markSentBtn" type="button">I have sent the money</button>
-            </div>
-
-            <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
-
-            <div class="small-meta">This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.</div>
-
-            <form method="post" action="#" id="payer-form" style="margin-top:12px">
-              <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
-              <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-              <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-              <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-              <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-            </form>
+      <div class="payer-details">
+        <h3 style="margin:0 0 15px;font-size:16px;">Payer Details</h3>
+        
+        <form method="post" action="#" id="payer-form" class="payer-form">
+          <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
+          <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
+          <div class="form-row">
+            <label>Name on Payer Account</label>
+            <input name="payer_name" required placeholder="Enter account holder name">
           </div>
+          <div class="form-row">
+            <label>Account Number</label>
+            <input name="payer_number" required placeholder="Enter account number">
+          </div>
+          <div class="form-row">
+            <label>Bank Name</label>
+            <input name="payer_bank" required placeholder="Enter bank name">
+          </div>
+        </form>
+
+        <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
+        
+        <button class="btn-send-money" id="markSentBtn" type="button">
+          I have sent the money
+        </button>
+        
+        <div style="text-align:center;margin-top:15px;color:#666;font-size:13px;">
+          This payment link expires after 2 days
         </div>
+      </div>
+    </div>
+  </div>
 
         <script>
           // make a bookmark for base
