@@ -166,6 +166,71 @@
     background: rgba(0,0,0,0.05)
 }
 
+/* Form styling */
+.form-row {
+    margin-bottom: 16px
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--hq-text)
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    transition: border-color 0.2s
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--hq-primary)
+}
+
+/* Additional helpers */
+.text-center {
+    text-align: center
+}
+
+.small-meta {
+    font-size: 13px;
+    color: var(--hq-gray);
+    margin-top: 8px
+}
+
+/* Success modal styling */
+.hq-success {
+    text-align: center;
+    padding: 20px
+}
+
+.hq-success-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px
+}
+
+.hq-success-icon svg {
+    width: 100%;
+    height: 100%
+}
+
+/* Dark backdrop for Swal modals */
+.swal2-backdrop-show {
+    background: rgba(0,0,0,0.4) !important
+}
+
+.swal2-popup.hq-success {
+    padding: 24px;
+    border-radius: 12px
+}
+
 .hq-pay-wrapper {
     max-width: 760px;
     margin: 28px auto;

@@ -100,22 +100,36 @@ $csrf = generateToken('signup_form');
             <div class="ref">Reference: <strong><?= htmlspecialchars($payment['reference']) ?></strong></div>
             <div class="expires"><span class="paybox-countdown" id="payboxCountdown">--:--</span></div>
 
-            <div style="text-align:center;margin-top:18px">
-              <button class="btn-primary fullwidth" id="markSentBtn" type="button">I have sent the money</button>
-            </div>
-
-            <div id="payerRecordedInfo" style="display:none;margin-top:14px"></div>
-
-            <div class="small-meta">This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.</div>
-
-            <form method="post" action="#" id="payer-form" style="margin-top:12px">
+            <form method="post" action="#" id="payer-form">
               <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
               <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-              <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-              <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-              <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
+              <div class="form-row">
+                <label>Name on Payer Account</label>
+                <input name="payer_name" class="form-control" required>
+              </div>
+              <div class="form-row">
+                <label>Account Number</label>
+                <input name="payer_number" class="form-control" required>
+              </div>
+              <div class="form-row">
+                <label>Bank Name</label>
+                <input name="payer_bank" class="form-control" required>
+              </div>
             </form>
           </div>
+
+          <div class="payment-footer">
+            <div id="payerRecordedInfo" style="display:none"></div>
+            <div class="payment-status">Payment expires in <span id="payboxCountdown">--:--</span></div>
+            <div class="payment-actions">
+              <button class="btn btn-secondary" onclick="history.back()">Cancel</button>
+              <button class="btn btn-primary" id="markSentBtn" type="button">I have sent the money</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="small-meta" style="text-align:center;margin-top:12px;color:var(--hq-gray)">
+          This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details.
         </div>
 
         <script>
@@ -333,7 +347,11 @@ $csrf = generateToken('signup_form');
   </div>
 </section>
 
-  </main>
-  <footer class="card-desc" style="padding:18px 0;text-align:center;color:var(--hq-gray);font-size:13px;">&copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY</footer>
+      <?php endif; ?>
+    </div>
+    <footer class="text-center" style="margin-top:auto;padding:18px;color:var(--hq-panel)">
+      &copy; <?= date('Y') ?> HIGH Q SOLID ACADEMY
+    </footer>
+  </div>
 </body>
 </html>
