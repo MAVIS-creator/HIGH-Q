@@ -673,7 +673,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>" onclick="return false;">Export</button>
-              <form method="post" action=./pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
