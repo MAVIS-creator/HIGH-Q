@@ -1,22 +1,22 @@
 // Initialize notifications
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const btn = document.getElementById('notifBtn');
     if (!btn) return;
 
     // Create dropdown container
     const wrap = document.createElement('div');
     wrap.className = 'notif-dropdown';
-    
+
     const panel = document.createElement('div');
     panel.className = 'notif-panel notification-list';
     panel.id = 'notifPanel';
     panel.style.maxHeight = '420px';
     panel.style.overflow = 'auto';
-    
+
     // Clone button and add to wrapper
     wrap.appendChild(btn.cloneNode(true));
     wrap.appendChild(panel);
-    
+
     // Replace original button with wrapper
     const orig = btn.parentNode;
     orig.replaceChild(wrap, btn);
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
                 return;
             }
-            
+
             // Update badge
             const count = data.notifications?.length || 0;
             badge.style.display = count > 0 ? 'inline-block' : 'none';
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
                 item.href = `/HIGH-Q/admin/${data.urls[n.type]}${n.id}`;
-                
+
                 const title = document.createElement('div');
                 title.className = 'notification-title';
                 title.textContent = n.title || '';
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 panel.appendChild(item);
 
                 // Add click handler
-                item.addEventListener('click', async function(e) {
+                item.addEventListener('click', async function (e) {
                     e.preventDefault();
                     // Mark as read
                     const formData = new FormData();
@@ -127,28 +127,28 @@ document.addEventListener('DOMContentLoaded', function() {
             // wire up Mark all button
             const markAllBtn = panel.querySelector('.mark-all');
             if (markAllBtn) {
-                markAllBtn.addEventListener('click', async function(ev) {
+                markAllBtn.addEventListener('click', async function (ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    markAllBtn.disabled = true; 
+                    markAllBtn.disabled = true;
                     markAllBtn.textContent = 'Marking...';
                     try {
                         // Send mark_read for each notification
                         const ops = data.notifications.map(n => {
-                            const fd = new FormData(); 
-                            fd.append('type', n.type); 
+                            const fd = new FormData();
+                            fd.append('type', n.type);
                             fd.append('id', n.id);
                             return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }));
                         });
                         await Promise.all(ops);
-                        
+
                         // Update UI to show all as read
                         panel.querySelectorAll('.notification-item').forEach(item => {
                             item.classList.add('read');
                         });
                         badge.style.display = 'none';
                         badge.textContent = '0';
-                        
+
                         markAllBtn.textContent = 'All read';
                         setTimeout(() => {
                             markAllBtn.textContent = 'Mark all as read';
@@ -156,19 +156,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         }, 2000);
                     } catch (e) {
                         console.error('Failed to mark all as read', e);
-                        markAllBtn.disabled = false; 
+                        markAllBtn.disabled = false;
                         markAllBtn.textContent = 'Mark all as read';
                     }
                 });
             }
-        } catch(e) {
+        } catch (e) {
             console.error('Error loading notifications:', e);
             panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
         }
     }
 
     // Toggle panel and load notifications
-    wrap.querySelector('button').addEventListener('click', function(e) {
+    wrap.querySelector('button').addEventListener('click', function (e) {
         e.stopPropagation();
         const isVisible = panel.style.display === 'block';
         panel.style.display = isVisible ? 'none' : 'block';
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Close on outside click
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!wrap.contains(e.target)) {
             panel.style.display = 'none';
         }
