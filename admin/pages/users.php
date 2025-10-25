@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 // AJAX: return JSON for a single user view
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['id'])) {
   $id = (int)$_GET['id'];
-  $stmt = $pdo->prepare('SELECT u.*, r.name AS role_name, r.slug AS role_slug,
+  $stmt = $pdo->prepare('SELECT u.*, u.role_id AS role_id, r.name AS role_name, r.slug AS role_slug,
   (SELECT COUNT(*) FROM posts WHERE author_id = u.id) AS posts_count,
     (SELECT COUNT(*) FROM comments WHERE user_id = u.id) AS comments_count
     FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.id = ?');
@@ -287,8 +287,8 @@ $users = $pdo->query("
       </div>
       <div class="user-actions">
         <div class="card-actions">
-          <button class="btn-secondary" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
-          <button class="btn-primary" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
+          <button class="btn-secondary btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
+          <button class="btn-primary btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
               <?php if($u['is_active']===0): ?>
               <form method="post" action="?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
@@ -430,8 +430,20 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await fetch(`index.php?pages=users&action=view&id=${id}`);
-  const data = await res.json();
+  const res = await fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' });
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (e) {
+    // Probably an auth redirect or HTML response; show friendly message and redirect to login
+    const text = await res.text();
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = '/HIGH-Q/admin/login.php');
+    } else {
+      alert('Session expired. Please login again.'); window.location = '/HIGH-Q/admin/login.php';
+    }
+    return;
+  }
   if(data.error) {
     if (typeof Swal !== 'undefined') Swal.fire('Error', data.error, 'error'); else alert(data.error);
     return;

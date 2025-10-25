@@ -19,11 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('type', type);
             formData.append('id', id);
 
-            const response = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('../api/mark_read.php', { method: 'POST', body: formData }) : fetch('../api/mark_read.php', { method: 'POST', body: formData }));
+            const response = await fetch('../api/mark_read.php', {
+                method: 'POST',
+                body: formData
+            });
 
-            // Normalize: hqFetchCompat may return parsed; native fetch returns Response
-            const ok = (response && response._parsed) ? true : (response && response.ok);
-            if (ok) {
+            if (response.ok) {
                 // Visual feedback
                 notificationItem.classList.add('read');
                 

@@ -513,21 +513,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
       
       try {
         const formData = new FormData(this);
-        const response = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(this.action, { method: 'POST', body: formData, credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } }) : fetch(this.action, { method: 'POST', body: formData, credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } }));
-
-        // Normalize parsed payload from hqFetchCompat or native fetch
-        let data;
-        try {
-          if (response && response._parsed) data = response._parsed;
-          else if (response && typeof response.json === 'function') data = await response.json();
-          else data = response;
-        } catch (err) {
-          const txt = (response && typeof response.text === 'function') ? await response.text().catch(()=>'[no body]') : '[no body]';
-          console.error('Failed to parse response', err, txt);
-          throw new Error('Server did not return valid JSON');
+        const response = await fetch(this.action, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include', // include cookies / basic auth
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
+        });
+        
+        // First check if the response is OK
+        if (!response.ok) {
+          const txt = await response.text().catch(() => '[no body]');
+          console.error('Non-OK response', response.status, txt);
+          throw new Error(`Server error: ${response.status}`);
         }
-        if (!data) throw new Error('Empty response from server');
-        if (data.status === 'error' || data.success === false) throw new Error(data.message || 'Failed to save tutor');
+        
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          data = await response.json();
+          if (data.status === 'error') {
+            throw new Error(data.message || 'Failed to save tutor');
+          }
+        } else {
+          const text = await response.text();
+          console.error('Non-JSON response from server:', text);
+          throw new Error('Server did not return JSON response');
+        }
         
         // Show success message
         await Swal.fire({

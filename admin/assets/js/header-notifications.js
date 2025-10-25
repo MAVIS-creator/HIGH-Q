@@ -1,22 +1,22 @@
 // Initialize notifications
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const btn = document.getElementById('notifBtn');
     if (!btn) return;
 
     // Create dropdown container
     const wrap = document.createElement('div');
     wrap.className = 'notif-dropdown';
-
+    
     const panel = document.createElement('div');
     panel.className = 'notif-panel notification-list';
     panel.id = 'notifPanel';
     panel.style.maxHeight = '420px';
     panel.style.overflow = 'auto';
-
+    
     // Clone button and add to wrapper
     wrap.appendChild(btn.cloneNode(true));
     wrap.appendChild(panel);
-
+    
     // Replace original button with wrapper
     const orig = btn.parentNode;
     orig.replaceChild(wrap, btn);
@@ -27,51 +27,23 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-           // Force use of the original unpatched fetch
-const res = await (
-  window._fetch
-    ? window._fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' })
-    : fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' })
-);
-
-// Always wait for the JSON to finish parsing
-let data = await res.json().catch(err => {
-  console.error("Failed to parse JSON:", err);
-  return null;
-});
-
-console.log("Notifications response:", data);
-
-if (!data || typeof data !== 'object') {
-  console.warn("Unexpected notifications response", data);
-  return;
-}
-
-// Continue rendering notifications...
-
-            // Normalize response: hqFetchCompat may return parsed object under _parsed
-            data = null;
-            if (res && res._parsed) {
-                data = res._parsed;
-            } else if (res && typeof res.text === 'function') {
-                if (!res.ok) {
-                    console.warn('Notifications endpoint returned HTTP', res.status);
-                    return;
-                }
-                const txt = await res.text();
-                try {
-                    data = JSON.parse(txt);
-                } catch (err) {
-                    console.error('Notifications API returned non-JSON response:', txt);
-                    panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
-                    return;
-                }
-            } else {
-                console.error('Unexpected notifications response', res);
-                panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+            const res = await fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' });
+            if (!res.ok) {
+                console.warn('Notifications endpoint returned HTTP', res.status);
                 return;
             }
 
+            // Read as text first so we can show raw HTML errors (PHP notices) in console instead of causing an unhandled JSON parse exception
+            const txt = await res.text();
+            let data;
+            try {
+                data = JSON.parse(txt);
+            } catch (err) {
+                console.error('Notifications API returned non-JSON response:', txt);
+                panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                return;
+            }
+            
             // Update badge
             const count = data.notifications?.length || 0;
             badge.style.display = count > 0 ? 'inline-block' : 'none';
@@ -97,7 +69,7 @@ if (!data || typeof data !== 'object') {
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
                 item.href = `/HIGH-Q/admin/${data.urls[n.type]}${n.id}`;
-
+                
                 const title = document.createElement('div');
                 title.className = 'notification-title';
                 title.textContent = n.title || '';
@@ -118,14 +90,18 @@ if (!data || typeof data !== 'object') {
                 panel.appendChild(item);
 
                 // Add click handler
-                item.addEventListener('click', async function (e) {
+                item.addEventListener('click', async function(e) {
                     e.preventDefault();
                     // Mark as read
                     const formData = new FormData();
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }));
+                        await fetch('/HIGH-Q/admin/api/mark_read.php', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'same-origin'
+                        });
                         // Add read class for visual feedback
                         item.classList.add('read');
                         // Update the badge count
@@ -147,28 +123,32 @@ if (!data || typeof data !== 'object') {
             // wire up Mark all button
             const markAllBtn = panel.querySelector('.mark-all');
             if (markAllBtn) {
-                markAllBtn.addEventListener('click', async function (ev) {
+                markAllBtn.addEventListener('click', async function(ev) {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    markAllBtn.disabled = true;
+                    markAllBtn.disabled = true; 
                     markAllBtn.textContent = 'Marking...';
                     try {
                         // Send mark_read for each notification
                         const ops = data.notifications.map(n => {
-                            const fd = new FormData();
-                            fd.append('type', n.type);
+                            const fd = new FormData(); 
+                            fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }));
+                            return fetch('/HIGH-Q/admin/api/mark_read.php', {
+                                method: 'POST', 
+                                body: fd, 
+                                credentials: 'same-origin'
+                            });
                         });
                         await Promise.all(ops);
-
+                        
                         // Update UI to show all as read
                         panel.querySelectorAll('.notification-item').forEach(item => {
                             item.classList.add('read');
                         });
                         badge.style.display = 'none';
                         badge.textContent = '0';
-
+                        
                         markAllBtn.textContent = 'All read';
                         setTimeout(() => {
                             markAllBtn.textContent = 'Mark all as read';
@@ -176,19 +156,19 @@ if (!data || typeof data !== 'object') {
                         }, 2000);
                     } catch (e) {
                         console.error('Failed to mark all as read', e);
-                        markAllBtn.disabled = false;
+                        markAllBtn.disabled = false; 
                         markAllBtn.textContent = 'Mark all as read';
                     }
                 });
             }
-        } catch (e) {
+        } catch(e) {
             console.error('Error loading notifications:', e);
             panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
         }
     }
 
     // Toggle panel and load notifications
-    wrap.querySelector('button').addEventListener('click', function (e) {
+    wrap.querySelector('button').addEventListener('click', function(e) {
         e.stopPropagation();
         const isVisible = panel.style.display === 'block';
         panel.style.display = isVisible ? 'none' : 'block';
@@ -196,7 +176,7 @@ if (!data || typeof data !== 'object') {
     });
 
     // Close on outside click
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
         if (!wrap.contains(e.target)) {
             panel.style.display = 'none';
         }
