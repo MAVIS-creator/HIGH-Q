@@ -136,6 +136,15 @@
             var wrapper = {
                 ok: true,
                 status: 200,
+                // minimal headers-like object for code that expects resp.headers.get(...)
+                headers: {
+                    get: function(name) {
+                        if (!name) return null;
+                        var n = String(name).toLowerCase();
+                        if (n === 'content-type') return isObj ? 'application/json' : 'text/html';
+                        return null;
+                    }
+                },
                 // return parsed for json(); if parsed is string, attempt parse
                 json: function() {
                     return new Promise(function(resolve, reject){
