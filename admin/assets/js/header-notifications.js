@@ -28,9 +28,26 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
            // Force use of the original unpatched fetch
-const res = await window._fetch
-  ? window._fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' })
-  : fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' });
+const res = await (
+  window._fetch
+    ? window._fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' })
+    : fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' })
+);
+
+// Always wait for the JSON to finish parsing
+const data = await res.json().catch(err => {
+  console.error("Failed to parse JSON:", err);
+  return null;
+});
+
+console.log("Notifications response:", data);
+
+if (!data || typeof data !== 'object') {
+  console.warn("Unexpected notifications response", data);
+  return;
+}
+
+// Continue rendering notifications...
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
             let data = null;
