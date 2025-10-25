@@ -451,13 +451,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
 
       // Optional payment creation: admin may include create_payment=1 and amount in POST (AJAX)
       if (!empty($_POST['create_payment']) && !empty($_POST['amount'])) {
-        $amount = floatval($_POST['amount']);
+  $amount = floatval($_POST['amount']);
         $method = $_POST['method'] ?? 'bank';
         // create payment placeholder and send reference to registrant email
         $ref = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-        $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
-        $ins->execute([$amount, $method, $ref]);
-        $paymentId = $pdo->lastInsertId();
+  // apply random surcharge to the payment amount
+  $surcharge = round(mt_rand(1, 16754) / 100, 2);
+  $amount_with_surcharge = round($amount + $surcharge, 2);
+  $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+  $ins->execute([$amount_with_surcharge, $method, $ref]);
+  $paymentId = $pdo->lastInsertId();
+  // try to persist surcharge into metadata (best-effort)
+  try { $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?')->execute([$surcharge, $paymentId]); } catch (Throwable $_) {}
+  // update amount variable used in emails
+  $amount = $amount_with_surcharge;
         logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
 
           // send email to registrant with link to payments_wait (if email present)
