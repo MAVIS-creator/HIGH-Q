@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const notifUrl = adminApiBase + '/api/notifications.php';
+            const notifUrl = (typeof window.adminApi === 'function') ? window.adminApi('notifications.php') : (adminApiBase + '/api/notifications.php');
             const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notifUrl, { credentials: 'same-origin' }) : fetch(notifUrl, { credentials: 'same-origin' }));
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            var markUrl = adminApiBase + '/api/mark_read.php';
+                            var markUrl = (typeof window.adminApi === 'function') ? window.adminApi('mark_read.php') : (adminApiBase + '/api/mark_read.php');
                             return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markUrl, { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch(markUrl, { method: 'POST', body: fd, credentials: 'same-origin' }));
                         });
                         await Promise.all(ops);
