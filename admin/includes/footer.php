@@ -92,7 +92,12 @@
         opts = opts || {};
         opts.credentials = opts.credentials || 'same-origin';
         return fetch(url, opts).then(function(resp) {
-            var ct = resp.headers.get('Content-Type') || '';
+            var ct = '';
+            try {
+                if (resp && resp.headers && typeof resp.headers.get === 'function') ct = resp.headers.get('Content-Type') || '';
+                else if (resp && resp._parsed) ct = 'application/json';
+                else if (typeof resp === 'string') ct = 'text/html';
+            } catch(e) { ct = ''; }
             if (resp.status === 401 || resp.status === 403) {
                 return resp.json().catch(function(){ return null; }).then(function(j){
                     if (window.hqAjaxAuthHandler.handleJsonAuthError(j)) { window.hqAjaxAuthHandler.redirectToLoginWithReturn(); throw new Error('auth'); }
@@ -185,7 +190,12 @@
     if (_fetch) {
         window.fetch = function(input, init){
             return _fetch(input, init).then(function(resp){
-                var ct = resp.headers.get('Content-Type') || '';
+                var ct = '';
+                try {
+                    if (resp && resp.headers && typeof resp.headers.get === 'function') ct = resp.headers.get('Content-Type') || '';
+                    else if (resp && resp._parsed) ct = 'application/json';
+                    else if (typeof resp === 'string') ct = 'text/html';
+                } catch(e) { ct = ''; }
                 if (resp.status === 401 || resp.status === 403) {
                     // try parse JSON, else redirect
                     return resp.clone().text().then(function(txt){
