@@ -3,14 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const notificationList = document.querySelector('.notification-list');
     if (!notificationList) return;
 
-    // Compute admin API base (use injected window.HQ_BASE_URL when present)
-    var adminApiBase = (function(){
-        try {
-            if (window.HQ_BASE_URL && window.HQ_BASE_URL.length) return window.HQ_BASE_URL.replace(/\/$/, '') + '/admin';
-            if (location.pathname.indexOf('/admin') !== -1) return location.protocol + '//' + location.host + location.pathname.split('/admin')[0] + '/admin';
-            return '/admin';
-        } catch(e) { return '/admin'; }
-    })();
+    // Compute admin API base (use injected helper when available)
+    var adminApiBase = null;
+    try {
+        if (typeof window.adminApi === 'function') adminApiBase = null;
+        else if (window.HQ_BASE_URL && window.HQ_BASE_URL.length) adminApiBase = window.HQ_BASE_URL.replace(/\/$/, '') + '/admin';
+        else if (location.pathname.indexOf('/admin') !== -1) adminApiBase = location.protocol + '//' + location.host + location.pathname.split('/admin')[0] + '/admin';
+        else adminApiBase = '/admin';
+    } catch(e) { adminApiBase = '/admin'; }
 
     notificationList.addEventListener('click', async function(e) {
         const notificationItem = e.target.closest('[data-notification-id]');
