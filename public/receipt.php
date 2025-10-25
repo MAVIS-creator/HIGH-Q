@@ -1,8 +1,6 @@
 <?php
 // public/receipt.php - simple colored receipt page
 require_once __DIR__ . '/config/db.php';
-// helpers (hq_public_url, etc.)
-require_once __DIR__ . '/config/functions.php';
 $ref = $_GET['ref'] ?? '';
 if (!$ref) { http_response_code(400); echo "Missing reference"; exit; }
 $stmt = $pdo->prepare('SELECT p.*, sr.first_name, sr.last_name, sr.email AS reg_email, sr.passport_path FROM payments p LEFT JOIN student_registrations sr ON sr.id = p.student_id WHERE p.reference = ? LIMIT 1');
@@ -44,12 +42,12 @@ if (!$p) { http_response_code(404); echo "Receipt not found"; exit; }
     <div><strong>Email:</strong> <?= htmlspecialchars($p['reg_email'] ?? $p['email'] ?? '') ?></div>
     <div><strong>Account:</strong> <?= htmlspecialchars($p['payer_account_number'] ?? '') ?> (<?= htmlspecialchars($p['payer_bank_name'] ?? '') ?>)</div>
     <?php if (!empty($p['receipt_path'])): ?>
-      <p><a href="<?= htmlspecialchars(function_exists('hq_public_url') ? hq_public_url($p['receipt_path']) : $p['receipt_path']) ?>" target="_blank">Download receipt file</a></p>
+      <p><a href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download receipt file</a></p>
     <?php endif; ?>
     <?php if (!empty($p['passport_path'])): ?>
       <hr>
       <h4>Passport</h4>
-      <img src="<?= htmlspecialchars(function_exists('hq_public_url') ? hq_public_url($p['passport_path']) : $p['passport_path']) ?>" alt="passport" style="width:140px;border-radius:4px;border:1px solid #eee">
+      <img src="<?= htmlspecialchars($p['passport_path']) ?>" alt="passport" style="width:140px;border-radius:4px;border:1px solid #eee">
     <?php endif; ?>
     <hr>
     <p style="margin-top:12px"><a class="btn" href="javascript:window.print()">Print / Save as PDF</a> <a class="btn" href="index.php">Return to site</a></p>

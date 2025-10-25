@@ -322,7 +322,7 @@ function openModal(mode, role = {}) {
 
   if (mode === 'edit') {
     modalTitle.textContent = 'Edit Role';
-  roleForm.action = window.adminUrl('roles', { action: 'edit', id: role.id });
+  roleForm.action = `index.php?pages=roles&action=edit&id=${role.id}`;
     nameInput.value = role.name;
     slugInput.value = role.slug;
     maxInput.value  = role.max_count || '';
@@ -334,7 +334,7 @@ function openModal(mode, role = {}) {
     });
   } else {
     modalTitle.textContent = 'New Role';
-  roleForm.action = window.adminUrl('roles', { action: 'create' });
+  roleForm.action = 'index.php?pages=roles&action=create';
     nameInput.value = '';
     slugInput.value = '';
     maxInput.value  = '';
@@ -383,7 +383,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   if (!res.isConfirmed) return;
   const fd = new FormData(); fd.append('action','delete'); fd.append('csrf_token','<?= $csrf ?>');
   // Post to this page (roles.php) so server-side handler in this file processes it and returns JSON when requested
-  var xhr = new XMLHttpRequest(); xhr.open('POST', window.adminUrl('roles', { action: 'delete', id: encodeURIComponent(id) }), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  var xhr = new XMLHttpRequest(); xhr.open('POST','index.php?pages=roles&action=delete&id='+encodeURIComponent(id), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ try{ var j = JSON.parse(xhr.responseText||'{}'); } catch(e){ j=null; }
       if (xhr.status===200 && j && (j.status==='ok' || j.success===true)) { Swal.fire('Removed','Role removed','success').then(()=> location.reload()); }
       else { Swal.fire('Failed','Could not remove role','error'); }

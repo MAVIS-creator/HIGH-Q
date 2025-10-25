@@ -275,8 +275,7 @@ $users = $pdo->query("
     ?>
     <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
       <div class="user-avatar">
-  <?php $userAvatar = $u['avatar'] ?? null; if (!$userAvatar) $userAvatar = (isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/assets/images/hq-logo.jpeg'; else if (strpos($userAvatar, 'http') !== 0) $userAvatar = rtrim($HQ_BASE_URL, '/') . '/' . ltrim($userAvatar, '/'); ?>
-  <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar">
+        <img src="<?= $u['avatar'] ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg' ?>" alt="Avatar">
       </div>
       <div class="user-info">
         <div class="user-name"><?= htmlspecialchars($u['name']) ?></div>
@@ -348,7 +347,7 @@ $users = $pdo->query("
     <!-- View Tab -->
     <div id="viewTab" class="tab-pane active">
       <div class="profile-header">
-  <img id="mAvatar" src="<?= htmlspecialchars((isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/assets/images/hq-logo.jpeg') ?>" alt="Avatar">
+  <img id="mAvatar" src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Avatar">
         <div>
           <h3 id="mName">Name</h3>
           <p id="mRole" class="role-badge role-student">Role</p>
@@ -431,7 +430,7 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(window.adminUrl('users', { action: 'view', id: id }), { credentials: 'same-origin' }) : fetch(window.adminUrl('users', { action: 'view', id: id }), { credentials: 'same-origin' }));
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' }) : fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' }));
   let data = null;
   try {
     if (res && res._parsed) data = res._parsed;
@@ -463,11 +462,11 @@ async function loadUser(id, mode='view'){
   document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
   document.getElementById('mPosts').textContent = data.posts_count;
   document.getElementById('mComments').textContent = data.comments_count;
-  document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : (window.HQ_BASE_URL ? window.HQ_BASE_URL + '/public/assets/images/hq-logo.jpeg' : '<?= addslashes((isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/assets/images/hq-logo.jpeg') ?>');
+  document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "/HIGH-Q/public/assets/images/hq-logo.jpeg";
 
   // Fill edit form
   const form = document.getElementById('editForm');
-  form.action = window.adminUrl('users', { action: 'edit', id: data.id });
+  form.action = `index.php?pages=users&action=edit&id=${data.id}`;
   document.getElementById('fName').value = data.name;
   document.getElementById('fEmail').value = data.email;
   document.getElementById('fRole').value = data.role_id ?? '';

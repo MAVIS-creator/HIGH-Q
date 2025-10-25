@@ -57,27 +57,6 @@
 })();
 </script>
 
-<script>
-// adminUrl helper: builds admin router URLs like /admin/index.php?pages=... using window.HQ_BASE_URL when available
-(function(){
-    if (!window.HQ_BASE_URL) {
-        // attempt to derive from location if not injected
-        try { window.HQ_BASE_URL = (location.protocol + '//' + location.host + (location.pathname.indexOf('/admin')!==-1 ? location.pathname.split('/admin')[0] : '')).replace(/\/$/, ''); } catch(e) { window.HQ_BASE_URL = ''; }
-    }
-    window.adminUrl = function(page, params){
-        page = page || '';
-        var qp = '';
-        if (params && typeof params === 'object') {
-            var parts = [];
-            for (var k in params) if (params.hasOwnProperty(k)) parts.push(encodeURIComponent(k)+'='+encodeURIComponent(params[k]));
-            if (parts.length) qp = '&' + parts.join('&');
-        }
-        var base = (window.HQ_BASE_URL ? window.HQ_BASE_URL.replace(/\/$/,'') + '/admin/index.php?pages=' + encodeURIComponent(page) : 'index.php?pages=' + encodeURIComponent(page));
-        return base + qp;
-    };
-})();
-</script>
-
 <!-- Global AJAX auth helper: parse JSON error responses and redirect to login with return_to -->
 <script>
     window.hqAjaxAuthHandler = {

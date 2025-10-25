@@ -23,25 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const badge = wrap.querySelector('#notifBadge');
 
-    // Compute absolute admin API base to avoid relative-path resolution issues
-    var adminApiBase = (function(){
-        try {
-            if (window.HQ_BASE_URL && window.HQ_BASE_URL.length) {
-                return window.HQ_BASE_URL.replace(/\/$/, '') + '/admin';
-            }
-            // derive from location.path
-            var prefix = '';
-            if (location.pathname.indexOf('/admin') !== -1) prefix = location.pathname.split('/admin')[0];
-            return location.protocol + '//' + location.host + (prefix ? prefix.replace(/\/$/, '') + '/admin' : '/admin');
-        } catch(e) { return '/admin'; }
-    })();
-
     // Function to load and display notifications
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const notifUrl = (typeof window.adminApi === 'function') ? window.adminApi('notifications.php') : (adminApiBase + '/api/notifications.php');
-            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notifUrl, { credentials: 'same-origin' }) : fetch(notifUrl, { credentials: 'same-origin' }));
+            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/notifications.php', { credentials: 'same-origin' }) : fetch('api/notifications.php', { credentials: 'same-origin' }));
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
             let data = null;
@@ -90,9 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.className = 'notification-item ' + (n.is_read ? 'read' : '');
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
-                // Build absolute admin page link using adminUrl helper when available
-                var pageLink = (typeof window.adminUrl === 'function') ? window.adminUrl(data.urls[n.type], { id: n.id }) : ('index.php?pages=' + encodeURIComponent(data.urls[n.type]) + '&id=' + encodeURIComponent(n.id));
-                item.href = pageLink;
+                // Build relative admin link (index router)
+                item.href = `index.php?pages=${data.urls[n.type]}&id=${n.id}`;
                 
                 const title = document.createElement('div');
                 title.className = 'notification-title';
@@ -121,8 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        var markUrl = adminApiBase + '/api/mark_read.php';
-                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markUrl, { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch(markUrl, { method: 'POST', body: formData, credentials: 'same-origin' }));
+                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch('api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }));
                         // Add read class for visual feedback
                         item.classList.add('read');
                         // Update the badge count
@@ -155,8 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            var markUrl = (typeof window.adminApi === 'function') ? window.adminApi('mark_read.php') : (adminApiBase + '/api/mark_read.php');
-                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markUrl, { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch(markUrl, { method: 'POST', body: fd, credentials: 'same-origin' }));
+                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch('api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }));
                         });
                         await Promise.all(ops);
                         

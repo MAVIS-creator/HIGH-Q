@@ -39,10 +39,8 @@ $stmt = $pdo->prepare('SELECT email, unsubscribe_token FROM newsletter_subscribe
 $stmt->execute();
 $subs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 foreach ($subs as $sub) {
-    $appBase = rtrim($_ENV['APP_URL'] ?? '', '/');
-    if ($appBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $appBase = rtrim($proto . '://' . $host, '/'); }
-    $unsubscribeUrl = $appBase . '/public/unsubscribe_newsletter.php?token=' . urlencode($sub['unsubscribe_token']);
-    $postUrl = $appBase . '/post.php?id=' . $postId;
+    $unsubscribeUrl = 'http://localhost/HIGH-Q/public/unsubscribe_newsletter.php?token=' . urlencode($sub['unsubscribe_token']);
+    $postUrl = 'http://localhost/HIGH-Q/post.php?id=' . $postId;
     $html = "<p>Hi,</p><p>A new article was published: <strong>$postTitle</strong></p>";
     $html .= "<p>$postExcerpt</p>";
     $html .= "<p><a href='$postUrl'>Read the full article</a></p>";

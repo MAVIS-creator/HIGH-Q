@@ -7,8 +7,7 @@ http_response_code(403);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>403 Forbidden - HIGH Q SOLID ACADEMY</title>
-    <?php $appBase = rtrim($_ENV['APP_URL'] ?? '', '/'); if ($appBase === '') $appBase = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'); ?>
-    <link rel="stylesheet" href="<?= $appBase ?>/public/assets/css/public.css">
+    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
     <style>
         .error-container {
             min-height: 60vh;

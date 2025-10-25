@@ -4,6 +4,8 @@ require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
+
+define('BASE_URL', '/HIGH-Q');
 $pageTitle = 'Tutors';
 $pageSubtitle = 'Manage tutor profiles and listings';
 
@@ -357,7 +359,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
 
             <div class="tutor-photo">
               <?php
-              $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : ((isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/assets/images/hq-logo.jpeg');
+              $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '/HIGH-Q/public/assets/images/hq-logo.jpeg';
               ?>
               <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
             </div>
@@ -404,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
     <div class="modal-content">
       <span class="modal-close" id="tutorModalClose"><i class="bx bx-x"></i></span>
       <h3 id="tutorModalTitle">Add New Tutor</h3>
-  <form id="tutorForm" method="post" action="<?= htmlspecialchars($_ENV['APP_URL'] ?? '') ? '' : '' ?>">
+    <form id="tutorForm" method="post" action="index.php?pages=tutors&action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
         <div class="form-row split-2">
@@ -480,7 +482,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
       tutorModal.classList.add('open');
       if (mode === 'edit') {
         modalTitle.textContent = 'Edit Tutor';
-  tutorForm.action = window.adminUrl('tutors', { action: 'edit', id: data.id });
+        tutorForm.action = `index.php?pages=tutors&action=edit&id=${data.id}`;
         fields.name.value = data.name || '';
         fields.title.value = data.title || '';
         fields.subs.value = data.subjects || '';
@@ -489,7 +491,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
         fields.image.value = data.image || '';
       } else {
         modalTitle.textContent = 'Add Tutor';
-  tutorForm.action = window.adminUrl('tutors', { action: 'create' });
+        tutorForm.action = 'index.php?pages=tutors&action=create';
         Object.values(fields).forEach(f => f.value = '');
       }
     }
@@ -579,7 +581,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
 
 <script>
   function deleteTutor(id, name) {
-    const BASE_URL = <?= json_encode(isset($HQ_BASE_URL) ? $HQ_BASE_URL : rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')) ?>;
+    const BASE_URL = "<?= BASE_URL ?>";
     Swal.fire({
       title: "Delete Tutor?",
       text: "Are you sure you want to delete " + name + "?",
@@ -592,7 +594,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
       if (result.isConfirmed) {
         const form = document.createElement("form");
         form.method = "POST";
-  form.action = window.adminUrl('tutors', { action: 'delete', id: id });
+        form.action = `index.php?pages=tutors&action=delete&id=${id}`;
 
         const csrfInput = document.createElement("input");
         csrfInput.type = "hidden";
@@ -607,13 +609,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
   }
 
   function editTutor(id) {
-    const BASE_URL = <?= json_encode(isset($HQ_BASE_URL) ? $HQ_BASE_URL : rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')) ?>;
+    const BASE_URL = "<?= BASE_URL ?>";
     const card = document.querySelector(`.tutor-card[data-id='${id}']`);
     if (!card) return;
 
     document.getElementById('tutorModalTitle').textContent = 'Edit Tutor';
     const form = document.getElementById('tutorForm');
-  form.action = window.adminUrl('tutors', { action: 'edit', id: id });
+    form.action = `index.php?pages=tutors&action=edit&id=${id}`;
     document.getElementById('tName').value = card.dataset.name || '';
     document.getElementById('tTitle').value = card.dataset.title || '';
     document.getElementById('tSubjects').value = card.dataset.subjects || '';

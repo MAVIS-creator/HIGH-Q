@@ -78,8 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             if (strpos($type, 'image/') === 0) {
               $updHtml = '<br><img src="' . $url . '" style="max-width:100%;border-radius:8px">';
             } else {
-              $downloadPath = (isset($HQ_BASE_URL) ? rtrim($HQ_BASE_URL, '/') : '') . '/public/download_attachment.php?file=' . urlencode($nameSafe);
-              $updHtml = '<br><a href="' . htmlspecialchars($downloadPath) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
+              $updHtml = '<br><a href="/HIGH-Q/public/download_attachment.php?file=' . urlencode($nameSafe) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
             }
             $upd = $pdo->prepare('UPDATE chat_messages SET message = CONCAT(message, ?) WHERE id = ?');
             $upd->execute([$updHtml, $messageId]);
@@ -162,7 +161,7 @@ function claim(id){
     fd.append('_csrf','<?= generateToken('chat_form') ?>');
 
   var xhr=new XMLHttpRequest();
-  xhr.open('POST', window.adminUrl('chat'), true);
+  xhr.open('POST','../index.php?pages=chat',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
 
     xhr.onload=function(){

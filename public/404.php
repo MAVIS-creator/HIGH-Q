@@ -7,8 +7,7 @@ require_once __DIR__ . '/includes/header.php';
     <h2>Page Not Found</h2>
     <p style="color:#666;margin:20px 0 30px">The page you're looking for doesn't exist or has been moved.</p>
     <div>
-    <?php $appBase = rtrim($_ENV['APP_URL'] ?? '', '/'); if ($appBase === '') { $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; $appBase = rtrim($proto . '://' . $host, '/'); } ?>
-    <a href="<?= htmlspecialchars($appBase) ?>/public/home.php" class="btn-primary">Go Home</a>
+        <a href="/HIGH-Q/public/home.php" class="btn-primary">Go Home</a>
     </div>
 </div>
 
