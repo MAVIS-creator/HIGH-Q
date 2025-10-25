@@ -89,54 +89,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // add header with Mark all as read control
             const headerBar = document.createElement('div');
-            headerBar.className = 'notif-panel-header';
-            headerBar.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid #f1f1f1;background:#fafafa"><strong style="font-size:13px">Notifications</strong><div><button class="mark-all" style="background:none;border:none;color:#007bff;cursor:pointer;padding:4px 8px">Mark all as read</button></div></div>';
-            panel.appendChild(headerBar);
-            if (!data.notifications || data.notifications.length === 0) {
-                panel.innerHTML = '<div class="notif-empty">No notifications</div>';
-                return;
-            }
+                    // include credentials so session cookie is sent and the API can authenticate the admin
+                    const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notificationsEndpoint, { credentials: 'same-origin' }) : (fetch(notificationsEndpoint, { credentials: 'same-origin' }).catch(err => { console.error('Notifications fetch failed', err); return null; })));
 
-            // Create notification items
-            data.notifications.forEach(n => {
-                const item = document.createElement('a');
-                item.className = 'notification-item ' + (n.is_read ? 'read' : '');
-                item.setAttribute('data-notification-id', n.id);
-                item.setAttribute('data-notification-type', n.type);
-                // Build relative admin link (index router)
-                item.href = `index.php?pages=${data.urls[n.type]}&id=${n.id}`;
-                
-                const title = document.createElement('div');
-                title.className = 'notification-title';
-                title.textContent = n.title || '';
+                    // Quick normalization: handle parsed JSON returned directly, our compat wrapper, or a native Response
+                    if (!res) {
+                        panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                        return;
+                    }
 
-                const message = document.createElement('div');
-                message.className = 'notification-message';
-                message.textContent = n.message || '';
-
-                const time = document.createElement('div');
-                time.className = 'notification-time';
-                // Format the timestamp nicely
-                const date = new Date(n.created_at);
-                time.textContent = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-
-                item.appendChild(title);
-                item.appendChild(message);
-                item.appendChild(time);
-                panel.appendChild(item);
-
-                // Add click handler
-                item.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    // Mark as read
-                    const formData = new FormData();
-                    formData.append('type', n.type);
-                    formData.append('id', n.id);
-                    try {
-                        const markEndpoint = adminBase ? adminBase.replace(/\/$/, '') + '/api/mark_read.php' : 'api/mark_read.php';
-                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markEndpoint, { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch(markEndpoint, { method: 'POST', body: formData, credentials: 'same-origin' }));
-                        // Add read class for visual feedback
-                        item.classList.add('read');
+                    // If hqFetchCompat (or a polyfill) returned parsed JSON directly
+                    let data = null;
+                    if (res.notifications) {
+                        data = res;
+                    } else if (res._parsed) {
+                        data = res._parsed;
+                    } else {
+                        try {
+                            // assume native Response
+                            const txt = await res.text();
+                            data = JSON.parse(txt);
+                        } catch (err) {
+                            console.error('Failed to parse notifications response', err, res);
+                            panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                            return;
+                        }
+                    }
                         // Update the badge count
                         const curCount = parseInt(badge.textContent) || 0;
                         if (curCount > 0) {
