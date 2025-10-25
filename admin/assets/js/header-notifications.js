@@ -75,6 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
                 return;
             }
+            // Debug: log raw response so we can inspect wrappers/polyfills shapes in this environment
+            try { console.log('Notifications API raw response:', res); } catch (e) { /* ignore console errors */ }
             
             // Update badge
             const count = data.notifications?.length || 0;
