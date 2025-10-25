@@ -193,19 +193,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
 
   $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
 
-    // Build payment link (prefer APP_URL from environment if loaded)
-    $base = $GLOBALS['HQ_BASE_URL'] ?? null;
-    if (empty($base)) {
-      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-    }
-    // Prefer APP_URL from environment, otherwise build from request host
+    // Build payment link (prefer APP_URL or computed HQ_BASE_URL, otherwise fall back to request host)
     $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
     if (empty($base)) {
-      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+      $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+      $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+      $base = $proto . '://' . $host;
     }
     $base = rtrim($base, '/');
-    // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
-  $paymentLink = $base . '/pay/' . urlencode($ref);
+    // Build a public-facing URL to payments_wait page
+    $paymentLink = $base . '/pay/' . urlencode($ref);
 
     // Send email
     $email_sent = false;
@@ -471,10 +468,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
             } catch (Throwable $e) { /* ignore */ }
 
             $subject = $siteName . ' — Payment instructions for your registration';
-            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            // build link relative to public folder (best-effort)
-            $base = $proto . '://' . $host;
+            // prefer APP_URL/HQ_BASE_URL, otherwise fall back to request host
+            $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
+            if (empty($base)) {
+              $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+              $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+              $base = $proto . '://' . $host;
+            }
+            $base = rtrim($base, '/');
             $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
 
             // Branded HTML message
