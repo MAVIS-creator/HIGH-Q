@@ -23,11 +23,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const badge = wrap.querySelector('#notifBadge');
 
+    // Compute absolute admin API base to avoid relative-path resolution issues
+    var adminApiBase = (function(){
+        try {
+            if (window.HQ_BASE_URL && window.HQ_BASE_URL.length) {
+                return window.HQ_BASE_URL.replace(/\/$/, '') + '/admin';
+            }
+            // derive from location.path
+            var prefix = '';
+            if (location.pathname.indexOf('/admin') !== -1) prefix = location.pathname.split('/admin')[0];
+            return location.protocol + '//' + location.host + (prefix ? prefix.replace(/\/$/, '') + '/admin' : '/admin');
+        } catch(e) { return '/admin'; }
+    })();
+
     // Function to load and display notifications
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/notifications.php', { credentials: 'same-origin' }) : fetch('api/notifications.php', { credentials: 'same-origin' }));
+            const notifUrl = adminApiBase + '/api/notifications.php';
+            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notifUrl, { credentials: 'same-origin' }) : fetch(notifUrl, { credentials: 'same-origin' }));
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
             let data = null;
@@ -106,7 +120,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch('api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }));
+                        var markUrl = adminApiBase + '/api/mark_read.php';
+                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markUrl, { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch(markUrl, { method: 'POST', body: formData, credentials: 'same-origin' }));
                         // Add read class for visual feedback
                         item.classList.add('read');
                         // Update the badge count
@@ -139,7 +154,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch('api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }));
+                            var markUrl = adminApiBase + '/api/mark_read.php';
+                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markUrl, { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch(markUrl, { method: 'POST', body: fd, credentials: 'same-origin' }));
                         });
                         await Promise.all(ops);
                         
