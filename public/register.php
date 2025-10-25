@@ -562,7 +562,7 @@ $csrf = generateToken('signup_form');
 													</div>
 
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
-													<div class="section-body">
+														<div class="section-body" id="regularPersonal">
 																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Gender</label><select name="gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
 																									<div class="form-row">
@@ -943,6 +943,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	var regTypeInput = document.getElementById('registration_type_input');
 	var programsGrid = document.querySelector('.programs-grid');
 	var paymentSummary = document.querySelector('.payment-summary');
+	var regularPersonal = document.getElementById('regularPersonal');
 	if (!btnReg || !btnPost || !postSec || !regTypeInput) return;
 	function setRegular(){ 
 		postSec.style.display='none'; 
@@ -950,6 +951,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		btnReg.style.background='#f8fafc'; btnPost.style.background='#fff'; 
 		if (programsGrid) programsGrid.style.display = '';
 		if (paymentSummary) paymentSummary.style.display = '';
+		if (regularPersonal) regularPersonal.style.display = '';
 	}
 	function setPost(){ 
 		postSec.style.display='block'; 
@@ -957,6 +959,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		btnPost.style.background='#f8fafc'; btnReg.style.background='#fff'; 
 		if (programsGrid) programsGrid.style.display = 'none';
 		if (paymentSummary) paymentSummary.style.display = 'none';
+		if (regularPersonal) regularPersonal.style.display = 'none';
 	}
 	btnReg.addEventListener('click', setRegular);
 	btnPost.addEventListener('click', setPost);
