@@ -90,14 +90,39 @@ if (!function_exists('hq_app_base')) {
     function hq_app_base(): string {
         static $b = null;
         if ($b !== null) return $b;
+
+        // Prefer explicit APP_URL from environment
         $env = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: '';
         if (!empty($env)) { $b = rtrim($env, '/'); return $b; }
-        if (!empty($_SERVER['HTTP_HOST'])) {
-            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $b = $proto . '://' . $_SERVER['HTTP_HOST'];
+
+        // Derive from current request if available
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        if (!empty($host)) {
+            // Attempt to include any application path prefix (e.g. /HIGH-Q) by inspecting SCRIPT_NAME
+            $script = $_SERVER['SCRIPT_NAME'] ?? '';
+            $prefix = '';
+            if ($script !== '') {
+                // If script contains /admin, keep the path up to /admin as app prefix
+                $pos = strpos($script, '/admin');
+                if ($pos !== false) {
+                    $prefix = substr($script, 0, $pos);
+                } else {
+                    // fallback to dirname of script (may be /HIGH-Q/public or similar)
+                    $dir = rtrim(dirname($script), '\\/');
+                    // If dirname is just '/', treat as empty
+                    if ($dir !== '' && $dir !== '.') $prefix = $dir;
+                }
+            }
+            // ensure prefix begins with / if not empty
+            if ($prefix !== '' && $prefix[0] !== '/') $prefix = '/' . ltrim($prefix, '/');
+            $b = $proto . '://' . $host . rtrim($prefix, '/');
+            $b = rtrim($b, '/');
             return $b;
         }
-        $b = 'http://localhost';
+
+        // Last resort: empty string (avoid hard-coded localhost in production). Callers should handle empty base.
+        $b = '';
         return $b;
     }
 }
