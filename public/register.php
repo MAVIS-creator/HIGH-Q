@@ -418,6 +418,16 @@ $csrf = generateToken('signup_form');
 																									</div>
 																									<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
+																									<div class="form-row">
+																										<label>Gender</label>
+																										<select name="gender">
+																											<option value="">Prefer not to say</option>
+																											<option value="male" <?= (isset($gender) && $gender === 'male') ? 'selected' : '' ?>>Male</option>
+																											<option value="female" <?= (isset($gender) && $gender === 'female') ? 'selected' : '' ?>>Female</option>
+																											<option value="other" <?= (isset($gender) && $gender === 'other') ? 'selected' : '' ?>>Other</option>
+																											<option value="prefer_not_to_say" <?= (isset($gender) && $gender === 'prefer_not_to_say') ? 'selected' : '' ?>>Prefer not to say</option>
+																										</select>
+																									</div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
 
 													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
