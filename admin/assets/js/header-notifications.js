@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Debug: show raw response shape (helps determine if wrapper returns parsed JSON/string/Response)
             console.log('Notifications API raw response:', res);
+            console.log('🔍 DEBUG: raw res value =', res);
+console.log('🔍 DEBUG: res type =', typeof res);
+
             // Normalize response: support multiple shapes returned by different fetch wrappers
             // - hqFetchCompat returns a Response-like wrapper with _parsed
             // - some polyfills override fetch to return parsed JSON/string directly
