@@ -39,13 +39,20 @@ document.addEventListener('DOMContentLoaded', function() {
             let data = null;
             try {
                 if (res && res._parsed) {
-                    // our compat wrapper: parsed value is available
                     data = res._parsed;
+                } else if (typeof res === 'string') {
+                    try {
+                        data = JSON.parse(res);
+                    } catch (err) {
+                        console.error('Notifications API returned invalid string JSON:', res);
+                        panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                        return;
+                    }
                 } else if (res && typeof res === 'object' && !res.text) {
-                    // Some fetch wrappers/polyfills return parsed JSON directly (object)
+                    // already-parsed JSON object from a polyfill/wrapper
                     data = res;
-                } else if (res && typeof res.text === 'function') {
-                    // Native Response-like object
+                } else if (res && typeof res.text === 'function' && typeof res.ok === 'boolean') {
+                    // native Response-like
                     if (!res.ok) {
                         console.warn('Notifications endpoint returned HTTP', res.status);
                         return;
