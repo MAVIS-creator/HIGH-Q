@@ -73,32 +73,49 @@
             });
 
             var data = new FormData(this);
-            // Use hqFetch so auth errors are handled centrally (redirect with return_to)
-            if (typeof hqFetch !== 'function') {
-                // fallback to fetch if helper not available
-                fetch('/HIGH-Q/admin/api/save-settings.php', { method: 'POST', body: data, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then(function(r){ return r.text(); })
-                    .then(function(text){
-                        var parsed = tryParseJSONOrShowHtml(text);
-                        if (!parsed) return;
-                        if (parsed.status === 'ok') { Swal.fire({title: parsed.title||'Success', text: parsed.message||'Settings saved', icon:'success'}).then(()=>location.reload()); }
-                        else { Swal.fire({title: parsed.title||'Error', text: parsed.message||'Failed to save', icon:'error'}); }
-                    }).catch(function(err){ Swal.fire({title:'Error', text: err.message||'Network error', icon:'error'}); });
-            } else {
-                hqFetch('/HIGH-Q/admin/api/save-settings.php', { method: 'POST', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then(function(parsed){
-                        if (!parsed) return;
-                        if (parsed.status === 'ok') {
-                            Swal.fire({ title: parsed.title || 'Success', text: parsed.message || 'Settings saved successfully', icon: 'success' }).then(function(){ location.reload(); });
-                        } else {
-                            Swal.fire({ title: parsed.title || 'Error', text: parsed.message || 'Failed to save settings', icon: 'error' });
-                        }
-                    }).catch(function(err){
-                        // hqFetch already handles auth redirect; show generic error for others
-                        if (err && err.message && (err.message === 'auth' || err.message === 'auth-html')) return;
-                        Swal.fire({ title: 'Error', text: err.message || 'Network error occurred while saving settings', icon: 'error' });
+            var xhr = new XMLHttpRequest();
+            // Submit settings to the dedicated JSON endpoint to ensure JSON-only responses
+            xhr.open('POST', '/HIGH-Q/admin/api/save-settings.php', true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onload = function() {
+                var text = xhr.responseText || '';
+                var parsed = null;
+                try {
+                    parsed = tryParseJSONOrShowHtml(text);
+                } catch (err) {
+                    Swal.fire({title:'Error',text:err.message || 'Unexpected response',icon:'error'});
+                    return;
+                }
+                if (!parsed) return; // HTML preview was shown
+
+                if (xhr.status === 200 && parsed.status === 'ok') {
+                    Swal.fire({
+                        title: parsed.title || 'Success',
+                        text: parsed.message || 'Settings saved successfully',
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => { location.reload(); });
+                } else {
+                    Swal.fire({
+                        title: parsed.title || 'Error',
+                        text: parsed.message || 'Failed to save settings',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
                     });
-            }
+                }
+            };
+
+            xhr.onerror = function() {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Network error occurred while saving settings',
+                    icon: 'error',
+                    confirmButtonColor: '#d33'
+                });
+            };
+
+            xhr.send(data);
         });
 
         // Action handlers
@@ -117,18 +134,46 @@
                 didOpen: () => { Swal.showLoading(); }
             });
 
+            var xhr = new XMLHttpRequest();
+            // For runScan use the dedicated JSON-only endpoint to avoid HTML output from page includes
+            // Use dedicated JSON endpoint for runScan, otherwise post to the admin router so pages return JSON for AJAX
             var endpoint = (action === 'runScan') ? '/HIGH-Q/admin/api/run-scan.php' : '/HIGH-Q/admin/index.php?pages=settings';
-            if (typeof hqFetch !== 'function') {
-                fetch(endpoint, { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then(function(r){ return r.text(); })
-                    .then(function(text){
-                        var parsed = tryParseJSONOrShowHtml(text); if (!parsed) return; if (parsed.status === 'ok') { Swal.fire({title: parsed.title||'Success', text: parsed.message||'Action completed', icon:'success'}).then(()=>{ if (action === 'clearIPs' || action === 'clearLogs') location.reload(); }); } else { Swal.fire({title: parsed.title||'Error', text: parsed.message||'Action failed', icon:'error'}); }
-                    }).catch(function(err){ Swal.fire({ title: 'Error', text: err.message || 'Network error occurred', icon: 'error' }); });
-            } else {
-                hqFetch(endpoint, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then(function(parsed){ if (!parsed) return; if (parsed.status === 'ok') { Swal.fire({title: parsed.title||'Success', text: parsed.message||'Action completed', icon:'success'}).then(()=>{ if (action === 'clearIPs' || action === 'clearLogs') location.reload(); }); } else { Swal.fire({title: parsed.title||'Error', text: parsed.message||'Action failed', icon:'error'}); } })
-                    .catch(function(err){ if (err && (err.message==='auth' || err.message==='auth-html')) return; Swal.fire({ title: 'Error', text: err.message || 'Network error occurred', icon: 'error' }); });
-            }
+            xhr.open('POST', endpoint, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onload = function() {
+                var text = xhr.responseText || '';
+                var parsed = null;
+                try {
+                    parsed = tryParseJSONOrShowHtml(text);
+                } catch (err) {
+                    Swal.fire({title:'Error',text:err.message || 'Unexpected response',icon:'error'});
+                    return;
+                }
+                if (!parsed) return; // HTML preview was shown
+
+                if (xhr.status === 200 && parsed.status === 'ok') {
+                    Swal.fire({
+                        title: parsed.title || 'Success',
+                        text: parsed.message || 'Action completed successfully',
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => { if (action === 'clearIPs' || action === 'clearLogs') location.reload(); });
+                } else {
+                    Swal.fire({
+                        title: parsed.title || 'Error',
+                        text: parsed.message || 'Action failed',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            };
+
+            xhr.onerror = function() {
+                Swal.fire({ title: 'Error', text: 'Network error occurred', icon: 'error', confirmButtonColor: '#d33' });
+            };
+
+            xhr.send(fd);
         }
 
         // Action button handlers (guard nulls)

@@ -11,9 +11,8 @@ if (file_exists(__DIR__ . '/../.env')) {
 }
 $site = $_ENV['ADMIN_RECAPTCHA_SITE_KEY'] ?? getenv('ADMIN_RECAPTCHA_SITE_KEY');
 $secret = $_ENV['ADMIN_RECAPTCHA_SECRET'] ?? getenv('ADMIN_RECAPTCHA_SECRET');
-$enabled = isset($_ENV['ADMIN_RECAPTCHA_ENABLED']) ? (strtolower($_ENV['ADMIN_RECAPTCHA_ENABLED']) === '1' || strtolower($_ENV['ADMIN_RECAPTCHA_ENABLED']) === 'true') : (getenv('ADMIN_RECAPTCHA_ENABLED') ? (strtolower(getenv('ADMIN_RECAPTCHA_ENABLED')) === '1' || strtolower(getenv('ADMIN_RECAPTCHA_ENABLED')) === 'true') : false);
 if ($site || $secret) {
-    return ['site_key' => $site ?: '', 'secret' => $secret ?: '', 'enabled' => $enabled];
+    return ['site_key' => $site ?: '', 'secret' => $secret ?: ''];
 }
 
 // Fallback to project config
@@ -21,4 +20,4 @@ if (file_exists(__DIR__ . '/../../config/recaptcha.php')) {
     return require __DIR__ . '/../../config/recaptcha.php';
 }
 
-return ['site_key'=>'','secret'=>'','enabled'=>false];
+return ['site_key'=>'','secret'=>''];

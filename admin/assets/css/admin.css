@@ -1,8 +1,5 @@
 :root {
   --hq-yellow: #ffd600;
-  --swal-bg: #fff7dd;
-  --swal-border: #ffda66;
-  --swal-button: #ffd600;
   --hq-yellow-light: #ffe566;
   --hq-red: #ff4b2b;
   --hq-black: #0a0a0a;
@@ -393,17 +390,6 @@ body {
 body.sidebar-collapsed .admin-sidebar {
   transform: translateX(-100%)
 }
-
-/* SweetAlert2 HQ theme */
-.hq-swal.swal2-popup {
-  background: var(--swal-bg) !important;
-  border: 2px solid var(--swal-border) !important;
-  box-shadow: 0 12px 36px rgba(11,37,64,0.16) !important;
-}
-.hq-swal .swal2-title { color: var(--hq-black); font-weight:800 }
-.hq-swal .swal2-html-container { color: #333 }
-.hq-swal .swal2-confirm { background: var(--swal-button) !important; color: #111 !important; border-radius: 8px !important; }
-.hq-swal .swal2-cancel { background: transparent !important; color: #333 !important; border: 1px solid rgba(0,0,0,0.08) !important }
 
 /* when sidebar is collapsed, allow header/footer to expand into the freed space */
 body.sidebar-collapsed .admin-header {
