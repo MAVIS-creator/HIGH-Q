@@ -100,11 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   // Insert payment placeholder using fallback helper
   $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
 
-    // Build link using loaded base URL if available
-    // Prefer APP_URL from environment, otherwise build from request host
+    // Build link preferring APP_URL or previously-computed HQ_BASE_URL, fall back to request host
     $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
     if (empty($base)) {
-      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+      $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+      $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+      $base = $proto . '://' . $host;
     }
     $base = rtrim($base, '/');
     // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
