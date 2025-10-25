@@ -183,6 +183,31 @@ if (!headers_sent()) {
         // Expose global base for admin JS code
         window.HQ_BASE_URL = <?= json_encode($HQ_BASE_URL) ?>;
     </script>
+    <script>
+        // adminApi helper: build absolute admin API URLs. Use HQ_BASE_URL when available.
+        (function(){
+            try {
+                var base = (window.HQ_BASE_URL && window.HQ_BASE_URL.length) ? window.HQ_BASE_URL.replace(/\/$/, '') : (location.protocol + '//' + location.host);
+                // ensure admin path
+                var adminRoot = base + '/admin';
+                window.adminApi = function(path) {
+                    path = (path || '').replace(/^\//, '');
+                    return adminRoot + '/api/' + path;
+                };
+                // lightweight adminUrl fallback (if footer not yet executed)
+                window.adminUrl = window.adminUrl || function(page, params){
+                    page = page || '';
+                    var qp = '';
+                    if (params && typeof params === 'object') {
+                        var parts = [];
+                        for (var k in params) if (params.hasOwnProperty(k)) parts.push(encodeURIComponent(k)+'='+encodeURIComponent(params[k]));
+                        if (parts.length) qp = '&' + parts.join('&');
+                    }
+                    return adminRoot + '/index.php?pages=' + encodeURIComponent(page) + qp;
+                };
+            } catch(e) { /* ignore */ }
+        })();
+    </script>
     <?php
     // Render flash messages (if any)
     if (function_exists('getFlash')) {
