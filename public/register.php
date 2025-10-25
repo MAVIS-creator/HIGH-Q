@@ -678,7 +678,7 @@ $csrf = generateToken('signup_form');
 																required
 															>
 															<label for="agreed_terms" class="terms-label">
-																<span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span>
+																<span>I agree to the <a href="./" target="_blank">terms and conditions</a></span>
 															</label>
 														</div>
 													</div>

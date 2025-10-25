@@ -188,8 +188,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'upload_receipt' && isset($_GE
     $upd->execute(["uploads/receipts/{$fileName}", $pid]);
   } else {
     $ref = 'RCPT-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-    $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, receipt_path, created_at) VALUES (?, 0, "bank_transfer", ?, "uploaded", ?, NOW())');
-    $ins->execute([$id, $ref, "uploads/receipts/{$fileName}"]); $pid = $pdo->lastInsertId();
+    // Always add a small random surcharge to payments
+    $surcharge = round(mt_rand(1, 16754) / 100, 2);
+    $amount_with_surcharge = round(0 + $surcharge, 2);
+    $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, receipt_path, created_at) VALUES (?, ?, "bank_transfer", ?, "uploaded", ?, NOW())');
+    $ins->execute([$id, $amount_with_surcharge, $ref, "uploads/receipts/{$fileName}"]); $pid = $pdo->lastInsertId();
+    try { $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?')->execute([$surcharge, $pid]); } catch (Throwable $_) {}
   }
 
   // Notify admins via log
