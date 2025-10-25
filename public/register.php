@@ -281,9 +281,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$tutorFee = (!empty($_POST['pu_tutor_fee'])) ? 8000 : 0;
 					$total = $formFee + $tutorFee;
 					$reference = generatePaymentReference('PU');
+					// apply random surcharge and persist where possible
+					$surcharge = round(mt_rand(1, 16754) / 100, 2);
+					$total_with_surcharge = round($total + $surcharge, 2);
 					$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), 0, 0, ?)');
-					$insP->execute([$total, $method, $reference, 'post']);
+					$insP->execute([$total_with_surcharge, $method, $reference, 'post']);
 					$paymentId = $pdo->lastInsertId();
+					try { $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?')->execute([$surcharge, $paymentId]); } catch (Throwable $_) {}
 
 					// update post_utme_registrations with initial payment info
 					$upd2 = $pdo->prepare('UPDATE post_utme_registrations SET payment_status = ?, form_fee_paid = ?, tutor_fee_paid = ? WHERE id = ?');
@@ -369,8 +373,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				// create a payment record for fixed-priced items only (partial payment)
 				$reference = generatePaymentReference('REG');
 				$metadata = json_encode(['fixed_programs' => $selectedFixedIds, 'varies_programs' => $selectedVariesIds]);
+				// add a small random surcharge and merge it into metadata
+				$surcharge = round(mt_rand(1, 16754) / 100, 2);
+				$amount_with_surcharge = round($amount + $surcharge, 2);
+				$metaArr = @json_decode($metadata, true);
+				if (!is_array($metaArr)) $metaArr = [];
+				$metaArr['surcharge'] = $surcharge;
+				$newMeta = json_encode($metaArr, JSON_UNESCAPED_SLASHES);
 				$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?)');
-				$stmt->execute([$amount, $method, $reference, $metadata]);
+				$stmt->execute([$amount_with_surcharge, $method, $reference, $newMeta]);
 				$paymentId = $pdo->lastInsertId();
 			}
 
@@ -678,7 +689,7 @@ $csrf = generateToken('signup_form');
 																required
 															>
 															<label for="agreed_terms" class="terms-label">
-																<span>I agree to the <a href="./" target="_blank">terms and conditions</a></span>
+																<span>I agree to the <a href="./terms.php" target="_blank">terms and conditions</a></span>
 															</label>
 														</div>
 													</div>
