@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // include credentials so session cookie is sent and the API can authenticate the admin
             const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notificationsEndpoint, { credentials: 'same-origin' }) : fetch(notificationsEndpoint, { credentials: 'same-origin' }));
 
+            // Debug: show raw response shape (helps determine if wrapper returns parsed JSON/string/Response)
+            console.log('Notifications API raw response:', res);
             // Normalize response: support multiple shapes returned by different fetch wrappers
             // - hqFetchCompat returns a Response-like wrapper with _parsed
             // - some polyfills override fetch to return parsed JSON/string directly
