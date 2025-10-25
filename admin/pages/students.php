@@ -1049,6 +1049,9 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 // Helper to POST action and reload
 async function postAction(url, formData){
   const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }) : fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }));
+  console.log('🔍 DEBUG: raw res value =', res);
+console.log('🔍 DEBUG: res type =', typeof res);
+
   let payload = null;
   try { payload = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : null); } catch (e) { payload = null; }
   if (!res.ok || !payload) {
