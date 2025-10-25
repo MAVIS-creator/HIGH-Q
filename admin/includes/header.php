@@ -191,8 +191,16 @@ if (!headers_sent()) {
                 // ensure admin path
                 var adminRoot = base + '/admin';
                 window.adminApi = function(path) {
-                    path = (path || '').replace(/^\//, '');
-                    return adminRoot + '/api/' + path;
+                    // If given a full absolute URL, return it unchanged
+                    if (typeof path === 'string' && /^https?:\/\//i.test(path)) return path;
+                    path = (path || '').toString();
+                    // strip leading slashes
+                    path = path.replace(/^\/+/, '');
+                    // if caller passed a path that already includes an 'api/' prefix, remove it to avoid double 'api/api'
+                    if (path.indexOf('api/') === 0) path = path.substr(4);
+                    // if caller passed '/admin/api/...' or 'admin/api/...' normalize to filename part
+                    if (path.indexOf('admin/api/') === 0) path = path.substr('admin/api/'.length);
+                    return adminRoot.replace(/\/$/, '') + '/api/' + path;
                 };
                 // lightweight adminUrl fallback (if footer not yet executed)
                 window.adminUrl = window.adminUrl || function(page, params){
