@@ -327,12 +327,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$fname = 'passport_' . $registrationId . '_' . time() . '.' . $ext;
 					$dst = $dstDir . '/' . $fname;
 					if (move_uploaded_file($u['tmp_name'], $dst)) {
-							// store a full absolute URL so admin views will render correctly when hosted
-							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-							$baseUrl = rtrim($proto . '://' . $host, '/');
-							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
-							$fullUrl = $baseUrl . $publicRel;
+							// store a public-relative path and build absolute URL using configured base
+							try {
+								$baseUrl = function_exists('hq_base_url') ? hq_base_url() : rtrim(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), '/');
+							} catch (Throwable $e) { $baseUrl = rtrim(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), '/'); }
+							$publicRel = '/uploads/passports/' . $fname;
+							$fullUrl = rtrim($baseUrl, '/') . $publicRel;
 							$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
 							$upd->execute([$fullUrl, $registrationId]);
 					}
