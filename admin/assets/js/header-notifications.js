@@ -35,7 +35,7 @@ const res = await (
 );
 
 // Always wait for the JSON to finish parsing
-const data = await res.json().catch(err => {
+let data = await res.json().catch(err => {
   console.error("Failed to parse JSON:", err);
   return null;
 });
@@ -50,7 +50,7 @@ if (!data || typeof data !== 'object') {
 // Continue rendering notifications...
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
-            let data = null;
+            data = null;
             if (res && res._parsed) {
                 data = res._parsed;
             } else if (res && typeof res.text === 'function') {
