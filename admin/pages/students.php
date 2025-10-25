@@ -13,29 +13,18 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
-if (!empty($earlyAction)) {
+  if (!empty($earlyAction)) {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
   header('Content-Type: application/json');
 
-  // Try to load APP_URL from .env if Dotenv is available, otherwise fall back to request host
-  $baseUrl = null;
-  if (class_exists('\Dotenv\\Dotenv')) {
-    try {
-      $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-      $dotenv->load();
-      $baseUrl = rtrim($_ENV['APP_URL'] ?? ($_ENV['APP_URL'] ?? ''), '/');
-    } catch (Throwable $e) {
-      // ignore dotenv load errors
-      $baseUrl = null;
-    }
-  }
-  if (empty($baseUrl)) {
+  // Prefer APP_URL or the computed global base; fall back to request host if necessary
+  $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
+  if (empty($base)) {
     $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $baseUrl = $proto . '://' . $host;
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $base = $proto . '://' . $host;
   }
-  // expose $baseUrl for later handlers in this file
-  $GLOBALS['HQ_BASE_URL'] = $baseUrl;
+  $GLOBALS['HQ_BASE_URL'] = rtrim($base, '/');
 }
 
   // Helper: insert payment row with fallback for databases where payments.id is not AUTO_INCREMENT
