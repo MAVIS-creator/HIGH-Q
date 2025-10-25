@@ -26,8 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to load and display notifications
     async function loadNotifications() {
         try {
+            // Build API endpoint using ADMIN_BASE when available to avoid incorrect relative resolution
+            const adminBase = (typeof window.ADMIN_BASE !== 'undefined' && window.ADMIN_BASE) ? window.ADMIN_BASE : '';
+            const notificationsEndpoint = adminBase ? adminBase.replace(/\/$/, '') + '/api/notifications.php' : 'api/notifications.php';
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/notifications.php', { credentials: 'same-origin' }) : fetch('api/notifications.php', { credentials: 'same-origin' }));
+            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notificationsEndpoint, { credentials: 'same-origin' }) : fetch(notificationsEndpoint, { credentials: 'same-origin' }));
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
             let data = null;
@@ -106,7 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch('api/mark_read.php', { method: 'POST', body: formData, credentials: 'same-origin' }));
+                        const markEndpoint = adminBase ? adminBase.replace(/\/$/, '') + '/api/mark_read.php' : 'api/mark_read.php';
+                        await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markEndpoint, { method: 'POST', body: formData, credentials: 'same-origin' }) : fetch(markEndpoint, { method: 'POST', body: formData, credentials: 'same-origin' }));
                         // Add read class for visual feedback
                         item.classList.add('read');
                         // Update the badge count
@@ -139,7 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch('api/mark_read.php', { method: 'POST', body: fd, credentials: 'same-origin' }));
+                            const markEndpointAll = adminBase ? adminBase.replace(/\/$/, '') + '/api/mark_read.php' : 'api/mark_read.php';
+                            return (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(markEndpointAll, { method: 'POST', body: fd, credentials: 'same-origin' }) : fetch(markEndpointAll, { method: 'POST', body: fd, credentials: 'same-origin' }));
                         });
                         await Promise.all(ops);
                         
