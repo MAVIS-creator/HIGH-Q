@@ -251,7 +251,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
     elseif (!empty($GLOBALS['HQ_BASE_URL'])) $hqBase = rtrim($GLOBALS['HQ_BASE_URL'], '/');
     else {
       $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-      $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+      $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
       $hqBase = rtrim($proto . '://' . $host, '/');
     }
   } catch (Throwable $e) { $hqBase = ''; }
