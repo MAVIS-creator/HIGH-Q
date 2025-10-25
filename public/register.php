@@ -121,9 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// $programs already read above
 	$agreed_terms = isset($_POST['agreed_terms']) ? 1 : 0;
 
-		// Determine registration type: 'regular' or 'post'
-		$registration_type = trim($_POST['registration_type'] ?? 'regular');
-
 	// Terms must be accepted
 	if (!$agreed_terms) { $errors[] = 'You must accept the terms and conditions to proceed.'; }
 
@@ -132,169 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$errors[] = 'Provide a valid contact email address.';
 	}
 
-	// Server-side validation for Post-UTME registrations
-	if ($registration_type === 'post') {
-		// Required basic fields
-		$pu_first = trim($_POST['pu_first_name'] ?? $_POST['first_name'] ?? '');
-		$pu_surname = trim($_POST['pu_surname'] ?? $_POST['last_name'] ?? '');
-		$pu_jamb_reg = trim($_POST['pu_jamb_reg'] ?? '');
-		$pu_jamb_score = trim($_POST['pu_jamb_score'] ?? '');
-		// collect O'Level subject entries
-		$pu_subjects = [];
-		for ($i=1;$i<=8;$i++) {
-			$sub = trim($_POST['pu_subj_' . $i] ?? '');
-			$gr = trim($_POST['pu_grade_' . $i] ?? '');
-			if ($sub !== '' || $gr !== '') $pu_subjects[] = ['subject'=>$sub,'grade'=>$gr];
-		}
-
-		if ($pu_first === '') $errors[] = 'Provide the applicant\'s first name for Post-UTME registration.';
-		if ($pu_surname === '') $errors[] = 'Provide the applicant\'s surname for Post-UTME registration.';
-		if ($pu_jamb_reg === '') $errors[] = 'Provide the applicant\'s JAMB registration number.';
-		if ($pu_jamb_score === '' || !is_numeric($pu_jamb_score)) $errors[] = 'Provide a valid JAMB score (numeric).';
-		// require at least 5 O'Level subjects with grades
-		$subjectCountWithGrade = 0;
-		foreach ($pu_subjects as $s) { if (!empty($s['subject']) && !empty($s['grade'])) $subjectCountWithGrade++; }
-		if ($subjectCountWithGrade < 5) $errors[] = 'Provide at least 5 O\'Level subjects with grades (enter both subject and grade).';
-		// optional: ensure WAEC token & serial if exam type WAEC and raw token provided
-		$examType = trim($_POST['pu_exam_type'] ?? '');
-		$waecToken = trim($_POST['pu_waec_token'] ?? '');
-		$waecSerial = trim($_POST['pu_waec_serial'] ?? '');
-		if (strtoupper($examType) === 'WAEC' && ($waecToken === '' && $waecSerial === '')) {
-			// not strictly required, but warn if missing — treat as notice not hard error (use errors[] for required)
-			// $errors[] = 'WAEC token and serial are recommended for WAEC exam type.';
-		}
-	}
-
 	if (empty($errors)) {
 		// create registration record without creating a site user account
 		try {
 			$pdo->beginTransaction();
-
-				// If post-utme registration save to post_utme_registrations table
-				if ($registration_type === 'post') {
-						// collect post-utme specific fields (map newly added inputs)
-						$pu = [];
-						$pu['institution'] = trim($_POST['pu_institution'] ?? null);
-						$pu['first_name'] = trim($_POST['pu_first_name'] ?? $first_name ?? null);
-						$pu['surname'] = trim($_POST['pu_surname'] ?? $last_name ?? null);
-						$pu['other_name'] = trim($_POST['pu_other_name'] ?? null);
-						$pu['gender'] = trim($_POST['pu_gender'] ?? null);
-						$pu['address'] = trim($_POST['pu_address'] ?? null);
-						$pu['dob'] = trim($_POST['pu_dob'] ?? null);
-						$pu['parent_phone'] = trim($_POST['pu_parent_phone'] ?? null);
-						$pu['email'] = trim($_POST['pu_email'] ?? $email_contact ?? null);
-						$pu['nin_number'] = trim($_POST['pu_nin'] ?? null);
-						$pu['local_government'] = trim($_POST['pu_local_government'] ?? null);
-						$pu['place_of_birth'] = trim($_POST['pu_place_of_birth'] ?? null);
-						$pu['nationality'] = trim($_POST['pu_nationality'] ?? null);
-						$pu['mode_of_entry'] = trim($_POST['pu_mode_of_entry'] ?? null);
-						$pu['notes'] = trim($_POST['pu_notes'] ?? null);
-						$pu['state_of_origin'] = trim($_POST['pu_state_of_origin'] ?? null);
-						$pu['marital_status'] = trim($_POST['pu_marital_status'] ?? null);
-						$pu['disability'] = trim($_POST['pu_disability'] ?? null);
-						$pu['religion'] = trim($_POST['pu_religion'] ?? null);
-						$pu['jamb_registration_number'] = trim($_POST['pu_jamb_reg'] ?? null);
-						$pu['jamb_score'] = intval($_POST['pu_jamb_score'] ?? 0) ?: null;
-						$pu['jamb_subjects'] = !empty($_POST['pu_jamb_subjects']) ? json_encode(array_map('trim', explode(',', $_POST['pu_jamb_subjects']))) : null;
-						$pu['course_first_choice'] = trim($_POST['pu_course_first'] ?? null);
-						$pu['course_second_choice'] = trim($_POST['pu_course_second'] ?? null);
-						$pu['institution_first_choice'] = trim($_POST['pu_institution_first'] ?? null);
-						$pu['father_name'] = trim($_POST['pu_father_name'] ?? null);
-						$pu['father_phone'] = trim($_POST['pu_father_phone'] ?? null);
-						$pu['mother_name'] = trim($_POST['pu_mother_name'] ?? null);
-						$pu['mother_phone'] = trim($_POST['pu_mother_phone'] ?? null);
-						$pu['parent_email'] = trim($_POST['pu_parent_email'] ?? null);
-						$pu['father_occupation'] = trim($_POST['pu_father_occupation'] ?? null);
-						$pu['mother_occupation'] = trim($_POST['pu_mother_occupation'] ?? null);
-						$pu['primary_school'] = trim($_POST['pu_primary_school'] ?? null);
-						$pu['primary_year_ended'] = trim($_POST['pu_primary_year_ended'] ?? null);
-						$pu['secondary_school'] = trim($_POST['pu_secondary_school'] ?? null);
-						$pu['secondary_year_ended'] = trim($_POST['pu_secondary_year_ended'] ?? null);
-						$pu['sponsor_name'] = trim($_POST['pu_sponsor_name'] ?? null);
-						$pu['sponsor_address'] = trim($_POST['pu_sponsor_address'] ?? null);
-						$pu['sponsor_email'] = trim($_POST['pu_sponsor_email'] ?? null);
-						$pu['sponsor_relationship'] = trim($_POST['pu_sponsor_relationship'] ?? null);
-						$pu['sponsor_phone'] = trim($_POST['pu_sponsor_phone'] ?? null);
-						$pu['nok_name'] = trim($_POST['pu_nok_name'] ?? null);
-						$pu['nok_address'] = trim($_POST['pu_nok_address'] ?? null);
-						$pu['nok_email'] = trim($_POST['pu_nok_email'] ?? null);
-						$pu['nok_relationship'] = trim($_POST['pu_nok_relationship'] ?? null);
-						$pu['nok_phone'] = trim($_POST['pu_nok_phone'] ?? null);
-						$pu['exam_type'] = trim($_POST['pu_exam_type'] ?? null);
-						$pu['candidate_name'] = trim($_POST['pu_candidate_name'] ?? null);
-						$pu['exam_number'] = trim($_POST['pu_exam_number'] ?? null);
-						$pu['exam_year_month'] = trim($_POST['pu_exam_year_month'] ?? null);
-						$pu['waec_token'] = trim($_POST['pu_waec_token'] ?? null);
-						$pu['waec_serial'] = trim($_POST['pu_waec_serial'] ?? null);
-
-						// build olevel_results structure from the subject/grade pairs
-						$olevel = [
-							'subjects' => []
-						];
-						for ($i=1;$i<=8;$i++) {
-							$sKey = 'pu_subj_' . $i;
-							$gKey = 'pu_grade_' . $i;
-							$sub = trim($_POST[$sKey] ?? '');
-							$gr = trim($_POST[$gKey] ?? '');
-							if ($sub !== '' || $gr !== '') {
-								$olevel['subjects'][] = ['subject' => $sub, 'grade' => $gr];
-							}
-						}
-						// include token/serial and raw textarea if present
-						$olevel['waec_token'] = $pu['waec_token'];
-						$olevel['waec_serial'] = $pu['waec_serial'];
-						$olevel['raw_text'] = trim($_POST['pu_olevel_results'] ?? '');
-						$pu['olevel_results'] = json_encode($olevel, JSON_UNESCAPED_UNICODE);
-
-					// insert into post_utme_registrations
-					$ins = $pdo->prepare('INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, parent_phone, email, nin_number, state_of_origin, local_government, jamb_registration_number, jamb_score, jamb_subjects, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, mother_name, mother_phone, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
-					$ins->execute([
-						'pending',
-						$pu['institution'], $pu['first_name'], $pu['surname'], $pu['other_name'], $pu['gender'], $pu['parent_phone'], $email_contact ?: null, $pu['nin_number'], $pu['state_of_origin'], $pu['local_government'], $pu['jamb_registration_number'], $pu['jamb_score'], $pu['jamb_subjects'], $pu['course_first_choice'], $pu['course_second_choice'], $pu['institution_first_choice'], $pu['father_name'], $pu['father_phone'], $pu['mother_name'], $pu['mother_phone'], $pu['exam_type'], $pu['candidate_name'], $pu['exam_number'], $pu['exam_year_month'], $pu['olevel_results']
-					]);
-					$registrationId = $pdo->lastInsertId();
-
-					// handle passport upload for post-utme (same logic as regular)
-					if (!empty($_FILES['passport']) && $_FILES['passport']['error'] === UPLOAD_ERR_OK) {
-						$u = $_FILES['passport'];
-						$ext = pathinfo($u['name'], PATHINFO_EXTENSION);
-						$allowed = ['jpg','jpeg','png'];
-						if (in_array(strtolower($ext), $allowed)) {
-							$dstDir = __DIR__ . '/uploads/passports';
-							if (!is_dir($dstDir)) @mkdir($dstDir, 0755, true);
-							$fname = 'postutme_passport_' . $registrationId . '_' . time() . '.' . $ext;
-							$dst = $dstDir . '/' . $fname;
-							if (move_uploaded_file($u['tmp_name'], $dst)) {
-								$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-								$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-								$baseUrl = rtrim($proto . '://' . $host, '/');
-								$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
-								$fullUrl = $baseUrl . $publicRel;
-								$upd = $pdo->prepare('UPDATE post_utme_registrations SET passport_photo = ? WHERE id = ?');
-								$upd->execute([$fullUrl, $registrationId]);
-							}
-						}
-					}
-
-					// create payment for compulsory form fee and optional tutor fee
-					$formFee = 1000; // compulsory
-					$tutorFee = (!empty($_POST['pu_tutor_fee'])) ? 8000 : 0;
-					$total = $formFee + $tutorFee;
-					$reference = generatePaymentReference('PU');
-					$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), 0, 0, ?)');
-					$insP->execute([$total, $method, $reference, 'post']);
-					$paymentId = $pdo->lastInsertId();
-
-					// update post_utme_registrations with initial payment info
-					$upd2 = $pdo->prepare('UPDATE post_utme_registrations SET payment_status = ?, form_fee_paid = ?, tutor_fee_paid = ? WHERE id = ?');
-					$upd2->execute(['pending', 0, (!empty($tutorFee)?0:0), $registrationId]);
-
-					$pdo->commit();
-					// redirect to payment wait page
-					$_SESSION['last_payment_id'] = $paymentId;
-					$_SESSION['last_payment_reference'] = $reference;
-					header('Location: payments_wait.php?ref=' . urlencode($reference)); exit;
-				}
 
 			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, email, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
 			$reg->execute([
@@ -550,98 +388,19 @@ $csrf = generateToken('signup_form');
 												<?php else: ?>
 													<form method="post" enctype="multipart/form-data">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-													<input type="hidden" name="registration_type" id="registration_type_input" value="regular">
 													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
 													<input type="hidden" name="client_total" id="client_total_input" value="">
 													<input type="hidden" name="method" id="method_input" value="bank">
-													<!-- Registration type toggle -->
-													<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
-														<button type="button" id="regTypeRegular" class="btn" style="background:#fff;border:1px solid #e6e9ef">Regular Registration</button>
-														<button type="button" id="regTypePost" class="btn" style="background:#fff;border:1px solid #e6e9ef">Post-UTME Registration</button>
-														<div style="margin-left:auto;color:#667085;font-size:13px">Choose form type</div>
-													</div>
-
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
 																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
-																									<div class="form-row"><label>Gender</label><select name="gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
 																									<div class="form-row">
 																										<label>Passport Photo (passport-size, face visible)</label>
-																																																										<div class="hq-file-input">
+																										<div class="hq-file-input">
 																											<button type="button" class="btn">Choose file</button>
 																											<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
 																											<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
 																										</div>
-
-																											<!-- Post-UTME specific fields (hidden by default) -->
-																																			<div id="postUtmeSection" style="display:none;margin-top:12px;border:1px solid #f1f5f9;padding:12px;border-radius:6px;background:#fff;">
-																																			<h4 style="margin-top:0;margin-bottom:8px">Post-UTME Details</h4>
-																											<div class="form-row"><label>Name of Institution</label><input type="text" name="pu_institution" placeholder="Name of institution"></div>
-																					<div class="form-row form-inline"><div><label>First Name</label><input type="text" name="pu_first_name" placeholder="First name"></div><div><label>Surname</label><input type="text" name="pu_surname" placeholder="Surname"></div></div>
-																					<div class="form-row"><label>Other Name</label><input type="text" name="pu_other_name" placeholder="Other name(s)"></div>
-																					<div class="form-row form-inline"><div><label>Gender</label><select name="pu_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div><div><label>Address</label><input type="text" name="pu_address" placeholder="Home address"></div></div>
-																					<div class="form-row form-inline"><div><label>Date of Birth</label><input type="date" name="pu_dob"></div><div><label>Parents Phone Number</label><input type="text" name="pu_parent_phone" placeholder="Parent phone number"></div></div>
-																					<div class="form-row form-inline"><div><label>Email Address</label><input type="email" name="pu_email" placeholder="applicant or parent email"></div><div><label>NIN Number</label><input type="text" name="pu_nin" placeholder="NIN"></div></div>
-																					<div class="form-row form-inline"><div><label>Local Government</label><input type="text" name="pu_local_government"></div><div><label>Place of Birth</label><input type="text" name="pu_place_of_birth"></div></div>
-																					<div class="form-row form-inline"><div><label>Nationality</label><input type="text" name="pu_nationality"></div><div><label>Mode of Entry</label><input type="text" name="pu_mode_of_entry" placeholder="JAMB/Direct Entry/Transfer"></div></div>
-																					<div class="form-row"><label>Additional Notes</label><input type="text" name="pu_notes" placeholder="Additional info / field continued"></div>
-																					<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="pu_state_of_origin"></div><div><label>Marital Status</label><input type="text" name="pu_marital_status"></div></div>
-																					<div class="form-row form-inline"><div><label>Disability</label><input type="text" name="pu_disability"></div><div><label>Religion</label><input type="text" name="pu_religion"></div></div>
-																					<h5 style="margin-top:8px">JAMB Details</h5>
-																					<div class="form-row"><label>JAMB Registration Number</label><input type="text" name="pu_jamb_reg"></div>
-																					<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="pu_jamb_score" min="0" max="400"></div><div><label>JAMB Subjects (comma separated)</label><input type="text" name="pu_jamb_subjects" placeholder="ENG, MAT, BIO"></div></div>
-																					<h5 style="margin-top:8px">Subjects (O'Level) — list 8 subjects; compulsory ones first</h5>
-																					<div class="form-row"><label>1. English Language (compulsory)</label><input type="text" name="pu_subj_1" placeholder="Subject name" value="English Language"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_1" placeholder="e.g. A1"></div>
-																					<div class="form-row"><label>2. Mathematics (compulsory)</label><input type="text" name="pu_subj_2" value="Mathematics"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_2" placeholder="e.g. A1"></div>
-																					<div class="form-row"><label>3. Civic Education (compulsory)</label><input type="text" name="pu_subj_3" value="Civic Education"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_3" placeholder="e.g. B2"></div>
-																					<!-- Additional optional subjects to make up to 8 -->
-																					<div class="form-row"><label>4. Subject</label><input type="text" name="pu_subj_4" placeholder="Subject 4"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_4" placeholder="Grade"></div>
-																					<div class="form-row"><label>5. Subject</label><input type="text" name="pu_subj_5" placeholder="Subject 5"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_5" placeholder="Grade"></div>
-																					<div class="form-row"><label>6. Subject</label><input type="text" name="pu_subj_6" placeholder="Subject 6"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_6" placeholder="Grade"></div>
-																					<div class="form-row"><label>7. Subject</label><input type="text" name="pu_subj_7" placeholder="Subject 7"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_7" placeholder="Grade"></div>
-																					<div class="form-row"><label>8. Subject</label><input type="text" name="pu_subj_8" placeholder="Subject 8"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_8" placeholder="Grade"></div>
-																					<h5 style="margin-top:8px">Course of Study</h5>
-																					<div class="form-row"><label>First choice</label><input type="text" name="pu_course_first"></div>
-																					<div class="form-row"><label>Second choice</label><input type="text" name="pu_course_second"></div>
-																					<h5 style="margin-top:8px">Institution Choice</h5>
-																					<div class="form-row"><label>First Choice</label><input type="text" name="pu_institution_first"></div>
-																					<h5 style="margin-top:8px">Parent Details</h5>
-																					<div class="form-row form-inline"><div><label>Father's Name</label><input type="text" name="pu_father_name"></div><div><label>Father's No.</label><input type="text" name="pu_father_phone"></div></div>
-																					<div class="form-row form-inline"><div><label>Mother's Name</label><input type="text" name="pu_mother_name"></div><div><label>Mother's No.</label><input type="text" name="pu_mother_phone"></div></div>
-																					<div class="form-row form-inline"><div><label>Father/Mother Email</label><input type="email" name="pu_parent_email"></div><div><label>Father's Occupation</label><input type="text" name="pu_father_occupation"></div></div>
-																					<div class="form-row"><label>Mother's Occupation</label><input type="text" name="pu_mother_occupation"></div>
-																					<h5 style="margin-top:8px">School History (Form 2 Transcription)</h5>
-																					<div class="form-row"><label>Primary School Name</label><input type="text" name="pu_primary_school" placeholder="Primary school name"></div>
-																					<div class="form-row form-inline"><div><label>Primary Year Ended</label><input type="text" name="pu_primary_year_ended"></div><div><label>Secondary School Name</label><input type="text" name="pu_secondary_school"></div></div>
-																					<div class="form-row"><label>Secondary Year Ended</label><input type="text" name="pu_secondary_year_ended"></div>
-																					<h5 style="margin-top:8px">Sponsors Details</h5>
-																					<div class="form-row"><label>Sponsor Name</label><input type="text" name="pu_sponsor_name"></div>
-																					<div class="form-row"><label>Sponsor Address</label><input type="text" name="pu_sponsor_address"></div>
-																					<div class="form-row form-inline"><div><label>Sponsor Email</label><input type="email" name="pu_sponsor_email"></div><div><label>Sponsor Relationship</label><input type="text" name="pu_sponsor_relationship"></div></div>
-																					<div class="form-row"><label>Sponsor No</label><input type="text" name="pu_sponsor_phone"></div>
-																					<h5 style="margin-top:8px">Next of Kin Details</h5>
-																					<div class="form-row"><label>Next of kin name</label><input type="text" name="pu_nok_name"></div>
-																					<div class="form-row"><label>Next of kin address</label><input type="text" name="pu_nok_address"></div>
-																					<div class="form-row form-inline"><div><label>Next of kin Email</label><input type="email" name="pu_nok_email"></div><div><label>Next of kin relationship</label><input type="text" name="pu_nok_relationship"></div></div>
-																					<div class="form-row"><label>Next of kin No</label><input type="text" name="pu_nok_phone"></div>
-																					<h5 style="margin-top:8px">O'Level Details</h5>
-																					<div class="form-row"><label>Exam type: WAEC/NECO/GCE</label><select name="pu_exam_type"><option value="WAEC">WAEC</option><option value="NECO">NECO</option><option value="GCE">GCE</option></select></div>
-																					<div class="form-row"><label>Candidate Name</label><input type="text" name="pu_candidate_name"></div>
-																					<div class="form-row form-inline"><div><label>Exam Number</label><input type="text" name="pu_exam_number"></div><div><label>Exam Year and Month</label><input type="text" name="pu_exam_year_month" placeholder="e.g. 2024-08"></div></div>
-																					<div class="form-row form-inline"><div style="flex:1"><label>WAEC/NECO/GCE Token</label><input type="text" name="pu_waec_token"></div><div style="flex:1"><label>WAEC/NECO/GCE Serial No.</label><input type="text" name="pu_waec_serial"></div></div>
-																					<div class="form-row"><small>I solemnly affirm that all information is entirely accurate and truthful.</small></div>
-																					<h5 style="margin-top:8px">Fees</h5>
-																					<div class="form-row"><label><input type="checkbox" name="pu_tutor_fee" id="pu_tutor_fee"> Add optional tutor fee (₦8,000)</label></div>
-																					<div class="form-row"><small>Compulsory Post-UTME form fee: ₦1,000 (will be added automatically)</small></div>
-																					</div>
 																									</div>
 																									<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
@@ -932,36 +691,6 @@ document.addEventListener('DOMContentLoaded', function(){
 		// init
 		compute();
 	}catch(e){/* ignore */}
-});
-</script>
-<script>
-// Post-UTME toggle wiring
-document.addEventListener('DOMContentLoaded', function(){
-	var btnReg = document.getElementById('regTypeRegular');
-	var btnPost = document.getElementById('regTypePost');
-	var postSec = document.getElementById('postUtmeSection');
-	var regTypeInput = document.getElementById('registration_type_input');
-	var programsGrid = document.querySelector('.programs-grid');
-	var paymentSummary = document.querySelector('.payment-summary');
-	if (!btnReg || !btnPost || !postSec || !regTypeInput) return;
-	function setRegular(){ 
-		postSec.style.display='none'; 
-		regTypeInput.value='regular'; 
-		btnReg.style.background='#f8fafc'; btnPost.style.background='#fff'; 
-		if (programsGrid) programsGrid.style.display = '';
-		if (paymentSummary) paymentSummary.style.display = '';
-	}
-	function setPost(){ 
-		postSec.style.display='block'; 
-		regTypeInput.value='post'; 
-		btnPost.style.background='#f8fafc'; btnReg.style.background='#fff'; 
-		if (programsGrid) programsGrid.style.display = 'none';
-		if (paymentSummary) paymentSummary.style.display = 'none';
-	}
-	btnReg.addEventListener('click', setRegular);
-	btnPost.addEventListener('click', setPost);
-	// default regular
-	setRegular();
 });
 </script>
 <!-- Mobile payment summary and computed-style logger -->

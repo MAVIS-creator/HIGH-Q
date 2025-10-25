@@ -8,10 +8,6 @@ require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
 // --- Early AJAX handling: ensure JSON responses are not contaminated by HTML ---
 // Determine requested action (AJAX clients typically send action via POST)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
 if (!empty($earlyAction)) {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
@@ -258,9 +254,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
 
 // Support POST view_registration for AJAX clients
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'view_registration') {
-  // Support POST view_registration for AJAX clients (supports regular and post-utme types)
-  $type = trim($_POST['type'] ?? 'registration');
-  
   $id = intval($_POST['id'] ?? 0);
 
   $stmt = $pdo->prepare("
@@ -272,26 +265,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   ");
   $stmt->execute([$id]);
   $s = $stmt->fetch(PDO::FETCH_ASSOC);
-
-  header('Content-Type: application/json');
-  if ($type === 'post') {
-    $stmt = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
-    $stmt->execute([$id]);
-    $s = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$s) { echo json_encode(['success' => false, 'error' => 'Post-UTME registration not found']); exit; }
-    // decode olevel_results if present
-    $olevel = null;
-    if (!empty($s['olevel_results'])) {
-      $decoded = @json_decode($s['olevel_results'], true);
-      if (is_array($decoded)) $olevel = $decoded;
-    }
-
-    // return a complete set of fields for the admin modal to render
-    $data = $s;
-    $data['olevel_results_parsed'] = $olevel;
-    echo json_encode(['success'=>true,'data'=>$data]);
-    exit;
-  }
 
   header('Content-Type: application/json');
   if (!$s) {
@@ -534,55 +507,16 @@ if ($hasRegistrations) {
   $perPage = 12;
   $page = max(1, (int)($_GET['page'] ?? 1));
   $offset = ($page - 1) * $perPage;
-  // If a post_utme_registrations table also exists, merge both tables into a single paginated list
-  try {
-    $hasPost = (bool) $pdo->query("SHOW TABLES LIKE 'post_utme_registrations'")->fetch();
-  } catch (Throwable $e) { $hasPost = false; }
 
-  if ($hasPost) {
-    // count total across both
-    $countStmt = $pdo->prepare("SELECT (SELECT COUNT(*) FROM student_registrations) + (SELECT COUNT(*) FROM post_utme_registrations) AS c");
-    $countStmt->execute();
-    $total = (int)$countStmt->fetchColumn();
+  $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
+  $countStmt->execute();
+  $total = (int)$countStmt->fetchColumn();
 
-    // union both tables selecting common columns
-    // Force a common collation for string columns to avoid 'Illegal mix of collations for operation UNION'
-    $sql = "SELECT * FROM (
-      SELECT sr.id, 'regular' AS registration_type,
-        sr.first_name COLLATE utf8mb4_general_ci AS first_name,
-        sr.last_name COLLATE utf8mb4_general_ci AS last_name,
-        COALESCE(sr.email, u.email) COLLATE utf8mb4_general_ci AS email,
-        sr.status COLLATE utf8mb4_general_ci AS status,
-        sr.passport_path COLLATE utf8mb4_general_ci AS passport_path,
-        sr.created_at AS created_at
-        FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id
-      UNION ALL
-      SELECT pr.id, 'post' AS registration_type,
-        pr.first_name COLLATE utf8mb4_general_ci AS first_name,
-        pr.surname COLLATE utf8mb4_general_ci AS last_name,
-        pr.email COLLATE utf8mb4_general_ci AS email,
-        pr.status COLLATE utf8mb4_general_ci AS status,
-        pr.passport_photo COLLATE utf8mb4_general_ci AS passport_path,
-        pr.created_at AS created_at
-        FROM post_utme_registrations pr
-    ) t ORDER BY t.created_at DESC LIMIT ? OFFSET ?";
-
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
-    $stmt->execute();
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } else {
-    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
-    $countStmt->execute();
-    $total = (int)$countStmt->fetchColumn();
-
-    $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
-    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
-    $stmt->execute();
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  }
+  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
+  $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+  $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+  $stmt->execute();
+  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } else {
   // Fetch students (users with role slug 'student' or where role is null)
@@ -600,6 +534,7 @@ if ($hasRegistrations) {
   }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -613,17 +548,6 @@ if ($hasRegistrations) {
 <?php include '../includes/sidebar.php'; ?>
 
 <div class="users-page">
-
-<?php
-// Temporary debug banner: enable by visiting /HIGH-Q/admin/pages/students.php?dbg=1
-if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
-  $hasPostVar = isset($hasPost) ? ($hasPost ? 'yes' : 'no') : 'unknown';
-  $studentsCount = isset($students) && is_array($students) ? count($students) : 0;
-  echo '<div style="background:#fff7cc;border:1px solid #ffe5a1;padding:12px;margin:12px;border-radius:6px;color:#422;">';
-  echo '<strong>DEBUG:</strong> hasRegistrations=' . ($hasRegistrations ? 'yes' : 'no') . ' | hasPost=' . $hasPostVar . ' | total=' . intval($total) . ' | fetched=' . intval($studentsCount);
-  echo '</div>';
-}
-?>
 
   <div class="summary-cards">
     <div class="card"><span class="icon"><i class='bx bx-user'></i></span><div><h3><?= $total ?></h3><p>Total Students</p></div></div>
@@ -640,17 +564,12 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       <option value="pending">Pending</option>
       <option value="banned">Banned</option>
     </select>
-    <select id="registrationTypeFilter" style="margin-left:8px;">
-      <option value="">All Types</option>
-      <option value="registration">Regular</option>
-      <option value="post">Post-UTME</option>
-    </select>
   </div>
 
   <div class="users-list" id="studentsList">
     <?php if (!empty($hasRegistrations)): ?>
-  <?php foreach ($students as $s): ?>
-  <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>">
+    <?php foreach ($students as $s): ?>
+      <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>">
           <div class="card-left">
             <?php $passportThumb = $s['passport_path'] ?? null; ?>
             <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
@@ -672,7 +591,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
               <?php endif; ?>
 
                 <!-- Export registration (zip) - always available for registrations -->
-                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>" onclick="return false;">Export</button>
+                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
               <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
@@ -682,7 +601,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
               <div><strong>DOB:</strong> <?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
               <div><strong>Address:</strong> <?= htmlspecialchars(strlen($s['home_address']??'')>80 ? substr($s['home_address'],0,80).'...' : ($s['home_address']??'-')) ?></div>
               <div><strong>Emergency:</strong> <?= htmlspecialchars(($s['emergency_contact_name'] ?? '-') . ' / ' . ($s['emergency_contact_phone'] ?? '-')) ?></div>
-              <div style="margin-top:8px;"><a href="#" class="view-registration" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>">View full registration</a></div>
+              <div style="margin-top:8px;"><a href="#" class="view-registration" data-id="<?= $s['id'] ?>">View full registration</a></div>
             </div>
           </div>
         </div>
@@ -714,7 +633,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
         $linkedRegId = $regRow['id'] ?? null;
         $passportThumb = $regRow['passport_path'] ?? ($s['avatar'] ?? null);
       ?>
-  <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>" data-type="<?= isset($linkedRegId) && $linkedRegId ? 'registration' : 'user' ?>">
+      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>">
         <div class="card-left">
           <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
@@ -747,7 +666,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
                 </form>
               <?php endif; ?>
               <?php if (!empty($linkedRegId)): ?>
-                <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>" data-type="registration">Export</button>
+                <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>">Export</button>
               <?php endif; ?>
               <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
@@ -785,27 +704,22 @@ document.addEventListener('submit', function(e){
 // Client-side search/filter
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
-const registrationTypeFilter = document.getElementById('registrationTypeFilter');
 const studentsList = document.getElementById('studentsList');
 
 function filterStudents(){
   const q = searchInput.value.toLowerCase();
   const status = statusFilter.value;
-  const regType = registrationTypeFilter ? registrationTypeFilter.value : '';
   document.querySelectorAll('#studentsList .user-card').forEach(card=>{
     const name = card.querySelector('.card-name').textContent.toLowerCase();
     const email = card.querySelector('.card-email').textContent.toLowerCase();
     const cardStatus = card.dataset.status;
     const matchesQ = q==='' || name.includes(q) || email.includes(q);
     const matchesStatus = status==='' || cardStatus===status;
-    const cardType = card.getAttribute('data-type') || '';
-    const matchesType = regType==='' || cardType === regType;
-    card.style.display = (matchesQ && matchesStatus && matchesType) ? '' : 'none';
+    card.style.display = (matchesQ && matchesStatus) ? '' : 'none';
   });
 }
 searchInput.addEventListener('input', filterStudents);
 statusFilter.addEventListener('change', filterStudents);
-if (registrationTypeFilter) registrationTypeFilter.addEventListener('change', filterStudents);
 
 
 searchInput.addEventListener('input', filterStudents);
@@ -818,91 +732,34 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     e.preventDefault();
     const id = this.dataset.id;
     const body = new URLSearchParams();
-  body.append('action', 'view_registration');
-  body.append('id', id);
-  // include registration type (if provided by link)
-  var type = this.getAttribute('data-type') || 'registration';
-  body.append('type', type);
+    body.append('action', 'view_registration');
+    body.append('id', id);
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
-    .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
+  fetch('/HIGH-Q/admin/pages/students.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
+      body: body.toString()
+    })
+    .then(res => res.json())
     .then(resp => {
-        if (resp.success) {
-            const d = resp.data;
-            var html = '<div style="max-height:640px;overflow:auto;padding-right:6px;">';
-            // passport
-            if (d.passport_photo) html += '<div style="text-align:center;margin-bottom:12px;"><img src="'+d.passport_photo+'" style="max-width:160px;border-radius:6px;" onerror="this.style.display=\'none\'"></div>';
-
-            // Detect post-utme by presence of jamb_registration_number or olevel_results_parsed or institution
-            var isPost = !!(d.jamb_registration_number || d.institution || d.olevel_results_parsed);
-            if (isPost) {
-              html += '<h3 style="margin-top:0">Post-UTME Registration</h3>';
-              html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
-              html += '<div><strong>Institution:</strong> ' + (d.institution||'-') + '</div>';
-              html += '<div><strong>Registered At:</strong> ' + (d.created_at||'-') + '</div>';
-              html += '<div><strong>Name:</strong> ' + ((d.first_name||'') + ' ' + (d.surname||'' || '')) + '</div>';
-              html += '<div><strong>Gender:</strong> ' + (d.gender||'-') + '</div>';
-              html += '<div><strong>DOB:</strong> ' + (d.dob||'-') + '</div>';
-              html += '<div><strong>Email:</strong> ' + (d.email||'-') + '</div>';
-              html += '<div style="grid-column:1/3"><strong>Address:</strong> ' + (d.address||'-') + '</div>';
-              html += '</div>';
-
-              // JAMB
-              html += '<h4 style="margin-top:12px">JAMB</h4>';
-              html += '<div><strong>Reg No:</strong> ' + (d.jamb_registration_number||'-') + ' &nbsp; <strong>Score:</strong> ' + (d.jamb_score||'-') + '</div>';
-
-              // Subjects table (O'Level)
-              if (d.olevel_results_parsed && Array.isArray(d.olevel_results_parsed.subjects)) {
-                html += '<h4 style="margin-top:12px">O\'Level Subjects & Grades</h4>';
-                html += '<table style="width:100%;border-collapse:collapse">';
-                html += '<thead><tr style="background:#f6f7fb"><th style="text-align:left;padding:8px;border:1px solid #eee">Subject</th><th style="text-align:left;padding:8px;border:1px solid #eee">Grade</th></tr></thead><tbody>';
-                d.olevel_results_parsed.subjects.forEach(function(s){ html += '<tr><td style="padding:8px;border:1px solid #eee">' + (s.subject||'') + '</td><td style="padding:8px;border:1px solid #eee">' + (s.grade||'') + '</td></tr>'; });
-                html += '</tbody></table>';
-                if (d.olevel_results_parsed.waec_token || d.olevel_results_parsed.waec_serial) {
-                  html += '<div style="margin-top:8px"><strong>WAEC Token:</strong> ' + (d.olevel_results_parsed.waec_token||'-') + ' &nbsp; <strong>Serial:</strong> ' + (d.olevel_results_parsed.waec_serial||'-') + '</div>';
-                }
-                if (d.olevel_results_parsed.raw_text) html += '<div style="margin-top:8px"><strong>Raw O\'Level Text:</strong><pre style="white-space:pre-wrap">' + (d.olevel_results_parsed.raw_text||'') + '</pre></div>';
-              }
-
-              // Schools
-              html += '<h4 style="margin-top:12px">Schools</h4>';
-              html += '<div><strong>Primary:</strong> ' + (d.primary_school||'-') + ' <em>(' + (d.primary_year_ended||'-') + ')</em></div>';
-              html += '<div><strong>Secondary:</strong> ' + (d.secondary_school||'-') + ' <em>(' + (d.secondary_year_ended||'-') + ')</em></div>';
-
-              // Parent / Sponsor / NOK
-              html += '<h4 style="margin-top:12px">Parent / Sponsor / Next of Kin</h4>';
-              html += '<div><strong>Father:</strong> ' + (d.father_name||'-') + ' — ' + (d.father_phone||'-') + ' — ' + (d.father_occupation||'-') + '</div>';
-              html += '<div><strong>Mother:</strong> ' + (d.mother_name||'-') + ' — ' + (d.mother_phone||'-') + ' — ' + (d.mother_occupation||'-') + '</div>';
-              html += '<div><strong>Parent Email:</strong> ' + (d.parent_email||'-') + '</div>';
-              html += '<div><strong>Sponsor:</strong> ' + (d.sponsor_name||'-') + ' — ' + (d.sponsor_phone||'-') + ' — ' + (d.sponsor_relationship||'-') + '</div>';
-              html += '<div><strong>Next of Kin:</strong> ' + (d.nok_name||'-') + ' — ' + (d.nok_phone||'-') + ' — ' + (d.nok_relationship||'-') + '</div>';
-
-              // Course & Institution choices
-              html += '<h4 style="margin-top:12px">Course & Institution Choices</h4>';
-              html += '<div><strong>Course 1:</strong> ' + (d.course_first_choice||'-') + ' &nbsp; <strong>Course 2:</strong> ' + (d.course_second_choice||'-') + '</div>';
-              html += '<div><strong>Institution choice:</strong> ' + (d.institution_first_choice||'-') + '</div>';
-
-              // Extras
-              html += '<div style="margin-top:12px"><strong>JAMB Subjects:</strong> ' + (d.jamb_subjects ? (typeof d.jamb_subjects === 'string' ? d.jamb_subjects : JSON.stringify(d.jamb_subjects)) : '-') + '</div>';
-              html += '<div style="margin-top:8px"><strong>Notes:</strong> ' + (d.notes||'-') + '</div>';
-
-            } else {
-              // regular registration rendering (existing behavior)
-              html += '<h4>'+ (d.first_name||'') + ' ' + (d.last_name||'') + '</h4>';
-              html += '<p><strong>Email:</strong> ' + (d.email||'') + '</p>';
-              if (d.date_of_birth) html += '<p><strong>Date of Birth:</strong> ' + d.date_of_birth + '</p>';
-              if (d.home_address) html += '<p><strong>Home Address:</strong> ' + d.home_address + '</p>';
-              if (d.previous_education) html += '<p><strong>Previous Education:</strong> ' + d.previous_education + '</p>';
-              if (d.jamb_registration_number) html += '<p><strong>JAMB Reg No:</strong> ' + d.jamb_registration_number + ' — Score: ' + (d.jamb_score||'') + '</p>';
-              if (d.institution) html += '<p><strong>Institution:</strong> ' + d.institution + '</p>';
-              if (d.status) html += '<p><strong>Status:</strong> ' + d.status + '</p>';
-              if (d.created_at) html += '<p><strong>Registered At:</strong> ' + d.created_at + '</p>';
-            }
-
-            html += '</div>';
-            document.getElementById('registrationContent').innerHTML = html;
+      if (resp.success) {
+        const d = resp.data;
+        document.getElementById('registrationContent').innerHTML = `
+          <div style="max-height:480px;overflow:auto;">
+            <h4>${d.first_name || ''} ${d.last_name || ''}</h4>
+            <p><strong>Email:</strong> ${d.email || ''}</p>
+            <p><strong>Date of Birth:</strong> ${d.date_of_birth || ''}</p>
+            <p><strong>Home Address:</strong> ${d.home_address || ''}</p>
+            <p><strong>Previous Education:</strong> ${d.previous_education || ''}</p>
+            <p><strong>Academic Goals:</strong> ${d.academic_goals || ''}</p>
+            <p><strong>Emergency Contact:</strong> ${d.emergency_contact_name || ''} (${d.emergency_relationship || ''}) - ${d.emergency_contact_phone || ''}</p>
+            <p><strong>Status:</strong> ${d.status || ''}</p>
+            <p><strong>Registered At:</strong> ${d.created_at || ''}</p>
+          </div>
+        `;
         const modal = document.getElementById('registrationViewModal');
         modal.dataset.regId = id;
         modal.style.display = 'flex';
@@ -922,8 +779,13 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
-    const data = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : res);
+  const res = await fetch('/HIGH-Q/admin/pages/students.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+      body: body.toString()
+    });
+    const data = await res.json();
     if (data.success) {
       Swal.fire({
         title: 'Payment Link Created ✅',
@@ -1033,9 +895,9 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 // When confirm form is submitted, POST to confirm_registration
 // Helper to POST action and reload
 async function postAction(url, formData){
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }) : fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }));
+  const res = await fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} });
   let payload = null;
-  try { payload = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : null); } catch (e) { payload = null; }
+  try { payload = await res.json(); } catch (e) { payload = null; }
   if (!res.ok || !payload) {
     const msg = payload && (payload.message || payload.error) ? (payload.message || payload.error) : 'Server error';
     await Swal.fire('Error', msg, 'error');
@@ -1219,8 +1081,7 @@ document.addEventListener('click', function(e){
   }).then(function(res){
     if (!res.isConfirmed) return;
     // Open export endpoint in new tab so the file download begins
-  var type = btn.getAttribute('data-type') || 'registration';
-  var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id) + '&type=' + encodeURIComponent(type);
+    var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id);
     window.open(url, '_blank');
   });
 });

@@ -33,7 +33,7 @@ function requirePermission($menuSlug) {
         if ($total === 0) {
             if (isAjaxRequest()) {
                 header('Content-Type: application/json'); http_response_code(200);
-                echo json_encode(['ok' => false, 'code' => 'no_users', 'message' => 'No users exist, redirect to signup', 'error' => 'No users exist']);
+                echo json_encode(['message' => 'No users exist, redirect to signup']);
                 exit;
             }
             header("Location: ../signup.php");
@@ -42,7 +42,7 @@ function requirePermission($menuSlug) {
 
         if (isAjaxRequest()) {
             header('Content-Type: application/json'); http_response_code(401);
-            echo json_encode(['ok' => false, 'code' => 'unauthenticated', 'message' => 'Unauthenticated', 'error' => 'Unauthenticated']);
+            echo json_encode(['error' => 'Unauthenticated']);
             exit;
         }
         header("Location: ../login.php");
@@ -55,7 +55,7 @@ function requirePermission($menuSlug) {
     $roleId = $stmt->fetchColumn();
 
     if (!$roleId) {
-    if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(403); echo json_encode(['ok'=>false,'code'=>'access_denied','message'=>'Access denied: no role assigned','error'=>'Access denied: no role assigned']); exit; }
+        if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(403); echo json_encode(['error'=>'Access denied: no role assigned']); exit; }
         die("Access denied: no role assigned.");
     }
 
@@ -68,14 +68,14 @@ function requirePermission($menuSlug) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         if (!$stmt->fetch()) {
-            if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(403); echo json_encode(['ok'=>false,'code'=>'access_denied','message'=>'Access denied: insufficient permission','error'=>'Access denied: insufficient permission']); exit; }
+            if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(403); echo json_encode(['error'=>'Access denied: insufficient permission']); exit; }
             die("Access denied: insufficient permission.");
         }
     } else {
         $stmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=?");
         $stmt->execute([$roleId, $menuSlug]);
         if (!$stmt->fetch()) {
-            if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(403); echo json_encode(['ok'=>false,'code'=>'access_denied','message'=>'Access denied: insufficient permission','error'=>'Access denied: insufficient permission']); exit; }
+            if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(403); echo json_encode(['error'=>'Access denied: insufficient permission']); exit; }
             die("Access denied: insufficient permission.");
         }
     }
@@ -101,11 +101,11 @@ function ensureAuthenticated(): void {
     }
 
     if ($total === 0) {
-        if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(200); echo json_encode(['ok'=>false,'code'=>'no_users','message'=>'No users exist','error'=>'No users exist']); exit; }
+        if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(200); echo json_encode(['message'=>'no-users']); exit; }
         header('Location: ../signup.php');
         exit;
     }
-    if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(401); echo json_encode(['ok'=>false,'code'=>'unauthenticated','message'=>'Unauthenticated','error'=>'Unauthenticated']); exit; }
+    if (isAjaxRequest()) { header('Content-Type: application/json'); http_response_code(401); echo json_encode(['error'=>'Unauthenticated']); exit; }
     header('Location: ../login.php');
     exit;
 }

@@ -41,7 +41,7 @@
             }
         }
 
-    form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
 
             // Show loading state
@@ -74,24 +74,31 @@
 
             var data = new FormData(this);
             // Use hqFetch so auth errors are handled centrally (redirect with return_to)
-            // Prefer the compatibility wrapper (which calls hqFetch internally if present)
-            const endpoint = '/HIGH-Q/admin/api/save-settings.php';
-            const opts = { method: 'POST', body: data, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } };
-            const resp = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(endpoint, opts) : (typeof hqFetch === 'function' ? hqFetch(endpoint, opts) : fetch(endpoint, opts)));
-
-            // Normalize parsed result
-            let parsed = null;
-            try {
-                if (resp && resp._parsed) parsed = resp._parsed;
-                else if (resp && typeof resp.text === 'function') {
-                    const txt = await resp.text();
-                    parsed = tryParseJSONOrShowHtml(txt);
-                } else parsed = resp;
-            } catch (err) { parsed = null; }
-
-            if (!parsed) return;
-            if (parsed.status === 'ok') { Swal.fire({title: parsed.title||'Success', text: parsed.message||'Settings saved', icon:'success'}).then(()=>location.reload()); }
-            else { Swal.fire({title: parsed.title||'Error', text: parsed.message||'Failed to save', icon:'error'}); }
+            if (typeof hqFetch !== 'function') {
+                // fallback to fetch if helper not available
+                fetch('/HIGH-Q/admin/api/save-settings.php', { method: 'POST', body: data, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(function(r){ return r.text(); })
+                    .then(function(text){
+                        var parsed = tryParseJSONOrShowHtml(text);
+                        if (!parsed) return;
+                        if (parsed.status === 'ok') { Swal.fire({title: parsed.title||'Success', text: parsed.message||'Settings saved', icon:'success'}).then(()=>location.reload()); }
+                        else { Swal.fire({title: parsed.title||'Error', text: parsed.message||'Failed to save', icon:'error'}); }
+                    }).catch(function(err){ Swal.fire({title:'Error', text: err.message||'Network error', icon:'error'}); });
+            } else {
+                hqFetch('/HIGH-Q/admin/api/save-settings.php', { method: 'POST', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(function(parsed){
+                        if (!parsed) return;
+                        if (parsed.status === 'ok') {
+                            Swal.fire({ title: parsed.title || 'Success', text: parsed.message || 'Settings saved successfully', icon: 'success' }).then(function(){ location.reload(); });
+                        } else {
+                            Swal.fire({ title: parsed.title || 'Error', text: parsed.message || 'Failed to save settings', icon: 'error' });
+                        }
+                    }).catch(function(err){
+                        // hqFetch already handles auth redirect; show generic error for others
+                        if (err && err.message && (err.message === 'auth' || err.message === 'auth-html')) return;
+                        Swal.fire({ title: 'Error', text: err.message || 'Network error occurred while saving settings', icon: 'error' });
+                    });
+            }
         });
 
         // Action handlers

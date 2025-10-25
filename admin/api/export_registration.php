@@ -29,16 +29,10 @@ if (!class_exists('ZipArchive')) {
     exit;
 }
 $regId = intval($_GET['id'] ?? 0);
-$type = trim($_GET['type'] ?? 'registration'); // 'registration' (student_registrations) or 'post'
 if (!$regId) { echo json_encode(['success'=>false,'error'=>'Missing id']); exit; }
 try {
-    if ($type === 'post') {
-        $stmt = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
-        $stmt->execute([$regId]); $r = $stmt->fetch(PDO::FETCH_ASSOC);
-    } else {
-        $stmt = $pdo->prepare('SELECT sr.*, GROUP_CONCAT(sp.course_id) AS courses FROM student_registrations sr LEFT JOIN student_programs sp ON sp.registration_id = sr.id WHERE sr.id = ? GROUP BY sr.id');
-        $stmt->execute([$regId]); $r = $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+    $stmt = $pdo->prepare('SELECT sr.*, GROUP_CONCAT(sp.course_id) AS courses FROM student_registrations sr LEFT JOIN student_programs sp ON sp.registration_id = sr.id WHERE sr.id = ? GROUP BY sr.id');
+    $stmt->execute([$regId]); $r = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$r) { echo json_encode(['success'=>false,'error'=>'Not found']); exit; }
     $tmp = sys_get_temp_dir() . '/hq_export_' . uniqid();
     @mkdir($tmp);
