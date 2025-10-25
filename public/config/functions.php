@@ -17,8 +17,9 @@ if (!isset($GLOBALS['HQ_BASE_URL'])) {
     if (!empty($_ENV['APP_URL'])) {
         $hq = rtrim($_ENV['APP_URL'], '/');
     } else {
-        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    // Prefer HTTP_HOST, then SERVER_NAME, then derive host from APP_URL if present; avoid blindly using 'localhost' on production.
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? (isset($_ENV['APP_URL']) ? parse_url(rtrim($_ENV['APP_URL'], '/'), PHP_URL_HOST) : null) ?? 'localhost';
         // If the application runs from a subdirectory, APP_URL should be used; fallback to host-only base
         $hq = rtrim($proto . '://' . $host, '/');
     }
