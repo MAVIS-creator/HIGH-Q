@@ -112,6 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$last_name = trim($_POST['last_name'] ?? '');
 	$email_contact = trim($_POST['email_contact'] ?? '');
 	$date_of_birth = trim($_POST['date_of_birth'] ?? '') ?: null;
+	// Accept gender (optional)
+	$gender = trim($_POST['gender'] ?? '') ?: null;
 	$home_address = trim($_POST['home_address'] ?? '') ?: null;
 	$previous_education = trim($_POST['previous_education'] ?? '') ?: null;
 	$academic_goals = trim($_POST['academic_goals'] ?? '') ?: null;
@@ -134,9 +136,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		try {
 			$pdo->beginTransaction();
 
-			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, last_name, email, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+			// Ensure gender value is one of the accepted options or null
+			$acceptedGenders = ['male','female','other','prefer_not_to_say'];
+			if ($gender !== null) {
+				$g = strtolower($gender);
+				if (!in_array($g, $acceptedGenders, true)) {
+					$gender = null; // sanitize unexpected values
+				} else {
+					$gender = $g;
+				}
+			}
+
+			$reg = $pdo->prepare('INSERT INTO student_registrations (user_id, first_name, gender, last_name, email, date_of_birth, home_address, previous_education, academic_goals, emergency_contact_name, emergency_contact_phone, emergency_relationship, agreed_terms, status, created_at) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())');
 			$reg->execute([
 				$first_name ?: null,
+				$gender,
 				$last_name ?: null,
 				$email_contact ?: null,
 				$date_of_birth,
