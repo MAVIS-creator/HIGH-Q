@@ -101,9 +101,15 @@ if (!headers_sent()) {
         $chosen = $adminBase . '/assets/css/admin.css';
     }
 
-    // Output only the correct admin CSS link for XAMPP
-    echo "<link rel=\"stylesheet\" href=\/assets/css/admin.css\">\n";
+    // Output only the correct admin CSS link for the chosen candidate
+    // Ensure the href is properly quoted to avoid malformed URLs in the browser
+    $cssHref = htmlspecialchars($chosen, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    echo "<link rel=\"stylesheet\" href=\"{$cssHref}\">\n";
     if (!empty($pageCss)) echo $pageCss;
+
+    // Expose the computed admin base to client-side scripts so JS can build absolute admin API URLs
+    $adminBaseJs = htmlspecialchars($adminBase, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    echo "<script>window.ADMIN_BASE = " . json_encode($adminBaseJs) . ";</script>\n";
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)
     // NOTE: keep these conservative and avoid overriding admin layout variables (no body padding or zero margin-left on .admin-main)
