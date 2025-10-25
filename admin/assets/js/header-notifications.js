@@ -90,8 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.className = 'notification-item ' + (n.is_read ? 'read' : '');
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
-                // Build relative admin link (index router)
-                item.href = `index.php?pages=${data.urls[n.type]}&id=${n.id}`;
+                // Build absolute admin page link using adminUrl helper when available
+                var pageLink = (typeof window.adminUrl === 'function') ? window.adminUrl(data.urls[n.type], { id: n.id }) : ('index.php?pages=' + encodeURIComponent(data.urls[n.type]) + '&id=' + encodeURIComponent(n.id));
+                item.href = pageLink;
                 
                 const title = document.createElement('div');
                 title.className = 'notification-title';
