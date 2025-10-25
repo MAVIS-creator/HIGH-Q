@@ -41,9 +41,21 @@ if (!empty($earlyAction)) {
   // Helper: insert payment row with fallback for databases where payments.id is not AUTO_INCREMENT
   function insertPaymentWithFallback(PDO $pdo, $studentId, $amount, $method, $reference) {
     try {
+      // Always add a small random surcharge (between ₦0.01 and ₦167.54) and persist it where possible
+      $surcharge = round(mt_rand(1, 16754) / 100, 2);
+      $amount_with_surcharge = round($amount + $surcharge, 2);
+
       $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
-      $ins->execute([ $studentId, $amount, $method, $reference ]);
-      return (int)$pdo->lastInsertId();
+      $ins->execute([ $studentId, $amount_with_surcharge, $method, $reference ]);
+      $pid = (int)$pdo->lastInsertId();
+
+      // Try to persist surcharge into metadata column if it exists (best-effort, ignore failures)
+      try {
+        $upd = $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?');
+        $upd->execute([$surcharge, $pid]);
+      } catch (Throwable $_) { /* ignore if metadata column or JSON functions unavailable */ }
+
+      return $pid;
     } catch (Throwable $e) {
       // fallback: lock table, compute next id, insert with explicit id
       try {
@@ -52,10 +64,15 @@ if (!empty($earlyAction)) {
         $pdo->exec('LOCK TABLES payments WRITE');
         $row = $pdo->query('SELECT MAX(id) AS m FROM payments')->fetch(PDO::FETCH_ASSOC);
         $next = (int)($row['m'] ?? 0) + 1;
+        // Add surcharge here too for fallback insertion
+        $surcharge = round(mt_rand(1, 16754) / 100, 2);
+        $amount_with_surcharge = round($amount + $surcharge, 2);
         $ins2 = $pdo->prepare('INSERT INTO payments (id, student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, "pending", NOW())');
-        $ins2->execute([ $next, $studentId, $amount, $method, $reference ]);
+        $ins2->execute([ $next, $studentId, $amount_with_surcharge, $method, $reference ]);
         $pdo->exec('UNLOCK TABLES');
         $pdo->commit();
+        // Attempt to set metadata.surcharge if possible
+        try { $upd2 = $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?'); $upd2->execute([$surcharge, $next]); } catch (Throwable $_) {}
         return $next;
       } catch (Throwable $e2) {
         try { $pdo->exec('UNLOCK TABLES'); } catch (Throwable $_) {}
