@@ -579,81 +579,11 @@ $csrf = generateToken('signup_form');
 																									<div class="form-row">
 																										<label>Passport Photo (passport-size, face visible)</label>
 																																																										<div class="hq-file-input">
-																											<button type="button" class="btn">Choose file</button>
-																											<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
-																											<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
-																										</div>
-
-																											<!-- Post-UTME specific fields (hidden by default) -->
-																																			<div id="postUtmeSection" style="display:none;margin-top:12px;border:1px solid #f1f5f9;padding:12px;border-radius:6px;background:#fff;">
-																																			<h4 style="margin-top:0;margin-bottom:8px">Post-UTME Details</h4>
-																											<div class="form-row"><label>Name of Institution</label><input type="text" name="pu_institution" placeholder="Name of institution"></div>
-																					<div class="form-row form-inline"><div><label>First Name</label><input type="text" name="pu_first_name" placeholder="First name"></div><div><label>Surname</label><input type="text" name="pu_surname" placeholder="Surname"></div></div>
-																					<div class="form-row"><label>Other Name</label><input type="text" name="pu_other_name" placeholder="Other name(s)"></div>
-																					<div class="form-row form-inline"><div><label>Gender</label><select name="pu_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div><div><label>Address</label><input type="text" name="pu_address" placeholder="Home address"></div></div>
-																					<div class="form-row form-inline"><div><label>Date of Birth</label><input type="date" name="pu_dob"></div><div><label>Parents Phone Number</label><input type="text" name="pu_parent_phone" placeholder="Parent phone number"></div></div>
-																					<div class="form-row form-inline"><div><label>Email Address</label><input type="email" name="pu_email" placeholder="applicant or parent email"></div><div><label>NIN Number</label><input type="text" name="pu_nin" placeholder="NIN"></div></div>
-																					<div class="form-row form-inline"><div><label>Local Government</label><input type="text" name="pu_local_government"></div><div><label>Place of Birth</label><input type="text" name="pu_place_of_birth"></div></div>
-																					<div class="form-row form-inline"><div><label>Nationality</label><input type="text" name="pu_nationality"></div><div><label>Mode of Entry</label><input type="text" name="pu_mode_of_entry" placeholder="JAMB/Direct Entry/Transfer"></div></div>
-																					<div class="form-row"><label>Additional Notes</label><input type="text" name="pu_notes" placeholder="Additional info / field continued"></div>
-																					<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="pu_state_of_origin"></div><div><label>Marital Status</label><input type="text" name="pu_marital_status"></div></div>
-																					<div class="form-row form-inline"><div><label>Disability</label><input type="text" name="pu_disability"></div><div><label>Religion</label><input type="text" name="pu_religion"></div></div>
-																					<h5 style="margin-top:8px">JAMB Details</h5>
-																					<div class="form-row"><label>JAMB Registration Number</label><input type="text" name="pu_jamb_reg"></div>
-																					<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="pu_jamb_score" min="0" max="400"></div><div><label>JAMB Subjects (comma separated)</label><input type="text" name="pu_jamb_subjects" placeholder="ENG, MAT, BIO"></div></div>
-																					<h5 style="margin-top:8px">Subjects (O'Level) — list 8 subjects; compulsory ones first</h5>
-																					<div class="form-row"><label>1. English Language (compulsory)</label><input type="text" name="pu_subj_1" placeholder="Subject name" value="English Language"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_1" placeholder="e.g. A1"></div>
-																					<div class="form-row"><label>2. Mathematics (compulsory)</label><input type="text" name="pu_subj_2" value="Mathematics"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_2" placeholder="e.g. A1"></div>
-																					<div class="form-row"><label>3. Civic Education (compulsory)</label><input type="text" name="pu_subj_3" value="Civic Education"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_3" placeholder="e.g. B2"></div>
-																					<!-- Additional optional subjects to make up to 8 -->
-																					<div class="form-row"><label>4. Subject</label><input type="text" name="pu_subj_4" placeholder="Subject 4"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_4" placeholder="Grade"></div>
-																					<div class="form-row"><label>5. Subject</label><input type="text" name="pu_subj_5" placeholder="Subject 5"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_5" placeholder="Grade"></div>
-																					<div class="form-row"><label>6. Subject</label><input type="text" name="pu_subj_6" placeholder="Subject 6"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_6" placeholder="Grade"></div>
-																					<div class="form-row"><label>7. Subject</label><input type="text" name="pu_subj_7" placeholder="Subject 7"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_7" placeholder="Grade"></div>
-																					<div class="form-row"><label>8. Subject</label><input type="text" name="pu_subj_8" placeholder="Subject 8"></div>
-																					<div class="form-row"><label>Grade</label><input type="text" name="pu_grade_8" placeholder="Grade"></div>
-																					<h5 style="margin-top:8px">Course of Study</h5>
-																					<div class="form-row"><label>First choice</label><input type="text" name="pu_course_first"></div>
-																					<div class="form-row"><label>Second choice</label><input type="text" name="pu_course_second"></div>
-																					<h5 style="margin-top:8px">Institution Choice</h5>
-																					<div class="form-row"><label>First Choice</label><input type="text" name="pu_institution_first"></div>
-																					<h5 style="margin-top:8px">Parent Details</h5>
-																					<div class="form-row form-inline"><div><label>Father's Name</label><input type="text" name="pu_father_name"></div><div><label>Father's No.</label><input type="text" name="pu_father_phone"></div></div>
-																					<div class="form-row form-inline"><div><label>Mother's Name</label><input type="text" name="pu_mother_name"></div><div><label>Mother's No.</label><input type="text" name="pu_mother_phone"></div></div>
-																					<div class="form-row form-inline"><div><label>Father/Mother Email</label><input type="email" name="pu_parent_email"></div><div><label>Father's Occupation</label><input type="text" name="pu_father_occupation"></div></div>
-																					<div class="form-row"><label>Mother's Occupation</label><input type="text" name="pu_mother_occupation"></div>
-																					<h5 style="margin-top:8px">School History (Form 2 Transcription)</h5>
-																					<div class="form-row"><label>Primary School Name</label><input type="text" name="pu_primary_school" placeholder="Primary school name"></div>
-																					<div class="form-row form-inline"><div><label>Primary Year Ended</label><input type="text" name="pu_primary_year_ended"></div><div><label>Secondary School Name</label><input type="text" name="pu_secondary_school"></div></div>
-																					<div class="form-row"><label>Secondary Year Ended</label><input type="text" name="pu_secondary_year_ended"></div>
-																					<h5 style="margin-top:8px">Sponsors Details</h5>
-																					<div class="form-row"><label>Sponsor Name</label><input type="text" name="pu_sponsor_name"></div>
-																					<div class="form-row"><label>Sponsor Address</label><input type="text" name="pu_sponsor_address"></div>
-																					<div class="form-row form-inline"><div><label>Sponsor Email</label><input type="email" name="pu_sponsor_email"></div><div><label>Sponsor Relationship</label><input type="text" name="pu_sponsor_relationship"></div></div>
-																					<div class="form-row"><label>Sponsor No</label><input type="text" name="pu_sponsor_phone"></div>
-																					<h5 style="margin-top:8px">Next of Kin Details</h5>
-																					<div class="form-row"><label>Next of kin name</label><input type="text" name="pu_nok_name"></div>
-																					<div class="form-row"><label>Next of kin address</label><input type="text" name="pu_nok_address"></div>
-																					<div class="form-row form-inline"><div><label>Next of kin Email</label><input type="email" name="pu_nok_email"></div><div><label>Next of kin relationship</label><input type="text" name="pu_nok_relationship"></div></div>
-																					<div class="form-row"><label>Next of kin No</label><input type="text" name="pu_nok_phone"></div>
-																					<h5 style="margin-top:8px">O'Level Details</h5>
-																					<div class="form-row"><label>Exam type: WAEC/NECO/GCE</label><select name="pu_exam_type"><option value="WAEC">WAEC</option><option value="NECO">NECO</option><option value="GCE">GCE</option></select></div>
-																					<div class="form-row"><label>Candidate Name</label><input type="text" name="pu_candidate_name"></div>
-																					<div class="form-row form-inline"><div><label>Exam Number</label><input type="text" name="pu_exam_number"></div><div><label>Exam Year and Month</label><input type="text" name="pu_exam_year_month" placeholder="e.g. 2024-08"></div></div>
-																					<div class="form-row form-inline"><div style="flex:1"><label>WAEC/NECO/GCE Token</label><input type="text" name="pu_waec_token"></div><div style="flex:1"><label>WAEC/NECO/GCE Serial No.</label><input type="text" name="pu_waec_serial"></div></div>
-																					<div class="form-row"><small>I solemnly affirm that all information is entirely accurate and truthful.</small></div>
-																					<h5 style="margin-top:8px">Fees</h5>
-																					<div class="form-row"><label><input type="checkbox" name="pu_tutor_fee" id="pu_tutor_fee"> Add optional tutor fee (₦8,000)</label></div>
-																					<div class="form-row"><small>Compulsory Post-UTME form fee: ₦1,000 (will be added automatically)</small></div>
-																					</div>
-																									</div>
+																																																												<button type="button" class="btn">Choose file</button>
+																																																												<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
+																																																												<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																																																											</div>
+                                                                                                    
 																									<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
 																									<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
