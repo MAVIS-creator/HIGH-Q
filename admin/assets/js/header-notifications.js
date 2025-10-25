@@ -27,7 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' }) : fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' }));
+           // Force use of the original unpatched fetch
+const res = await window._fetch
+  ? window._fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' })
+  : fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' });
 
             // Normalize response: hqFetchCompat may return parsed object under _parsed
             let data = null;
