@@ -32,25 +32,39 @@ document.addEventListener('DOMContentLoaded', function() {
             // include credentials so session cookie is sent and the API can authenticate the admin
             const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(notificationsEndpoint, { credentials: 'same-origin' }) : fetch(notificationsEndpoint, { credentials: 'same-origin' }));
 
-            // Normalize response: hqFetchCompat may return parsed object under _parsed
+            // Normalize response: support multiple shapes returned by different fetch wrappers
+            // - hqFetchCompat returns a Response-like wrapper with _parsed
+            // - some polyfills override fetch to return parsed JSON/string directly
+            // - native fetch returns a Response with text()/json()
             let data = null;
-            if (res && res._parsed) {
-                data = res._parsed;
-            } else if (res && typeof res.text === 'function') {
-                if (!res.ok) {
-                    console.warn('Notifications endpoint returned HTTP', res.status);
-                    return;
-                }
-                const txt = await res.text();
-                try {
-                    data = JSON.parse(txt);
-                } catch (err) {
-                    console.error('Notifications API returned non-JSON response:', txt);
+            try {
+                if (res && res._parsed) {
+                    // our compat wrapper: parsed value is available
+                    data = res._parsed;
+                } else if (res && typeof res === 'object' && !res.text) {
+                    // Some fetch wrappers/polyfills return parsed JSON directly (object)
+                    data = res;
+                } else if (res && typeof res.text === 'function') {
+                    // Native Response-like object
+                    if (!res.ok) {
+                        console.warn('Notifications endpoint returned HTTP', res.status);
+                        return;
+                    }
+                    const txt = await res.text();
+                    try {
+                        data = JSON.parse(txt);
+                    } catch (err) {
+                        console.error('Notifications API returned non-JSON response:', txt);
+                        panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                        return;
+                    }
+                } else {
+                    console.error('Unexpected notifications response', res);
                     panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
                     return;
                 }
-            } else {
-                console.error('Unexpected notifications response', res);
+            } catch (e) {
+                console.error('Error normalizing notifications response', e, res);
                 panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
                 return;
             }
