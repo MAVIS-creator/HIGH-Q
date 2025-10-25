@@ -1,5 +1,5 @@
 <?php
-// admin./pages/chat_view.php
+// admin/pages/chat_view.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
@@ -216,7 +216,7 @@ document.addEventListener('click', function(e) {
       fd.append('id', id);
       fd.append('_csrf', '" . generateToken('chat_form') . "');
 
-  var promise = (typeof window.hqFetchCompat === 'function') ? window.hqFetchCompat('api/delete_attachment.php', { method: 'POST', body: fd }) : fetch('api/delete_attachment.php', { method: 'POST', body: fd });
+      var promise = (typeof window.hqFetchCompat === 'function') ? window.hqFetchCompat('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd }) : fetch('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd });
 
       promise.then(function(r){
         if (r && r._parsed) return Promise.resolve(r._parsed);
@@ -259,7 +259,7 @@ document.addEventListener('click', function(e) {
             fd.append('id', id);
             fd.append('_csrf', '".generateToken('chat_form')."');
             
-  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('api/delete_attachment.php', { method: 'POST', body: fd }) : fetch('api/delete_attachment.php', { method: 'POST', body: fd }))
+      (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd }) : fetch('/HIGH-Q/admin/api/delete_attachment.php', { method: 'POST', body: fd }))
 +
 +
 +            .then(function(r){

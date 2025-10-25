@@ -92,12 +92,7 @@
         opts = opts || {};
         opts.credentials = opts.credentials || 'same-origin';
         return fetch(url, opts).then(function(resp) {
-            var ct = '';
-            try {
-                if (resp && resp.headers && typeof resp.headers.get === 'function') ct = resp.headers.get('Content-Type') || '';
-                else if (resp && resp._parsed) ct = 'application/json';
-                else if (typeof resp === 'string') ct = 'text/html';
-            } catch(e) { ct = ''; }
+            var ct = resp.headers.get('Content-Type') || '';
             if (resp.status === 401 || resp.status === 403) {
                 return resp.json().catch(function(){ return null; }).then(function(j){
                     if (window.hqAjaxAuthHandler.handleJsonAuthError(j)) { window.hqAjaxAuthHandler.redirectToLoginWithReturn(); throw new Error('auth'); }
@@ -141,15 +136,6 @@
             var wrapper = {
                 ok: true,
                 status: 200,
-                // minimal headers-like object for code that expects resp.headers.get(...)
-                headers: {
-                    get: function(name) {
-                        if (!name) return null;
-                        var n = String(name).toLowerCase();
-                        if (n === 'content-type') return isObj ? 'application/json' : 'text/html';
-                        return null;
-                    }
-                },
                 // return parsed for json(); if parsed is string, attempt parse
                 json: function() {
                     return new Promise(function(resolve, reject){
@@ -190,12 +176,7 @@
     if (_fetch) {
         window.fetch = function(input, init){
             return _fetch(input, init).then(function(resp){
-                var ct = '';
-                try {
-                    if (resp && resp.headers && typeof resp.headers.get === 'function') ct = resp.headers.get('Content-Type') || '';
-                    else if (resp && resp._parsed) ct = 'application/json';
-                    else if (typeof resp === 'string') ct = 'text/html';
-                } catch(e) { ct = ''; }
+                var ct = resp.headers.get('Content-Type') || '';
                 if (resp.status === 401 || resp.status === 403) {
                     // try parse JSON, else redirect
                     return resp.clone().text().then(function(txt){

@@ -1,5 +1,5 @@
 <?php
-// admin./pages/students.php
+// admin/pages/students.php
 // Remove any visible code output from the top of the page
 // Ensure no script or debug code is rendered at the top of the page
 require_once '../includes/auth.php';
@@ -13,38 +13,37 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
-  if (!empty($earlyAction)) {
+if (!empty($earlyAction)) {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
   header('Content-Type: application/json');
 
-  // Prefer APP_URL or the computed global base; fall back to request host if necessary
-  $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
-  if (empty($base)) {
-    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-    $base = $proto . '://' . $host;
+  // Try to load APP_URL from .env if Dotenv is available, otherwise fall back to request host
+  $baseUrl = null;
+  if (class_exists('\Dotenv\\Dotenv')) {
+    try {
+      $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+      $dotenv->load();
+      $baseUrl = rtrim($_ENV['APP_URL'] ?? ($_ENV['APP_URL'] ?? ''), '/');
+    } catch (Throwable $e) {
+      // ignore dotenv load errors
+      $baseUrl = null;
+    }
   }
-  $GLOBALS['HQ_BASE_URL'] = rtrim($base, '/');
+  if (empty($baseUrl)) {
+    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $baseUrl = $proto . '://' . $host;
+  }
+  // expose $baseUrl for later handlers in this file
+  $GLOBALS['HQ_BASE_URL'] = $baseUrl;
 }
 
   // Helper: insert payment row with fallback for databases where payments.id is not AUTO_INCREMENT
   function insertPaymentWithFallback(PDO $pdo, $studentId, $amount, $method, $reference) {
     try {
-      // Always add a small random surcharge (between ₦0.01 and ₦167.54) and persist it where possible
-      $surcharge = round(mt_rand(1, 16754) / 100, 2);
-      $amount_with_surcharge = round($amount + $surcharge, 2);
-
       $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
-      $ins->execute([ $studentId, $amount_with_surcharge, $method, $reference ]);
-      $pid = (int)$pdo->lastInsertId();
-
-      // Try to persist surcharge into metadata column if it exists (best-effort, ignore failures)
-      try {
-        $upd = $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?');
-        $upd->execute([$surcharge, $pid]);
-      } catch (Throwable $_) { /* ignore if metadata column or JSON functions unavailable */ }
-
-      return $pid;
+      $ins->execute([ $studentId, $amount, $method, $reference ]);
+      return (int)$pdo->lastInsertId();
     } catch (Throwable $e) {
       // fallback: lock table, compute next id, insert with explicit id
       try {
@@ -53,15 +52,10 @@ $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
         $pdo->exec('LOCK TABLES payments WRITE');
         $row = $pdo->query('SELECT MAX(id) AS m FROM payments')->fetch(PDO::FETCH_ASSOC);
         $next = (int)($row['m'] ?? 0) + 1;
-        // Add surcharge here too for fallback insertion
-        $surcharge = round(mt_rand(1, 16754) / 100, 2);
-        $amount_with_surcharge = round($amount + $surcharge, 2);
         $ins2 = $pdo->prepare('INSERT INTO payments (id, student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, "pending", NOW())');
-        $ins2->execute([ $next, $studentId, $amount_with_surcharge, $method, $reference ]);
+        $ins2->execute([ $next, $studentId, $amount, $method, $reference ]);
         $pdo->exec('UNLOCK TABLES');
         $pdo->commit();
-        // Attempt to set metadata.surcharge if possible
-        try { $upd2 = $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?'); $upd2->execute([$surcharge, $next]); } catch (Throwable $_) {}
         return $next;
       } catch (Throwable $e2) {
         try { $pdo->exec('UNLOCK TABLES'); } catch (Throwable $_) {}
@@ -100,12 +94,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   // Insert payment placeholder using fallback helper
   $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
 
-    // Build link preferring APP_URL or previously-computed HQ_BASE_URL, fall back to request host
+    // Build link using loaded base URL if available
+    // Prefer APP_URL from environment, otherwise build from request host
     $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
     if (empty($base)) {
-      $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-      $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-      $base = $proto . '://' . $host;
+      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
     }
     $base = rtrim($base, '/');
     // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
@@ -193,16 +186,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
 
   $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
 
-    // Build payment link (prefer APP_URL or computed HQ_BASE_URL, otherwise fall back to request host)
+    // Build payment link (prefer APP_URL from environment if loaded)
+    $base = $GLOBALS['HQ_BASE_URL'] ?? null;
+    if (empty($base)) {
+      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+    }
+    // Prefer APP_URL from environment, otherwise build from request host
     $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
     if (empty($base)) {
-      $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-      $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-      $base = $proto . '://' . $host;
+      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
     }
     $base = rtrim($base, '/');
-    // Build a public-facing URL to payments_wait page
-    $paymentLink = $base . '/pay/' . urlencode($ref);
+    // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
+  $paymentLink = $base . '/pay/' . urlencode($ref);
 
     // Send email
     $email_sent = false;
@@ -339,28 +335,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
   if (!verifyToken('students_form', $token)) {
-  header('Location: index.php?pages=students'); exit;
+    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
   if ($id === 1 || $id === $currentUserId) {
-  header('Location: index.php?pages=students'); exit;
+    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-  header('Location: index.php?pages=students'); exit;
+    header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     if ($action === 'activate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
   if ($action === 'delete') {
@@ -372,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-  header('Location: index.php?pages=students'); exit;
+      header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
@@ -386,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
     }
-  header('Location: index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
   // Custom: send message/approve flow from modal
@@ -412,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-  header('Location: index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 
   // Confirm registration (admin) - send notification
@@ -421,13 +417,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-  header('Location: index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-  setFlash('error','Registration already confirmed'); header('Location: index.php?pages=students'); exit;
+  setFlash('error','Registration already confirmed'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
@@ -438,20 +434,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
 
       // Optional payment creation: admin may include create_payment=1 and amount in POST (AJAX)
       if (!empty($_POST['create_payment']) && !empty($_POST['amount'])) {
-  $amount = floatval($_POST['amount']);
+        $amount = floatval($_POST['amount']);
         $method = $_POST['method'] ?? 'bank';
         // create payment placeholder and send reference to registrant email
         $ref = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-  // apply random surcharge to the payment amount
-  $surcharge = round(mt_rand(1, 16754) / 100, 2);
-  $amount_with_surcharge = round($amount + $surcharge, 2);
-  $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
-  $ins->execute([$amount_with_surcharge, $method, $ref]);
-  $paymentId = $pdo->lastInsertId();
-  // try to persist surcharge into metadata (best-effort)
-  try { $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?')->execute([$surcharge, $paymentId]); } catch (Throwable $_) {}
-  // update amount variable used in emails
-  $amount = $amount_with_surcharge;
+        $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (NULL, ?, ?, ?, "pending", NOW())');
+        $ins->execute([$amount, $method, $ref]);
+        $paymentId = $pdo->lastInsertId();
         logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
 
           // send email to registrant with link to payments_wait (if email present)
@@ -468,14 +457,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
             } catch (Throwable $e) { /* ignore */ }
 
             $subject = $siteName . ' — Payment instructions for your registration';
-            // prefer APP_URL/HQ_BASE_URL, otherwise fall back to request host
-            $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
-            if (empty($base)) {
-              $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-              $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-              $base = $proto . '://' . $host;
-            }
-            $base = rtrim($base, '/');
+            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            // build link relative to public folder (best-effort)
+            $base = $proto . '://' . $host;
             $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
 
             // Branded HTML message
@@ -506,11 +491,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null, 'email'=> $reg['email'] ?? null];
         echo json_encode($resp); exit;
       }
-  header('Location: index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
-  setFlash('error','Failed to confirm registration'); header('Location: index.php?pages=students'); exit;
+  setFlash('error','Failed to confirm registration'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
   }
 
@@ -530,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
-  header('Location: index.php?pages=students'); exit;
+  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
   }
 }
 
@@ -630,7 +615,7 @@ if ($hasRegistrations) {
 <div class="users-page">
 
 <?php
-// Temporary debug banner: enable by visiting /HIGH-Q/admin./pages/students.php?dbg=1
+// Temporary debug banner: enable by visiting /HIGH-Q/admin/pages/students.php?dbg=1
 if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
   $hasPostVar = isset($hasPost) ? ($hasPost ? 'yes' : 'no') : 'unknown';
   $studentsCount = isset($students) && is_array($students) ? count($students) : 0;
@@ -668,7 +653,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
   <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>">
           <div class="card-left">
             <?php $passportThumb = $s['passport_path'] ?? null; ?>
-            <img src="<?= htmlspecialchars($passportThumb ?: '../../public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
+            <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
             <div class="card-meta">
               <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
               <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
@@ -688,7 +673,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" data-type="<?= htmlspecialchars($s['registration_type'] ?? 'registration') ?>" onclick="return false;">Export</button>
-              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -707,7 +692,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
         <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
           <?php for ($p=1;$p<=$pages;$p++): ?>
-            <a href="index.php?pages=students&page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+            <a href="/HIGH-Q/admin/pages/students.php?page=<?= $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
           <?php endfor; ?>
         </div>
       <?php endif; ?>
@@ -731,7 +716,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
       ?>
   <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>" data-type="<?= isset($linkedRegId) && $linkedRegId ? 'registration' : 'user' ?>">
         <div class="card-left">
-          <img src="<?= htmlspecialchars($passportThumb ?: '../../public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='../../public/assets/images/hq-logo.jpeg'">
+          <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
           <div class="card-meta">
             <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
             <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
@@ -746,17 +731,17 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
             <!-- view icon removed as requested -->
               <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
-                <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Deactivate</button>
                 </form>
               <?php elseif ($s['is_active'] == 0): ?>
-                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Activate</button>
                 </form>
               <?php else: ?>
-                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
+                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
@@ -764,7 +749,7 @@ if (!empty($_GET['dbg']) && $_GET['dbg'] === '1') {
               <?php if (!empty($linkedRegId)): ?>
                 <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>" data-type="registration">Export</button>
               <?php endif; ?>
-              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+              <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
@@ -841,7 +826,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
+  (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' }, body: body.toString() }))
     .then(function(r){ if (r && r._parsed) return Promise.resolve(r._parsed); if (r && typeof r.json === 'function') return r.json(); return Promise.resolve(r); })
     .then(resp => {
         if (resp.success) {
@@ -937,7 +922,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('index.php?pages=students', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
+  const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }) : fetch('/HIGH-Q/admin/pages/students.php', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' }, body: body.toString() }));
     const data = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : res);
     if (data.success) {
       Swal.fire({
@@ -996,7 +981,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `index.php?pages=students&action=send_message&id=${id}`;
+  modalForm.action = `/HIGH-Q/admin/pages/students.php?action=send_message&id=${id}`;
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
@@ -1049,7 +1034,6 @@ regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.st
 // Helper to POST action and reload
 async function postAction(url, formData){
   const res = await (typeof window.hqFetchCompat === 'function' ? window.hqFetchCompat(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }) : fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} }));
-
   let payload = null;
   try { payload = (res && res._parsed) ? res._parsed : (res && typeof res.json === 'function' ? await res.json() : null); } catch (e) { payload = null; }
   if (!res.ok || !payload) {
@@ -1085,9 +1069,9 @@ regConfirmForm.addEventListener('submit', async function(e){
   try {
     if (choice.isConfirmed) {
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-  const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+  const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
   // success shown by postAction; reload to reflect changes
-  window.location = 'index.php?pages=students';
+  window.location = '/HIGH-Q/admin/pages/students.php';
     } else if (choice.isDenied) {
       const { value: formValues } = await Swal.fire({
         title: 'Create payment',
@@ -1100,8 +1084,8 @@ regConfirmForm.addEventListener('submit', async function(e){
       const amt = parseFloat(formValues.amount || 0);
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
-  window.location = 'index.php?pages=students';
+  const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+  window.location = '/HIGH-Q/admin/pages/students.php';
     }
   } catch (err) {
     Swal.fire('Error','Failed to confirm','error');
@@ -1126,7 +1110,7 @@ regRejectBtn.addEventListener('click', ()=>{
       (async ()=>{
         try {
       const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-  const payload = await postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd);
+      const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=reject_registration&id=${id}`, fd);
           // update UI: remove buttons and mark status
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -1158,7 +1142,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-              const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+              const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
@@ -1186,7 +1170,7 @@ document.addEventListener('click', function(e){
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
         try {
-          const payload = await postAction(`index.php?pages=students&action=confirm_registration&id=${id}`, fd);
+          const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
           // update UI similar to above
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -1209,7 +1193,7 @@ document.addEventListener('click', function(e){
       inputPlaceholder: 'Reason for rejection',
       showCancelButton: true,
       confirmButtonText: 'Reject'
-  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`index.php?pages=students&action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`/HIGH-Q/admin/pages/students.php?action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
     return;
   }
 });
@@ -1236,7 +1220,7 @@ document.addEventListener('click', function(e){
     if (!res.isConfirmed) return;
     // Open export endpoint in new tab so the file download begins
   var type = btn.getAttribute('data-type') || 'registration';
-  var url = 'api/export_registration.php?id=' + encodeURIComponent(id) + '&type=' + encodeURIComponent(type);
+  var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id) + '&type=' + encodeURIComponent(type);
     window.open(url, '_blank');
   });
 });

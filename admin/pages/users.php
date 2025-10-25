@@ -1,5 +1,5 @@
 <?php
-// admin./pages/users.php
+// admin/pages/users.php
 require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
@@ -188,12 +188,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'upload_receipt' && isset($_GE
     $upd->execute(["uploads/receipts/{$fileName}", $pid]);
   } else {
     $ref = 'RCPT-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-    // Always add a small random surcharge to payments
-    $surcharge = round(mt_rand(1, 16754) / 100, 2);
-    $amount_with_surcharge = round(0 + $surcharge, 2);
-    $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, receipt_path, created_at) VALUES (?, ?, "bank_transfer", ?, "uploaded", ?, NOW())');
-    $ins->execute([$id, $amount_with_surcharge, $ref, "uploads/receipts/{$fileName}"]); $pid = $pdo->lastInsertId();
-    try { $pdo->prepare('UPDATE payments SET metadata = JSON_OBJECT("surcharge", ?) WHERE id = ?')->execute([$surcharge, $pid]); } catch (Throwable $_) {}
+    $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, receipt_path, created_at) VALUES (?, 0, "bank_transfer", ?, "uploaded", ?, NOW())');
+    $ins->execute([$id, $ref, "uploads/receipts/{$fileName}"]); $pid = $pdo->lastInsertId();
   }
 
   // Notify admins via log
@@ -444,9 +440,9 @@ async function loadUser(id, mode='view'){
     // Probably an auth redirect or HTML response; show friendly message and redirect to login
     const text = (res && typeof res.text === 'function') ? await res.text() : null;
     if (typeof Swal !== 'undefined') {
-  Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = 'login.php');
+      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = '/HIGH-Q/admin/login.php');
     } else {
-  alert('Session expired. Please login again.'); window.location = 'login.php';
+      alert('Session expired. Please login again.'); window.location = '/HIGH-Q/admin/login.php';
     }
     return;
   }

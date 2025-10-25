@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
 
   // Redirect to avoid form resubmission — return to this page (roles.php)
-  header("Location: index.php?pages=roles");
+  header("Location: /HIGH-Q/admin/pages/roles.php");
   exit;
 }
 
@@ -221,7 +221,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                   data-menus='<?= json_encode($roleMenus) ?>'>
             <i class='bx bx-edit'></i> Edit
           </button>
-          <form method="post" action=./pages/roles.php?action=delete&id=<?= $r['id'] ?>" style="display:inline">
+          <form method="post" action="/HIGH-Q/admin/pages/roles.php?action=delete&id=<?= $r['id'] ?>" style="display:inline">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <button type="submit" class="btn-banish">
               <i class='bx bx-trash'></i> Delete
@@ -242,7 +242,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <button class="modal-close" id="roleModalClose" aria-label="Close"><i class='bx bx-x'></i></button>
     <h3 id="roleModalTitle">New Role</h3>
 
-  <form id="roleForm" method="post" action=./pages/roles.php?action=create">
+  <form id="roleForm" method="post" action="/HIGH-Q/admin/pages/roles.php?action=create">
       <!-- CSRF token -->
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 
@@ -322,7 +322,7 @@ function openModal(mode, role = {}) {
 
   if (mode === 'edit') {
     modalTitle.textContent = 'Edit Role';
-  roleForm.action = `index.php?pages=roles&action=edit&id=${role.id}`;
+  roleForm.action = `/HIGH-Q/admin/pages/roles.php?action=edit&id=${role.id}`;
     nameInput.value = role.name;
     slugInput.value = role.slug;
     maxInput.value  = role.max_count || '';
@@ -334,7 +334,7 @@ function openModal(mode, role = {}) {
     });
   } else {
     modalTitle.textContent = 'New Role';
-  roleForm.action = 'index.php?pages=roles&action=create';
+  roleForm.action = '/HIGH-Q/admin/pages/roles.php?action=create';
     nameInput.value = '';
     slugInput.value = '';
     maxInput.value  = '';
@@ -383,7 +383,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   if (!res.isConfirmed) return;
   const fd = new FormData(); fd.append('action','delete'); fd.append('csrf_token','<?= $csrf ?>');
   // Post to this page (roles.php) so server-side handler in this file processes it and returns JSON when requested
-  var xhr = new XMLHttpRequest(); xhr.open('POST','index.php?pages=roles&action=delete&id='+encodeURIComponent(id), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  var xhr = new XMLHttpRequest(); xhr.open('POST','/HIGH-Q/admin/pages/roles.php?action=delete&id='+encodeURIComponent(id), true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ try{ var j = JSON.parse(xhr.responseText||'{}'); } catch(e){ j=null; }
       if (xhr.status===200 && j && (j.status==='ok' || j.success===true)) { Swal.fire('Removed','Role removed','success').then(()=> location.reload()); }
       else { Swal.fire('Failed','Could not remove role','error'); }

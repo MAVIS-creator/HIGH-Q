@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $admins = $pdo->prepare('SELECT email, name FROM users WHERE role_id = 1');
                     $admins->execute();
-                    $reviewUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://' ) . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin./pages/users.php';
+                    $reviewUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://' ) . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin/pages/users.php';
                     $notifySubject = "New admin application submitted";
                     $notifyHtml = "<p>A new admin application was submitted by <strong>" . htmlspecialchars($name) . "</strong> (" . htmlspecialchars($email) . ").</p><p>Review applications: <a href=\"{$reviewUrl}\">Admin applications</a></p>";
                     while ($a = $admins->fetch(PDO::FETCH_ASSOC)) {

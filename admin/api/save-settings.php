@@ -95,7 +95,7 @@ try {
 
     // Try to upsert into site_settings structured table (best-effort)
     try {
-        // Map to columns with safe defaults (mirrors admin./pages/settings.php)
+        // Map to columns with safe defaults (mirrors admin/pages/settings.php)
         $site = $posted['site'] ?? [];
         $contact = $posted['contact'] ?? [];
         $security = $posted['security'] ?? [];

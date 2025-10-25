@@ -1,5 +1,5 @@
 <?php
-// admin./pages/chat.php
+// admin/pages/chat.php
 require_once __DIR__ . '/../includes/db.php';      // Load DB connection first
 require_once __DIR__ . '/../includes/auth.php';    // Then auth
 require_once __DIR__ . '/../includes/csrf.php';
@@ -202,11 +202,11 @@ async function pollThreads(){
     // prefer hqFetchCompat which returns a Response-like object when available
     var res = null;
     if (typeof window.hqFetchCompat === 'function') {
-  res = await window.hqFetchCompat('api/threads.php');
+      res = await window.hqFetchCompat('/HIGH-Q/admin/api/threads.php');
       // hqFetchCompat wraps parsed result under _parsed when using hqFetch; handle both shapes
       var j = res && res._parsed ? res._parsed : (await (res.json ? res.json() : Promise.resolve(res)));
     } else {
-  res = await fetch('api/threads.php');
+      res = await fetch('/HIGH-Q/admin/api/threads.php');
       if(!res.ok) return;
       var j = await res.json();
     }

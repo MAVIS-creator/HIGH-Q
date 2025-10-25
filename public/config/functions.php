@@ -10,29 +10,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
-// Compute a canonical base URL for use when building absolute links.
-// Preference order: APP_URL from env -> computed from request (scheme + host + optional script dir)
-if (!isset($GLOBALS['HQ_BASE_URL'])) {
-    $hq = null;
-    if (!empty($_ENV['APP_URL'])) {
-        $hq = rtrim($_ENV['APP_URL'], '/');
-    } else {
-    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    // Prefer HTTP_HOST, then SERVER_NAME, then derive host from APP_URL if present; avoid blindly using 'localhost' on production.
-    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? (isset($_ENV['APP_URL']) ? parse_url(rtrim($_ENV['APP_URL'], '/'), PHP_URL_HOST) : null) ?? 'localhost';
-        // If the application runs from a subdirectory, APP_URL should be used; fallback to host-only base
-        $hq = rtrim($proto . '://' . $host, '/');
-    }
-    $GLOBALS['HQ_BASE_URL'] = $hq;
-}
-
-/**
- * Helper to get the computed base URL
- */
-function hq_base_url(): string {
-    return $GLOBALS['HQ_BASE_URL'] ?? '';
-}
-
 /**
  * Log actions into audit_logs
  */

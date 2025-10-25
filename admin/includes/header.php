@@ -44,13 +44,6 @@ if (!headers_sent()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/admin.css">
-    <link rel="stylesheet" href="../assets/css/users.css">   
-    <link rel="stylesheet" href="../assets/css/courses.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../assets/css/notifications.css">
-    <link rel="stylesheet" href="../assets/css/tutors.css">
-    <link rel="stylesheet" href="../assets/css/roles.css">
     <link rel="stylesheet" href="../assets/css/admin-style.css">
     <link rel="stylesheet" href="../assets/css/notifications.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
@@ -101,15 +94,9 @@ if (!headers_sent()) {
         $chosen = $adminBase . '/assets/css/admin.css';
     }
 
-    // Output only the correct admin CSS link for the chosen candidate
-    // Ensure the href is properly quoted to avoid malformed URLs in the browser
-    $cssHref = htmlspecialchars($chosen, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    echo "<link rel=\"stylesheet\" href=\"{$cssHref}\">\n";
+    // Output only the correct admin CSS link for XAMPP
+    echo "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/admin.css\">\n";
     if (!empty($pageCss)) echo $pageCss;
-
-    // Expose the computed admin base to client-side scripts so JS can build absolute admin API URLs
-    $adminBaseJs = htmlspecialchars($adminBase, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    echo "<script>window.ADMIN_BASE = " . json_encode($adminBaseJs) . ";</script>\n";
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)
     // NOTE: keep these conservative and avoid overriding admin layout variables (no body padding or zero margin-left on .admin-main)

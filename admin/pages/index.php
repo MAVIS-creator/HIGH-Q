@@ -1,5 +1,5 @@
 <?php
-// admin./pages/index.php
+// admin/pages/index.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 if (!$pageAllowed) {
     // fallback to dashboard
     // If requested page file exists and the role has the 'settings' permission, allow it (convenience for admins)
-    $candidatesExplicit = [__DIR__ . "/{$page}.php", __DIR__ . "./pages/{$page}.php", __DIR__ . "/.../pages/{$page}.php"];
+    $candidatesExplicit = [__DIR__ . "/{$page}.php", __DIR__ . "/pages/{$page}.php", __DIR__ . "/../pages/{$page}.php"];
     $fileExists = false;
     foreach ($candidatesExplicit as $f) { if (file_exists($f)) { $fileExists = true; break; } }
     if ($fileExists && in_array('settings', $allowed_pages)) {
@@ -128,11 +128,11 @@ if (!$isAjaxRequest) {
     require_once __DIR__ . '/../includes/sidebar.php';
 }
 
-// Try sensible locations for the page file (avoids pages./pages/ double-nesting)
+// Try sensible locations for the page file (avoids pages/pages/ double-nesting)
 $candidates = [
     __DIR__ . "/{$page}.php",         
-    __DIR__ . "./pages/{$page}.php",    
-    __DIR__ . "/.../pages/{$page}.php", 
+    __DIR__ . "/pages/{$page}.php",    
+    __DIR__ . "/../pages/{$page}.php", 
 ];
 
 
@@ -151,8 +151,8 @@ if (!$found && substr($page, -1) === 's') {
     $sing = rtrim($page, 's');
     $singCandidates = [
         __DIR__ . "/{$sing}.php",
-        __DIR__ . "./pages/{$sing}.php",
-        __DIR__ . "/.../pages/{$sing}.php",
+        __DIR__ . "/pages/{$sing}.php",
+        __DIR__ . "/../pages/{$sing}.php",
     ];
     foreach ($singCandidates as $file) {
         if (file_exists($file)) {

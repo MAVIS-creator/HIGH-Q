@@ -44,7 +44,3 @@ error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT c
 error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
 [2025-10-20T01:44:12+02:00] Mailer Exception: SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
 error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
-[2025-10-25 21:37:18] Confirm registration error: Registration not found -- in C:\xampp\htdocs\HIGH-Q\admin\pages\students.php:180
-#0 C:\xampp\htdocs\HIGH-Q\admin\pages\index.php(143): include()
-#1 {main}
-

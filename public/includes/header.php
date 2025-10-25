@@ -243,20 +243,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- HQ Animations helper -->
   <script defer src="./assets/js/hq-animations.js"></script>
-  <?php
-  // Expose a JS global for the base URL so client-side code can build absolute links when needed.
-  try {
-    $hqBase = '';
-    if (!empty($_ENV['APP_URL'])) $hqBase = rtrim($_ENV['APP_URL'], '/');
-    elseif (!empty($GLOBALS['HQ_BASE_URL'])) $hqBase = rtrim($GLOBALS['HQ_BASE_URL'], '/');
-    else {
-      $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-      $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-      $hqBase = rtrim($proto . '://' . $host, '/');
-    }
-  } catch (Throwable $e) { $hqBase = ''; }
-  ?>
-  <script>window.HQ_BASE_URL = <?= json_encode($hqBase) ?>;</script>
   </head>
 
   <body class="hq-public">

@@ -270,7 +270,7 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p>Please complete your payment using the secure link below:</p>
 
-[2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p><a href='http://localhost/HIGH-Q/HIGH-Q/admin./pages/../public/payments_wait.php?ref=pay_68e174476aa38'>http://localhost/HIGH-Q/HIGH-Q/admin./pages/../public/payments_wait.php?ref=pay_68e174476aa38</a></p>
+[2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p><a href='http://localhost/HIGH-Q/HIGH-Q/admin/pages/../public/payments_wait.php?ref=pay_68e174476aa38'>http://localhost/HIGH-Q/HIGH-Q/admin/pages/../public/payments_wait.php?ref=pay_68e174476aa38</a></p>
 
 [2025-10-04T21:23:54+02:00] [level=1] CLIENT -> SERVER:                 <p>Best regards,<br><strong>HIGH Q SOLID ACADEMY</strong></p>
 
@@ -912,7 +912,7 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: 
 
-[2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: <p>A new admin application was submitted by <strong>MAVIS GAMING</strong> (akintundeibunkunoluwa31@gmail.com).</p><p>Review applications: <a href="http://localhost/HIGH-Q/admin./pages/users.php">Admin applications</a></p>
+[2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: <p>A new admin application was submitted by <strong>MAVIS GAMING</strong> (akintundeibunkunoluwa31@gmail.com).</p><p>Review applications: <a href="http://localhost/HIGH-Q/admin/pages/users.php">Admin applications</a></p>
 
 [2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: 
 
@@ -923,116 +923,4 @@ error:0A000086:SSL routines::certificate verify failed
 [2025-10-20T02:23:35+02:00] [level=1] CLIENT -> SERVER: QUIT
 
 [2025-10-20T02:23:36+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-427f009a96asm12515883f8f.31 - gsmtp
-
-[2025-10-25T15:05:07+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP a640c23a62f3a-b6d853077c7sm200597566b.7 - gsmtp
-
-[2025-10-25T15:05:07+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
-
-[2025-10-25T15:05:07+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [197.211.52.180]
-250-SIZE 35882577
-250-8BITMIME
-250-STARTTLS
-250-ENHANCEDSTATUSCODES
-250-PIPELINING
-250-CHUNKING
-250 SMTPUTF8
-
-[2025-10-25T15:05:07+02:00] [level=1] CLIENT -> SERVER: STARTTLS
-
-[2025-10-25T15:05:08+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
-
-[2025-10-25T15:05:08+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
-
-[2025-10-25T15:05:09+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [197.211.52.180]
-250-SIZE 35882577
-250-8BITMIME
-250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
-250-ENHANCEDSTATUSCODES
-250-PIPELINING
-250-CHUNKING
-250 SMTPUTF8
-
-[2025-10-25T15:05:09+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
-
-[2025-10-25T15:05:09+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
-
-[2025-10-25T15:05:09+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
-[2025-10-25T15:05:09+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
-
-[2025-10-25T15:05:09+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
-[2025-10-25T15:05:09+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
-
-[2025-10-25T15:05:09+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
-
-[2025-10-25T15:05:09+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK a640c23a62f3a-b6d853077c7sm200597566b.7 - gsmtp
-
-[2025-10-25T15:05:09+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<Sharonokeowo27@gmail.com>
-
-[2025-10-25T15:05:10+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK a640c23a62f3a-b6d853077c7sm200597566b.7 - gsmtp
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: DATA
-
-[2025-10-25T15:05:10+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead a640c23a62f3a-b6d853077c7sm200597566b.7 - gsmtp
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: Date: Sat, 25 Oct 2025 15:05:07 +0200
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: To: Sharonokeowo27@gmail.com
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: Subject: Payment Link for Your Registration
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: Message-ID: <PW5VHRUARSRyeY2oRBMOlEL6zEyaEfqZXNaaAVIs@localhost>
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: 
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: <div style=3D"font-family:Arial,Helvetica,sans-serif;color:#222;line-height=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: :1.45"><h2 style=3D"color:#1a73e8;margin-bottom:0.25rem">Your Registration =
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: Has Been Accepted</h2><p style=3D"margin-top:0.5rem">Hi Sharon,</p><p>Congr=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: atulations, nding pageyour registration has been reviewed and accepted. To =
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: finalize your enrollment, please complete the payment using the secure link=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER:  below.</p><p style=3D"text-align:center;margin:20px 0"><a href=3D"http://l=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: ocalhost/HIGH-Q/pay/pay_68fccb0363f3c" style=3D"background-color:#1a73e8;co=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: lor:#ffffff;padding:12px 18px;border-radius:6px;text-decoration:none;displa=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: y:inline-block;font-weight:600">Complete Your Payment</a></p><p style=3D"fo=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: nt-size:0.95rem;color:#555">If the button does not work, use this URL:</p><=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: p style=3D"word-break:break-all;"><a href=3D"http://localhost/HIGH-Q/pay/pa=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: y_68fccb0363f3c">http://localhost/HIGH-Q/pay/pay_68fccb0363f3c</a></p><p st=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: yle=3D"margin-top:0.5rem">Reference: <strong>pay_68fccb0363f3c</strong></p>=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: <hr style=3D"border:none;border-top:1px solid #eee;margin:18px 0"><p style=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: =3D"font-size:0.9rem;color:#666">If you need assistance, reply to this mess=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: age or contact support.</p><p style=3D"margin-top:6px"><strong>Best regards=
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: ,<br>HIGH Q SOLID ACADEMY</strong></p></div>
-
-[2025-10-25T15:05:10+02:00] [level=1] CLIENT -> SERVER: .
-
-[2025-10-25T15:05:11+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1761397511 a640c23a62f3a-b6d853077c7sm200597566b.7 - gsmtp
-
-[2025-10-25T15:05:11+02:00] [level=1] CLIENT -> SERVER: QUIT
-
-[2025-10-25T15:05:11+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection a640c23a62f3a-b6d853077c7sm200597566b.7 - gsmtp
 
