@@ -12,16 +12,26 @@
         if (typeof Swal === 'undefined') return; // SweetAlert required
 
         function ajaxJson(method, url, data, cb){
+            // Normalize relative API paths to absolute admin API endpoints
+            var normalizedUrl = url;
+            try {
+                if (!/^[a-z]+:\/\//i.test(url) && url.charAt(0) !== '/') {
+                    // remove leading ../ segments
+                    normalizedUrl = url.replace(/^(?:\.\.\/)+/, '');
+                    if (typeof window.adminApi === 'function') normalizedUrl = window.adminApi(normalizedUrl);
+                }
+            } catch(e) { normalizedUrl = url; }
+
             // Prefer hqFetch for central auth handling
             if (typeof hqFetch === 'function') {
                 var opts = { method: method, headers: { 'X-Requested-With': 'XMLHttpRequest' } };
                 if (method.toUpperCase() === 'POST' && data) opts.body = data;
-                hqFetch(url, opts).then(function(parsed){ cb(null, parsed); }).catch(function(err){ cb(err); });
+                hqFetch(normalizedUrl, opts).then(function(parsed){ cb(null, parsed); }).catch(function(err){ cb(err); });
                 return;
             }
             // Fallback to XHR
             var xhr = new XMLHttpRequest();
-            xhr.open(method, url, true);
+            xhr.open(method, normalizedUrl, true);
             xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
             xhr.onload = function(){
                 try { var j = JSON.parse(xhr.responseText); cb(null,j); }
