@@ -425,7 +425,7 @@ $csrf = generateToken('signup_form');
 																											<option value="male" <?= (isset($gender) && $gender === 'male') ? 'selected' : '' ?>>Male</option>
 																											<option value="female" <?= (isset($gender) && $gender === 'female') ? 'selected' : '' ?>>Female</option>
 																											<option value="other" <?= (isset($gender) && $gender === 'other') ? 'selected' : '' ?>>Other</option>
-																											<option value="prefer_not_to_say" <?= (isset($gender) && $gender === 'prefer_not_to_say') ? 'selected' : '' ?>>Prefer not to say</option>
+
 																										</select>
 																									</div>
 																									<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
