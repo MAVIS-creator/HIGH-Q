@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close on outside click
     document.addEventListener('click', function(e) {
-let         if (!wrap.contains(e.target)) {
+        if (!wrap.contains(e.target)) {
             panel.style.display = 'none';
         }
     });
