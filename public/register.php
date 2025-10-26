@@ -957,16 +957,25 @@ document.addEventListener('DOMContentLoaded', function(){
 </style>
 
 <script>
-// Passport file input wiring
+// Passport file input wiring (support main and post-UTME inputs)
 document.addEventListener('DOMContentLoaded', function(){
-	var btn = document.querySelector('.hq-file-input button');
-	var input = document.getElementById('passport_input');
-	var chosen = document.getElementById('passport_chosen');
-	if (!btn || !input) return;
-	btn.addEventListener('click', function(){ input.click(); });
-	input.addEventListener('change', function(){
-		if (input.files && input.files.length) chosen.textContent = input.files[0].name; else chosen.textContent = 'No file chosen';
-	});
+	// main passport input (regular mode)
+	var mainBtn = document.querySelector('.main-passport-input button');
+	var mainInput = document.getElementById('passport_input');
+	var mainChosen = document.getElementById('passport_chosen');
+	if (mainBtn && mainInput) {
+		mainBtn.addEventListener('click', function(){ mainInput.click(); });
+		mainInput.addEventListener('change', function(){ if (mainInput.files && mainInput.files.length) mainChosen.textContent = mainInput.files[0].name; else mainChosen.textContent = 'No file chosen'; });
+	}
+
+	// post-UTME passport input (inside post block)
+	var postBtn = document.querySelector('.post-passport-input button');
+	var postInput = document.getElementById('passport_input_post');
+	var postChosen = document.getElementById('passport_chosen_post');
+	if (postBtn && postInput) {
+		postBtn.addEventListener('click', function(){ postInput.click(); });
+		postInput.addEventListener('change', function(){ if (postInput.files && postInput.files.length) postChosen.textContent = postInput.files[0].name; else postChosen.textContent = 'No file chosen'; });
+	}
 });
 </script>
 
