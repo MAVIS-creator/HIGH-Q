@@ -98,11 +98,25 @@ try {
     if ($foundType === 'post_utme_registrations') {
         if (isset($r['passport_photo']) && !isset($r['passport_path'])) $r['passport_path'] = $r['passport_photo'];
         // For post-UTME, show a curated set of fields only (hide regular-only fields)
+        // Complete Post-UTME field list (covers sponsor / next-of-kin / waec fields and others)
         $fieldsToShow = [
-            'institution','first_name','surname','other_name','gender','address','parent_phone','email','nin_number','state_of_origin','local_government','place_of_birth','nationality','religion',
-            'jamb_registration_number','jamb_score','jamb_subjects','course_first_choice','course_second_choice','institution_first_choice',
+            // identity & contact
+            'institution','first_name','surname','other_name','gender','address','date_of_birth','date_of_birth_post','parent_phone','email','nin_number','state_of_origin','local_government','place_of_birth','nationality','marital_status','disability','religion','mode_of_entry',
+            // jamb
+            'jamb_registration_number','jamb_score','jamb_subjects',
+            // course/institution choices
+            'course_first_choice','course_second_choice','institution_first_choice',
+            // parent details
             'father_name','father_phone','father_email','father_occupation','mother_name','mother_phone','mother_occupation',
-            'primary_school','primary_year_ended','secondary_school','secondary_year_ended','exam_type','candidate_name','exam_number','exam_year_month','olevel_results','payment_status'
+            // education history
+            'primary_school','primary_year_ended','secondary_school','secondary_year_ended',
+            // sponsor & next of kin
+            'sponsor_name','sponsor_address','sponsor_email','sponsor_phone','sponsor_relationship',
+            'next_of_kin_name','next_of_kin_address','next_of_kin_email','next_of_kin_phone','next_of_kin_relationship',
+            // exam / olevel
+            'exam_type','candidate_name','exam_number','exam_year_month','olevel_results','waec_token','waec_serial',
+            // system/payment
+            'passport_photo','payment_status','form_fee_paid','tutor_fee_paid','created_at','updated_at'
         ];
         // If passport exists we'll include it below as an <img>
         if (!empty($r['passport_path']) && $passportSaved !== null) {
