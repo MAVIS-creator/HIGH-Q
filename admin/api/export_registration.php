@@ -175,8 +175,10 @@ try {
     $zip = new ZipArchive();
     if ($zip->open($zipPath, ZipArchive::CREATE)!==TRUE) { echo json_encode(['success'=>false,'error'=>'Cannot create zip']); exit; }
     $zip->addFile($tmp . '/registration.html','registration.html');
-    if (file_exists($tmp . '/passport.jpg')) $zip->addFile($tmp . '/passport.jpg','passport.jpg');
-    if (file_exists($tmp . '/passport.png')) $zip->addFile($tmp . '/passport.png','passport.png');
+    if ($passportSaved && file_exists($tmp . '/' . $passportSaved)) {
+        // add passport using the saved filename inside the zip
+        $zip->addFile($tmp . '/' . $passportSaved, $passportSaved);
+    }
     $zip->close();
     // serve zip
     header('Content-Type: application/zip');
