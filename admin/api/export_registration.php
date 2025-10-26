@@ -33,12 +33,27 @@ if (!$regId) { echo json_encode(['success'=>false,'error'=>'Missing id']); exit;
 try {
     $stmt = $pdo->prepare('SELECT sr.*, GROUP_CONCAT(sp.course_id) AS courses FROM student_registrations sr LEFT JOIN student_programs sp ON sp.registration_id = sr.id WHERE sr.id = ? GROUP BY sr.id');
     $stmt->execute([$regId]); $r = $stmt->fetch(PDO::FETCH_ASSOC);
+    $foundType = 'student_registrations';
+    if (!$r) {
+        // Try post_utme_registrations as a fallback
+        $stmt2 = $pdo->prepare('SELECT pur.* FROM post_utme_registrations pur WHERE pur.id = ? LIMIT 1');
+        $stmt2->execute([$regId]);
+        $r = $stmt2->fetch(PDO::FETCH_ASSOC);
+        if ($r) {
+            $foundType = 'post_utme_registrations';
+        }
+    }
     if (!$r) { echo json_encode(['success'=>false,'error'=>'Not found']); exit; }
     $tmp = sys_get_temp_dir() . '/hq_export_' . uniqid();
     @mkdir($tmp);
     // create a simple HTML copy
     $html = '<html><body>';
-    $html .= '<h1>Registration #' . $r['id'] . '</h1>';
+    $html .= '<h1>Registration #' . htmlspecialchars($r['id']) . ' (' . htmlspecialchars($foundType) . ')</h1>';
+    // Normalize passport field name for display
+    if ($foundType === 'post_utme_registrations') {
+        // rename passport_photo to passport_path for consistency
+        if (isset($r['passport_photo']) && !isset($r['passport_path'])) $r['passport_path'] = $r['passport_photo'];
+    }
     foreach ($r as $k=>$v) { $val = is_null($v) ? '' : (string)$v; $html .= '<p><strong>' . htmlspecialchars((string)$k) . ':</strong> ' . htmlspecialchars($val) . '</p>'; }
     $html .= '</body></html>';
     file_put_contents($tmp . '/registration.html', $html);
