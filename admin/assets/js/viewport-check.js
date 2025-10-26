@@ -15,7 +15,7 @@ function checkViewportMode() {
         }).then((result) => {
             if (!result.isConfirmed) {
                 // Redirect to logout if they don't want to enable desktop mode
-                window.location.href = '../admin/logout.php';
+                window.location.href = './admin/logout.php';
             }
         });
         return false;
@@ -42,6 +42,6 @@ window.addEventListener('orientationchange', () => {
 setInterval(() => {
     if (!checkViewportMode()) {
         // If viewport check fails during usage, redirect to logout
-        window.location.href = '/logout';
+        window.location.href = '../logout.php';
     }
 }, 5000);
