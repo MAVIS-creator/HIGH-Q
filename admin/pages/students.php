@@ -268,7 +268,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
   header('Content-Type: application/json');
   if (!$s) {
-    echo json_encode(['success' => false, 'error' => 'Registration not found']);
+    // Fallback: try post_utme_registrations and map fields to the expected view shape
+    $stmt2 = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
+    $stmt2->execute([$id]);
+    $p = $stmt2->fetch(PDO::FETCH_ASSOC);
+    if (!$p) { echo json_encode(['success' => false, 'error' => 'Registration not found']); exit; }
+
+    echo json_encode([
+      'success' => true,
+      'data' => [
+        'first_name'             => $p['first_name'] ?? null,
+        'last_name'              => $p['surname'] ?? ($p['last_name'] ?? null),
+        'email'                  => $p['email'] ?? null,
+        'date_of_birth'          => $p['date_of_birth'] ?? $p['date_of_birth_post'] ?? null,
+        'home_address'           => $p['address'] ?? null,
+        'previous_education'     => ($p['secondary_school'] ?? null),
+        'academic_goals'         => ($p['course_first_choice'] ?? null),
+        'emergency_contact_name' => $p['next_of_kin_name'] ?? null,
+        'emergency_contact_phone'=> $p['next_of_kin_phone'] ?? null,
+        'emergency_relationship' => $p['next_of_kin_relationship'] ?? null,
+        'status'                 => $p['status'] ?? null,
+        'created_at'             => $p['created_at'] ?? null,
+      ]
+    ]);
     exit;
   }
 
