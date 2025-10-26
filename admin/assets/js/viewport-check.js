@@ -33,7 +33,7 @@ window.addEventListener('orientationchange', () => {
     setTimeout(() => {
         if (!checkViewportMode()) {
             // If viewport check fails after orientation change, redirect to logout
-            window.location.href = '../admin/logout.php';
+            window.location.href = '../logout.php';
         }
     }, 300);
 });
@@ -42,6 +42,6 @@ window.addEventListener('orientationchange', () => {
 setInterval(() => {
     if (!checkViewportMode()) {
         // If viewport check fails during usage, redirect to logout
-        window.location.href = '../admin/logout.php';
+        window.location.href = '/logout';
     }
 }, 5000);
