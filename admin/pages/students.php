@@ -499,6 +499,20 @@ try {
   $hasRegistrations = !empty($check);
 } catch (Throwable $e) { $hasRegistrations = false; }
 
+// Also detect post_utme_registrations table so we can list/export those entries
+$hasPostUtme = false;
+try {
+  $check2 = $pdo->query("SHOW TABLES LIKE 'post_utme_registrations'")->fetch();
+  $hasPostUtme = !empty($check2);
+} catch (Throwable $e) { $hasPostUtme = false; }
+
+// If student_registrations table is not present but post_utme exists, use that as the registrations source
+$registrations_source = 'student_registrations';
+if (!$hasRegistrations && $hasPostUtme) {
+  $hasRegistrations = true;
+  $registrations_source = 'post_utme_registrations';
+}
+
 // ensure counters exist regardless of which data path is used
 $active = 0; $pending = 0; $banned = 0; $total = 0;
 
@@ -508,15 +522,31 @@ if ($hasRegistrations) {
   $page = max(1, (int)($_GET['page'] ?? 1));
   $offset = ($page - 1) * $perPage;
 
-  $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
-  $countStmt->execute();
-  $total = (int)$countStmt->fetchColumn();
+  if ($registrations_source === 'student_registrations') {
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM student_registrations");
+    $countStmt->execute();
+    $total = (int)$countStmt->fetchColumn();
 
-  $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
-  $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-  $stmt->bindValue(2, $offset, PDO::PARAM_INT);
-  $stmt->execute();
-  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } else {
+    // post_utme_registrations listing
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM post_utme_registrations");
+    $countStmt->execute();
+    $total = (int)$countStmt->fetchColumn();
+
+    $stmt = $pdo->prepare("SELECT pur.* FROM post_utme_registrations pur ORDER BY pur.created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // mark entries so template can render appropriate actions
+    foreach ($students as &$ss) { $ss['__postutme'] = 1; }
+    unset($ss);
+  }
 
 } else {
   // Fetch students (users with role slug 'student' or where role is null)
