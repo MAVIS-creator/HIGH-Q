@@ -15,7 +15,7 @@ function checkViewportMode() {
         }).then((result) => {
             if (!result.isConfirmed) {
                 // Redirect to logout if they don't want to enable desktop mode
-                window.location.href = './admin/logout.php';
+                window.location.href = '../logout.php';
             }
         });
         return false;
