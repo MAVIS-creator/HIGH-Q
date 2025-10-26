@@ -589,6 +589,13 @@ $csrf = generateToken('signup_form');
 																										<div id="postUtmeFields" style="display:none;margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px solid #f0f0f0">
 																											<h4 class="section-title"><i class="bx bxs-book"></i> Post-UTME Registration Details</h4>
 																											<div class="form-row"><label>Name of Institution</label><input type="text" name="institution" placeholder="Name of Institution where you're applying" value="<?= htmlspecialchars($_POST['institution'] ?? '') ?>"></div>
+																											<div class="form-row post-passport-row" style="display:none"><label>Passport Photo (Post-UTME applicants)</label>
+																												<div class="hq-file-input post-passport-input">
+																													<button type="button" class="btn">Choose file</button>
+																													<input type="file" name="passport" id="passport_input_post" accept="image/*" style="display:none">
+																													<span id="passport_chosen_post" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																												</div>
+																											</div>
 																											<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
 																											<div class="form-row"><label>Other Name</label><input type="text" name="other_name" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
 																											<div class="form-row"><label>Gender</label><select name="post_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
