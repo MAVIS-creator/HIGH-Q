@@ -1183,12 +1183,22 @@ document.addEventListener('DOMContentLoaded', function(){
 		regInput.value = 'regular';
 		if (postBlock) postBlock.style.display = 'none';
 		if (programsGrid) programsGrid.style.display = '';
+		// show regular-only fields
+		var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = '';
+		// show main passport input, hide post passport
+		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = '';
+		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = 'none';
 		btnReg.style.borderColor = '#007bff'; btnPost.style.borderColor = '#ddd';
 	}
 	function setPost() {
 		regInput.value = 'postutme';
 		if (postBlock) postBlock.style.display = '';
 		if (programsGrid) programsGrid.style.display = 'none';
+		// hide regular-only fields
+		var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = 'none';
+		// hide main passport input, show post passport
+		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = 'none';
+		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = '';
 		btnPost.style.borderColor = '#007bff'; btnReg.style.borderColor = '#ddd';
 	}
 	btnReg.addEventListener('click', setRegular);
