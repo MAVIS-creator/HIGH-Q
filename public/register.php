@@ -991,3 +991,30 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <!-- Debug overrides removed: styles are consolidated into public/css/register.css -->
+<script>
+// Toggle between Regular and Post-UTME registration forms
+document.addEventListener('DOMContentLoaded', function(){
+	const btnReg = document.getElementById('regTypeRegular');
+	const btnPost = document.getElementById('regTypePost');
+	const regInput = document.getElementById('registration_type');
+	const postBlock = document.getElementById('postUtmeFields');
+	const programsGrid = document.querySelector('.programs-grid');
+	if (!btnReg || !btnPost || !regInput) return;
+	function setRegular() {
+		regInput.value = 'regular';
+		if (postBlock) postBlock.style.display = 'none';
+		if (programsGrid) programsGrid.style.display = '';
+		btnReg.style.borderColor = '#007bff'; btnPost.style.borderColor = '#ddd';
+	}
+	function setPost() {
+		regInput.value = 'postutme';
+		if (postBlock) postBlock.style.display = '';
+		if (programsGrid) programsGrid.style.display = 'none';
+		btnPost.style.borderColor = '#007bff'; btnReg.style.borderColor = '#ddd';
+	}
+	btnReg.addEventListener('click', setRegular);
+	btnPost.addEventListener('click', setPost);
+	// initialize
+	setRegular();
+});
+</script>
