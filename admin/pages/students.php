@@ -299,7 +299,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
   $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id WHERE sr.id = ? LIMIT 1");
   $stmt->execute([$id]); $s = $stmt->fetch(PDO::FETCH_ASSOC);
   header('Content-Type: application/json');
-  if (!$s) { echo json_encode(['error'=>'Not found']); exit; }
+  if (!$s) {
+    // Try post_utme_registrations as a fallback
+    $stmt2 = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
+    $stmt2->execute([$id]);
+    $s2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+    if (!$s2) { echo json_encode(['error'=>'Not found']); exit; }
+    // return post-UTME record
+    echo json_encode($s2); exit;
+  }
   echo json_encode($s); exit;
 }
 
@@ -341,6 +349,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
+      header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+    }
+  
+    // Delete a post-UTME registration row
+    if ($action === 'delete_postutme') {
+      try {
+        $del = $pdo->prepare('DELETE FROM post_utme_registrations WHERE id = ?');
+        $del->execute([$id]);
+        logAction($pdo, $currentUserId, 'postutme_delete', ['postutme_id'=>$id]);
+      } catch (Throwable $e) {
+        // swallow and continue to redirect
+      }
       header('Location: /HIGH-Q/admin/pages/students.php'); exit;
     }
 
