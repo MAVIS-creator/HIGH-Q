@@ -615,17 +615,26 @@ if ($hasRegistrations) {
           <div class="card-right">
             <div class="card-actions">
               <!-- view icon removed as requested -->
-              <?php if (!empty($s['status'])): ?>
-                <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
-                <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
-              <?php endif; ?>
+              <?php if (empty($s['__postutme'])): ?>
+                <?php if (!empty($s['status'])): ?>
+                  <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
+                  <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
+                <?php endif; ?>
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
-              <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-banish">Delete</button>
-              </form>
+                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-banish">Delete</button>
+                </form>
+              <?php else: ?>
+                <!-- post-UTME entries: only allow export and deletion of the post_utme_registrations row -->
+                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>">Export</button>
+                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete_postutme&id=<?= $s['id'] ?>" class="inline-form student-delete-form" style="display:inline-block;">
+                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                  <button type="submit" class="btn-banish">Delete</button>
+                </form>
+              <?php endif; ?>
             </div>
             <div class="card-details" style="margin-top:10px;padding:12px;border-radius:6px;background:#fff;">
               <div><strong>DOB:</strong> <?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
