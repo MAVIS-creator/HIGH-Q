@@ -49,13 +49,42 @@ try {
     // create a simple HTML copy
     $html = '<html><body>';
     $html .= '<h1>Registration #' . htmlspecialchars($r['id']) . ' (' . htmlspecialchars($foundType) . ')</h1>';
-    // Normalize passport field name for display
+    // Normalize passport field name for display (post_utme may use passport_photo)
     if ($foundType === 'post_utme_registrations') {
-        // rename passport_photo to passport_path for consistency
         if (isset($r['passport_photo']) && !isset($r['passport_path'])) $r['passport_path'] = $r['passport_photo'];
+        // For post-UTME, show a curated set of fields only (hide regular-only fields)
+        $fieldsToShow = [
+            'institution','first_name','surname','other_name','gender','address','parent_phone','email','nin_number','state_of_origin','local_government','place_of_birth','nationality','religion',
+            'jamb_registration_number','jamb_score','jamb_subjects','course_first_choice','course_second_choice','institution_first_choice',
+            'father_name','father_phone','father_email','father_occupation','mother_name','mother_phone','mother_occupation',
+            'primary_school','primary_year_ended','secondary_school','secondary_year_ended','exam_type','candidate_name','exam_number','exam_year_month','olevel_results','payment_status'
+        ];
+        // If passport exists we'll include it below as an <img>
+        if (!empty($r['passport_path'])) {
+            // placeholder, actual image file will be copied into ZIP as passport.*
+            $html .= '<div style="margin:12px 0;"><strong>Passport:</strong><br>';
+            $html .= '<img src="passport.jpg" alt="Passport" style="max-width:200px;border:1px solid #ccc;padding:4px"/>';
+            $html .= '</div>';
+        }
+        foreach ($fieldsToShow as $k) {
+            if (!array_key_exists($k, $r)) continue;
+            $v = $r[$k];
+            if (is_null($v)) $v = '';
+            // if JSON fields, pretty-print
+            if (in_array($k, ['jamb_subjects','olevel_results']) && $v) {
+                $decoded = json_decode($v, true);
+                if (is_array($decoded)) $v = '<pre>' . htmlspecialchars(json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) . '</pre>';
+            } else {
+                $v = htmlspecialchars((string)$v);
+            }
+            $html .= '<p><strong>' . htmlspecialchars($k) . ':</strong> ' . $v . '</p>';
+        }
+        $html .= '</body></html>';
+    } else {
+        // default: dump all fields for student_registrations
+        foreach ($r as $k=>$v) { $val = is_null($v) ? '' : (string)$v; $html .= '<p><strong>' . htmlspecialchars((string)$k) . ':</strong> ' . htmlspecialchars($val) . '</p>'; }
+        $html .= '</body></html>';
     }
-    foreach ($r as $k=>$v) { $val = is_null($v) ? '' : (string)$v; $html .= '<p><strong>' . htmlspecialchars((string)$k) . ':</strong> ' . htmlspecialchars($val) . '</p>'; }
-    $html .= '</body></html>';
     file_put_contents($tmp . '/registration.html', $html);
     // copy passport if exists. passport_path may be an absolute URL or a local path.
     if (!empty($r['passport_path'])) {
