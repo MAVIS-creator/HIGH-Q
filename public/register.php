@@ -526,7 +526,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$errors[] = 'Failed to register: ' . $e->getMessage();
 		}
 	}
-
+}
 // Render a simple form when GET or on errors
 $csrf = generateToken('signup_form');
 ?>
