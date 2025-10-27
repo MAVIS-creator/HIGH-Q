@@ -576,10 +576,10 @@ $csrf = generateToken('signup_form');
 													</div>
 													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 													<div class="section-body">
-																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
+																									<div class="form-row form-inline" id="regularPersonalTop"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
 																									<div class="form-row">
 																										<label>Passport Photo (passport-size, face visible)</label>
-																										<div class="hq-file-input">
+																										<div class="hq-file-input main-passport-input">
 																											<button type="button" class="btn">Choose file</button>
 																											<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
 																											<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
