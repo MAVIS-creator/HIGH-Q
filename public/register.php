@@ -198,6 +198,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$service_charge = round(mt_rand(0, 16754) / 100.0, 2);
 			$total_amount = $post_form_fee + $post_tutor_fee + $service_charge;
 
+			// Additional Post-UTME optional fields
+			$mode_of_entry = trim($_POST['mode_of_entry'] ?? '') ?: null;
+			$marital_status = trim($_POST['marital_status'] ?? '') ?: null;
+			$disability = trim($_POST['disability'] ?? '') ?: null;
+			$waec_token = trim($_POST['waec_token'] ?? '') ?: null;
+			$waec_serial = trim($_POST['waec_serial'] ?? '') ?: null;
+			$sponsor_name = trim($_POST['sponsor_name'] ?? '') ?: null;
+			$sponsor_address = trim($_POST['sponsor_address'] ?? '') ?: null;
+			$sponsor_email = trim($_POST['sponsor_email'] ?? '') ?: null;
+			$sponsor_phone = trim($_POST['sponsor_phone'] ?? '') ?: null;
+			$sponsor_relationship = trim($_POST['sponsor_relationship'] ?? '') ?: null;
+			$next_of_kin_name = trim($_POST['next_of_kin_name'] ?? '') ?: null;
+			$next_of_kin_address = trim($_POST['next_of_kin_address'] ?? '') ?: null;
+			$next_of_kin_email = trim($_POST['next_of_kin_email'] ?? '') ?: null;
+			$next_of_kin_phone = trim($_POST['next_of_kin_phone'] ?? '') ?: null;
+			$next_of_kin_relationship = trim($_POST['next_of_kin_relationship'] ?? '') ?: null;
+			// allow free-text jamb subject list fallback
+			$jamb_subjects_text = trim($_POST['jamb_subjects_text'] ?? '') ?: null;
+
 			try {
 				$pdo->beginTransaction();
 
