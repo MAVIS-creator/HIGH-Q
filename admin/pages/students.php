@@ -648,6 +648,12 @@ if ($hasRegistrations) {
   </div>
 
   <div class="user-filters">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <a href="/HIGH-Q/admin/pages/students.php" class="btn <?= ($current_source==='regular' || $current_source==='') ? 'btn-active' : '' ?>">All / Regular</a>
+      <?php if ($hasPostUtme): ?>
+        <a href="/HIGH-Q/admin/pages/students.php?source=postutme" class="btn <?= ($current_source==='postutme') ? 'btn-active' : '' ?>">Post‑UTME</a>
+      <?php endif; ?>
+    </div>
     <input type="text" id="searchInput" placeholder="Search students by name or email">
     <select id="statusFilter">
       <option value="">All Status</option>
