@@ -548,12 +548,31 @@ try {
   $hasPostUtme = !empty($check2);
 } catch (Throwable $e) { $hasPostUtme = false; }
 
-// If student_registrations table is not present but post_utme exists, use that as the registrations source
+// Allow admin to request a source via GET ?source=postutme|regular
+$requestedSource = strtolower(trim($_GET['source'] ?? ''));
 $registrations_source = 'student_registrations';
-if (!$hasRegistrations && $hasPostUtme) {
-  $hasRegistrations = true;
+if ($requestedSource === 'postutme' && $hasPostUtme) {
   $registrations_source = 'post_utme_registrations';
+  $hasRegistrations = true;
+} elseif ($requestedSource === 'regular') {
+  // prefer student_registrations if present; otherwise fall back to post_utme
+  if ($hasRegistrations) {
+    $registrations_source = 'student_registrations';
+  } elseif ($hasPostUtme) {
+    $registrations_source = 'post_utme_registrations';
+    $hasRegistrations = true;
+  }
+} else {
+  // default behavior: if no student_registrations table but post_utme exists, use post_utme
+  if (!$hasRegistrations && $hasPostUtme) {
+    $hasRegistrations = true;
+    $registrations_source = 'post_utme_registrations';
+    $requestedSource = 'postutme';
+  }
 }
+
+// expose for template UI
+$current_source = $requestedSource ?: ($registrations_source === 'post_utme_registrations' ? 'postutme' : 'regular');
 
 // ensure counters exist regardless of which data path is used
 $active = 0; $pending = 0; $banned = 0; $total = 0;
