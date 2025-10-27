@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			try {
 				$pdo->beginTransaction();
 
-				$insertSql = 'INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, address, parent_phone, email, nin_number, state_of_origin, local_government, place_of_birth, nationality, religion, mode_of_entry, jamb_registration_number, jamb_score, jamb_subjects, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, father_email, father_occupation, mother_name, mother_phone, mother_occupation, primary_school, primary_year_ended, secondary_school, secondary_year_ended, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, passport_photo, payment_status, form_fee_paid, tutor_fee_paid, created_at) VALUES (NULL, :status, :institution, :first_name, :surname, :other_name, :gender, :address, :parent_phone, :email, :nin_number, :state_of_origin, :local_government, :place_of_birth, :nationality, :religion, :mode_of_entry, :jamb_registration_number, :jamb_score, :jamb_subjects, :course_first_choice, :course_second_choice, :institution_first_choice, :father_name, :father_phone, :father_email, :father_occupation, :mother_name, :mother_phone, :mother_occupation, :primary_school, :primary_year_ended, :secondary_school, :secondary_year_ended, :exam_type, :candidate_name, :exam_number, :exam_year_month, :olevel_results, :passport_photo, :payment_status, :form_fee_paid, :tutor_fee_paid, NOW())';
+				$insertSql = 'INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, address, parent_phone, email, nin_number, state_of_origin, local_government, place_of_birth, nationality, religion, mode_of_entry, marital_status, disability, jamb_registration_number, jamb_score, jamb_subjects, jamb_subjects_text, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, father_email, father_occupation, mother_name, mother_phone, mother_occupation, primary_school, primary_year_ended, secondary_school, secondary_year_ended, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, waec_token, waec_serial, sponsor_name, sponsor_address, sponsor_email, sponsor_phone, sponsor_relationship, next_of_kin_name, next_of_kin_address, next_of_kin_email, next_of_kin_phone, next_of_kin_relationship, passport_photo, payment_status, form_fee_paid, tutor_fee_paid, created_at) VALUES (NULL, :status, :institution, :first_name, :surname, :other_name, :gender, :address, :parent_phone, :email, :nin_number, :state_of_origin, :local_government, :place_of_birth, :nationality, :religion, :mode_of_entry, :marital_status, :disability, :jamb_registration_number, :jamb_score, :jamb_subjects, :jamb_subjects_text, :course_first_choice, :course_second_choice, :institution_first_choice, :father_name, :father_phone, :father_email, :father_occupation, :mother_name, :mother_phone, :mother_occupation, :primary_school, :primary_year_ended, :secondary_school, :secondary_year_ended, :exam_type, :candidate_name, :exam_number, :exam_year_month, :olevel_results, :waec_token, :waec_serial, :sponsor_name, :sponsor_address, :sponsor_email, :sponsor_phone, :sponsor_relationship, :next_of_kin_name, :next_of_kin_address, :next_of_kin_email, :next_of_kin_phone, :next_of_kin_relationship, :passport_photo, :payment_status, :form_fee_paid, :tutor_fee_paid, NOW())';
 
 				$stmtIns = $pdo->prepare($insertSql);
 				$stmtIns->execute([
@@ -239,10 +239,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					':place_of_birth' => $place_of_birth,
 					':nationality' => $nationality,
 					':religion' => $religion,
-					':mode_of_entry' => null,
+					':mode_of_entry' => $mode_of_entry,
+					':marital_status' => $marital_status,
+					':disability' => $disability,
 					':jamb_registration_number' => $jamb_registration_number,
 					':jamb_score' => $jamb_score,
 					':jamb_subjects' => $jamb_subjects ? json_encode($jamb_subjects, JSON_UNESCAPED_UNICODE) : null,
+					':jamb_subjects_text' => $jamb_subjects_text,
 					':course_first_choice' => $course_first_choice,
 					':course_second_choice' => $course_second_choice,
 					':institution_first_choice' => $institution_first_choice,
@@ -262,6 +265,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					':exam_number' => $exam_number,
 					':exam_year_month' => $exam_year_month,
 					':olevel_results' => !empty($olevel_results) ? json_encode($olevel_results, JSON_UNESCAPED_UNICODE) : null,
+					':waec_token' => $waec_token,
+					':waec_serial' => $waec_serial,
+					':sponsor_name' => $sponsor_name,
+					':sponsor_address' => $sponsor_address,
+					':sponsor_email' => $sponsor_email,
+					':sponsor_phone' => $sponsor_phone,
+					':sponsor_relationship' => $sponsor_relationship,
+					':next_of_kin_name' => $next_of_kin_name,
+					':next_of_kin_address' => $next_of_kin_address,
+					':next_of_kin_email' => $next_of_kin_email,
+					':next_of_kin_phone' => $next_of_kin_phone,
+					':next_of_kin_relationship' => $next_of_kin_relationship,
 					':passport_photo' => null,
 					':payment_status' => 'pending',
 					':form_fee_paid' => 0,
