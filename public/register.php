@@ -717,6 +717,12 @@ $csrf = generateToken('signup_form');
 																											<div class="form-row form-inline"><div><label>Father's name</label><input type="text" name="father_name" value="<?= htmlspecialchars($_POST['father_name'] ?? '') ?>"></div><div><label>Father's phone</label><input type="text" name="father_phone" value="<?= htmlspecialchars($_POST['father_phone'] ?? '') ?>"></div></div>
 																											<div class="form-row form-inline"><div><label>Mother's name</label><input type="text" name="mother_name" value="<?= htmlspecialchars($_POST['mother_name'] ?? '') ?>"></div><div><label>Mother's phone</label><input type="text" name="mother_phone" value="<?= htmlspecialchars($_POST['mother_phone'] ?? '') ?>"></div></div>
 																											<hr>
+																											<!-- Primary / Secondary school fields inserted immediately after Parent Details -->
+																											<div class="form-row"><label>Primary School Name:</label><input type="text" name="primary_school" placeholder="Primary School Name" value="<?= htmlspecialchars($_POST['primary_school'] ?? '') ?>"></div>
+																											<div class="form-row"><label>Year Ended (Primary):</label><input type="text" name="primary_year_ended" placeholder="e.g. 2008" value="<?= htmlspecialchars($_POST['primary_year_ended'] ?? '') ?>"></div>
+																											<div class="form-row"><label>Secondary School Name:</label><input type="text" name="secondary_school" placeholder="Secondary School Name" value="<?= htmlspecialchars($_POST['secondary_school'] ?? '') ?>"></div>
+																											<div class="form-row"><label>Year Ended (Secondary):</label><input type="text" name="secondary_year_ended" placeholder="e.g. 2014" value="<?= htmlspecialchars($_POST['secondary_year_ended'] ?? '') ?>"></div>
+
 																											<h5>O'Level (Enter up to 8 subjects — compulsory first)</h5>
 																											<?php for ($i=1;$i<=8;$i++): ?>
 																											<div class="form-row form-inline"><div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div><div><label>Grade <?= $i ?></label><input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>"></div></div>
