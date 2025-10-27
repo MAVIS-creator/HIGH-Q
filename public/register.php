@@ -154,19 +154,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$religion = trim($_POST['religion'] ?? '') ?: null;
 
 			$jamb_registration_number = trim($_POST['jamb_registration_number'] ?? '') ?: null;
-															$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null;
-															// build jamb subjects from the 4 subject inputs (preferred) or fallback to free-text
-															$jamb_subjects_text = null;
-															if (!empty($_POST['jamb_subj_1']) || !empty($_POST['jamb_subj_2']) || !empty($_POST['jamb_subj_3']) || !empty($_POST['jamb_subj_4'])) {
-																$parts = [];
-																for ($jsi=1;$jsi<=4;$jsi++) {
-																	$sub = trim($_POST['jamb_subj_' . $jsi] ?? '');
-																	$sco = trim($_POST['jamb_score_' . $jsi] ?? '');
-																	if ($sub !== '') { $parts[] = $sub . ':' . ($sco !== '' ? $sco : ''); }
-																}
-																if (!empty($parts)) $jamb_subjects_text = implode(', ', $parts);
-															} else {
-																$jamb_subjects_text = trim($_POST['jamb_subjects_text'] ?? '') ?: null;
+			$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null; 
+			$jamb_subjects_text = $jamb_subjects_text ?? null; 
+
+			// ----------------------
+			// Server-side validation for Post-UTME specific fields
+			// Enforce JAMB score ranges (0-100) and require English + three other subjects
+			// Also require WAEC presence of English Language, Mathematics, Civic Education
+			// These errors will be pushed into $errors and abort registration if present
+			// ----------------------
+			if ($jamb_score !== null && ($jamb_score < 0 || $jamb_score > 100)) {
+				$errors[] = 'JAMB score must be between 0 and 100.';
+			}
+
+			// validate individual JAMB subject scores and subject presence
+			for ($jsi = 1; $jsi <= 4; $jsi++) {
+				$sub = trim($_POST['jamb_subj_' . $jsi] ?? '');
+				$scRaw = trim($_POST['jamb_score_' . $jsi] ?? '');
+				if ($scRaw !== '') {
+					if (!is_numeric($scRaw) || intval($scRaw) < 0 || intval($scRaw) > 100) {
+						$errors[] = 'JAMB subject ' . $jsi . ' score must be a number between 0 and 100.';
+					}
+				}
+				// require three other subjects in addition to English (subj 2..4)
+				if ($jsi > 1 && $sub === '') {
+					$errors[] = 'Please provide three other JAMB subjects in addition to English.';
+				}
+			}
+
+			// ensure subject 1 is English
+			$sub1 = trim($_POST['jamb_subj_1'] ?? '');
+			if ($sub1 === '' || !preg_match('/eng/i', $sub1)) {
+				$errors[] = 'JAMB Subject 1 must be English.';
+			}
+
+			// WAEC presence checks (from $olevel_results built earlier)
+			$requiredWaec = [
+				'english' => 'English Language',
+				'mathematics' => 'Mathematics',
+				'civic' => 'Civic Education'
+			];
+			$foundWaec = ['english' => false, 'mathematics' => false, 'civic' => false];
+			foreach (!empty($olevel_results) ? $olevel_results : [] as $r) {
+				$s = strtolower(trim($r['subject'] ?? ''));
+				if ($s === '') continue;
+				if (preg_match('/eng/i', $s)) $foundWaec['english'] = true;
+				if (preg_match('/math|mth/i', $s)) $foundWaec['mathematics'] = true;
+				if (preg_match('/civic/i', $s)) $foundWaec['civic'] = true;
+			}
+			foreach ($foundWaec as $k => $v) {
+				if (!$v) $errors[] = $requiredWaec[$k] . " is required in O'Level results.";
+			}
 															}
 
 			$course_first_choice = trim($_POST['course_first_choice'] ?? '') ?: null;
