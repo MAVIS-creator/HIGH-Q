@@ -221,8 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$next_of_kin_email = trim($_POST['next_of_kin_email'] ?? '') ?: null;
 			$next_of_kin_phone = trim($_POST['next_of_kin_phone'] ?? '') ?: null;
 			$next_of_kin_relationship = trim($_POST['next_of_kin_relationship'] ?? '') ?: null;
-			// allow free-text jamb subject list fallback
-			$jamb_subjects_text = trim($_POST['jamb_subjects_text'] ?? '') ?: null;
+
 
 			try {
 				$pdo->beginTransaction();
