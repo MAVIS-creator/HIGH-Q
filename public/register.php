@@ -1200,7 +1200,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		if (postBlock) postBlock.style.display = 'none';
 		if (programsGrid) programsGrid.style.display = '';
 		// show regular-only fields
-		var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = '';
+			var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = '';
+			var topPersonal = document.getElementById('regularPersonalTop'); if (topPersonal) topPersonal.style.display = '';
 		// show main passport input, hide post passport
 		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = '';
 		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = 'none';
@@ -1211,7 +1212,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		if (postBlock) postBlock.style.display = '';
 		if (programsGrid) programsGrid.style.display = 'none';
 		// hide regular-only fields
-		var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = 'none';
+			var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = 'none';
+			var topPersonal = document.getElementById('regularPersonalTop'); if (topPersonal) topPersonal.style.display = 'none';
 		// hide main passport input, show post passport
 		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = 'none';
 		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = '';
