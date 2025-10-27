@@ -154,13 +154,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$religion = trim($_POST['religion'] ?? '') ?: null;
 
 			$jamb_registration_number = trim($_POST['jamb_registration_number'] ?? '') ?: null;
-			$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null;
-			$jamb_subjects_raw = trim($_POST['jamb_subjects'] ?? '');
-			$jamb_subjects = null;
-			if ($jamb_subjects_raw !== '') {
-				$decoded = json_decode($jamb_subjects_raw, true);
-				if (is_array($decoded)) $jamb_subjects = $decoded; else $jamb_subjects = [$jamb_subjects_raw];
-			}
+															$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null;
+															// build jamb subjects from the 4 subject inputs (preferred) or fallback to free-text
+															$jamb_subjects_text = null;
+															if (!empty($_POST['jamb_subj_1']) || !empty($_POST['jamb_subj_2']) || !empty($_POST['jamb_subj_3']) || !empty($_POST['jamb_subj_4'])) {
+																$parts = [];
+																for ($jsi=1;$jsi<=4;$jsi++) {
+																	$sub = trim($_POST['jamb_subj_' . $jsi] ?? '');
+																	$sco = trim($_POST['jamb_score_' . $jsi] ?? '');
+																	if ($sub !== '') { $parts[] = $sub . ':' . ($sco !== '' ? $sco : ''); }
+																}
+																if (!empty($parts)) $jamb_subjects_text = implode(', ', $parts);
+															} else {
+																$jamb_subjects_text = trim($_POST['jamb_subjects_text'] ?? '') ?: null;
+															}
 
 			$course_first_choice = trim($_POST['course_first_choice'] ?? '') ?: null;
 			$course_second_choice = trim($_POST['course_second_choice'] ?? '') ?: null;
