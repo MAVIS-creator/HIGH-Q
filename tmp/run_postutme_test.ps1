@@ -64,7 +64,7 @@ $form = @{
 # Attach passport file (use the tmp test file)
 $passportPath = Join-Path $root 'test_passport.jpg'
 if (-not (Test-Path $passportPath)) { Write-Host "Passport file missing: $passportPath"; exit 3 }
-$form.Add('passport', Get-Item $passportPath)
+$form.Add('passport', (Get-Item $passportPath))
 
 Write-Host "Submitting Post-UTME registration (this will follow redirects) ..."
 try {
