@@ -769,7 +769,7 @@ $csrf = generateToken('signup_form');
 																											<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
 																											<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
 																											<div style="margin-top:10px;"><label><input type="checkbox" name="post_tutor_fee" value="1" <?= !empty($_POST['post_tutor_fee']) ? 'checked' : '' ?>> Add optional tutor fee (₦8,000)</label></div>
-																											<p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000. A small service charge (≤ ₦167.54) will be added at checkout.</p>
+																											<p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000. A small.</p>
 																										</div>
 																									</div>
 																									<div id="regularFields">
