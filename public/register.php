@@ -137,6 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		// If Post-UTME registration, handle the separate insert + payment logic and redirect to payment wait
 		if ($registration_type === 'postutme') {
+				// IMPORTANT: Post-UTME applicants MUST pay the compulsory form fee immediately.
+				// Ignore any admin "verify_registration_before_payment" toggle for Post-UTME flows.
+				// This variable documents the intent and can be used by other logic if needed.
+				$forceImmediatePostPayment = true;
 			// Read a subset of Post-UTME fields (best-effort sanitization)
 			$institution = trim($_POST['institution'] ?? '') ?: null;
 			$first_name_post = trim($_POST['first_name_post'] ?? '') ?: null;
