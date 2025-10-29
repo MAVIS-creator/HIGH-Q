@@ -365,10 +365,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					}
 				}
 
-				// create a payment placeholder
+				// create a payment placeholder (include metadata for accounting clarity)
 				$reference = generatePaymentReference('PTU');
-				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, "postutme")');
-				$insP->execute([$total_amount, 'bank', $reference, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
+				$paymentMetadata = json_encode([
+					'components' => [
+						'post_form_fee' => number_format((float)$post_form_fee, 2, '.', ''),
+						'tutor_fee' => number_format((float)$post_tutor_fee, 2, '.', ''),
+						'service_charge' => number_format((float)$service_charge, 2, '.', ''),
+					],
+					'total' => number_format((float)$total_amount, 2, '.', ''),
+					'registration_type' => 'postutme'
+				], JSON_UNESCAPED_SLASHES);
+				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, ?, "postutme")');
+				$insP->execute([$total_amount, 'bank', $reference, $paymentMetadata, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
 				$paymentId = $pdo->lastInsertId();
 
 				$pdo->commit();
