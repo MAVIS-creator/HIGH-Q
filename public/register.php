@@ -1,6 +1,17 @@
-																																												<hr>
-																																												<h5>Exam Details</h5>
-																																												<p style="font-size:13px;color:#666;">Exam details and WAEC/NECO/GCE fields are part of the main Post‑UTME form. Please fill them in the main form on the left.</p>
+<?php
+// public/register.php
+// Use public-side config/includes (avoid pulling admin internals)
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/csrf.php';
+require_once __DIR__ . '/config/functions.php';
+$cfg = require __DIR__ . '/../config/payments.php';
+
+$errors = [];
+$success = '';
+
+// Fixed additional processing fees applied to any registration
+$form_fee = 1000; // ₦1,000 form processing
+$card_fee = 1500; // ₦1,500 card fee
 
 // Load site settings to respect registration toggle (structured site_settings preferred)
 $siteSettings = [];
@@ -356,18 +367,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 				// create a payment placeholder
 				$reference = generatePaymentReference('PTU');
-				// include explicit metadata for accounting: breakdown of post form fee, tutor fee and service charge
-				$payment_metadata = json_encode([
-					'components' => [
-						'post_form_fee' => $post_form_fee,
-						'tutor_fee' => $post_tutor_fee,
-						'service_charge' => $service_charge,
-					],
-					'total' => $total_amount,
-					'registration_type' => 'postutme'
-				]);
-				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, ?, "postutme")');
-				$insP->execute([$total_amount, 'bank', $reference, $payment_metadata, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
+				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, "postutme")');
+				$insP->execute([$total_amount, 'bank', $reference, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
 				$paymentId = $pdo->lastInsertId();
 
 				$pdo->commit();
@@ -820,8 +821,17 @@ $csrf = generateToken('signup_form');
 					<div class="sidebar-card admission-box">
 						<h4>Admission Requirements</h4>
 																																																						<hr>
-																																																																						<h5>O'Level (Enter up to 8 subjects — first three compulsory)</h5>
-																																																																						<p style="font-size:13px;color:#666;">Please fill your O'Level subjects within the main registration form on the left. The admission requirements are shown here for reference only.</p>
+																																																						<h5>O'Level (Enter up to 8 subjects — first three compulsory)</h5>
+																																																						<!-- Compulsory O'Level subjects -->
+																																																						<div class="form-row form-inline"><div><label>Subject 1</label><input type="text" name="olevel_subj_1" value="English Language" readonly></div><div><label>Grade 1</label><input type="text" name="olevel_grade_1" value="<?= htmlspecialchars($_POST['olevel_grade_1'] ?? '') ?>"></div></div>
+																																																						<div class="form-row form-inline"><div><label>Subject 2</label><input type="text" name="olevel_subj_2" value="Mathematics" readonly></div><div><label>Grade 2</label><input type="text" name="olevel_grade_2" value="<?= htmlspecialchars($_POST['olevel_grade_2'] ?? '') ?>"></div></div>
+																																																						<div class="form-row form-inline"><div><label>Subject 3</label><input type="text" name="olevel_subj_3" value="Civic Education" readonly></div><div><label>Grade 3</label><input type="text" name="olevel_grade_3" value="<?= htmlspecialchars($_POST['olevel_grade_3'] ?? '') ?>"></div></div>
+																																																						<!-- Additional optional subjects 4..8 -->
+																																																						<?php for ($i=4;$i<=8;$i++): ?>
+																																																						<div class="form-row form-inline"><div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div><div><label>Grade <?= $i ?></label><input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>"></div></div>
+																																																						<?php endfor; ?>
+
+																																																						<hr>
 																																																						<h5>Exam Details</h5>
 																																																						<div class="form-row"><label>Exam type</label>
 																																																							<select name="exam_type">
