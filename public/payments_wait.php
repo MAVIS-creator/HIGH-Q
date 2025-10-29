@@ -215,14 +215,30 @@ $csrf = generateToken('signup_form');
                     if (st === 'confirmed') {
                       // close any checking modal then show success then redirect
                       try { if (typeof Swal !== 'undefined') Swal.close(); } catch(e){}
-                      if (typeof Swal !== 'undefined') {
-                        Swal.fire({ icon: 'success', title: 'Payment Successful', html: 'Your payment has been confirmed. Redirecting to your receipt...', showConfirmButton: false, timer: 2200, customClass: { popup: 'hq-swal' } }).then(()=>{
+                      // If this payment is for a Post-UTME, show friendly message that an agent will contact them after review
+                      var isPost = (r.payment.registration_type && r.payment.registration_type === 'postutme');
+                      if (isPost) {
+                        var msg = 'Payment confirmed. An agent will get in touch with you after your details have been reviewed.';
+                        if (typeof Swal !== 'undefined') {
+                          Swal.fire({ icon: 'success', title: 'Payment Received', html: msg, showConfirmButton: true, customClass: { popup: 'hq-swal' } }).then(function(){
+                            if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                            else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                          });
+                        } else {
+                          alert(msg);
                           if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
                           else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
-                        });
+                        }
                       } else {
-                        if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                        else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                        if (typeof Swal !== 'undefined') {
+                          Swal.fire({ icon: 'success', title: 'Payment Successful', html: 'Your payment has been confirmed. Redirecting to your receipt...', showConfirmButton: false, timer: 2200, customClass: { popup: 'hq-swal' } }).then(()=>{
+                            if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                            else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                          });
+                        } else {
+                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                        }
                       }
                     } else if (st === 'expired') {
                       // backend marked expired
