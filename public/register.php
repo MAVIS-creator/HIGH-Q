@@ -154,8 +154,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$religion = trim($_POST['religion'] ?? '') ?: null;
 
 			$jamb_registration_number = trim($_POST['jamb_registration_number'] ?? '') ?: null;
-			$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null; 
-			$jamb_subjects_text = $jamb_subjects_text ?? null; 
+			$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null;
+			// Build jamb_subjects array and a human-friendly jamb_subjects_text from the four subject/score inputs
+			$jamb_subjects = [];
+			$jamb_pairs = [];
+			for ($j=1;$j<=4;$j++) {
+				$sj = trim($_POST['jamb_subj_' . $j] ?? '');
+				$sc = trim($_POST['jamb_score_' . $j] ?? '');
+				if ($sj !== '') {
+					$jamb_subjects[] = ['subject' => $sj, 'score' => ($sc !== '' ? intval($sc) : null)];
+					$jamb_pairs[] = $sj . ($sc !== '' ? ' (' . $sc . ')' : '');
+				}
+			}
+			$jamb_subjects_text = !empty($jamb_pairs) ? implode('; ', $jamb_pairs) : null;
 
 			// ----------------------
 			// Server-side validation for Post-UTME specific fields
