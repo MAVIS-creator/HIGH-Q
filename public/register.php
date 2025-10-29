@@ -751,6 +751,20 @@ $csrf = generateToken('signup_form');
 																											<div class="form-row form-inline"><div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div><div><label>Grade <?= $i ?></label><input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>"></div></div>
 																											<?php endfor; ?>
 																											<hr>
+																											<h5>Exam Details</h5>
+																											<div class="form-row"><label>Exam type</label>
+																												<select name="exam_type">
+																													<option value="">Select</option>
+																													<option value="WAEC" <?= (isset($_POST['exam_type']) && $_POST['exam_type']==='WAEC')?'selected':'' ?>>WAEC</option>
+																													<option value="NECO" <?= (isset($_POST['exam_type']) && $_POST['exam_type']==='NECO')?'selected':'' ?>>NECO</option>
+																													<option value="GCE" <?= (isset($_POST['exam_type']) && $_POST['exam_type']==='GCE')?'selected':'' ?>>GCE</option>
+																												</select>
+																											</div>
+																											<div class="form-row"><label>Candidate Name</label><input type="text" name="candidate_name" value="<?= htmlspecialchars($_POST['candidate_name'] ?? '') ?>"></div>
+																											<div class="form-row form-inline"><div><label>Exam Number</label><input type="text" name="exam_number" value="<?= htmlspecialchars($_POST['exam_number'] ?? '') ?>"></div><div><label>Exam Year & Month</label><input type="text" name="exam_year_month" placeholder="e.g. 2024-08" value="<?= htmlspecialchars($_POST['exam_year_month'] ?? '') ?>"></div></div>
+																											<div class="form-row"><label>WAEC/NECO/GCE Token</label><input type="text" name="waec_token" value="<?= htmlspecialchars($_POST['waec_token'] ?? '') ?>"></div>
+																											<div class="form-row"><label>WAEC/NECO/GCE Serial No.</label><input type="text" name="waec_serial" value="<?= htmlspecialchars($_POST['waec_serial'] ?? '') ?>"></div>
+																											<hr>
 																											<h5>Sponsor & Next of kin</h5>
 																											<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
 																											<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
