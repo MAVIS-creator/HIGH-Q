@@ -1,17 +1,6 @@
-<?php
-// public/register.php
-// Use public-side config/includes (avoid pulling admin internals)
-require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/config/csrf.php';
-require_once __DIR__ . '/config/functions.php';
-$cfg = require __DIR__ . '/../config/payments.php';
-
-$errors = [];
-$success = '';
-
-// Fixed additional processing fees applied to any registration
-$form_fee = 1000; // ₦1,000 form processing
-$card_fee = 1500; // ₦1,500 card fee
+																																												<hr>
+																																												<h5>Exam Details</h5>
+																																												<p style="font-size:13px;color:#666;">Exam details and WAEC/NECO/GCE fields are part of the main Post‑UTME form. Please fill them in the main form on the left.</p>
 
 // Load site settings to respect registration toggle (structured site_settings preferred)
 $siteSettings = [];
