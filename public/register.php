@@ -855,7 +855,6 @@ $csrf = generateToken('signup_form');
 						<div class="sidebar-card admission-box">
 							<h4>Admission Requirements</h4>
 							<hr>
-							<p style="font-size:13px;color:#444;margin:8px 0">Please complete your O'Level subjects and Exam Details inside the main registration form (if you're applying for Post‑UTME, expand the Post‑UTME section and fill the O'Level and Exam Details there). The inputs shown on the form are required for Post‑UTME applications.</p>
 							<ul style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
 								<li>Completed O'Level certificate (for JAMB/Post‑UTME)</li>
 								<li>Valid identification document</li>
