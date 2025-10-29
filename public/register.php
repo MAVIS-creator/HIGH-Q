@@ -831,17 +831,8 @@ $csrf = generateToken('signup_form');
 					<div class="sidebar-card admission-box">
 						<h4>Admission Requirements</h4>
 																																																						<hr>
-																																																						<h5>O'Level (Enter up to 8 subjects — first three compulsory)</h5>
-																																																						<!-- Compulsory O'Level subjects -->
-																																																						<div class="form-row form-inline"><div><label>Subject 1</label><input type="text" name="olevel_subj_1" value="English Language" readonly></div><div><label>Grade 1</label><input type="text" name="olevel_grade_1" value="<?= htmlspecialchars($_POST['olevel_grade_1'] ?? '') ?>"></div></div>
-																																																						<div class="form-row form-inline"><div><label>Subject 2</label><input type="text" name="olevel_subj_2" value="Mathematics" readonly></div><div><label>Grade 2</label><input type="text" name="olevel_grade_2" value="<?= htmlspecialchars($_POST['olevel_grade_2'] ?? '') ?>"></div></div>
-																																																						<div class="form-row form-inline"><div><label>Subject 3</label><input type="text" name="olevel_subj_3" value="Civic Education" readonly></div><div><label>Grade 3</label><input type="text" name="olevel_grade_3" value="<?= htmlspecialchars($_POST['olevel_grade_3'] ?? '') ?>"></div></div>
-																																																						<!-- Additional optional subjects 4..8 -->
-																																																						<?php for ($i=4;$i<=8;$i++): ?>
-																																																						<div class="form-row form-inline"><div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div><div><label>Grade <?= $i ?></label><input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>"></div></div>
-																																																						<?php endfor; ?>
-
-																																																						<hr>
+																																																																						<h5>O'Level (Enter up to 8 subjects — first three compulsory)</h5>
+																																																																						<p style="font-size:13px;color:#666;">Please fill your O'Level subjects within the main registration form on the left. The admission requirements are shown here for reference only.</p>
 																																																						<h5>Exam Details</h5>
 																																																						<div class="form-row"><label>Exam type</label>
 																																																							<select name="exam_type">
