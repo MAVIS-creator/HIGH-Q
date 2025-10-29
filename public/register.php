@@ -856,25 +856,13 @@ $csrf = generateToken('signup_form');
 							<h4>Admission Requirements</h4>
 							<hr>
 							<p style="font-size:13px;color:#444;margin:8px 0">Please complete your O'Level subjects and Exam Details inside the main registration form (if you're applying for Post‑UTME, expand the Post‑UTME section and fill the O'Level and Exam Details there). The inputs shown on the form are required for Post‑UTME applications.</p>
-
-							<div style="margin-top:8px;font-size:13px;color:#333">
-								<label style="font-weight:600;display:block;margin-bottom:6px">WAEC compulsory subjects (for reference)</label>
-								<div class="mb-2">
-									<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0">
-										<div>English Language</div>
-										<input type="text" class="form-control form-control-sm" value="Required" readonly disabled style="width:110px;text-align:center;background:#f9f9f9;border:1px solid #e6e6e6">
-									</div>
-									<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0">
-										<div>Mathematics</div>
-										<input type="text" class="form-control form-control-sm" value="Required" readonly disabled style="width:110px;text-align:center;background:#f9f9f9;border:1px solid #e6e6e6">
-									</div>
-									<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0">
-										<div>Civic Education</div>
-										<input type="text" class="form-control form-control-sm" value="Required" readonly disabled style="width:110px;text-align:center;background:#f9f9f9;border:1px solid #e6e6e6">
-									</div>
-								</div>
-								<p style="margin-top:8px;color:#666;font-size:12px">Note: Enter the full O'Level subjects and grades in the Post‑UTME form to the left. These fields in this sidebar are for quick reference only and are not submitted.</p>
-							</div>
+							<ul style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
+								<li>Completed O'Level certificate (for JAMB/Post‑UTME)</li>
+								<li>Valid identification document</li>
+								<li>Passport photograph (2 copies)</li>
+								<li>Registration fee payment</li>
+								<li>Commitment to academic excellence</li>
+							</ul>
 						</div>
 
 							<div class="sidebar-card payment-box">
