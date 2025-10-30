@@ -315,7 +315,7 @@ $csrf = generateToken('signup_form');
                     var msg = (j && j.message) ? j.message : 'Failed to record transfer.';
                     if (j && j.raw) msg += '\n' + j.raw;
                     if (typeof Swal !== 'undefined') Swal.fire('Error', msg, 'error'); else alert(msg);
-                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Record transfer details'; }
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "I've sent the money"; }
                     if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none';
                   }
                 }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Record transfer details'; } if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none'; });
