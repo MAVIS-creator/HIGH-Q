@@ -253,17 +253,12 @@ $csrf = generateToken('signup_form');
             }
           } catch(e){}
 
-          // show/hide payer form when user clicks the primary button
+          // When primary button is clicked, submit the payer form (user should have filled details)
           try {
-            if (markSentBtn) {
+            if (markSentBtn && form) {
               markSentBtn.addEventListener('click', function(){
-                if (payerFormWrap) {
-                  payerFormWrap.style.display = (payerFormWrap.style.display === 'none' || payerFormWrap.style.display === '') ? 'block' : 'none';
-                  if (payerFormWrap.style.display === 'block') {
-                    var el = payerFormWrap.querySelector('input[name="payer_name"]'); if (el) el.focus();
-                    window.scrollTo({ top: payerFormWrap.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
-                  }
-                }
+                // trigger a normal submit so our submit handler processes it
+                if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit();
               });
             }
           } catch(e){}
