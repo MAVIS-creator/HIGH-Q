@@ -699,7 +699,16 @@ $csrf = generateToken('signup_form');
 																											</div>
 																											<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
 
-																																															<!-- Instruction block removed as requested: compulsory WAEC subjects will be enforced via the O'Level inputs themselves -->
+																																															<!-- Brief admission/instruction note (moved from sidebar): show compulsory WAEC subjects as reference inside the Post-UTME form -->
+																																															<div class="postutme-instructions" style="margin:8px 0;padding:10px;border-left:4px solid #ffd966;background:#fffbe6;font-size:13px;color:#333">
+																																																<strong style="display:block;margin-bottom:6px">Admission requirements (Post‑UTME)</strong>
+																																																<p style="margin:0 0 8px;color:#555">Ensure you include the following compulsory WAEC subjects in your O'Level entries below. Fill full O'Level subjects and grades in the O'Level section further down.</p>
+																																																<div style="display:flex;gap:8px;align-items:center">
+																																																	<div style="flex:1;min-width:160px"><label class="small" style="display:block;margin-bottom:4px">English Language</label><input type="text" class="form-control form-control-sm" value="Required" readonly disabled style="background:#f6f6f6;border:1px solid #e6e6e6"></div>
+																																																	<div style="flex:1;min-width:160px"><label class="small" style="display:block;margin-bottom:4px">Mathematics</label><input type="text" class="form-control form-control-sm" value="Required" readonly disabled style="background:#f6f6f6;border:1px solid #e6e6e6"></div>
+																																																	<div style="flex:1;min-width:160px"><label class="small" style="display:block;margin-bottom:4px">Civic Education</label><input type="text" class="form-control form-control-sm" value="Required" readonly disabled style="background:#f6f6f6;border:1px solid #e6e6e6"></div>
+																																																</div>
+																																															</div>
 																											<div class="form-row"><label>Other Name</label><input type="text" name="other_name" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
 																											<div class="form-row"><label>Gender</label><select name="post_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
 																											<div class="form-row"><label>Address</label><textarea name="address"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea></div>
