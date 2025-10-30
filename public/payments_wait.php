@@ -189,58 +189,45 @@ $csrf = generateToken('signup_form');
         (function(){
           var created = <?= json_encode($payment['created_at'] ?? null) ?>;
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
-          var pageTimeout = 10 * 60; // 10 minutes
           var elTransfer = document.getElementById('transferExpire');
           var form = document.getElementById('payer-form');
           var payerFormWrap = document.getElementById('payerFormWrap');
           var markSentBtn = document.getElementById('markSentBtn');
-          var storageKey = 'hq_pay_timer_' + ref;
-          // server-side expiry (2 days from payment.created_at)
-          var expiryTs = <?= json_encode($payment && !empty($payment['created_at']) ? (strtotime($payment['created_at']) + (2*24*60*60)) : null) ?>;
 
-          function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
+          // Payment window: 30 minutes from when the user opens/taps the link (page load)
+          var paymentWindowSeconds = 30 * 60; // 30 minutes
+          var transferStartKey = 'hq_transfer_start_' + ref;
 
-          // create or reuse a start timestamp for the page timer so refresh doesn't reset it
-          var startTs = null;
+          // try to reuse a previously stored transfer start time so refresh doesn't reset the countdown
+          var transferStartTs = null;
           try {
-            var stored = localStorage.getItem(storageKey);
-            if (stored) startTs = parseInt(stored,10);
-            if (!startTs || isNaN(startTs)) { startTs = Math.floor(Date.now()/1000); localStorage.setItem(storageKey, startTs); }
-          } catch (e) { startTs = Math.floor(Date.now()/1000); }
+            var storedStart = localStorage.getItem(transferStartKey);
+            if (storedStart) transferStartTs = parseInt(storedStart, 10);
+            if (!transferStartTs || isNaN(transferStartTs)) { transferStartTs = Math.floor(Date.now()/1000); localStorage.setItem(transferStartKey, transferStartTs); }
+          } catch (e) { transferStartTs = Math.floor(Date.now()/1000); }
 
-          function updatePageTimer(){
-            var now = Math.floor(Date.now()/1000);
-            var remain = pageTimeout - (now - startTs);
-            if (remain <= 0) {
-              // hide payer form and indicate closed
-              if (form) form.style.display = 'none';
-              if (elTransfer) elTransfer.textContent = '00:00';
-              return false;
-            }
-            return true;
-          }
-
-          // show server-side expiry countdown (time until payment.created_at + 2 days)
           function updateTransferTimer(){
             if (!elTransfer) return;
-            if (!expiryTs) { elTransfer.textContent = '--:--'; return; }
             var now = Math.floor(Date.now()/1000);
-            var remain = expiryTs - now;
-            if (remain <= 0) { elTransfer.textContent = 'expired'; return; }
-            // Format: if more than 1 day, show "Xd HH:MM:SS", else "HH:MM:SS"
-            var days = Math.floor(remain / 86400);
-            var hh = Math.floor((remain % 86400) / 3600);
-            var mm = Math.floor((remain % 3600) / 60);
+            var remain = paymentWindowSeconds - (now - transferStartTs);
+            if (remain <= 0) {
+              elTransfer.textContent = '00:00';
+              // disable the form (payment window closed)
+              if (form) form.querySelectorAll('input,button,select,textarea').forEach(function(i){ i.disabled = true; });
+              if (markSentBtn) { markSentBtn.disabled = true; markSentBtn.textContent = "Payment window closed"; }
+              return;
+            }
+            var hh = Math.floor(remain/3600);
+            var mm = Math.floor((remain%3600)/60);
             var ss = remain % 60;
             function two(n){ return (n<10? '0'+n : ''+n); }
-            if (days > 0) elTransfer.textContent = days + 'd ' + two(hh) + ':' + two(mm) + ':' + two(ss);
-            else elTransfer.textContent = two(hh) + ':' + two(mm) + ':' + two(ss);
+            if (hh>0) elTransfer.textContent = two(hh)+ ':' + two(mm) + ':' + two(ss);
+            else elTransfer.textContent = two(mm) + ':' + two(ss);
           }
 
-          // initialize timers
-          updatePageTimer();
+          // initialize transfer countdown and update every second
           updateTransferTimer();
-          setInterval(function(){ updatePageTimer(); updateTransferTimer(); }, 1000);
+          setInterval(updateTransferTimer, 1000);
 
           // polling for admin confirmation and server-side expiry
           function check(){
@@ -293,8 +280,8 @@ $csrf = generateToken('signup_form');
           check();
           setInterval(check, 5000);
 
-          // when the user successfully records a payment we can clear the page timer so UX resets on next visit
-          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); localStorage.removeItem(transferStartKey); } catch(e){} });
+          // when the user successfully records a payment we can clear the transfer start so UX resets on next visit
+          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(transferStartKey); } catch(e){} });
 
           // copy account number helper (show toast popup instead of swapping icons)
           try {
