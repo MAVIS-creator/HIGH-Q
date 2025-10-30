@@ -62,27 +62,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container" style="max-width:760px;margin:18px auto;padding:18px;background:#fff;border-radius:8px;">
         <h1>Create Payment Link</h1>
         <div id="adminMsg" style="display:none;margin-bottom:12px;padding:10px;border-radius:6px;background:#f7f7f7;border:1px solid #eee"></div>
-        <div class="admin-payment-card">
-            <form id="adminPaymentForm" class="admin-payment-form">
-                <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
-                <div class="form-row"><label>Amount (NGN)</label><input type="text" name="amount" placeholder="e.g. 1080" required></div>
-                <div class="form-row"><label>Recipient email</label><input type="email" name="email" placeholder="payer@example.com" required></div>
-                <div class="form-row"><label>Message (optional)</label><textarea name="message" rows="4" placeholder="Message to include with the payment link"></textarea></div>
-                <div class="admin-payment-actions">
-                        <button class="btn" id="createSendBtn" type="button">Create & Send Link</button>
-                        <div id="createdLinkWrap" style="display:none;flex:1;">
-                                <div class="admin-payment-link" id="createdLink"></div>
-                                <button class="admin-payment-copy" id="copyLinkBtn" style="margin-left:8px;">Copy link</button>
-                        </div>
-                </div>
-            </form>
-        </div>
+            <div class="admin-payment-card">
+                <form id="adminPaymentForm" class="admin-payment-form">
+                    <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
+                    <div class="form-row"><label>Amount (NGN)</label><input type="text" name="amount" placeholder="e.g. 1080" required></div>
+                    <div class="form-row"><label>Recipient email</label><input type="email" name="email" placeholder="payer@example.com" required></div>
+                    <div class="form-row"><label>Message (optional)</label><textarea name="message" rows="4" placeholder="Message to include with the payment link"></textarea></div>
+                    <div class="admin-payment-actions">
+                            <button class="btn" id="createSendBtn" type="button">Create & Send Link</button>
+                            <div id="createdLinkWrap" style="display:none;flex:1;">
+                                    <div class="admin-payment-link" id="createdLink"></div>
+                                    <button class="admin-payment-copy" id="copyLinkBtn" style="margin-left:8px;">Copy link</button>
+                            </div>
+                    </div>
+                </form>
+            </div>
 </div>
 
 <?php if (!empty($recentLinks)): ?>
-    <div class="admin-payment-card" style="margin-top:18px;">
-        <h3>Recent created links</h3>
-        <table class="table" style="width:100%"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Created</th></tr></thead><tbody>
+        <div class="admin-payment-card" style="margin-top:18px;">
+            <h3>Recent created links</h3>
+            <table class="table" style="width:100%"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Emailed</th><th>Actions</th><th>Created</th></tr></thead><tbody>
         <?php foreach($recentLinks as $r):
                 $meta = [];
                 if (!empty($r['metadata'])) { $meta = json_decode($r['metadata'], true) ?: []; }
@@ -95,8 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <td>₦<?= number_format($r['amount'],2) ?></td>
                 <td><?= htmlspecialchars($emailTo) ?></td>
                 <td><?= htmlspecialchars(strlen($msgText) > 60 ? substr($msgText,0,57).'...' : $msgText) ?></td>
-                <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div><button class="admin-payment-copy" data-link="<?= htmlspecialchars($link) ?>">Copy</button></div></td>
-                <td><?= htmlspecialchars($r['created_at']) ?></td>
+                    <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div></div></td>
+                    <td class="small-muted"><?= (!empty($meta['emailed']) ? '<strong style="color:var(--hq-dark)">Yes</strong>' : '<span class="small-muted">No</span>') ?></td>
+                    <td>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                    <button class="admin-payment-copy action-btn" data-link="<?= htmlspecialchars($link) ?>">Copy</button>
+                                    <button class="admin-payment-resend action-btn" data-id="<?= htmlspecialchars($r['id']) ?>">Resend</button>
+                            </div>
+                    </td>
+                    <td><?= htmlspecialchars($r['created_at']) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody></table>
