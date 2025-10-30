@@ -1270,35 +1270,44 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <script>
-// Ensure the registration form sets the correct payment method before submit
+// Attach submit handlers to both forms (regular and postutme). Post-UTME always forces bank flow.
 (function(){
-	var form = document.getElementById('registrationForm') || document.querySelector('form[method="post"][enctype]');
-	if (!form) return;
-	form.id = form.id || 'registrationForm';
-	form.addEventListener('submit', function(e){
-		try { if (typeof window.compute === 'function') window.compute(); } catch(e){}
-		var state = window.hqPaymentState || {};
-		var methodInput = document.getElementById('method_input');
-		// If this is the Post-UTME form, force bank flow on submit so the server creates a Post-UTME payment (PTU ref)
-		if (form.classList && form.classList.contains('form-postutme')) {
-			if (methodInput) methodInput.value = 'bank';
-			// allow normal submission (server will handle creating PTU payment and redirect)
-			return;
-		}
-		// For regular registrations: prefer online when there are fixed-priced items
-		if (methodInput) {
-			if (state.anyFixed) methodInput.value = 'paystack'; else methodInput.value = 'bank';
-		}
-		// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
-		if (methodInput && methodInput.value === 'paystack') {
-			// allow the form to submit but intercept to show confirmation
-			e.preventDefault();
-			if (typeof Swal !== 'undefined') {
-				Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
-			} else {
-				if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
+	function attachSubmit(form){
+		if (!form) return;
+		form.addEventListener('submit', function(e){
+			try { if (typeof window.compute === 'function') window.compute(); } catch(err){}
+			var state = window.hqPaymentState || {};
+			// target method inputs inside this form (safer than global id)
+			var methodInputs = form.querySelectorAll('input[name="method"]');
+			// If this is the Post-UTME form, force bank flow on submit so the server creates a Post-UTME payment (PTU ref)
+			if (form.classList && form.classList.contains('form-postutme')) {
+				if (methodInputs && methodInputs.length) methodInputs.forEach(function(mi){ try{ mi.value = 'bank'; }catch(e){} });
+				// allow normal submission
+				return;
 			}
-		}
+
+			// Regular registrations: prefer online when there are fixed-priced items
+			if (methodInputs && methodInputs.length) {
+				var val = (state && state.anyFixed) ? 'paystack' : 'bank';
+				methodInputs.forEach(function(mi){ try{ mi.value = val; }catch(e){} });
+			}
+
+			// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
+			var currentMethod = (methodInputs && methodInputs[0]) ? methodInputs[0].value : null;
+			if (currentMethod === 'paystack') {
+				e.preventDefault();
+				if (typeof Swal !== 'undefined') {
+					Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
+				} else {
+					if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
+				}
+			}
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', function(){
+		attachSubmit(document.getElementById('regularForm'));
+		attachSubmit(document.getElementById('postutmeForm'));
 	});
 })();
 </script>
