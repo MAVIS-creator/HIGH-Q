@@ -43,7 +43,6 @@ $csrf = generateToken('signup_form');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="stylesheet" href="./assets/css/payment.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -68,9 +67,9 @@ $csrf = generateToken('signup_form');
   </style>
 </head>
 <body>
-  <div class="minimal-header">
-    <div class="container">
-      <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
+    <div class="container" style="display:flex;align-items:center;gap:12px;">
+  <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
         <div style="font-size:12px;color:#666;">Secure payment</div>
@@ -94,11 +93,10 @@ $csrf = generateToken('signup_form');
           <!-- Sidebar removed — only Transfer is allowed -->
 
           <!-- Main transfer panel -->
-
           <div style="flex:1;">
-            <div class="transfer-card">
+            <div class="transfer-card" style="background:#fff;border-radius:8px;padding:18px;border:1px solid #eee;text-align:center;position:relative;">
               <!-- Close (X) button -->
-              <button id="closeBtn" class="close-btn" aria-label="Close"><i class="bx bx-x"></i></button>
+              <button id="closeBtn" aria-label="Close" style="position:absolute;right:12px;top:12px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#666"><i class="bx bx-x"></i></button>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                 <div style="text-align:left">
                   <div style="font-size:13px;color:#666">Paying as</div>
@@ -112,20 +110,21 @@ $csrf = generateToken('signup_form');
 
               <h3 style="margin:10px 0 6px;color:#444;font-weight:700;">Transfer ₦<?= number_format($payment['amount'],2) ?></h3>
 
-              <div style="margin:14px auto;max-width:560px;">
-                <div style="padding:16px;border-radius:8px;background:#fbfbfb;border:1px solid #f0f0f0;">
-                  <div style="font-size:13px;color:#888;margin-bottom:6px">Paystack Checkout</div>
-                  <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?></div>
-                  <div class="acct-number"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" class="copy-btn" aria-label="Copy account number"><i class="bx bx-copy"></i></button></div>
-                  <div class="acct-meta">Account name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?></div>
-                  <div class="transfer-expire">Payment link expires in <span id="transferExpire">--:--</span></div>
-                  <div style="margin-top:6px;color:#666;font-size:13px">Payment window: <span id="paymentWindowTimer">--:--</span></div>
-                </div>
+              <div style="margin:14px auto;padding:16px;border-radius:8px;background:#fbfbfb;border:1px solid #f0f0f0;max-width:560px;">
+                <div style="font-size:13px;color:#888;margin-bottom:6px">Paystack Checkout</div>
+                <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?></div>
+                <div class="acct-number" style="font-size:30px;letter-spacing:2px;font-weight:800;"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" aria-label="Copy account number" style="margin-left:8px;border:none;background:transparent;cursor:pointer;font-size:18px;color:#444"><i class="bx bx-copy"></i></button></div>
+                <div style="color:#999;margin-top:8px">Account name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?></div>
+                <div style="margin-top:10px;color:#b33;font-weight:600">Expires in <span id="transferExpire">29:59</span></div>
               </div>
 
               <div style="margin-top:10px">
                 <p style="color:#666">Use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong> when making the transfer.</p>
-                <p style="color:#666">This payment link expires after 2 days. After making the transfer on your phone, return to this page and provide your transfer details for verification.</p>
+                <p style="color:#666">This payment link expires after 2 days. After making the transfer, click "I've sent the money" and provide your transfer details for verification.</p>
+              </div>
+
+              <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;">
+                <button class="btn-primary" id="markSentBtn" type="button">I've sent the money</button>
               </div>
             </div>
 
@@ -139,8 +138,8 @@ $csrf = generateToken('signup_form');
                   <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
                   <div class="form-row"><label for="payer_name_input">Name on Payer Account</label><input id="payer_name_input" name="payer_name" required style="width:100%" placeholder="Full name on the account"></div>
                   <div class="form-row"><label for="payer_number_input">Account Number</label><input id="payer_number_input" name="payer_number" required style="width:100%" placeholder="e.g. 0012345678"></div>
-                    <div class="form-row"><label for="payer_bank_input">Bank Name</label><input id="payer_bank_input" name="payer_bank" required style="width:100%" placeholder="e.g. Zenith Bank"></div>
-                    <div class="form-row" style="text-align:center;margin-top:12px;"><button class="btn-primary" id="markSentBtn" type="submit">I've sent the money</button></div>
+                  <div class="form-row"><label for="payer_bank_input">Bank Name</label><input id="payer_bank_input" name="payer_bank" required style="width:100%" placeholder="e.g. Zenith Bank"></div>
+                  <div class="form-row"><label for="tx_desc_input">Transaction description (programme)</label><input id="tx_desc_input" name="transaction_description" placeholder="E.g. PTU — Computer Science" style="width:100%"></div>
                 </form>
               </div>
             </div>
@@ -151,25 +150,23 @@ $csrf = generateToken('signup_form');
       </div>
 
       <script>
-        // Client-side script:
-        // - 2-day link expiry is server-enforced and shown in #transferExpire
-        // - 30-minute payment window starts when the user opens this page and is persisted in localStorage per payment ref
+        // Page-level timer: 10 minutes per page load (persisted in localStorage per reference)
+        // Link-level expiry: server enforces 2 days from payment.created_at (already handled server-side)
         (function(){
           var created = <?= json_encode($payment['created_at'] ?? null) ?>;
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
-          var pageTimeout = 30 * 60; // 30 minutes
+          var pageTimeout = 10 * 60; // 10 minutes
           var elTransfer = document.getElementById('transferExpire');
-          var elWindow = document.getElementById('paymentWindowTimer');
           var form = document.getElementById('payer-form');
           var payerFormWrap = document.getElementById('payerFormWrap');
           var markSentBtn = document.getElementById('markSentBtn');
-          var storageKey = 'hq_pay_window_start_' + ref;
+          var storageKey = 'hq_pay_timer_' + ref;
           // server-side expiry (2 days from payment.created_at)
           var expiryTs = <?= json_encode($payment && !empty($payment['created_at']) ? (strtotime($payment['created_at']) + (2*24*60*60)) : null) ?>;
 
-          function two(n){ return (n < 10 ? '0' + n : '' + n); }
+          function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
 
-          // Create or reuse a start timestamp for the 30-minute payment window
+          // create or reuse a start timestamp for the page timer so refresh doesn't reset it
           var startTs = null;
           try {
             var stored = localStorage.getItem(storageKey);
@@ -177,22 +174,14 @@ $csrf = generateToken('signup_form');
             if (!startTs || isNaN(startTs)) { startTs = Math.floor(Date.now()/1000); localStorage.setItem(storageKey, startTs); }
           } catch (e) { startTs = Math.floor(Date.now()/1000); }
 
-          function updateWindowTimer(){
-            if (!elWindow) return;
+          function updatePageTimer(){
             var now = Math.floor(Date.now()/1000);
             var remain = pageTimeout - (now - startTs);
             if (remain <= 0) {
-              elWindow.textContent = 'expired';
+              // hide payer form and indicate closed
               if (form) form.style.display = 'none';
-              if (markSentBtn) { markSentBtn.disabled = true; markSentBtn.textContent = "Payment window expired"; }
+              if (elTransfer) elTransfer.textContent = '00:00';
               return false;
-            }
-            var mm = Math.floor(remain / 60);
-            var ss = remain % 60;
-            if (mm >= 60) {
-              var hh = Math.floor(mm / 60); mm = mm % 60; elWindow.textContent = two(hh)+ ':' + two(mm) + ':' + two(ss);
-            } else {
-              elWindow.textContent = two(mm) + ':' + two(ss);
             }
             return true;
           }
@@ -204,29 +193,35 @@ $csrf = generateToken('signup_form');
             var now = Math.floor(Date.now()/1000);
             var remain = expiryTs - now;
             if (remain <= 0) { elTransfer.textContent = 'expired'; return; }
+            // Format: if more than 1 day, show "Xd HH:MM:SS", else "HH:MM:SS"
             var days = Math.floor(remain / 86400);
             var hh = Math.floor((remain % 86400) / 3600);
             var mm = Math.floor((remain % 3600) / 60);
             var ss = remain % 60;
+            function two(n){ return (n<10? '0'+n : ''+n); }
             if (days > 0) elTransfer.textContent = days + 'd ' + two(hh) + ':' + two(mm) + ':' + two(ss);
             else elTransfer.textContent = two(hh) + ':' + two(mm) + ':' + two(ss);
           }
 
-          // initialize timers and pollers
-          updateWindowTimer(); updateTransferTimer();
-          setInterval(function(){ updateWindowTimer(); updateTransferTimer(); }, 1000);
+          // initialize timers
+          updatePageTimer();
+          updateTransferTimer();
+          setInterval(function(){ updatePageTimer(); updateTransferTimer(); }, 1000);
 
           // polling for admin confirmation and server-side expiry
           function check(){
             if (!ref) return;
             var xhr = new XMLHttpRequest();
+            // add a timestamp to prevent aggressive caching by proxies/browsers
             var url = (window.HQ_BASE||'') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref) + '&t=' + Date.now();
             xhr.open('GET', url, true);
             xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText);
                   if (r.status==='ok' && r.payment) {
                     var st = r.payment.status || '';
                     if (st === 'confirmed') {
+                      // close any checking modal then show success then redirect
                       try { if (typeof Swal !== 'undefined') Swal.close(); } catch(e){}
+                      // If this payment is for a Post-UTME, show friendly message that an agent will contact them after review
                       var isPost = (r.payment.registration_type && r.payment.registration_type === 'postutme');
                       if (isPost) {
                         var msg = 'Payment confirmed. An agent will get in touch with you after your details have been reviewed.';
@@ -236,7 +231,9 @@ $csrf = generateToken('signup_form');
                             else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
                           });
                         } else {
-                          alert(msg); if (r.payment.receipt_path) { window.location = r.payment.receipt_path; } else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                          alert(msg);
+                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
                         }
                       } else {
                         if (typeof Swal !== 'undefined') {
@@ -244,9 +241,13 @@ $csrf = generateToken('signup_form');
                             if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
                             else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
                           });
-                        } else { if (r.payment.receipt_path) { window.location = r.payment.receipt_path; } else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); } }
+                        } else {
+                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
+                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                        }
                       }
                     } else if (st === 'expired') {
+                      // backend marked expired
                       if (form) form.style.display = 'none';
                       if (elTransfer) elTransfer.textContent = 'expired';
                     }
@@ -254,12 +255,14 @@ $csrf = generateToken('signup_form');
                 } catch(e){} }};
             xhr.send();
           }
-          check(); setInterval(check, 5000);
+          // run an initial check and then poll every 5 seconds
+          check();
+          setInterval(check, 5000);
 
-          // when the user successfully records a payment we can clear the 30-minute window so UX resets on next visit
-          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); } catch(e){} });
+          // when the user successfully records a payment we can clear the page timer so UX resets on next visit
+          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); localStorage.removeItem(transferStartKey); } catch(e){} });
 
-          // copy account number helper (themed toast)
+          // copy account number helper (show toast popup instead of swapping icons)
           try {
             var copyBtn = document.getElementById('copyAcct');
             if (copyBtn) {
@@ -268,29 +271,25 @@ $csrf = generateToken('signup_form');
                 try {
                   navigator.clipboard.writeText(acct).then(function(){
                     if (typeof Swal !== 'undefined') {
-                      Swal.fire({ toast:true, position:'top-end', html: '<div style="display:flex;align-items:center;gap:8px"><i class="bx bx-check-circle" style="color:#b30000;font-size:18px"></i><span>Account number copied</span></div>', showConfirmButton:false, timer:1600, customClass:{ popup: 'hq-copy-toast-popup' } });
+                      Swal.fire({toast:true,position:'top-end',icon:'success',title:'Account number copied',showConfirmButton:false,timer:1600});
                     } else { alert('Account number copied: ' + acct); }
-                  }).catch(function(){ if (typeof Swal !== 'undefined') Swal.fire({ icon:'info', title:'Copy to clipboard failed', text:acct, customClass:{ popup:'hq-swal' } }); else alert('Copy: ' + acct); });
-                } catch(e){ if (typeof Swal !== 'undefined') Swal.fire({ icon:'info', title:'Copy to clipboard not supported', text:acct, customClass:{ popup:'hq-swal' } }); else alert('Copy: ' + acct); }
+                  }).catch(function(){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard failed',text:acct}); else alert('Copy: ' + acct); });
+                } catch(e){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard not supported',text:acct}); else alert('Copy: ' + acct); }
               });
             }
           } catch(e){}
 
           // close button handler (acts as cancel/back)
-          try { var closeBtn = document.getElementById('closeBtn'); if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register.php'; }); } catch(e){}
+          try {
+            var closeBtn = document.getElementById('closeBtn');
+            if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register.php'; });
+          } catch(e){}
 
-          // When primary button is clicked, submit the payer form (ensure window still open)
+          // When primary button is clicked, submit the payer form (user should have filled details)
           try {
             if (markSentBtn && form) {
               markSentBtn.addEventListener('click', function(){
-                // check payment window
-                var now = Math.floor(Date.now()/1000);
-                var remain = pageTimeout - (now - startTs);
-                if (remain <= 0) {
-                  if (typeof Swal !== 'undefined') Swal.fire('Payment window expired', 'The 30-minute payment window has ended. Please request a new payment link.', 'error');
-                  else alert('Payment window expired');
-                  return;
-                }
+                // trigger a normal submit so our submit handler processes it
                 if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit();
               });
             }
