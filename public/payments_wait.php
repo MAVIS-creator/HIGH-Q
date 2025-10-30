@@ -198,39 +198,36 @@ $csrf = generateToken('signup_form');
           var paymentWindowSeconds = 30 * 60; // 30 minutes
           var transferStartKey = 'hq_transfer_start_' + ref;
 
-          // Try to get server-activated timestamp (authoritative). If server returns activated_ts, use it.
+          // try to reuse a previously stored transfer start time so refresh doesn't reset the countdown
           var transferStartTs = null;
-          function startTimersWith(ts) {
-            transferStartTs = parseInt(ts, 10) || Math.floor(Date.now()/1000);
-            try { localStorage.setItem(transferStartKey, transferStartTs); } catch(e) {}
-            // initialize transfer countdown and update every second
-            updateTransferTimer();
-            window.__hq_transfer_interval = setInterval(updateTransferTimer, 1000);
-          }
+          try {
+            var storedStart = localStorage.getItem(transferStartKey);
+            if (storedStart) transferStartTs = parseInt(storedStart, 10);
+            if (!transferStartTs || isNaN(transferStartTs)) { transferStartTs = Math.floor(Date.now()/1000); localStorage.setItem(transferStartKey, transferStartTs); }
+          } catch (e) { transferStartTs = Math.floor(Date.now()/1000); }
 
-          function initActivation() {
-            if (!ref) {
-              // fallback to a client-side start
-              var stored = null; try { stored = localStorage.getItem(transferStartKey); } catch(e){}
-              if (stored) startTimersWith(parseInt(stored,10)); else startTimersWith(Math.floor(Date.now()/1000));
+          function updateTransferTimer(){
+            if (!elTransfer) return;
+            var now = Math.floor(Date.now()/1000);
+            var remain = paymentWindowSeconds - (now - transferStartTs);
+            if (remain <= 0) {
+              elTransfer.textContent = '00:00';
+              // disable the form (payment window closed)
+              if (form) form.querySelectorAll('input,button,select,textarea').forEach(function(i){ i.disabled = true; });
+              if (markSentBtn) { markSentBtn.disabled = true; markSentBtn.textContent = "Payment window closed"; }
               return;
             }
-            // Call activation endpoint to record the activation server-side and get canonical timestamp
-            fetch((window.HQ_BASE||'') + '/public/api/activate_payment.php?ref=' + encodeURIComponent(ref), { credentials: 'same-origin' })
-              .then(function(r){ return r.json(); })
-              .then(function(j){
-                if (j && j.status === 'ok' && j.activated_ts) {
-                  startTimersWith(j.activated_ts);
-                } else {
-                  // fallback to localStorage or now
-                  var stored = null; try { stored = localStorage.getItem(transferStartKey); } catch(e){}
-                  if (stored) startTimersWith(parseInt(stored,10)); else startTimersWith(Math.floor(Date.now()/1000));
-                }
-              }).catch(function(){ var stored=null; try{ stored=localStorage.getItem(transferStartKey);}catch(e){} if (stored) startTimersWith(parseInt(stored,10)); else startTimersWith(Math.floor(Date.now()/1000)); });
+            var hh = Math.floor(remain/3600);
+            var mm = Math.floor((remain%3600)/60);
+            var ss = remain % 60;
+            function two(n){ return (n<10? '0'+n : ''+n); }
+            if (hh>0) elTransfer.textContent = two(hh)+ ':' + two(mm) + ':' + two(ss);
+            else elTransfer.textContent = two(mm) + ':' + two(ss);
           }
 
-          // The activation call is made immediately — it records activated_at server-side and returns the canonical start time
-          initActivation();
+          // initialize transfer countdown and update every second
+          updateTransferTimer();
+          setInterval(updateTransferTimer, 1000);
 
           // polling for admin confirmation and server-side expiry
           function check(){
