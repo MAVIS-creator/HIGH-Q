@@ -80,6 +80,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </form>
         </div>
+    
+            <!-- Recent created links (history) -->
+            <div class="card" style="margin-top:16px;">
+                <h4 style="margin-top:0;margin-bottom:8px">Recent created links</h4>
+                <?php if (empty($recentLinks)): ?>
+                    <div style="color:#666">No recent admin-created links.</div>
+                <?php else: ?>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <?php foreach($recentLinks as $rl):
+                                $meta = @json_decode($rl['metadata'] ?? '{}', true) ?: [];
+                                $emailTo = $meta['email_to'] ?? ($meta['email'] ?? '');
+                                $msgShort = isset($meta['message']) ? (strlen($meta['message'])>80 ? substr($meta['message'],0,77).'...' : $meta['message']) : '';
+                                $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/public/payments_wait.php?ref=' . urlencode($rl['reference']);
+                        ?>
+                            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:6px;border:1px solid #eee;background:#fafafa">
+                                <div style="flex:1;min-width:0">
+                                    <div style="font-weight:700;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= htmlspecialchars($rl['reference']) ?></div>
+                                    <div style="font-size:13px;color:#666">To: <?= htmlspecialchars($emailTo) ?> &middot; ₦<?= number_format($rl['amount'],2) ?> &middot; <?= htmlspecialchars($rl['status']) ?> &middot; <?= htmlspecialchars($rl['created_at']) ?></div>
+                                    <?php if ($msgShort): ?><div style="font-size:13px;color:#444;margin-top:6px"><?= htmlspecialchars($msgShort) ?></div><?php endif; ?>
+                                </div>
+                                <div style="display:flex;gap:8px;margin-left:12px">
+                                    <button class="btn" type="button" onclick="navigator.clipboard.writeText('<?= addslashes($link) ?>').then(()=>Swal.fire({toast:true,position:'top-end',icon:'success',title:'Link copied',showConfirmButton:false,timer:1400}))">Copy</button>
+                                    <a class="btn" href="<?= htmlspecialchars($link) ?>" target="_blank">Open</a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
