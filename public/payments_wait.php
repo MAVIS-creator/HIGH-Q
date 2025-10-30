@@ -268,6 +268,12 @@ $csrf = generateToken('signup_form');
             }
           } catch(e){}
 
+          // close button handler (acts as cancel/back)
+          try {
+            var closeBtn = document.getElementById('closeBtn');
+            if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register.php'; });
+          } catch(e){}
+
           // When primary button is clicked, submit the payer form (user should have filled details)
           try {
             if (markSentBtn && form) {
