@@ -18,16 +18,50 @@ $msg = trim($_POST['message'] ?? '');
 if ($amount <= 0 || !filter_var($email, FILTER_VALIDATE_EMAIL)) { echo json_encode(['status'=>'error','message'=>'Invalid input']); exit; }
 
 try {
+    // Load payment config to check for surcharge rules
+    $payConfig = [];
+    try { $payConfig = include __DIR__ . '/../../config/payments.php'; } catch (Throwable $_) { $payConfig = []; }
+
+    // Determine surcharge. Support config keys: 'surcharge' (percent), 'surcharge_percent', 'surcharge_fixed'
+    $surchargeAmount = 0.0;
+    $surchargeMeta = [];
+    if (!empty($payConfig['surcharge_percent'])) {
+        $pct = floatval($payConfig['surcharge_percent']);
+        $surchargeAmount = $amount * $pct / 100.0;
+        $surchargeMeta = ['type'=>'percent','value'=>$pct];
+    } elseif (!empty($payConfig['surcharge_fixed'])) {
+        $fixed = floatval($payConfig['surcharge_fixed']);
+        $surchargeAmount = $fixed;
+        $surchargeMeta = ['type'=>'fixed','value'=>$fixed];
+    } elseif (isset($payConfig['surcharge']) && is_numeric($payConfig['surcharge'])) {
+        // legacy: treat as percent
+        $pct = floatval($payConfig['surcharge']);
+        $surchargeAmount = $amount * $pct / 100.0;
+        $surchargeMeta = ['type'=>'percent','value'=>$pct];
+    }
+
+    // Round monetary values to 2 decimals
+    $surchargeAmount = round($surchargeAmount, 2);
+    $totalAmount = round($amount + $surchargeAmount, 2);
+
     $ref = 'ADMIN-' . date('YmdHis') . '-' . bin2hex(random_bytes(4));
-    $metadata = ['email_to' => $email, 'message' => $msg];
+    $metadata = ['email_to' => $email, 'message' => $msg, 'base_amount' => $amount, 'surcharge' => $surchargeMeta, 'surcharge_amount' => $surchargeAmount];
     $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (NULL, ?, ?, ?, ?, NOW(), ?)');
-    $ok = $ins->execute([$amount, 'bank', $ref, 'pending', json_encode($metadata, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)]);
+    // Store the total amount (base + surcharge) in the payments.amount column so downstream pages show the final payable amount
+    $ok = $ins->execute([$totalAmount, 'bank', $ref, 'pending', json_encode($metadata, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)]);
     if (!$ok) throw new Exception('DB insert failed');
     $paymentId = $pdo->lastInsertId();
     // build link
     $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/public/payments_wait.php?ref=' . urlencode($ref);
     $subject = 'Payment link — HIGH Q SOLID ACADEMY';
-    $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment of ₦' . number_format($amount,2) . ':</p>';
+    // Email should show breakdown: base amount, surcharge, total
+    $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment.</p>';
+    $html .= '<p>Amount: ₦' . number_format($amount,2) . '</p>';
+    if ($surchargeAmount > 0) {
+        $html .= '<p>Surcharge (' . htmlspecialchars(strtoupper($surchargeMeta['type'] ?? '')) . '): ₦' . number_format($surchargeAmount,2) . '</p>';
+    }
+    $html .= '<p><strong>Total payable: ₦' . number_format($totalAmount,2) . '</strong></p>';
+    $html .= '<p>Use this secure link to pay: </p>';
     $html .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
     if (!empty($msg)) $html .= '<p>Message: ' . nl2br(htmlspecialchars($msg)) . '</p>';
     $html .= '<p>Link expires in 2 days.</p><p>Thanks,<br>HIGH Q Solid Academy</p>';
