@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('payments');
 $pageTitle = 'Create Payment Link';
-$pageCss = 'assets/css/payment.css';
+$pageCss = '../assets/css/payment.css';
 require_once __DIR__ . '/../includes/header.php';
 
 $message = '';
@@ -59,6 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
+<head>
+    <link rel="stylesheet" href="../assets/css/payment.css">
+</head>
 <div class="admin-payment-card">
     <h3>Create Payment Link</h3>
     <div id="adminMsg" style="display:none;" class="alert"></div>
