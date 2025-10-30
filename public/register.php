@@ -1380,45 +1380,38 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 <!-- Debug overrides removed: styles are consolidated into public/css/register.css -->
 <script>
-// Toggle between Regular and Post-UTME registration forms
+// Choice screen + show selected form
 document.addEventListener('DOMContentLoaded', function(){
-	const btnReg = document.getElementById('regTypeRegular');
-	const btnPost = document.getElementById('regTypePost');
-	const regInput = document.getElementById('registration_type');
-	const postBlock = document.getElementById('postUtmeFields');
-	const programsGrid = document.querySelector('.programs-grid');
-	if (!btnReg || !btnPost || !regInput) return;
-	function setRegular() {
-		regInput.value = 'regular';
-		if (postBlock) postBlock.style.display = 'none';
-		if (programsGrid) programsGrid.style.display = '';
-		// show regular-only fields
-			var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = '';
-			var topPersonal = document.getElementById('regularPersonalTop'); if (topPersonal) topPersonal.style.display = '';
-		// show main passport input, hide post passport
-		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = '';
-		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = 'none';
-		btnReg.style.borderColor = '#007bff'; btnPost.style.borderColor = '#ddd';
-		// update form classes so JS can distinguish flows
-		try { var theForm = document.getElementById('registrationForm'); if (theForm && theForm.classList) { theForm.classList.remove('form-postutme'); theForm.classList.add('form-regular'); } } catch(e) {}
+	const chooseRegular = document.getElementById('chooseRegular');
+	const choosePost = document.getElementById('choosePost');
+	const regularForm = document.getElementById('regularForm');
+	const postForm = document.getElementById('postutmeForm');
+	const choiceContainer = document.querySelector('.choice-container');
+
+	function showForm(type) {
+		if (type === 'regular') {
+			if (choiceContainer) choiceContainer.style.display = 'none';
+			if (regularForm) regularForm.style.display = 'block';
+			if (postForm) postForm.style.display = 'none';
+			// scroll into view
+			if (regularForm) regularForm.scrollIntoView({behavior:'smooth'});
+		} else if (type === 'postutme') {
+			if (choiceContainer) choiceContainer.style.display = 'none';
+			if (postForm) postForm.style.display = 'block';
+			if (regularForm) regularForm.style.display = 'none';
+			if (postForm) postForm.scrollIntoView({behavior:'smooth'});
+		}
 	}
-	function setPost() {
-		regInput.value = 'postutme';
-		if (postBlock) postBlock.style.display = '';
-		if (programsGrid) programsGrid.style.display = 'none';
-		// hide regular-only fields
-			var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = 'none';
-			var topPersonal = document.getElementById('regularPersonalTop'); if (topPersonal) topPersonal.style.display = 'none';
-		// hide main passport input, show post passport
-		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = 'none';
-		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = '';
-		btnPost.style.borderColor = '#007bff'; btnReg.style.borderColor = '#ddd';
-		// update form classes so JS can distinguish flows
-		try { var theForm = document.getElementById('registrationForm'); if (theForm && theForm.classList) { theForm.classList.remove('form-regular'); theForm.classList.add('form-postutme'); } } catch(e) {}
-	}
-	btnReg.addEventListener('click', setRegular);
-	btnPost.addEventListener('click', setPost);
-	// initialize
-	setRegular();
+
+	if (chooseRegular) chooseRegular.addEventListener('click', function(){ showForm('regular'); });
+	if (choosePost) choosePost.addEventListener('click', function(){ showForm('postutme'); });
+
+	// allow direct linking to a form via query param (e.g. ?type=postutme)
+	try {
+		var urlParams = new URLSearchParams(window.location.search);
+		var t = urlParams.get('type');
+		if (t === 'postutme') showForm('postutme');
+		else if (t === 'regular') showForm('regular');
+	} catch(e) {}
 });
 </script>
