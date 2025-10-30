@@ -49,6 +49,21 @@ $csrf = generateToken('signup_form');
   <style>
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .swal-spinner { display:inline-block; }
+    /* Responsive adjustments for payments_wait layout */
+    .payment-wait-layout { align-items:flex-start; }
+    .transfer-card { max-width:900px; margin:0 auto; }
+    .acct-number { font-size:30px; }
+    @media (max-width:900px) {
+      .payment-wait-layout { flex-direction:column; gap:12px; padding:0 12px; }
+      .transfer-card { padding:12px; }
+      .acct-number { font-size:22px; }
+      #payerFormWrap { width:100%; }
+      .transfer-card button#closeBtn { right:8px; top:8px; }
+    }
+    @media (max-width:420px) {
+      .acct-number { font-size:18px; }
+      h3 { font-size:18px; }
+    }
   </style>
 </head>
 <body>
