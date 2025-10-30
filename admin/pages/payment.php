@@ -8,6 +8,16 @@ require_once __DIR__ . '/../includes/functions.php';
 requirePermission('payments');
 $pageTitle = 'Create Payment Link';
 $pageCss = "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/payment.css\">";
+
+// fetch recent admin-created links for history row
+try {
+    $recentStmt = $pdo->prepare("SELECT id, reference, amount, metadata, created_at, status FROM payments WHERE reference LIKE ? ORDER BY created_at DESC LIMIT 8");
+    $recentStmt->execute(['ADMIN-%']);
+    $recentLinks = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    $recentLinks = [];
+}
+
 require_once __DIR__ . '/../includes/header.php';
 
 $message = '';
