@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/csrf.php';
 
 // permission may be 'students' or 'payments' depending on roles; use students for now
-requirePermission('students');
+requirePermission('payments');
 $csrf = generateToken('admin_payment_form');
 ?>
 <!doctype html>
