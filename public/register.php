@@ -696,6 +696,17 @@ $csrf = generateToken('signup_form');
 														<input type="hidden" name="method" value="bank">
 														<input type="hidden" name="registration_type" value="regular">
 
+														<!-- Payment method selector: let user choose bank or online (online may be disabled when Paystack not configured) -->
+														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
+															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice" value="bank" checked> High Q Transfer (Bank Transfer)</label>
+															<label>
+																<input type="radio" name="payment_method_choice" value="online" <?= $paystackEnabled ? '' : 'disabled' ?>> Online Card Payment
+																<?= $paystackEnabled ? '' : '<small style="color:#a33;margin-left:6px">(Currently unavailable)</small>' ?>
+															</label>
+														</div>
+
+														<div class="form-row" style="margin-bottom:8px;"><button type="button" class="btn btn-secondary go-back">Change Type</button></div>
+
 														<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
 														<div class="section-body">
 															<div class="form-row form-inline" id="regularPersonalTop"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
@@ -773,6 +784,17 @@ $csrf = generateToken('signup_form');
 														<input type="hidden" name="client_total" value="0">
 														<input type="hidden" name="method" value="bank">
 														<input type="hidden" name="registration_type" value="postutme">
+
+														<!-- Provide payment-choice UI for consistency, but Post-UTME is forced to bank on submit (online disabled here) -->
+														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
+															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice" value="bank" checked> High Q Transfer (Bank Transfer)</label>
+															<label>
+																<input type="radio" name="payment_method_choice" value="online" disabled> Online Card Payment
+																<small style="color:#a33;margin-left:6px">(Not available for Post-UTME)</small>
+															</label>
+														</div>
+
+														<div class="form-row" style="margin-bottom:8px;"><button type="button" class="btn btn-secondary go-back">Change Type</button></div>
 
 														<div id="postUtmeFields" style="margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px solid #f0f0f0">
 															<h4 class="section-title"><i class="bx bxs-book"></i> Post-UTME Registration Details</h4>
