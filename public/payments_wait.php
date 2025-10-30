@@ -248,7 +248,7 @@ $csrf = generateToken('signup_form');
             if (copyBtn) {
               copyBtn.addEventListener('click', function(){
                 var acct = <?= json_encode($siteSettings['bank_account_number'] ?? '') ?>;
-                try { navigator.clipboard.writeText(acct); copyBtn.textContent = '✅'; setTimeout(function(){ copyBtn.textContent = '📋'; },1500); } catch(e){ alert('Copy: ' + acct); }
+                try { navigator.clipboard.writeText(acct); copyBtn.innerHTML = '<i class="bx bx-check"></i>'; setTimeout(function(){ copyBtn.innerHTML = '<i class="bx bx-copy"></i>'; },1500); } catch(e){ alert('Copy: ' + acct); }
               });
             }
           } catch(e){}
