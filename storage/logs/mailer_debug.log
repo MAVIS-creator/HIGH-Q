@@ -947,3 +947,83 @@ error:0A000086:SSL routines::certificate verify failed
 [2025-10-30T22:23:20+01:00] [level=1] SMTP ERROR: QUIT command failed: 
 [2025-10-30T22:23:20+01:00] [level=2] SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
 error:0A000086:SSL routines::certificate verify failed
+[2025-10-30T22:26:01+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-429952de5f9sm34204347f8f.38 - gsmtp
+
+[2025-10-30T22:26:01+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2025-10-30T22:26:01+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.75.65]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2025-10-30T22:26:01+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-10-30T22:26:02+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-10-30T22:26:03+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2025-10-30T22:26:03+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.75.65]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-10-30T22:26:03+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-10-30T22:26:03+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-10-30T22:26:03+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-30T22:26:03+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-10-30T22:26:03+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-10-30T22:26:04+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-10-30T22:26:04+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-429952de5f9sm34204347f8f.38 - gsmtp
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2025-10-30T22:26:04+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-429952de5f9sm34204347f8f.38 - gsmtp
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-10-30T22:26:04+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-429952de5f9sm34204347f8f.38 - gsmtp
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: Date: Thu, 30 Oct 2025 22:26:01 +0100
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: Subject: =?iso-8859-1?Q?Payment_link_=E2=80=94_HIGH_Q_SOLID_ACADEMY?=
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: Message-ID: <pweHC4aWtC788nJ7IztSoqrdbZs8VoKYq0QOBR9Q@localhost>
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: <p>Hi,</p><p>Please use the following secure link to complete your payment of ₦20,000.00:</p><p><a href="http://localhost/public/payments_wait.php?ref=ADMIN-20251030222601-f1649a0c">http://localhost/public/payments_wait.php?ref=ADMIN-20251030222601-f1649a0c</a></p><p>Message: eniowejnwee</p><p>Link expires in 2 days.</p><p>Thanks,<br>HIGH Q Solid Academy</p>
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-30T22:26:04+01:00] [level=1] CLIENT -> SERVER: .
+
+[2025-10-30T22:26:05+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1761859566 ffacd0b85a97d-429952de5f9sm34204347f8f.38 - gsmtp
+
+[2025-10-30T22:26:05+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-30T22:26:05+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-429952de5f9sm34204347f8f.38 - gsmtp
+
