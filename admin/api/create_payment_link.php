@@ -51,8 +51,8 @@ try {
     $ok = $ins->execute([$totalAmount, 'bank', $ref, 'pending', json_encode($metadata, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)]);
     if (!$ok) throw new Exception('DB insert failed');
     $paymentId = $pdo->lastInsertId();
-    // build link
-    $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/public/payments_wait.php?ref=' . urlencode($ref);
+    // build link using app_url() helper so deployment base path is respected
+    $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
     $subject = 'Payment link — HIGH Q SOLID ACADEMY';
     // Email should show breakdown: base amount, surcharge, total
     $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment.</p>';
