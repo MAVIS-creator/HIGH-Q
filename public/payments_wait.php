@@ -136,10 +136,10 @@ $csrf = generateToken('signup_form');
                 <form method="post" action="#" id="payer-form">
                   <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
                   <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-                  <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required style="width:100%"></div>
-                  <div class="form-row"><label>Account Number</label><input name="payer_number" required style="width:100%"></div>
-                  <div class="form-row"><label>Bank Name</label><input name="payer_bank" required style="width:100%"></div>
-                  <div class="form-row"><label>Transaction description (programme)</label><input name="transaction_description" placeholder="E.g. PTU — Computer Science" style="width:100%"></div>
+                  <div class="form-row"><label for="payer_name_input">Name on Payer Account</label><input id="payer_name_input" name="payer_name" required style="width:100%" placeholder="Full name on the account"></div>
+                  <div class="form-row"><label for="payer_number_input">Account Number</label><input id="payer_number_input" name="payer_number" required style="width:100%" placeholder="e.g. 0012345678"></div>
+                  <div class="form-row"><label for="payer_bank_input">Bank Name</label><input id="payer_bank_input" name="payer_bank" required style="width:100%" placeholder="e.g. Zenith Bank"></div>
+                  <div class="form-row"><label for="tx_desc_input">Transaction description (programme)</label><input id="tx_desc_input" name="transaction_description" placeholder="E.g. PTU — Computer Science" style="width:100%"></div>
                 </form>
               </div>
             </div>
