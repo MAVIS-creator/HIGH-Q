@@ -75,21 +75,13 @@ $csrf = generateToken('signup_form');
         <div class="spinner" id="pageSpinner" style="display:none"></div>
 
         <div class="payment-wait-layout" style="display:flex;gap:18px;align-items:flex-start;">
-          <!-- Left nav like Paystack modal (visual only) -->
-          <aside style="width:150px;background:#fafafa;border:1px solid #eee;border-radius:6px;padding:12px;">
-            <h4 style="margin:6px 0 10px;font-size:14px">PAY WITH</h4>
-            <ul style="list-style:none;padding:0;margin:0;color:#444;font-size:14px">
-              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-credit-card" style="font-size:18px"></i> Card</li>
-              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-building-house" style="font-size:18px"></i> Bank</li>
-              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;color:var(--hq-green, #2b8a3e);font-weight:600"><i class="bx bx-transfer" style="font-size:18px"></i> Transfer</li>
-              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-phone" style="font-size:18px"></i> USSD</li>
-              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-qr" style="font-size:18px"></i> Visa QR</li>
-            </ul>
-          </aside>
+          <!-- Sidebar removed — only Transfer is allowed -->
 
           <!-- Main transfer panel -->
           <div style="flex:1;">
-            <div class="transfer-card" style="background:#fff;border-radius:8px;padding:18px;border:1px solid #eee;text-align:center;">
+            <div class="transfer-card" style="background:#fff;border-radius:8px;padding:18px;border:1px solid #eee;text-align:center;position:relative;">
+              <!-- Close (X) button -->
+              <button id="closeBtn" aria-label="Close" style="position:absolute;right:12px;top:12px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#666"><i class="bx bx-x"></i></button>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                 <div style="text-align:left">
                   <div style="font-size:13px;color:#666">Paying as</div>
@@ -106,7 +98,7 @@ $csrf = generateToken('signup_form');
               <div style="margin:14px auto;padding:16px;border-radius:8px;background:#fbfbfb;border:1px solid #f0f0f0;max-width:560px;">
                 <div style="font-size:13px;color:#888;margin-bottom:6px">Paystack Checkout</div>
                 <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?></div>
-                <div style="font-size:30px;letter-spacing:2px;font-weight:800;"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" style="margin-left:8px;border:none;background:transparent;cursor:pointer">📋</button></div>
+                <div style="font-size:30px;letter-spacing:2px;font-weight:800;"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" aria-label="Copy account number" style="margin-left:8px;border:none;background:transparent;cursor:pointer;font-size:18px;color:#444"><i class="bx bx-copy"></i></button></div>
                 <div style="color:#999;margin-top:8px">Account name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?></div>
                 <div style="margin-top:10px;color:#b33;font-weight:600">Expires in <span id="transferExpire">29:59</span></div>
               </div>
@@ -117,8 +109,7 @@ $csrf = generateToken('signup_form');
               </div>
 
               <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;">
-                <button class="btn-primary" id="markSentBtn">I've sent the money</button>
-                <button class="btn" onclick="location.href='register.php'">Cancel / Back</button>
+                <button class="btn-primary" id="markSentBtn" type="button">I've sent the money</button>
               </div>
             </div>
 
