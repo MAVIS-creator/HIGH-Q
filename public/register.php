@@ -1008,18 +1008,25 @@ document.addEventListener('DOMContentLoaded', function(){
 				total += formFee + cardFee;
 			}
 
-					// Set the payment method for the server: if there are any fixed-priced items, prefer online (Paystack)
-					try { var methodInput = document.getElementById('method_input'); if (methodInput) { methodInput.value = anyFixed ? 'paystack' : 'bank'; } } catch(e) {}
+					// Set the payment method for the server: update all method inputs. If there are any fixed-priced items, prefer online (Paystack)
+					try {
+						var methodInputs = document.querySelectorAll('input[name="method"]');
+						if (methodInputs && methodInputs.length) {
+							methodInputs.forEach(function(mi){ try{ mi.value = anyFixed ? 'paystack' : 'bank'; }catch(e){} });
+						}
+					} catch(e) {}
 
 			subtotalEl.textContent = formatN(subtotalFixed);
 			formEl.textContent = formatN(formFee);
 			cardEl.textContent = formatN(cardFee);
 			totalEl.textContent = formatN(total);
 
-			// persist client-side total to hidden input for server-side recheck
+			// persist client-side total to hidden inputs for server-side recheck (works for both forms)
 			try {
-				var clientInput = document.getElementById('client_total_input');
-				if (clientInput) clientInput.value = total.toFixed(2);
+				var clientInputs = document.querySelectorAll('input[name="client_total"]');
+				if (clientInputs && clientInputs.length) {
+					clientInputs.forEach(function(ci){ try{ ci.value = total.toFixed(2); }catch(e){} });
+				}
 			} catch(e) {}
 
 			// Enable/disable online payment UI: only disable when ALL selected are variable-priced
