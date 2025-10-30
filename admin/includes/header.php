@@ -155,7 +155,14 @@ if (!headers_sent()) {
                         </button>
                     </div>
                     <div class="header-avatar">
-                        <img src="<?= $_SESSION['user']['avatar'] ?? '/HIGH-Q/public/assets/images/hq-logo.jpeg'; ?>" alt="Avatar">
+                        <?php
+                        // Build a resilient avatar fallback using the computed app base so hardcoded /HIGH-Q paths are avoided
+                        $avatar = $_SESSION['user']['avatar'] ?? null;
+                        if (empty($avatar)) {
+                            $avatar = (isset($appBase) && $appBase !== '' ? $appBase : '') . '/public/assets/images/hq-logo.jpeg';
+                        }
+                        ?>
+                        <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
                     </div>
             <?php endif; ?>
         </div>
