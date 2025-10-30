@@ -47,6 +47,38 @@ $csrf = generateToken('signup_form');
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+    /* Ensure HQ palette is available for this page and SweetAlert overrides */
+    :root {
+      --hq-yellow: #f5b904;
+      --hq-yellow-600: #f1ad00;
+      --hq-yellow-100: #fdcc2b;
+      --hq-red: #dc3545;
+      --hq-dark: #0d1b2a;
+      --hq-text: #333333;
+      --hq-white: #ffffff;
+    }
+    /* SweetAlert2 custom theme for HQ branding */
+    .swal2-popup.hq-swal {
+      background: var(--hq-yellow) !important;
+      color: var(--hq-white) !important;
+      box-shadow: 0 14px 40px rgba(13,27,42,0.12) !important;
+    }
+    .swal2-popup.hq-swal .swal2-title,
+    .swal2-popup.hq-swal .swal2-content { color: var(--hq-white) !important; }
+    /* make the usual success icon use HQ red instead of green for brand consistency */
+    .swal2-icon.swal2-success {
+      color: var(--hq-red) !important;
+    }
+    .swal2-popup.hq-swal .swal2-styled.swal2-confirm {
+      background: var(--hq-dark) !important;
+      color: var(--hq-white) !important;
+      border-radius: 8px !important;
+    }
+    /* Toast (top-end) variant */
+    .swal2-toast.hq-swal { background: var(--hq-yellow) !important; color: var(--hq-white) !important; }
+    .swal2-toast.hq-swal .swal2-title { color: var(--hq-white) !important; }
+  </style>
+  <style>
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .swal-spinner { display:inline-block; }
     /* Responsive adjustments for payments_wait layout */
