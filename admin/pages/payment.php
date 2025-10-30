@@ -54,6 +54,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
+<div class="admin-payment-card">
+    <h3>Create Payment Link</h3>
+    <div id="adminMsg" style="display:none;" class="alert"></div>
+    <form id="adminPaymentForm" class="admin-payment-form">
+        <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
+        <div class="form-row"><label>Amount (NGN)</label><input type="text" name="amount" placeholder="e.g. 1080" required></div>
+        <div class="form-row"><label>Recipient email</label><input type="email" name="email" placeholder="payer@example.com" required></div>
+        <div class="form-row"><label>Message (optional)</label><textarea name="message" rows="4" placeholder="Message to include with the payment link"></textarea></div>
+        <div class="admin-payment-actions">
+            <button class="btn" id="createSendBtn" type="button">Create & Send Link</button>
+            <div id="createdLinkWrap" style="display:none;flex:1;">
+                <div class="admin-payment-link" id="createdLink"></div>
+                <button class="admin-payment-copy" id="copyLinkBtn" style="margin-left:8px;" type="button">Copy link</button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <?php if (!empty($recentLinks)): ?>
         <div class="admin-payment-card" style="margin-top:18px;">
             <h3>Recent created links</h3>
