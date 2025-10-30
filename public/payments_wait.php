@@ -113,19 +113,23 @@ $csrf = generateToken('signup_form');
               </div>
             </div>
 
-            <!-- inline payer details form (hidden behind the button in small screens) -->
-            <div id="payerFormWrap" style="margin-top:14px;display:none;max-width:560px;">
-              <form method="post" action="#" id="payer-form">
-                <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
-                <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-                <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-                <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-                <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-                <div style="margin-top:12px;"><button class="btn-primary" id="markSentSubmit" type="submit">Record transfer details</button></div>
-              </form>
+            <!-- inline payer details form (visible — user must provide before clicking 'I've sent the money') -->
+            <div id="payerFormWrap" style="margin-top:14px;display:block;max-width:560px;margin-left:auto;margin-right:auto;text-align:left;">
+              <div style="border:1px solid #f0f0f0;padding:12px;border-radius:6px;background:#fafafa;">
+                <strong>Payment details (required)</strong>
+                <p style="margin:6px 0 10px;color:#666;font-size:13px">Provide the account name, number and bank you used for the transfer. Add a short transaction description (programme name) to speed up verification.</p>
+                <form method="post" action="#" id="payer-form">
+                  <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
+                  <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
+                  <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required style="width:100%"></div>
+                  <div class="form-row"><label>Account Number</label><input name="payer_number" required style="width:100%"></div>
+                  <div class="form-row"><label>Bank Name</label><input name="payer_bank" required style="width:100%"></div>
+                  <div class="form-row"><label>Transaction description (programme)</label><input name="transaction_description" placeholder="E.g. PTU — Computer Science" style="width:100%"></div>
+                </form>
+              </div>
             </div>
 
-            <div id="payerRecordedInfo" style="display:none;margin-top:12px;max-width:560px;"></div>
+            <div id="payerRecordedInfo" style="display:none;margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto;"></div>
           </div>
         </div>
       </div>
