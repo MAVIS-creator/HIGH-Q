@@ -72,99 +72,71 @@ $csrf = generateToken('signup_form');
   <?php else: ?>
       <div class="card">
         <div class="spinner" id="pageSpinner" style="display:none"></div>
-  <p>Please transfer <strong>₦<?= number_format($payment['amount'],2) ?></strong> to the account below and use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong>.</p>
-  <p><strong>Account Name:</strong> <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
-  <strong>Bank:</strong> <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
-  <strong>Account Number:</strong> <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
 
-    <p>This payment link expires after 2 days. After making the transfer, click "I have sent the money" and provide your transfer details. An admin will verify and confirm your payment.</p>
+        <div class="payment-wait-layout" style="display:flex;gap:18px;align-items:flex-start;">
+          <!-- Left nav like Paystack modal (visual only) -->
+          <aside style="width:150px;background:#fafafa;border:1px solid #eee;border-radius:6px;padding:12px;">
+            <h4 style="margin:6px 0 10px;font-size:14px">PAY WITH</h4>
+            <ul style="list-style:none;padding:0;margin:0;color:#444;font-size:14px">
+              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-credit-card" style="font-size:18px"></i> Card</li>
+              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-building-house" style="font-size:18px"></i> Bank</li>
+              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;color:var(--hq-green, #2b8a3e);font-weight:600"><i class="bx bx-transfer" style="font-size:18px"></i> Transfer</li>
+              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-phone" style="font-size:18px"></i> USSD</li>
+              <li style="padding:8px 6px;display:flex;align-items:center;gap:8px;"><i class="bx bx-qr" style="font-size:18px"></i> Visa QR</li>
+            </ul>
+          </aside>
 
-  <div id="countdown" style="font-size:18px;font-weight:600;color:#b33;margin-bottom:12px;">--:--</div>
+          <!-- Main transfer panel -->
+          <div style="flex:1;">
+            <div class="transfer-card" style="background:#fff;border-radius:8px;padding:18px;border:1px solid #eee;text-align:center;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div style="text-align:left">
+                  <div style="font-size:13px;color:#666">Paying as</div>
+                  <div style="font-weight:600"><?= htmlspecialchars($payment['email'] ?? $payment['name'] ?? 'Guest') ?></div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:13px;color:#666">Amount</div>
+                  <div style="font-weight:700;color:#0a8a3a;">₦<?= number_format($payment['amount'],2) ?></div>
+                </div>
+              </div>
 
-  <form method="post" action="#" id="payer-form">
-          <!-- mark_sent API expects _csrf and payment_id fields -->
-          <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
-          <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
-          <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
-          <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
-          <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
-          <div style="margin-top:12px;"><button class="btn-primary" id="markSentBtn" type="submit">I have sent the money</button></div>
-        </form>
+              <h3 style="margin:10px 0 6px;color:#444;font-weight:700;">Transfer ₦<?= number_format($payment['amount'],2) ?></h3>
 
-        <script>
-          // submit mark-sent via fetch to API endpoint and handle response
-          // Expose HQ_BASE globally so other scripts (polling) can use it
-          window.HQ_BASE = window.location.origin;
-          (function(){
-            var form = document.getElementById('payer-form');
-            var btn = document.getElementById('markSentBtn');
-            form.addEventListener('submit', function(e){
-              e.preventDefault();
-              btn.disabled = true; btn.textContent = 'Recording...';
-              document.getElementById('pageSpinner').style.display = 'block';
-              var fd = new FormData(form);
-              fetch(window.HQ_BASE + './api/mark_sent.php', {
-                method: 'POST',
-                body: fd,
-                credentials: 'same-origin',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-              })
-                .then(function(r){
-                    // Try to parse JSON safely; if not JSON, read as text for debugging
-                    return r.text().then(function(text){
-                        try { return JSON.parse(text); } catch(e) { return { status: 'error', message: 'Invalid server response', raw: text }; }
-                    });
-                })
-                .then(function(j){
-                      if (j.status === 'ok') {
-                        // show success and let polling detect confirmation
-                        btn.textContent = 'Recorded — awaiting admin verification';
-                        btn.disabled = true;
-                        // display recorded payer details
-                        var info = document.getElementById('payerRecordedInfo');
-                        if (info) {
-                          var pay = j.payment || {};
-                          info.innerHTML = '<h4>Recorded transfer details</h4>'+
-                            '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>'+
-                            '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>'+
-                            '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
-                          info.style.border = '1px dashed #ccc';
-                          info.style.padding = '10px';
-                          info.style.marginTop = '12px';
-                          info.style.display = 'block';
-                        }
-                        // trigger an immediate check so the page can react to a quick admin confirmation
-                        try { if (typeof check === 'function') check(); } catch(e){}
-                        // show checking transaction modal
-                        if (typeof Swal !== 'undefined') {
-                          Swal.fire({
-                            title: 'Checking transaction status',
-                            html: '<div style="text-align:center"><div class="swal-spinner" style="margin:12px auto 0;width:36px;height:36px;border:4px solid rgba(0,0,0,0.08);border-top-color:var(--hq-black);border-radius:50%;animation:spin 1s linear infinite"></div></div>',
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                            customClass: { popup: 'hq-swal' }
-                          });
-                        }
-                        document.getElementById('pageSpinner').style.display = 'none';
-                      } else {
-                        // show raw server message when available to make debugging easier
-                        var msg = j.message || 'Failed to record transfer.';
-                        if (j.raw) msg += '\nServer response:\n' + j.raw;
-                        if (typeof Swal !== 'undefined') {
-                          Swal.fire({ icon: 'error', title: 'Failed', text: msg });
-                        } else { alert(msg); }
-                        btn.disabled = false; btn.textContent = 'I have sent the money'; document.getElementById('pageSpinner').style.display = 'none';
-                      }
-                }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); btn.disabled = false; btn.textContent = 'I have sent the money'; });
-            });
-            
-          })();
-        </script>
+              <div style="margin:14px auto;padding:16px;border-radius:8px;background:#fbfbfb;border:1px solid #f0f0f0;max-width:560px;">
+                <div style="font-size:13px;color:#888;margin-bottom:6px">Paystack Checkout</div>
+                <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?></div>
+                <div style="font-size:30px;letter-spacing:2px;font-weight:800;"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" style="margin-left:8px;border:none;background:transparent;cursor:pointer">📋</button></div>
+                <div style="color:#999;margin-top:8px">Account name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?></div>
+                <div style="margin-top:10px;color:#b33;font-weight:600">Expires in <span id="transferExpire">29:59</span></div>
+              </div>
 
-        <p style="margin-top:12px;color:#666;">Reference: <?= htmlspecialchars($payment['reference'] ?? '') ?></p>
+              <div style="margin-top:10px">
+                <p style="color:#666">Use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong> when making the transfer.</p>
+                <p style="color:#666">This payment link expires after 2 days. After making the transfer, click "I've sent the money" and provide your transfer details for verification.</p>
+              </div>
+
+              <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;">
+                <button class="btn-primary" id="markSentBtn">I've sent the money</button>
+                <button class="btn" onclick="location.href='register.php'">Cancel / Back</button>
+              </div>
+            </div>
+
+            <!-- inline payer details form (hidden behind the button in small screens) -->
+            <div id="payerFormWrap" style="margin-top:14px;display:none;max-width:560px;">
+              <form method="post" action="#" id="payer-form">
+                <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
+                <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
+                <div class="form-row"><label>Name on Payer Account</label><input name="payer_name" required></div>
+                <div class="form-row"><label>Account Number</label><input name="payer_number" required></div>
+                <div class="form-row"><label>Bank Name</label><input name="payer_bank" required></div>
+                <div style="margin-top:12px;"><button class="btn-primary" id="markSentSubmit" type="submit">Record transfer details</button></div>
+              </form>
+            </div>
+
+            <div id="payerRecordedInfo" style="display:none;margin-top:12px;max-width:560px;"></div>
+          </div>
+        </div>
       </div>
-
-      <div id="payerRecordedInfo" style="display:none;"></div>
 
       <script>
         // Page-level timer: 10 minutes per page load (persisted in localStorage per reference)
