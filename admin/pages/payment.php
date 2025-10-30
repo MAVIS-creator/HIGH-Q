@@ -7,6 +7,7 @@ require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('payments');
 $pageTitle = 'Create Payment Link';
+$pageCss = "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/payment.css\">";
 require_once __DIR__ . '/../includes/header.php';
 
 $message = '';
@@ -52,15 +53,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <div class="container" style="max-width:760px;margin:18px auto;padding:18px;background:#fff;border-radius:8px;">
-    <h1>Create Payment Link</h1>
-    <?php if (!empty($message)): ?><div style="padding:10px;border-radius:6px;background:#f7f7f7;border:1px solid #eee;margin-bottom:12px"><?= $message ?></div><?php endif; ?>
-    <form method="post">
-        <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
-        <div style="margin-bottom:10px;"><label>Amount (NGN)</label><br><input type="text" name="amount" placeholder="e.g. 1080" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd"></div>
-        <div style="margin-bottom:10px;"><label>Recipient email</label><br><input type="email" name="email" placeholder="payer@example.com" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd"></div>
-        <div style="margin-bottom:10px;"><label>Message (optional)</label><br><textarea name="message" rows="4" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd" placeholder="Message to include with the payment link"></textarea></div>
-        <div><button class="btn" type="submit">Create & Send Link</button></div>
-    </form>
+        <h1>Create Payment Link</h1>
+        <div id="adminMsg" style="display:none;margin-bottom:12px;padding:10px;border-radius:6px;background:#f7f7f7;border:1px solid #eee"></div>
+        <div class="admin-payment-card">
+            <form id="adminPaymentForm" class="admin-payment-form">
+                <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
+                <div class="form-row"><label>Amount (NGN)</label><input type="text" name="amount" placeholder="e.g. 1080" required></div>
+                <div class="form-row"><label>Recipient email</label><input type="email" name="email" placeholder="payer@example.com" required></div>
+                <div class="form-row"><label>Message (optional)</label><textarea name="message" rows="4" placeholder="Message to include with the payment link"></textarea></div>
+                <div class="admin-payment-actions">
+                        <button class="btn" id="createSendBtn" type="button">Create & Send Link</button>
+                        <div id="createdLinkWrap" style="display:none;flex:1;">
+                                <div class="admin-payment-link" id="createdLink"></div>
+                                <button class="admin-payment-copy" id="copyLinkBtn" style="margin-left:8px;">Copy link</button>
+                        </div>
+                </div>
+            </form>
+        </div>
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
