@@ -663,7 +663,7 @@ $csrf = generateToken('signup_form');
 													</script>
 													<?php unset($_SESSION['registration_pending_id']); ?>
 												<?php else: ?>
-													<form method="post" enctype="multipart/form-data">
+													<form id="registrationForm" class="registration-form form-regular" method="post" enctype="multipart/form-data">
 													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
 													<input type="hidden" name="client_total" id="client_total_input" value="">
@@ -1299,15 +1299,21 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 // Ensure the registration form sets the correct payment method before submit
 (function(){
-	var form = document.querySelector('form[method="post"][enctype]');
+	var form = document.getElementById('registrationForm') || document.querySelector('form[method="post"][enctype]');
 	if (!form) return;
 	form.id = form.id || 'registrationForm';
 	form.addEventListener('submit', function(e){
 		try { if (typeof window.compute === 'function') window.compute(); } catch(e){}
 		var state = window.hqPaymentState || {};
 		var methodInput = document.getElementById('method_input');
+		// If this is the Post-UTME form, force bank flow on submit so the server creates a Post-UTME payment (PTU ref)
+		if (form.classList && form.classList.contains('form-postutme')) {
+			if (methodInput) methodInput.value = 'bank';
+			// allow normal submission (server will handle creating PTU payment and redirect)
+			return;
+		}
+		// For regular registrations: prefer online when there are fixed-priced items
 		if (methodInput) {
-			// prefer online when there are fixed-priced items
 			if (state.anyFixed) methodInput.value = 'paystack'; else methodInput.value = 'bank';
 		}
 		// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
