@@ -84,3 +84,38 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         return false;
     }
 }
+
+/**
+ * Return the configured application base URL.
+ * Prefer APP_URL from environment (.env). If not set, compute from the current request.
+ */
+function app_url(string $path = ''): string {
+    // prefer explicit APP_URL from .env
+    $env = $_ENV['APP_URL'] ?? ($_ENV['APP_URL'] ?? null);
+    if (!empty($env)) {
+        $base = rtrim($env, '/');
+        if ($path === '') return $base;
+        return $base . '/' . ltrim($path, '/');
+    }
+
+    // fallback: derive from current request
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    // project base is assumed to be two levels up from admin includes in many scripts, but use dirname to be safe
+    $proj = rtrim(dirname(dirname($script)), '/');
+    if ($proj === '\\' || $proj === '.') $proj = '';
+    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
+    if ($path === '') return $base;
+    return $base . '/' . ltrim($path, '/');
+}
+
+/**
+ * Return the admin base URL (app_url + /admin)
+ */
+function admin_url(string $path = ''): string {
+    $base = rtrim(app_url(''), '/');
+    $adminBase = $base . '/admin';
+    if ($path === '') return $adminBase;
+    return $adminBase . '/' . ltrim($path, '/');
+}
