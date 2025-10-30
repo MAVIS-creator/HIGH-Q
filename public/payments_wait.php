@@ -266,7 +266,7 @@ $csrf = generateToken('signup_form');
           // handle payer-form submission (record transfer details)
           try {
             if (form) {
-              var submitBtn = document.getElementById('markSentSubmit');
+              var submitBtn = document.getElementById('markSentBtn');
               form.addEventListener('submit', function(e){
                 e.preventDefault();
                 if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Recording...'; }
