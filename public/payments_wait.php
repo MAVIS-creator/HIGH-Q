@@ -161,8 +161,8 @@ $csrf = generateToken('signup_form');
           var payerFormWrap = document.getElementById('payerFormWrap');
           var markSentBtn = document.getElementById('markSentBtn');
           var storageKey = 'hq_pay_timer_' + ref;
-          var transferStartKey = 'hq_transfer_start_' + ref;
-          var transferDuration = 30 * 60; // 30 minutes visual countdown for transfer
+          // server-side expiry (2 days from payment.created_at)
+          var expiryTs = <?= json_encode($payment && !empty($payment['created_at']) ? (strtotime($payment['created_at']) + (2*24*60*60)) : null) ?>;
 
           function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
 
@@ -186,16 +186,21 @@ $csrf = generateToken('signup_form');
             return true;
           }
 
-          // transfer countdown (visual 30-minute timer shown in the card)
+          // show server-side expiry countdown (time until payment.created_at + 2 days)
           function updateTransferTimer(){
             if (!elTransfer) return;
+            if (!expiryTs) { elTransfer.textContent = '--:--'; return; }
             var now = Math.floor(Date.now()/1000);
-            var tStart = null;
-            try { tStart = parseInt(localStorage.getItem(transferStartKey), 10); } catch(e) { tStart = null; }
-            if (!tStart || isNaN(tStart)) { tStart = Math.floor(Date.now()/1000); try { localStorage.setItem(transferStartKey, tStart); } catch(e){} }
-            var remain = transferDuration - (now - tStart);
-            if (remain < 0) remain = 0;
-            elTransfer.textContent = fmt(remain);
+            var remain = expiryTs - now;
+            if (remain <= 0) { elTransfer.textContent = 'expired'; return; }
+            // Format: if more than 1 day, show "Xd HH:MM:SS", else "HH:MM:SS"
+            var days = Math.floor(remain / 86400);
+            var hh = Math.floor((remain % 86400) / 3600);
+            var mm = Math.floor((remain % 3600) / 60);
+            var ss = remain % 60;
+            function two(n){ return (n<10? '0'+n : ''+n); }
+            if (days > 0) elTransfer.textContent = days + 'd ' + two(hh) + ':' + two(mm) + ':' + two(ss);
+            else elTransfer.textContent = two(hh) + ':' + two(mm) + ':' + two(ss);
           }
 
           // initialize timers
