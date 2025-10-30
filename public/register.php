@@ -778,7 +778,7 @@ $csrf = generateToken('signup_form');
 															<div class="form-row post-passport-row" style="display:block"><label>Passport Photo (Post-UTME applicants)</label>
 																<div class="hq-file-input post-passport-input">
 																	<button type="button" class="btn">Choose file</button>
-																	<input type="file" name="passport_post" id="passport_input_post" accept="image/*" style="display:none">
+																	<input type="file" name="passport" id="passport_input_post" accept="image/*" style="display:none">
 																	<span id="passport_chosen_post" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
 																</div>
 															</div>
