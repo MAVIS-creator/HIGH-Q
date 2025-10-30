@@ -750,7 +750,25 @@ $csrf = generateToken('signup_form');
 
 																											<h5>O'Level (Enter up to 8 subjects — compulsory first)</h5>
 																											<?php for ($i=1;$i<=8;$i++): ?>
-																											<div class="form-row form-inline"><div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div><div><label>Grade <?= $i ?></label><input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>"></div></div>
+																											<?php
+																												// Prefill and make readonly the first three compulsory O'Level subjects (English, Mathematics, Civic Education)
+																												$prefill = '';
+																												$readonly = '';
+																												if ($i === 1) { $prefill = 'English'; $readonly = 'readonly'; }
+																												elseif ($i === 2) { $prefill = 'Mathematics'; $readonly = 'readonly'; }
+																												elseif ($i === 3) { $prefill = 'Civic Education'; $readonly = 'readonly'; }
+																												$valueSub = $prefill !== '' ? $prefill : htmlspecialchars($_POST['olevel_subj_' . $i] ?? '');
+																											?>
+																											<div class="form-row form-inline">
+																												<div>
+																													<label>Subject <?= $i ?></label>
+																													<input type="text" name="olevel_subj_<?= $i ?>" value="<?= $valueSub ?>" <?= $readonly ?> >
+																												</div>
+																												<div>
+																													<label>Grade <?= $i ?></label>
+																													<input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>">
+																												</div>
+																											</div>
 																											<?php endfor; ?>
 																											<hr>
 																											<h5>Exam Details</h5>
