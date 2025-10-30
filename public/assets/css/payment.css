@@ -102,7 +102,7 @@ body {
     background: #fff;
     border-radius: 8px;
     padding: 18px;
-    border: 1px solid #eee;
+    border: 1px solid rgba(0,0,0,0.06);
     text-align: center;
     position: relative;
     max-width: 100%;
@@ -116,13 +116,13 @@ body {
 }
 
 .transfer-card .acct-meta {
-    color: #999;
+    color: var(--hq-gray, #999);
     margin-top: 8px
 }
 
 .transfer-card .transfer-expire {
     margin-top: 10px;
-    color: #b33;
+    color: var(--hq-red, #b33);
     font-weight: 600
 }
 
@@ -158,8 +158,8 @@ body {
 }
 
 .btn-primary {
-    background: #1a73e8;
-    color: #fff;
+    background: var(--hq-yellow, #f5b904);
+    color: var(--hq-black, #111);
     border: 0;
     padding: 10px 14px;
     border-radius: 6px;
@@ -215,15 +215,15 @@ body {
 
 /* SweetAlert custom classes for site-themed toasts/popups */
 .hq-copy-toast-popup.swal2-popup {
-    background: #FFCC00 !important;
-    color: #fff !important;
+    background: var(--hq-yellow, #f5b904) !important;
+    color: var(--hq-white, #fff) !important;
 }
 
 .hq-copy-toast-popup .swal2-html-container {
-    color: #fff !important;
+    color: var(--hq-white, #fff) !important;
     font-weight: 600
 }
 
 .hq-swal.swal2-popup {
-    color: #222;
+    color: var(--hq-text, #222);
 }
