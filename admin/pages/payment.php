@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+?>
 <?php if (!empty($recentLinks)): ?>
         <div class="admin-payment-card" style="margin-top:18px;">
             <h3>Recent created links</h3>
