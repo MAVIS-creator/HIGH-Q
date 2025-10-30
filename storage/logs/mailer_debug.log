@@ -1073,3 +1073,37 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-10-31T00:04:40+01:00] [level=1] CLIENT -> SERVER: DATA
 
+[2025-10-31T00:04:41+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-429952de5f9sm34550915f8f.38 - gsmtp
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: Date: Fri, 31 Oct 2025 00:04:38 +0100
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: Subject: =?iso-8859-1?Q?Payment_link_=E2=80=94_HIGH_Q_SOLID_ACADEMY?=
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: Message-ID: <GKHb0Zp4ts2rSxbVnCvr2HPpRhvT75bhEkO5byG3Y@localhost>
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-31T00:04:41+01:00] [level=1] CLIENT -> SERVER: <p>Hi,</p><p>Please use the following secure link to complete your payment.</p><p>Amount: ₦20,000.00</p><p><strong>Total payable: ₦20,000.00</strong></p><p>Use this secure link to pay: </p><p><a href="http://localhost/HIGH-Q/public/payments_wait.php?ref=ADMIN-20251031000438-2c81ffac">http://localhost/HIGH-Q/public/payments_wait.php?ref=ADMIN-20251031000438-2c81ffac</a></p><p>Message: sdkldsk</p><p>Link expires in 2 days.</p><p>Thanks,<br>HIGH Q Solid Academy</p>
+
+[2025-10-31T00:04:42+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-10-31T00:04:42+01:00] [level=1] CLIENT -> SERVER: .
+
+[2025-10-31T00:04:42+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1761865483 ffacd0b85a97d-429952de5f9sm34550915f8f.38 - gsmtp
+
+[2025-10-31T00:04:42+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-10-31T00:04:42+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-429952de5f9sm34550915f8f.38 - gsmtp
+
