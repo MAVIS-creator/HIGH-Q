@@ -81,12 +81,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="admin-payment-card" style="margin-top:18px;">
             <h3>Recent created links</h3>
             <table class="table" style="width:100%"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Emailed</th><th>Actions</th><th>Created</th></tr></thead><tbody>
-        <?php foreach($recentLinks as $r):
+        <?php
+            // compute app base once for recent links URL construction
+            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+            $projectBase = rtrim(dirname(dirname($scriptName)), '/');
+            if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
+            $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+            $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
+        foreach($recentLinks as $r):
                 $meta = [];
                 if (!empty($r['metadata'])) { $meta = json_decode($r['metadata'], true) ?: []; }
                 $emailTo = $meta['email_to'] ?? '';
                 $msgText = $meta['message'] ?? '';
-                $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/public/payments_wait.php?ref=' . urlencode($r['reference']);
+        $link = $appBase . '/public/payments_wait.php?ref=' . urlencode($r['reference']);
         ?>
             <tr>
                 <td><?= htmlspecialchars($r['id']) ?></td>
