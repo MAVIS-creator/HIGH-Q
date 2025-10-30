@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('payments');
 $pageTitle = 'Create Payment Link';
-$pageCss = "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/payment.css\">";
+$pageCss = 'assets/css/payment.css';
 require_once __DIR__ . '/../includes/header.php';
 
 $message = '';
@@ -36,8 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ok = $ins->execute([$amount, 'bank', $ref, 'pending', json_encode($metadata, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)]);
             if ($ok) {
                 $paymentId = $pdo->lastInsertId();
-                // send email with link
-                $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/public/payments_wait.php?ref=' . urlencode($ref);
+                // send email with link (build app base dynamically)
+                $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+                $projectBase = rtrim(dirname(dirname($scriptName)), '/');
+                if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
+                $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+                $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
+                $link = $appBase . '/public/payments_wait.php?ref=' . urlencode($ref);
                 $subject = 'Payment link — HIGH Q SOLID ACADEMY';
                 $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment of ₦' . number_format($amount,2) . ':</p>';
                 $html .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
@@ -54,9 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
-<head>
-    <link rel="stylesheet" href="../assets/css/payment.css">
-</head>
 <div class="admin-payment-card">
     <h3>Create Payment Link</h3>
     <div id="adminMsg" style="display:none;" class="alert"></div>
