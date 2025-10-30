@@ -1071,23 +1071,21 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 // Client-side validation for Post-UTME fields
 document.addEventListener('DOMContentLoaded', function(){
-	var form = document.querySelector('form');
+	var form = document.getElementById('postutmeForm');
 	if (!form) return;
 	form.addEventListener('submit', function(e){
 		try {
-			var regType = document.getElementById('registration_type') ? document.getElementById('registration_type').value : 'regular';
-			if (regType !== 'postutme') return; // only validate for postutme
 			var errors = [];
 			// overall JAMB score
-			var jambScoreEl = document.querySelector('input[name="jamb_score"]');
+			var jambScoreEl = form.querySelector('input[name="jamb_score"]');
 			if (jambScoreEl) {
 				var v = jambScoreEl.value.trim();
 				if (v !== '' && (isNaN(v) || Number(v) < 0 || Number(v) > 100)) errors.push('JAMB score must be a number between 0 and 100.');
 			}
 			// per-subject checks
 			for (var i=1;i<=4;i++){
-				var subj = (document.querySelector('input[name="jamb_subj_' + i + '"]') || {}).value || '';
-				var sc = (document.querySelector('input[name="jamb_score_' + i + '"]') || {}).value || '';
+				var subj = (form.querySelector('input[name="jamb_subj_' + i + '"]') || {}).value || '';
+				var sc = (form.querySelector('input[name="jamb_score_' + i + '"]') || {}).value || '';
 				if (i === 1) {
 					if (!/eng/i.test(subj)) errors.push('JAMB Subject 1 must be English.');
 				} else {
@@ -1101,7 +1099,7 @@ document.addEventListener('DOMContentLoaded', function(){
 			// WAEC required subjects check: English Language, Mathematics, Civic Education
 			var found = {english:false, mathematics:false, civic:false};
 			for (var j=1;j<=8;j++){
-				var s = (document.querySelector('input[name="olevel_subj_' + j + '"]') || {}).value || '';
+				var s = (form.querySelector('input[name="olevel_subj_' + j + '"]') || {}).value || '';
 				var low = s.toLowerCase();
 				if (/eng/i.test(low)) found.english = true;
 				if (/math|mth/i.test(low)) found.mathematics = true;
