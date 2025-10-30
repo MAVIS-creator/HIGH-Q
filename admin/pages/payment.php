@@ -48,6 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($sent) {
                     $message = 'Payment link created and emailed to ' . htmlspecialchars($email) . '.';
                 }
+            }
+        }
+    }
+}
 
 <?php if (!empty($recentLinks)): ?>
         <div class="admin-payment-card" style="margin-top:18px;">
