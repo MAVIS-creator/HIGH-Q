@@ -1014,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', function(){
 							try {
 								var forms = document.querySelectorAll('.registration-form');
 								forms.forEach(function(f){
-									var userChoice = f.querySelector('input[name="payment_method_choice"]:checked');
+									var userChoice = f.querySelector('input[name^="payment_method_choice"]:checked');
 									var chosen = null;
 									if (userChoice) {
 										chosen = userChoice.value; // 'bank' or 'online'
