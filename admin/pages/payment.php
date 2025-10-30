@@ -11,6 +11,13 @@ $pageCss = "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/payment.css
 require_once __DIR__ . '/../includes/header.php';
 
 $message = '';
+// fetch recent admin-created payment links
+$recentLinks = [];
+try {
+    $rs = $pdo->prepare("SELECT id, reference, amount, metadata, created_at FROM payments WHERE reference LIKE 'ADMIN-%' ORDER BY created_at DESC LIMIT 8");
+    $rs->execute();
+    $recentLinks = $rs->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $_) { $recentLinks = []; }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('payments_form', $token)) {
@@ -71,6 +78,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
 </div>
+
+<?php if (!empty($recentLinks)): ?>
+    <div class="admin-payment-card" style="margin-top:18px;">
+        <h3>Recent created links</h3>
+        <table class="table" style="width:100%"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Created</th></tr></thead><tbody>
+        <?php foreach($recentLinks as $r):
+                $meta = [];
+                if (!empty($r['metadata'])) { $meta = json_decode($r['metadata'], true) ?: []; }
+                $emailTo = $meta['email_to'] ?? '';
+                $msgText = $meta['message'] ?? '';
+                $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/public/payments_wait.php?ref=' . urlencode($r['reference']);
+        ?>
+            <tr>
+                <td><?= htmlspecialchars($r['id']) ?></td>
+                <td>₦<?= number_format($r['amount'],2) ?></td>
+                <td><?= htmlspecialchars($emailTo) ?></td>
+                <td><?= htmlspecialchars(strlen($msgText) > 60 ? substr($msgText,0,57).'...' : $msgText) ?></td>
+                <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div><button class="admin-payment-copy" data-link="<?= htmlspecialchars($link) ?>">Copy</button></div></td>
+                <td><?= htmlspecialchars($r['created_at']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody></table>
+    </div>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
 ?>

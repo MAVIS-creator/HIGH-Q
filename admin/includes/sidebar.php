@@ -41,10 +41,12 @@ $menuItems = [
         <ul>
             <?php foreach ($menuItems as $slug => $item): ?>
                 <?php
-                // Show item if role_permissions contains the menu slug
-                $show = in_array($slug, $permissions);
-                // Also show audit_logs to users who have the general 'settings' permission (common admin role)
-                if (!$show && $slug === 'audit_logs' && in_array('settings', $permissions)) $show = true;
+                    // Show item if role_permissions contains the menu slug
+                    $show = in_array($slug, $permissions);
+                    // Also show audit_logs to users who have the general 'settings' permission (common admin role)
+                    if (!$show && $slug === 'audit_logs' && in_array('settings', $permissions)) $show = true;
+                    // Ensure the Create Payment Link menu is shown to users with 'payments' permission
+                    if (!$show && $slug === 'create_payment_link' && in_array('payments', $permissions)) $show = true;
                 ?>
                 <?php if ($show): ?>
                     <li><a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
