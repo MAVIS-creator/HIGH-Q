@@ -1417,6 +1417,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = '';
 		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = 'none';
 		btnReg.style.borderColor = '#007bff'; btnPost.style.borderColor = '#ddd';
+		// update form classes so JS can distinguish flows
+		try { var theForm = document.getElementById('registrationForm'); if (theForm && theForm.classList) { theForm.classList.remove('form-postutme'); theForm.classList.add('form-regular'); } } catch(e) {}
 	}
 	function setPost() {
 		regInput.value = 'postutme';
@@ -1429,6 +1431,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = 'none';
 		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = '';
 		btnPost.style.borderColor = '#007bff'; btnReg.style.borderColor = '#ddd';
+		// update form classes so JS can distinguish flows
+		try { var theForm = document.getElementById('registrationForm'); if (theForm && theForm.classList) { theForm.classList.remove('form-regular'); theForm.classList.add('form-postutme'); } } catch(e) {}
 	}
 	btnReg.addEventListener('click', setRegular);
 	btnPost.addEventListener('click', setPost);
