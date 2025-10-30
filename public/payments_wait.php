@@ -262,13 +262,19 @@ $csrf = generateToken('signup_form');
           // when the user successfully records a payment we can clear the page timer so UX resets on next visit
           document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); localStorage.removeItem(transferStartKey); } catch(e){} });
 
-          // copy account number helper
+          // copy account number helper (show toast popup instead of swapping icons)
           try {
             var copyBtn = document.getElementById('copyAcct');
             if (copyBtn) {
               copyBtn.addEventListener('click', function(){
                 var acct = <?= json_encode($siteSettings['bank_account_number'] ?? '') ?>;
-                try { navigator.clipboard.writeText(acct); copyBtn.innerHTML = '<i class="bx bx-check"></i>'; setTimeout(function(){ copyBtn.innerHTML = '<i class="bx bx-copy"></i>'; },1500); } catch(e){ alert('Copy: ' + acct); }
+                try {
+                  navigator.clipboard.writeText(acct).then(function(){
+                    if (typeof Swal !== 'undefined') {
+                      Swal.fire({toast:true,position:'top-end',icon:'success',title:'Account number copied',showConfirmButton:false,timer:1600});
+                    } else { alert('Account number copied: ' + acct); }
+                  }).catch(function(){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard failed',text:acct}); else alert('Copy: ' + acct); });
+                } catch(e){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard not supported',text:acct}); else alert('Copy: ' + acct); }
               });
             }
           } catch(e){}
