@@ -94,9 +94,20 @@ if (!headers_sent()) {
         $chosen = $adminBase . '/assets/css/admin.css';
     }
 
-    // Output only the correct admin CSS link for XAMPP
-    echo "<link rel=\"stylesheet\" href=\"/HIGH-Q/admin/assets/css/admin.css\">\n";
-    if (!empty($pageCss)) echo $pageCss;
+    // Output only the correct admin CSS link for the detected admin path
+    echo "<link rel=\"stylesheet\" href=\"" . $chosen . "\">\n";
+    // If a page-specific CSS was provided, allow two modes:
+    //  - raw <link> tag (echo as-is)
+    //  - relative path (treat as relative to admin base)
+    if (!empty($pageCss)) {
+        $trim = trim($pageCss);
+        if (strpos($trim, '<link') === 0) {
+            echo $pageCss;
+        } else {
+            $adminBaseForHref = $adminBase === '/' ? '' : $adminBase;
+            echo "<link rel=\"stylesheet\" href=\"" . $adminBaseForHref . "/" . ltrim($pageCss, '/') . "\">\n";
+        }
+    }
 
     // Minimal critical inline fallback CSS (keeps UI readable if external CSS fails)
     // NOTE: keep these conservative and avoid overriding admin layout variables (no body padding or zero margin-left on .admin-main)
@@ -110,6 +121,15 @@ if (!headers_sent()) {
         ".tab-btn{padding:6px 8px;border:1px solid #ccc;background:#fff;border-radius:4px;cursor:pointer;}\n" .
         "label{display:block;margin:6px 0;font-weight:600;}input.input, textarea.input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;}\n" .
         "</style>\n";
+
+    // Expose admin base and app base to client-side JS so scripts can build URLs dynamically
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $projectBase = rtrim(dirname(dirname($scriptName)), '/');
+    if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
+    $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? '');
+    $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
+    $adminBaseForJs = $adminBase === '/' ? '' : $adminBase;
+    echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseForJs . "'; window.HQ_APP_BASE='" . $appBase . "';</script>\n";
     ?>
 </head>
 
