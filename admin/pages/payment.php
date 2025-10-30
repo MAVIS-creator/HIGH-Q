@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <head>
-    link
+    <link rel="stylesheet" href="../assets/css/payment.css">
 </head>
 <div class="admin-payment-card">
     <h3>Create Payment Link</h3>
