@@ -155,9 +155,7 @@ $csrf = generateToken('signup_form');
                 <p style="color:#666">This payment link expires after 2 days. After making the transfer, click "I've sent the money" and provide your transfer details for verification.</p>
               </div>
 
-              <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;">
-                <button class="btn-primary" id="markSentBtn" type="button">I've sent the money</button>
-              </div>
+              <!-- button removed from here; it is placed after payment details so user fills form first -->
             </div>
 
             <!-- inline payer details form (visible — user must provide before clicking 'I've sent the money') -->
@@ -171,12 +169,16 @@ $csrf = generateToken('signup_form');
                   <div class="form-row"><label for="payer_name_input">Name on Payer Account</label><input id="payer_name_input" name="payer_name" required style="width:100%" placeholder="Full name on the account"></div>
                   <div class="form-row"><label for="payer_number_input">Account Number</label><input id="payer_number_input" name="payer_number" required style="width:100%" placeholder="e.g. 0012345678"></div>
                   <div class="form-row"><label for="payer_bank_input">Bank Name</label><input id="payer_bank_input" name="payer_bank" required style="width:100%" placeholder="e.g. Zenith Bank"></div>
-                  <div class="form-row"><label for="tx_desc_input">Transaction description (programme)</label><input id="tx_desc_input" name="transaction_description" placeholder="E.g. PTU — Computer Science" style="width:100%"></div>
+                  <!-- transaction_description removed per request: this is collected on the user's phone during transfer, not here -->
                 </form>
               </div>
             </div>
-
             <div id="payerRecordedInfo" style="display:none;margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto;"></div>
+
+            <!-- Primary CTA is placed here (below payment details) so user fills details first -->
+            <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;">
+              <button class="btn-primary" id="markSentBtn" type="button">I've sent the money</button>
+            </div>
           </div>
         </div>
       </div>
