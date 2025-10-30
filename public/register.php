@@ -5,6 +5,8 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
 $cfg = require __DIR__ . '/../config/payments.php';
+// Determine whether Paystack is actually configured (placeholder keys contain 'xxx')
+$paystackEnabled = !empty($cfg['paystack']['public']) && strpos($cfg['paystack']['public'], 'xxx') === false;
 
 $errors = [];
 $success = '';
