@@ -206,6 +206,20 @@ $csrf = generateToken('signup_form');
             if (!transferStartTs || isNaN(transferStartTs)) { transferStartTs = Math.floor(Date.now()/1000); localStorage.setItem(transferStartKey, transferStartTs); }
           } catch (e) { transferStartTs = Math.floor(Date.now()/1000); }
 
+          // Record activation server-side so backend can enforce the 30-minute window reliably.
+          try {
+            (function(){
+              var payIdInput = document.querySelector('input[name="payment_id"]');
+              var pid = payIdInput ? payIdInput.value : '';
+              var token = document.querySelector('input[name="_csrf"]') ? document.querySelector('input[name="_csrf"]').value : '';
+              var fd = new FormData(); fd.append('ref', ref); fd.append('payment_id', pid); fd.append('_csrf', token);
+              fetch((window.HQ_BASE||'') + '/public/api/activate_payment.php', { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With':'XMLHttpRequest' } })
+                .then(function(r){ return r.text().then(function(t){ try{ return JSON.parse(t); }catch(e){ return { status:'error', raw: t }; } }); })
+                .then(function(j){ /* no-op: server will record activated_at; payment_status will consider it */ })
+                .catch(function(e){ /* ignore activation errors for now */ });
+            })();
+          } catch(e){}
+
           function updateTransferTimer(){
             if (!elTransfer) return;
             var now = Math.floor(Date.now()/1000);
