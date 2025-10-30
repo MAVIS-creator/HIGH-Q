@@ -73,3 +73,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php';
+?>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('createSendBtn');
+    var form = document.getElementById('adminPaymentForm');
+    var msg = document.getElementById('adminMsg');
+    var linkWrap = document.getElementById('createdLinkWrap');
+    var createdLink = document.getElementById('createdLink');
+    var copyBtn = document.getElementById('copyLinkBtn');
+    btn.addEventListener('click', function(){
+        var fd = new FormData(form);
+        btn.disabled = true; btn.textContent = 'Sending...';
+        fetch('/HIGH-Q/admin/api/create_payment_link.php', { method: 'POST', body: fd, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} })
+            .then(r => r.text())
+            .then(function(t){ try { return JSON.parse(t); } catch(e) { return { status:'error', raw:t }; } })
+            .then(function(j){
+                btn.disabled = false; btn.textContent = 'Create & Send Link';
+                if (j.status === 'ok') {
+                    msg.style.display = 'block'; msg.textContent = 'Link created' + (j.emailed ? ' and emailed.' : ' (email failed - copy below)');
+                    linkWrap.style.display = 'flex'; createdLink.textContent = j.link;
+                    // show toast
+                    Swal.fire({ toast:true, position:'top-end', icon:'success', title:'Payment link created', showConfirmButton:false, timer:2000 });
+                } else {
+                    msg.style.display = 'block'; msg.textContent = j.message || 'Error creating link';
+                    Swal.fire({ icon:'error', title:'Error', text: j.message || 'Server error' });
+                }
+            }).catch(function(err){ btn.disabled = false; btn.textContent = 'Create & Send Link'; Swal.fire({ icon:'error', title:'Network error' }); });
+    });
+    copyBtn.addEventListener('click', function(){ var txt = createdLink.textContent || ''; navigator.clipboard.writeText(txt).then(function(){ Swal.fire({toast:true,position:'top-end',icon:'success',title:'Link copied',showConfirmButton:false,timer:1500}); }); });
+});
+</script>
