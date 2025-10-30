@@ -324,7 +324,7 @@ $csrf = generateToken('signup_form');
                     if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "I've sent the money"; }
                     if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none';
                   }
-                }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Record transfer details'; } if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none'; });
+                }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "I've sent the money"; } if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none'; });
               });
             }
           } catch(e){}
