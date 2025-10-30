@@ -154,23 +154,25 @@ $csrf = generateToken('signup_form');
       </div>
 
       <script>
-        // Page-level timer: 10 minutes per page load (persisted in localStorage per reference)
-        // Link-level expiry: server enforces 2 days from payment.created_at (already handled server-side)
+        // Client-side script:
+        // - 2-day link expiry is server-enforced and shown in #transferExpire
+        // - 30-minute payment window starts when the user opens this page and is persisted in localStorage per payment ref
         (function(){
           var created = <?= json_encode($payment['created_at'] ?? null) ?>;
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
-          var pageTimeout = 10 * 60; // 10 minutes
+          var pageTimeout = 30 * 60; // 30 minutes
           var elTransfer = document.getElementById('transferExpire');
+          var elWindow = document.getElementById('paymentWindowTimer');
           var form = document.getElementById('payer-form');
           var payerFormWrap = document.getElementById('payerFormWrap');
           var markSentBtn = document.getElementById('markSentBtn');
-          var storageKey = 'hq_pay_timer_' + ref;
+          var storageKey = 'hq_pay_window_start_' + ref;
           // server-side expiry (2 days from payment.created_at)
           var expiryTs = <?= json_encode($payment && !empty($payment['created_at']) ? (strtotime($payment['created_at']) + (2*24*60*60)) : null) ?>;
 
-          function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
+          function two(n){ return (n < 10 ? '0' + n : '' + n); }
 
-          // create or reuse a start timestamp for the page timer so refresh doesn't reset it
+          // Create or reuse a start timestamp for the 30-minute payment window
           var startTs = null;
           try {
             var stored = localStorage.getItem(storageKey);
@@ -178,14 +180,22 @@ $csrf = generateToken('signup_form');
             if (!startTs || isNaN(startTs)) { startTs = Math.floor(Date.now()/1000); localStorage.setItem(storageKey, startTs); }
           } catch (e) { startTs = Math.floor(Date.now()/1000); }
 
-          function updatePageTimer(){
+          function updateWindowTimer(){
+            if (!elWindow) return;
             var now = Math.floor(Date.now()/1000);
             var remain = pageTimeout - (now - startTs);
             if (remain <= 0) {
-              // hide payer form and indicate closed
+              elWindow.textContent = 'expired';
               if (form) form.style.display = 'none';
-              if (elTransfer) elTransfer.textContent = '00:00';
+              if (markSentBtn) { markSentBtn.disabled = true; markSentBtn.textContent = "Payment window expired"; }
               return false;
+            }
+            var mm = Math.floor(remain / 60);
+            var ss = remain % 60;
+            if (mm >= 60) {
+              var hh = Math.floor(mm / 60); mm = mm % 60; elWindow.textContent = two(hh)+ ':' + two(mm) + ':' + two(ss);
+            } else {
+              elWindow.textContent = two(mm) + ':' + two(ss);
             }
             return true;
           }
@@ -197,35 +207,29 @@ $csrf = generateToken('signup_form');
             var now = Math.floor(Date.now()/1000);
             var remain = expiryTs - now;
             if (remain <= 0) { elTransfer.textContent = 'expired'; return; }
-            // Format: if more than 1 day, show "Xd HH:MM:SS", else "HH:MM:SS"
             var days = Math.floor(remain / 86400);
             var hh = Math.floor((remain % 86400) / 3600);
             var mm = Math.floor((remain % 3600) / 60);
             var ss = remain % 60;
-            function two(n){ return (n<10? '0'+n : ''+n); }
             if (days > 0) elTransfer.textContent = days + 'd ' + two(hh) + ':' + two(mm) + ':' + two(ss);
             else elTransfer.textContent = two(hh) + ':' + two(mm) + ':' + two(ss);
           }
 
-          // initialize timers
-          updatePageTimer();
-          updateTransferTimer();
-          setInterval(function(){ updatePageTimer(); updateTransferTimer(); }, 1000);
+          // initialize timers and pollers
+          updateWindowTimer(); updateTransferTimer();
+          setInterval(function(){ updateWindowTimer(); updateTransferTimer(); }, 1000);
 
           // polling for admin confirmation and server-side expiry
           function check(){
             if (!ref) return;
             var xhr = new XMLHttpRequest();
-            // add a timestamp to prevent aggressive caching by proxies/browsers
             var url = (window.HQ_BASE||'') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref) + '&t=' + Date.now();
             xhr.open('GET', url, true);
             xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText);
                   if (r.status==='ok' && r.payment) {
                     var st = r.payment.status || '';
                     if (st === 'confirmed') {
-                      // close any checking modal then show success then redirect
                       try { if (typeof Swal !== 'undefined') Swal.close(); } catch(e){}
-                      // If this payment is for a Post-UTME, show friendly message that an agent will contact them after review
                       var isPost = (r.payment.registration_type && r.payment.registration_type === 'postutme');
                       if (isPost) {
                         var msg = 'Payment confirmed. An agent will get in touch with you after your details have been reviewed.';
@@ -235,9 +239,7 @@ $csrf = generateToken('signup_form');
                             else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
                           });
                         } else {
-                          alert(msg);
-                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                          alert(msg); if (r.payment.receipt_path) { window.location = r.payment.receipt_path; } else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
                         }
                       } else {
                         if (typeof Swal !== 'undefined') {
@@ -245,13 +247,9 @@ $csrf = generateToken('signup_form');
                             if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
                             else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
                           });
-                        } else {
-                          if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
-                        }
+                        } else { if (r.payment.receipt_path) { window.location = r.payment.receipt_path; } else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); } }
                       }
                     } else if (st === 'expired') {
-                      // backend marked expired
                       if (form) form.style.display = 'none';
                       if (elTransfer) elTransfer.textContent = 'expired';
                     }
@@ -259,14 +257,12 @@ $csrf = generateToken('signup_form');
                 } catch(e){} }};
             xhr.send();
           }
-          // run an initial check and then poll every 5 seconds
-          check();
-          setInterval(check, 5000);
+          check(); setInterval(check, 5000);
 
-          // when the user successfully records a payment we can clear the page timer so UX resets on next visit
-          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); localStorage.removeItem(transferStartKey); } catch(e){} });
+          // when the user successfully records a payment we can clear the 30-minute window so UX resets on next visit
+          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); } catch(e){} });
 
-          // copy account number helper (show toast popup instead of swapping icons)
+          // copy account number helper (themed toast)
           try {
             var copyBtn = document.getElementById('copyAcct');
             if (copyBtn) {
@@ -275,25 +271,29 @@ $csrf = generateToken('signup_form');
                 try {
                   navigator.clipboard.writeText(acct).then(function(){
                     if (typeof Swal !== 'undefined') {
-                      Swal.fire({toast:true,position:'top-end',icon:'success',title:'Account number copied',showConfirmButton:false,timer:1600});
+                      Swal.fire({ toast:true, position:'top-end', html: '<div style="display:flex;align-items:center;gap:8px"><i class="bx bx-check-circle" style="color:#b30000;font-size:18px"></i><span>Account number copied</span></div>', showConfirmButton:false, timer:1600, customClass:{ popup: 'hq-copy-toast-popup' } });
                     } else { alert('Account number copied: ' + acct); }
-                  }).catch(function(){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard failed',text:acct}); else alert('Copy: ' + acct); });
-                } catch(e){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard not supported',text:acct}); else alert('Copy: ' + acct); }
+                  }).catch(function(){ if (typeof Swal !== 'undefined') Swal.fire({ icon:'info', title:'Copy to clipboard failed', text:acct, customClass:{ popup:'hq-swal' } }); else alert('Copy: ' + acct); });
+                } catch(e){ if (typeof Swal !== 'undefined') Swal.fire({ icon:'info', title:'Copy to clipboard not supported', text:acct, customClass:{ popup:'hq-swal' } }); else alert('Copy: ' + acct); }
               });
             }
           } catch(e){}
 
           // close button handler (acts as cancel/back)
-          try {
-            var closeBtn = document.getElementById('closeBtn');
-            if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register.php'; });
-          } catch(e){}
+          try { var closeBtn = document.getElementById('closeBtn'); if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register.php'; }); } catch(e){}
 
-          // When primary button is clicked, submit the payer form (user should have filled details)
+          // When primary button is clicked, submit the payer form (ensure window still open)
           try {
             if (markSentBtn && form) {
               markSentBtn.addEventListener('click', function(){
-                // trigger a normal submit so our submit handler processes it
+                // check payment window
+                var now = Math.floor(Date.now()/1000);
+                var remain = pageTimeout - (now - startTs);
+                if (remain <= 0) {
+                  if (typeof Swal !== 'undefined') Swal.fire('Payment window expired', 'The 30-minute payment window has ended. Please request a new payment link.', 'error');
+                  else alert('Payment window expired');
+                  return;
+                }
                 if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit();
               });
             }
