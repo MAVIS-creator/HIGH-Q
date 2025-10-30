@@ -32,8 +32,17 @@ try {
     if (!empty($msg)) $html .= '<p>Message: ' . nl2br(htmlspecialchars($msg)) . '</p>';
     $html .= '<p>Link expires in 2 days.</p><p>Thanks,<br>HIGH Q Solid Academy</p>';
     $sent = false; try { $sent = sendEmail($email, $subject, $html); } catch (Throwable $e) { $sent = false; }
+    // enrich metadata with emailed flag and created_by
+    try {
+        $metaArr = is_string($metadata) ? json_decode($metadata, true) : (is_array($metadata) ? $metadata : []);
+        if (!is_array($metaArr)) $metaArr = [];
+        $metaArr['emailed'] = $sent ? true : false;
+        $metaArr['created_by'] = (int)($_SESSION['user']['id'] ?? 0);
+        $upd = $pdo->prepare('UPDATE payments SET metadata = ? WHERE id = ?');
+        $upd->execute([json_encode($metaArr, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE), $paymentId]);
+    } catch (Throwable $_) {}
     // log action
-    try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'create_payment_link', ['payment_id'=>$paymentId,'email'=>$email]); } catch(Throwable $_){}
+    try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'create_payment_link', ['payment_id'=>$paymentId,'email'=>$email,'emailed'=>$sent]); } catch(Throwable $_){}
 
     echo json_encode(['status'=>'ok','payment_id'=>$paymentId,'reference'=>$ref,'link'=>$link,'emailed'=>$sent]); exit;
 } catch (Throwable $e) {
