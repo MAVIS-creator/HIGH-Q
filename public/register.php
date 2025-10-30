@@ -135,6 +135,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// Determine which registration type was selected (regular/postutme)
 		$registration_type = isset($_POST['registration_type']) && $_POST['registration_type'] === 'postutme' ? 'postutme' : 'regular';
 
+		// Basic server-side sanity checks to avoid spoofed flows
+		if ($registration_type === 'postutme') {
+			// require basic identity fields
+			if (trim($_POST['first_name_post'] ?? '') === '' || trim($_POST['surname'] ?? '') === '') {
+				$errors[] = 'First name and surname are required for Post-UTME registration.';
+			}
+			// require at least one JAMB identifier (reg number or score)
+			if (trim($_POST['jamb_registration_number'] ?? '') === '' && trim((string)($_POST['jamb_score'] ?? '')) === '') {
+				$errors[] = 'Provide a JAMB registration number or a JAMB score for Post-UTME registration.';
+			}
+		}
+
 		// If Post-UTME registration, handle the separate insert + payment logic and redirect to payment wait
 		if ($registration_type === 'postutme') {
 				// IMPORTANT: Post-UTME applicants MUST pay the compulsory form fee immediately.
