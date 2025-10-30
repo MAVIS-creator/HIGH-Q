@@ -61,6 +61,7 @@ $csrf = generateToken('signup_form');
       </div>
     </div>
   </div>
+  <script>window.HQ_BASE = <?= json_encode(rtrim($HQ_BASE, '/')) ?>;</script>
   <main class="public-main" style="padding:28px 0;">
 <?php
 ?>
@@ -145,9 +146,13 @@ $csrf = generateToken('signup_form');
           var created = <?= json_encode($payment['created_at'] ?? null) ?>;
           var ref = <?= json_encode($payment['reference'] ?? '') ?>;
           var pageTimeout = 10 * 60; // 10 minutes
-          var el = document.getElementById('countdown');
+          var elTransfer = document.getElementById('transferExpire');
           var form = document.getElementById('payer-form');
+          var payerFormWrap = document.getElementById('payerFormWrap');
+          var markSentBtn = document.getElementById('markSentBtn');
           var storageKey = 'hq_pay_timer_' + ref;
+          var transferStartKey = 'hq_transfer_start_' + ref;
+          var transferDuration = 30 * 60; // 30 minutes visual countdown for transfer
 
           function fmt(s){ var m=Math.floor(s/60); var ss=s%60; return (m<10? '0'+m: m)+":"+(ss<10? '0'+ss:ss); }
 
@@ -163,16 +168,30 @@ $csrf = generateToken('signup_form');
             var now = Math.floor(Date.now()/1000);
             var remain = pageTimeout - (now - startTs);
             if (remain <= 0) {
-              el.textContent = 'Payment window closed — please request a new link or contact support.';
+              // hide payer form and indicate closed
               if (form) form.style.display = 'none';
+              if (elTransfer) elTransfer.textContent = '00:00';
               return false;
             }
-            el.textContent = fmt(remain);
             return true;
           }
 
+          // transfer countdown (visual 30-minute timer shown in the card)
+          function updateTransferTimer(){
+            if (!elTransfer) return;
+            var now = Math.floor(Date.now()/1000);
+            var tStart = null;
+            try { tStart = parseInt(localStorage.getItem(transferStartKey), 10); } catch(e) { tStart = null; }
+            if (!tStart || isNaN(tStart)) { tStart = Math.floor(Date.now()/1000); try { localStorage.setItem(transferStartKey, tStart); } catch(e){} }
+            var remain = transferDuration - (now - tStart);
+            if (remain < 0) remain = 0;
+            elTransfer.textContent = fmt(remain);
+          }
+
+          // initialize timers
           updatePageTimer();
-          setInterval(updatePageTimer, 1000);
+          updateTransferTimer();
+          setInterval(function(){ updatePageTimer(); updateTransferTimer(); }, 1000);
 
           // polling for admin confirmation and server-side expiry
           function check(){
@@ -215,7 +234,7 @@ $csrf = generateToken('signup_form');
                     } else if (st === 'expired') {
                       // backend marked expired
                       if (form) form.style.display = 'none';
-                      el.textContent = 'Link expired';
+                      if (elTransfer) elTransfer.textContent = 'expired';
                     }
                   }
                 } catch(e){} }};
@@ -226,7 +245,78 @@ $csrf = generateToken('signup_form');
           setInterval(check, 5000);
 
           // when the user successfully records a payment we can clear the page timer so UX resets on next visit
-          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); } catch(e){} });
+          document.addEventListener('hq.payment.recorded', function(){ try { localStorage.removeItem(storageKey); localStorage.removeItem(transferStartKey); } catch(e){} });
+
+          // copy account number helper
+          try {
+            var copyBtn = document.getElementById('copyAcct');
+            if (copyBtn) {
+              copyBtn.addEventListener('click', function(){
+                var acct = <?= json_encode($siteSettings['bank_account_number'] ?? '') ?>;
+                try { navigator.clipboard.writeText(acct); copyBtn.textContent = '✅'; setTimeout(function(){ copyBtn.textContent = '📋'; },1500); } catch(e){ alert('Copy: ' + acct); }
+              });
+            }
+          } catch(e){}
+
+          // show/hide payer form when user clicks the primary button
+          try {
+            if (markSentBtn) {
+              markSentBtn.addEventListener('click', function(){
+                if (payerFormWrap) {
+                  payerFormWrap.style.display = (payerFormWrap.style.display === 'none' || payerFormWrap.style.display === '') ? 'block' : 'none';
+                  if (payerFormWrap.style.display === 'block') {
+                    var el = payerFormWrap.querySelector('input[name="payer_name"]'); if (el) el.focus();
+                    window.scrollTo({ top: payerFormWrap.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+                  }
+                }
+              });
+            }
+          } catch(e){}
+
+          // handle payer-form submission (record transfer details)
+          try {
+            if (form) {
+              var submitBtn = document.getElementById('markSentSubmit');
+              form.addEventListener('submit', function(e){
+                e.preventDefault();
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Recording...'; }
+                if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'block';
+                var fd = new FormData(form);
+                fetch((window.HQ_BASE||'') + '/public/api/mark_sent.php', {
+                  method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With':'XMLHttpRequest' }
+                }).then(function(r){ return r.text().then(function(t){ try { return JSON.parse(t); } catch(e){ return { status: 'error', raw: t }; } }); })
+                .then(function(j){
+                  if (j && j.status === 'ok') {
+                    if (submitBtn) { submitBtn.textContent = 'Recorded — awaiting admin verification'; submitBtn.disabled = true; }
+                    if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none';
+                    var info = document.getElementById('payerRecordedInfo');
+                    if (info) {
+                      var pay = j.payment || {};
+                      info.innerHTML = '<h4>Recorded transfer details</h4>'+
+                        '<div><strong>Name:</strong> ' + (pay.payer_name||'') + '</div>'+
+                        '<div><strong>Account:</strong> ' + (pay.payer_number||'') + '</div>'+
+                        '<div><strong>Bank:</strong> ' + (pay.payer_bank||'') + '</div>';
+                      info.style.border = '1px dashed #ccc'; info.style.padding = '10px'; info.style.marginTop = '12px'; info.style.display = 'block';
+                    }
+                    // show checking modal
+                    if (typeof Swal !== 'undefined') {
+                      Swal.fire({ title: 'Checking transaction status', html: '<div style="text-align:center"><div class="swal-spinner" style="margin:12px auto 0;width:36px;height:36px;border:4px solid rgba(0,0,0,0.08);border-top-color:var(--hq-black);border-radius:50%;animation:spin 1s linear infinite"></div></div>', showConfirmButton:false, allowOutsideClick:false, customClass:{ popup: 'hq-swal' } });
+                    }
+                    // trigger check immediately
+                    try { check(); } catch(e){}
+                    // fire event so timers clear
+                    try { document.dispatchEvent(new Event('hq.payment.recorded')); } catch(e){}
+                  } else {
+                    var msg = (j && j.message) ? j.message : 'Failed to record transfer.';
+                    if (j && j.raw) msg += '\n' + j.raw;
+                    if (typeof Swal !== 'undefined') Swal.fire('Error', msg, 'error'); else alert(msg);
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Record transfer details'; }
+                    if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none';
+                  }
+                }).catch(function(err){ var m = 'Network error: ' + (err && err.message ? err.message : 'unknown'); if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Record transfer details'; } if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'none'; });
+              });
+            }
+          } catch(e){}
         })();
       </script>
 
