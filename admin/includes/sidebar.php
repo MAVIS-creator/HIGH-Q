@@ -22,6 +22,7 @@ $menuItems = [
     'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?pages=tutors'],
     'students'  => ['title' => 'Students', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?pages=students'],
         'payments'  => ['title' => 'Payments', 'icon' => 'bx bxs-credit-card', 'url' => 'index.php?pages=payments'],
+        'create_payment_link' => ['title' => 'Create Payment Link', 'icon' => 'bx bx-link', 'url' => 'index.php?pages=payment'],
         'icons'     => ['title' => 'Icons', 'icon' => 'bx bx-image', 'url' => 'index.php?pages=icons'],
     'post'      => ['title' => 'News / Blog', 'icon' => 'bx bxs-news', 'url' => 'index.php?pages=post'],
     'comments'  => ['title' => 'Comments', 'icon' => 'bx bxs-comment-detail', 'url' => 'index.php?pages=comments'],
