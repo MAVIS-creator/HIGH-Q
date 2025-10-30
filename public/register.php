@@ -698,9 +698,9 @@ $csrf = generateToken('signup_form');
 
 														<!-- Payment method selector: let user choose bank or online (online may be disabled when Paystack not configured) -->
 														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
-															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice" value="bank" checked> High Q Transfer (Bank Transfer)</label>
+															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice_regular" value="bank" checked> High Q Transfer (Bank Transfer)</label>
 															<label>
-																<input type="radio" name="payment_method_choice" value="online" <?= $paystackEnabled ? '' : 'disabled' ?>> Online Card Payment
+																<input type="radio" name="payment_method_choice_regular" value="online" <?= $paystackEnabled ? '' : 'disabled' ?>> Online Card Payment
 																<?= $paystackEnabled ? '' : '<small style="color:#a33;margin-left:6px">(Currently unavailable)</small>' ?>
 															</label>
 														</div>
@@ -787,9 +787,9 @@ $csrf = generateToken('signup_form');
 
 														<!-- Provide payment-choice UI for consistency, but Post-UTME is forced to bank on submit (online disabled here) -->
 														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
-															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice" value="bank" checked> High Q Transfer (Bank Transfer)</label>
+															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice_post" value="bank" checked> High Q Transfer (Bank Transfer)</label>
 															<label>
-																<input type="radio" name="payment_method_choice" value="online" disabled> Online Card Payment
+																<input type="radio" name="payment_method_choice_post" value="online" disabled> Online Card Payment
 																<small style="color:#a33;margin-left:6px">(Not available for Post-UTME)</small>
 															</label>
 														</div>
