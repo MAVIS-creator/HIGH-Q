@@ -663,200 +663,166 @@ $csrf = generateToken('signup_form');
 													</script>
 													<?php unset($_SESSION['registration_pending_id']); ?>
 												<?php else: ?>
-													<form id="registrationForm" class="registration-form form-regular" method="post" enctype="multipart/form-data">
-													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
-													<input type="hidden" name="client_total" id="client_total_input" value="">
-													<input type="hidden" name="method" id="method_input" value="bank">
-													<input type="hidden" name="registration_type" id="registration_type" value="regular">
-													<div style="margin:12px 0;display:flex;gap:8px;align-items:center;">
-														<label style="font-weight:600;margin-right:8px">Registration type:</label>
-														<button type="button" id="regTypeRegular" class="btn" style="background:#fff;border:1px solid #ddd">Regular</button>
-														<button type="button" id="regTypePost" class="btn" style="background:#fff;border:1px solid #ddd">Post-UTME</button>
-														<span style="color:#666;margin-left:8px;font-size:13px">Choose the registration form to fill</span>
+													<!-- Choice screen -->
+													<div class="choice-container" style="margin:12px 0;display:flex;gap:12px;align-items:center;">
+														<div style="flex:1">
+															<label style="font-weight:600;display:block;margin-bottom:6px">Select Registration Type</label>
+															<div>
+																<button type="button" id="chooseRegular" class="btn" style="background:#fff;border:1px solid #ddd;margin-right:8px">Regular Admission</button>
+																<button type="button" id="choosePost" class="btn" style="background:#fff;border:1px solid #ddd">Post-UTME Admission</button>
+															</div>
+															<p style="color:#666;margin-top:8px;font-size:13px">Choose the registration flow that applies to you.</p>
+														</div>
 													</div>
-													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
-													<div class="section-body">
-																									<div class="form-row form-inline" id="regularPersonalTop"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
-																									<div class="form-row">
-																										<label>Passport Photo (passport-size, face visible)</label>
-																										<div class="hq-file-input main-passport-input">
-																											<button type="button" class="btn">Choose file</button>
-																											<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
-																											<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
-																										</div>
 
-																										<!-- Post-UTME specific fields (hidden by default) -->
-																										<div id="postUtmeFields" style="display:none;margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px solid #f0f0f0">
-																											<h4 class="section-title"><i class="bx bxs-book"></i> Post-UTME Registration Details</h4>
-																											<div class="form-row"><label>Name of Institution</label><input type="text" name="institution" placeholder="Name of Institution where you're applying" value="<?= htmlspecialchars($_POST['institution'] ?? '') ?>"></div>
-																											<div class="form-row post-passport-row" style="display:none"><label>Passport Photo (Post-UTME applicants)</label>
-																												<div class="hq-file-input post-passport-input">
-																													<button type="button" class="btn">Choose file</button>
-																													<input type="file" name="passport" id="passport_input_post" accept="image/*" style="display:none">
-																													<span id="passport_chosen_post" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
-																												</div>
-																											</div>
-																											<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
+													<!-- Regular form -->
+													<form id="regularForm" class="registration-form form-regular" method="post" enctype="multipart/form-data" style="display:none;">
+														<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+														<input type="hidden" name="client_total" value="">
+														<input type="hidden" name="method" value="bank">
+														<input type="hidden" name="registration_type" value="regular">
 
-                                                                                                                            
-																											<div class="form-row"><label>Other Name</label><input type="text" name="other_name" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Gender</label><select name="post_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
-																											<div class="form-row"><label>Address</label><textarea name="address"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea></div>
-																											<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="state_of_origin" value="<?= htmlspecialchars($_POST['state_of_origin'] ?? '') ?>"></div><div><label>Local Government</label><input type="text" name="local_government" value="<?= htmlspecialchars($_POST['local_government'] ?? '') ?>"></div></div>
-																											<div class="form-row form-inline"><div><label>Place of Birth</label><input type="text" name="place_of_birth" value="<?= htmlspecialchars($_POST['place_of_birth'] ?? '') ?>"></div><div><label>Nationality</label><input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>"></div></div>
-																											<div class="form-row form-inline"><div><label>Marital Status</label><input type="text" name="marital_status" value="<?= htmlspecialchars($_POST['marital_status'] ?? '') ?>"></div><div><label>Disability</label><input type="text" name="disability" value="<?= htmlspecialchars($_POST['disability'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>Mode of Entry</label><input type="text" name="mode_of_entry" value="<?= htmlspecialchars($_POST['mode_of_entry'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>Date of Birth</label><input type="date" name="date_of_birth_post" value="<?= htmlspecialchars($_POST['date_of_birth_post'] ?? '') ?>"></div><div><label>Personal Phone</label><input type="text" name="post_phone" value="<?= htmlspecialchars($_POST['post_phone'] ?? '') ?>"></div><div><label>Parent's Phone</label><input type="text" name="parent_phone" value="<?= htmlspecialchars($_POST['parent_phone'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>Email Address</label><input type="email" name="email_post" value="<?= htmlspecialchars($_POST['email_post'] ?? '') ?>"></div>
-																											<div class="form-row"><label>NIN Number</label><input type="text" name="nin_number" value="<?= htmlspecialchars($_POST['nin_number'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="state_of_origin" value="<?= htmlspecialchars($_POST['state_of_origin'] ?? '') ?>"></div><div><label>Local Government</label><input type="text" name="local_government" value="<?= htmlspecialchars($_POST['local_government'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>Place of Birth</label><input type="text" name="place_of_birth" value="<?= htmlspecialchars($_POST['place_of_birth'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>Nationality</label><input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>"></div><div><label>Religion</label><input type="text" name="religion" value="<?= htmlspecialchars($_POST['religion'] ?? '') ?>"></div></div>
-																											<hr>
-																											<h5>JAMB Details</h5>
-																											<div class="form-row"><label>JAMB registration number</label><input type="text" name="jamb_registration_number" value="<?= htmlspecialchars($_POST['jamb_registration_number'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="jamb_score" id="jamb_score" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score'] ?? '') ?>"></div></div>
-																											<h5>JAMB Subjects (4) — English is compulsory, then any other three</h5>
-																											<div class="form-row form-inline"><div><label>Subject 1</label><input type="text" name="jamb_subj_1" value="English" readonly></div><div><label>Score 1</label><input type="number" name="jamb_score_1" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_1'] ?? '') ?>"></div></div>
-																											<div class="form-row form-inline"><div><label>Subject 2</label><input type="text" name="jamb_subj_2" placeholder="e.g. Biology" value="<?= htmlspecialchars($_POST['jamb_subj_2'] ?? '') ?>"></div><div><label>Score 2</label><input type="number" name="jamb_score_2" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_2'] ?? '') ?>"></div></div>
-																											<div class="form-row form-inline"><div><label>Subject 3</label><input type="text" name="jamb_subj_3" placeholder="e.g. Physics" value="<?= htmlspecialchars($_POST['jamb_subj_3'] ?? '') ?>"></div><div><label>Score 3</label><input type="number" name="jamb_score_3" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_3'] ?? '') ?>"></div></div>
-																											<div class="form-row form-inline"><div><label>Subject 4</label><input type="text" name="jamb_subj_4" placeholder="e.g. Chemistry" value="<?= htmlspecialchars($_POST['jamb_subj_4'] ?? '') ?>"></div><div><label>Score 4</label><input type="number" name="jamb_score_4" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_4'] ?? '') ?>"></div></div>
-																											<hr>
-																											<h5>Course & Institution Choices</h5>
-																											<div class="form-row form-inline"><div><label>First choice</label><input type="text" name="course_first_choice" value="<?= htmlspecialchars($_POST['course_first_choice'] ?? '') ?>"></div><div><label>Second choice</label><input type="text" name="course_second_choice" value="<?= htmlspecialchars($_POST['course_second_choice'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>Institution first choice</label><input type="text" name="institution_first_choice" value="<?= htmlspecialchars($_POST['institution_first_choice'] ?? '') ?>"></div>
-																											<hr>
-																											<h5>Sponsor Details</h5>
-																											<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Sponsor address</label><input type="text" name="sponsor_address" value="<?= htmlspecialchars($_POST['sponsor_address'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>Sponsor email</label><input type="email" name="sponsor_email" value="<?= htmlspecialchars($_POST['sponsor_email'] ?? '') ?>"></div><div><label>Sponsor phone</label><input type="text" name="sponsor_phone" value="<?= htmlspecialchars($_POST['sponsor_phone'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>Sponsor relationship</label><input type="text" name="sponsor_relationship" value="<?= htmlspecialchars($_POST['sponsor_relationship'] ?? '') ?>"></div>
-																											<hr>
-																											<h5>Next of Kin Details</h5>
-																											<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Next of kin address</label><input type="text" name="next_of_kin_address" value="<?= htmlspecialchars($_POST['next_of_kin_address'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>Next of kin Email</label><input type="email" name="next_of_kin_email" value="<?= htmlspecialchars($_POST['next_of_kin_email'] ?? '') ?>"></div><div><label>Next of kin phone</label><input type="text" name="next_of_kin_phone" value="<?= htmlspecialchars($_POST['next_of_kin_phone'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>Next of kin relationship</label><input type="text" name="next_of_kin_relationship" value="<?= htmlspecialchars($_POST['next_of_kin_relationship'] ?? '') ?>"></div>
-																											<h5>Parent Details</h5>
-																											<div class="form-row form-inline"><div><label>Father's name</label><input type="text" name="father_name" value="<?= htmlspecialchars($_POST['father_name'] ?? '') ?>"></div><div><label>Father's phone</label><input type="text" name="father_phone" value="<?= htmlspecialchars($_POST['father_phone'] ?? '') ?>"></div></div>
-																											<div class="form-row form-inline"><div><label>Mother's name</label><input type="text" name="mother_name" value="<?= htmlspecialchars($_POST['mother_name'] ?? '') ?>"></div><div><label>Mother's phone</label><input type="text" name="mother_phone" value="<?= htmlspecialchars($_POST['mother_phone'] ?? '') ?>"></div></div>
-																											<hr>
-																											<!-- Primary / Secondary school fields inserted immediately after Parent Details -->
-																											<div class="form-row"><label>Primary School Name:</label><input type="text" name="primary_school" placeholder="Primary School Name" value="<?= htmlspecialchars($_POST['primary_school'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Year Ended (Primary):</label><input type="text" name="primary_year_ended" placeholder="e.g. 2008" value="<?= htmlspecialchars($_POST['primary_year_ended'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Secondary School Name:</label><input type="text" name="secondary_school" placeholder="Secondary School Name" value="<?= htmlspecialchars($_POST['secondary_school'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Year Ended (Secondary):</label><input type="text" name="secondary_year_ended" placeholder="e.g. 2014" value="<?= htmlspecialchars($_POST['secondary_year_ended'] ?? '') ?>"></div>
+														<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
+														<div class="section-body">
+															<div class="form-row form-inline" id="regularPersonalTop"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
+															<div class="form-row">
+																<label>Passport Photo (passport-size, face visible)</label>
+																<div class="hq-file-input main-passport-input">
+																	<button type="button" class="btn">Choose file</button>
+																	<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
+																	<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																</div>
+															</div>
 
-																											<h5>O'Level (Enter up to 8 subjects — compulsory first)</h5>
-																											<?php for ($i=1;$i<=8;$i++): ?>
-																											<?php
-																												// Prefill and make readonly the first three compulsory O'Level subjects (English, Mathematics, Civic Education)
-																												$prefill = '';
-																												$readonly = '';
-																												if ($i === 1) { $prefill = 'English'; $readonly = 'readonly'; }
-																												elseif ($i === 2) { $prefill = 'Mathematics'; $readonly = 'readonly'; }
-																												elseif ($i === 3) { $prefill = 'Civic Education'; $readonly = 'readonly'; }
-																												$valueSub = $prefill !== '' ? $prefill : htmlspecialchars($_POST['olevel_subj_' . $i] ?? '');
-																											?>
-																											<div class="form-row form-inline">
-																												<div>
-																													<label>Subject <?= $i ?></label>
-																													<input type="text" name="olevel_subj_<?= $i ?>" value="<?= $valueSub ?>" <?= $readonly ?> >
-																												</div>
-																												<div>
-																													<label>Grade <?= $i ?></label>
-																													<input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>">
-																												</div>
-																											</div>
-																											<?php endfor; ?>
-																											<hr>
-																											<h5>Exam Details</h5>
-																											<div class="form-row"><label>Exam type</label>
-																												<select name="exam_type">
-																													<option value="">Select</option>
-																													<option value="WAEC" <?= (isset($_POST['exam_type']) && $_POST['exam_type']==='WAEC')?'selected':'' ?>>WAEC</option>
-																													<option value="NECO" <?= (isset($_POST['exam_type']) && $_POST['exam_type']==='NECO')?'selected':'' ?>>NECO</option>
-																													<option value="GCE" <?= (isset($_POST['exam_type']) && $_POST['exam_type']==='GCE')?'selected':'' ?>>GCE</option>
-																												</select>
-																											</div>
-																											<div class="form-row"><label>Candidate Name</label><input type="text" name="candidate_name" value="<?= htmlspecialchars($_POST['candidate_name'] ?? '') ?>"></div>
-																											<div class="form-row form-inline"><div><label>Exam Number</label><input type="text" name="exam_number" value="<?= htmlspecialchars($_POST['exam_number'] ?? '') ?>"></div><div><label>Exam Year & Month</label><input type="text" name="exam_year_month" placeholder="e.g. 2024-08" value="<?= htmlspecialchars($_POST['exam_year_month'] ?? '') ?>"></div></div>
-																											<div class="form-row"><label>WAEC/NECO/GCE Token</label><input type="text" name="waec_token" value="<?= htmlspecialchars($_POST['waec_token'] ?? '') ?>"></div>
-																											<div class="form-row"><label>WAEC/NECO/GCE Serial No.</label><input type="text" name="waec_serial" value="<?= htmlspecialchars($_POST['waec_serial'] ?? '') ?>"></div>
-																											<hr>
-																											<h5>Sponsor & Next of kin</h5>
-																											<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
-																											<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
-																											<div style="margin-top:10px;"><label><input type="checkbox" name="post_tutor_fee" value="1" <?= !empty($_POST['post_tutor_fee']) ? 'checked' : '' ?>> Add optional tutor fee (₦8,000)</label></div>
-																											<p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000.</p>
-																										</div>
-																									</div>
-																									<div id="regularFields">
-																										<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
-																										<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
-																										<div class="form-row">
-																											<label>Gender</label>
-																											<select name="gender">
-																												<option value="">Prefer not to say</option>
-																												<option value="male" <?= (isset($gender) && $gender === 'male') ? 'selected' : '' ?>>Male</option>
-																												<option value="female" <?= (isset($gender) && $gender === 'female') ? 'selected' : '' ?>>Female</option>
-																												<option value="other" <?= (isset($gender) && $gender === 'other') ? 'selected' : '' ?>>Other</option>
-																											</select>
-																										</div>
-																										<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
-																									</div>
+															<div id="regularFields">
+																<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
+																<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
+																<div class="form-row">
+																	<label>Gender</label>
+																	<select name="gender">
+																		<option value="">Prefer not to say</option>
+																		<option value="male" <?= (isset($gender) && $gender === 'male') ? 'selected' : '' ?>>Male</option>
+																		<option value="female" <?= (isset($gender) && $gender === 'female') ? 'selected' : '' ?>>Female</option>
+																		<option value="other" <?= (isset($gender) && $gender === 'other') ? 'selected' : '' ?>>Other</option>
+																	</select>
+																</div>
+																<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
+															</div>
+														</div>
 
-													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
-													<div class="programs-grid">
-														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
-														<?php foreach ($courses as $c): ?>
+														<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
+														<div class="programs-grid">
+															<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
+															<?php foreach ($courses as $c): ?>
 																<label class="program-label">
-																		<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small class="program-price">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
-																		<div class="program-duration"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
-																	</label>
+																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small class="program-price">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
+																	<div class="program-duration"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
+																</label>
 															<?php endforeach; ?>
-													</div>
-
-													<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
-													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
-
-													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
-													<div class="section-body">
-													<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
-													<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
-													<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
-													</div>
-
-													<div class="form-row terms-row">
-														<div class="checkbox-wrapper">
-															<input 
-																type="checkbox" 
-																name="agreed_terms" 
-																id="agreed_terms" 
-																<?= !empty($agreed_terms) ? 'checked' : '' ?> 
-																required
-															>
-															<label for="agreed_terms" class="terms-label">
-																<span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span>
-															</label>
 														</div>
-													</div>
-													<div class="submit-row"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
-													<!-- Move payment summary here (desktop will show it; mobile panel clones this content) -->
-													<div class="payment-summary">
-														<h5 class="payment-summary-title">Payment Summary</h5>
-														<div class="payment-summary-body">
-															<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
-															<div>Form fee: <strong id="ps-form">₦<?= number_format($form_fee,2) ?></strong></div>
-															<div>Card fee: <strong id="ps-card">₦<?= number_format($card_fee,2) ?></strong></div>
-															<hr class="ps-divider">
-															<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
+
+														<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
+														<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
+
+														<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
+														<div class="section-body">
+															<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
+															<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
+															<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
 														</div>
-														<p class="payment-note">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
-														<!-- inline summary hidden; floating panel is used for visible summary -->
-													</div>
-												</form>
+
+														<div class="form-row terms-row">
+															<div class="checkbox-wrapper">
+																<input type="checkbox" name="agreed_terms" id="agreed_terms_reg" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
+																<label for="agreed_terms_reg" class="terms-label"><span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span></label>
+															</div>
+														</div>
+
+														<div class="submit-row"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
+
+														<div class="payment-summary">
+															<h5 class="payment-summary-title">Payment Summary</h5>
+															<div class="payment-summary-body">
+																<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
+																<div>Form fee: <strong id="ps-form">₦<?= number_format($form_fee,2) ?></strong></div>
+																<div>Card fee: <strong id="ps-card">₦<?= number_format($card_fee,2) ?></strong></div>
+																<hr class="ps-divider">
+																<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
+															</div>
+															<p class="payment-note">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
+														</div>
+													</form>
+
+													<!-- Post-UTME form -->
+													<form id="postutmeForm" class="registration-form form-postutme" method="post" enctype="multipart/form-data" style="display:none;">
+														<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+														<input type="hidden" name="client_total" value="0">
+														<input type="hidden" name="method" value="bank">
+														<input type="hidden" name="registration_type" value="postutme">
+
+														<div id="postUtmeFields" style="margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px solid #f0f0f0">
+															<h4 class="section-title"><i class="bx bxs-book"></i> Post-UTME Registration Details</h4>
+															<div class="form-row"><label>Name of Institution</label><input type="text" name="institution" placeholder="Name of Institution where you're applying" value="<?= htmlspecialchars($_POST['institution'] ?? '') ?>"></div>
+															<div class="form-row post-passport-row" style="display:block"><label>Passport Photo (Post-UTME applicants)</label>
+																<div class="hq-file-input post-passport-input">
+																	<button type="button" class="btn">Choose file</button>
+																	<input type="file" name="passport_post" id="passport_input_post" accept="image/*" style="display:none">
+																	<span id="passport_chosen_post" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																</div>
+															</div>
+															<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
+															<div class="form-row"><label>Other Name</label><input type="text" name="other_name" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
+															<div class="form-row"><label>Gender</label><select name="post_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
+															<div class="form-row"><label>Address</label><textarea name="address"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea></div>
+															<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="state_of_origin" value="<?= htmlspecialchars($_POST['state_of_origin'] ?? '') ?>"></div><div><label>Local Government</label><input type="text" name="local_government" value="<?= htmlspecialchars($_POST['local_government'] ?? '') ?>"></div></div>
+															<div class="form-row form-inline"><div><label>Place of Birth</label><input type="text" name="place_of_birth" value="<?= htmlspecialchars($_POST['place_of_birth'] ?? '') ?>"></div><div><label>Nationality</label><input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>"></div></div>
+															<div class="form-row form-inline"><div><label>Marital Status</label><input type="text" name="marital_status" value="<?= htmlspecialchars($_POST['marital_status'] ?? '') ?>"></div><div><label>Disability</label><input type="text" name="disability" value="<?= htmlspecialchars($_POST['disability'] ?? '') ?>"></div></div>
+															<div class="form-row"><label>Mode of Entry</label><input type="text" name="mode_of_entry" value="<?= htmlspecialchars($_POST['mode_of_entry'] ?? '') ?>"></div>
+															<div class="form-row form-inline"><div><label>Date of Birth</label><input type="date" name="date_of_birth_post" value="<?= htmlspecialchars($_POST['date_of_birth_post'] ?? '') ?>"></div><div><label>Personal Phone</label><input type="text" name="post_phone" value="<?= htmlspecialchars($_POST['post_phone'] ?? '') ?>"></div><div><label>Parent's Phone</label><input type="text" name="parent_phone" value="<?= htmlspecialchars($_POST['parent_phone'] ?? '') ?>"></div></div>
+															<div class="form-row"><label>Email Address</label><input type="email" name="email_post" value="<?= htmlspecialchars($_POST['email_post'] ?? '') ?>"></div>
+															<div class="form-row"><label>NIN Number</label><input type="text" name="nin_number" value="<?= htmlspecialchars($_POST['nin_number'] ?? '') ?>"></div>
+															<hr>
+															<h5>JAMB Details</h5>
+															<div class="form-row"><label>JAMB registration number</label><input type="text" name="jamb_registration_number" value="<?= htmlspecialchars($_POST['jamb_registration_number'] ?? '') ?>"></div>
+															<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="jamb_score" id="jamb_score" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score'] ?? '') ?>"></div></div>
+															<h5>JAMB Subjects (4) — English is compulsory, then any other three</h5>
+															<div class="form-row form-inline"><div><label>Subject 1</label><input type="text" name="jamb_subj_1" value="English" readonly></div><div><label>Score 1</label><input type="number" name="jamb_score_1" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_1'] ?? '') ?>"></div></div>
+															<div class="form-row form-inline"><div><label>Subject 2</label><input type="text" name="jamb_subj_2" placeholder="e.g. Biology" value="<?= htmlspecialchars($_POST['jamb_subj_2'] ?? '') ?>"></div><div><label>Score 2</label><input type="number" name="jamb_score_2" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_2'] ?? '') ?>"></div></div>
+															<div class="form-row form-inline"><div><label>Subject 3</label><input type="text" name="jamb_subj_3" placeholder="e.g. Physics" value="<?= htmlspecialchars($_POST['jamb_subj_3'] ?? '') ?>"></div><div><label>Score 3</label><input type="number" name="jamb_score_3" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_3'] ?? '') ?>"></div></div>
+															<div class="form-row form-inline"><div><label>Subject 4</label><input type="text" name="jamb_subj_4" placeholder="e.g. Chemistry" value="<?= htmlspecialchars($_POST['jamb_subj_4'] ?? '') ?>"></div><div><label>Score 4</label><input type="number" name="jamb_score_4" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_4'] ?? '') ?>"></div></div>
+															<hr>
+															<h5>Course & Institution Choices</h5>
+															<div class="form-row form-inline"><div><label>First choice</label><input type="text" name="course_first_choice" value="<?= htmlspecialchars($_POST['course_first_choice'] ?? '') ?>"></div><div><label>Second choice</label><input type="text" name="course_second_choice" value="<?= htmlspecialchars($_POST['course_second_choice'] ?? '') ?>"></div></div>
+															<div class="form-row"><label>Institution first choice</label><input type="text" name="institution_first_choice" value="<?= htmlspecialchars($_POST['institution_first_choice'] ?? '') ?>"></div>
+															<hr>
+															<h5>Sponsor Details</h5>
+															<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
+															<div class="form-row"><label>Sponsor address</label><input type="text" name="sponsor_address" value="<?= htmlspecialchars($_POST['sponsor_address'] ?? '') ?>"></div>
+															<div class="form-row form-inline"><div><label>Sponsor email</label><input type="email" name="sponsor_email" value="<?= htmlspecialchars($_POST['sponsor_email'] ?? '') ?>"></div><div><label>Sponsor phone</label><input type="text" name="sponsor_phone" value="<?= htmlspecialchars($_POST['sponsor_phone'] ?? '') ?>"></div></div>
+															<div class="form-row"><label>Sponsor relationship</label><input type="text" name="sponsor_relationship" value="<?= htmlspecialchars($_POST['sponsor_relationship'] ?? '') ?>"></div>
+															<hr>
+															<h5>Next of Kin Details</h5>
+															<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
+															<div class="form-row"><label>Next of kin address</label><input type="text" name="next_of_kin_address" value="<?= htmlspecialchars($_POST['next_of_kin_address'] ?? '') ?>"></div>
+															<div class="form-row form-inline"><div><label>Next of kin Email</label><input type="email" name="next_of_kin_email" value="<?= htmlspecialchars($_POST['next_of_kin_email'] ?? '') ?>"></div><div><label>Next of kin phone</label><input type="text" name="next_of_kin_phone" value="<?= htmlspecialchars($_POST['next_of_kin_phone'] ?? '') ?>"></div></div>
+															<div class="form-row"><label>Next of kin relationship</label><input type="text" name="next_of_kin_relationship" value="<?= htmlspecialchars($_POST['next_of_kin_relationship'] ?? '') ?>"></div>
+															<h5>Parent Details</h5>
+															<div class="form-row form-inline"><div><label>Father's name</label><input type="text" name="father_name" value="<?= htmlspecialchars($_POST['father_name'] ?? '') ?>"></div><div><label>Father's phone</label><input type="text" name="father_phone" value="<?= htmlspecialchars($_POST['father_phone'] ?? '') ?>"></div></div>
+															<div class="form-row form-inline"><div><label>Mother's name</label><input type="text" name="mother_name" value="<?= htmlspecialchars($_POST['mother_name'] ?? '') ?>"></div><div><label>Mother's phone</label><input type="text" name="mother_phone" value="<?= htmlspecialchars($_POST['mother_phone'] ?? '') ?>"></div></div>
+															<hr>
+															<div style="margin-top:10px;"><label><input type="checkbox" name="post_tutor_fee" value="1" <?= !empty($_POST['post_tutor_fee']) ? 'checked' : '' ?>> Add optional tutor fee (₦8,000)</label></div>
+															<p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000.</p>
+														</div>
+
+														<div class="form-row terms-row" style="margin-top:12px;">
+															<div class="checkbox-wrapper">
+																<input type="checkbox" name="agreed_terms" id="agreed_terms_post" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
+																<label for="agreed_terms_post" class="terms-label"><span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span></label>
+															</div>
+														</div>
+
+														<div class="submit-row" style="margin-top:8px;"><button class="btn-primary btn-submit" type="submit">Submit Post-UTME Registration</button></div>
+													</form>
 											</div>
 										</main>
 
