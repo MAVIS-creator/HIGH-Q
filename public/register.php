@@ -1010,13 +1010,24 @@ document.addEventListener('DOMContentLoaded', function(){
 				total += formFee + cardFee;
 			}
 
-					// Set the payment method for the server: update all method inputs. If there are any fixed-priced items, prefer online (Paystack)
-					try {
-						var methodInputs = document.querySelectorAll('input[name="method"]');
-						if (methodInputs && methodInputs.length) {
-							methodInputs.forEach(function(mi){ try{ mi.value = anyFixed ? 'paystack' : 'bank'; }catch(e){} });
-						}
-					} catch(e) {}
+							// Set the payment method for the server per form. Respect any explicit user choice (radio input) if present.
+							try {
+								var forms = document.querySelectorAll('.registration-form');
+								forms.forEach(function(f){
+									var userChoice = f.querySelector('input[name="payment_method_choice"]:checked');
+									var chosen = null;
+									if (userChoice) {
+										chosen = userChoice.value; // 'bank' or 'online'
+									} else {
+										// fallback: if there are any fixed-priced items prefer online, otherwise bank
+										chosen = anyFixed ? 'online' : 'bank';
+									}
+									var methodInputs = f.querySelectorAll('input[name="method"]');
+									if (methodInputs && methodInputs.length) {
+										methodInputs.forEach(function(mi){ try{ mi.value = (chosen === 'online' ? 'paystack' : 'bank'); }catch(e){} });
+									}
+								});
+							} catch(e) {}
 
 			subtotalEl.textContent = formatN(subtotalFixed);
 			formEl.textContent = formatN(formFee);
@@ -1439,6 +1450,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
 	if (chooseRegular) chooseRegular.addEventListener('click', function(){ showForm('regular'); });
 	if (choosePost) choosePost.addEventListener('click', function(){ showForm('postutme'); });
+
+	// Go-back / Change Type buttons inside forms
+	try {
+		var backBtns = document.querySelectorAll('.go-back');
+		backBtns.forEach(function(b){ b.addEventListener('click', function(){ if (choiceContainer) choiceContainer.style.display = 'flex'; if (regularForm) regularForm.style.display = 'none'; if (postForm) postForm.style.display = 'none'; if (choiceContainer) choiceContainer.scrollIntoView({behavior:'smooth'}); }); });
+	} catch(e) {}
 
 	// allow direct linking to a form via query param (e.g. ?type=postutme)
 	try {
