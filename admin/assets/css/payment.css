@@ -1,31 +1,124 @@
 /* Styles for admin Create Payment Link page — HQ admin theme */
 :root {
-  --hq-yellow: #f5b904;
-  --hq-yellow-600: #f1ad00;
-  --hq-dark: #0d1b2a;
-  --hq-text: #333333;
-  --hq-muted: #6b6b6b;
+    --hq-yellow: #f5b904;
+    --hq-yellow-600: #f1ad00;
+    --hq-dark: #0d1b2a;
+    --hq-text: #333333;
+    --hq-muted: #6b6b6b;
 }
 
-.admin-payment-card { max-width:860px; margin:18px auto; padding:20px; background:#fff; border-radius:8px; border:1px solid rgba(0,0,0,0.06); box-shadow:0 8px 24px rgba(11,37,64,0.04); }
-.admin-payment-card h1, .admin-payment-card h3 { margin-top:0; color:var(--hq-dark); }
-.admin-payment-form .form-row { margin-bottom:12px; }
-.admin-payment-form label { display:block; font-weight:700; margin-bottom:6px; color:var(--hq-text); }
-.admin-payment-form input, .admin-payment-form textarea { width:100%; padding:10px; border-radius:6px; border:1px solid #e6e6e6; background:#fff; }
-.admin-payment-actions { display:flex; gap:12px; align-items:center; margin-top:12px; }
-.admin-payment-link { word-break:break-all; background:#fbfbfb; padding:10px; border-radius:6px; border:1px solid #f0f0f0; color:var(--hq-text); }
-.admin-payment-copy, .admin-payment-resend { background:var(--hq-yellow); color:#111; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:700; }
-.admin-payment-resend { background:transparent; border:1px solid rgba(0,0,0,0.06); color:var(--hq-muted); }
+.admin-payment-card {
+    max-width: 860px;
+    margin: 18px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 24px rgba(11, 37, 64, 0.04);
+}
+
+.admin-payment-card h1,
+.admin-payment-card h3 {
+    margin-top: 0;
+    color: var(--hq-dark);
+}
+
+.admin-payment-form .form-row {
+    margin-bottom: 12px;
+}
+
+.admin-payment-form label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--hq-text);
+}
+
+.admin-payment-form input,
+.admin-payment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #e6e6e6;
+    background: #fff;
+}
+
+.admin-payment-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.admin-payment-link {
+    word-break: break-all;
+    background: #fbfbfb;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #f0f0f0;
+    color: var(--hq-text);
+}
+
+.admin-payment-copy,
+.admin-payment-resend {
+    background: var(--hq-yellow);
+    color: #111;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.admin-payment-resend {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: var(--hq-muted);
+}
 
 /* History table */
-.admin-payment-card table.table { width:100%; border-collapse:collapse; margin-top:8px; }
-.admin-payment-card table.table thead th { text-align:left; padding:10px; font-weight:700; border-bottom:1px solid rgba(0,0,0,0.06); color:var(--hq-dark); }
-.admin-payment-card table.table tbody td { padding:10px; border-bottom:1px solid #f4f4f4; color:var(--hq-text); vertical-align:middle; }
-.admin-payment-card .small-muted { color:var(--hq-muted); font-size:13px; }
-.admin-payment-card .action-btn { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:#fff; cursor:pointer; }
+.admin-payment-card table.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+.admin-payment-card table.table thead th {
+    text-align: left;
+    padding: 10px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    color: var(--hq-dark);
+}
+
+.admin-payment-card table.table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #f4f4f4;
+    color: var(--hq-text);
+    vertical-align: middle;
+}
+
+.admin-payment-card .small-muted {
+    color: var(--hq-muted);
+    font-size: 13px;
+}
+
+.admin-payment-card .action-btn {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #fff;
+    cursor: pointer;
+}
 
 /* responsive tweaks */
 @media (max-width: 900px) {
-  .admin-payment-card { padding:14px; }
-  .admin-payment-actions { flex-direction:column; align-items:stretch; }
+    .admin-payment-card {
+        padding: 14px;
+    }
+
+    .admin-payment-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
