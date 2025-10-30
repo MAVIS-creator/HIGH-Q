@@ -292,7 +292,7 @@ $csrf = generateToken('signup_form');
                 try {
                   navigator.clipboard.writeText(acct).then(function(){
                     if (typeof Swal !== 'undefined') {
-                      Swal.fire({toast:true,position:'top-end',icon:'success',title:'Account number copied',showConfirmButton:false,timer:1600});
+                      Swal.fire({toast:true,position:'top-end',icon:'success',title:'Account number copied',showConfirmButton:false,timer:1600,customClass:{popup:'hq-swal'}});
                     } else { alert('Account number copied: ' + acct); }
                   }).catch(function(){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard failed',text:acct}); else alert('Copy: ' + acct); });
                 } catch(e){ if (typeof Swal !== 'undefined') Swal.fire({icon:'info',title:'Copy to clipboard not supported',text:acct}); else alert('Copy: ' + acct); }
