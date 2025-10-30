@@ -43,6 +43,7 @@ $csrf = generateToken('signup_form');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="./assets/css/public.css">
   <link rel="stylesheet" href="./assets/css/payment.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -124,11 +125,7 @@ $csrf = generateToken('signup_form');
 
               <div style="margin-top:10px">
                 <p style="color:#666">Use reference <strong><?= htmlspecialchars($payment['reference']) ?></strong> when making the transfer.</p>
-                <p style="color:#666">This payment link expires after 2 days. After making the transfer, click "I've sent the money" and provide your transfer details for verification.</p>
-              </div>
-
-              <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;align-items:center;">
-                <button class="btn-primary" id="markSentBtn" type="button">I've sent the money</button>
+                <p style="color:#666">This payment link expires after 2 days. After making the transfer on your phone, return to this page and provide your transfer details for verification.</p>
               </div>
             </div>
 
@@ -142,8 +139,8 @@ $csrf = generateToken('signup_form');
                   <input type="hidden" name="payment_id" value="<?= intval($payment['id'] ?? 0) ?>">
                   <div class="form-row"><label for="payer_name_input">Name on Payer Account</label><input id="payer_name_input" name="payer_name" required style="width:100%" placeholder="Full name on the account"></div>
                   <div class="form-row"><label for="payer_number_input">Account Number</label><input id="payer_number_input" name="payer_number" required style="width:100%" placeholder="e.g. 0012345678"></div>
-                  <div class="form-row"><label for="payer_bank_input">Bank Name</label><input id="payer_bank_input" name="payer_bank" required style="width:100%" placeholder="e.g. Zenith Bank"></div>
-                  <div class="form-row"><label for="tx_desc_input">Transaction description (programme)</label><input id="tx_desc_input" name="transaction_description" placeholder="E.g. PTU — Computer Science" style="width:100%"></div>
+                    <div class="form-row"><label for="payer_bank_input">Bank Name</label><input id="payer_bank_input" name="payer_bank" required style="width:100%" placeholder="e.g. Zenith Bank"></div>
+                    <div class="form-row" style="text-align:center;margin-top:12px;"><button class="btn-primary" id="markSentBtn" type="submit">I've sent the money</button></div>
                 </form>
               </div>
             </div>
