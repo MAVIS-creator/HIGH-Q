@@ -67,9 +67,9 @@ $csrf = generateToken('signup_form');
   </style>
 </head>
 <body>
-  <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
-    <div class="container" style="display:flex;align-items:center;gap:12px;">
-  <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <div class="minimal-header">
+    <div class="container">
+      <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
         <div style="font-size:12px;color:#666;">Secure payment</div>
@@ -93,10 +93,11 @@ $csrf = generateToken('signup_form');
           <!-- Sidebar removed — only Transfer is allowed -->
 
           <!-- Main transfer panel -->
+
           <div style="flex:1;">
-            <div class="transfer-card" style="background:#fff;border-radius:8px;padding:18px;border:1px solid #eee;text-align:center;position:relative;">
+            <div class="transfer-card">
               <!-- Close (X) button -->
-              <button id="closeBtn" aria-label="Close" style="position:absolute;right:12px;top:12px;background:transparent;border:none;cursor:pointer;font-size:18px;color:#666"><i class="bx bx-x"></i></button>
+              <button id="closeBtn" class="close-btn" aria-label="Close"><i class="bx bx-x"></i></button>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                 <div style="text-align:left">
                   <div style="font-size:13px;color:#666">Paying as</div>
@@ -110,12 +111,15 @@ $csrf = generateToken('signup_form');
 
               <h3 style="margin:10px 0 6px;color:#444;font-weight:700;">Transfer ₦<?= number_format($payment['amount'],2) ?></h3>
 
-              <div style="margin:14px auto;padding:16px;border-radius:8px;background:#fbfbfb;border:1px solid #f0f0f0;max-width:560px;">
-                <div style="font-size:13px;color:#888;margin-bottom:6px">Paystack Checkout</div>
-                <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?></div>
-                <div class="acct-number" style="font-size:30px;letter-spacing:2px;font-weight:800;"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" aria-label="Copy account number" style="margin-left:8px;border:none;background:transparent;cursor:pointer;font-size:18px;color:#444"><i class="bx bx-copy"></i></button></div>
-                <div style="color:#999;margin-top:8px">Account name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?></div>
-                <div style="margin-top:10px;color:#b33;font-weight:600">Expires in <span id="transferExpire">29:59</span></div>
+              <div style="margin:14px auto;max-width:560px;">
+                <div style="padding:16px;border-radius:8px;background:#fbfbfb;border:1px solid #f0f0f0;">
+                  <div style="font-size:13px;color:#888;margin-bottom:6px">Paystack Checkout</div>
+                  <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:6px"><?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?></div>
+                  <div class="acct-number"><?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?> <button id="copyAcct" class="copy-btn" aria-label="Copy account number"><i class="bx bx-copy"></i></button></div>
+                  <div class="acct-meta">Account name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?></div>
+                  <div class="transfer-expire">Payment link expires in <span id="transferExpire">--:--</span></div>
+                  <div style="margin-top:6px;color:#666;font-size:13px">Payment window: <span id="paymentWindowTimer">--:--</span></div>
+                </div>
               </div>
 
               <div style="margin-top:10px">

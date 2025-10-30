@@ -115,4 +115,4 @@ body {
 /* SweetAlert custom classes for site-themed toasts/popups */
 .hq-copy-toast-popup.swal2-popup { background: #FFCC00 !important; color:#fff !important; }
 .hq-copy-toast-popup .swal2-html-container { color:#fff !important; font-weight:600 }
-.hq-swal.swal2-popup { /* keep default look but ensure text uses site colors */ }
+.hq-swal.swal2-popup { color: #222; }
