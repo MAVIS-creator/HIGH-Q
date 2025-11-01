@@ -124,9 +124,17 @@ if (!headers_sent()) {
 
     // Expose admin base and app base to client-side JS so scripts can build URLs dynamically
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    $projectBase = rtrim(dirname(dirname($scriptName)), '/');
-    if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
-    $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? '');
+    // compute project base similar to app_url(): if an 'admin' segment is present, the project base is the path before it
+    $projectBase = '';
+    $parts = explode('/', trim($scriptName, '/'));
+    $idx = array_search('admin', $parts, true);
+    if ($idx !== false) {
+        $projectBase = '/' . implode('/', array_slice($parts, 0, $idx));
+    } else {
+        $projectBase = rtrim(dirname(dirname($scriptName)), '/');
+        if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
+    }
+    $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'example.com'));
     $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
     $adminBaseForJs = $adminBase === '/' ? '' : $adminBase;
     echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseForJs . "'; window.HQ_APP_BASE='" . $appBase . "';</script>\n";
