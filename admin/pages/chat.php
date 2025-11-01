@@ -200,7 +200,7 @@ function claim(id){
 // Polling: use lightweight JSON API every 5 seconds
 async function pollThreads(){
   try{
-    const res = await fetch('/HIGH-Q/admin/api/threads.php');
+  const res = await fetch((window.HQ_ADMIN_BASE || '') + '/api/threads.php');
     if(!res.ok) return;
     const j = await res.json();
     if(!j.threads) return;
@@ -229,9 +229,9 @@ async function pollThreads(){
         btn.onclick = ()=>{ claim(t.id); };
         right.appendChild(btn);
       } else {
-        const a = document.createElement('a');
-        a.className='btn';
-        a.href = `?pages=chat_view&thread_id=${t.id}`;
+  const a = document.createElement('a');
+  a.className='btn';
+  a.href = (window.HQ_ADMIN_BASE || '') + '/pages/chat_view?thread_id=' + t.id;
         a.textContent='Open';
         right.appendChild(a);
       }
