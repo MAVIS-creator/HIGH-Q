@@ -1,7 +1,9 @@
 # PowerShell script to submit a fake Post-UTME registration to the local site and print the response
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$url = 'http://localhost/HIGH-Q/public/register.php'
+$appUrl = $env:APP_URL
+if ([string]::IsNullOrWhiteSpace($appUrl)) { $appUrl = 'http://localhost/HIGH-Q' }
+$url = $appUrl.TrimEnd('/') + '/public/register.php'
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 
 # Fetch the registration page to get CSRF token and cookies

@@ -40,7 +40,6 @@ $stmt->execute();
 $subs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 foreach ($subs as $sub) {
     // Use app_url() so the script respects APP_URL from .env or computed base
-    require_once __DIR__ . '/../admin/includes/functions.php';
     $unsubscribeUrl = app_url('public/unsubscribe_newsletter.php?token=' . urlencode($sub['unsubscribe_token']));
     $postUrl = app_url('post.php?id=' . $postId);
     $html = "<p>Hi,</p><p>A new article was published: <strong>$postTitle</strong></p>";
