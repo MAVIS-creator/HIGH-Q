@@ -91,20 +91,29 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
  */
 function app_url(string $path = ''): string {
     // prefer explicit APP_URL from .env
-    $env = $_ENV['APP_URL'] ?? ($_ENV['APP_URL'] ?? null);
+    $env = $_ENV['APP_URL'] ?? null;
     if (!empty($env)) {
         $base = rtrim($env, '/');
         if ($path === '') return $base;
         return $base . '/' . ltrim($path, '/');
     }
 
-    // fallback: derive from current request
+    // fallback: derive from current request. Avoid hardcoding localhost as the ultimate fallback.
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'example.com');
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
-    // project base is assumed to be two levels up from admin includes in many scripts, but use dirname to be safe
-    $proj = rtrim(dirname(dirname($script)), '/');
-    if ($proj === '\\' || $proj === '.') $proj = '';
+
+    // compute project base conservatively: if URL contains an 'admin' segment, assume project base is the path before 'admin'
+    $proj = '';
+    $parts = explode('/', trim($script, '/'));
+    $idx = array_search('admin', $parts, true);
+    if ($idx !== false) {
+        $proj = '/' . implode('/', array_slice($parts, 0, $idx));
+    } else {
+        $proj = rtrim(dirname(dirname($script)), '/');
+        if ($proj === '\\' || $proj === '.') $proj = '';
+    }
+
     $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
     if ($path === '') return $base;
     return $base . '/' . ltrim($path, '/');
