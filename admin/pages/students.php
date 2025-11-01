@@ -1053,7 +1053,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
   const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
-  window.location = '/HIGH-Q/admin/pages/students.php';
+  window.location = (window.HQ_ADMIN_BASE || '') + '/pages/students.php';
     }
   } catch (err) {
     Swal.fire('Error','Failed to confirm','error');
@@ -1161,7 +1161,7 @@ document.addEventListener('click', function(e){
       inputPlaceholder: 'Reason for rejection',
       showCancelButton: true,
       confirmButtonText: 'Reject'
-  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction(`/HIGH-Q/admin/pages/students.php?action=reject_registration&id=${id}`, fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=reject_registration&id=' + encodeURIComponent(id), fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
     return;
   }
 });
