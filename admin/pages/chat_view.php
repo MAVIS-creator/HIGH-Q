@@ -65,7 +65,8 @@ error_reporting(E_ALL);
 
                       echo '<div style="display:flex;gap:8px;align-items:center;padding:8px;border:1px solid #eee;border-radius:8px;background:#fff">';
                       if ($isImage) {
-                        echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank"><img src="' . htmlspecialchars($a) . '" style="max-width:120px;border-radius:6px"></a>';
+                        // Use app_url() so image URLs include any subdirectory (preserve APP_URL)
+                        echo '<a href="' . htmlspecialchars($downloadUrl) . '" target="_blank"><img src="' . htmlspecialchars(app_url($a)) . '" style="max-width:120px;border-radius:6px"></a>';
                       } else {
                         echo '<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#f5f5f5"><i class="fas fa-file" style="font-size:20px;color:#666"></i></div>';
                       }
@@ -117,7 +118,7 @@ document.getElementById('replyForm').addEventListener('submit', function(e){
   if (csrfEl) fd.append('_csrf', csrfEl.value);
 
   var xhr=new XMLHttpRequest(); 
-  xhr.open('POST', '../index.php?pages=chat',true);
+  xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.onload=function(){ 
     try{var r=JSON.parse(xhr.responseText);}catch(e){ 
@@ -137,7 +138,7 @@ document.getElementById('replyForm').addEventListener('submit', function(e){
 // Poll messages every 5 seconds
 setInterval(function(){
   var xhr = new XMLHttpRequest(); 
-  xhr.open('GET', '../index.php?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
+  xhr.open('GET', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id=<?= $threadId ?>&ajax=1&_=' + Date.now(), true);
   xhr.onload = function(){ 
     if (xhr.status !== 200) return; 
     try{ var html = xhr.responseText; } catch(e){ return; }
@@ -172,7 +173,7 @@ document.getElementById('closeThreadBtn').addEventListener('click', function(){
     if (csrfEl) fd.append('_csrf', csrfEl.value);
 
   var xhr = new XMLHttpRequest(); 
-  xhr.open('POST', '../index.php?pages=chat', true); 
+  xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat', true); 
     xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ 
       try{ var r = JSON.parse(xhr.responseText); }
@@ -182,7 +183,7 @@ document.getElementById('closeThreadBtn').addEventListener('click', function(){
       } 
       if(r.status==='ok'){ 
         Swal.fire('Closed!', 'The thread has been closed.', 'success')
-          .then(()=>{ window.location.href='?pages=chat'; });
+          .then(()=>{ window.location.href=(window.HQ_ADMIN_BASE || '') + '/pages/chat'; });
       } else {
         Swal.fire('Failed', 'Could not close the thread.', 'error'); 
       }
