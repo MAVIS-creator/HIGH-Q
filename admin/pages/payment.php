@@ -37,12 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($ok) {
                 $paymentId = $pdo->lastInsertId();
                 // send email with link (build app base dynamically)
-                $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-                $projectBase = rtrim(dirname(dirname($scriptName)), '/');
-                if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
-                $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-                $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
-                $link = $appBase . '/public/payments_wait.php?ref=' . urlencode($ref);
+                // Build the link using app_url() so APP_URL and deployment base path are honored
+                $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
                 $subject = 'Payment link — HIGH Q SOLID ACADEMY';
                 $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment of ₦' . number_format($amount,2) . ':</p>';
                 $html .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
@@ -85,12 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h3>Recent created links</h3>
             <table class="table" style="width:100%"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Emailed</th><th>Actions</th><th>Created</th></tr></thead><tbody>
         <?php
-            // compute app base once for recent links URL construction
-            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-            $projectBase = rtrim(dirname(dirname($scriptName)), '/');
-            if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
-            $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-            $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
+            // compute app base for recent links using helper
+            $appBase = rtrim(app_url(''), '/');
         foreach($recentLinks as $r):
                 $meta = [];
                 if (!empty($r['metadata'])) { $meta = json_decode($r['metadata'], true) ?: []; }
