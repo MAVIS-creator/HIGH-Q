@@ -843,7 +843,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  fetch('/HIGH-Q/admin/pages/students.php', {
+  fetch((window.HQ_ADMIN_BASE || '') + '/pages/students.php', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
@@ -1037,7 +1037,7 @@ regConfirmForm.addEventListener('submit', async function(e){
   try {
     if (choice.isConfirmed) {
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-  const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+  const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
   // success shown by postAction; reload to reflect changes
   window.location = '/HIGH-Q/admin/pages/students.php';
     } else if (choice.isDenied) {
@@ -1052,7 +1052,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       const amt = parseFloat(formValues.amount || 0);
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+  const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
   window.location = '/HIGH-Q/admin/pages/students.php';
     }
   } catch (err) {
@@ -1110,7 +1110,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-              const payload = await postAction(`/HIGH-Q/admin/pages/students.php?action=confirm_registration&id=${id}`, fd);
+              const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
@@ -1187,8 +1187,8 @@ document.addEventListener('click', function(e){
   }).then(function(res){
     if (!res.isConfirmed) return;
     // Open export endpoint in new tab so the file download begins
-    var url = '/HIGH-Q/admin/api/export_registration.php?id=' + encodeURIComponent(id);
-    window.open(url, '_blank');
+  var url = (window.HQ_ADMIN_BASE || '') + '/api/export_registration.php?id=' + encodeURIComponent(id);
+  window.open(url, '_blank');
   });
 });
 </script>
