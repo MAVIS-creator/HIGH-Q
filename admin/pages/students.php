@@ -359,7 +359,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: ' . admin_url('pages/students.php')); exit;
     }
 
   if ($action === 'delete') {
