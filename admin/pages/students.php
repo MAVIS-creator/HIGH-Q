@@ -649,9 +649,9 @@ if ($hasRegistrations) {
 
   <div class="user-filters">
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <a href="/HIGH-Q/admin/pages/students.php" class="btn <?= ($current_source==='regular' || $current_source==='') ? 'btn-active' : '' ?>">All / Regular</a>
+      <a href="<?= admin_url('pages/students.php') ?>" class="btn <?= ($current_source==='regular' || $current_source==='') ? 'btn-active' : '' ?>">All / Regular</a>
       <?php if ($hasPostUtme): ?>
-        <a href="/HIGH-Q/admin/pages/students.php?source=postutme" class="btn <?= ($current_source==='postutme') ? 'btn-active' : '' ?>">Post‑UTME</a>
+        <a href="<?= admin_url('pages/students.php?source=postutme') ?>" class="btn <?= ($current_source==='postutme') ? 'btn-active' : '' ?>">Post‑UTME</a>
       <?php endif; ?>
     </div>
     <input type="text" id="searchInput" placeholder="Search students by name or email">
@@ -669,7 +669,7 @@ if ($hasRegistrations) {
       <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>">
           <div class="card-left">
             <?php $passportThumb = $s['passport_path'] ?? null; ?>
-            <img src="<?= htmlspecialchars($passportThumb ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg') ?>" class="avatar-sm card-avatar" onerror="this.src='/HIGH-Q/public/assets/images/hq-logo.jpeg'">
+            <img src="<?= htmlspecialchars($passportThumb ?: app_url('public/assets/images/hq-logo.jpeg')) ?>" class="avatar-sm card-avatar" onerror="this.src='<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>'">
             <div class="card-meta">
               <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
               <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
@@ -690,14 +690,14 @@ if ($hasRegistrations) {
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
-                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
+                <form method="post" action="<?= admin_url('pages/students.php?action=delete&id=' . $s['id']) ?>" class="inline-form student-delete-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Delete</button>
                 </form>
               <?php else: ?>
                 <!-- post-UTME entries: only allow export and deletion of the post_utme_registrations row -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>">Export</button>
-                <form method="post" action="/HIGH-Q/admin/pages/students.php?action=delete_postutme&id=<?= $s['id'] ?>" class="inline-form student-delete-form" style="display:inline-block;">
+                <form method="post" action="<?= admin_url('pages/students.php?action=delete_postutme&id=' . $s['id']) ?>" class="inline-form student-delete-form" style="display:inline-block;">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Delete</button>
                 </form>
@@ -790,21 +790,21 @@ if ($hasRegistrations) {
 
 <?php include '../includes/footer.php'; ?>
 
-<script>
-// Replace native confirm for student delete forms with SweetAlert2
-document.addEventListener('submit', function(e){
-  var f = e.target.closest && e.target.closest('.student-delete-form');
-  if (!f) return;
-  e.preventDefault();
-  Swal.fire({
-    title: 'Delete?',
-    text: 'Delete this record? This action cannot be undone.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete'
-  }).then(function(res){ if (res.isConfirmed) f.submit(); });
-});
+      <tr>
+    <td><?= htmlspecialchars($r['id']) ?></td>
+    <td>₦<?= number_format($r['amount'],2) ?></td>
+    <td><?= htmlspecialchars($emailTo) ?></td>
+    <td><?= htmlspecialchars(strlen($msgText) > 60 ? substr($msgText,0,57).'...' : $msgText) ?></td>
+        <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div></div></td>
+        <td class="small-muted"><?= (!empty($meta['emailed']) ? '<strong style="color:var(--hq-dark)">Yes</strong>' : '<span class="small-muted">No</span>') ?></td>
+        <td>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="admin-payment-copy action-btn" data-link="<?= htmlspecialchars($link) ?>">Copy</button>
+            <button class="admin-payment-resend action-btn" data-id="<?= htmlspecialchars($r['id']) ?>">Resend</button>
+          </div>
+        </td>
+        <td><?= htmlspecialchars($r['created_at']) ?></td>
+      </tr>
 </script>
 <script>
 // Client-side search/filter
