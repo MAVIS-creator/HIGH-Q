@@ -78,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             if (strpos($type, 'image/') === 0) {
               $updHtml = '<br><img src="' . $url . '" style="max-width:100%;border-radius:8px">';
             } else {
-              $updHtml = '<br><a href="/HIGH-Q/public/download_attachment.php?file=' . urlencode($nameSafe) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
+              $downloadLink = app_url('public/download_attachment.php?file=' . urlencode($nameSafe));
+              $updHtml = '<br><a href="' . htmlspecialchars($downloadLink) . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
             }
             $upd = $pdo->prepare('UPDATE chat_messages SET message = CONCAT(message, ?) WHERE id = ?');
             $upd->execute([$updHtml, $messageId]);
