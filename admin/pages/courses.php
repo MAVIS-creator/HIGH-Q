@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <span class="modal-close" id="courseModalClose"><i class='bx bx-x'></i></span>
       <h3 id="courseModalTitle">New Course</h3>
 
-  <form id="courseForm" method="post" action="/HIGH-Q/admin/pages/courses.php?action=create">
+  <form id="courseForm" method="post" action="<?= htmlspecialchars(admin_url('pages/courses.php?action=create')) ?>">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="form-row compact-row">
           <div class="form-group">
@@ -543,7 +543,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
   if (iconPreview) iconPreview.innerHTML = '';
   if (fIconClass) fIconClass.value = '';
 
-    if (mode === 'edit' && data && data.id) {
+  if (mode === 'edit' && data && data.id) {
       // populate fields
       fTitle.value = data.title || '';
       fSlug.value = data.slug || '';
@@ -563,9 +563,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       if (fFeatures) fFeatures.value = data.features || '';
       if (fBadge) fBadge.value = data.badge || '';
       updateIconPreview();
-      courseForm.action = `/HIGH-Q/admin/pages/courses.php?action=edit&id=${data.id}`;
+      // Use client-side admin base so JS respects subfolder; header.php exposes window.HQ_ADMIN_BASE
+      courseForm.action = (window.HQ_ADMIN_BASE || '') + '/pages/courses.php?action=edit&id=' + encodeURIComponent(data.id);
     } else {
-      courseForm.action = '/HIGH-Q/admin/pages/courses.php?action=create';
+      courseForm.action = (window.HQ_ADMIN_BASE || '') + '/pages/courses.php?action=create';
     }
   }
   // Auto-generate slug client-side as user types title when slug is empty
