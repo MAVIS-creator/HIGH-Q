@@ -113,6 +113,20 @@ function app_url(string $path = ''): string {
         $proj = rtrim(dirname(dirname($script)), '/');
         if ($proj === '\\' || $proj === '.') $proj = '';
     }
+    // Additional fallback: some server setups present the project path in REQUEST_URI but not in SCRIPT_NAME
+    // (for example when the app is accessed via http://localhost/HIGH-Q/... but SCRIPT_NAME is '/admin/...').
+    // If we didn't detect a project segment above, try extracting it from REQUEST_URI when '/admin' appears there.
+    if (empty($proj)) {
+        $req = $_SERVER['REQUEST_URI'] ?? '';
+        if (!empty($req)) {
+            $pos = strpos($req, '/admin');
+            if ($pos !== false && $pos > 0) {
+                $proj = substr($req, 0, $pos);
+            }
+        }
+        // normalize
+        if ($proj === '/' || $proj === '\\') $proj = '';
+    }
 
     $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
     if ($path === '') return $base;
