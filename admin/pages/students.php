@@ -362,6 +362,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
   header('Location: ' . admin_url('pages/students.php')); exit;
     }
 
+      // Delete a post-UTME registration row (separate action) - handle before generic delete
+      if ($action === 'delete_postutme') {
+        try {
+          $del = $pdo->prepare('DELETE FROM post_utme_registrations WHERE id = ?');
+          $del->execute([$id]);
+          logAction($pdo, $currentUserId, 'postutme_delete', ['postutme_id'=>$id]);
+        } catch (Throwable $e) {
+          // ignore errors
+        }
+        header('Location: ' . admin_url('pages/students.php')); exit;
+      }
+
   if ($action === 'delete') {
     // If this id exists in student_registrations, delete that registration. Otherwise treat as users delete.
     $checkReg = $pdo->prepare('SELECT id FROM student_registrations WHERE id = ? LIMIT 1');
