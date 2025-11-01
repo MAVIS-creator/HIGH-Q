@@ -383,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       } catch (Throwable $e) {
         // swallow and continue to redirect
       }
-      header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+      header('Location: ' . admin_url('pages/students.php')); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
@@ -423,7 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: ' . admin_url('pages/students.php')); exit;
   }
 
   // Confirm registration (admin) - send notification
