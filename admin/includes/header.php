@@ -123,21 +123,10 @@ if (!headers_sent()) {
         "</style>\n";
 
     // Expose admin base and app base to client-side JS so scripts can build URLs dynamically
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    // compute project base similar to app_url(): if an 'admin' segment is present, the project base is the path before it
-    $projectBase = '';
-    $parts = explode('/', trim($scriptName, '/'));
-    $idx = array_search('admin', $parts, true);
-    if ($idx !== false) {
-        $projectBase = '/' . implode('/', array_slice($parts, 0, $idx));
-    } else {
-        $projectBase = rtrim(dirname(dirname($scriptName)), '/');
-        if ($projectBase === '\\' || $projectBase === '.') $projectBase = '';
-    }
-    $origin = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'example.com'));
-    $appBase = $origin . ($projectBase !== '' ? $projectBase : '');
-    $adminBaseForJs = $adminBase === '/' ? '' : $adminBase;
-    echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseForJs . "'; window.HQ_APP_BASE='" . $appBase . "';</script>\n";
+    // Prefer the canonical helpers so APP_URL (from .env) is honoured. admin_url() and app_url() return full URLs.
+    $adminBaseFull = rtrim(admin_url(''), '/');
+    $appBaseFull = rtrim(app_url(''), '/');
+    echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseFull . "'; window.HQ_APP_BASE='" . $appBaseFull . "';</script>\n";
     ?>
 </head>
 
@@ -167,7 +156,8 @@ if (!headers_sent()) {
                         // Build a resilient avatar fallback using the computed app base so hardcoded /HIGH-Q paths are avoided
                         $avatar = $_SESSION['user']['avatar'] ?? null;
                         if (empty($avatar)) {
-                            $avatar = (isset($appBase) && $appBase !== '' ? $appBase : '') . '/public/assets/images/hq-logo.jpeg';
+                            // Use app_url() to compute image path reliably (preserves subfolder when APP_URL is not set)
+                            $avatar = app_url('public/assets/images/hq-logo.jpeg');
                         }
                         ?>
                         <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
