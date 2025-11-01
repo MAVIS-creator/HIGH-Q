@@ -344,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
-  if ($id === 1 || $id === $currentUserId) {
+    if ($id === 1 || $id === $currentUserId) {
     header('Location: ' . admin_url('pages/students.php')); exit;
   }
 
