@@ -346,8 +346,8 @@ $users = $pdo->query("
 
     <!-- View Tab -->
     <div id="viewTab" class="tab-pane active">
-      <div class="profile-header">
-  <img id="mAvatar" src="/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="Avatar">
+    <div class="profile-header">
+  <img id="mAvatar" src="<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>" alt="Avatar">
         <div>
           <h3 id="mName">Name</h3>
           <p id="mRole" class="role-badge role-student">Role</p>
