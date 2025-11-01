@@ -371,8 +371,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 							$baseUrl = rtrim($proto . '://' . $host, '/');
-							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
-							$fullUrl = $baseUrl . $publicRel;
+							// Preserve any subdirectory the app is installed under by using SCRIPT_NAME
+							$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+							$fullUrl = $baseUrl . $scriptDir . '/uploads/passports/' . $fname;
 							$upd = $pdo->prepare('UPDATE post_utme_registrations SET passport_photo = ? WHERE id = ?');
 							$upd->execute([$fullUrl, $newId]);
 						}
@@ -461,8 +462,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 							$baseUrl = rtrim($proto . '://' . $host, '/');
-							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
-							$fullUrl = $baseUrl . $publicRel;
+							// Preserve any subdirectory the app is installed under by using SCRIPT_NAME
+							$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+							$fullUrl = $baseUrl . $scriptDir . '/uploads/passports/' . $fname;
 							$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
 							$upd->execute([$fullUrl, $registrationId]);
 					}
