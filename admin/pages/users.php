@@ -275,7 +275,7 @@ $users = $pdo->query("
     ?>
     <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
       <div class="user-avatar">
-        <img src="<?= $u['avatar'] ?: '/HIGH-Q/public/assets/images/hq-logo.jpeg' ?>" alt="Avatar">
+        <img src="<?= htmlspecialchars($u['avatar'] ? app_url($u['avatar']) : app_url('public/assets/images/hq-logo.jpeg')) ?>" alt="Avatar">
       </div>
       <div class="user-info">
         <div class="user-name"><?= htmlspecialchars($u['name']) ?></div>
@@ -430,7 +430,7 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await fetch(`index.php?pages=users&action=view&id=${id}`, { credentials: 'same-origin' });
+  const res = await fetch((window.HQ_ADMIN_BASE || '') + '/index.php?pages=users&action=view&id=' + encodeURIComponent(id), { credentials: 'same-origin' });
   let data = null;
   try {
     data = await res.json();
@@ -438,9 +438,9 @@ async function loadUser(id, mode='view'){
     // Probably an auth redirect or HTML response; show friendly message and redirect to login
     const text = await res.text();
     if (typeof Swal !== 'undefined') {
-      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = '/HIGH-Q/admin/login.php');
+      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = (window.HQ_ADMIN_BASE || '') + '/login.php');
     } else {
-      alert('Session expired. Please login again.'); window.location = '/HIGH-Q/admin/login.php';
+      alert('Session expired. Please login again.'); window.location = (window.HQ_ADMIN_BASE || '') + '/login.php';
     }
     return;
   }
@@ -460,7 +460,7 @@ async function loadUser(id, mode='view'){
   document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
   document.getElementById('mPosts').textContent = data.posts_count;
   document.getElementById('mComments').textContent = data.comments_count;
-  document.getElementById('mAvatar').src = data.avatar ? `../${data.avatar}` : "/HIGH-Q/public/assets/images/hq-logo.jpeg";
+  document.getElementById('mAvatar').src = data.avatar ? ((window.HQ_APP_BASE || '') + '/' + data.avatar.replace(/^\/+/, '')) : ((window.HQ_APP_BASE || '') + '/public/assets/images/hq-logo.jpeg');
 
   // Fill edit form
   const form = document.getElementById('editForm');
