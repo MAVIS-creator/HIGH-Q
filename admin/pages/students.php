@@ -885,7 +885,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await fetch('/HIGH-Q/admin/pages/students.php', {
+  const res = await fetch((window.HQ_ADMIN_BASE || '') + '/pages/students.php', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
@@ -949,7 +949,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = `/HIGH-Q/admin/pages/students.php?action=send_message&id=${id}`;
+  modalForm.action = (window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=send_message&id=' + encodeURIComponent(id);
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
@@ -1039,7 +1039,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
   const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
   // success shown by postAction; reload to reflect changes
-  window.location = '/HIGH-Q/admin/pages/students.php';
+  window.location = (window.HQ_ADMIN_BASE || '') + '/pages/students.php';
     } else if (choice.isDenied) {
       const { value: formValues } = await Swal.fire({
         title: 'Create payment',
