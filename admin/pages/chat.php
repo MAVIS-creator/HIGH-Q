@@ -162,7 +162,7 @@ function claim(id){
     fd.append('_csrf','<?= generateToken('chat_form') ?>');
 
   var xhr=new XMLHttpRequest();
-  xhr.open('POST','../index.php?pages=chat',true);
+  xhr.open('POST',(window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
 
     xhr.onload=function(){
@@ -177,7 +177,7 @@ function claim(id){
         const li = document.querySelector('li[data-thread="'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="?pages=chat_view&thread_id='+id+'">Open</a>';
+          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/pages/chat_view?thread_id='+id+'">Open</a>';
         }
       }
       else if(r.status==='taken'){
@@ -186,7 +186,7 @@ function claim(id){
         const li = document.querySelector('li[data-thread="'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="?pages=chat_view&thread_id='+id+'">Open</a>';
+          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/pages/chat_view?thread_id='+id+'">Open</a>';
         }
       }
       else {
