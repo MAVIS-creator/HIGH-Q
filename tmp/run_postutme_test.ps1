@@ -2,7 +2,7 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $appUrl = $env:APP_URL
-if ([string]::IsNullOrWhiteSpace($appUrl)) { $appUrl = 'http://localhost/HIGH-Q' }
+if ([string]::IsNullOrWhiteSpace($appUrl)) { $appUrl = 'http://localhost' }
 $url = $appUrl.TrimEnd('/') + '/public/register.php'
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 
