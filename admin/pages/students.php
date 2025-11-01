@@ -432,13 +432,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-  header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  header('Location: ' . admin_url('pages/students.php')); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-  setFlash('error','Registration already confirmed'); header('Location: /HIGH-Q/admin/pages/students.php'); exit;
+  setFlash('error','Registration already confirmed'); header('Location: ' . admin_url('pages/students.php')); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
