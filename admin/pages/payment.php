@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($r['metadata'])) { $meta = json_decode($r['metadata'], true) ?: []; }
                 $emailTo = $meta['email_to'] ?? '';
                 $msgText = $meta['message'] ?? '';
-        $link = $appBase . '/public/payments_wait.php?ref=' . urlencode($r['reference']);
+    $link = app_url('public/payments_wait.php?ref=' . urlencode($r['reference']));
         ?>
             <tr>
                 <td><?= htmlspecialchars($r['id']) ?></td>
