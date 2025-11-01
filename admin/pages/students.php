@@ -98,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     $base = rtrim($base, '/');
     // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
-  // Use a prettier, public-facing URL (e.g. /pay/{ref})
-  $link = $base . '/pay/' . urlencode($reference);
+  // Use a prettier, public-facing URL (e.g. /pay/{ref}) and prefer app_url() to compute base
+  $link = app_url('pay/' . urlencode($reference));
 
     // Try to send email to registrant with the payment link
     $emailSent = false;
@@ -193,8 +193,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
       $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
     }
     $base = rtrim($base, '/');
-    // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
-  $paymentLink = $base . '/pay/' . urlencode($ref);
+    // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname). Use app_url() so subfolder is preserved.
+  $paymentLink = app_url('pay/' . urlencode($ref));
 
     // Send email
     $email_sent = false;
@@ -476,7 +476,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             // build link relative to public folder (best-effort)
             $base = $proto . '://' . $host;
-            $link = $base . dirname($_SERVER['SCRIPT_NAME']) . '/../public/payments_wait.php?ref=' . urlencode($ref);
+            // Prefer app_url() so APP_URL or computed base includes any subdirectory
+            $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
 
             // Branded HTML message
             $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
