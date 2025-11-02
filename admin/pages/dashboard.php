@@ -67,18 +67,7 @@ function checkUrl(string $url)
 }
 
 // Determine site URL to check (prefer app_url()/admin_url() when available, then env, then fallback)
-$siteUrl = null;
-if (function_exists('app_url')) {
-    $siteUrl = rtrim(app_url(''), '/') . '/';
-} else {
-    $envUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
-    if (!empty($envUrl)) {
-        $siteUrl = rtrim($envUrl, '/') . '/';
-    } elseif (!empty($_SERVER['HTTP_HOST'])) {
-        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $siteUrl = $proto . '://' . $_SERVER['HTTP_HOST'] . '/';
-    }
-}
+$siteUrl = rtrim(app_url(''), '/') . '/';
 
 // Run quick checks
 $dbStatus = checkDatabase($pdo);
