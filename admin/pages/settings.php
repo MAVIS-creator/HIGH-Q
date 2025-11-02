@@ -353,8 +353,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
             exit;
         }
-        setFlash('success', 'Settings saved.');
-        header('Location: ?pages=settings');
+    setFlash('success', 'Settings saved.');
+    header('Location: index.php?pages=settings');
         exit;
     }
 
@@ -371,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     setFlash('error', 'Failed to save settings. Check DB permissions.');
-    header('Location: ?pages=settings');
+    header('Location: index.php?pages=settings');
     exit;
 }
 
