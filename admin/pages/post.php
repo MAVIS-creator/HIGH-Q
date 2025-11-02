@@ -414,8 +414,7 @@ $posts = $stmt->fetchAll();
                 <p class="subtitle">Create and manage news articles and blog posts.</p>
             </div>
             <div class="module-actions">
-                <form method="get" action="?pages=posts" class="search-form">
-                    <input type="hidden" name="pages" value="posts">
+                <form method="get" action="index.php?pages=posts" class="search-form">
                     <input type="text" name="q" placeholder="Search by title..." value="<?= htmlspecialchars($q) ?>">
                     
 
@@ -470,8 +469,8 @@ $posts = $stmt->fetchAll();
                         </div>
                         <div class="excerpt"><?= nl2br(htmlspecialchars($p['excerpt'] ?: '')) ?></div>
                         <div class="actions">
-                            <a href="post_edit.php?id=<?= $p['id'] ?>" class="btn edit-link" data-id="<?= $p['id'] ?>">Edit</a>
-                            <form method="post" action="?pages=posts&action=delete&amp;id=<?= $p['id'] ?>" style="display:inline">
+                            <a href="index.php?pages=post_edit&id=<?= $p['id'] ?>" class="btn edit-link" data-id="<?= $p['id'] ?>">Edit</a>
+                            <form method="post" action="index.php?pages=posts&action=delete&amp;id=<?= $p['id'] ?>" style="display:inline">
                                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                                 <button class="btn btn-danger" type="submit">Delete</button>
                             </form>
@@ -491,7 +490,7 @@ $posts = $stmt->fetchAll();
         <div class="modal-content">
             <span class="modal-close" id="postModalClose"><i class="bx bx-x"></i></span>
             <h3 id="postModalTitle">New Article</h3>
-            <form id="postForm" method="post" action="?pages=posts&action=create" enctype="multipart/form-data">
+            <form id="postForm" method="post" action="index.php?pages=posts&action=create" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
 
                 <div class="form-row">
@@ -640,7 +639,7 @@ document.querySelectorAll('.edit-link').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const id = link.dataset.id;
-    fetch(`post_edit.php?id=${id}`)
+    fetch(`index.php?pages=post_edit&id=${id}`)
       .then(res => res.text())
       .then(html => {
         editContent.innerHTML = html;

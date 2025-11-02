@@ -299,7 +299,7 @@ $totalPages = (int)ceil($total / $perPage);
     <div class="page-header"><h1><i class="bx bxs-credit-card"></i> Payments</h1></div>
     <script>window.__PAYMENTS_CSRF = '<?= generateToken('payments_form') ?>';</script>
     <div style="margin:12px 0;display:flex;gap:12px;align-items:center;">
-    <form method="get" action="?pages=payments" class="filter-form">
+    <form method="get" action="index.php?pages=payments" class="filter-form">
             <input type="hidden" name="pages" value="payments">
             <label for="statusFilter">Status:</label>
             <select id="statusFilter" name="status" class="small">

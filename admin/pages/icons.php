@@ -61,7 +61,7 @@ $icons = $pdo->query('SELECT * FROM icons ORDER BY name')->fetchAll();
         <td><?= htmlspecialchars($ic['class']) ?></td>
         <td><?php if ($ic['class']): ?><i class="<?= htmlspecialchars($ic['class']) ?>"></i><?php elseif ($ic['filename']): ?><img src="../public/assets/images/icons/<?= htmlspecialchars($ic['filename']) ?>" style="width:24px;height:24px"><?php endif; ?></td>
         <td>
-          <form method="post" action="?pages=icons&action=delete&id=<?= $ic['id'] ?>" style="display:inline">
+          <form method="post" action="index.php?pages=icons&action=delete&id=<?= $ic['id'] ?>" style="display:inline">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <button class="btn-delete">Delete</button>
           </form>
@@ -72,7 +72,7 @@ $icons = $pdo->query('SELECT * FROM icons ORDER BY name')->fetchAll();
   </table>
 
   <h3>Add Icon</h3>
-  <form method="post" action="?pages=icons&action=create">
+  <form method="post" action="index.php?pages=icons&action=create">
     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
     <div><label>Name</label><input name="name"></div>
     <div><label>Filename (optional)</label><input name="filename"></div>
