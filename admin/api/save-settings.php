@@ -3,7 +3,7 @@
 // JSON-only endpoint to save system settings (used by admin JS)
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/functions.php';
 

@@ -1,7 +1,7 @@
 <?php
 // admin/api/run-scan.php
 // JSON-only endpoint to queue the background security scan.
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/functions.php';

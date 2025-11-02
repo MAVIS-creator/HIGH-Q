@@ -2,7 +2,7 @@
 // admin/pages/students.php
 // Remove any visible code output from the top of the page
 // Ensure no script or debug code is rendered at the top of the page
-require_once __DIR__ . '/../bootstrap.php';
+require_once '../includes/auth.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';

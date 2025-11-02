@@ -1,6 +1,6 @@
 <?php
 // admin/pages/payments.php
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../includes/functions.php';
