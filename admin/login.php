@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmtDel->execute([$ip, $email]);
                 } catch (Throwable $e) { error_log('clear login attempts failed: ' . $e->getMessage()); }
 
-                header("Location: pages/index.php");
+                header("Location: index.php?pages=index");
                 exit;
             }
         } else {
