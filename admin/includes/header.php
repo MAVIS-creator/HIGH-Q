@@ -27,6 +27,15 @@ if ($isAjaxRequest) {
     return;
 }
 
+// Ensure admin helper functions are available (defines admin_url/app_url). Some callers
+// include this header early and may not have included admin/includes/functions.php.
+if (!function_exists('admin_url') || !function_exists('app_url')) {
+    $funcPath = __DIR__ . '/functions.php';
+    if (file_exists($funcPath)) {
+        require_once $funcPath;
+    }
+}
+
 // Start output buffering so downstream header() calls succeed even if this file emits HTML
 if (!headers_sent()) {
     ob_start();
