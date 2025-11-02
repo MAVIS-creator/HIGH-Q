@@ -513,9 +513,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
     $token = $_POST['_csrf'] ?? '';
-    if (!verifyToken('settings_form', $token)) { setFlash('error','Invalid CSRF token for import'); header('Location: ?pages=settings'); exit; }
+    if (!verifyToken('settings_form', $token)) { setFlash('error','Invalid CSRF token for import'); header('Location: index.php?pages=settings'); exit; }
     $tmp = $_FILES['import_file']['tmp_name'] ?? null;
-    if (!$tmp || !is_readable($tmp)) { setFlash('error','No file uploaded or unreadable'); header('Location: ?pages=settings'); exit; }
+    if (!$tmp || !is_readable($tmp)) { setFlash('error','No file uploaded or unreadable'); header('Location: index.php?pages=settings'); exit; }
     $raw = @file_get_contents($tmp);
     $json = @json_decode($raw, true);
     if (!is_array($json) || empty($json['settings'])) { setFlash('error','Invalid import file'); header('Location: ?pages=settings'); exit; }
