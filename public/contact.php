@@ -333,7 +333,10 @@ document.addEventListener('DOMContentLoaded', function(){
 	// clicking floating chat also opens contact page or mini chat
 	var floatBtn = document.querySelector('.floating-chat');
 	if(floatBtn){ floatBtn.addEventListener('click', function(e){ e.preventDefault(); // open contact in same tab, but with hash to open mini chat
-		location.href = 'contact.php#livechat'; }); }
+		var base = (window.HQ_APP_BASE || '');
+		// Ensure base is empty or does not end with '/'
+		try { if (base && base.slice(-1) === '/') base = base.slice(0, -1); } catch(e){}
+		location.href = (base ? (base + '/contact.php#livechat') : 'contact.php#livechat'); }); }
 
 });
 </script>

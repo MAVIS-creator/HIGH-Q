@@ -50,7 +50,7 @@ if (!$p) { http_response_code(404); echo "Receipt not found"; exit; }
       <img src="<?= htmlspecialchars($p['passport_path']) ?>" alt="passport" style="width:140px;border-radius:4px;border:1px solid #eee">
     <?php endif; ?>
     <hr>
-    <p style="margin-top:12px"><a class="btn" href="javascript:window.print()">Print / Save as PDF</a> <a class="btn" href="index.php">Return to site</a></p>
+  <p style="margin-top:12px"><a class="btn" href="javascript:window.print()">Print / Save as PDF</a> <a class="btn" href="<?= htmlspecialchars(function_exists('app_url') ? rtrim(app_url(''), '/') . '/index.php' : 'index.php') ?>">Return to site</a></p>
   </div>
 </div>
 </body>
@@ -87,7 +87,7 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
 <body>
   <div class="receipt-card">
     <div class="receipt-header">
-      <img src="/assets/images/hq-logo.jpeg" alt="logo" style="height:60px;">
+  <img src="<?= htmlspecialchars(function_exists('app_url') ? rtrim(app_url(''), '/') . '/assets/images/hq-logo.jpeg' : '/assets/images/hq-logo.jpeg') ?>" alt="logo" style="height:60px;">
       <div>
         <h2>Payment Receipt</h2>
         <div style="color:#888"><?= htmlspecialchars($siteName) ?></div>
@@ -107,8 +107,8 @@ $siteName = $p['site_name'] ?? 'HIGH Q SOLID ACADEMY';
 
     <div class="actions">
   <button onclick="window.print();" class="btn-primary">Print / Download</button>
-  <a href="contact.php" class="btn" style="margin-left:8px;">Contact Support</a>
-  <a href="contact.php#livechat" class="btn" style="margin-left:8px;">Open Live Chat</a>
+  <a href="<?= htmlspecialchars(function_exists('app_url') ? rtrim(app_url(''), '/') . '/contact.php' : 'contact.php') ?>" class="btn" style="margin-left:8px;">Contact Support</a>
+  <a href="<?= htmlspecialchars(function_exists('app_url') ? rtrim(app_url(''), '/') . '/contact.php#livechat' : 'contact.php#livechat') ?>" class="btn" style="margin-left:8px;">Open Live Chat</a>
     </div>
 
     <div style="margin-top:18px;color:#333">
