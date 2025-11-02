@@ -672,14 +672,14 @@ if ($hasRegistrations) {
 
                 <!-- Export registration (zip) - always available for registrations -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
-                <form method="post" action="<?= admin_url('pages/students.php?action=delete&id=' . $s['id']) ?>" class="inline-form student-delete-form">
+                <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Delete</button>
                 </form>
               <?php else: ?>
                 <!-- post-UTME entries: only allow export and deletion of the post_utme_registrations row -->
                 <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>">Export</button>
-                <form method="post" action="<?= admin_url('pages/students.php?action=delete_postutme&id=' . $s['id']) ?>" class="inline-form student-delete-form" style="display:inline-block;">
+                <form method="post" action="index.php?pages=students&action=delete_postutme&id=<?= $s['id'] ?>" class="inline-form student-delete-form" style="display:inline-block;">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Delete</button>
                 </form>
