@@ -302,6 +302,9 @@ body.modal-open { overflow: hidden; }
 </style>
 
 <script>
+// Server-side fallback for admin base (used when window.HQ_ADMIN_BASE is not available)
+const ADMIN_BASE_SERVER = <?= json_encode(rtrim(admin_url(''), '/')) ?>;
+
 const roleModal    = document.getElementById('roleModal');
 const overlay      = document.getElementById('modalOverlay');
 const closeRoleBtn = document.getElementById('roleModalClose');
