@@ -4,8 +4,10 @@ $errorsFound = $false
 Get-ChildItem -Path 'c:\xampp\htdocs\HIGH-Q' -Recurse -Filter '*.php' | ForEach-Object {
     try {
         $path = $_.FullName
+        # Run php -l and capture exit code and any output
         $res = & php -l $path 2>&1
-        if ($res -notmatch 'No syntax errors detected') {
+        $exitCode = $LASTEXITCODE
+        if ($exitCode -ne 0) {
             Write-Output "ERROR in: $path"
             Write-Output $res
             $errorsFound = $true
