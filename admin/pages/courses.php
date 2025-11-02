@@ -564,9 +564,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       if (fBadge) fBadge.value = data.badge || '';
       updateIconPreview();
       // Use client-side admin base so JS respects subfolder; header.php exposes window.HQ_ADMIN_BASE
-      courseForm.action = (window.HQ_ADMIN_BASE || '') + '/pages/courses.php?action=edit&id=' + encodeURIComponent(data.id);
+  courseForm.action = 'index.php?pages=courses&action=edit&id=' + encodeURIComponent(data.id);
     } else {
-      courseForm.action = (window.HQ_ADMIN_BASE || '') + '/pages/courses.php?action=create';
+  courseForm.action = 'index.php?pages=courses&action=create';
     }
   }
   // Auto-generate slug client-side as user types title when slug is empty
