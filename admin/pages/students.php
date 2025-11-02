@@ -1021,7 +1021,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
   const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
   // success shown by postAction; reload to reflect changes
-  window.location = (window.HQ_ADMIN_BASE || '') + '/pages/students.php';
+  window.location = 'index.php?pages=students';
     } else if (choice.isDenied) {
       const { value: formValues } = await Swal.fire({
         title: 'Create payment',
@@ -1035,7 +1035,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
   const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
-  window.location = (window.HQ_ADMIN_BASE || '') + '/pages/students.php';
+  window.location = 'index.php?pages=students';
     }
   } catch (err) {
     Swal.fire('Error','Failed to confirm','error');
