@@ -206,8 +206,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
                 $uupd->execute([$sentAt, $uid]);
 
-                $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
-                $verifyUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin/verify_email.php?token=' . urlencode($verificationToken);
+                // Use admin_url() to ensure ADMIN_URL from .env is used when set; fall back to helper fallback
+                $verifyUrl = admin_url('verify_email.php?token=' . urlencode($verificationToken));
 
                 $subject = "Verify your email for HIGH Q SOLID ACADEMY";
                 $html = "<p>Hello $name,</p>
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $admins = $pdo->prepare('SELECT email, name FROM users WHERE role_id = 1');
                     $admins->execute();
-                    $reviewUrl = ($appUrl ? rtrim($appUrl, '/') : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://' ) . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'])) . '/admin/pages/users.php';
+                    $reviewUrl = admin_url('pages/users.php');
                     $notifySubject = "New admin application submitted";
                     $notifyHtml = "<p>A new admin application was submitted by <strong>" . htmlspecialchars($name) . "</strong> (" . htmlspecialchars($email) . ").</p><p>Review applications: <a href=\"{$reviewUrl}\">Admin applications</a></p>";
                     while ($a = $admins->fetch(PDO::FETCH_ASSOC)) {

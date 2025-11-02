@@ -24,12 +24,8 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
-// Determine application base URL (use APP_URL env if available, otherwise build from host)
-$appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
-if (!$appUrl) {
-    $appUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-    $appUrl .= ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']);
-}
+// Determine application base URL using canonical helper so APP_URL from .env is honoured
+$appUrl = rtrim(app_url(''), '/');
 
 // Detect whether the posts table has a category_id column on this install
 $hasCategoryId = false;
@@ -180,8 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                                                             $upd->execute([$uToken, $sub['id']]);
                                                                         } catch (Throwable $_) {}
                                                                     }
-                                                                    $postUrl = rtrim($appUrl, '/') . '/post.php?id=' . $newId;
-                                                                    $unsubscribeUrl = rtrim($appUrl, '/') . '/public/unsubscribe_newsletter.php?token=' . urlencode($uToken);
+                                                                    $postUrl = app_url('post.php?id=' . urlencode($newId));
+                                                                    $unsubscribeUrl = app_url('public/unsubscribe_newsletter.php?token=' . urlencode($uToken));
                                                                     $html = "<p>Hi,</p><p>A new article was published: <strong>" . htmlspecialchars($title) . "</strong></p>";
                                                                     $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
                                                                     $html .= "<p><a href=\"{$postUrl}\">Read the full article</a></p>";
@@ -253,8 +249,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                                         if (empty($sub['unsubscribe_token'])) {
                                                             try { $upd = $pdo->prepare('UPDATE newsletter_subscribers SET unsubscribe_token=?, token_created_at=NOW() WHERE id=?'); $upd->execute([$uToken, $sub['id']]); } catch (Throwable $_) {}
                                                         }
-                                                        $postUrl = rtrim($appUrl, '/') . '/post.php?id=' . $id;
-                                                        $unsubscribeUrl = rtrim($appUrl, '/') . '/public/unsubscribe_newsletter.php?token=' . urlencode($uToken);
+                                                        $postUrl = app_url('post.php?id=' . urlencode($id));
+                                                        $unsubscribeUrl = app_url('public/unsubscribe_newsletter.php?token=' . urlencode($uToken));
                                                         $html = "<p>Hi,</p><p>An article was published: <strong>" . htmlspecialchars($title) . "</strong></p>";
                                                         $html .= "<p>" . nl2br(htmlspecialchars($excerpt ?: substr($content,0,200))) . "</p>";
                                                         $html .= "<p><a href=\"{$postUrl}\">Read the full article</a></p>";
