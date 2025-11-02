@@ -6,7 +6,12 @@ $siteSettings = [];
 require_once __DIR__ . '/config/functions.php';
 $ref = $_GET['ref'] ?? ($_SESSION['last_payment_reference'] ?? '');
 $HQ_SUBPATH = '';
-$HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] : '');
+// Prefer app_url() when available (keeps links consistent with .env). Fall back to previous host-based logic.
+if (function_exists('app_url')) {
+  $HQ_BASE = rtrim(app_url(''), '/');
+} else {
+  $HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] : '');
+}
 
 // load site settings (bank details, logo) for display
 try {
