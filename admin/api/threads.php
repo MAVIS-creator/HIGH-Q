@@ -1,7 +1,7 @@
 <?php
 // admin/api/threads.php - lightweight JSON API for admin thread list and unread counts
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../../public/config/functions.php';
 
 header('Content-Type: application/json');

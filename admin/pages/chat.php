@@ -1,6 +1,6 @@
 <?php
 // admin/pages/chat.php
-require_once __DIR__ . '/../bootstrap.php';      // Load DB and helpers via central bootstrap
+require_once __DIR__ . '/../includes/db.php';      // Load DB connection first
 require_once __DIR__ . '/../includes/auth.php';    // Then auth
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/functions.php';

@@ -4,7 +4,7 @@
 // Run with: php admin/cli/test_tutor_insert.php
 
 chdir(__DIR__ . '/..'); // make includes resolve the same way
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/db.php';
 
 echo "Running CLI tutor insert test...\n";
 

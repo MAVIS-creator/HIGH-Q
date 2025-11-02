@@ -1,6 +1,7 @@
 <?php
 // admin/pages/index.php
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
 
 
 // Use the 'pages' query param (you said you want 'pages' all through)

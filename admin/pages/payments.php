@@ -2,7 +2,7 @@
 // admin/pages/payments.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 // Ensure logs directory exists for AJAX handlers
