@@ -1,6 +1,6 @@
 <?php
 // admin/pages/users.php
-require_once '../includes/auth.php';
+require_once __DIR__ . '/../bootstrap.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 require_once '../includes/csrf.php';
