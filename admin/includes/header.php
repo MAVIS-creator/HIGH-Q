@@ -177,9 +177,9 @@ if (!headers_sent()) {
     }
     // --- Admin area IP/MAC logging and blocklist enforcement ---
     try {
-        if (file_exists(__DIR__ . '/../../config/db.php')) {
+        if (file_exists(__DIR__ . '/db.php')) {
             // ensure DB is available (admin pages often include db earlier)
-            if (!isset($pdo)) require_once __DIR__ . '/../../config/db.php';
+            if (!isset($pdo)) require_once __DIR__ . '/db.php';
         }
         if (isset($pdo)) {
             $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
