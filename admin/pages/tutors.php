@@ -463,7 +463,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
   document.addEventListener('DOMContentLoaded', function() {
     // Prefer admin_url() when available (respects .env ADMIN_URL). Fall back to script dirname.
     const BASE_URL = <?= json_encode( (function(){
-      // inline PHP: resolve JS string from server helpers if present
       try {
         if (function_exists('admin_url')) return rtrim(admin_url(''), '/');
       } catch (Throwable $_) {}
