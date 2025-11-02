@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         setFlash('error', $err);
-        header('Location: ?pages=settings');
+        header('Location: index.php?pages=settings');
         exit;
     }
 
