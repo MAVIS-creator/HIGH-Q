@@ -20,16 +20,21 @@ HIGH-Q/
 │   ├── .htaccess
 │   ├── .htpasswd
 │   ├── api/
+│   │   ├── create_payment_link.php
+│   │   ├── debug-headers.php
 │   │   ├── delete_attachment.php
+│   │   ├── export_registration.php
 │   │   ├── ip_logs.php
 │   │   ├── mac_blocklist.php
 │   │   ├── maintenance-debug.php
 │   │   ├── mark_read.php
 │   │   ├── notifications.php
+│   │   ├── resend_payment_link.php
 │   │   ├── run-scan.php
 │   │   ├── save-settings.php
 │   │   └── threads.php
 │   ├── assets/
+│   │   ├── avatars/
 │   │   ├── css/
 │   │   │   ├── admin-style.css
 │   │   │   ├── admin.css
@@ -37,6 +42,7 @@ HIGH-Q/
 │   │   │   ├── courses.css
 │   │   │   ├── dashboard.css
 │   │   │   ├── notifications.css
+│   │   │   ├── payment.css
 │   │   │   ├── posts.css
 │   │   │   ├── responsive.css
 │   │   │   ├── roles.css
@@ -68,7 +74,7 @@ HIGH-Q/
 │   │   │   │   ├── target.svg
 │   │   │   │   ├── teacher.svg
 │   │   │   │   └── trophy.svg
-│   │   │   ├── site.webmanifest
+│   │   │   └── site.webmanifest
 │   │   ├── js/
 │   │   │   ├── admin-forms.js
 │   │   │   ├── admin-security.js
@@ -78,10 +84,12 @@ HIGH-Q/
 │   │   │   └── viewport-check.js
 │   ├── auth_check.php
 │   ├── auth_test.php
+│   ├── cli/
 │   ├── config/
 │   │   └── recaptcha.php
 │   ├── create_htpasswd.php
 │   ├── create_pass.php
+│   ├── download_post_utme.php
 │   ├── errors/
 │   │   ├── 400.php
 │   │   ├── 401.php
@@ -111,6 +119,7 @@ HIGH-Q/
 │   │   ├── dashboard.php
 │   │   ├── icons.php
 │   │   ├── index.php
+│   │   ├── payment.php
 │   │   ├── payments.php
 │   │   ├── post.php
 │   │   ├── post_edit.php
@@ -120,6 +129,7 @@ HIGH-Q/
 │   │   ├── tutors.php
 │   │   └── users.php
 │   ├── pending.php
+│   ├── post_utme_registrations.php
 │   ├── reset_password_final.php
 │   ├── robots.txt
 │   ├── signup.php
@@ -129,7 +139,7 @@ HIGH-Q/
 │   └── verify_email.php
 ├── bin/
 │   ├── scan-runner.php
-│   └── scan-scheduler.php
++│   └── scan-scheduler.php
 ├── config/
 │   ├── payments.php
 │   └── recaptcha.php
@@ -171,8 +181,24 @@ HIGH-Q/
 │   ├── test_dotenv_admin.php
 │   └── _seed_icons.sql
 ├── public/
+│   ├── .htaccess
+│   ├── 404.php
++│   ├── 500.php
 │   ├── about.php
 │   ├── api/
+│   │   ├── activate_payment.php
+│   │   ├── chat.php
+│   │   ├── comments.php
+│   │   ├── comment_like.php
+│   │   ├── forum_reply.php
+│   │   ├── like_post.php
+│   │   ├── mark_sent.php
++│   │   ├── payments_webhook.php
+│   │   ├── payment_status.php
+│   │   ├── register_post_utme.php
+│   │   ├── settings.php
+│   │   ├── subscribe_newsletter.php
+│   │   ├── unsubscribe_newsletter.php
 │   ├── assets/
 │   │   ├── css/
 │   │   │   ├── admin.css
@@ -210,7 +236,7 @@ HIGH-Q/
 │   │   │   ├── master.jpg
 │   │   │   ├── quam.jpg
 │   │   │   ├── quam1.jpg
-│   │   │   ├── site.webmanifest
+│   │   │   └── site.webmanifest
 │   │   ├── js/
 │   │   │   ├── post.js
 │   │   │   └── sweetalert2-cdn.html
@@ -241,22 +267,41 @@ HIGH-Q/
 │   ├── programs.php
 │   ├── receipt.php
 │   ├── register.php
+│   ├── register_new.php
+│   ├── register_post_utme.php
 │   ├── terms.php
 │   ├── tutors.php
 │   ├── tutor_profile.php
 │   ├── unsubscribe_newsletter.php
 │   ├── uploads/
+│   │   ├── passports/
 │   │   ├── posts/
 │   │   └── tutors/
 ├── scripts/
-│   ├── create_like_tables.php
-│   ├── describe_courses.php
-│   ├── describe_post_likes.php
-│   ├── fix_post_likes_schema.php
-│   ├── test_admin_recaptcha_env.php
-│   ├── test_newsletter_flow.php
-│   ├── test_newsletter_migration.php
-│   ├── test_recaptcha_env.php
+│   ├── apply_gender_and_seed_postutme.php
+│   ├── apply_notifications_migration.php
+│   ├── apply_waec_serial_migration.php
+│   ├── check_dompdf.php
+│   ├── check_home.php
+│   ├── check_migrations_and_schema.php
+│   ├── check_postutme_schema.php
+│   ├── check_site_settings_cli.php
+│   ├── check_smtp_cert.php
+│   ├── check_smtp_ssl.php
+│   ├── check_smtp_verify_php.php
+│   ├── drop_waec_serial_no_and_backup.php
+│   ├── dump_public_header.php
+│   ├── home_after.html
+│   ├── home_dump.html
+│   ├── inspect_payments.php
+│   ├── inspect_site_settings.php
+│   ├── run_db_diagnostics.php
+│   ├── run_migrations.php
+│   ├── run_specific_migrations.php
+│   ├── send_test_mail.php
+│   ├── send_test_mail_noverify.php
+│   ├── set_settings_bank.php
+│   └── set_site_bank.php
 ├── src/
 │   ├── Helpers/
 │   │   └── Payments.php
@@ -292,7 +337,7 @@ HIGH-Q/
 │   ├── set_settings_bank.php
 │   ├── set_site_bank.php
 └── vendor/
-    └── ... (Composer dependencies)
+  └── ... (Composer dependencies)
 ├── docs/
 │   └── DEPLOY.md
 
