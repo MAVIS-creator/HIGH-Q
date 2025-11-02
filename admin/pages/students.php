@@ -1092,7 +1092,7 @@ document.addEventListener('click', function(e){
         if (res.isConfirmed) {
               const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
               try {
-              const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
+              const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
                 // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
                 const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
                 if (card) {
@@ -1120,7 +1120,7 @@ document.addEventListener('click', function(e){
         if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
         const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
         try {
-          const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
+    const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
           // update UI similar to above
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
