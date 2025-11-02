@@ -76,16 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   // Insert payment placeholder using fallback helper
   $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
 
-    // Build link using loaded base URL if available
-    // Prefer APP_URL from environment, otherwise build from request host
-    $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
-    if (empty($base)) {
-      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-    }
-    $base = rtrim($base, '/');
-    // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname)
-  // Use a prettier, public-facing URL (e.g. /pay/{ref}) and prefer app_url() to compute base
-  $link = app_url('pay/' . urlencode($reference));
+    // Prefer canonical helper so APP_URL from .env (if present) is honoured and fallbacks are consistent
+    $base = rtrim(app_url(''), '/');
+    // Build a public-facing URL to payments_wait.php (use app_url to preserve subfolder installs)
+    $link = app_url('pay/' . urlencode($reference));
 
     // Try to send email to registrant with the payment link
     $emailSent = false;
@@ -168,19 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
 
   $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
 
-    // Build payment link (prefer APP_URL from environment if loaded)
-    $base = $GLOBALS['HQ_BASE_URL'] ?? null;
-    if (empty($base)) {
-      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-    }
-    // Prefer APP_URL from environment, otherwise build from request host
-    $base = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: ($GLOBALS['HQ_BASE_URL'] ?? null);
-    if (empty($base)) {
-      $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-    }
-    $base = rtrim($base, '/');
-    // Build a public-facing URL to payments_wait.php (avoid filesystem paths/dirname). Use app_url() so subfolder is preserved.
-  $paymentLink = app_url('pay/' . urlencode($ref));
+    // Use canonical helper to construct the payment link so .env APP_URL and subfolder installs are respected
+    $paymentLink = app_url('pay/' . urlencode($ref));
 
     // Send email
     $email_sent = false;
