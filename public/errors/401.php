@@ -7,7 +7,7 @@ http_response_code(401);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>401 Unauthorized - HIGH Q SOLID ACADEMY</title>
-    <link rel="stylesheet" href="../assets/css/public.css">
+    <link rel="stylesheet" href="/assets/css/public.css">
     <style>
         .error-container {
             min-height: 60vh;
@@ -38,7 +38,7 @@ http_response_code(401);
     </style>
 </head>
 <body>
-    <?php include '../includes/header.php'; ?>
+    <?php include __DIR__ . '/../includes/header.php'; ?>
     
     <div class="error-container">
         <div class="error-code">401</div>
@@ -47,6 +47,6 @@ http_response_code(401);
         <a href="../public/index.php" class="back-link">← Return to Homepage</a>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
+    <?php include __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>
