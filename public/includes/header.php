@@ -246,6 +246,26 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   </head>
 
   <body class="hq-public">
+  <?php
+    // Expose a client-side base URL for public scripts.
+    // Prefer app_url() from helpers/.env when available; otherwise fall back to scheme://host + script dir.
+    try {
+      if (function_exists('app_url')) {
+        $hq_app_base = rtrim(app_url(''), '/');
+      } else {
+        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+        $hq_app_base = rtrim($proto . '://' . $host, '/') . $scriptDir;
+      }
+    } catch (Throwable $_) { $hq_app_base = ''; }
+  ?>
+
+  <script>
+    // HQ base available for public JS. window.HQ_APP_BASE preferred; keep HQ_BASE for legacy pages.
+    window.HQ_APP_BASE = <?= json_encode($hq_app_base) ?>;
+    if (!window.HQ_BASE) window.HQ_BASE = window.HQ_APP_BASE;
+  </script>
   <header>
     <!-- Top bar -->
     <div class="top-bar">
