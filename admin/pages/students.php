@@ -867,7 +867,7 @@ async function createPaymentLink(studentId) {
     body.append('action', 'create_payment_link');
     body.append('id', studentId);
 
-  const res = await fetch((window.HQ_ADMIN_BASE || '') + '/pages/students.php', {
+  const res = await fetch('index.php?pages=students', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
