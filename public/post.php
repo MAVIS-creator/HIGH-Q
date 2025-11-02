@@ -161,7 +161,8 @@ require_once __DIR__ . '/includes/header.php';
           if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
             $imgSrc = $fi;
           } else {
-            $imgSrc = '/HIGH-Q/' . ltrim($fi, '/');
+            // Use a document-relative path so assets resolve correctly when site is in a subfolder
+            $imgSrc = './' . ltrim($fi, '/');
           }
         ?>
         <div class="post-thumb" style="margin-bottom:12px;">
