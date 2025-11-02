@@ -738,17 +738,17 @@ if ($hasRegistrations) {
             <!-- view icon removed as requested -->
               <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
               <?php if ($s['is_active'] == 1): ?>
-                <form method="post" action="<?= admin_url('pages/students.php?action=deactivate&id=' . $s['id']) ?>" class="inline-form">
+                <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-banish">Deactivate</button>
                 </form>
               <?php elseif ($s['is_active'] == 0): ?>
-                <form method="post" action="<?= admin_url('pages/students.php?action=activate&id=' . $s['id']) ?>" class="inline-form">
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Activate</button>
                 </form>
               <?php else: ?>
-                <form method="post" action="<?= admin_url('pages/students.php?action=activate&id=' . $s['id']) ?>" class="inline-form">
+                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
                   <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                   <button type="submit" class="btn-approve">Reactivate</button>
                 </form>
@@ -756,7 +756,7 @@ if ($hasRegistrations) {
               <?php if (!empty($linkedRegId)): ?>
                 <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>">Export</button>
               <?php endif; ?>
-              <form method="post" action="<?= admin_url('pages/students.php?action=delete&id=' . $s['id']) ?>" class="inline-form student-delete-form">
+              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Delete</button>
               </form>
