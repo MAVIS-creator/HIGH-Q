@@ -290,7 +290,7 @@ $users = $pdo->query("
           <button class="btn-primary btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
               <?php if($u['is_active']===0): ?>
-              <form method="post" action="?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
+              <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <select name="role_id" required>
                   <option value="">Assign Role</option>
@@ -300,25 +300,25 @@ $users = $pdo->query("
                 </select>
                 <button type="submit" class="btn-approve">Approve</button>
               </form>
-              <form method="post" action="?pages=users&action=resend_verification&id=<?= $u['id'] ?>" class="inline-form">
+              <form method="post" action="index.php?pages=users&action=resend_verification&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn">Resend Verification</button>
               </form>
               <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
-              <form method="post" action="?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+              <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Reject</button>
               </form>
               <?php endif; ?>
             <?php elseif($u['is_active']===1): ?>
               <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
-              <form method="post" action="?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
+              <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-banish">Deactivate</button>
               </form>
               <?php endif; ?>
             <?php else: ?>
-              <form method="post" action="?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
+              <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
                 <button type="submit" class="btn-approve">Reactivate</button>
               </form>
