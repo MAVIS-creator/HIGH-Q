@@ -223,16 +223,16 @@ if (!headers_sent()) {
             if (!empty($mac) && in_array($enforcement, ['mac','both'])) {
                 $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
                 $q->execute([$mac]);
-                    if ($r && !empty($r['enabled'])) {
-                        http_response_code(403);
-                        // Use a minimal admin error page (standalone) to avoid recursion
-                        $err = __DIR__ . '/../errors/403.php';
-                        if (file_exists($err)) {
-                            include $err;
-                            exit;
-                        }
-                        echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
+                $r = $q->fetch(PDO::FETCH_ASSOC);
+                if ($r && !empty($r['enabled'])) {
+                    http_response_code(403);
+                    // Use a minimal admin error page (standalone) to avoid recursion
+                    $err = __DIR__ . '/../errors/403.php';
+                    if (file_exists($err)) {
+                        include $err;
                         exit;
+                    }
+                    echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
                     exit;
                 }
             }
@@ -242,11 +242,11 @@ if (!headers_sent()) {
                 try {
                     $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
                     $bq->execute([$remoteIp]);
-                            http_response_code(403);
-                            $err = __DIR__ . '/../errors/403.php';
-                            if (file_exists($err)) { include $err; exit; }
-                            echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
-                            exit;
+                    if ($bq->fetch()) {
+                        http_response_code(403);
+                        $err = __DIR__ . '/../errors/403.php';
+                        if (file_exists($err)) { include $err; exit; }
+                        echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
                         exit;
                     }
                 } catch (Throwable $e) { /* ignore */ }
