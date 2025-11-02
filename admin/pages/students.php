@@ -631,9 +631,9 @@ if ($hasRegistrations) {
 
   <div class="user-filters">
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <a href="<?= admin_url('pages/students.php') ?>" class="btn <?= ($current_source==='regular' || $current_source==='') ? 'btn-active' : '' ?>">All / Regular</a>
+      <a href="<?= admin_url('index.php?pages=students') ?>" class="btn <?= ($current_source==='regular' || $current_source==='') ? 'btn-active' : '' ?>">All / Regular</a>
       <?php if ($hasPostUtme): ?>
-        <a href="<?= admin_url('pages/students.php?source=postutme') ?>" class="btn <?= ($current_source==='postutme') ? 'btn-active' : '' ?>">Post‑UTME</a>
+        <a href="<?= admin_url('index.php?pages=students&source=postutme') ?>" class="btn <?= ($current_source==='postutme') ? 'btn-active' : '' ?>">Post‑UTME</a>
       <?php endif; ?>
     </div>
     <input type="text" id="searchInput" placeholder="Search students by name or email">
@@ -699,7 +699,7 @@ if ($hasRegistrations) {
       <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
         <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
       <?php for ($p=1;$p<=$pages;$p++): ?>
-        <a href="<?= admin_url('pages/students.php?page=' . $p) ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+  <a href="<?= admin_url('index.php?pages=students&page=' . $p) ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
           <?php endfor; ?>
         </div>
       <?php endif; ?>
