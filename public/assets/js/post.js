@@ -12,7 +12,7 @@
   const parentInput = document.getElementById('parent_id');
 
   function fetchComments() {
-    fetch('/HIGH-Q/public/api/comments.php?post_id=' + encodeURIComponent(POST_ID))
+  fetch('api/comments.php?post_id=' + encodeURIComponent(POST_ID))
       .then(r => r.json())
       .then(data => {
         commentsList.innerHTML = '';
@@ -56,7 +56,7 @@
     likeBtnC.addEventListener('click', function () {
       const cid = this.getAttribute('data-id');
       if (sessionStorage.getItem('liked_comment_' + cid) === '1') return;
-      fetch('/HIGH-Q/public/api/comment_like.php', { method: 'POST', body: new URLSearchParams({ comment_id: cid }) })
+  fetch('api/comment_like.php', { method: 'POST', body: new URLSearchParams({ comment_id: cid }) })
         .then(r => r.json())
         .then(j => {
           if (j && typeof j.likes !== 'undefined') {
@@ -100,7 +100,7 @@
 
   function doDelete(cid) {
     var fd = new URLSearchParams(); fd.append('_method','delete'); fd.append('comment_id', cid);
-    fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
+  fetch('api/comments.php', { method: 'POST', body: fd })
       .then(r => r.json())
       .then(j => { if (j && j.status === 'ok') fetchComments(); else { if (typeof Swal !== 'undefined') Swal.fire('Error', j.message || 'Delete failed','error'); else alert(j.message || 'Delete failed'); } })
       .catch(()=>{ if (typeof Swal !== 'undefined') Swal.fire('Error','Network error','error'); else alert('Network error'); });
@@ -124,7 +124,7 @@
 
   if (likeBtn && POST_ID) {
     // initial GET to learn current likes and whether visitor has liked
-    fetch('/HIGH-Q/public/api/like_post.php?post_id=' + encodeURIComponent(POST_ID))
+  fetch('api/like_post.php?post_id=' + encodeURIComponent(POST_ID))
       .then(r => r.json())
       .then(j => {
         if (j && typeof j.likes !== 'undefined') likesCountEl.textContent = j.likes;
@@ -137,7 +137,7 @@
       // optimistically flip UI
       const currentlyLiked = sessionStorage.getItem('liked_post_' + POST_ID) === '1';
       setLikedUI(!currentlyLiked);
-      fetch('/HIGH-Q/public/api/like_post.php', { method: 'POST', body: new URLSearchParams({ post_id: POST_ID }) })
+  fetch('api/like_post.php', { method: 'POST', body: new URLSearchParams({ post_id: POST_ID }) })
         .then(r => r.json())
         .then(j => {
           if (j && typeof j.likes !== 'undefined') likesCountEl.textContent = j.likes;
@@ -161,7 +161,7 @@
     commentForm.addEventListener('submit', function (ev) {
       ev.preventDefault();
       const fd = new FormData(commentForm);
-      fetch('/HIGH-Q/public/api/comments.php', { method: 'POST', body: fd })
+    fetch('api/comments.php', { method: 'POST', body: fd })
   .then(r => r.json())
   .then(j => { if (j && j.success) { commentForm.reset(); parentInput.value=''; cancelReply.style.display='none'; fetchComments(); } else { var m = j && j.message ? j.message : 'Unable to post comment'; if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); } })
   .catch(() => { var m = 'Unable to post comment'; if (typeof Swal !== 'undefined') Swal.fire('Error', m, 'error'); else alert(m); });

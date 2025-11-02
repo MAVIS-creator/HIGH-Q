@@ -7,7 +7,7 @@ require_once __DIR__ . '/includes/header.php';
     <h2>Server Error</h2>
     <p style="color:#666;margin:20px 0 30px">Something went wrong on our end. Please try again later.</p>
     <div>
-        <a href="/HIGH-Q/public/home.php" class="btn-primary">Go Home</a>
+    <a href="./index.php" class="btn-primary">Go Home</a>
     </div>
 </div>
 
