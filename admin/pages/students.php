@@ -1060,7 +1060,7 @@ regRejectBtn.addEventListener('click', ()=>{
       (async ()=>{
         try {
       const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-  const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=reject_registration&id=' + encodeURIComponent(id), fd);
+  const payload = await postAction('index.php?pages=students&action=reject_registration&id=' + encodeURIComponent(id), fd);
           // update UI: remove buttons and mark status
           const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
           if (card) {
@@ -1143,7 +1143,7 @@ document.addEventListener('click', function(e){
       inputPlaceholder: 'Reason for rejection',
       showCancelButton: true,
       confirmButtonText: 'Reject'
-  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=reject_registration&id=' + encodeURIComponent(id), fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
+  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction('index.php?pages=students&action=reject_registration&id=' + encodeURIComponent(id), fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
     return;
   }
 });
