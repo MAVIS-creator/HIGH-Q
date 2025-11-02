@@ -171,22 +171,22 @@ function claim(id){
         return;
       }
 
-      if(r.status==='ok'){
+        if(r.status==='ok'){
         Swal.fire('Claimed!','You are now assigned to this thread.','success');
         // update button to Open without reloading
-        const li = document.querySelector('li[data-thread="'+id+'"]');
+        const li = document.querySelector('li[data-thread"'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/pages/chat_view?thread_id='+id+'">Open</a>';
+          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
         }
       }
-      else if(r.status==='taken'){
+        else if(r.status==='taken'){
         Swal.fire('Already Taken','This thread was claimed by ' + (r.assigned_admin_name || 'another admin') + '.','warning');
         // update UI to show Open link
-        const li = document.querySelector('li[data-thread="'+id+'"]');
+        const li = document.querySelector('li[data-thread"'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/pages/chat_view?thread_id='+id+'">Open</a>';
+          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
         }
       }
       else {
@@ -229,9 +229,9 @@ async function pollThreads(){
         btn.onclick = ()=>{ claim(t.id); };
         right.appendChild(btn);
       } else {
-  const a = document.createElement('a');
-  a.className='btn';
-  a.href = (window.HQ_ADMIN_BASE || '') + '/pages/chat_view?thread_id=' + t.id;
+      const a = document.createElement('a');
+      a.className='btn';
+      a.href = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id=' + t.id;
         a.textContent='Open';
         right.appendChild(a);
       }
