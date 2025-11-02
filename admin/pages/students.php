@@ -825,7 +825,7 @@ document.querySelectorAll('.view-registration').forEach(btn => {
     // include CSRF token if desired by server-side protections
     body.append('csrf_token', __students_csrf);
 
-  fetch((window.HQ_ADMIN_BASE || '') + '/pages/students.php', {
+  fetch('index.php?pages=students', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
