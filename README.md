@@ -293,6 +293,9 @@ HIGH-Q/
 │   ├── set_site_bank.php
 └── vendor/
     └── ... (Composer dependencies)
+
+├── docs/
+│   └── DEPLOY.md
 ```
 
 ## Deploying the app (domain root vs subfolder)
