@@ -66,14 +66,18 @@ function checkUrl(string $url)
     return ['ok' => false, 'message' => 'Unreachable'];
 }
 
-// Determine site URL to check (try environment/config or fallback)
+// Determine site URL to check (prefer app_url()/admin_url() when available, then env, then fallback)
 $siteUrl = null;
-$envUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
-if (!empty($envUrl)) {
-    $siteUrl = rtrim($envUrl, '/') . '/';
-} elseif (!empty($_SERVER['HTTP_HOST'])) {
-    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $siteUrl = $proto . '://' . $_SERVER['HTTP_HOST'] . '/';
+if (function_exists('app_url')) {
+    $siteUrl = rtrim(app_url(''), '/') . '/';
+} else {
+    $envUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
+    if (!empty($envUrl)) {
+        $siteUrl = rtrim($envUrl, '/') . '/';
+    } elseif (!empty($_SERVER['HTTP_HOST'])) {
+        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $siteUrl = $proto . '://' . $_SERVER['HTTP_HOST'] . '/';
+    }
 }
 
 // Run quick checks
@@ -85,7 +89,12 @@ try {
     $dbServer = null;
 }
 $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unknown'];
-$adminUrl = $siteUrl ? rtrim($siteUrl, '/') . '/admin/' : null;
+$adminUrl = null;
+if (function_exists('admin_url')) {
+    $adminUrl = rtrim(admin_url(''), '/') . '/';
+} else {
+    $adminUrl = $siteUrl ? rtrim($siteUrl, '/') . '/admin/' : null;
+}
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
 ?>
 <div class="dashboard">
