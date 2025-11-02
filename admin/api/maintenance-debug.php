@@ -1,7 +1,7 @@
 <?php
 // admin/api/maintenance-debug.php - Read-only diagnostic for maintenance mode
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 $debug = ['ok' => true];
 try {
