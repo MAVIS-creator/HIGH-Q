@@ -7,7 +7,7 @@ http_response_code(403);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>403 Forbidden - HIGH Q SOLID ACADEMY</title>
-    <link rel="stylesheet" href="../assets/css/public.css">
+    <link rel="stylesheet" href="/assets/css/public.css">
     <style>
         .error-container {
             min-height: 60vh;
@@ -38,15 +38,15 @@ http_response_code(403);
     </style>
 </head>
 <body>
-    <?php include '../includes/header.php'; ?>
+    <?php if (file_exists(__DIR__ . '/../includes/header.php')) include __DIR__ . '/../includes/header.php'; ?>
     
     <div class="error-container">
         <div class="error-code">403</div>
         <h1>Access Forbidden</h1>
         <p class="error-message">You don't have permission to access this resource.</p>
-        <a href="../public/index.php" class="back-link">← Return to Homepage</a>
+        <a href="/" class="back-link">← Return to Homepage</a>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
+    <?php if (file_exists(__DIR__ . '/../includes/footer.php')) include __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>
