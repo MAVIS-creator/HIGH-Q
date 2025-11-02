@@ -375,9 +375,6 @@ This project can be hosted at the domain root (e.g. https://example.com) or insi
      AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
      Require valid-user
 
-     RewriteEngine On
-     RewriteBase /HIGH-Q/admin/
-
      ErrorDocument 400 /HIGH-Q/admin/errors/400.php
      ErrorDocument 401 /HIGH-Q/admin/errors/401.php
      ErrorDocument 403 /HIGH-Q/admin/errors/403.php
