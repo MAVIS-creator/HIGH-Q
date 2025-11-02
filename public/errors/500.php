@@ -7,7 +7,7 @@ http_response_code(500);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>500 Server Error - HIGH Q SOLID ACADEMY</title>
-    <link rel="stylesheet" href="/HIGH-Q/public/assets/css/public.css">
+    <link rel="stylesheet" href="../assets/css/public.css">
     <style>
         .error-container {
             min-height: 60vh;
