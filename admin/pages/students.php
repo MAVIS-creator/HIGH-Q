@@ -931,7 +931,7 @@ function openStudentModal(id, name, email){
   modal.style.display = 'flex';
   modalStudentName.textContent = name;
   modalStudentEmail.textContent = email;
-  modalForm.action = (window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=send_message&id=' + encodeURIComponent(id);
+  modalForm.action = 'index.php?pages=students&action=send_message&id=' + encodeURIComponent(id);
 }
 
 modalCancel.addEventListener('click', ()=> modal.style.display='none');
@@ -1019,7 +1019,7 @@ regConfirmForm.addEventListener('submit', async function(e){
   try {
     if (choice.isConfirmed) {
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-  const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
+  const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
   // success shown by postAction; reload to reflect changes
   window.location = (window.HQ_ADMIN_BASE || '') + '/pages/students.php';
     } else if (choice.isDenied) {
