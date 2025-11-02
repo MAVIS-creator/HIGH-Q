@@ -318,8 +318,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
     <div class="tutors-header">
       <h1>Tutors Management</h1>
       <div class="tutors-actions">
-  <form method="get" action="../index.php" class="search-form">
-          <input type="hidden" name="pages" value="tutors">
+  <form method="get" action="index.php?pages=tutors" class="search-form">
           <input type="text" name="q" placeholder="Search Tutors" value="<?= htmlspecialchars($q) ?>">
         </form>
         <button id="newTutorBtn" class="btn-approve">
