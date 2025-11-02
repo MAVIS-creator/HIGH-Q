@@ -518,10 +518,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
     if (!$tmp || !is_readable($tmp)) { setFlash('error','No file uploaded or unreadable'); header('Location: index.php?pages=settings'); exit; }
     $raw = @file_get_contents($tmp);
     $json = @json_decode($raw, true);
-    if (!is_array($json) || empty($json['settings'])) { setFlash('error','Invalid import file'); header('Location: ?pages=settings'); exit; }
+    if (!is_array($json) || empty($json['settings'])) { setFlash('error','Invalid import file'); header('Location: index.php?pages=settings'); exit; }
     $ok = saveSettingsToDb($pdo, $json['settings']);
-    if ($ok) { setFlash('success','Settings imported'); header('Location: ?pages=settings'); exit; }
-    setFlash('error','Failed to import settings'); header('Location: ?pages=settings'); exit;
+    if ($ok) { setFlash('success','Settings imported'); header('Location: index.php?pages=settings'); exit; }
+    setFlash('error','Failed to import settings'); header('Location: index.php?pages=settings'); exit;
 }
 
 // Page rendering
