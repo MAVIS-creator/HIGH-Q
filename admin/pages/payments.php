@@ -164,8 +164,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                             if ($logo) $htmlMail .= '<div style="margin-bottom:12px"><img src="' . htmlspecialchars($logo) . '" alt="' . htmlspecialchars($site) . '" style="max-height:60px"></div>';
                             $htmlMail .= '<h2>Hi ' . htmlspecialchars($p['name'] ?? '') . '</h2>';
                             $htmlMail .= '<p>Your payment with reference <strong>' . htmlspecialchars($p['reference']) . '</strong> has been confirmed. Your account has been activated.</p>';
-                            if (!empty($receiptPath)) {
-                                $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/' . ltrim($receiptPath, '/');
+                                if (!empty($receiptPath)) {
+                                // Use app_url() so APP_URL from .env (or computed fallback) is used consistently
+                                $link = app_url($receiptPath);
                                 $htmlMail .= '<p><a class="btn" href="' . htmlspecialchars($link) . '" target="_blank">Download Receipt</a></p>';
                             }
                             $htmlMail .= '<p>Thanks,<br>' . htmlspecialchars($site) . ' team</p>';
