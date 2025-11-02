@@ -327,7 +327,7 @@ function openModal(mode, role = {}) {
   if (mode === 'edit') {
     modalTitle.textContent = 'Edit Role';
     // Use runtime admin base exposed by header.php
-    roleForm.action = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=roles.php&action=edit&id=' + encodeURIComponent(role.id);
+  roleForm.action = (window.HQ_ADMIN_BASE || ADMIN_BASE_SERVER) + '/index.php?pages=roles.php&action=edit&id=' + encodeURIComponent(role.id);
     nameInput.value = role.name;
     slugInput.value = role.slug;
     maxInput.value  = role.max_count || '';
@@ -339,7 +339,7 @@ function openModal(mode, role = {}) {
     });
   } else {
     modalTitle.textContent = 'New Role';
-    roleForm.action = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=roles.php&action=create';
+  roleForm.action = (window.HQ_ADMIN_BASE || ADMIN_BASE_SERVER) + '/index.php?pages=roles.php&action=create';
     nameInput.value = '';
     slugInput.value = '';
     maxInput.value  = '';
@@ -389,7 +389,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
   const fd = new FormData(); fd.append('action','delete'); fd.append('csrf_token','<?= $csrf ?>');
   // Post to this page (roles.php) so server-side handler in this file processes it and returns JSON when requested
     var xhr = new XMLHttpRequest();
-    var target = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=roles.php&action=delete&id=' + encodeURIComponent(id);
+  var target = (window.HQ_ADMIN_BASE || ADMIN_BASE_SERVER) + '/index.php?pages=roles.php&action=delete&id=' + encodeURIComponent(id);
     xhr.open('POST', target, true);
     xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function(){ try{ var j = JSON.parse(xhr.responseText||'{}'); } catch(e){ j=null; }
