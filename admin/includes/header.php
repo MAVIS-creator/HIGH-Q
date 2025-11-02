@@ -55,6 +55,16 @@ if (!headers_sent()) {
     <script src="../assets/js/viewport-check.js" defer></script>
     <script src="../assets/js/admin-forms.js" defer></script>
     <?php
+    // Ensure URL helpers are available. Some callers include this header directly
+    // without first requiring the shared functions file; load it lazily to avoid
+    // fatal "undefined function" errors when admin_url()/app_url() are used below.
+    if (!function_exists('admin_url') || !function_exists('app_url')) {
+        $fn = __DIR__ . '/functions.php';
+        if (file_exists($fn)) {
+            require_once $fn;
+        }
+    }
+
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
     $parts = explode('/', trim($script, '/'));
