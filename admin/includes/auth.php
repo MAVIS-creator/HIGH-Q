@@ -33,6 +33,9 @@ function requirePermission($menuSlug) {
     $roleId = $stmt->fetchColumn();
 
     if (!$roleId) {
+        http_response_code(403);
+        $err = __DIR__ . '/../errors/403.php';
+        if (file_exists($err)) { include $err; exit; }
         die("Access denied: no role assigned.");
     }
 
@@ -45,12 +48,18 @@ function requirePermission($menuSlug) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         if (!$stmt->fetch()) {
+            http_response_code(403);
+            $err = __DIR__ . '/../errors/403.php';
+            if (file_exists($err)) { include $err; exit; }
             die("Access denied: insufficient permission.");
         }
     } else {
         $stmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=?");
         $stmt->execute([$roleId, $menuSlug]);
         if (!$stmt->fetch()) {
+            http_response_code(403);
+            $err = __DIR__ . '/../errors/403.php';
+            if (file_exists($err)) { include $err; exit; }
             die("Access denied: insufficient permission.");
         }
     }
