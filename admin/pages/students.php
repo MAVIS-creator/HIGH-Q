@@ -307,28 +307,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
   if (!verifyToken('students_form', $token)) {
-    header('Location: ' . admin_url('pages/students.php')); exit;
+    header('Location: ' . admin_url('index.php?pages=students')); exit;
   }
 
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
     if ($id === 1 || $id === $currentUserId) {
-    header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('index.php?pages=students')); exit;
   }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('index.php?pages=students')); exit;
     }
 
     if ($action === 'activate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('index.php?pages=students')); exit;
     }
 
       // Delete a post-UTME registration row (separate action) - handle before generic delete
@@ -352,7 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('index.php?pages=students')); exit;
     }
   
     // Delete a post-UTME registration row
