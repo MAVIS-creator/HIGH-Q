@@ -137,6 +137,15 @@ function app_url(string $path = ''): string {
  * Return the admin base URL (app_url + /admin)
  */
 function admin_url(string $path = ''): string {
+    // Prefer explicit ADMIN_URL from .env when available (allows admin area to live on a different host/path)
+    $env = $_ENV['ADMIN_URL'] ?? null;
+    if (!empty($env)) {
+        $base = rtrim($env, '/');
+        if ($path === '') return $base;
+        return $base . '/' . ltrim($path, '/');
+    }
+
+    // Fallback: derive from app_url
     $base = rtrim(app_url(''), '/');
     $adminBase = $base . '/admin';
     if ($path === '') return $adminBase;

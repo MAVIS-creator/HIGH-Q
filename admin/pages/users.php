@@ -75,9 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
               $upd = $pdo->prepare('UPDATE users SET email_verification_token = ?, email_verification_sent_at = NOW() WHERE id = ?');
               $upd->execute([$token, $id]);
 
-              $appUrl = getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null);
-              if ($appUrl) $verifyUrl = rtrim($appUrl, '/') . '/admin/verify_email.php?token=' . urlencode($token);
-              else $verifyUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https://' : 'http://' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']) . '/admin/verify_email.php?token=' . urlencode($token);
+              // Use admin_url() so ADMIN_URL from .env (if set) is honoured and fallbacks apply consistently
+              $verifyUrl = admin_url('verify_email.php?token=' . urlencode($token));
 
               $subject = 'Please verify your email';
               $html = '<p>Hi ' . htmlspecialchars($usr['name'] ?? '') . ',</p>' .
