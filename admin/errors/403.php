@@ -1,5 +1,27 @@
 <?php
 http_response_code(403);
+// Minimal standalone admin 403 page. This file is intentionally self-contained
+// so it can be included from early bootstrap code (before header/footer are safe).
+?><!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>403 Forbidden - Admin</title>
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <style>body{font-family:Arial,Helvetica,sans-serif;background:#fafafa;color:#111;margin:0;padding:40px} .center{max-width:820px;margin:40px auto;text-align:center} .code{font-size:5rem;color:#d33;font-weight:700} .msg{font-size:1.1rem;color:#333}</style>
+</head>
+<body>
+  <div class="center">
+    <div class="code">403</div>
+    <h1>Access Forbidden</h1>
+    <p class="msg">You do not have permission to view this admin page.</p>
+    <p><a href="/admin/login.php">Login to Admin Panel</a></p>
+  </div>
+</body>
+</html>
+<?php
+http_response_code(403);
 ?>
 <!DOCTYPE html>
 <html lang="en">

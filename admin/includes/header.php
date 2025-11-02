@@ -225,8 +225,9 @@ if (!headers_sent()) {
                 $q->execute([$mac]);
                 $r = $q->fetch(PDO::FETCH_ASSOC);
                 if ($r && !empty($r['enabled'])) {
-                    http_response_code(403);
-                    echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
+                    // Use the admin 403 template when device is blocked
+                    $err = __DIR__ . '/../errors/403.php';
+                    if (file_exists($err)) { include $err; } else { http_response_code(403); echo "Access denied (MAC)"; }
                     exit;
                 }
             }
@@ -237,8 +238,8 @@ if (!headers_sent()) {
                     $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
                     $bq->execute([$remoteIp]);
                     if ($bq->fetch()) {
-                        http_response_code(403);
-                        echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
+                        $err = __DIR__ . '/../errors/403.php';
+                        if (file_exists($err)) { include $err; } else { http_response_code(403); echo "Access denied (IP)"; }
                         exit;
                     }
                 } catch (Throwable $e) { /* ignore */ }

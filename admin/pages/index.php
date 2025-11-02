@@ -164,14 +164,26 @@ if (!$found && substr($page, -1) === 's') {
 }
 
 if (!$found) {
-    // Friendly debug output to show where it's looking
-    echo "<div class='container'><h2>Page not found</h2>";
-    echo "<p>Looking for: <strong>" . htmlspecialchars($page) . "</strong></p>";
-    echo "<p>Checked paths:</p><ul>";
-    foreach ($candidates as $c) {
-        echo "<li>" . htmlspecialchars($c) . "</li>";
+    // If this was an AJAX/API-style request, return a JSON 404; otherwise show the admin 404 page
+    if ($isAjaxRequest) {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Not found', 'page' => $page]);
+        exit;
     }
-    echo "</ul></div>";
+
+    $err = __DIR__ . '/../errors/404.php';
+    if (file_exists($err)) {
+        include $err;
+    } else {
+        echo "<div class='container'><h2>Page not found</h2>";
+        echo "<p>Looking for: <strong>" . htmlspecialchars($page) . "</strong></p>";
+        echo "<p>Checked paths:</p><ul>";
+        foreach ($candidates as $c) {
+            echo "<li>" . htmlspecialchars($c) . "</li>";
+        }
+        echo "</ul></div>";
+    }
 }
 
 require_once __DIR__ . '/../includes/footer.php';

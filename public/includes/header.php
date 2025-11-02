@@ -120,25 +120,14 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
         // If maintenance is on, block public pages unless requester is admin by session (and in admin area) or allowed via flag/IP/auth page
         if ($maintenance && !(($isAdminBySession && $isAdminArea) || $ipAllowed || $isAdminAuthPage || ($isAdminBySession && $allowAdminPublicView))) {
-          // Render a simple maintenance notice and exit
-          http_response_code(503);
-          ?>
-          <!doctype html>
-          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/assets/css/public.css"></head><body>
-          <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
-            <div style="max-width:720px;padding:28px;border-radius:10px;background:linear-gradient(90deg,#ffd54f,#ffb300);box-shadow:0 8px 30px rgba(0,0,0,0.12);color:#111;">
-              <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:12px;">
-                <div style="width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,0.08);">
-                  <img src="/assets/images/hq-logo.jpeg" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
-                </div>
-                <h1 style="margin:0;font-size:1.6rem;">We'll be back soon</h1>
-              </div>
-              <p style="margin:0 0 12px;color:rgba(0,0,0,0.8);">Our site is currently undergoing scheduled maintenance. We're working to bring it back online as quickly as possible.</p>
-              <p style="margin:0;color:rgba(0,0,0,0.7);font-size:0.95rem">If you are an administrator and need access, log in via the admin area or contact support.</p>
-            </div>
-          </main>
-          </body></html>
-          <?php
+          // Include the public maintenance error page and exit
+          $err = __DIR__ . '/../errors/503.php';
+          if (file_exists($err)) {
+              include $err;
+          } else {
+              http_response_code(503);
+              echo "Service temporarily unavailable";
+          }
           exit;
         }
         // --- IP & MAC logging: insert a short access log for every public request ---
@@ -175,19 +164,20 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
             $q->execute([$mac]);
             $r = $q->fetch(PDO::FETCH_ASSOC);
-            if ($r && !empty($r['enabled'])) {
-              http_response_code(403);
-              echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
-              exit;
-            }
+      if ($r && !empty($r['enabled'])) {
+          // Include a standard 403 page when device is blocked
+          $err = __DIR__ . '/../errors/403.php';
+          if (file_exists($err)) { include $err; } else { http_response_code(403); echo "Access denied"; }
+          exit;
+        }
           }
 
           if (in_array($enforcement, ['ip','both'])) {
             $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
             $bq->execute([$remoteIp]);
             if ($bq->fetch()) {
-              http_response_code(403);
-              echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
+              $err = __DIR__ . '/../errors/403.php';
+              if (file_exists($err)) { include $err; } else { http_response_code(403); echo "Access denied"; }
               exit;
             }
           }
