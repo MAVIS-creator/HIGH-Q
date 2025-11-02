@@ -79,10 +79,17 @@ try {
         } else {
             // treat as local path (may be absolute or site-relative)
             $candidate = $pp;
-            // if starts with /HIGH-Q, try realpath relative to project root
-            if (strpos($candidate, '/HIGH-Q') === 0) {
+            // If the path is prefixed with the configured app path (e.g. /HIGH-Q) or is site-root-relative,
+            // map it to the project filesystem under the public/ folder so we can read the file.
+            $appPath = parse_url(app_url(), PHP_URL_PATH) ?: '';
+            if ($appPath && strpos($candidate, $appPath) === 0) {
+                // remove the appPath prefix and resolve relative to project root
+                $candidate = __DIR__ . '/../../' . ltrim(substr($candidate, strlen($appPath)), '/');
+            } elseif (strpos($candidate, '/') === 0) {
+                // site-root-relative paths (starting with '/') map to project root/public/
                 $candidate = __DIR__ . '/../../' . ltrim($candidate, '/');
             }
+
             if (file_exists($candidate)) {
                 $ext = pathinfo($candidate, PATHINFO_EXTENSION);
                 copy($candidate, $tmp . '/passport.' . $ext);
