@@ -453,12 +453,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
             } catch (Throwable $e) { /* ignore */ }
 
             $subject = $siteName . ' — Payment instructions for your registration';
-            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            // build link relative to public folder (best-effort)
-            $base = $proto . '://' . $host;
-            // Prefer app_url() so APP_URL or computed base includes any subdirectory
-            $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
+            // Prefer app_url() so APP_URL (from .env) or computed base includes any subdirectory.
+            // Fall back to a conservative $_SERVER-based construction when helper is not available.
+            if (function_exists('app_url')) {
+              $link = rtrim(app_url(''), '/') . '/public/payments_wait.php?ref=' . urlencode($ref);
+            } else {
+              $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+              $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+              $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+              $link = $proto . '://' . $host . $scriptDir . '/public/payments_wait.php?ref=' . urlencode($ref);
+            }
 
             // Branded HTML message
             $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
