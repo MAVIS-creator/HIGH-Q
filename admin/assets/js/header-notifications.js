@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await fetch('/HIGH-Q/admin/api/notifications.php', { credentials: 'same-origin' });
+            const res = await fetch((window.HQ_ADMIN_BASE || '') + '/api/notifications.php', { credentials: 'same-origin' });
             if (!res.ok) {
                 console.warn('Notifications endpoint returned HTTP', res.status);
                 return;
@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.className = 'notification-item ' + (n.is_read ? 'read' : '');
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
-                item.href = `/HIGH-Q/admin/${data.urls[n.type]}${n.id}`;
+                const u = (data.urls[n.type] || '').replace(/^\//, '');
+                item.href = (window.HQ_ADMIN_BASE || '') + '/' + u + n.id;
                 
                 const title = document.createElement('div');
                 title.className = 'notification-title';
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        await fetch('/HIGH-Q/admin/api/mark_read.php', {
+                        await fetch((window.HQ_ADMIN_BASE || '') + '/api/mark_read.php', {
                             method: 'POST',
                             body: formData,
                             credentials: 'same-origin'
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            return fetch('/HIGH-Q/admin/api/mark_read.php', {
+                            return fetch((window.HQ_ADMIN_BASE || '') + '/api/mark_read.php', {
                                 method: 'POST', 
                                 body: fd, 
                                 credentials: 'same-origin'

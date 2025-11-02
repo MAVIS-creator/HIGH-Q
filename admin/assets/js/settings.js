@@ -75,7 +75,7 @@
             var data = new FormData(this);
             var xhr = new XMLHttpRequest();
             // Submit settings to the dedicated JSON endpoint to ensure JSON-only responses
-            xhr.open('POST', '/HIGH-Q/admin/api/save-settings.php', true);
+            xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/api/save-settings.php', true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
             xhr.onload = function() {
@@ -137,7 +137,7 @@
             var xhr = new XMLHttpRequest();
             // For runScan use the dedicated JSON-only endpoint to avoid HTML output from page includes
             // Use dedicated JSON endpoint for runScan, otherwise post to the admin router so pages return JSON for AJAX
-            var endpoint = (action === 'runScan') ? '/HIGH-Q/admin/api/run-scan.php' : '/HIGH-Q/admin/index.php?pages=settings';
+            var endpoint = (action === 'runScan') ? (window.HQ_ADMIN_BASE || '') + '/api/run-scan.php' : (window.HQ_ADMIN_BASE || '') + '/index.php?pages=settings';
             xhr.open('POST', endpoint, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
