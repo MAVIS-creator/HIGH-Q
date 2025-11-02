@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 requirePermission('chat');
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 $threadId = intval($_GET['thread_id'] ?? 0);
