@@ -1034,7 +1034,7 @@ regConfirmForm.addEventListener('submit', async function(e){
       const amt = parseFloat(formValues.amount || 0);
       if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
       const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  const payload = await postAction((window.HQ_ADMIN_BASE || '') + '/pages/students.php?action=confirm_registration&id=' + encodeURIComponent(id), fd);
+  const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
   window.location = (window.HQ_ADMIN_BASE || '') + '/pages/students.php';
     }
   } catch (err) {
