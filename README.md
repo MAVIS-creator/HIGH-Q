@@ -295,95 +295,125 @@ HIGH-Q/
     └── ... (Composer dependencies)
 ```
 
-## Deploying under a subfolder (example: /HIGH-Q)
+## Deploying the app (domain root vs subfolder)
 
-Follow this short checklist when hosting the app under a subfolder. These are *suggested* changes — back up files before editing and test in a staging environment.
+This project can be hosted at the domain root (e.g. https://example.com) or inside a subfolder (e.g. https://example.com/HIGH-Q). Below are recommended steps for both cases. Back up files and test in staging before changing production configuration.
 
-1. Set APP_URL in `.env`
+1) Set APP_URL in `.env` (required)
 
-    - Edit `.env` and set the canonical URL including the subfolder, e.g.:
+   - If hosting at domain root, set:
 
-      ```env
-      APP_URL=https://example.com/HIGH-Q
-      ```
+     ```env
+     APP_URL=https://example.com
+     ```
 
-    - Also update `admin/.env` if present. This value is used by server helpers (`app_url()` / `admin_url()`) to build absolute links (emails, exports, etc.).
+   - If hosting in a subfolder, set (example):
 
-2. Backup `.htaccess` files
+     ```env
+     APP_URL=https://example.com/HIGH-Q
+     ```
 
-    - Always create backups before changing server config:
+   - Also update `admin/.env` if present. `APP_URL` is the canonical source of truth used by server helpers (`app_url()` / `admin_url()`) to build absolute links (emails, exports, etc.).
 
-      ```powershell
-      Copy-Item .htaccess .htaccess.bak -Force
-      Copy-Item admin\.htaccess admin\.htaccess.bak -Force
-      ```
+2) Backup `.htaccess` files
 
-3. Example `.htaccess` changes (manual review required)
+   - Always create backups before changing server config:
 
-    - Root `.htaccess` (adjust `RewriteBase` to your subfolder):
+     ```powershell
+     Copy-Item .htaccess .htaccess.bak -Force
+     Copy-Item admin\.htaccess admin\.htaccess.bak -Force
+     ```
 
-      ```apache
-      # Root .htaccess — set RewriteBase to your subfolder
-      RewriteEngine On
-      RewriteBase /HIGH-Q/
+3) `.htaccess` examples (manual review required)
 
-      RewriteCond %{REQUEST_FILENAME} !-f
-      RewriteCond %{REQUEST_FILENAME} !-d
-      RewriteRule ^(.*)$ index.php [L,QSA]
+   - If you host at the domain root (recommended), set `RewriteBase /` and use root-relative ErrorDocument paths. Example root `.htaccess`:
 
-      ErrorDocument 400 /HIGH-Q/public/errors/400.php
-      ErrorDocument 401 /HIGH-Q/public/errors/401.php
-      ErrorDocument 403 /HIGH-Q/public/errors/403.php
-      ErrorDocument 404 /HIGH-Q/public/errors/404.php
-      ErrorDocument 500 /HIGH-Q/public/errors/500.php
-      ```
+     ```apache
+     # Root .htaccess for domain root installs
+     RewriteEngine On
+     RewriteBase /
 
-    - `admin/.htaccess` (protect admin and set admin base):
+     RewriteCond %{REQUEST_FILENAME} !-f
+     RewriteCond %{REQUEST_FILENAME} !-d
+     RewriteRule ^(.*)$ index.php [L,QSA]
 
-      ```apache
-      # admin/.htaccess — adjust RewriteBase to the admin folder
-      AuthType Basic
-      AuthName "Admin Area"
-      AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
-      Require valid-user
+     ErrorDocument 400 /public/errors/400.php
+     ErrorDocument 401 /public/errors/401.php
+     ErrorDocument 403 /public/errors/403.php
+     ErrorDocument 404 /public/errors/404.php
+     ErrorDocument 500 /public/errors/500.php
+     ```
 
-      RewriteEngine On
-      RewriteBase /HIGH-Q/admin/
+   - If you host in a subfolder, set `RewriteBase` to the subfolder and adjust ErrorDocument paths to include the subfolder. Example for `/HIGH-Q`:
 
-      ErrorDocument 400 /HIGH-Q/admin/errors/400.php
-      ErrorDocument 401 /HIGH-Q/admin/errors/401.php
-      ErrorDocument 403 /HIGH-Q/admin/errors/403.php
-      ErrorDocument 404 /HIGH-Q/admin/errors/404.php
-      ErrorDocument 500 /HIGH-Q/admin/errors/500.php
-      ```
+     ```apache
+     # Root .htaccess for subfolder installs (example /HIGH-Q)
+     RewriteEngine On
+     RewriteBase /HIGH-Q/
 
-    - Note: adapt filesystem paths (AuthUserFile) and the `RewriteBase` value to match your host. If you host at domain root, set `RewriteBase /` and adjust ErrorDocument paths accordingly.
+     RewriteCond %{REQUEST_FILENAME} !-f
+     RewriteCond %{REQUEST_FILENAME} !-d
+     RewriteRule ^(.*)$ index.php [L,QSA]
 
-4. File permissions and services
+     ErrorDocument 400 /HIGH-Q/public/errors/400.php
+     ErrorDocument 401 /HIGH-Q/public/errors/401.php
+     ErrorDocument 403 /HIGH-Q/public/errors/403.php
+     ErrorDocument 404 /HIGH-Q/public/errors/404.php
+     ErrorDocument 500 /HIGH-Q/public/errors/500.php
+     ```
 
-    - Ensure `public/uploads/` and `storage/` are writable by the webserver user.
-    - Restart Apache/PHP-FPM after edits (XAMPP: restart Apache via control panel).
+   - Admin area `admin/.htaccess` (adjust `RewriteBase` similarly). Example (subfolder case shown):
 
-5. Smoke tests
+     ```apache
+     AuthType Basic
+     AuthName "Admin Area"
+     AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+     Require valid-user
 
-    - Visit: `https://example.com/HIGH-Q/index.php`
-    - Open an asset: `https://example.com/HIGH-Q/assets/images/hq-logo.jpeg`
-    - Test admin: `https://example.com/HIGH-Q/admin/login.php`
-    - Use browser devtools to confirm admin AJAX endpoints return 200/JSON.
+     RewriteEngine On
+     RewriteBase /HIGH-Q/admin/
 
-6. Rollback
+     ErrorDocument 400 /HIGH-Q/admin/errors/400.php
+     ErrorDocument 401 /HIGH-Q/admin/errors/401.php
+     ErrorDocument 403 /HIGH-Q/admin/errors/403.php
+     ErrorDocument 404 /HIGH-Q/admin/errors/404.php
+     ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+     ```
 
-    - Restore backups if needed:
+   - Note: adapt `AuthUserFile` and `RewriteBase` values to match your host. If hosting at domain root, set `RewriteBase /` and remove the subfolder prefix from ErrorDocument paths.
 
-      ```powershell
-      Copy-Item .htaccess.bak .htaccess -Force
-      Copy-Item admin\.htaccess.bak admin\.htaccess -Force
-      ```
+4) File permissions and services
+
+   - Ensure `public/uploads/` and `storage/` are writable by the webserver user.
+   - Restart Apache/PHP-FPM after edits (XAMPP: restart Apache via control panel).
+
+5) Smoke tests
+
+   - If root install:
+     - Visit: `https://example.com/index.php`
+     - Asset: `https://example.com/assets/images/hq-logo.jpeg`
+     - Admin: `https://example.com/admin/login.php`
+
+   - If subfolder install (example `/HIGH-Q`):
+     - Visit: `https://example.com/HIGH-Q/index.php`
+     - Asset: `https://example.com/HIGH-Q/assets/images/hq-logo.jpeg`
+     - Admin: `https://example.com/HIGH-Q/admin/login.php`
+
+   - Use browser devtools to confirm admin AJAX endpoints return 200/JSON.
+
+6) Rollback
+
+   - Restore backups if needed:
+
+     ```powershell
+     Copy-Item .htaccess.bak .htaccess -Force
+     Copy-Item admin\.htaccess.bak admin\.htaccess -Force
+     ```
 
 Notes
 
-- Prefer setting `APP_URL` over mass editing `.htaccess` because server-side helpers will generate correct absolute links (emails, export ZIPs, etc.).
-- Do not edit log files or historical mail dumps; they are archival and may contain past absolute links.
+- Prefer setting `APP_URL` correctly rather than mass-editing files: server-side helpers (`app_url()`/`admin_url()`) will then generate correct absolute links used in emails and exports.
+- Do not edit log files or historical mail dumps — they are archival and may contain past absolute links.
 
-If you want, I can add these suggestions as a dedicated `docs/DEPLOY.md` file or apply a preview diff to your `.htaccess` files (I will back them up first). Let me know which you prefer.
+If you'd like, I can add these suggestions as a dedicated `docs/DEPLOY.md` file or prepare preview diffs for your `.htaccess` files (I will back them up first). Let me know which you prefer.
 
