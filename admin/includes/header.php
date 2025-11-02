@@ -223,11 +223,16 @@ if (!headers_sent()) {
             if (!empty($mac) && in_array($enforcement, ['mac','both'])) {
                 $q = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE mac = ? LIMIT 1');
                 $q->execute([$mac]);
-                $r = $q->fetch(PDO::FETCH_ASSOC);
-                if ($r && !empty($r['enabled'])) {
-                    // Use the admin 403 template when device is blocked
-                    $err = __DIR__ . '/../errors/403.php';
-                    if (file_exists($err)) { include $err; } else { http_response_code(403); echo "Access denied (MAC)"; }
+                    if ($r && !empty($r['enabled'])) {
+                        http_response_code(403);
+                        // Use a minimal admin error page (standalone) to avoid recursion
+                        $err = __DIR__ . '/../errors/403.php';
+                        if (file_exists($err)) {
+                            include $err;
+                            exit;
+                        }
+                        echo "<h1>Access denied</h1><p>Your device is blocked (MAC).</p>";
+                        exit;
                     exit;
                 }
             }
@@ -237,9 +242,11 @@ if (!headers_sent()) {
                 try {
                     $bq = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
                     $bq->execute([$remoteIp]);
-                    if ($bq->fetch()) {
-                        $err = __DIR__ . '/../errors/403.php';
-                        if (file_exists($err)) { include $err; } else { http_response_code(403); echo "Access denied (IP)"; }
+                            http_response_code(403);
+                            $err = __DIR__ . '/../errors/403.php';
+                            if (file_exists($err)) { include $err; exit; }
+                            echo "<h1>Access denied</h1><p>Your IP address is blocked.</p>";
+                            exit;
                         exit;
                     }
                 } catch (Throwable $e) { /* ignore */ }

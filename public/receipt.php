@@ -2,10 +2,18 @@
 // public/receipt.php - simple colored receipt page
 require_once __DIR__ . '/config/db.php';
 $ref = $_GET['ref'] ?? '';
-if (!$ref) { http_response_code(400); echo "Missing reference"; exit; }
+if (!$ref) {
+  $err = __DIR__ . '/errors/400.php';
+  if (file_exists($err)) { include $err; } else { http_response_code(400); echo "Missing reference"; }
+  exit;
+}
 $stmt = $pdo->prepare('SELECT p.*, sr.first_name, sr.last_name, sr.email AS reg_email, sr.passport_path FROM payments p LEFT JOIN student_registrations sr ON sr.id = p.student_id WHERE p.reference = ? LIMIT 1');
 $stmt->execute([$ref]); $p = $stmt->fetch(PDO::FETCH_ASSOC);
-if (!$p) { http_response_code(404); echo "Receipt not found"; exit; }
+if (!$p) {
+  $err = __DIR__ . '/errors/404.php';
+  if (file_exists($err)) { include $err; } else { http_response_code(404); echo "Receipt not found"; }
+  exit;
+}
 ?>
 <!doctype html>
 <html>

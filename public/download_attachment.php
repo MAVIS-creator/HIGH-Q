@@ -1,14 +1,19 @@
 <?php
 // public/download_attachment.php - secure download for chat attachments (serves files from uploads/chat)
 $file = $_GET['file'] ?? '';
-if (!$file) { http_response_code(400); echo 'Missing file'; exit; }
+if (!$file) {
+    $err = __DIR__ . '/errors/400.php';
+    if (file_exists($err)) { include $err; } else { http_response_code(400); echo 'Missing file'; }
+    exit;
+}
 
 $baseDir = __DIR__ . '/uploads/chat/';
 $path = realpath($baseDir . $file);
 // Prevent path traversal
 if ($path === false || strpos($path, realpath($baseDir)) !== 0 || !is_file($path)) {
-    http_response_code(404);
-    echo 'Not found'; exit;
+    $err = __DIR__ . '/errors/404.php';
+    if (file_exists($err)) { include $err; } else { http_response_code(404); echo 'Not found'; }
+    exit;
 }
 
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
