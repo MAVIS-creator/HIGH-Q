@@ -461,7 +461,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const BASE_URL = "<?= rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') ?>";
+    // Prefer admin_url() when available (respects .env ADMIN_URL). Fall back to script dirname.
+    const BASE_URL = <?= json_encode( (function(){
+      // inline PHP: resolve JS string from server helpers if present
+      try {
+        if (function_exists('admin_url')) return rtrim(admin_url(''), '/');
+      } catch (Throwable $_) {}
+      return rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    })() ) ?>;
 
     const tutorModal = document.getElementById('tutorModal');
     const overlay = document.getElementById('modalOverlay');
