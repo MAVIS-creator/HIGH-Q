@@ -1,5 +1,25 @@
 <?php
 http_response_code(500);
+?><!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>500 Server Error - Admin</title>
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <style>body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;margin:0;padding:40px} .center{max-width:820px;margin:40px auto;text-align:center} .code{font-size:4rem;color:#d33;font-weight:700} .msg{font-size:1.05rem;color:#333}</style>
+</head>
+<body>
+  <div class="center">
+    <div class="code">500</div>
+    <h1>Server Error</h1>
+    <p class="msg">An unexpected error occurred. Try again later.</p>
+    <p><a href="/admin/pages/index.php">Return to Admin Dashboard</a></p>
+  </div>
+</body>
+</html>
+<?php
+http_response_code(500);
 ?>
 <!DOCTYPE html>
 <html lang="en">
