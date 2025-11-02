@@ -293,6 +293,8 @@ HIGH-Q/
 │   ├── set_site_bank.php
 └── vendor/
     └── ... (Composer dependencies)
+├── docs/
+│   └── DEPLOY.md
 
 ├── docs/
 │   └── DEPLOY.md
