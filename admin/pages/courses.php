@@ -234,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
   <div class="page-actions" style="display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-bottom:12px;">
     <button id="newCourseBtn" class="header-cta">New Course</button>
-  <form method="post" action="?action=bulk_convert_icons" style="display:inline">
+  <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
       <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
       <button type="submit" class="header-cta" style="background:#f7c948;color:#222">Bulk Convert Icons</button>
     </form>
@@ -274,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
           <h3><?= htmlspecialchars($c['title']) ?></h3>
           <small><?= htmlspecialchars($c['duration'] ?: 'Flexible') ?></small>
         </div>
-  <form method="post" action="?action=delete&id=<?= $c['id'] ?>" class="delete-form">
+  <form method="post" action="index.php?pages=courses&action=delete&id=<?= $c['id'] ?>" class="delete-form">
           <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
           <button type="submit" class="btn-delete">Delete</button>
         </form>
@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       <span class="modal-close" id="courseModalClose"><i class='bx bx-x'></i></span>
       <h3 id="courseModalTitle">New Course</h3>
 
-  <form id="courseForm" method="post" action="<?= htmlspecialchars(admin_url('pages/courses.php?action=create')) ?>">
+  <form id="courseForm" method="post" action="index.php?pages=courses&action=create">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="form-row compact-row">
           <div class="form-group">
