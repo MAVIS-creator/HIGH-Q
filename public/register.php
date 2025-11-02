@@ -5,8 +5,6 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
 $cfg = require __DIR__ . '/../config/payments.php';
-// Determine whether Paystack is actually configured (placeholder keys contain 'xxx')
-$paystackEnabled = !empty($cfg['paystack']['public']) && strpos($cfg['paystack']['public'], 'xxx') === false;
 
 $errors = [];
 $success = '';
@@ -137,24 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// Determine which registration type was selected (regular/postutme)
 		$registration_type = isset($_POST['registration_type']) && $_POST['registration_type'] === 'postutme' ? 'postutme' : 'regular';
 
-		// Basic server-side sanity checks to avoid spoofed flows
-		if ($registration_type === 'postutme') {
-			// require basic identity fields
-			if (trim($_POST['first_name_post'] ?? '') === '' || trim($_POST['surname'] ?? '') === '') {
-				$errors[] = 'First name and surname are required for Post-UTME registration.';
-			}
-			// require at least one JAMB identifier (reg number or score)
-			if (trim($_POST['jamb_registration_number'] ?? '') === '' && trim((string)($_POST['jamb_score'] ?? '')) === '') {
-				$errors[] = 'Provide a JAMB registration number or a JAMB score for Post-UTME registration.';
-			}
-		}
-
 		// If Post-UTME registration, handle the separate insert + payment logic and redirect to payment wait
 		if ($registration_type === 'postutme') {
-				// IMPORTANT: Post-UTME applicants MUST pay the compulsory form fee immediately.
-				// Ignore any admin "verify_registration_before_payment" toggle for Post-UTME flows.
-				// This variable documents the intent and can be used by other logic if needed.
-				$forceImmediatePostPayment = true;
 			// Read a subset of Post-UTME fields (best-effort sanitization)
 			$institution = trim($_POST['institution'] ?? '') ?: null;
 			$first_name_post = trim($_POST['first_name_post'] ?? '') ?: null;
@@ -173,68 +155,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$jamb_registration_number = trim($_POST['jamb_registration_number'] ?? '') ?: null;
 			$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null;
-			// Build jamb_subjects array and a human-friendly jamb_subjects_text from the four subject/score inputs
-			$jamb_subjects = [];
-			$jamb_pairs = [];
-			for ($j=1;$j<=4;$j++) {
-				$sj = trim($_POST['jamb_subj_' . $j] ?? '');
-				$sc = trim($_POST['jamb_score_' . $j] ?? '');
-				if ($sj !== '') {
-					$jamb_subjects[] = ['subject' => $sj, 'score' => ($sc !== '' ? intval($sc) : null)];
-					$jamb_pairs[] = $sj . ($sc !== '' ? ' (' . $sc . ')' : '');
-				}
+			$jamb_subjects_raw = trim($_POST['jamb_subjects'] ?? '');
+			$jamb_subjects = null;
+			if ($jamb_subjects_raw !== '') {
+				$decoded = json_decode($jamb_subjects_raw, true);
+				if (is_array($decoded)) $jamb_subjects = $decoded; else $jamb_subjects = [$jamb_subjects_raw];
 			}
-			$jamb_subjects_text = !empty($jamb_pairs) ? implode('; ', $jamb_pairs) : null;
-
-			// ----------------------
-			// Server-side validation for Post-UTME specific fields
-			// Enforce JAMB score ranges (0-100) and require English + three other subjects
-			// Also require WAEC presence of English Language, Mathematics, Civic Education
-			// These errors will be pushed into $errors and abort registration if present
-			// ----------------------
-			if ($jamb_score !== null && ($jamb_score < 0 || $jamb_score > 100)) {
-				$errors[] = 'JAMB score must be between 0 and 100.';
-			}
-
-			// validate individual JAMB subject scores and subject presence
-			for ($jsi = 1; $jsi <= 4; $jsi++) {
-				$sub = trim($_POST['jamb_subj_' . $jsi] ?? '');
-				$scRaw = trim($_POST['jamb_score_' . $jsi] ?? '');
-				if ($scRaw !== '') {
-					if (!is_numeric($scRaw) || intval($scRaw) < 0 || intval($scRaw) > 100) {
-						$errors[] = 'JAMB subject ' . $jsi . ' score must be a number between 0 and 100.';
-					}
-				}
-				// require three other subjects in addition to English (subj 2..4)
-				if ($jsi > 1 && $sub === '') {
-					$errors[] = 'Please provide three other JAMB subjects in addition to English.';
-				}
-			}
-
-			// ensure subject 1 is English
-			$sub1 = trim($_POST['jamb_subj_1'] ?? '');
-			if ($sub1 === '' || !preg_match('/eng/i', $sub1)) {
-				$errors[] = 'JAMB Subject 1 must be English.';
-			}
-
-			// WAEC presence checks (from $olevel_results built earlier)
-			$requiredWaec = [
-				'english' => 'English Language',
-				'mathematics' => 'Mathematics',
-				'civic' => 'Civic Education'
-			];
-			$foundWaec = ['english' => false, 'mathematics' => false, 'civic' => false];
-			foreach (!empty($olevel_results) ? $olevel_results : [] as $r) {
-				$s = strtolower(trim($r['subject'] ?? ''));
-				if ($s === '') continue;
-				if (preg_match('/eng/i', $s)) $foundWaec['english'] = true;
-				if (preg_match('/math|mth/i', $s)) $foundWaec['mathematics'] = true;
-				if (preg_match('/civic/i', $s)) $foundWaec['civic'] = true;
-			}
-			foreach ($foundWaec as $k => $v) {
-				if (!$v) $errors[] = $requiredWaec[$k] . " is required in O'Level results.";
-			}
-															}
 
 			$course_first_choice = trim($_POST['course_first_choice'] ?? '') ?: null;
 			$course_second_choice = trim($_POST['course_second_choice'] ?? '') ?: null;
@@ -272,28 +198,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$service_charge = round(mt_rand(0, 16754) / 100.0, 2);
 			$total_amount = $post_form_fee + $post_tutor_fee + $service_charge;
 
-			// Additional Post-UTME optional fields
-			$mode_of_entry = trim($_POST['mode_of_entry'] ?? '') ?: null;
-			$marital_status = trim($_POST['marital_status'] ?? '') ?: null;
-			$disability = trim($_POST['disability'] ?? '') ?: null;
-			$waec_token = trim($_POST['waec_token'] ?? '') ?: null;
-			$waec_serial = trim($_POST['waec_serial'] ?? '') ?: null;
-			$sponsor_name = trim($_POST['sponsor_name'] ?? '') ?: null;
-			$sponsor_address = trim($_POST['sponsor_address'] ?? '') ?: null;
-			$sponsor_email = trim($_POST['sponsor_email'] ?? '') ?: null;
-			$sponsor_phone = trim($_POST['sponsor_phone'] ?? '') ?: null;
-			$sponsor_relationship = trim($_POST['sponsor_relationship'] ?? '') ?: null;
-			$next_of_kin_name = trim($_POST['next_of_kin_name'] ?? '') ?: null;
-			$next_of_kin_address = trim($_POST['next_of_kin_address'] ?? '') ?: null;
-			$next_of_kin_email = trim($_POST['next_of_kin_email'] ?? '') ?: null;
-			$next_of_kin_phone = trim($_POST['next_of_kin_phone'] ?? '') ?: null;
-			$next_of_kin_relationship = trim($_POST['next_of_kin_relationship'] ?? '') ?: null;
-
-
 			try {
 				$pdo->beginTransaction();
 
-				$insertSql = 'INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, address, parent_phone, email, nin_number, state_of_origin, local_government, place_of_birth, nationality, religion, mode_of_entry, marital_status, disability, jamb_registration_number, jamb_score, jamb_subjects, jamb_subjects_text, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, father_email, father_occupation, mother_name, mother_phone, mother_occupation, primary_school, primary_year_ended, secondary_school, secondary_year_ended, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, waec_token, waec_serial, sponsor_name, sponsor_address, sponsor_email, sponsor_phone, sponsor_relationship, next_of_kin_name, next_of_kin_address, next_of_kin_email, next_of_kin_phone, next_of_kin_relationship, passport_photo, payment_status, form_fee_paid, tutor_fee_paid, created_at) VALUES (NULL, :status, :institution, :first_name, :surname, :other_name, :gender, :address, :parent_phone, :email, :nin_number, :state_of_origin, :local_government, :place_of_birth, :nationality, :religion, :mode_of_entry, :marital_status, :disability, :jamb_registration_number, :jamb_score, :jamb_subjects, :jamb_subjects_text, :course_first_choice, :course_second_choice, :institution_first_choice, :father_name, :father_phone, :father_email, :father_occupation, :mother_name, :mother_phone, :mother_occupation, :primary_school, :primary_year_ended, :secondary_school, :secondary_year_ended, :exam_type, :candidate_name, :exam_number, :exam_year_month, :olevel_results, :waec_token, :waec_serial, :sponsor_name, :sponsor_address, :sponsor_email, :sponsor_phone, :sponsor_relationship, :next_of_kin_name, :next_of_kin_address, :next_of_kin_email, :next_of_kin_phone, :next_of_kin_relationship, :passport_photo, :payment_status, :form_fee_paid, :tutor_fee_paid, NOW())';
+				$insertSql = 'INSERT INTO post_utme_registrations (user_id, status, institution, first_name, surname, other_name, gender, address, parent_phone, email, nin_number, state_of_origin, local_government, place_of_birth, nationality, religion, mode_of_entry, jamb_registration_number, jamb_score, jamb_subjects, course_first_choice, course_second_choice, institution_first_choice, father_name, father_phone, father_email, father_occupation, mother_name, mother_phone, mother_occupation, primary_school, primary_year_ended, secondary_school, secondary_year_ended, exam_type, candidate_name, exam_number, exam_year_month, olevel_results, passport_photo, payment_status, form_fee_paid, tutor_fee_paid, created_at) VALUES (NULL, :status, :institution, :first_name, :surname, :other_name, :gender, :address, :parent_phone, :email, :nin_number, :state_of_origin, :local_government, :place_of_birth, :nationality, :religion, :mode_of_entry, :jamb_registration_number, :jamb_score, :jamb_subjects, :course_first_choice, :course_second_choice, :institution_first_choice, :father_name, :father_phone, :father_email, :father_occupation, :mother_name, :mother_phone, :mother_occupation, :primary_school, :primary_year_ended, :secondary_school, :secondary_year_ended, :exam_type, :candidate_name, :exam_number, :exam_year_month, :olevel_results, :passport_photo, :payment_status, :form_fee_paid, :tutor_fee_paid, NOW())';
 
 				$stmtIns = $pdo->prepare($insertSql);
 				$stmtIns->execute([
@@ -312,13 +220,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					':place_of_birth' => $place_of_birth,
 					':nationality' => $nationality,
 					':religion' => $religion,
-					':mode_of_entry' => $mode_of_entry,
-					':marital_status' => $marital_status,
-					':disability' => $disability,
+					':mode_of_entry' => null,
 					':jamb_registration_number' => $jamb_registration_number,
 					':jamb_score' => $jamb_score,
 					':jamb_subjects' => $jamb_subjects ? json_encode($jamb_subjects, JSON_UNESCAPED_UNICODE) : null,
-					':jamb_subjects_text' => $jamb_subjects_text,
 					':course_first_choice' => $course_first_choice,
 					':course_second_choice' => $course_second_choice,
 					':institution_first_choice' => $institution_first_choice,
@@ -338,18 +243,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					':exam_number' => $exam_number,
 					':exam_year_month' => $exam_year_month,
 					':olevel_results' => !empty($olevel_results) ? json_encode($olevel_results, JSON_UNESCAPED_UNICODE) : null,
-					':waec_token' => $waec_token,
-					':waec_serial' => $waec_serial,
-					':sponsor_name' => $sponsor_name,
-					':sponsor_address' => $sponsor_address,
-					':sponsor_email' => $sponsor_email,
-					':sponsor_phone' => $sponsor_phone,
-					':sponsor_relationship' => $sponsor_relationship,
-					':next_of_kin_name' => $next_of_kin_name,
-					':next_of_kin_address' => $next_of_kin_address,
-					':next_of_kin_email' => $next_of_kin_email,
-					':next_of_kin_phone' => $next_of_kin_phone,
-					':next_of_kin_relationship' => $next_of_kin_relationship,
 					':passport_photo' => null,
 					':payment_status' => 'pending',
 					':form_fee_paid' => 0,
@@ -368,37 +261,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						$fname = 'postutme_passport_' . $newId . '_' . time() . '.' . $ext;
 						$dst = $dstDir . '/' . $fname;
 						if (move_uploaded_file($u['tmp_name'], $dst)) {
-							// Prefer app_url() when present so generated URLs respect .env APP_URL.
-							if (function_exists('app_url')) {
-								$base = rtrim(app_url(''), '/');
-								$fullUrl = $base . '/uploads/passports/' . $fname;
-							} else {
-								$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-								$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-								$baseUrl = rtrim($proto . '://' . $host, '/');
-								// Preserve any subdirectory the app is installed under by using SCRIPT_NAME
-								$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-								$fullUrl = $baseUrl . $scriptDir . '/uploads/passports/' . $fname;
-							}
+							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+							$baseUrl = rtrim($proto . '://' . $host, '/');
+							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
+							$fullUrl = $baseUrl . $publicRel;
 							$upd = $pdo->prepare('UPDATE post_utme_registrations SET passport_photo = ? WHERE id = ?');
 							$upd->execute([$fullUrl, $newId]);
 						}
 					}
 				}
 
-				// create a payment placeholder (include metadata for accounting clarity)
+				// create a payment placeholder
 				$reference = generatePaymentReference('PTU');
-				$paymentMetadata = json_encode([
-					'components' => [
-						'post_form_fee' => number_format((float)$post_form_fee, 2, '.', ''),
-						'tutor_fee' => number_format((float)$post_tutor_fee, 2, '.', ''),
-						'service_charge' => number_format((float)$service_charge, 2, '.', ''),
-					],
-					'total' => number_format((float)$total_amount, 2, '.', ''),
-					'registration_type' => 'postutme'
-				], JSON_UNESCAPED_SLASHES);
-				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, ?, "postutme")');
-				$insP->execute([$total_amount, 'bank', $reference, $paymentMetadata, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
+				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, "postutme")');
+				$insP->execute([$total_amount, 'bank', $reference, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
 				$paymentId = $pdo->lastInsertId();
 
 				$pdo->commit();
@@ -465,17 +342,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$dst = $dstDir . '/' . $fname;
 					if (move_uploaded_file($u['tmp_name'], $dst)) {
 							// store a full absolute URL so admin views will render correctly when hosted
-							if (function_exists('app_url')) {
-								$base = rtrim(app_url(''), '/');
-								$fullUrl = $base . '/uploads/passports/' . $fname;
-							} else {
-								$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-								$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-								$baseUrl = rtrim($proto . '://' . $host, '/');
-								// Preserve any subdirectory the app is installed under by using SCRIPT_NAME
-								$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-								$fullUrl = $baseUrl . $scriptDir . '/uploads/passports/' . $fname;
-							}
+							$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+							$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+							$baseUrl = rtrim($proto . '://' . $host, '/');
+							$publicRel = '/HIGH-Q/public/uploads/passports/' . $fname;
+							$fullUrl = $baseUrl . $publicRel;
 							$upd = $pdo->prepare('UPDATE student_registrations SET passport_path = ? WHERE id = ?');
 							$upd->execute([$fullUrl, $registrationId]);
 					}
@@ -577,6 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$errors[] = 'Failed to register: ' . $e->getMessage();
 		}
 	}
+}
 
 // Render a simple form when GET or on errors
 $csrf = generateToken('signup_form');
@@ -690,203 +562,154 @@ $csrf = generateToken('signup_form');
 													</script>
 													<?php unset($_SESSION['registration_pending_id']); ?>
 												<?php else: ?>
-													<!-- Choice screen -->
-													<div class="choice-container" style="margin:12px 0;display:flex;gap:12px;align-items:center;">
-														<div style="flex:1">
-															<label style="font-weight:600;display:block;margin-bottom:6px">Select Registration Type</label>
-															<div>
-																<button type="button" id="chooseRegular" class="btn" style="background:#fff;border:1px solid #ddd;margin-right:8px">Regular Admission</button>
-																<button type="button" id="choosePost" class="btn" style="background:#fff;border:1px solid #ddd">Post-UTME Admission</button>
-															</div>
-															<p style="color:#666;margin-top:8px;font-size:13px">Choose the registration flow that applies to you.</p>
-														</div>
+													<form method="post" enctype="multipart/form-data">
+													<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+													<!-- client_total is set by JS to allow server-side re-check of the UI-calculated total -->
+													<input type="hidden" name="client_total" id="client_total_input" value="">
+													<input type="hidden" name="method" id="method_input" value="bank">
+													<input type="hidden" name="registration_type" id="registration_type" value="regular">
+													<div style="margin:12px 0;display:flex;gap:8px;align-items:center;">
+														<label style="font-weight:600;margin-right:8px">Registration type:</label>
+														<button type="button" id="regTypeRegular" class="btn" style="background:#fff;border:1px solid #ddd">Regular</button>
+														<button type="button" id="regTypePost" class="btn" style="background:#fff;border:1px solid #ddd">Post-UTME</button>
+														<span style="color:#666;margin-left:8px;font-size:13px">Choose the registration form to fill</span>
+													</div>
+													<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
+													<div class="section-body">
+																									<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
+																									<div class="form-row">
+																										<label>Passport Photo (passport-size, face visible)</label>
+																										<div class="hq-file-input">
+																											<button type="button" class="btn">Choose file</button>
+																											<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
+																											<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																										</div>
+
+																										<!-- Post-UTME specific fields (hidden by default) -->
+																										<div id="postUtmeFields" style="display:none;margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px solid #f0f0f0">
+																											<h4 class="section-title"><i class="bx bxs-book"></i> Post-UTME Registration Details</h4>
+																											<div class="form-row"><label>Name of Institution</label><input type="text" name="institution" placeholder="Name of Institution where you're applying" value="<?= htmlspecialchars($_POST['institution'] ?? '') ?>"></div>
+																											<div class="form-row post-passport-row" style="display:none"><label>Passport Photo (Post-UTME applicants)</label>
+																												<div class="hq-file-input post-passport-input">
+																													<button type="button" class="btn">Choose file</button>
+																													<input type="file" name="passport" id="passport_input_post" accept="image/*" style="display:none">
+																													<span id="passport_chosen_post" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																												</div>
+																											</div>
+																											<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
+																											<div class="form-row"><label>Other Name</label><input type="text" name="other_name" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
+																											<div class="form-row"><label>Gender</label><select name="post_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
+																											<div class="form-row"><label>Address</label><textarea name="address"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea></div>
+																											<div class="form-row form-inline"><div><label>Date of Birth</label><input type="date" name="date_of_birth_post" value="<?= htmlspecialchars($_POST['date_of_birth_post'] ?? '') ?>"></div><div><label>Parent's Phone</label><input type="text" name="parent_phone" value="<?= htmlspecialchars($_POST['parent_phone'] ?? '') ?>"></div></div>
+																											<div class="form-row"><label>Email Address</label><input type="email" name="email_post" value="<?= htmlspecialchars($_POST['email_post'] ?? '') ?>"></div>
+																											<div class="form-row"><label>NIN Number</label><input type="text" name="nin_number" value="<?= htmlspecialchars($_POST['nin_number'] ?? '') ?>"></div>
+																											<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="state_of_origin" value="<?= htmlspecialchars($_POST['state_of_origin'] ?? '') ?>"></div><div><label>Local Government</label><input type="text" name="local_government" value="<?= htmlspecialchars($_POST['local_government'] ?? '') ?>"></div></div>
+																											<div class="form-row"><label>Place of Birth</label><input type="text" name="place_of_birth" value="<?= htmlspecialchars($_POST['place_of_birth'] ?? '') ?>"></div>
+																											<div class="form-row form-inline"><div><label>Nationality</label><input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>"></div><div><label>Religion</label><input type="text" name="religion" value="<?= htmlspecialchars($_POST['religion'] ?? '') ?>"></div></div>
+																											<hr>
+																											<h5>JAMB Details</h5>
+																											<div class="form-row"><label>JAMB registration number</label><input type="text" name="jamb_registration_number" value="<?= htmlspecialchars($_POST['jamb_registration_number'] ?? '') ?>"></div>
+																											<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="jamb_score" value="<?= htmlspecialchars($_POST['jamb_score'] ?? '') ?>"></div><div><label>Subjects (JSON)</label><input type="text" name="jamb_subjects" placeholder='[{"subject":"ENG","score":70},...]' value="<?= htmlspecialchars($_POST['jamb_subjects'] ?? '') ?>"></div></div>
+																											<hr>
+																											<h5>Course & Institution Choices</h5>
+																											<div class="form-row form-inline"><div><label>First choice</label><input type="text" name="course_first_choice" value="<?= htmlspecialchars($_POST['course_first_choice'] ?? '') ?>"></div><div><label>Second choice</label><input type="text" name="course_second_choice" value="<?= htmlspecialchars($_POST['course_second_choice'] ?? '') ?>"></div></div>
+																											<div class="form-row"><label>Institution first choice</label><input type="text" name="institution_first_choice" value="<?= htmlspecialchars($_POST['institution_first_choice'] ?? '') ?>"></div>
+																											<hr>
+																											<h5>Parent Details</h5>
+																											<div class="form-row form-inline"><div><label>Father's name</label><input type="text" name="father_name" value="<?= htmlspecialchars($_POST['father_name'] ?? '') ?>"></div><div><label>Father's phone</label><input type="text" name="father_phone" value="<?= htmlspecialchars($_POST['father_phone'] ?? '') ?>"></div></div>
+																											<div class="form-row form-inline"><div><label>Mother's name</label><input type="text" name="mother_name" value="<?= htmlspecialchars($_POST['mother_name'] ?? '') ?>"></div><div><label>Mother's phone</label><input type="text" name="mother_phone" value="<?= htmlspecialchars($_POST['mother_phone'] ?? '') ?>"></div></div>
+																											<hr>
+																											<h5>O'Level (Enter up to 8 subjects — compulsory first)</h5>
+																											<?php for ($i=1;$i<=8;$i++): ?>
+																											<div class="form-row form-inline"><div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div><div><label>Grade <?= $i ?></label><input type="text" name="olevel_grade_<?= $i ?>" value="<?= htmlspecialchars($_POST['olevel_grade_' . $i] ?? '') ?>"></div></div>
+																											<?php endfor; ?>
+																											<hr>
+																											<h5>Sponsor & Next of kin</h5>
+																											<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
+																											<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
+																											<div style="margin-top:10px;"><label><input type="checkbox" name="post_tutor_fee" value="1" <?= !empty($_POST['post_tutor_fee']) ? 'checked' : '' ?>> Add optional tutor fee (₦8,000)</label></div>
+																											<p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000. A small service charge (≤ ₦167.54) will be added at checkout.</p>
+																										</div>
+																									</div>
+																									<div id="regularFields">
+																										<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
+																										<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
+																										<div class="form-row">
+																											<label>Gender</label>
+																											<select name="gender">
+																												<option value="">Prefer not to say</option>
+																												<option value="male" <?= (isset($gender) && $gender === 'male') ? 'selected' : '' ?>>Male</option>
+																												<option value="female" <?= (isset($gender) && $gender === 'female') ? 'selected' : '' ?>>Female</option>
+																												<option value="other" <?= (isset($gender) && $gender === 'other') ? 'selected' : '' ?>>Other</option>
+																											</select>
+																										</div>
+																										<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
+																									</div>
+
+													<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
+													<div class="programs-grid">
+														<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
+														<?php foreach ($courses as $c): ?>
+																<label class="program-label">
+																		<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small class="program-price">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
+																		<div class="program-duration"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
+																	</label>
+															<?php endforeach; ?>
 													</div>
 
-													<!-- Regular form -->
-													<form id="regularForm" class="registration-form form-regular" method="post" enctype="multipart/form-data" style="display:none;">
-														<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-														<input type="hidden" name="client_total" value="">
-														<input type="hidden" name="method" value="bank">
-														<input type="hidden" name="registration_type" value="regular">
+													<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
+													<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
 
-														<!-- Payment method selector: let user choose bank or online (online may be disabled when Paystack not configured) -->
-														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
-															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice_regular" value="bank" checked> High Q Transfer (Bank Transfer)</label>
-															<label>
-																<input type="radio" name="payment_method_choice_regular" value="online" <?= $paystackEnabled ? '' : 'disabled' ?>> Online Card Payment
-																<?= $paystackEnabled ? '' : '<small style="color:#a33;margin-left:6px">(Currently unavailable)</small>' ?>
+													<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
+													<div class="section-body">
+													<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
+													<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
+													<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
+													</div>
+
+													<div class="form-row terms-row">
+														<div class="checkbox-wrapper">
+															<input 
+																type="checkbox" 
+																name="agreed_terms" 
+																id="agreed_terms" 
+																<?= !empty($agreed_terms) ? 'checked' : '' ?> 
+																required
+															>
+															<label for="agreed_terms" class="terms-label">
+																<span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span>
 															</label>
 														</div>
-
-														<div class="form-row" style="margin-bottom:8px;"><button type="button" class="btn btn-secondary go-back">Change Type</button></div>
-
-														<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
-														<div class="section-body">
-															<div class="form-row form-inline" id="regularPersonalTop"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value="<?= htmlspecialchars($first_name ?? '') ?>"></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value="<?= htmlspecialchars($last_name ?? '') ?>"></div></div>
-															<div class="form-row">
-																<label>Passport Photo (passport-size, face visible)</label>
-																<div class="hq-file-input main-passport-input">
-																	<button type="button" class="btn">Choose file</button>
-																	<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
-																	<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
-																</div>
-															</div>
-
-															<div id="regularFields">
-																<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value="<?= htmlspecialchars($email_contact ?? '') ?>"></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>"></div></div>
-																<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($date_of_birth ?? '') ?>"></div>
-																<div class="form-row">
-																	<label>Gender</label>
-																	<select name="gender">
-																		<option value="">Prefer not to say</option>
-																		<option value="male" <?= (isset($gender) && $gender === 'male') ? 'selected' : '' ?>>Male</option>
-																		<option value="female" <?= (isset($gender) && $gender === 'female') ? 'selected' : '' ?>>Female</option>
-																		<option value="other" <?= (isset($gender) && $gender === 'other') ? 'selected' : '' ?>>Other</option>
-																	</select>
-																</div>
-																<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"><?= htmlspecialchars($home_address ?? '') ?></textarea></div>
-															</div>
+													</div>
+													<div class="submit-row"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
+													<!-- Move payment summary here (desktop will show it; mobile panel clones this content) -->
+													<div class="payment-summary">
+														<h5 class="payment-summary-title">Payment Summary</h5>
+														<div class="payment-summary-body">
+															<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
+															<div>Form fee: <strong id="ps-form">₦<?= number_format($form_fee,2) ?></strong></div>
+															<div>Card fee: <strong id="ps-card">₦<?= number_format($card_fee,2) ?></strong></div>
+															<hr class="ps-divider">
+															<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
 														</div>
-
-														<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
-														<div class="programs-grid">
-															<?php if (empty($courses)): ?><p>No programs available currently.</p><?php endif; ?>
-															<?php foreach ($courses as $c): ?>
-																<label class="program-label">
-																	<input type="checkbox" name="programs[]" value="<?= $c['id'] ?>"> <?= htmlspecialchars($c['title']) ?> <small class="program-price">(<?= ($c['price'] === null || $c['price'] === '') ? 'Varies' : '₦' . number_format($c['price'],2) ?>)</small>
-																	<div class="program-duration"><?= htmlspecialchars($c['duration'] ?? '') ?></div>
-																</label>
-															<?php endforeach; ?>
-														</div>
-
-														<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"><?= htmlspecialchars($previous_education ?? '') ?></textarea></div>
-														<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"><?= htmlspecialchars($academic_goals ?? '') ?></textarea></div>
-
-														<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
-														<div class="section-body">
-															<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value="<?= htmlspecialchars($emergency_name ?? '') ?>"></div>
-															<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($emergency_phone ?? '') ?>"></div>
-															<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value="<?= htmlspecialchars($emergency_relationship ?? '') ?>"></div>
-														</div>
-
-														<div class="form-row terms-row">
-															<div class="checkbox-wrapper">
-																<input type="checkbox" name="agreed_terms" id="agreed_terms_reg" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
-																<label for="agreed_terms_reg" class="terms-label"><span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span></label>
-															</div>
-														</div>
-
-														<div class="submit-row"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
-
-														<div class="payment-summary">
-															<h5 class="payment-summary-title">Payment Summary</h5>
-															<div class="payment-summary-body">
-																<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
-																<div>Form fee: <strong id="ps-form">₦<?= number_format($form_fee,2) ?></strong></div>
-																<div>Card fee: <strong id="ps-card">₦<?= number_format($card_fee,2) ?></strong></div>
-																<hr class="ps-divider">
-																<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
-															</div>
-															<p class="payment-note">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
-														</div>
-													</form>
-
-													<!-- Post-UTME form -->
-													<form id="postutmeForm" class="registration-form form-postutme" method="post" enctype="multipart/form-data" style="display:none;">
-														<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-														<input type="hidden" name="client_total" value="0">
-														<input type="hidden" name="method" value="bank">
-														<input type="hidden" name="registration_type" value="postutme">
-
-														<!-- Provide payment-choice UI for consistency, but Post-UTME is forced to bank on submit (online disabled here) -->
-														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
-															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice_post" value="bank" checked> High Q Transfer (Bank Transfer)</label>
-															<label>
-																<input type="radio" name="payment_method_choice_post" value="online" disabled> Online Card Payment
-																<small style="color:#a33;margin-left:6px">(Not available for Post-UTME)</small>
-															</label>
-														</div>
-
-														<div class="form-row" style="margin-bottom:8px;"><button type="button" class="btn btn-secondary go-back">Change Type</button></div>
-
-														<div id="postUtmeFields" style="margin-top:12px;padding:12px;border-radius:6px;background:#fff;border:1px solid #f0f0f0">
-															<h4 class="section-title"><i class="bx bxs-book"></i> Post-UTME Registration Details</h4>
-															<div class="form-row"><label>Name of Institution</label><input type="text" name="institution" placeholder="Name of Institution where you're applying" value="<?= htmlspecialchars($_POST['institution'] ?? '') ?>"></div>
-															<div class="form-row post-passport-row" style="display:block"><label>Passport Photo (Post-UTME applicants)</label>
-																<div class="hq-file-input post-passport-input">
-																	<button type="button" class="btn">Choose file</button>
-																	<input type="file" name="passport" id="passport_input_post" accept="image/*" style="display:none">
-																	<span id="passport_chosen_post" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
-																</div>
-															</div>
-															<div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
-															<div class="form-row"><label>Other Name</label><input type="text" name="other_name" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
-															<div class="form-row"><label>Gender</label><select name="post_gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
-															<div class="form-row"><label>Address</label><textarea name="address"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea></div>
-															<div class="form-row form-inline"><div><label>State of Origin</label><input type="text" name="state_of_origin" value="<?= htmlspecialchars($_POST['state_of_origin'] ?? '') ?>"></div><div><label>Local Government</label><input type="text" name="local_government" value="<?= htmlspecialchars($_POST['local_government'] ?? '') ?>"></div></div>
-															<div class="form-row form-inline"><div><label>Place of Birth</label><input type="text" name="place_of_birth" value="<?= htmlspecialchars($_POST['place_of_birth'] ?? '') ?>"></div><div><label>Nationality</label><input type="text" name="nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? '') ?>"></div></div>
-															<div class="form-row form-inline"><div><label>Marital Status</label><input type="text" name="marital_status" value="<?= htmlspecialchars($_POST['marital_status'] ?? '') ?>"></div><div><label>Disability</label><input type="text" name="disability" value="<?= htmlspecialchars($_POST['disability'] ?? '') ?>"></div></div>
-															<div class="form-row"><label>Mode of Entry</label><input type="text" name="mode_of_entry" value="<?= htmlspecialchars($_POST['mode_of_entry'] ?? '') ?>"></div>
-															<div class="form-row form-inline"><div><label>Date of Birth</label><input type="date" name="date_of_birth_post" value="<?= htmlspecialchars($_POST['date_of_birth_post'] ?? '') ?>"></div><div><label>Personal Phone</label><input type="text" name="post_phone" value="<?= htmlspecialchars($_POST['post_phone'] ?? '') ?>"></div><div><label>Parent's Phone</label><input type="text" name="parent_phone" value="<?= htmlspecialchars($_POST['parent_phone'] ?? '') ?>"></div></div>
-															<div class="form-row"><label>Email Address</label><input type="email" name="email_post" value="<?= htmlspecialchars($_POST['email_post'] ?? '') ?>"></div>
-															<div class="form-row"><label>NIN Number</label><input type="text" name="nin_number" value="<?= htmlspecialchars($_POST['nin_number'] ?? '') ?>"></div>
-															<hr>
-															<h5>JAMB Details</h5>
-															<div class="form-row"><label>JAMB registration number</label><input type="text" name="jamb_registration_number" value="<?= htmlspecialchars($_POST['jamb_registration_number'] ?? '') ?>"></div>
-															<div class="form-row form-inline"><div><label>JAMB Score</label><input type="number" name="jamb_score" id="jamb_score" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score'] ?? '') ?>"></div></div>
-															<h5>JAMB Subjects (4) — English is compulsory, then any other three</h5>
-															<div class="form-row form-inline"><div><label>Subject 1</label><input type="text" name="jamb_subj_1" value="English" readonly></div><div><label>Score 1</label><input type="number" name="jamb_score_1" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_1'] ?? '') ?>"></div></div>
-															<div class="form-row form-inline"><div><label>Subject 2</label><input type="text" name="jamb_subj_2" placeholder="e.g. Biology" value="<?= htmlspecialchars($_POST['jamb_subj_2'] ?? '') ?>"></div><div><label>Score 2</label><input type="number" name="jamb_score_2" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_2'] ?? '') ?>"></div></div>
-															<div class="form-row form-inline"><div><label>Subject 3</label><input type="text" name="jamb_subj_3" placeholder="e.g. Physics" value="<?= htmlspecialchars($_POST['jamb_subj_3'] ?? '') ?>"></div><div><label>Score 3</label><input type="number" name="jamb_score_3" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_3'] ?? '') ?>"></div></div>
-															<div class="form-row form-inline"><div><label>Subject 4</label><input type="text" name="jamb_subj_4" placeholder="e.g. Chemistry" value="<?= htmlspecialchars($_POST['jamb_subj_4'] ?? '') ?>"></div><div><label>Score 4</label><input type="number" name="jamb_score_4" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_4'] ?? '') ?>"></div></div>
-															<hr>
-															<h5>Course & Institution Choices</h5>
-															<div class="form-row form-inline"><div><label>First choice</label><input type="text" name="course_first_choice" value="<?= htmlspecialchars($_POST['course_first_choice'] ?? '') ?>"></div><div><label>Second choice</label><input type="text" name="course_second_choice" value="<?= htmlspecialchars($_POST['course_second_choice'] ?? '') ?>"></div></div>
-															<div class="form-row"><label>Institution first choice</label><input type="text" name="institution_first_choice" value="<?= htmlspecialchars($_POST['institution_first_choice'] ?? '') ?>"></div>
-															<hr>
-															<h5>Sponsor Details</h5>
-															<div class="form-row"><label>Sponsor name</label><input type="text" name="sponsor_name" value="<?= htmlspecialchars($_POST['sponsor_name'] ?? '') ?>"></div>
-															<div class="form-row"><label>Sponsor address</label><input type="text" name="sponsor_address" value="<?= htmlspecialchars($_POST['sponsor_address'] ?? '') ?>"></div>
-															<div class="form-row form-inline"><div><label>Sponsor email</label><input type="email" name="sponsor_email" value="<?= htmlspecialchars($_POST['sponsor_email'] ?? '') ?>"></div><div><label>Sponsor phone</label><input type="text" name="sponsor_phone" value="<?= htmlspecialchars($_POST['sponsor_phone'] ?? '') ?>"></div></div>
-															<div class="form-row"><label>Sponsor relationship</label><input type="text" name="sponsor_relationship" value="<?= htmlspecialchars($_POST['sponsor_relationship'] ?? '') ?>"></div>
-															<hr>
-															<h5>Next of Kin Details</h5>
-															<div class="form-row"><label>Next of kin name</label><input type="text" name="next_of_kin_name" value="<?= htmlspecialchars($_POST['next_of_kin_name'] ?? '') ?>"></div>
-															<div class="form-row"><label>Next of kin address</label><input type="text" name="next_of_kin_address" value="<?= htmlspecialchars($_POST['next_of_kin_address'] ?? '') ?>"></div>
-															<div class="form-row form-inline"><div><label>Next of kin Email</label><input type="email" name="next_of_kin_email" value="<?= htmlspecialchars($_POST['next_of_kin_email'] ?? '') ?>"></div><div><label>Next of kin phone</label><input type="text" name="next_of_kin_phone" value="<?= htmlspecialchars($_POST['next_of_kin_phone'] ?? '') ?>"></div></div>
-															<div class="form-row"><label>Next of kin relationship</label><input type="text" name="next_of_kin_relationship" value="<?= htmlspecialchars($_POST['next_of_kin_relationship'] ?? '') ?>"></div>
-															<h5>Parent Details</h5>
-															<div class="form-row form-inline"><div><label>Father's name</label><input type="text" name="father_name" value="<?= htmlspecialchars($_POST['father_name'] ?? '') ?>"></div><div><label>Father's phone</label><input type="text" name="father_phone" value="<?= htmlspecialchars($_POST['father_phone'] ?? '') ?>"></div></div>
-															<div class="form-row form-inline"><div><label>Mother's name</label><input type="text" name="mother_name" value="<?= htmlspecialchars($_POST['mother_name'] ?? '') ?>"></div><div><label>Mother's phone</label><input type="text" name="mother_phone" value="<?= htmlspecialchars($_POST['mother_phone'] ?? '') ?>"></div></div>
-															<hr>
-															<div style="margin-top:10px;"><label><input type="checkbox" name="post_tutor_fee" value="1" <?= !empty($_POST['post_tutor_fee']) ? 'checked' : '' ?>> Add optional tutor fee (₦8,000)</label></div>
-															<p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000.</p>
-														</div>
-
-														<div class="form-row terms-row" style="margin-top:12px;">
-															<div class="checkbox-wrapper">
-																<input type="checkbox" name="agreed_terms" id="agreed_terms_post" <?= !empty($agreed_terms) ? 'checked' : '' ?> required>
-																<label for="agreed_terms_post" class="terms-label"><span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span></label>
-															</div>
-														</div>
-
-														<div class="submit-row" style="margin-top:8px;"><button class="btn-primary btn-submit" type="submit">Submit Post-UTME Registration</button></div>
-													</form>
+														<p class="payment-note">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
+														<!-- inline summary hidden; floating panel is used for visible summary -->
+													</div>
+												</form>
 											</div>
 										</main>
 
 										<aside class="register-sidebar hq-aside-target">
-						<div class="sidebar-card admission-box">
-							<h4>Admission Requirements</h4>
-							<hr>
-							<ul style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
-								<li>Completed O'Level certificate (for JAMB/Post‑UTME)</li>
-								<li>Valid identification document</li>
-								<li>Passport photograph (2 copies)</li>
-								<li>Registration fee payment</li>
-								<li>Commitment to academic excellence</li>
-							</ul>
-						</div>
+					<div class="sidebar-card admission-box">
+						<h4>Admission Requirements</h4>
+						<ul>
+							<li>Completed O'Level certificate (for JAMB/Post-UTME)</li>
+							<li>Valid identification document</li>
+							<li>Passport photograph (2 copies)</li>
+							<li>Registration fee payment</li>
+							<li>Commitment to academic excellence</li>
+						</ul>
+					</div>
 
 							<div class="sidebar-card payment-box">
 								<h4>Payment Options</h4>
@@ -1023,36 +846,18 @@ document.addEventListener('DOMContentLoaded', function(){
 				total += formFee + cardFee;
 			}
 
-							// Set the payment method for the server per form. Respect any explicit user choice (radio input) if present.
-							try {
-								var forms = document.querySelectorAll('.registration-form');
-								forms.forEach(function(f){
-									var userChoice = f.querySelector('input[name^="payment_method_choice"]:checked');
-									var chosen = null;
-									if (userChoice) {
-										chosen = userChoice.value; // 'bank' or 'online'
-									} else {
-										// fallback: if there are any fixed-priced items prefer online, otherwise bank
-										chosen = anyFixed ? 'online' : 'bank';
-									}
-									var methodInputs = f.querySelectorAll('input[name="method"]');
-									if (methodInputs && methodInputs.length) {
-										methodInputs.forEach(function(mi){ try{ mi.value = (chosen === 'online' ? 'paystack' : 'bank'); }catch(e){} });
-									}
-								});
-							} catch(e) {}
+					// Set the payment method for the server: if there are any fixed-priced items, prefer online (Paystack)
+					try { var methodInput = document.getElementById('method_input'); if (methodInput) { methodInput.value = anyFixed ? 'paystack' : 'bank'; } } catch(e) {}
 
 			subtotalEl.textContent = formatN(subtotalFixed);
 			formEl.textContent = formatN(formFee);
 			cardEl.textContent = formatN(cardFee);
 			totalEl.textContent = formatN(total);
 
-			// persist client-side total to hidden inputs for server-side recheck (works for both forms)
+			// persist client-side total to hidden input for server-side recheck
 			try {
-				var clientInputs = document.querySelectorAll('input[name="client_total"]');
-				if (clientInputs && clientInputs.length) {
-					clientInputs.forEach(function(ci){ try{ ci.value = total.toFixed(2); }catch(e){} });
-				}
+				var clientInput = document.getElementById('client_total_input');
+				if (clientInput) clientInput.value = total.toFixed(2);
 			} catch(e) {}
 
 			// Enable/disable online payment UI: only disable when ALL selected are variable-priced
@@ -1126,63 +931,6 @@ document.addEventListener('DOMContentLoaded', function(){
 		// init
 		compute();
 	}catch(e){/* ignore */}
-});
-</script>
-<script>
-// Client-side validation for Post-UTME fields
-document.addEventListener('DOMContentLoaded', function(){
-	var form = document.getElementById('postutmeForm');
-	if (!form) return;
-	form.addEventListener('submit', function(e){
-		try {
-			var errors = [];
-			// overall JAMB score
-			var jambScoreEl = form.querySelector('input[name="jamb_score"]');
-			if (jambScoreEl) {
-				var v = jambScoreEl.value.trim();
-				if (v !== '' && (isNaN(v) || Number(v) < 0 || Number(v) > 100)) errors.push('JAMB score must be a number between 0 and 100.');
-			}
-			// per-subject checks
-			for (var i=1;i<=4;i++){
-				var subj = (form.querySelector('input[name="jamb_subj_' + i + '"]') || {}).value || '';
-				var sc = (form.querySelector('input[name="jamb_score_' + i + '"]') || {}).value || '';
-				if (i === 1) {
-					if (!/eng/i.test(subj)) errors.push('JAMB Subject 1 must be English.');
-				} else {
-					if (!subj.trim()) errors.push('Please provide JAMB subject ' + i + '.');
-				}
-				if (sc.trim() !== '') {
-					if (isNaN(sc) || Number(sc) < 0 || Number(sc) > 100) errors.push('JAMB subject ' + i + ' score must be a number between 0 and 100.');
-				}
-			}
-
-			// WAEC required subjects check: English Language, Mathematics, Civic Education
-			var found = {english:false, mathematics:false, civic:false};
-			for (var j=1;j<=8;j++){
-				var s = (form.querySelector('input[name="olevel_subj_' + j + '"]') || {}).value || '';
-				var low = s.toLowerCase();
-				if (/eng/i.test(low)) found.english = true;
-				if (/math|mth/i.test(low)) found.mathematics = true;
-				if (/civic/i.test(low)) found.civic = true;
-			}
-			if (!found.english) errors.push('O\'Level must include English Language.');
-			if (!found.mathematics) errors.push('O\'Level must include Mathematics.');
-			if (!found.civic) errors.push('O\'Level must include Civic Education.');
-
-			if (errors.length) {
-				e.preventDefault();
-				var msg = errors.join('<br>');
-				if (typeof Swal !== 'undefined') {
-					Swal.fire({icon:'error',title:'Please fix the following',html: msg,customClass:{popup:'hq-swal'}});
-				} else {
-					alert(errors.join('\n'));
-				}
-				return false;
-			}
-		} catch(err) {
-			console.error(err);
-		}
-	});
 });
 </script>
 <!-- Mobile payment summary and computed-style logger -->
@@ -1328,44 +1076,29 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <script>
-// Attach submit handlers to both forms (regular and postutme). Post-UTME always forces bank flow.
+// Ensure the registration form sets the correct payment method before submit
 (function(){
-	function attachSubmit(form){
-		if (!form) return;
-		form.addEventListener('submit', function(e){
-			try { if (typeof window.compute === 'function') window.compute(); } catch(err){}
-			var state = window.hqPaymentState || {};
-			// target method inputs inside this form (safer than global id)
-			var methodInputs = form.querySelectorAll('input[name="method"]');
-			// If this is the Post-UTME form, force bank flow on submit so the server creates a Post-UTME payment (PTU ref)
-			if (form.classList && form.classList.contains('form-postutme')) {
-				if (methodInputs && methodInputs.length) methodInputs.forEach(function(mi){ try{ mi.value = 'bank'; }catch(e){} });
-				// allow normal submission
-				return;
+	var form = document.querySelector('form[method="post"][enctype]');
+	if (!form) return;
+	form.id = form.id || 'registrationForm';
+	form.addEventListener('submit', function(e){
+		try { if (typeof window.compute === 'function') window.compute(); } catch(e){}
+		var state = window.hqPaymentState || {};
+		var methodInput = document.getElementById('method_input');
+		if (methodInput) {
+			// prefer online when there are fixed-priced items
+			if (state.anyFixed) methodInput.value = 'paystack'; else methodInput.value = 'bank';
+		}
+		// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
+		if (methodInput && methodInput.value === 'paystack') {
+			// allow the form to submit but intercept to show confirmation
+			e.preventDefault();
+			if (typeof Swal !== 'undefined') {
+				Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
+			} else {
+				if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
 			}
-
-			// Regular registrations: prefer online when there are fixed-priced items
-			if (methodInputs && methodInputs.length) {
-				var val = (state && state.anyFixed) ? 'paystack' : 'bank';
-				methodInputs.forEach(function(mi){ try{ mi.value = val; }catch(e){} });
-			}
-
-			// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
-			var currentMethod = (methodInputs && methodInputs[0]) ? methodInputs[0].value : null;
-			if (currentMethod === 'paystack') {
-				e.preventDefault();
-				if (typeof Swal !== 'undefined') {
-					Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
-				} else {
-					if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
-				}
-			}
-		});
-	}
-
-	document.addEventListener('DOMContentLoaded', function(){
-		attachSubmit(document.getElementById('regularForm'));
-		attachSubmit(document.getElementById('postutmeForm'));
+		}
 	});
 })();
 </script>
@@ -1438,44 +1171,39 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 <!-- Debug overrides removed: styles are consolidated into public/css/register.css -->
 <script>
-// Choice screen + show selected form
+// Toggle between Regular and Post-UTME registration forms
 document.addEventListener('DOMContentLoaded', function(){
-	const chooseRegular = document.getElementById('chooseRegular');
-	const choosePost = document.getElementById('choosePost');
-	const regularForm = document.getElementById('regularForm');
-	const postForm = document.getElementById('postutmeForm');
-	const choiceContainer = document.querySelector('.choice-container');
-
-	function showForm(type) {
-		if (type === 'regular') {
-			if (choiceContainer) choiceContainer.style.display = 'none';
-			if (regularForm) regularForm.style.display = 'block';
-			if (postForm) postForm.style.display = 'none';
-			// scroll into view
-			if (regularForm) regularForm.scrollIntoView({behavior:'smooth'});
-		} else if (type === 'postutme') {
-			if (choiceContainer) choiceContainer.style.display = 'none';
-			if (postForm) postForm.style.display = 'block';
-			if (regularForm) regularForm.style.display = 'none';
-			if (postForm) postForm.scrollIntoView({behavior:'smooth'});
-		}
+	const btnReg = document.getElementById('regTypeRegular');
+	const btnPost = document.getElementById('regTypePost');
+	const regInput = document.getElementById('registration_type');
+	const postBlock = document.getElementById('postUtmeFields');
+	const programsGrid = document.querySelector('.programs-grid');
+	if (!btnReg || !btnPost || !regInput) return;
+	function setRegular() {
+		regInput.value = 'regular';
+		if (postBlock) postBlock.style.display = 'none';
+		if (programsGrid) programsGrid.style.display = '';
+		// show regular-only fields
+		var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = '';
+		// show main passport input, hide post passport
+		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = '';
+		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = 'none';
+		btnReg.style.borderColor = '#007bff'; btnPost.style.borderColor = '#ddd';
 	}
-
-	if (chooseRegular) chooseRegular.addEventListener('click', function(){ showForm('regular'); });
-	if (choosePost) choosePost.addEventListener('click', function(){ showForm('postutme'); });
-
-	// Go-back / Change Type buttons inside forms
-	try {
-		var backBtns = document.querySelectorAll('.go-back');
-		backBtns.forEach(function(b){ b.addEventListener('click', function(){ if (choiceContainer) choiceContainer.style.display = 'flex'; if (regularForm) regularForm.style.display = 'none'; if (postForm) postForm.style.display = 'none'; if (choiceContainer) choiceContainer.scrollIntoView({behavior:'smooth'}); }); });
-	} catch(e) {}
-
-	// allow direct linking to a form via query param (e.g. ?type=postutme)
-	try {
-		var urlParams = new URLSearchParams(window.location.search);
-		var t = urlParams.get('type');
-		if (t === 'postutme') showForm('postutme');
-		else if (t === 'regular') showForm('regular');
-	} catch(e) {}
+	function setPost() {
+		regInput.value = 'postutme';
+		if (postBlock) postBlock.style.display = '';
+		if (programsGrid) programsGrid.style.display = 'none';
+		// hide regular-only fields
+		var regFields = document.getElementById('regularFields'); if (regFields) regFields.style.display = 'none';
+		// hide main passport input, show post passport
+		var mainPassport = document.querySelector('.main-passport-input'); if (mainPassport) mainPassport.style.display = 'none';
+		var postPassportRow = document.querySelector('.post-passport-row'); if (postPassportRow) postPassportRow.style.display = '';
+		btnPost.style.borderColor = '#007bff'; btnReg.style.borderColor = '#ddd';
+	}
+	btnReg.addEventListener('click', setRegular);
+	btnPost.addEventListener('click', setPost);
+	// initialize
+	setRegular();
 });
 </script>
