@@ -13,23 +13,9 @@ if (!empty($earlyAction)) {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
   header('Content-Type: application/json');
 
-  // Try to load APP_URL from .env if Dotenv is available, otherwise fall back to request host
-  $baseUrl = null;
-  if (class_exists('\Dotenv\\Dotenv')) {
-    try {
-      $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-      $dotenv->load();
-      $baseUrl = rtrim($_ENV['APP_URL'] ?? ($_ENV['APP_URL'] ?? ''), '/');
-    } catch (Throwable $e) {
-      // ignore dotenv load errors
-      $baseUrl = null;
-    }
-  }
-  if (empty($baseUrl)) {
-    $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $baseUrl = $proto . '://' . $host;
-  }
+  // Use canonical helper so APP_URL from .env (if present) is honoured and fallbacks are consistent
+  // app_url() is available because we included ../includes/functions.php earlier
+  $baseUrl = rtrim(app_url(''), '/');
   // expose $baseUrl for later handlers in this file
   $GLOBALS['HQ_BASE_URL'] = $baseUrl;
 }
