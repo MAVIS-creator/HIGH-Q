@@ -37,10 +37,11 @@ function http_post($url, $data, $cookieJar) {
 }
 
 function extract_csrf($html) {
-    if (preg_match('/name=["']?_csrf_token["']?\s+value=["']([^"']+)["']/', $html, $m)) return $m[1];
-    if (preg_match('/name="_csrf"\s+value="([^"]+)"/', $html, $m)) return $m[1];
+    // Use ~ as delimiter and allow both single/double quotes for attribute values
+    if (preg_match("~name=['\"]?_csrf_token['\"]?\s+value=['\"]([^'\"]+)['\"]~i", $html, $m)) return $m[1];
+    if (preg_match("~name=['\"]?_csrf['\"]?\s+value=['\"]([^'\"]+)['\"]~i", $html, $m)) return $m[1];
     // fallback search for token input
-    if (preg_match('/<input[^>]*name=["']?_csrf(?:_token)?["']?[^>]*value=["']([^"']+)["']/', $html, $m)) return $m[1];
+    if (preg_match("~<input[^>]*name=['\"]?_csrf(?:_token)?['\"]?[^>]*value=['\"]([^'\"]+)['\"]~i", $html, $m)) return $m[1];
     return null;
 }
 
