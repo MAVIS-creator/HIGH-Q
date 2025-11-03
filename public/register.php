@@ -135,7 +135,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	if (empty($errors)) {
 		// Determine which registration type was selected (regular/postutme)
-		$registration_type = isset($_POST['registration_type']) && $_POST['registration_type'] === 'postutme' ? 'postutme' : 'regular';
+		// Prefer server-side detection based on presence of Post-UTME-only fields
+		$posted_reg_type = isset($_POST['registration_type']) ? trim((string)$_POST['registration_type']) : '';
+		$detected_reg_type = 'regular';
+		// If any obvious Post-UTME fields are present, treat as postutme regardless of client hidden input
+		if (!empty($_POST['first_name_post']) || !empty($_POST['jamb_registration_number']) || !empty($_POST['jamb_score']) || !empty($_POST['waec_serial']) || !empty($_POST['post_tutor_fee'])) {
+			$detected_reg_type = 'postutme';
+		} elseif ($posted_reg_type === 'postutme') {
+			// fallback: client explicitly requested postutme
+			$detected_reg_type = 'postutme';
+		}
+		$registration_type = $detected_reg_type;
 
 		// Basic server-side sanity checks to avoid spoofed flows
 		if ($registration_type === 'postutme') {
@@ -387,6 +397,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				}
 
 				// create a payment placeholder (include metadata for accounting clarity)
+				// Debug log: record why we are creating a PTU payment here
+				try {
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " CREATE PTU: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . "\n", FILE_APPEND | LOCK_EX);
+				} catch (Throwable $_) { }
+
 				$reference = generatePaymentReference('PTU');
 				$paymentMetadata = json_encode([
 					'components' => [
@@ -510,6 +525,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$reference = null; $paymentId = null;
 			if (!$verifyBeforePayment && $selectedHasAnyFixed) {
 				// create a payment record for fixed-priced items only (partial payment)
+				// Debug log: record why we are creating a REG payment here
+				try {
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " CREATE REG: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . "\n", FILE_APPEND | LOCK_EX);
+				} catch (Throwable $_) { }
+
 				$reference = generatePaymentReference('REG');
 				$metadata = json_encode(['fixed_programs' => $selectedFixedIds, 'varies_programs' => $selectedVariesIds]);
 				$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?)');
