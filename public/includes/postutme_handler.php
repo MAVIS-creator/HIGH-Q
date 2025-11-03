@@ -6,6 +6,8 @@
 
 // Note: keep this handler idempotent and self-contained; it will exit on completion.
 try {
+    // quick entry log to confirm handler execution
+    try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " POSTUTME HANDLER START\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) { }
     // IMPORTANT: Post-UTME applicants MUST pay the compulsory form fee immediately.
     $forceImmediatePostPayment = true;
 
