@@ -572,6 +572,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$pdo->commit();
 
+			// Safety fallback: if for any reason we didn't create a REG payment but we should have,
+			// create it here before redirecting. This covers edge cases where earlier logic
+			// skipped creation because of unexpected flow or transient errors.
+			if (empty($reference) && !$verifyBeforePayment && !empty($selectedHasAnyFixed)) {
+				try {
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " FALLBACK CREATE REG: registrationId=" . ($registrationId ?: 'NULL') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . "\n", FILE_APPEND | LOCK_EX);
+					$reference = generatePaymentReference('REG');
+					$metadata = json_encode(['fixed_programs' => $selectedFixedIds ?? [], 'varies_programs' => $selectedVariesIds ?? []]);
+					$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?)');
+					$stmt->execute([$amount, $method, $reference, $metadata]);
+					$paymentId = $pdo->lastInsertId();
+					// commit the new payment insertion (best-effort)
+				} catch (Throwable $e) {
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " FALLBACK CREATE REG ERROR: " . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+				}
+			}
+
 			// Create an admin notification and send email to admins about new registration
 			try {
 				// Fetch admin email from site_settings (fallback to settings table)
