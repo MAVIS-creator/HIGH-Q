@@ -12,6 +12,24 @@ if (function_exists('app_url')) {
 } else {
   $HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] : '');
 }
+// Fallback: if we didn't find payment by reference, try session-stored payment id (helps when redirect lost ref param)
+if (!$payment && empty($ref) && !empty($_SESSION['last_payment_id'])) {
+  try {
+    $stmt = $pdo->prepare('SELECT p.*, u.email, u.name FROM payments p LEFT JOIN users u ON u.id = p.student_id WHERE p.id = ? LIMIT 1');
+    $stmt->execute([ (int) $_SESSION['last_payment_id'] ]);
+    $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($payment && !empty($payment['reference'])) {
+      $ref = $payment['reference'];
+    }
+  } catch (Throwable $e) { /* ignore fallback errors */ }
+}
+
+// If still not found, write a short debug entry so we can correlate session vs DB state
+if (!$payment) {
+  try {
+    @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PAY_WAIT_MISS: ref=" . ($ref ?: 'NULL') . " session_last_payment_id=" . (isset($_SESSION['last_payment_id']) ? $_SESSION['last_payment_id'] : 'NULL') . "\n", FILE_APPEND | LOCK_EX);
+  } catch (Throwable $_) { }
+}
 
 // load site settings (bank details, logo) for display
 try {
