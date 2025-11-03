@@ -135,14 +135,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	if (empty($errors)) {
 		// Determine which registration type was selected (regular/postutme)
-		// Prefer server-side detection based on presence of Post-UTME-only fields
-		$posted_reg_type = isset($_POST['registration_type']) ? trim((string)$_POST['registration_type']) : '';
+	// Prefer server-side detection based on explicit submitted form action or presence of Post-UTME-only fields
+	$posted_reg_type = isset($_POST['registration_type']) ? trim((string)$_POST['registration_type']) : '';
+	$submitted_form_action = isset($_POST['form_action']) ? trim((string)$_POST['form_action']) : '';
 		$detected_reg_type = 'regular';
 		// If any obvious Post-UTME fields are present, treat as postutme regardless of client hidden input
-		if (!empty($_POST['first_name_post']) || !empty($_POST['jamb_registration_number']) || !empty($_POST['jamb_score']) || !empty($_POST['waec_serial']) || !empty($_POST['post_tutor_fee'])) {
+		// If the submit button explicitly indicated Post-UTME, prefer that (safer when both forms present)
+		if ($submitted_form_action === 'postutme') {
+			$detected_reg_type = 'postutme';
+		} elseif (!empty($_POST['first_name_post']) || !empty($_POST['jamb_registration_number']) || !empty($_POST['jamb_score']) || !empty($_POST['waec_serial']) || !empty($_POST['post_tutor_fee'])) {
 			$detected_reg_type = 'postutme';
 		} elseif ($posted_reg_type === 'postutme') {
-			// fallback: client explicitly requested postutme
+			// fallback: client explicitly requested postutme via hidden input
 			$detected_reg_type = 'postutme';
 		}
 		$registration_type = $detected_reg_type;
@@ -801,7 +805,7 @@ $csrf = generateToken('signup_form');
 															</div>
 														</div>
 
-														<div class="submit-row"><button class="btn-primary btn-submit" type="submit">Submit Registration</button></div>
+														<div class="submit-row"><button class="btn-primary btn-submit" type="submit" name="form_action" value="regular">Submit Registration</button></div>
 
 														<div class="payment-summary">
 															<h5 class="payment-summary-title">Payment Summary</h5>
@@ -895,7 +899,7 @@ $csrf = generateToken('signup_form');
 															</div>
 														</div>
 
-														<div class="submit-row" style="margin-top:8px;"><button class="btn-primary btn-submit" type="submit">Submit Post-UTME Registration</button></div>
+														<div class="submit-row" style="margin-top:8px;"><button class="btn-primary btn-submit" type="submit" name="form_action" value="postutme">Submit Post-UTME Registration</button></div>
 													</form>
 											</div>
 										</main>
