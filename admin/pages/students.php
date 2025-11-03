@@ -21,12 +21,10 @@ if (!empty($earlyAction)) {
 }
 
   // Helper: insert payment row with fallback for databases where payments.id is not AUTO_INCREMENT
-  // Extended to accept optional metadata, fee flags, and registration_type so admin-created payments
-  // can be recorded with full context (prevents misclassification e.g. showing Post-UTME messaging for regular payments).
-  function insertPaymentWithFallback(PDO $pdo, $studentId, $amount, $method, $reference, $metadata = null, $formFeePaid = 0, $tutorFeePaid = 0, $registrationType = 'regular') {
+  function insertPaymentWithFallback(PDO $pdo, $studentId, $amount, $method, $reference) {
     try {
-      $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (?, ?, ?, ?, "pending", NOW(), ?, ?, ?, ?)');
-      $ins->execute([ $studentId, $amount, $method, $reference, $metadata, (int)$formFeePaid, (int)$tutorFeePaid, $registrationType ]);
+      $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, "pending", NOW())');
+      $ins->execute([ $studentId, $amount, $method, $reference ]);
       return (int)$pdo->lastInsertId();
     } catch (Throwable $e) {
       // fallback: lock table, compute next id, insert with explicit id
@@ -36,8 +34,8 @@ if (!empty($earlyAction)) {
         $pdo->exec('LOCK TABLES payments WRITE');
         $row = $pdo->query('SELECT MAX(id) AS m FROM payments')->fetch(PDO::FETCH_ASSOC);
         $next = (int)($row['m'] ?? 0) + 1;
-        $ins2 = $pdo->prepare('INSERT INTO payments (id, student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (?, ?, ?, ?, ?, "pending", NOW(), ?, ?, ?, ?)');
-        $ins2->execute([ $next, $studentId, $amount, $method, $reference, $metadata, (int)$formFeePaid, (int)$tutorFeePaid, $registrationType ]);
+        $ins2 = $pdo->prepare('INSERT INTO payments (id, student_id, amount, payment_method, reference, status, created_at) VALUES (?, ?, ?, ?, ?, "pending", NOW())');
+        $ins2->execute([ $next, $studentId, $amount, $method, $reference ]);
         $pdo->exec('UNLOCK TABLES');
         $pdo->commit();
         return $next;
@@ -76,9 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   if (strtolower($method) === 'paystack') $method = 'paystack';
 
   // Insert payment placeholder using fallback helper
-  // attach metadata so the payment clearly links back to the registration and is typed as 'regular'
-  $paymentMeta = json_encode(['registration_id' => (int)($reg['id'] ?? 0), 'source' => 'student_registrations']);
-  $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference, $paymentMeta, 0, 0, 'regular');
+  $paymentId = insertPaymentWithFallback($pdo, $reg['user_id'] ?: null, $amount, $method, $reference);
 
     // Prefer canonical helper so APP_URL from .env (if present) is honoured and fallbacks are consistent
     $base = rtrim(app_url(''), '/');
@@ -164,9 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     if (in_array(strtolower($method), ['bank', 'bank_transfer', 'transfer'])) $method = 'bank_transfer';
     if (strtolower($method) === 'paystack') $method = 'paystack';
 
-  // attach metadata and mark as regular registration payment
-  $paymentMeta = json_encode(['registration_id' => (int)($reg['id'] ?? 0), 'source' => 'student_registrations']);
-  $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref, $paymentMeta, 0, 0, 'regular');
+  $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
 
     // Use canonical helper to construct the payment link so .env APP_URL and subfolder installs are respected
     $paymentLink = app_url('pay/' . urlencode($ref));
