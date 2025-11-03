@@ -147,6 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 		$registration_type = $detected_reg_type;
 
+		// Debug: record detection result and key POST flags for forensic analysis
+		try {
+			@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-BRANCH: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " method=" . (isset($_POST['method']) ? $_POST['method'] : 'NULL') . " keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
+		} catch (Throwable $_) { }
+
 		// Basic server-side sanity checks to avoid spoofed flows
 		if ($registration_type === 'postutme') {
 			// require basic identity fields
