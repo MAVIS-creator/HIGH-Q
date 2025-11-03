@@ -222,7 +222,7 @@ $csrf = generateToken('signup_form');
               var pid = payIdInput ? payIdInput.value : '';
               var token = document.querySelector('input[name="_csrf"]') ? document.querySelector('input[name="_csrf"]').value : '';
               var fd = new FormData(); fd.append('ref', ref); fd.append('payment_id', pid); fd.append('_csrf', token);
-              fetch((window.HQ_APP_BASE || window.HQ_BASE || '') + '/public/api/activate_payment.php', { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With':'XMLHttpRequest' } })
+              fetch((window.HQ_APP_BASE || window.HQ_BASE || '') + '/api/activate_payment.php', { method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With':'XMLHttpRequest' } })
                 .then(function(r){ return r.text().then(function(t){ try{ return JSON.parse(t); }catch(e){ return { status:'error', raw: t }; } }); })
                 .then(function(j){ /* no-op: server will record activated_at; payment_status will consider it */ })
                 .catch(function(e){ /* ignore activation errors for now */ });
@@ -257,7 +257,7 @@ $csrf = generateToken('signup_form');
             if (!ref) return;
             var xhr = new XMLHttpRequest();
             // add a timestamp to prevent aggressive caching by proxies/browsers
-            var url = (window.HQ_APP_BASE || window.HQ_BASE || '') + '/public/api/payment_status.php?ref=' + encodeURIComponent(ref) + '&t=' + Date.now();
+            var url = (window.HQ_APP_BASE || window.HQ_BASE || '') + '/api/payment_status.php?ref=' + encodeURIComponent(ref) + '&t=' + Date.now();
             xhr.open('GET', url, true);
             xhr.onload = function(){ if (xhr.status===200){ try{ var r = JSON.parse(xhr.responseText);
                   if (r.status==='ok' && r.payment) {
@@ -348,7 +348,7 @@ $csrf = generateToken('signup_form');
                 if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Recording...'; }
                 if (document.getElementById('pageSpinner')) document.getElementById('pageSpinner').style.display = 'block';
                 var fd = new FormData(form);
-                  fetch((window.HQ_APP_BASE || window.HQ_BASE || '') + '/public/api/mark_sent.php', {
+                  fetch((window.HQ_APP_BASE || window.HQ_BASE || '') + '/api/mark_sent.php', {
                   method: 'POST', body: fd, credentials: 'same-origin', headers: { 'X-Requested-With':'XMLHttpRequest' }
                 }).then(function(r){ return r.text().then(function(t){ try { return JSON.parse(t); } catch(e){ return { status: 'error', raw: t }; } }); })
                 .then(function(j){
