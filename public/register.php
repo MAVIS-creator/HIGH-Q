@@ -168,94 +168,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 		}
 
-		// If Post-UTME registration, handle the separate insert + payment logic and redirect to payment wait
+		// If Post-UTME registration, delegate processing to the separated handler
 		if ($registration_type === 'postutme') {
-				// IMPORTANT: Post-UTME applicants MUST pay the compulsory form fee immediately.
-				// Ignore any admin "verify_registration_before_payment" toggle for Post-UTME flows.
-				// This variable documents the intent and can be used by other logic if needed.
-				$forceImmediatePostPayment = true;
-			// Read a subset of Post-UTME fields (best-effort sanitization)
-			$institution = trim($_POST['institution'] ?? '') ?: null;
-			$first_name_post = trim($_POST['first_name_post'] ?? '') ?: null;
-			$surname = trim($_POST['surname'] ?? '') ?: null;
-			$other_name = trim($_POST['other_name'] ?? '') ?: null;
-			$post_gender = trim($_POST['post_gender'] ?? '') ?: null;
-			$address = trim($_POST['address'] ?? '') ?: null;
-			$parent_phone = trim($_POST['parent_phone'] ?? '') ?: null;
-			$email_post = trim($_POST['email_post'] ?? '') ?: null;
-			$nin_number = trim($_POST['nin_number'] ?? '') ?: null;
-			$state_of_origin = trim($_POST['state_of_origin'] ?? '') ?: null;
-			$local_government = trim($_POST['local_government'] ?? '') ?: null;
-			$place_of_birth = trim($_POST['place_of_birth'] ?? '') ?: null;
-			$nationality = trim($_POST['nationality'] ?? '') ?: null;
-			$religion = trim($_POST['religion'] ?? '') ?: null;
-
-			$jamb_registration_number = trim($_POST['jamb_registration_number'] ?? '') ?: null;
-			$jamb_score = ($_POST['jamb_score'] ?? '') !== '' ? intval($_POST['jamb_score']) : null;
-			// Build jamb_subjects array and a human-friendly jamb_subjects_text from the four subject/score inputs
-			$jamb_subjects = [];
-			$jamb_pairs = [];
-			for ($j=1;$j<=4;$j++) {
-				$sj = trim($_POST['jamb_subj_' . $j] ?? '');
-				$sc = trim($_POST['jamb_score_' . $j] ?? '');
-				if ($sj !== '') {
-					$jamb_subjects[] = ['subject' => $sj, 'score' => ($sc !== '' ? intval($sc) : null)];
-					$jamb_pairs[] = $sj . ($sc !== '' ? ' (' . $sc . ')' : '');
-				}
+			// include a dedicated handler to isolate Post-UTME logic from the regular flow
+			// The handler will perform DB inserts, set session values and redirect on success.
+			$handler = __DIR__ . '/includes/postutme_handler.php';
+			if (is_file($handler)) {
+				include $handler;
+				// the included handler exits on success; if it returns control, fall back to continuing the script
+			} else {
+				$errors[] = 'Post-UTME handler not found. Please contact support.';
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " MISSING POSTUTME HANDLER: looked for $handler\n", FILE_APPEND | LOCK_EX);
 			}
-			$jamb_subjects_text = !empty($jamb_pairs) ? implode('; ', $jamb_pairs) : null;
+		}
 
-			// ----------------------
-			// Server-side validation for Post-UTME specific fields
-			// Enforce JAMB score ranges (0-100) and require English + three other subjects
-			// Also require WAEC presence of English Language, Mathematics, Civic Education
-			// These errors will be pushed into $errors and abort registration if present
-			// ----------------------
-			if ($jamb_score !== null && ($jamb_score < 0 || $jamb_score > 100)) {
-				$errors[] = 'JAMB score must be between 0 and 100.';
-			}
-
-			// validate individual JAMB subject scores and subject presence
-			for ($jsi = 1; $jsi <= 4; $jsi++) {
-				$sub = trim($_POST['jamb_subj_' . $jsi] ?? '');
-				$scRaw = trim($_POST['jamb_score_' . $jsi] ?? '');
-				if ($scRaw !== '') {
-					if (!is_numeric($scRaw) || intval($scRaw) < 0 || intval($scRaw) > 100) {
-						$errors[] = 'JAMB subject ' . $jsi . ' score must be a number between 0 and 100.';
-					}
-				}
-				// require three other subjects in addition to English (subj 2..4)
-				if ($jsi > 1 && $sub === '') {
-					$errors[] = 'Please provide three other JAMB subjects in addition to English.';
-				}
-			}
-
-			// ensure subject 1 is English
-			$sub1 = trim($_POST['jamb_subj_1'] ?? '');
-			if ($sub1 === '' || !preg_match('/eng/i', $sub1)) {
-				$errors[] = 'JAMB Subject 1 must be English.';
-			}
-
-			// WAEC presence checks (from $olevel_results built earlier)
-			$requiredWaec = [
-				'english' => 'English Language',
-				'mathematics' => 'Mathematics',
-				'civic' => 'Civic Education'
-			];
-			$foundWaec = ['english' => false, 'mathematics' => false, 'civic' => false];
-			foreach (!empty($olevel_results) ? $olevel_results : [] as $r) {
-				$s = strtolower(trim($r['subject'] ?? ''));
-				if ($s === '') continue;
-				if (preg_match('/eng/i', $s)) $foundWaec['english'] = true;
-				if (preg_match('/math|mth/i', $s)) $foundWaec['mathematics'] = true;
-				if (preg_match('/civic/i', $s)) $foundWaec['civic'] = true;
-			}
-			foreach ($foundWaec as $k => $v) {
-				if (!$v) $errors[] = $requiredWaec[$k] . " is required in O'Level results.";
-			}
-															}
-
-			$course_first_choice = trim($_POST['course_first_choice'] ?? '') ?: null;
+		$course_first_choice = trim($_POST['course_first_choice'] ?? '') ?: null;
 			$course_second_choice = trim($_POST['course_second_choice'] ?? '') ?: null;
 			$institution_first_choice = trim($_POST['institution_first_choice'] ?? '') ?: null;
 
