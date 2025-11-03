@@ -164,7 +164,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
     if (in_array(strtolower($method), ['bank', 'bank_transfer', 'transfer'])) $method = 'bank_transfer';
     if (strtolower($method) === 'paystack') $method = 'paystack';
 
-  $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref);
+  // attach metadata and mark as regular registration payment
+  $paymentMeta = json_encode(['registration_id' => (int)($reg['id'] ?? 0), 'source' => 'student_registrations']);
+  $paymentId = insertPaymentWithFallback($pdo, $studentId, $amount, $method, $ref, $paymentMeta, 0, 0, 'regular');
 
     // Use canonical helper to construct the payment link so .env APP_URL and subfolder installs are respected
     $paymentLink = app_url('pay/' . urlencode($ref));
