@@ -4,7 +4,10 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 $siteSettings = [];
 require_once __DIR__ . '/config/functions.php';
-$ref = $_GET['ref'] ?? ($_SESSION['last_payment_reference'] ?? '');
+$ref = $_GET['ref'] ?? (isset($_SESSION['last_payment_reference']) ? $_SESSION['last_payment_reference'] : '');
+$payment = null;
+// Ensure session is started (some environments may not have session auto-started in helpers)
+if (session_status() === PHP_SESSION_NONE) session_start();
 $HQ_SUBPATH = '';
 // Prefer app_url() when available (keeps links consistent with .env). Fall back to previous host-based logic.
 if (function_exists('app_url')) {
