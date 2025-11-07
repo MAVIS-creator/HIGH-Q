@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $paymentId = $pdo->lastInsertId();
                 // send email with link (build app base dynamically)
                 // Build the link using app_url() so APP_URL and deployment base path are honored
-                $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
+                // Use friendly pay route so APP_URL and subfolder installs are respected
+                $link = app_url('pay/' . urlencode($ref));
                 $subject = 'Payment link — HIGH Q SOLID ACADEMY';
                 $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment of ₦' . number_format($amount,2) . ':</p>';
                 $html .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
