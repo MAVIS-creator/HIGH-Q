@@ -1426,10 +1426,29 @@ document.addEventListener('DOMContentLoaded', function(){
 			var currentMethod = (methodInputs && methodInputs[0]) ? methodInputs[0].value : null;
 			if (currentMethod === 'paystack') {
 				e.preventDefault();
+				// Ensure the server receives which form was submitted. programmatic form.submit()
+				// does not include the clicked submit button's name/value. Inject a hidden
+				// form_action input derived from registration_type (or fallback to 'regular').
+				function submitWithAction() {
+					try {
+						var btn = form.querySelector('button[type="submit"][name="form_action"]');
+						var faVal = btn ? btn.value : (form.querySelector('input[name="registration_type"]') ? form.querySelector('input[name="registration_type"]').value : 'regular');
+						// remove any existing injected marker to avoid duplicates
+						var prev = form.querySelector('input.__hq_injected_form_action');
+						if (prev) prev.parentNode.removeChild(prev);
+						var hidden = document.createElement('input');
+						hidden.type = 'hidden';
+						hidden.name = 'form_action';
+						hidden.value = faVal;
+						hidden.className = '__hq_injected_form_action';
+						form.appendChild(hidden);
+					} catch (err) { /* ignore */ }
+					form.submit();
+				}
 				if (typeof Swal !== 'undefined') {
-					Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) form.submit(); });
+					Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) submitWithAction(); });
 				} else {
-					if (confirm('You will be redirected to a secure payment page. Continue?')) form.submit();
+					if (confirm('You will be redirected to a secure payment page. Continue?')) submitWithAction();
 				}
 			}
 		});
