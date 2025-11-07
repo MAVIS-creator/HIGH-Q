@@ -16,11 +16,25 @@ $token = $tokMatch.Groups[1].Value
 Write-Host "CSRF token:" $token
 
 # Find available program IDs (checkbox inputs named programs[])
-$progMatches = [regex]::Matches($html, 'name="programs\[\]"\s+value="(\d+)"')
+#[+] Prefer a fixed-priced program (skip 'Varies')
 $selectedProgram = $null
+$progMatches = [regex]::Matches($html, 'name="programs\[\]"\s+value="(\d+)"[\s\S]*?<small class="program-price">\(([^)]+)\)', 'IgnoreCase')
 if ($progMatches.Count -gt 0) {
-    $selectedProgram = $progMatches[0].Groups[1].Value
-    Write-Host "Found program id to select:" $selectedProgram
+    foreach ($m in $progMatches) {
+        $id = $m.Groups[1].Value
+        $priceText = $m.Groups[2].Value.Trim()
+        if ($priceText -and ($priceText -notmatch 'Varies')) {
+            # found fixed price (e.g. '₦90,000.00' or '₦90000')
+            $selectedProgram = $id
+            Write-Host "Found fixed-priced program id:" $id "price:" $priceText
+            break
+        }
+    }
+    if (-not $selectedProgram) {
+        # fallback: pick first program if none fixed-priced
+        $selectedProgram = $progMatches[0].Groups[1].Value
+        Write-Host "No fixed-priced program found; picked first program id:" $selectedProgram
+    }
 } else {
     Write-Host "No programs found on the registration page. The form may be trimmed or server returned a different layout.";
 }
