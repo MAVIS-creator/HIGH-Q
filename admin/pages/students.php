@@ -458,7 +458,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
             // build link relative to public folder (best-effort)
             $base = $proto . '://' . $host;
             // Prefer app_url() so APP_URL or computed base includes any subdirectory
-            $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
+            // Prefer the canonical friendly pay route so APP_URL and subfolder installs are honoured
+            $link = app_url('pay/' . urlencode($ref));
 
             // Branded HTML message
             $body = '<!doctype html><html><head><meta charset="utf-8"><title>' . htmlspecialchars($subject) . '</title>';
