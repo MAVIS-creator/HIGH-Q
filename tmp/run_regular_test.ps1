@@ -68,8 +68,12 @@ if ($selectedProgram) {
 
 Write-Host "Submitting Regular registration (expecting a redirect to payment or confirmation) ..."
 try {
-    $postResp = Invoke-WebRequest -Uri $url -Method Post -WebSession $session -Form $form -MaximumRedirection 0 -AllowUnencryptedAuthentication -ErrorAction Stop
-    Write-Host "Submission returned status code:" $postResp.StatusCode
+    # Allow one redirect so we can observe the Location (payment page) while still controlling flow
+    $postResp = Invoke-WebRequest -Uri $url -Method Post -WebSession $session -Form $form -MaximumRedirection 1 -AllowUnencryptedAuthentication -ErrorAction Stop
+    # Try to obtain final URI and status
+    try { $finalUri = $postResp.BaseResponse.ResponseUri.AbsoluteUri } catch { $finalUri = $null }
+    if ($finalUri) { Write-Host "Submission completed. Final URI:" $finalUri }
+    if ($postResp.StatusCode) { Write-Host "Status code:" $postResp.StatusCode }
     if ($postResp.Headers) { Write-Host "Response headers:"; $postResp.Headers }
     $content = $postResp.Content
     Write-Host "Response content (first 400 chars):"; Write-Host ($content.Substring(0,[Math]::Min(400,$content.Length)))
