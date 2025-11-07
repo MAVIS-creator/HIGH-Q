@@ -11,6 +11,17 @@ $paystackEnabled = !empty($cfg['paystack']['public']) && strpos($cfg['paystack']
 $errors = [];
 $success = '';
 
+// Initialize optional variables to avoid undefined-variable warnings in mixed flows
+if (session_status() === PHP_SESSION_NONE) {
+	@session_start();
+}
+$institution = null;
+$first_name_post = null;
+$surname = null;
+$reference = null;
+$paymentId = null;
+$olevel_results = [];
+
 // Fixed additional processing fees applied to any registration
 $form_fee = 1000; // ₦1,000 form processing
 $card_fee = 1500; // ₦1,500 card fee
