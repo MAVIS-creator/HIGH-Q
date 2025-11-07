@@ -767,8 +767,8 @@ $csrf = generateToken('signup_form');
 														<div style="flex:1">
 															<label style="font-weight:600;display:block;margin-bottom:6px">Select Registration Type</label>
 															<div>
-																<button type="button" id="chooseRegular" class="btn" style="background:#fff;border:1px solid #ddd;margin-right:8px">Regular Admission</button>
-																<button type="button" id="choosePost" class="btn" style="background:#fff;border:1px solid #ddd">Post-UTME Admission</button>
+																<a id="chooseRegular" class="btn" href="register.php" style="background:#fff;border:1px solid #ddd;margin-right:8px;display:inline-block;padding:8px 12px;text-decoration:none;color:inherit;">Regular Admission</a>
+																<a id="choosePost" class="btn" href="post-utme.php" style="background:#fff;border:1px solid #ddd;display:inline-block;padding:8px 12px;text-decoration:none;color:inherit;">Post-UTME Admission</a>
 															</div>
 															<p style="color:#666;margin-top:8px;font-size:13px">Choose the registration flow that applies to you.</p>
 														</div>
