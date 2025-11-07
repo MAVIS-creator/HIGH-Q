@@ -28,7 +28,8 @@ try {
     if (empty($emailTo) || !filter_var($emailTo, FILTER_VALIDATE_EMAIL)) { echo json_encode(['status'=>'error','message'=>'No valid email on record']); exit; }
 
     // Use app_url() helper so deployment base path and APP_URL are respected (avoids hardcoded host/path)
-    $link = app_url('public/payments_wait.php?ref=' . urlencode($p['reference']));
+    // Prefer friendly/pay route so APP_URL and subfolder installs are consistent
+    $link = app_url('pay/' . urlencode($p['reference']));
     $subject = 'Payment link — HIGH Q SOLID ACADEMY';
     $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment of ₦' . number_format($p['amount'],2) . ':</p>';
     $html .= '<p><a href="' . htmlspecialchars($link) . '">' . htmlspecialchars($link) . '</a></p>';
