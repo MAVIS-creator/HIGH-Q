@@ -616,6 +616,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$stmt->execute([$amount, $method, $reference, $metadata]);
 				$paymentId = $pdo->lastInsertId();
 			}
+			else {
+				// Debug: REG creation was skipped — record context to help diagnose automated test failures
+				try {
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " SKIP REG: verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " amount=" . (isset($amount) ? $amount : 'NULL') . " method=" . (isset($method) ? $method : 'NULL') . " fixedIds=" . json_encode($selectedFixedIds) . " variesIds=" . json_encode($selectedVariesIds) . " keys=" . implode(',', array_keys($_POST)) . " POST=" . json_encode($_POST) . "\n", FILE_APPEND | LOCK_EX);
+				} catch (Throwable $_) { }
+			}
 
 			$pdo->commit();
 
