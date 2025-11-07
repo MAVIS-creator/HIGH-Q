@@ -31,33 +31,40 @@ $passportPath = Join-Path $root 'test_passport.jpg'
 if (-not (Test-Path $passportPath)) { Write-Host "Passport file missing: $passportPath"; exit 3 }
 $form.Add('passport', (Get-Item $passportPath))
 
-Write-Host "Submitting Regular registration (this will follow redirects) ..."
+Write-Host "Submitting Regular registration (expecting a redirect to payment or confirmation) ..."
 try {
     $postResp = Invoke-WebRequest -Uri $url -Method Post -WebSession $session -Form $form -MaximumRedirection 0 -AllowUnencryptedAuthentication -ErrorAction Stop
     Write-Host "Submission returned status code:" $postResp.StatusCode
-    Write-Host "Response headers:"; $postResp.Headers
+    if ($postResp.Headers) { Write-Host "Response headers:"; $postResp.Headers }
     $content = $postResp.Content
     Write-Host "Response content (first 400 chars):"; Write-Host ($content.Substring(0,[Math]::Min(400,$content.Length)))
 } catch [System.Net.WebException] {
     $we = $_.Exception.Response
     if ($we -ne $null) {
-        $status = $we.StatusCode.Value__
+        try { $status = $we.StatusCode.Value__ } catch { $status = 'Unknown' }
         Write-Host "Submission resulted in HTTP status:" $status
-        $loc = $we.GetResponseHeader('Location')
+        try { $loc = $we.GetResponseHeader('Location') } catch { $loc = $null }
         if ($loc) { Write-Host "Redirect Location:" $loc }
-        $sr = New-Object System.IO.StreamReader($we.GetResponseStream())
-        $body = $sr.ReadToEnd()
-        Write-Host "Response body (first 400 chars):"
-        Write-Host ($body.Substring(0,[Math]::Min(400,$body.Length)))
+        try {
+            $sr = New-Object System.IO.StreamReader($we.GetResponseStream())
+            $body = $sr.ReadToEnd()
+            Write-Host "Response body (first 400 chars):"
+            Write-Host ($body.Substring(0,[Math]::Min(400,$body.Length)))
+        } catch { Write-Host "Unable to read response body." }
     } else {
         Write-Host "WebException without response:" $_.Exception.Message
     }
 }
 
-# After submit, query DB via PHP helper
-nWrite-Host "\nQuerying DB for last regular registration (using PHP helper)..."
+# After submit, query DB via PHP helper for the last regular registration and recent payments
+Write-Host "\nQuerying DB for last regular registration and recent payments (using PHP helpers)..."
 $php = 'php'
-$phpScript = Join-Path $root 'query_last_postutme.php'
-if (-not (Test-Path $phpScript)) { Write-Host "PHP query script missing: $phpScript"; exit 4 }
-$phpProc = & $php $phpScript
-Write-Host $phpProc
+$phpScriptReg = Join-Path $root 'query_last_regular.php'
+if (-not (Test-Path $phpScriptReg)) { Write-Host "PHP query script missing: $phpScriptReg"; exit 4 }
+$phpOut = & $php $phpScriptReg
+Write-Host "Last regular registration:"; Write-Host $phpOut
+
+$phpScriptPay = Join-Path $root 'dump_payments.php'
+if (-not (Test-Path $phpScriptPay)) { Write-Host "PHP dump payments script missing: $phpScriptPay"; exit 5 }
+$phpOut2 = & $php $phpScriptPay
+Write-Host "Recent payments:"; Write-Host $phpOut2
