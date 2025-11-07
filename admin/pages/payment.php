@@ -89,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($r['metadata'])) { $meta = json_decode($r['metadata'], true) ?: []; }
                 $emailTo = $meta['email_to'] ?? '';
                 $msgText = $meta['message'] ?? '';
-    $link = app_url('public/payments_wait.php?ref=' . urlencode($r['reference']));
+    // Use friendly pay route for consistency
+    $link = app_url('pay/' . urlencode($r['reference']));
         ?>
             <tr>
                 <td><?= htmlspecialchars($r['id']) ?></td>
