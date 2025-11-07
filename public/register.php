@@ -603,6 +603,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			if (!empty($selectedAllVaries)) $verifyBeforePayment = true;
 
 			$reference = null; $paymentId = null;
+			// Debug: log registration payment decision variables before attempting REG creation
+			try {
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-REG-CHECK: verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " amount=" . (isset($amount) ? $amount : 'NULL') . " method=" . (isset($method) ? $method : 'NULL') . " fixedIds=" . json_encode($selectedFixedIds) . " variesIds=" . json_encode($selectedVariesIds) . " keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
+			} catch (Throwable $_) { }
 			if (!$verifyBeforePayment && $selectedHasAnyFixed) {
 				// create a payment record for fixed-priced items only (partial payment)
 				// Debug log: record why we are creating a REG payment here
