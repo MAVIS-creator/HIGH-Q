@@ -15,6 +15,16 @@ if (-not $tokMatch.Success) { Write-Host "Failed to find CSRF token in form."; e
 $token = $tokMatch.Groups[1].Value
 Write-Host "CSRF token:" $token
 
+# Find available program IDs (checkbox inputs named programs[])
+$progMatches = [regex]::Matches($html, 'name="programs\[\]"\s+value="(\d+)"')
+$selectedProgram = $null
+if ($progMatches.Count -gt 0) {
+    $selectedProgram = $progMatches[0].Groups[1].Value
+    Write-Host "Found program id to select:" $selectedProgram
+} else {
+    Write-Host "No programs found on the registration page. The form may be trimmed or server returned a different layout.";
+}
+
 # Prepare form fields (minimal required for Regular validation)
 $form = @{
     '_csrf_token' = $token
@@ -30,6 +40,13 @@ $form = @{
 $passportPath = Join-Path $root 'test_passport.jpg'
 if (-not (Test-Path $passportPath)) { Write-Host "Passport file missing: $passportPath"; exit 3 }
 $form.Add('passport', (Get-Item $passportPath))
+
+# Add a single fixed-priced program selection if available so the server creates a payment
+if ($selectedProgram) {
+    # For form arrays, repeat the key
+    $form.Add('programs[]', $selectedProgram)
+    Write-Host "Added programs[] = $selectedProgram to form"
+}
 
 Write-Host "Submitting Regular registration (expecting a redirect to payment or confirmation) ..."
 try {
