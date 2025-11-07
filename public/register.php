@@ -429,6 +429,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-PTU-CHECK: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} submitted_form_action=" . ($submitted_form_action ?: 'NULL') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
 				} catch (Throwable $_) { }
 
+				// Ensure payment placeholders are defined to avoid notices when PTU creation is skipped
+				$paymentId = null;
+				$reference = null;
 				// Safety: only proceed to create a PTU payment when detection strongly indicates Post-UTME
 				$proceedCreatePTU = (
 					$registration_type === 'postutme'
