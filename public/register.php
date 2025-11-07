@@ -145,6 +145,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// Ensure form fee/card fee defaults for rendering and client JS
 		$form_fee = isset($form_fee) ? $form_fee : 1000;
 		$card_fee = isset($card_fee) ? $card_fee : 1500;
+		// Post-UTME-specific fields (default to null/empty so later references are safe)
+		$institution = null;
+		$first_name_post = null;
+		$surname = null;
+		$other_name = null;
+		$post_gender = null;
+		$address = null;
+		$parent_phone = null;
+		$email_post = null;
+		$nin_number = null;
+		$state_of_origin = null;
+		$local_government = null;
+		$place_of_birth = null;
+		$nationality = null;
+		$religion = null;
+		$jamb_registration_number = null;
+		$jamb_score = null;
+		$jamb_subjects = [];
+		$jamb_subjects_text = null;
+		$olevel_results = [];
 		// Determine which registration type was selected (regular/postutme)
 		// Prefer server-side detection based on explicit submit action or presence of Post-UTME-only fields.
 		// Be defensive: do NOT treat a hidden `registration_type` alone as proof of Post-UTME
