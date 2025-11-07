@@ -457,7 +457,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				// set session and redirect to payment wait page
 				$_SESSION['last_payment_id'] = $paymentId;
 				$_SESSION['last_payment_reference'] = $reference;
-				header('Location: payments_wait.php?ref=' . urlencode($reference));
+				// Use app_url() when available so redirects respect APP_URL and subfolder installs
+				if (function_exists('app_url')) {
+					$redirect = app_url('pay/' . urlencode($reference));
+				} else {
+					$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+				}
+				header('Location: ' . $redirect);
 				exit;
 			} catch (Exception $e) {
 				if ($pdo->inTransaction()) $pdo->rollBack();
