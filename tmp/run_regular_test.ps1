@@ -50,6 +50,10 @@ $form = @{
     'agreed_terms' = 'on'
 }
 
+# Ensure server receives explicit method and form_action to match the real form submission
+$form['method'] = 'bank'
+$form['form_action'] = 'regular'
+
 # Attach passport file (use the tmp test file)
 $passportPath = Join-Path $root 'test_passport.jpg'
 if (-not (Test-Path $passportPath)) { Write-Host "Passport file missing: $passportPath"; exit 3 }
