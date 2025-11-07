@@ -135,18 +135,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	if (empty($errors)) {
 		// Determine which registration type was selected (regular/postutme)
-	// Prefer server-side detection based on explicit submitted form action or presence of Post-UTME-only fields
-	$posted_reg_type = isset($_POST['registration_type']) ? trim((string)$_POST['registration_type']) : '';
-	$submitted_form_action = isset($_POST['form_action']) ? trim((string)$_POST['form_action']) : '';
+		// Prefer server-side detection based on explicit submit action or presence of Post-UTME-only fields.
+		// Be defensive: do NOT treat a hidden `registration_type` alone as proof of Post-UTME
+		// because programmatic submissions can omit submit button values and a stale hidden input
+		// should not cause a regular submission to be handled as Post-UTME. Require at least
+		// one Post-UTME-specific field in addition to a posted registration_type when
+		// inferring Post-UTME from the hidden input.
+		$posted_reg_type = isset($_POST['registration_type']) ? trim((string)$_POST['registration_type']) : '';
+		$submitted_form_action = isset($_POST['form_action']) ? trim((string)$_POST['form_action']) : '';
 		$detected_reg_type = 'regular';
-		// If any obvious Post-UTME fields are present, treat as postutme regardless of client hidden input
-		// If the submit button explicitly indicated Post-UTME, prefer that (safer when both forms present)
+		// Highest confidence: explicit submit button value
 		if ($submitted_form_action === 'postutme') {
 			$detected_reg_type = 'postutme';
+		// Medium confidence: presence of obvious Post-UTME-only fields
 		} elseif (!empty($_POST['first_name_post']) || !empty($_POST['jamb_registration_number']) || !empty($_POST['jamb_score']) || !empty($_POST['waec_serial']) || !empty($_POST['post_tutor_fee'])) {
 			$detected_reg_type = 'postutme';
-		} elseif ($posted_reg_type === 'postutme') {
-			// fallback: client explicitly requested postutme via hidden input
+		// Lower confidence: hidden registration_type; only accept when accompanied by at least one Post-UTME-specific field
+		} elseif ($posted_reg_type === 'postutme' && (
+			!empty($_POST['first_name_post']) || !empty($_POST['jamb_registration_number']) || !empty($_POST['jamb_score']) || !empty($_POST['post_tutor_fee'])
+		)) {
 			$detected_reg_type = 'postutme';
 		}
 		$registration_type = $detected_reg_type;
