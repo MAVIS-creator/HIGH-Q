@@ -621,7 +621,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if ($reference) {
 					$_SESSION['last_payment_id'] = $paymentId;
 					$_SESSION['last_payment_reference'] = $reference;
-					header('Location: payments_wait.php?ref=' . urlencode($reference));
+					// Use canonical app_url() helper when available so APP_URL and subfolder are respected
+					if (function_exists('app_url')) {
+						$redirect = app_url('pay/' . urlencode($reference));
+					} else {
+						$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+					}
+					header('Location: ' . $redirect);
 					exit;
 				} else {
 					// mark in session and redirect back to registration with pending flag so UI shows awaiting verification
