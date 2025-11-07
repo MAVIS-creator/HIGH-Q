@@ -134,6 +134,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 
 	if (empty($errors)) {
+		// Ensure commonly-used variables have safe defaults to avoid PHP notices
+		$selectedHasAnyFixed = isset($selectedHasAnyFixed) ? $selectedHasAnyFixed : false;
+		$selectedAllVaries = isset($selectedAllVaries) ? $selectedAllVaries : false;
+		$selectedFixedIds = isset($selectedFixedIds) ? $selectedFixedIds : [];
+		$selectedVariesIds = isset($selectedVariesIds) ? $selectedVariesIds : [];
+		$amount = isset($amount) ? $amount : 0;
+		$method = isset($_POST['method']) ? $_POST['method'] : (isset($method) ? $method : 'bank');
+		$programs = isset($_POST['programs']) ? $_POST['programs'] : (isset($programs) ? $programs : []);
+		// Ensure form fee/card fee defaults for rendering and client JS
+		$form_fee = isset($form_fee) ? $form_fee : 1000;
+		$card_fee = isset($card_fee) ? $card_fee : 1500;
 		// Determine which registration type was selected (regular/postutme)
 		// Prefer server-side detection based on explicit submit action or presence of Post-UTME-only fields.
 		// Be defensive: do NOT treat a hidden `registration_type` alone as proof of Post-UTME
