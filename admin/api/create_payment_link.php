@@ -52,7 +52,8 @@ try {
     if (!$ok) throw new Exception('DB insert failed');
     $paymentId = $pdo->lastInsertId();
     // build link using app_url() helper so deployment base path is respected
-    $link = app_url('public/payments_wait.php?ref=' . urlencode($ref));
+    // Use friendly pay route so APP_URL and subfolder installs are respected
+    $link = app_url('pay/' . urlencode($ref));
     $subject = 'Payment link — HIGH Q SOLID ACADEMY';
     // Email should show breakdown: base amount, surcharge, total
     $html = '<p>Hi,</p><p>Please use the following secure link to complete your payment.</p>';
