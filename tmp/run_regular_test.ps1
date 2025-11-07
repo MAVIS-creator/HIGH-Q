@@ -40,29 +40,36 @@ if ($progMatches.Count -gt 0) {
 }
 
 # Prepare form fields (minimal required for Regular validation)
-$form = @{
-    '_csrf_token' = $token
-    'registration_type' = 'regular'
-    'first_name' = 'Automated'
-    'last_name' = 'Tester'
-    'email_contact' = 'test+regular@example.local'
-    'phone' = '08012345678'
-    'agreed_terms' = 'on'
+try {
+    # Follow up to one redirect so we can capture the Location header when the app redirects to payment/wait
+    $postResp = Invoke-WebRequest -Uri $url -Method Post -WebSession $session -Form $form -MaximumRedirection 1 -AllowUnencryptedAuthentication -ErrorAction Stop
+    Write-Host "Submission returned status code:" $postResp.StatusCode
+    # Try to print the Location header if present
+    try {
+        $loc = $postResp.Headers.Location
+        if (-not $loc) { $loc = $postResp.Headers['Location'] }
+    } catch { $loc = $null }
+    if ($loc) { Write-Host "Redirect Location:" $loc }
+    if ($postResp.Headers) { Write-Host "Response headers:"; $postResp.Headers }
+    $content = $postResp.Content
+    Write-Host "Response content (first 400 chars):"; Write-Host ($content.Substring(0,[Math]::Min(400,$content.Length)))
+} catch [System.Net.WebException] {
+    $we = $_.Exception.Response
+    if ($we -ne $null) {
+        try { $status = $we.StatusCode.Value__ } catch { $status = 'Unknown' }
+        Write-Host "Submission resulted in HTTP status:" $status
+        try { $loc = $we.GetResponseHeader('Location') } catch { $loc = $null }
+        if ($loc) { Write-Host "Redirect Location (from exception):" $loc }
+        try {
+            $sr = New-Object System.IO.StreamReader($we.GetResponseStream())
+            $body = $sr.ReadToEnd()
+            Write-Host "Response body (first 400 chars):"
+            Write-Host ($body.Substring(0,[Math]::Min(400,$body.Length)))
+        } catch { Write-Host "Unable to read response body." }
+    } else {
+        Write-Host "WebException without response:" $_.Exception.Message
+    }
 }
-
-# Ensure server receives explicit method and form_action to match the real form submission
-$form['method'] = 'bank'
-$form['form_action'] = 'regular'
-
-# Attach passport file (use the tmp test file)
-$passportPath = Join-Path $root 'test_passport.jpg'
-if (-not (Test-Path $passportPath)) { Write-Host "Passport file missing: $passportPath"; exit 3 }
-$form.Add('passport', (Get-Item $passportPath))
-
-# Add a single fixed-priced program selection if available so the server creates a payment
-if ($selectedProgram) {
-    # For form arrays, repeat the key
-    $form.Add('programs[]', $selectedProgram)
     Write-Host "Added programs[] = $selectedProgram to form"
 }
 
