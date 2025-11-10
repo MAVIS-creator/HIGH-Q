@@ -195,7 +195,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		} catch (Throwable $_) { }
 
 		// Basic server-side sanity checks to avoid spoofed flows
-		if ($registration_type === 'postutme') {
+		// TEMPORARY: completely bypass Post-UTME handling in register.php so Regular flow cannot be short-circuited.
+		// Post-UTME should be processed only in post-utme.php. This block is disabled for diagnostics.
+		if (false && $registration_type === 'postutme') {
 			// require basic identity fields
 			if (trim($_POST['first_name_post'] ?? '') === '' || trim($_POST['surname'] ?? '') === '') {
 				$errors[] = 'First name and surname are required for Post-UTME registration.';
