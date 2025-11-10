@@ -715,6 +715,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			// For now, always use bank transfer: skip online payment logic
 
+			// Fallback: if no reference was created but this is a Regular flow with at least one program,
+			// force-create a minimal REG payment so the student gets a reference to complete bank transfer.
+			if (empty($reference) && $registration_type === 'regular' && !empty($programs)) {
+				try {
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . ' REG FALLBACK: creating payment due to missing reference. context=' . json_encode([
+						'amount'=>$amount ?? null,
+						'method'=>$method ?? null,
+						'programs'=>$programs,
+						'selectedFixedIds'=>$selectedFixedIds ?? [],
+						'selectedVariesIds'=>$selectedVariesIds ?? [],
+					]) . "\n", FILE_APPEND | LOCK_EX);
+				} catch (Throwable $_) {}
+				$reference = generatePaymentReference('REG');
+				$metadata = json_encode(['fixed_programs' => $selectedFixedIds ?? [], 'varies_programs' => $selectedVariesIds ?? [], 'fallback'=>true]);
+				$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, "regular")');
+				$stmt->execute([$amount, $method, $reference, $metadata]);
+				$paymentId = $pdo->lastInsertId();
+			}
+
 			// bank transfer: redirect to dedicated waiting page only if a payment reference was created.
 			// If verify-before-payment is enabled, no payment/reference was created and we should show an awaiting-verification message.
 			if ($method === 'bank') {
