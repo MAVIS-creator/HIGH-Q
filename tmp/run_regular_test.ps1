@@ -53,6 +53,8 @@ $form = @{
 # Ensure server receives explicit method and form_action to match the real form submission
 $form['method'] = 'bank'
 $form['form_action'] = 'regular'
+# Explicit hidden field name used by server for method choice (mirrors payment_method_choice_regular)
+$form['payment_method_choice_regular'] = 'bank'
 
 # Attach passport file (use the tmp test file)
 $passportPath = Join-Path $root 'test_passport.jpg'
@@ -70,6 +72,7 @@ Write-Host "Submitting Regular registration (expecting a redirect to payment or 
 try {
     # Allow one redirect so we can observe the Location (payment page) while still controlling flow
     $postResp = Invoke-WebRequest -Uri $url -Method Post -WebSession $session -Form $form -MaximumRedirection 1 -AllowUnencryptedAuthentication -ErrorAction Stop
+    Write-Host "Posted form fields:" ($form.GetEnumerator() | ForEach-Object { $_.Key + '=' + ($_.Value -is [IO.FileInfo] ? '[FILE]' : $_.Value) } | Out-String)
     # Try to obtain final URI and status
     try { $finalUri = $postResp.BaseResponse.ResponseUri.AbsoluteUri } catch { $finalUri = $null }
     if ($finalUri) { Write-Host "Submission completed. Final URI:" $finalUri }
