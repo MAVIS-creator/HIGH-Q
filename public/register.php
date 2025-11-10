@@ -1520,7 +1520,18 @@ document.addEventListener('DOMContentLoaded', function(){
 		}
 	}
 
-	if (chooseRegular) chooseRegular.addEventListener('click', function(){ showForm('regular'); });
+	if (chooseRegular) chooseRegular.addEventListener('click', function(e){
+		e.preventDefault();
+		showForm('regular');
+		// Persist selection in URL without reloading
+		try {
+			if (window.history && history.replaceState) {
+				const url = new URL(window.location);
+				url.searchParams.set('type','regular');
+				history.replaceState(null, '', url.toString());
+			}
+		} catch(_) {}
+	});
 	if (choosePost) choosePost.addEventListener('click', function(){ showForm('postutme'); });
 
 	// Go-back / Change Type buttons inside forms
