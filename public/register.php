@@ -604,18 +604,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$reference = null; $paymentId = null;
 			// Debug: log registration payment decision variables before attempting REG creation
+			// Expanded debug: dump raw evaluation pieces and any unexpected state before REG decision
 			try {
-				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-REG-CHECK: verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " amount=" . (isset($amount) ? $amount : 'NULL') . " method=" . (isset($method) ? $method : 'NULL') . " fixedIds=" . json_encode($selectedFixedIds) . " variesIds=" . json_encode($selectedVariesIds) . " keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
+				$rawEval = [
+					'verifyBeforePayment'=>$verifyBeforePayment,
+					'selectedHasAnyFixed'=>$selectedHasAnyFixed,
+					'selectedAllVaries'=>$selectedAllVaries,
+					'amount'=>$amount ?? null,
+					'method'=>$method ?? null,
+					'fixedIds'=>$selectedFixedIds,
+					'variesIds'=>$selectedVariesIds,
+					'programs_post'=>$_POST['programs'] ?? null,
+					'payment_method_choice_regular'=>$_POST['payment_method_choice_regular'] ?? null,
+					'registration_type'=>$registration_type,
+					'posted_reg_type'=>$posted_reg_type,
+				];
+				@file_put_contents(
+					__DIR__ . '/../storage/logs/registration_payment_debug.log',
+					date('c') . ' PRE-REG-CHECK: ' . json_encode($rawEval) . ' keys=' . implode(',', array_keys($_POST)) . "\n",
+					FILE_APPEND | LOCK_EX
+				);
+				// PRE-REG-FINAL provides a second snapshot (identical structure) for correlation
+				@file_put_contents(
+					__DIR__ . '/../storage/logs/registration_payment_debug.log',
+					date('c') . ' PRE-REG-FINAL: ' . json_encode($rawEval) . ' POST=' . json_encode($_POST) . "\n",
+					FILE_APPEND | LOCK_EX
+				);
 			} catch (Throwable $_) { }
-				// Add a short-lived final debug snapshot immediately before REG creation check
-				try {
-					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-REG-FINAL: verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " amount=" . (isset($amount) ? $amount : 'NULL') . " method=" . (isset($method) ? $method : 'NULL') . " fixedIds=" . json_encode($selectedFixedIds) . " variesIds=" . json_encode($selectedVariesIds) . " POST=" . json_encode($_POST) . "\n", FILE_APPEND | LOCK_EX);
-				} catch (Throwable $_) { }
 			if (!$verifyBeforePayment && $selectedHasAnyFixed) {
 				// create a payment record for fixed-priced items only (partial payment)
 				// Debug log: record why we are creating a REG payment here
 				try {
-					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " CREATE REG: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . "\n", FILE_APPEND | LOCK_EX);
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . ' CREATE REG: context=' . json_encode([
+						'posted_reg_type'=>$posted_reg_type,
+						'detected_reg_type'=>$registration_type,
+						'verifyBeforePayment'=>$verifyBeforePayment,
+						'selectedHasAnyFixed'=>$selectedHasAnyFixed,
+						'selectedAllVaries'=>$selectedAllVaries,
+						'amount'=>$amount ?? null,
+						'method'=>$method ?? null,
+						'fixedIds'=>$selectedFixedIds,
+						'variesIds'=>$selectedVariesIds,
+						'programs_post'=>$_POST['programs'] ?? null,
+					]) . "\n", FILE_APPEND | LOCK_EX);
 				} catch (Throwable $_) { }
 
 				$reference = generatePaymentReference('REG');
@@ -627,7 +658,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			else {
 				// Debug: REG creation was skipped — record context to help diagnose automated test failures
 				try {
-					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " SKIP REG: verifyBeforePayment=" . ($verifyBeforePayment ? '1' : '0') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " amount=" . (isset($amount) ? $amount : 'NULL') . " method=" . (isset($method) ? $method : 'NULL') . " fixedIds=" . json_encode($selectedFixedIds) . " variesIds=" . json_encode($selectedVariesIds) . " keys=" . implode(',', array_keys($_POST)) . " POST=" . json_encode($_POST) . "\n", FILE_APPEND | LOCK_EX);
+					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . ' SKIP REG: context=' . json_encode([
+						'verifyBeforePayment'=>$verifyBeforePayment,
+						'selectedHasAnyFixed'=>$selectedHasAnyFixed,
+						'selectedAllVaries'=>$selectedAllVaries,
+						'amount'=>$amount ?? null,
+						'method'=>$method ?? null,
+						'fixedIds'=>$selectedFixedIds,
+						'variesIds'=>$selectedVariesIds,
+						'programs_post'=>$_POST['programs'] ?? null,
+						'keys'=>array_keys($_POST),
+						'registration_type'=>$registration_type,
+						'posted_reg_type'=>$posted_reg_type,
+					]) . ' POST=' . json_encode($_POST) . "\n", FILE_APPEND | LOCK_EX);
 				} catch (Throwable $_) { }
 			}
 
