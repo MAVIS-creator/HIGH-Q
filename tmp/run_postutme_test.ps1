@@ -2,8 +2,8 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $appUrl = $env:APP_URL
-if ([string]::IsNullOrWhiteSpace($appUrl)) { $appUrl = 'http://127.0.0.1' }
-$url = $appUrl.TrimEnd('/') + '/public/register.php'
+if ([string]::IsNullOrWhiteSpace($appUrl)) { $appUrl = 'http://127.0.0.1/HIGH-Q' }
+$url = $appUrl.TrimEnd('/') + '/public/post-utme.php'
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 
 # Fetch the registration page to get CSRF token and cookies
@@ -80,7 +80,7 @@ try {
     Write-Host ($content.Substring(0,[Math]::Min(400,$content.Length)))
 } catch [System.Net.WebException] {
     $we = $_.Exception.Response
-    if ($we -ne $null) {
+     if ($null -ne $we) {
         $status = $we.StatusCode.Value__
         Write-Host "Submission resulted in HTTP status:" $status
         $loc = $we.GetResponseHeader('Location')
