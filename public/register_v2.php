@@ -4,6 +4,21 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
+// Global shutdown handler to catch fatals and unexpected exits during registration submit
+try {
+	register_shutdown_function(function(){
+		$e = error_get_last();
+		if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+			try {
+				@file_put_contents(
+					__DIR__ . '/../storage/logs/registration_payment_debug.log',
+					date('c') . ' SHUTDOWN_FATAL: type=' . ($e['type'] ?? 'NULL') . ' msg=' . ($e['message'] ?? 'NULL') . ' file=' . ($e['file'] ?? 'NULL') . ' line=' . ($e['line'] ?? 'NULL') . "\n",
+					FILE_APPEND | LOCK_EX
+				);
+			} catch (Throwable $_) { /* ignore */ }
+		}
+	});
+} catch (Throwable $_) { /* ignore */ }
 $cfg = require __DIR__ . '/../config/payments.php';
 // Determine whether Paystack is actually configured (placeholder keys contain 'xxx')
 $paystackEnabled = !empty($cfg['paystack']['public']) && strpos($cfg['paystack']['public'], 'xxx') === false;
@@ -137,6 +152,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		// Diagnostic sentinel: mark that we've passed initial validation and are about to create registration
 		try {
 			@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ENTER_CREATE_REG: reached registration creation block. keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
+		} catch (Throwable $_) { }
+		// Extra sentinel to confirm progress beyond ENTER_CREATE_REG
+		try {
+			@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " AFTER_ENTER_CREATE_REG: continuing setup before branch checks.\n", FILE_APPEND | LOCK_EX);
 		} catch (Throwable $_) { }
 		// Ensure commonly-used variables have safe defaults to avoid PHP notices
 		$selectedHasAnyFixed = isset($selectedHasAnyFixed) ? $selectedHasAnyFixed : false;
@@ -521,6 +540,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		// create registration record without creating a site user account
 		try {
+			// Pre-TRY sentinel to ensure we reach this point
+			try {
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " BEFORE_CREATE_REG_TRY: about to begin registration transaction.\n", FILE_APPEND | LOCK_EX);
+			} catch (Throwable $_) {}
 			// Diagnostic: log entry into registration creation
 			try {
 				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " BEFORE_INSERT_STUDENT_REG: first_name=" . ($first_name ?: 'NULL') . " programs=" . json_encode($programs) . "\n", FILE_APPEND | LOCK_EX);
