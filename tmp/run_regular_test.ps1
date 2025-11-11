@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $appUrl = $env:APP_URL
 if ([string]::IsNullOrWhiteSpace($appUrl)) { $appUrl = 'http://127.0.0.1/HIGH-Q' }
-$url = $appUrl.TrimEnd('/') + '/public/register.php'
+$url = $appUrl.TrimEnd('/') + '/public/register_v2.php'  # Use v2 to bypass cache
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 
 # Fetch the registration page to get CSRF token and cookies
