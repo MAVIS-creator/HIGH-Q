@@ -521,17 +521,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				// send admin notification (best-effort)
 				try { $insNotif = $pdo->prepare('INSERT INTO notifications (user_id, title, body, type, metadata, is_read, created_at) VALUES (NULL,?,?,?,?,0,NOW())'); $insNotif->execute(['New Post-UTME registration', ($first_name_post ?: '') . ' submitted a Post-UTME registration', 'postutme', json_encode(['id'=>$newId,'email'=>$email_post ?: $email_contact])]); } catch (Throwable $_) {}
 
-				// set session and redirect to payment wait page
-				$_SESSION['last_payment_id'] = $paymentId;
-				$_SESSION['last_payment_reference'] = $reference;
-				// Use app_url() when available so redirects respect APP_URL and subfolder installs
-				if (function_exists('app_url')) {
-					$redirect = app_url('pay/' . urlencode($reference));
-				} else {
-					$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+				// set session and redirect to payment wait page ONLY when a reference exists
+				if (!empty($reference)) {
+					$_SESSION['last_payment_id'] = $paymentId;
+					$_SESSION['last_payment_reference'] = $reference;
+					// Use app_url() when available so redirects respect APP_URL and subfolder installs
+					if (function_exists('app_url')) {
+						$redirect = app_url('pay/' . urlencode($reference));
+					} else {
+						$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+					}
+					header('Location: ' . $redirect);
+					exit;
 				}
-				header('Location: ' . $redirect);
-				exit;
 			} catch (Exception $e) {
 				if ($pdo->inTransaction()) $pdo->rollBack();
 				$errors[] = 'Failed to submit Post-UTME registration: ' . $e->getMessage();
