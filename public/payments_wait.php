@@ -9,11 +9,18 @@ $payment = null;
 // Ensure session is started (some environments may not have session auto-started in helpers)
 if (session_status() === PHP_SESSION_NONE) session_start();
 $HQ_SUBPATH = '';
-// Prefer app_url() when available (keeps links consistent with .env). Fall back to previous host-based logic.
+// Compute an effective base for API calls.
+// If app_url() exists, it already points to the public app base (respects APP_URL and subfolders).
+// Otherwise, derive from the current script directory so '/HIGH-Q/public' is preserved on localhost installs.
 if (function_exists('app_url')) {
   $HQ_BASE = rtrim(app_url(''), '/');
+  $HQ_EFFECTIVE_BASE = $HQ_BASE;
 } else {
-  $HQ_BASE = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] : '');
+  $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+  $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/\\');
+  $HQ_EFFECTIVE_BASE = rtrim($proto . '://' . $host, '/') . ($scriptDir ? $scriptDir : '');
+  $HQ_BASE = rtrim($proto . '://' . $host, '/');
 }
 // Fallback: if we didn't find payment by reference, try session-stored payment id (helps when redirect lost ref param)
 if (!$payment && empty($ref) && !empty($_SESSION['last_payment_id'])) {
@@ -136,7 +143,7 @@ $csrf = generateToken('signup_form');
   </div>
   <script>
     // Expose both new and legacy globals for public JS
-    window.HQ_APP_BASE = <?= json_encode(rtrim($HQ_BASE, '/')) ?>;
+    window.HQ_APP_BASE = <?= json_encode(rtrim($HQ_EFFECTIVE_BASE, '/')) ?>;
     if (!window.HQ_BASE) window.HQ_BASE = window.HQ_APP_BASE;
   </script>
   <main class="public-main" style="padding:28px 0;">
