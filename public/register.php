@@ -521,6 +521,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		// create registration record without creating a site user account
 		try {
+			// Diagnostic: log entry into registration creation
+			try {
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " BEFORE_INSERT_STUDENT_REG: first_name=" . ($first_name ?: 'NULL') . " programs=" . json_encode($programs) . "\n", FILE_APPEND | LOCK_EX);
+			} catch (Throwable $_) {}
+			
 			$pdo->beginTransaction();
 
 			// Ensure gender value is one of the accepted options or null
@@ -550,6 +555,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$agreed_terms ? '1' : '0',
 				'pending'
 			]);
+			
+			try {
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " AFTER_INSERT_STUDENT_REG: registrationId=" . $pdo->lastInsertId() . "\n", FILE_APPEND | LOCK_EX);
+			} catch (Throwable $_) {}
+			
 			$registrationId = $pdo->lastInsertId();
 
 			// handle passport upload if present
