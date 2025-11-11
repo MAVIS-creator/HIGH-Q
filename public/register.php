@@ -683,6 +683,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 			$pdo->commit();
 
+			// Diagnostic: mark that registration DB work committed
+			try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " AFTER_REG_COMMIT: registrationId=" . ($registrationId ?? 'NULL') . " reference=" . ($reference ?? 'NULL') . " paymentId=" . ($paymentId ?? 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+
 			// Create an admin notification and send email to admins about new registration
 			try {
 				// Fetch admin email from site_settings (fallback to settings table)
@@ -743,6 +746,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// If verify-before-payment is enabled, no payment/reference was created and we should show an awaiting-verification message.
 			if ($method === 'bank') {
 				if ($reference) {
+					try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ABOUT_TO_REDIRECT_PAY: redirect=pay/" . urlencode($reference) . " session_last_payment_id=" . (isset($_SESSION['last_payment_id']) ? $_SESSION['last_payment_id'] : 'NULL') . " session_last_payment_reference=" . (isset($_SESSION['last_payment_reference']) ? $_SESSION['last_payment_reference'] : 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
 					$_SESSION['last_payment_id'] = $paymentId;
 					$_SESSION['last_payment_reference'] = $reference;
 					// Use canonical app_url() helper when available so APP_URL and subfolder are respected
