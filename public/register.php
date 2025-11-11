@@ -776,6 +776,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			}
 
 		} catch (Exception $e) {
+			try {
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " CATCH_EXCEPTION: err=" . $e->getMessage() . " file=" . $e->getFile() . " line=" . $e->getLine() . "\n", FILE_APPEND | LOCK_EX);
+			} catch (Throwable $_) {}
 			$pdo->rollBack();
 			$errors[] = 'Failed to register: ' . $e->getMessage();
 		}
