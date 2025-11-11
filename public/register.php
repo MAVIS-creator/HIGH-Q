@@ -134,6 +134,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 
 	if (empty($errors)) {
+		// Diagnostic sentinel: mark that we've passed initial validation and are about to create registration
+		try {
+			@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ENTER_CREATE_REG: reached registration creation block. keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
+		} catch (Throwable $_) { }
 		// Ensure commonly-used variables have safe defaults to avoid PHP notices
 		$selectedHasAnyFixed = isset($selectedHasAnyFixed) ? $selectedHasAnyFixed : false;
 		$selectedAllVaries = isset($selectedAllVaries) ? $selectedAllVaries : false;
