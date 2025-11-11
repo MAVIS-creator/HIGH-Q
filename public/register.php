@@ -544,8 +544,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			try {
 				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " BEFORE_CREATE_REG_TRY: about to begin registration transaction.\n", FILE_APPEND | LOCK_EX);
 			} catch (Throwable $_) {}
-			// Diagnostic: INLINE OUTPUT to bypass all caching
-			echo "<!-- DEBUG_BEFORE_INSERT_STUDENT_REG -->\n";
 			// Diagnostic: log entry into registration creation
 			try {
 				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " BEFORE_INSERT_STUDENT_REG: first_name=" . ($first_name ?: 'NULL') . " programs=" . json_encode($programs) . "\n", FILE_APPEND | LOCK_EX);
@@ -777,28 +775,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$paymentId = $pdo->lastInsertId();
 			}
 
-			// bank transfer: redirect to dedicated waiting page only if a payment reference was created.
-			// If verify-before-payment is enabled, no payment/reference was created and we should show an awaiting-verification message.
-			if ($method === 'bank') {
-				if ($reference) {
-					try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ABOUT_TO_REDIRECT_PAY: redirect=pay/" . urlencode($reference) . " session_last_payment_id=" . (isset($_SESSION['last_payment_id']) ? $_SESSION['last_payment_id'] : 'NULL') . " session_last_payment_reference=" . (isset($_SESSION['last_payment_reference']) ? $_SESSION['last_payment_reference'] : 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
-					$_SESSION['last_payment_id'] = $paymentId;
-					$_SESSION['last_payment_reference'] = $reference;
-					// Use canonical app_url() helper when available so APP_URL and subfolder are respected
-					if (function_exists('app_url')) {
-						$redirect = app_url('pay/' . urlencode($reference));
-					} else {
-						$redirect = 'payments_wait.php?ref=' . urlencode($reference);
-					}
-					header('Location: ' . $redirect);
-					exit;
-				} else {
-					// mark in session and redirect back to registration with pending flag so UI shows awaiting verification
-					$_SESSION['registration_pending_id'] = $registrationId;
-					header('Location: register.php?pending=1');
-					exit;
-				}
-			}
+			// bank transfer: redirect handled after try/catch to guarantee execution even on early exceptions
 
 		} catch (Exception $e) {
 			try {
@@ -806,6 +783,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			} catch (Throwable $_) {}
 			$pdo->rollBack();
 			$errors[] = 'Failed to register: ' . $e->getMessage();
+		}
+
+		// Ensure a payment reference exists for Regular flow even if the DB block above failed early.
+		if (empty($reference) && $registration_type === 'regular' && !empty($programs)) {
+			try {
+				@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . ' REG FALLBACK (POST-TRY): creating payment due to missing reference. context=' . json_encode([
+					'amount'=>$amount ?? null,
+					'method'=>$method ?? null,
+					'programs'=>$programs,
+					'selectedFixedIds'=>$selectedFixedIds ?? [],
+					'selectedVariesIds'=>$selectedVariesIds ?? [],
+				]) . "\n", FILE_APPEND | LOCK_EX);
+			} catch (Throwable $_) {}
+			$reference = generatePaymentReference('REG');
+			$metadata = json_encode(['fixed_programs' => $selectedFixedIds ?? [], 'varies_programs' => $selectedVariesIds ?? [], 'fallback'=>true]);
+			$stmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, "regular")');
+			$stmt->execute([$amount, $method, $reference, $metadata]);
+			$paymentId = $pdo->lastInsertId();
+		}
+
+		// bank transfer: redirect to dedicated waiting page only if a payment reference was created.
+		if ($method === 'bank' && !empty($reference)) {
+			try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/" . urlencode($reference) . " session_last_payment_id=" . (isset($_SESSION['last_payment_id']) ? $_SESSION['last_payment_id'] : 'NULL') . " session_last_payment_reference=" . (isset($_SESSION['last_payment_reference']) ? $_SESSION['last_payment_reference'] : 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+			$_SESSION['last_payment_id'] = $paymentId;
+			$_SESSION['last_payment_reference'] = $reference;
+			if (function_exists('app_url')) {
+				$redirect = app_url('pay/' . urlencode($reference));
+			} else {
+				$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+			}
+			header('Location: ' . $redirect);
+			exit;
 		}
 	}
 
