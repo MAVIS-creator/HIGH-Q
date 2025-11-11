@@ -151,3 +151,4 @@
 2025-11-11T23:04:12+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":91500,"method":"bank","programs":["7","3"],"selectedFixedIds":[3,7],"selectedVariesIds":[]}
 2025-11-11T23:04:12+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251111230412-17f377 session_last_payment_id=NULL session_last_payment_reference=NULL
 2025-11-11T23:04:12+01:00 PAY_WAIT_MISS: ref=REG-20251111230412-17f377 session_last_payment_id=44
+2025-11-11T23:14:23+01:00 PAY_WAIT_MISS: ref=REG-20251111230412-17f377 session_last_payment_id=44
