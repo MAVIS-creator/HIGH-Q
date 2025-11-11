@@ -469,69 +469,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					}
 				}
 
-				// create a payment placeholder (include metadata for accounting clarity)
-				// Debug: double-check detection before creating a PTU payment and record context for forensic analysis
-				try {
-					@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-PTU-CHECK: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} submitted_form_action=" . ($submitted_form_action ?: 'NULL') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
-				} catch (Throwable $_) { }
-
-				// Ensure payment placeholders are defined to avoid notices when PTU creation is skipped
-				$paymentId = null;
-				$reference = null;
-				// Safety: only proceed to create a PTU payment when detection strongly indicates Post-UTME
-				$proceedCreatePTU = (
-					$registration_type === 'postutme'
-					&& (
-						$submitted_form_action === 'postutme'
-						|| !empty($_POST['first_name_post'])
-						|| !empty($_POST['jamb_registration_number'])
-						|| !empty($_POST['jamb_score'])
-						|| !empty($_POST['post_tutor_fee'])
-					)
-				);
-
-				if (!$proceedCreatePTU) {
-					// Anomaly: avoid creating PTU when detection doesn't match — log full POST for analysis and skip
+				// create a payment placeholder (include metadata for accounting clarity) ONLY when this is actually a Post-UTME registration.
+				if ($registration_type === 'postutme') {
+					// Debug: double-check detection before creating a PTU payment and record context for forensic analysis
 					try {
-						@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ANOMALY PTU SKIPPED: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} submitted_form_action=" . ($submitted_form_action ?: 'NULL') . " keys=" . implode(',', array_keys($_POST)) . " POST=" . json_encode($_POST) . " BACKTRACE=" . str_replace("\n", '\\n', print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5), true)) . "\n", FILE_APPEND | LOCK_EX);
-					} catch (Throwable $_) { }
-				} else {
-					// Debug log: record why we are creating a PTU payment here
-					try {
-						@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " CREATE PTU: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . "\n", FILE_APPEND | LOCK_EX);
+						@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " PRE-PTU-CHECK: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} submitted_form_action=" . ($submitted_form_action ?: 'NULL') . " selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . " keys=" . implode(',', array_keys($_POST)) . "\n", FILE_APPEND | LOCK_EX);
 					} catch (Throwable $_) { }
 
-					$reference = generatePaymentReference('PTU');
-					$paymentMetadata = json_encode([
-					'components' => [
-						'post_form_fee' => number_format((float)$post_form_fee, 2, '.', ''),
-						'tutor_fee' => number_format((float)$post_tutor_fee, 2, '.', ''),
-						'service_charge' => number_format((float)$service_charge, 2, '.', ''),
-					],
-					'total' => number_format((float)$total_amount, 2, '.', ''),
-					'registration_type' => 'postutme'
-				], JSON_UNESCAPED_SLASHES);
-				$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, ?, "postutme")');
-				$insP->execute([$total_amount, 'bank', $reference, $paymentMetadata, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
-				$paymentId = $pdo->lastInsertId();
+					// Ensure payment placeholders are defined to avoid notices when PTU creation is skipped
+					$paymentId = null;
+					$reference = null;
+					// Safety: only proceed to create a PTU payment when detection strongly indicates Post-UTME
+					$proceedCreatePTU = (
+						$registration_type === 'postutme'
+						&& (
+							$submitted_form_action === 'postutme'
+							|| !empty($_POST['first_name_post'])
+							|| !empty($_POST['jamb_registration_number'])
+							|| !empty($_POST['jamb_score'])
+							|| !empty($_POST['post_tutor_fee'])
+						)
+					);
 
-				}
-				$pdo->commit();
+					if (!$proceedCreatePTU) {
+						// Anomaly: avoid creating PTU when detection doesn't match — log full POST for analysis and skip
+						try {
+							@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ANOMALY PTU SKIPPED: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} submitted_form_action=" . ($submitted_form_action ?: 'NULL') . " keys=" . implode(',', array_keys($_POST)) . " POST=" . json_encode($_POST) . " BACKTRACE=" . str_replace("\n", '\n', print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5), true)) . "\n", FILE_APPEND | LOCK_EX);
+						} catch (Throwable $_) { }
+					} else {
+						// Debug log: record why we are creating a PTU payment here
+						try {
+							@file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " CREATE PTU: posted_reg_type=" . ($posted_reg_type ?: 'NULL') . " detected_reg_type={$registration_type} selectedHasAnyFixed=" . (!empty($selectedHasAnyFixed) ? '1' : '0') . " selectedAllVaries=" . (!empty($selectedAllVaries) ? '1' : '0') . "\n", FILE_APPEND | LOCK_EX);
+						} catch (Throwable $_) { }
 
-				// send admin notification (best-effort)
-				try { $insNotif = $pdo->prepare('INSERT INTO notifications (user_id, title, body, type, metadata, is_read, created_at) VALUES (NULL,?,?,?,?,0,NOW())'); $insNotif->execute(['New Post-UTME registration', ($first_name_post ?: '') . ' submitted a Post-UTME registration', 'postutme', json_encode(['id'=>$newId,'email'=>$email_post ?: $email_contact])]); } catch (Throwable $_) {}
+						$reference = generatePaymentReference('PTU');
+						$paymentMetadata = json_encode([
+						'components' => [
+							'post_form_fee' => number_format((float)$post_form_fee, 2, '.', ''),
+							'tutor_fee' => number_format((float)$post_tutor_fee, 2, '.', ''),
+							'service_charge' => number_format((float)$service_charge, 2, '.', ''),
+						],
+						'total' => number_format((float)$total_amount, 2, '.', ''),
+						'registration_type' => 'postutme'
+						], JSON_UNESCAPED_SLASHES);
+						$insP = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, form_fee_paid, tutor_fee_paid, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?, ?, "postutme")');
+						$insP->execute([$total_amount, 'bank', $reference, $paymentMetadata, 0, (!empty($_POST['post_tutor_fee']) && $_POST['post_tutor_fee']==='1') ? 1 : 0]);
+						$paymentId = $pdo->lastInsertId();
+					}
+					$pdo->commit();
 
-				// set session and redirect to payment wait page
-				$_SESSION['last_payment_id'] = $paymentId;
-				$_SESSION['last_payment_reference'] = $reference;
-				// Use app_url() when available so redirects respect APP_URL and subfolder installs
-				if (function_exists('app_url')) {
-					$redirect = app_url('pay/' . urlencode($reference));
+					// send admin notification (best-effort)
+					try { $insNotif = $pdo->prepare('INSERT INTO notifications (user_id, title, body, type, metadata, is_read, created_at) VALUES (NULL,?,?,?,?,0,NOW())'); $insNotif->execute(['New Post-UTME registration', ($first_name_post ?: '') . ' submitted a Post-UTME registration', 'postutme', json_encode(['id'=>$newId,'email'=>$email_post ?: $email_contact])]); } catch (Throwable $_) {}
+
+					// Only redirect for Post-UTME when we actually have a payment reference; otherwise leave flow to show an error.
+					if (!empty($reference)) {
+						$_SESSION['last_payment_id'] = $paymentId;
+						$_SESSION['last_payment_reference'] = $reference;
+						if (function_exists('app_url')) {
+							$redirect = app_url('pay/' . urlencode($reference));
+						} else {
+							$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+						}
+						header('Location: ' . $redirect);
+						exit;
+					}
 				} else {
-					$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+					// Log that we intentionally skipped Post-UTME block for a regular registration.
+					try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " SKIP POST-UTME BLOCK: registration_type={$registration_type} (expected regular).\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
 				}
-				header('Location: ' . $redirect);
-				exit;
 			} catch (Exception $e) {
 				if ($pdo->inTransaction()) $pdo->rollBack();
 				$errors[] = 'Failed to submit Post-UTME registration: ' . $e->getMessage();
