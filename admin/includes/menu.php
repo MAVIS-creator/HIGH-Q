@@ -18,6 +18,5 @@ return [
     'comments'  => ['title' => 'Comments', 'icon' => 'bx bxs-comment-detail', 'url' => 'index.php?pages=comments'],
     'chat'      => ['title' => 'Chat Support', 'icon' => 'bx bxs-message-dots', 'url' => 'index.php?pages=chat'],
     'audit_logs' => ['title' => 'Audit Logs', 'icon' => 'bx bxs-report', 'url' => 'index.php?pages=audit_logs'],
-    // New: appointments
     'appointments' => ['title' => 'Appointments', 'icon' => 'bx bx-calendar', 'url' => 'index.php?pages=appointments'],
 ];
