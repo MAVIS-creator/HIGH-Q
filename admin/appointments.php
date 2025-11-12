@@ -1,12 +1,7 @@
 <?php
-// admin/appointments.php - View and manage scheduled appointments
-session_start();
-require_once __DIR__ . '/auth_check.php';
-require_once __DIR__ . '/../public/config/db.php';
-require_once __DIR__ . '/../public/config/functions.php';
-
-$pageTitle = 'Appointments Management';
-$pageSubtitle = 'View and manage visitor appointments';
+// Legacy path shim: redirect to the pages router variant
+header('Location: index.php?pages=appointments');
+exit;
 
 // Handle status updates and notifications
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
