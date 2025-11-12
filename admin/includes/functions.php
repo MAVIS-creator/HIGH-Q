@@ -8,7 +8,12 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 // Load .env (project root is 2 levels up from /admin/includes/)
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->load();
+try {
+    // Use safeLoad to avoid fatal errors when .env is missing or has parse issues
+    $dotenv->safeLoad();
+} catch (Throwable $e) {
+    // Non-fatal: rely on getenv()/defaults below
+}
 
 /**
  * Log actions into audit_logs

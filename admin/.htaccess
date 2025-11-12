@@ -22,14 +22,19 @@ Options -Indexes
 
 # Enable URL rewriting
 RewriteEngine On
-RewriteBase/admin/
+# Correct base path for admin area
+RewriteBase /admin/
 
 # Allow access to error pages
 <FilesMatch "^(400|401|403|404|500)\.php$">
     Satisfy Any
+    Require all granted
+    Order allow,deny
     Allow from all
 </FilesMatch>
 
-# PHP Settings
-php_value display_errors Off
-php_flag session.cookie_httponly on
+# PHP Settings (only valid when using mod_php; comment out if using CGI/FPM)
+<IfModule mod_php.c>
+    php_value display_errors Off
+    php_flag session.cookie_httponly on
+</IfModule>
