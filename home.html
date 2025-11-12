@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Setup</title>
+  <link rel="icon" href="HQ-removebg-preview.png" type="image/png">
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <header>
+    <h1>HQ Online Exam</h1>
+  </header>
+
+  <main>
+    <form id="examForm">
+      <!-- Student Name -->
+      <label for="name">Enter Your Name:</label>
+      <input type="text" id="name" placeholder="Your full name" required>
+
+      <!-- Department -->
+      <label for="department">Select Department:</label>
+      <select id="department" required>
+        <option value="Science">Science</option>
+        <option value="Arts">Arts</option>
+        <option value="Commercial">Commercial</option>
+      </select>
+
+      <!-- Subjects -->
+      <div id="subjectList" class="subject-list"></div>
+      <div id="selectedCount"></div>
+
+      <!-- Submit -->
+      <button type="submit">Start Exam</button>
+    </form>
+  </main>
+
+  <script src="home.js"></script>
+</body>
+</html>
+
+

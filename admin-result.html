@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Quiz Results</title>
+  <link rel="stylesheet" href="admin-result.css">
+  <link rel="icon" href="HQ-removebg-preview.png" type="image/png">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f4f4f4; }
+    select { padding: 5px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Quiz Results - Admin Panel</h1>
+
+  <label for="subjectFilter">Filter by Subject: </label>
+  <select id="subjectFilter">
+    <option value="All">All</option>
+  </select>
+
+    <button id="exportBtn">Export to CSV</button>
+    <button id="clearBtn" style="margin-left:10px; background-color:red; color:white;">Clear All Results</button>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Subject</th>
+        <th>Score</th>
+        <th>Total</th>
+        <th>Aggregate (%)</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="resultsTableBody">
+      <!-- Results populate here -->
+    </tbody>
+  </table>
+
+  <script src="admin-result.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,14 @@
+{
+  "Physics": [
+    {
+      "question": "What is Physics",
+      "options": {
+        "A": "None of the above",
+        "B": "Study of gravity",
+        "C": "Gravity",
+        "D": "Physics"
+      },
+      "correct": "A"
+    }
+  ]
+}

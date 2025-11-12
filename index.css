@@ -1,0 +1,117 @@
+/* Reset defaults */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Full screen body with gold → red gradient */
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom right, #FFD700, #FF4500); /* gold → red */
+    color: #fff;
+}
+
+header {
+    display: flex;
+    justify-content: center;  /* centers horizontally */
+    align-items: center;      /* centers vertically */
+    gap: 15px;                /* space between logo and text */
+    padding: 20px 0;
+}
+
+.logo-img {
+    width: 80px;   /* adjust as needed */
+    height: auto;
+}
+
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff; /* white text */
+    text-shadow: 2px 2px 4px #4CAF50; /* green accent shadow */
+}
+
+/* Main content */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-box {
+    background-color: #fff; /* white card */
+    color: #333;
+    padding: 40px;
+    width: 60%;
+    max-width: 700px;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.welcome-box h2 {
+    font-size: 2rem;
+    color: #FFD700; /* gold heading */
+    margin-bottom: 15px;
+}
+
+.welcome-box p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* News / Announcement Section */
+.news {
+    background-color: #FFEBCC; /* light gold/yellow */
+    color: #333;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.news h3 {
+    margin-bottom: 10px;
+    color: #FF4500; /* red accent for titles */
+}
+
+.news p {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+/* Start Exam Button */
+.start-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #4CAF50; /* green button */
+    color: #fff;
+    font-size: 1.2rem;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.start-btn:hover {
+    background-color: #FFD700; /* gold hover */
+    color: #333;
+    transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px 0;
+    background-color: rgba(0,0,0,0.1);
+    color: #fff;
+}
+
