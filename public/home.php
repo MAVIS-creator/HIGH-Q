@@ -94,71 +94,65 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </p>
     </div>
 
-    <div class="row align-items-start g-4">
-      <!-- Left Column: Yellow Card with Photo -->
-      <div class="col-lg-5 d-flex flex-column gap-4">
-        <div class="ceo-card-yellow text-center p-4 rounded-4">
-          <div class="ceo-photo-circle mx-auto mb-3" style="width: 120px; height: 120px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="ceo-grid align-items-start g-4">
+      <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
+        <div class="ceo-card text-center text-lg-start mb-4">
+          <div class="ceo-photo mb-3">
+            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
           </div>
-          <h3 class="mb-1 fw-bold">Master Adebule Quam</h3>
-          <p class="role mb-0">CEO & Lead Tutor</p>
+          <div class="ceo-info">
+            <h3 class="mb-1">Master Adebule Quam</h3>
+            <p class="role mb-0">CEO & Lead Tutor</p>
+          </div>
         </div>
 
-        <div class="ceo-quote-card p-4 border rounded-3">
-          <i class="fas fa-quote-left mb-2 text-warning" style="font-size: 24px;"></i>
-          <p class="mb-3 fst-italic">
+        <div class="ceo-quote text-center text-lg-start">
+          <i class="fas fa-quote-left mb-2"></i>
+          <p class="mb-3">
             "Education is the force to push one ahead of others. Our unwavering
             commitment is to ensure every student achieves academic excellence and
             develops the confidence to face real-world challenges."
           </p>
-          <span class="d-block text-end fw-semibold text-danger">- Master Adebule Quam</span>
+          <span class="d-block text-end">- Master Adebule Quam</span>
         </div>
       </div>
 
-      <!-- Right Column: Content and Stats -->
-      <div class="col-lg-7 hq-aside-target">
+  <div class="ceo-right-column hq-aside-target">
         <div class="ceo-content mb-4">
-          <h3 class="mb-3 fw-bold">Seasoned Educator & Mentor</h3>
+          <h3 class="mb-3">Seasoned Educator & Mentor</h3>
           <p class="mb-3">
             Master Adebule Quam is a seasoned tutor versed in the teaching profession.
             Over the years, he has produced students who have achieved breathtaking
             academic excellence and excelled in various examinations including GCE,
             WAEC, JAMB, NECO, and professional certifications like HTML and CODING.
           </p>
-          <p class="mb-4">
+          <p>
             He believes in the school of thought that education is the force to push
             one ahead of others. Under his guidance, High Q Academy has blossomed into
             a hub of academic excellence and technological proficiency.
           </p>
         </div>
 
-        <div class="row g-3 mb-4">
-          <div class="col-md-4">
-            <div class="stat-card text-center p-4 rounded-3 border border-warning bg-light">
-              <i class="fas fa-trophy text-warning mb-2" style="font-size: 32px;"></i>
-              <div class="fw-bold fs-2">305</div>
-              <div class="text-muted small">Highest JAMB Score</div>
-            </div>
+        <div class="ceo-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-4 mb-4">
+          <div class="stat yellow text-center">
+            <i class="fas fa-trophy"></i>
+            <strong>305</strong>
+            <span>Highest JAMB Score</span>
           </div>
-          <div class="col-md-4">
-            <div class="stat-card text-center p-4 rounded-3 border border-danger bg-light">
-              <i class="fas fa-users text-danger mb-2" style="font-size: 32px;"></i>
-              <div class="fw-bold fs-2">1000+</div>
-              <div class="text-muted small">Students Mentored</div>
-            </div>
+          <div class="stat red text-center">
+            <i class="fas fa-users"></i>
+            <strong>1000+</strong>
+            <span>Students Mentored</span>
           </div>
-          <div class="col-md-4">
-            <div class="stat-card text-center p-4 rounded-3 border border-secondary bg-light">
-              <i class="fas fa-user-tie text-secondary mb-2" style="font-size: 32px;"></i>
-              <div class="fw-bold fs-2">6+</div>
-              <div class="text-muted small">Years Leading</div>
-            </div>
+          <div class="stat gray text-center">
+            <i class="fas fa-user-tie"></i>
+            <strong>6+</strong>
+            <span>Years Leading</span>
           </div>
         </div>
 
-        <div class="ceo-btn">
-          <a href="about.php" class="btn btn-dark px-4 py-2">Learn More About Our Story</a>
+        <div class="ceo-btn text-center text-lg-start">
+          <a href="about.php" class="btn btn-dark">Learn More About Our Story</a>
         </div>
       </div>
     </div>
