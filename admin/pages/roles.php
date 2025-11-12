@@ -28,8 +28,8 @@ if (!function_exists('verifyCsrfToken')) {
   }
 }
 
-// Load menus from central config so new sidebar items automatically appear here
-$__menus = require __DIR__ . '/../includes/menu.php';
+// Load menus from loader (DB-driven) so new sidebar items automatically appear here
+$__menus = require __DIR__ . '/../includes/menu_loader.php';
 $allMenus = [];
 foreach ($__menus as $slug => $item) {
   $allMenus[$slug] = $item['title'] ?? ucfirst($slug);
