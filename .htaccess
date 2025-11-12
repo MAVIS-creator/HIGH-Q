@@ -4,6 +4,9 @@
 
     RewriteBase /HIGH-Q/
 
+    # Normalize accidental double /public/public paths (defensive)
+    RewriteRule ^public/public/(.*)$ public/$1 [L,R=301]
+
     # Allow direct access to static files and directories
     RewriteRule ^(public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
 
