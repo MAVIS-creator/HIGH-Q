@@ -302,22 +302,22 @@ $csrf = generateToken('signup_form');
                         if (typeof Swal !== 'undefined') {
                           Swal.fire({ icon: 'success', title: 'Payment Received', html: msg, showConfirmButton: true, customClass: { popup: 'hq-swal' } }).then(function(){
                             if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                            else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                            else { window.location = (window.HQ_APP_BASE || window.HQ_BASE || '') + '/receipt.php?ref=' + encodeURIComponent(ref); }
                           });
                         } else {
                           alert(msg);
                           if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                          else { window.location = (window.HQ_APP_BASE || window.HQ_BASE || '') + '/receipt.php?ref=' + encodeURIComponent(ref); }
                         }
                       } else {
                         if (typeof Swal !== 'undefined') {
                           Swal.fire({ icon: 'success', title: 'Payment Successful', html: 'Your payment has been confirmed. Redirecting to your receipt...', showConfirmButton: false, timer: 2200, customClass: { popup: 'hq-swal' } }).then(()=>{
                             if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                            else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                            else { window.location = (window.HQ_APP_BASE || window.HQ_BASE || '') + '/receipt.php?ref=' + encodeURIComponent(ref); }
                           });
                         } else {
                           if (r.payment.receipt_path) { window.location = r.payment.receipt_path; }
-                          else { window.location = (window.HQ_BASE||'') + '/public/receipt.php?ref=' + encodeURIComponent(ref); }
+                          else { window.location = (window.HQ_APP_BASE || window.HQ_BASE || '') + '/receipt.php?ref=' + encodeURIComponent(ref); }
                         }
                       }
                     } else if (st === 'expired') {
