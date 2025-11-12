@@ -35,7 +35,7 @@
     # Default handler for other URLs (avoid re-prefixing requests already under /public)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/HIGH-Q/public/ [NC]
+    RewriteCond %{REQUEST_URI} !^/public/ [NC]
     RewriteRule ^(.*)$ public/$1 [L]
 
 </IfModule>
