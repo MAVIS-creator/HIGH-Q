@@ -28,20 +28,12 @@ if (!function_exists('verifyCsrfToken')) {
   }
 }
 
-// Define all menu items (matches sidebar.php)
-$allMenus = [
-    'dashboard' => 'Dashboard',
-    'users'     => 'Manage Users',
-    'roles'     => 'Roles',
-    'settings'  => 'Site Settings',
-    'courses'   => 'Courses',
-    'tutors'    => 'Tutors',
-    'students'  => 'Students',
-    'payments'  => 'Payments',
-    'post'     => 'News / Blog',
-    'comments'  => 'Comments',
-    'chat'      => 'Chat Support',
-];
+// Load menus from central config so new sidebar items automatically appear here
+$__menus = require __DIR__ . '/../includes/menu.php';
+$allMenus = [];
+foreach ($__menus as $slug => $item) {
+  $allMenus[$slug] = $item['title'] ?? ucfirst($slug);
+}
 
 // Handle POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
