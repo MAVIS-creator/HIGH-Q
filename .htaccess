@@ -32,9 +32,10 @@
     # Handle public pages
     RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
 
-    # Default handler for other URLs
+    # Default handler for other URLs (avoid re-prefixing when already under /public)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/public/ [NC]
     RewriteRule ^(.*)$ public/$1 [L]
 
 </IfModule>
