@@ -14,6 +14,26 @@ if ($userRoleId) {
 }
 // Load menu items from centralized config so sidebar and Roles UI stay in sync
 $menuItems = require __DIR__ . '/menu.php';
+
+// Ensure Admin role automatically gets new menu slugs (quality-of-life)
+try {
+    // Find admin role id by slug or name
+    $roleStmt = $pdo->query("SELECT id FROM roles WHERE slug='admin' OR LOWER(name)='admin' LIMIT 1");
+    $adminRoleId = $roleStmt ? $roleStmt->fetchColumn() : null;
+    if ($adminRoleId) {
+        $checkStmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=? LIMIT 1");
+        $insStmt = $pdo->prepare("INSERT INTO role_permissions (role_id, menu_slug) VALUES (?, ?)");
+        foreach (array_keys($menuItems) as $slug) {
+            $checkStmt->execute([$adminRoleId, $slug]);
+            if (!$checkStmt->fetch()) {
+                $insStmt->execute([$adminRoleId, $slug]);
+            }
+        }
+    }
+} catch (Throwable $e) {
+    // Non-fatal: log and continue
+    error_log('sidebar admin permission sync: ' . $e->getMessage());
+}
 ?>
 
 <aside class="admin-sidebar">
