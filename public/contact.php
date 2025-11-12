@@ -326,11 +326,176 @@ document.addEventListener('DOMContentLoaded', function(){
 
 	var openSchedule = document.getElementById('openSchedule');
 	var modal = document.getElementById('modalBackdrop');
+	var modalClose = document.getElementById('modalClose');
 	var cancel = document.getElementById('cancelSchedule');
-	var confirm = document.getElementById('confirmSchedule');
-	if(openSchedule && modal){ openSchedule.addEventListener('click', function(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }); openSchedule.addEventListener('keypress', function(e){ if(e.key==='Enter') openSchedule.click(); }); }
-	if(cancel){ cancel.addEventListener('click', function(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }); }
-	if(confirm){ confirm.addEventListener('click', function(){ var date=document.getElementById('visit_date').value; var time=document.getElementById('visit_time').value; if(!date){ if (typeof Swal !== 'undefined') Swal.fire('Oops','Please pick a date','warning'); else alert('Please pick a date'); return; } var msg = 'Thanks — your visit has been requested for ' + date + ' at ' + time + '. Our team will contact you to confirm.'; if (typeof Swal !== 'undefined') Swal.fire('Request Sent', msg, 'success'); else alert(msg); modal.classList.remove('open'); }); }
+	var scheduleForm = document.getElementById('scheduleForm');
+	
+	// Open modal
+	if(openSchedule && modal){ 
+		openSchedule.addEventListener('click', function(){ 
+			modal.classList.add('open'); 
+			modal.setAttribute('aria-hidden','false'); 
+		}); 
+		openSchedule.addEventListener('keypress', function(e){ 
+			if(e.key==='Enter') openSchedule.click(); 
+		}); 
+	}
+	
+	// Close modal functions
+	function closeModal() {
+		if (modal) {
+			modal.classList.remove('open'); 
+			modal.setAttribute('aria-hidden','true');
+			// Reset form
+			if (scheduleForm) scheduleForm.reset();
+		}
+	}
+	
+	if(cancel) cancel.addEventListener('click', closeModal);
+	if(modalClose) modalClose.addEventListener('click', closeModal);
+	
+	// Close on backdrop click
+	if(modal) {
+		modal.addEventListener('click', function(e) {
+			if (e.target === modal) closeModal();
+		});
+	}
+	
+	// Handle form submission
+	if(scheduleForm) {
+		scheduleForm.addEventListener('submit', function(e) {
+			e.preventDefault();
+			
+			var submitBtn = document.getElementById('confirmSchedule');
+			var originalBtnText = submitBtn.innerHTML;
+			submitBtn.disabled = true;
+			submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Scheduling...';
+			
+			// Get form data
+			var formData = {
+				_csrf_token: document.querySelector('input[name="_csrf_token"]').value,
+				name: document.getElementById('visit_name').value,
+				email: document.getElementById('visit_email').value,
+				phone: document.getElementById('visit_phone').value,
+				visit_date: document.getElementById('visit_date').value,
+				visit_time: document.getElementById('visit_time').value,
+				message: document.getElementById('visit_message').value
+			};
+			
+			// Get API base URL
+			var apiBase = window.HQ_APP_BASE || '';
+			if (apiBase && apiBase.slice(-1) === '/') apiBase = apiBase.slice(0, -1);
+			
+			fetch((apiBase ? apiBase + '/api/schedule_appointment.php' : 'api/schedule_appointment.php'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formData)
+			})
+			.then(function(response) { return response.json(); })
+			.then(function(data) {
+				submitBtn.disabled = false;
+				submitBtn.innerHTML = originalBtnText;
+				
+				if (data.success) {
+					closeModal();
+					
+					var message = data.message;
+					var calendarData = data.calendar_data;
+					
+					if (typeof Swal !== 'undefined') {
+						Swal.fire({
+							icon: 'success',
+							title: 'Appointment Requested!',
+							html: message + '<br><br><small>Would you like to add this to your calendar?</small>',
+							showCancelButton: true,
+							confirmButtonText: 'Add to Calendar',
+							cancelButtonText: 'Close',
+							customClass: { popup: 'hq-swal' }
+						}).then(function(result) {
+							if (result.isConfirmed && calendarData) {
+								// Create calendar event
+								addToCalendar(calendarData);
+							}
+						});
+					} else {
+						alert(message);
+					}
+				} else {
+					if (typeof Swal !== 'undefined') {
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: data.message,
+							confirmButtonText: 'OK',
+							customClass: { popup: 'hq-swal' }
+						});
+					} else {
+						alert('Error: ' + data.message);
+					}
+				}
+			})
+			.catch(function(error) {
+				submitBtn.disabled = false;
+				submitBtn.innerHTML = originalBtnText;
+				
+				if (typeof Swal !== 'undefined') {
+					Swal.fire({
+						icon: 'error',
+						title: 'Connection Error',
+						text: 'Failed to schedule appointment. Please try again or call us at 0807 208 8794',
+						confirmButtonText: 'OK',
+						customClass: { popup: 'hq-swal' }
+					});
+				} else {
+					alert('Failed to schedule appointment. Please try again.');
+				}
+			});
+		});
+	}
+	
+	// Function to add event to calendar
+	function addToCalendar(data) {
+		var startDateTime = new Date(data.start_date + ' ' + data.start_time);
+		var endDateTime = new Date(startDateTime.getTime() + (60 * 60 * 1000)); // Add 1 hour
+		
+		// Format dates for iCal
+		function formatICalDate(date) {
+			return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+		}
+		
+		var icsContent = [
+			'BEGIN:VCALENDAR',
+			'VERSION:2.0',
+			'PRODID:-//High Q Academy//Appointment//EN',
+			'BEGIN:VEVENT',
+			'UID:' + Date.now() + '@hqacademy.com',
+			'DTSTAMP:' + formatICalDate(new Date()),
+			'DTSTART:' + formatICalDate(startDateTime),
+			'DTEND:' + formatICalDate(endDateTime),
+			'SUMMARY:' + data.title,
+			'DESCRIPTION:' + data.description,
+			'LOCATION:' + data.location,
+			'STATUS:CONFIRMED',
+			'BEGIN:VALARM',
+			'TRIGGER:-PT30M',
+			'ACTION:DISPLAY',
+			'DESCRIPTION:Reminder: Visit to High Q Academy in 30 minutes',
+			'END:VALARM',
+			'END:VEVENT',
+			'END:VCALENDAR'
+		].join('\r\n');
+		
+		// Create download link
+		var blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+		var link = document.createElement('a');
+		link.href = window.URL.createObjectURL(blob);
+		link.download = 'high-q-academy-visit.ics';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
 
 	// Live Chat: open iframe modal only. Keep cookie helpers and badge update.
 	var openLive = document.getElementById('openLiveChat');
