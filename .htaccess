@@ -2,12 +2,12 @@
     RewriteEngine On
     Options -Indexes
 
-    RewriteBase /HIGH-Q/
+    RewriteBase /
 
     # Normalize accidental double /public/public paths (defensive)
     # Use THE_REQUEST to avoid internal rewrite loops and issue a clean 301
-    RewriteCond %{THE_REQUEST} \s//public/public/ [NC]
-    RewriteRule ^public/public/(.*)$ /HIGH/public/$1 [L,R=301]
+    RewriteCond %{THE_REQUEST} \s/public/public/ [NC]
+    RewriteRule ^public/public/(.*)$ /public/$1 [L,R=301]
 
     # Allow direct access to static files and directories
     RewriteRule ^(public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
