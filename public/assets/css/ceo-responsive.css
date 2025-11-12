@@ -72,14 +72,16 @@
 /* Desktop-specific styling to match image 1 layout */
 @media (min-width: 992px) {
   .ceo-grid {
-    grid-template-columns: 420px 1fr;
-    gap: 40px;
+    grid-template-columns: 380px 1fr;
+    gap: 48px;
+    align-items: start;
   }
 
   .ceo-left-column {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
+    max-width: 380px;
   }
 
   .ceo-card {
@@ -87,28 +89,118 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 40px 32px;
   }
 
   .ceo-photo {
-    margin-bottom: 0;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .ceo-photo img {
-    width: 180px;
-    height: 180px;
-    margin-bottom: 20px;
+    width: 200px !important;
+    height: 200px !important;
+    margin-bottom: 0;
+    border-width: 10px;
+  }
+
+  .ceo-info h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #0b2540;
+  }
+
+  .ceo-info .role {
+    font-size: 16px;
+    color: #0b2540;
+    font-weight: 500;
   }
 
   .ceo-quote {
     text-align: left;
+    padding: 24px;
+    margin: 0;
+  }
+
+  .ceo-quote i {
+    font-size: 28px;
+    color: var(--hq-yellow);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .ceo-quote p {
+    font-size: 15px;
+    line-height: 1.7;
+    font-style: italic;
+    color: #2c3e50;
+    margin-bottom: 16px;
+  }
+
+  .ceo-quote span {
+    color: var(--hq-red);
+    font-weight: 600;
+    font-size: 14px;
   }
 
   .ceo-right-column {
     text-align: left;
   }
 
+  .ceo-content h3 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #0b2540;
+  }
+
+  .ceo-content p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #4a5568;
+  }
+
   .ceo-stats {
     justify-content: flex-start;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .stat {
+    padding: 28px 20px;
+  }
+
+  .stat i {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .stat strong {
+    font-size: 36px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .stat span {
+    font-size: 14px;
+    color: #64748b;
+    display: block;
+  }
+
+  .stat.yellow {
+    border: 2px solid var(--hq-yellow);
+  }
+
+  .stat.red {
+    border: 2px solid var(--hq-red);
+  }
+
+  .stat.gray {
+    border: 2px solid #cbd5e0;
   }
 }
 
