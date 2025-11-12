@@ -208,10 +208,9 @@
 
 @media (max-width: 768px) {
     .hero {
-        /* Use HQ light yellow on mobile for a softer branded background */
-        background: var(--hq-yellow-100, #fed240);
-        /* Slightly thicker spacing on mobile for better presence */
-        padding: 4.5rem 0;
+        /* Use HQ yellow on mobile for branded background like image 3 */
+        background: #ffbf00;
+        padding: 3rem 0;
     }
     
     .hero .container {
@@ -221,42 +220,69 @@
     
     .hero-left {
         padding-right: 0;
+        text-align: left;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        margin-bottom: 1rem;
     }
     
     .hero h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    .hero .lead {
+        font-size: 0.95rem;
+        text-align: left;
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Left-align CTAs on mobile to match image 3 */
+    .hero-ctas {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
     
     .hero-stats {
-        gap: 2rem;
+        gap: 1.5rem;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .hero-stats > div {
+        min-width: 100px;
+    }
+
+    .hero-stats strong {
+        font-size: 1.5rem;
+    }
+
+    .hero-stats div div {
+        font-size: 0.85rem;
     }
     
     .hero-right {
         transform: none;
     }
-    /* Center the hero paragraph on small screens and constrain its width */
-    .hero-left .lead {
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-        max-width: 95%;
-    }
 
-    /* Ensure call-to-action buttons are centered on mobile */
-    .hero-ctas {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    /* Stack feature cards vertically with icon on top for better mobile alignment */
+    /* Stack feature cards vertically with icon on left for better mobile alignment */
     .feature-card {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+        padding: 1.25rem;
     }
 
     .feature-card .feature-icon {
-        margin: 0 0 0.75rem 0;
+        margin: 0;
+        flex-shrink: 0;
     }
 
     .feature-card .feature-body {
@@ -266,9 +292,11 @@
     .feature-card .feature-body h5 {
         margin-top: 0;
         margin-bottom: 0.5rem;
+        font-size: 1rem;
     }
 
     .feature-card .feature-body p {
-        text-align: center;
+        text-align: left;
+        font-size: 0.85rem;
     }
 }
