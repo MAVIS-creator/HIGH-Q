@@ -291,7 +291,112 @@ $csrf = generateToken('signup_form');
                     </div>
                 </div>
                 <div class="form-row form-inline"><div><label>First Name *</label><input type="text" name="first_name_post" placeholder="First name" value="<?= htmlspecialchars($_POST['first_name_post'] ?? '') ?>"></div><div><label>Surname *</label><input type="text" name="surname" placeholder="Surname" value="<?= htmlspecialchars($_POST['surname'] ?? '') ?>"></div></div>
-                <!-- more fields... reuse remaining inputs from original form -->
+                
+                <div class="form-row"><label>Other Name</label><input type="text" name="other_name" placeholder="Other names (optional)" value="<?= htmlspecialchars($_POST['other_name'] ?? '') ?>"></div>
+                
+                <div class="form-row">
+                    <label>Gender</label>
+                    <select name="post_gender">
+                        <option value="">Select gender</option>
+                        <option value="male" <?= (($_POST['post_gender'] ?? '') === 'male') ? 'selected' : '' ?>>Male</option>
+                        <option value="female" <?= (($_POST['post_gender'] ?? '') === 'female') ? 'selected' : '' ?>>Female</option>
+                    </select>
+                </div>
+
+                <div class="form-row"><label>Home Address</label><textarea name="address" placeholder="Complete home address"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea></div>
+                
+                <div class="form-row form-inline">
+                    <div><label>Parent/Guardian Phone</label><input type="tel" name="parent_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['parent_phone'] ?? '') ?>"></div>
+                    <div><label>Email Address</label><input type="email" name="email_post" placeholder="your.email@example.com" value="<?= htmlspecialchars($_POST['email_post'] ?? '') ?>"></div>
+                </div>
+
+                <div class="form-row form-inline">
+                    <div><label>NIN Number</label><input type="text" name="nin_number" placeholder="National Identification Number" value="<?= htmlspecialchars($_POST['nin_number'] ?? '') ?>"></div>
+                    <div><label>State of Origin</label><input type="text" name="state_of_origin" placeholder="State of origin" value="<?= htmlspecialchars($_POST['state_of_origin'] ?? '') ?>"></div>
+                </div>
+
+                <div class="form-row form-inline">
+                    <div><label>Local Government</label><input type="text" name="local_government" placeholder="Local government area" value="<?= htmlspecialchars($_POST['local_government'] ?? '') ?>"></div>
+                    <div><label>Place of Birth</label><input type="text" name="place_of_birth" placeholder="Place of birth" value="<?= htmlspecialchars($_POST['place_of_birth'] ?? '') ?>"></div>
+                </div>
+
+                <div class="form-row form-inline">
+                    <div><label>Nationality</label><input type="text" name="nationality" placeholder="Nationality" value="<?= htmlspecialchars($_POST['nationality'] ?? 'Nigerian') ?>"></div>
+                    <div><label>Religion</label><input type="text" name="religion" placeholder="Religion" value="<?= htmlspecialchars($_POST['religion'] ?? '') ?>"></div>
+                </div>
+
+                <h4 class="section-title" style="margin-top:20px;"><i class="bx bxs-graduation"></i> JAMB Information</h4>
+                
+                <div class="form-row form-inline">
+                    <div><label>JAMB Registration Number</label><input type="text" name="jamb_registration_number" placeholder="e.g. 12345678AA" value="<?= htmlspecialchars($_POST['jamb_registration_number'] ?? '') ?>"></div>
+                    <div><label>JAMB Score</label><input type="number" name="jamb_score" placeholder="Total score (0-400)" min="0" max="400" value="<?= htmlspecialchars($_POST['jamb_score'] ?? '') ?>"></div>
+                </div>
+
+                <div class="form-row"><label>JAMB Subject 1 (Must be English) *</label><input type="text" name="jamb_subj_1" placeholder="e.g. English Language" value="<?= htmlspecialchars($_POST['jamb_subj_1'] ?? '') ?>"></div>
+                <div class="form-row"><label>Score for Subject 1</label><input type="number" name="jamb_score_1" placeholder="0-100" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_1'] ?? '') ?>"></div>
+
+                <div class="form-row"><label>JAMB Subject 2 *</label><input type="text" name="jamb_subj_2" placeholder="Second subject" value="<?= htmlspecialchars($_POST['jamb_subj_2'] ?? '') ?>"></div>
+                <div class="form-row"><label>Score for Subject 2</label><input type="number" name="jamb_score_2" placeholder="0-100" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_2'] ?? '') ?>"></div>
+
+                <div class="form-row"><label>JAMB Subject 3 *</label><input type="text" name="jamb_subj_3" placeholder="Third subject" value="<?= htmlspecialchars($_POST['jamb_subj_3'] ?? '') ?>"></div>
+                <div class="form-row"><label>Score for Subject 3</label><input type="number" name="jamb_score_3" placeholder="0-100" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_3'] ?? '') ?>"></div>
+
+                <div class="form-row"><label>JAMB Subject 4 *</label><input type="text" name="jamb_subj_4" placeholder="Fourth subject" value="<?= htmlspecialchars($_POST['jamb_subj_4'] ?? '') ?>"></div>
+                <div class="form-row"><label>Score for Subject 4</label><input type="number" name="jamb_score_4" placeholder="0-100" min="0" max="100" value="<?= htmlspecialchars($_POST['jamb_score_4'] ?? '') ?>"></div>
+
+                <h4 class="section-title" style="margin-top:20px;"><i class="bx bxs-book-content"></i> O'Level Results (WAEC/NECO)</h4>
+                
+                <div class="form-row"><label>Exam Type</label><select name="exam_type"><option value="">Select exam type</option><option value="WAEC" <?= (($_POST['exam_type'] ?? '') === 'WAEC') ? 'selected' : '' ?>>WAEC</option><option value="NECO" <?= (($_POST['exam_type'] ?? '') === 'NECO') ? 'selected' : '' ?>>NECO</option></select></div>
+                
+                <div class="form-row"><label>Candidate Name (as on certificate)</label><input type="text" name="candidate_name" placeholder="Full name on certificate" value="<?= htmlspecialchars($_POST['candidate_name'] ?? '') ?>"></div>
+                
+                <div class="form-row form-inline">
+                    <div><label>Exam Number</label><input type="text" name="exam_number" placeholder="Exam number" value="<?= htmlspecialchars($_POST['exam_number'] ?? '') ?>"></div>
+                    <div><label>Exam Year/Month</label><input type="text" name="exam_year_month" placeholder="e.g. May/June 2024" value="<?= htmlspecialchars($_POST['exam_year_month'] ?? '') ?>"></div>
+                </div>
+
+                <div style="margin-top:12px;">
+                    <p style="font-size:13px;color:#666;margin-bottom:8px;">Enter up to 8 subjects with grades:</p>
+                    <?php for ($i = 1; $i <= 8; $i++): ?>
+                        <div class="form-row form-inline">
+                            <div><label>Subject <?= $i ?></label><input type="text" name="olevel_subj_<?= $i ?>" placeholder="Subject name" value="<?= htmlspecialchars($_POST['olevel_subj_' . $i] ?? '') ?>"></div>
+                            <div><label>Grade <?= $i ?></label><select name="olevel_grade_<?= $i ?>">
+                                <option value="">-</option>
+                                <?php foreach (['A1','B2','B3','C4','C5','C6','D7','E8','F9'] as $grade): ?>
+                                    <option value="<?= $grade ?>" <?= (($_POST['olevel_grade_' . $i] ?? '') === $grade) ? 'selected' : '' ?>><?= $grade ?></option>
+                                <?php endforeach; ?>
+                            </select></div>
+                        </div>
+                    <?php endfor; ?>
+                </div>
+
+                <h4 class="section-title" style="margin-top:20px;"><i class="bx bxs-school"></i> Course Choices</h4>
+                
+                <div class="form-row"><label>First Choice Course</label><input type="text" name="course_first_choice" placeholder="e.g. Computer Science" value="<?= htmlspecialchars($_POST['course_first_choice'] ?? '') ?>"></div>
+                <div class="form-row"><label>Second Choice Course</label><input type="text" name="course_second_choice" placeholder="Alternative course" value="<?= htmlspecialchars($_POST['course_second_choice'] ?? '') ?>"></div>
+                <div class="form-row"><label>First Choice Institution</label><input type="text" name="institution_first_choice" placeholder="Preferred university/polytechnic" value="<?= htmlspecialchars($_POST['institution_first_choice'] ?? '') ?>"></div>
+
+                <h4 class="section-title" style="margin-top:20px;"><i class="bx bxs-user-detail"></i> Parent/Guardian Information</h4>
+                
+                <div class="form-row"><label>Father's Name</label><input type="text" name="father_name" placeholder="Father's full name" value="<?= htmlspecialchars($_POST['father_name'] ?? '') ?>"></div>
+                <div class="form-row form-inline">
+                    <div><label>Father's Phone</label><input type="tel" name="father_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['father_phone'] ?? '') ?>"></div>
+                    <div><label>Father's Email</label><input type="email" name="father_email" placeholder="father@example.com" value="<?= htmlspecialchars($_POST['father_email'] ?? '') ?>"></div>
+                </div>
+                <div class="form-row"><label>Father's Occupation</label><input type="text" name="father_occupation" placeholder="Occupation" value="<?= htmlspecialchars($_POST['father_occupation'] ?? '') ?>"></div>
+
+                <div class="form-row"><label>Mother's Name</label><input type="text" name="mother_name" placeholder="Mother's full name" value="<?= htmlspecialchars($_POST['mother_name'] ?? '') ?>"></div>
+                <div class="form-row"><label>Mother's Phone</label><input type="tel" name="mother_phone" placeholder="+234 XXX XXX XXXX" value="<?= htmlspecialchars($_POST['mother_phone'] ?? '') ?>"></div>
+                <div class="form-row"><label>Mother's Occupation</label><input type="text" name="mother_occupation" placeholder="Occupation" value="<?= htmlspecialchars($_POST['mother_occupation'] ?? '') ?>"></div>
+
+                <h4 class="section-title" style="margin-top:20px;"><i class="bx bxs-school"></i> Educational Background</h4>
+                
+                <div class="form-row"><label>Primary School Attended</label><input type="text" name="primary_school" placeholder="Primary school name" value="<?= htmlspecialchars($_POST['primary_school'] ?? '') ?>"></div>
+                <div class="form-row"><label>Year Ended</label><input type="number" name="primary_year_ended" placeholder="e.g. 2015" min="1990" max="2025" value="<?= htmlspecialchars($_POST['primary_year_ended'] ?? '') ?>"></div>
+
+                <div class="form-row"><label>Secondary School Attended</label><input type="text" name="secondary_school" placeholder="Secondary school name" value="<?= htmlspecialchars($_POST['secondary_school'] ?? '') ?>"></div>
+                <div class="form-row"><label>Year Ended</label><input type="number" name="secondary_year_ended" placeholder="e.g. 2020" min="1990" max="2025" value="<?= htmlspecialchars($_POST['secondary_year_ended'] ?? '') ?>"></div>
+
                 <div style="margin-top:12px;"><label><input type="checkbox" name="post_tutor_fee" value="1" <?= !empty($_POST['post_tutor_fee']) ? 'checked' : '' ?>> Add optional tutor fee (₦8,000)</label></div>
                 <p style="font-size:13px;color:#666;margin-top:8px">Post-UTME compulsory form fee: ₦1,000.</p>
             </div>
