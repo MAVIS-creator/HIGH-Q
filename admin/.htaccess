@@ -1,7 +1,7 @@
 # Basic Authentication (temporarily disabled for local debugging)
 # AuthType Basic
 # AuthName "Admin Login"
-# AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+# AuthUserFile "C:/xampp/htdocsQ/admin/.htpasswd"
 # Require valid-user
 
 # Allow accessing assets after authentication
@@ -11,18 +11,18 @@
 </FilesMatch>
 
 # Error Documents
-ErrorDocument 400 /HIGH-Q/admin/errors/400.php
-ErrorDocument 401 /HIGH-Q/admin/errors/401.php
-ErrorDocument 403 /HIGH-Q/admin/errors/403.php
-ErrorDocument 404 /HIGH-Q/admin/errors/404.php
-ErrorDocument 500 /HIGH-Q/admin/errors/500.php
+ErrorDocument 400 Q/admin/errors/400.php
+ErrorDocument 401 Q/admin/errors/401.php
+ErrorDocument 403 Q/admin/errors/403.php
+ErrorDocument 404 /admin/errors/404.php
+ErrorDocument 500 /admin/errors/500.php
 
 # Prevent directory listing
 Options -Indexes
 
 # Enable URL rewriting
 RewriteEngine On
-RewriteBase /HIGH-Q/admin/
+RewriteBase Q/admin/
 
 # Allow access to error pages
 <FilesMatch "^(400|401|403|404|500)\.php$">
