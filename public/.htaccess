@@ -3,8 +3,8 @@ RewriteEngine On
 
 # Collapse accidental duplicate /public/public paths to /public
 # Use THE_REQUEST to avoid loops and only redirect on user-facing requests
-RewriteCond %{THE_REQUEST} \s/public/public/ [NC]
-RewriteRule ^public/(.*)$ /public/$1 [L,R=301]
+RewriteCond %{THE_REQUEST} \s/HIGH-Q/public/public/ [NC]
+RewriteRule ^public/(.*)$ /HIGH-Q/public/$1 [L,R=301]
 
 # If the requested file or folder actually exists, serve it directly
 RewriteCond %{REQUEST_FILENAME} -f [OR]
