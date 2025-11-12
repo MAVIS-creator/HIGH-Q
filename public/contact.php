@@ -235,26 +235,61 @@ include __DIR__ . '/includes/header.php';
 <!-- Calendar modal for scheduling visits -->
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
 	<div class="modal" role="document" aria-modal="true">
+		<button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
 		<h3>Schedule a Visit</h3>
-		<div class="field">
-			<label>Date</label>
-			<input type="date" id="visit_date">
-		</div>
-		<div class="field">
-			<label>Preferred Time</label>
-			<select id="visit_time">
-				<option>09:00 AM</option>
-				<option>10:00 AM</option>
-				<option>11:00 AM</option>
-				<option>01:00 PM</option>
-				<option>02:00 PM</option>
-				<option>03:00 PM</option>
-			</select>
-		</div>
-		<div class="actions">
-			<button class="btn-ghost" id="cancelSchedule">Cancel</button>
-			<button class="btn-primary" id="confirmSchedule">Confirm</button>
-		</div>
+		<p style="color:#666;font-size:14px;margin-bottom:20px;">Fill out the form below and we'll contact you to confirm your appointment.</p>
+		
+		<form id="scheduleForm">
+			<input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
+			
+			<div class="field">
+				<label>Your Name *</label>
+				<input type="text" id="visit_name" name="name" placeholder="Enter your full name" required>
+			</div>
+			
+			<div class="field">
+				<label>Email Address *</label>
+				<input type="email" id="visit_email" name="email" placeholder="your.email@example.com" required>
+			</div>
+			
+			<div class="field">
+				<label>Phone Number</label>
+				<input type="tel" id="visit_phone" name="phone" placeholder="+234 XXX XXX XXXX">
+			</div>
+			
+			<div class="field">
+				<label>Preferred Date *</label>
+				<input type="date" id="visit_date" name="visit_date" required min="<?= date('Y-m-d') ?>">
+			</div>
+			
+			<div class="field">
+				<label>Preferred Time *</label>
+				<select id="visit_time" name="visit_time" required>
+					<option value="">Select a time</option>
+					<option value="09:00 AM">09:00 AM</option>
+					<option value="10:00 AM">10:00 AM</option>
+					<option value="11:00 AM">11:00 AM</option>
+					<option value="12:00 PM">12:00 PM</option>
+					<option value="01:00 PM">01:00 PM</option>
+					<option value="02:00 PM">02:00 PM</option>
+					<option value="03:00 PM">03:00 PM</option>
+					<option value="04:00 PM">04:00 PM</option>
+					<option value="05:00 PM">05:00 PM</option>
+				</select>
+			</div>
+			
+			<div class="field">
+				<label>Additional Message (Optional)</label>
+				<textarea id="visit_message" name="message" placeholder="Let us know what you'd like to discuss..." rows="3"></textarea>
+			</div>
+			
+			<div class="actions">
+				<button type="button" class="btn-ghost" id="cancelSchedule">Cancel</button>
+				<button type="submit" class="btn-primary" id="confirmSchedule">
+					<i class="bx bx-calendar-check"></i> Schedule Visit
+				</button>
+			</div>
+		</form>
 	</div>
 </div>
 
