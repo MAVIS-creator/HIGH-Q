@@ -48,6 +48,8 @@ $menuItems = [
                     if (!$show && $slug === 'audit_logs' && in_array('settings', $permissions)) $show = true;
                     // Ensure the Create Payment Link menu is shown to users with 'payments' permission
                     if (!$show && $slug === 'create_payment_link' && in_array('payments', $permissions)) $show = true;
+                    // Show appointments to users with 'settings' or 'students' permission
+                    if (!$show && $slug === 'appointments' && (in_array('settings', $permissions) || in_array('students', $permissions))) $show = true;
                 ?>
                 <?php if ($show): ?>
                     <li><a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
