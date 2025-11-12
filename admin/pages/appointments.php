@@ -4,7 +4,8 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
-requirePermission('appointments'); // ensure role has access
+// Allow access if user has explicit 'appointments' permission, or broader 'settings'/'students'
+requirePermission(['appointments','settings','students']);
 
 // Handle status updates and notifications
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
