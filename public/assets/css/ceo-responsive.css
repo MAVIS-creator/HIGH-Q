@@ -193,25 +193,54 @@
 
   .stat.yellow {
     border: 2px solid var(--hq-yellow);
+    background: linear-gradient(180deg, #fffaf0, #fff);
+  }
+
+  .stat.yellow i {
+    color: var(--hq-yellow);
   }
 
   .stat.red {
     border: 2px solid var(--hq-red);
+    background: linear-gradient(180deg, #fff0f0, #fff);
+  }
+
+  .stat.red i {
+    color: var(--hq-red);
   }
 
   .stat.gray {
     border: 2px solid #cbd5e0;
+    background: #f7f7f7;
+  }
+
+  .stat.gray i {
+    color: var(--hq-gray-dark);
   }
 }
 
 /* Responsive Breakpoints */
-@media (max-width: 1200px) {
+@media (max-width: 1200px) and (min-width: 992px) {
   .ceo-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 360px 1fr;
+    gap: 32px;
+  }
+
+  .ceo-left-column {
+    max-width: 360px;
+  }
+
+  .ceo-photo img {
+    width: 160px !important;
+    height: 160px !important;
   }
   
   .stat {
     min-width: auto;
+  }
+
+  .ceo-stats {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
