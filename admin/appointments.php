@@ -6,6 +6,7 @@ require_once __DIR__ . '/../public/config/db.php';
 require_once __DIR__ . '/../public/config/functions.php';
 
 $pageTitle = 'Appointments Management';
+$pageSubtitle = 'View and manage visitor appointments';
 
 // Handle status updates and notifications
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -138,6 +139,7 @@ $statsQuery = "SELECT
 $stats = $pdo->query($statsQuery)->fetch();
 
 include __DIR__ . '/includes/header.php';
+include __DIR__ . '/includes/sidebar.php';
 ?>
 
 <div class="admin-header">
