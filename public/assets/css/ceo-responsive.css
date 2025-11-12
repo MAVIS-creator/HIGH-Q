@@ -8,8 +8,7 @@
 
 .ceo-grid {
   display: grid;
-  grid-template-columns: minmax(300px, 520px) 1fr;
-  /* make the gap slightly smaller by default to tighten up vertical spacing */
+  grid-template-columns: 1fr;
   gap: clamp(18px, 3.5vw, 40px);
   align-items: start;
   margin: 0 auto;
@@ -18,7 +17,7 @@
 
 /* Ensure the left column doesn't expand beyond the intended grid cell on large desktops */
 .ceo-left-column {
-  max-width: 520px;
+  max-width: 100%;
   width: 100%;
 }
 
