@@ -27,6 +27,7 @@
 #modalBackdrop .modal,
 .modal-backdrop .modal,
 .modal {
+  display: block !important;
   z-index: 13001 !important;
   opacity: 1 !important;
   visibility: visible !important;
