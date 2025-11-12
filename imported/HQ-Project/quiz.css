@@ -1,0 +1,128 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fdfdfd;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: green;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+/* Subject Tabs */
+.subject-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+.subject-tabs button {
+  padding: 8px 15px;
+  background: linear-gradient(135deg, gold, #FFD700);
+  border: 2px solid #e6c200;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.subject-tabs button.active {
+  background: #fff8cc;
+  border: 2px solid gold;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+}
+
+/* Question container */
+#questionContainer {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+#questionContainer h3 {
+  margin-bottom: 10px;
+}
+
+/* Number Navigation */
+.number-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.number-nav button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid gold;
+  background: #FFD700;
+  cursor: pointer;
+}
+.number-nav button.active {
+  background: orange;
+  color: white;
+}
+.number-nav button.answered {
+  background: green;
+  color: white;
+}
+
+/* Controls */
+.controls {
+  margin: 20px auto;
+  text-align: center;
+}
+.controls button {
+  margin: 0 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.controls .submit {
+  background: red;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+/* Calculator */
+#calculator {
+  max-width: 200px;
+  margin: 20px auto;
+  padding: 10px;
+  border: 2px solid gold;
+  border-radius: 8px;
+  background: #fff8cc;
+}
+#calculator.hidden {
+  display: none;
+}
+#calcDisplay {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 8px;
+  text-align: right;
+}
+#calcButtons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+#calcButtons button {
+  padding: 10px;
+  background: #FFD700;
+  border: 1px solid #e6c200;
+  font-weight: bold;
+  cursor: pointer;
+}
+#calcButtons button:hover {
+  background: gold;
+}
+
+

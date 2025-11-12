@@ -1,0 +1,73 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #fefdf6;
+  color: #333;
+}
+h1 {
+  text-align: center;
+  color: #2b5d34; /* dark green */
+}
+h2 {
+  color: #e6b800; /* golden yellow */
+}
+.form-container, .list-container {
+  max-width: 700px;
+  margin: 20px auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+}
+select, input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  background: #2b5d34; /* green */
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+button:hover {
+  background: #e6b800; /* yellow */
+  color: #333;
+}
+#questionList {
+  margin-top: 10px;
+}
+.question-card {
+  background: #fdf5d6; /* light yellow */
+  border-left: 5px solid #2b5d34;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+.question-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+.actions button {
+  margin-right: 8px;
+  font-size: 14px;
+  padding: 6px 12px;
+}
+.edit-btn {
+  background: #e6b800;
+  color: #333;
+}
+.delete-btn {
+  background: #d9534f;
+}

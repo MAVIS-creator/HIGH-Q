@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Page</title>
+  <link rel="icon" href="HQ-removebg-preview.png" type="image/png">
+  <link rel="stylesheet" href="quiz.css">
+</head>
+<body>
+  <header>
+    <h2>Welcome, <span id="studentName"></span></h2>
+    <div id="timer">02:00:00</div>
+  </header>
+
+  <!-- Subject Tabs -->
+  <div id="subjectTabs" class="subject-tabs"></div>
+
+  <!-- Question Area -->
+  <div id="questionContainer"></div>
+
+  <!-- Number Navigation -->
+  <div id="numberNav" class="number-nav"></div>
+
+  <!-- Exam Controls -->
+  <div class="controls">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+    <button id="submitBtn" class="submit">Submit Exam</button>
+    <button id="toggleCalc">Calculator</button>
+  </div>
+
+  <!-- Calculator -->
+  <div id="calculator" class="hidden">
+    <input type="text" id="calcDisplay" readonly>
+    <div id="calcButtons"></div>
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
