@@ -345,7 +345,9 @@ document.addEventListener('DOMContentLoaded', function(){
 	if(openSchedule && modal){ 
 		openSchedule.addEventListener('click', function(){ 
 			modal.classList.add('open'); 
-			modal.setAttribute('aria-hidden','false'); 
+			modal.setAttribute('aria-hidden','false');
+			// Prevent body scroll when modal is open
+			document.body.style.overflow = 'hidden';
 		}); 
 		openSchedule.addEventListener('keypress', function(e){ 
 			if(e.key==='Enter') openSchedule.click(); 
@@ -357,6 +359,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		if (modal) {
 			modal.classList.remove('open'); 
 			modal.setAttribute('aria-hidden','true');
+			// Restore body scroll
+			document.body.style.overflow = '';
 			// Reset form
 			if (scheduleForm) scheduleForm.reset();
 		}
@@ -526,7 +530,8 @@ document.addEventListener('DOMContentLoaded', function(){
 			if(chatModal){
 				chatModal.style.display = 'block';
 				chatModal.setAttribute('aria-hidden','false');
-				var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
+				var iframe = document.getElementById('chatIframe'); 
+				if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
 			}
 		});
 		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
@@ -534,7 +539,17 @@ document.addEventListener('DOMContentLoaded', function(){
 
 	// chat iframe modal close button
 	var closeChatModal = document.getElementById('closeChatModal');
-	if(closeChatModal){ closeChatModal.addEventListener('click', function(){ var chatModal = document.getElementById('chatIframeModal'); if(chatModal){ chatModal.style.display='none'; chatModal.setAttribute('aria-hidden','true'); var iframe = document.getElementById('chatIframe'); if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); } }); }
+	if(closeChatModal){ 
+		closeChatModal.addEventListener('click', function(){ 
+			var chatModal = document.getElementById('chatIframeModal'); 
+			if(chatModal){ 
+				chatModal.style.display='none'; 
+				chatModal.setAttribute('aria-hidden','true'); 
+				var iframe = document.getElementById('chatIframe'); 
+				if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); 
+			} 
+		}); 
+	}
 
 	// listen for messages from iframe (chatbox) to allow it to request close
 	window.addEventListener('message', function(ev){ try{ if(ev.data && ev.data.hq_chat_action === 'close'){ var m = document.getElementById('chatIframeModal'); if(m) m.style.display='none'; } }catch(e){} });
