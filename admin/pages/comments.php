@@ -134,6 +134,16 @@ if (!empty($_GET['ajax'])) {
   <div class="page-header"><h1><i class="bx bxs-comment-detail"></i> Comments</h1></div>
   <!-- CSRF token for AJAX actions; include name so various scripts can select it reliably -->
   <input type="hidden" id="comments_csrf" name="_csrf" value="<?= generateToken('comments_form') ?>">
+  
+  <?php if (empty($comments)): ?>
+    <div class="card">
+      <p style="text-align: center; padding: 20px; color: #666;">
+        <i class="bx bx-info-circle" style="font-size: 48px; display: block; margin-bottom: 10px;"></i>
+        No comments found. Comments will appear here once visitors start commenting on your posts.
+      </p>
+    </div>
+  <?php else: ?>
+  
   <table class="roles-table">
     <thead><tr><th>ID</th><th>Post</th><th>Name/Email</th><th>Content</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
     <tbody>
@@ -176,6 +186,7 @@ if (!empty($_GET['ajax'])) {
       <?php endforeach; ?>
     </tbody>
   </table>
+  <?php endif; ?>
 </div>
 
 <!-- Include SweetAlert2 -->
