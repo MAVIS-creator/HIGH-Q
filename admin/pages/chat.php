@@ -12,7 +12,6 @@ error_reporting(E_ALL);
 
 // Claim thread (AJAX): handle XHR POSTs before any HTML header is output so we can return pure JSON
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-  header('Content-Type: application/json');
   $token = $_POST['_csrf'] ?? '';
   if (!verifyToken('chat_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
   $action = $_POST['action'] ?? '';
