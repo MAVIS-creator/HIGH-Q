@@ -4,11 +4,11 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/functions.php';
-ini_set('display_errors', 0);
-header('Content-Type: application/json');
+
 requirePermission('comments');
 
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 // AJAX actions: approve, reject, reply - HANDLE BEFORE HEADER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
