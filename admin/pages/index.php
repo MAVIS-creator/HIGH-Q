@@ -163,6 +163,7 @@ if (!$found && substr($page, -1) === 's') {
     }
 }
 
+// existing code...
 if (!$found) {
     // Friendly debug output to show where it's looking
     echo "<div class='container'><h2>Page not found</h2>";
@@ -174,4 +175,7 @@ if (!$found) {
     echo "</ul></div>";
 }
 
-require_once __DIR__ . '/../includes/footer.php';
+if (!$isAjaxRequest) {
+    require_once __DIR__ . '/../includes/footer.php';
+}
+
