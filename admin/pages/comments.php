@@ -163,14 +163,24 @@ if (!empty($_GET['ajax'])) {
   </table>
 </div>
 
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 function doAction(action,id){
   var token = document.getElementById('comments_csrf').value || '';
   Swal.fire({ title: 'Confirm', text: 'Are you sure?', icon: 'question', showCancelButton: true }).then(function(res){
     if (!res.isConfirmed) return;
   var fd = new FormData(); fd.append('action', action); fd.append('id', id); fd.append('_csrf', token);
-  var xhr = new XMLHttpRequest(); xhr.open('POST', 'index.php?pages=comments', true); xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; }
+  var xhr = new XMLHttpRequest(); 
+  xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', true); 
+  xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+    xhr.onload = function(){ 
+      try{ var r = JSON.parse(xhr.responseText); } catch(e){ 
+        console.error('Parse error:', e, xhr.responseText);
+        Swal.fire('Error','Invalid server response','error'); 
+        return; 
+      }
       if (r.status === 'ok') { Swal.fire('Success','Action completed','success').then(()=> location.reload()); }
       else { Swal.fire('Failed', r.message || 'Operation failed', 'error'); }
     };
@@ -199,9 +209,9 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
           const fd = new FormData();
           fd.append('action', action);
           fd.append('id', id);
-          fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
+          fd.append('_csrf', document.getElementById('comments_csrf').value);
           
-          fetch('', {
+          fetch((window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', {
             method: 'POST',
             body: fd,
             headers: {
@@ -218,6 +228,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
             }
           })
           .catch(error => {
+            console.error('Fetch error:', error);
             Swal.fire('Error!', error.message || 'Something went wrong', 'error');
           });
         }
@@ -239,13 +250,15 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
 });
 // Poll the comments fragment every 5 seconds
 setInterval(function(){
-  var xhr = new XMLHttpRequest(); xhr.open('GET', 'index.php?pages=comments&ajax=1&_=' + Date.now(), true);
+  var xhr = new XMLHttpRequest(); 
+  xhr.open('GET', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments&ajax=1&_=' + Date.now(), true);
   xhr.onload = function(){
     if (xhr.status !== 200) return;
     // basic check: if response looks like a table fragment (starts with <tr) then replace tbody
     var txt = xhr.responseText || '';
     if (txt.trim().startsWith('<tr')) {
-      document.querySelector('table.roles-table tbody').innerHTML = txt;
+      var tbody = document.querySelector('table.roles-table tbody');
+      if (tbody) tbody.innerHTML = txt;
     } else {
       // ignore unexpected responses to avoid rendering full page inside the table
       console.warn('Ignored unexpected comments fragment during polling');
