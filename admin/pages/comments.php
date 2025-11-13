@@ -129,51 +129,6 @@ if (!empty($_GET['ajax'])) {
 // Load header AFTER all AJAX handling
 $pageTitle = 'Comments';
 require_once __DIR__ . '/../includes/header.php';
-}
-
-// If requested via AJAX fragment (polling), return only the tbody rows
-if (!empty($_GET['ajax'])) {
-  foreach($comments as $c){
-    echo "<tr>";
-    echo "<td>".htmlspecialchars($c['id'])."</td>";
-    echo "<td>".htmlspecialchars($c['post_id'])."</td>";
-    echo "<td>".htmlspecialchars(($c['name']?:'').' / '.($c['email']?:''))."</td>";
-    echo "<td>".htmlspecialchars(mb_strimwidth($c['content'],0,180,'...'))."</td>";
-    echo "<td>".htmlspecialchars($c['status'])."</td>";
-    echo "<td>".htmlspecialchars($c['created_at'])."</td>";
-
-    // build action buttons safely using json_encode for the preview string
-    $preview = htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES);
-    // use data-action buttons to allow delegated handlers
-    $replyBtn = "<button class='btn' data-action='reply' data-id='{$c['id']}' data-preview='{$preview}'>Reply</button>";
-    if ($c['status'] === 'pending') {
-      $actions = "<button class='btn' data-action='approve' data-id='{$c['id']}'>Approve</button> <button class='btn' data-action='reject' data-id='{$c['id']}'>Delete</button> <button class='btn' data-action='destroy' data-id='{$c['id']}'>Destroy</button> " . $replyBtn;
-    } else {
-      $actions = "<button class='btn' data-action='destroy' data-id='{$c['id']}'>Destroy</button> " . $replyBtn;
-    }
-
-    echo "<td>" . $actions . "</td>";
-    echo "</tr>";
-
-    // print any replies for this comment
-    $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? ORDER BY created_at ASC');
-    $rstmt->execute([$c['id']]);
-    $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach($replies as $rep) {
-      $displayName = ($rep['user_id'] ? 'Admin - ' . ($rep['name']?:'') : ($rep['name']?:''));
-      echo "<tr class='reply-row'>";
-      echo "<td>".htmlspecialchars($rep['id'])."</td>";
-      echo "<td>".htmlspecialchars($rep['post_id'])."</td>";
-      echo "<td>".htmlspecialchars($displayName)."</td>";
-      echo "<td>".htmlspecialchars(mb_strimwidth($rep['content'],0,180,'...'))."</td>";
-      echo "<td>".htmlspecialchars($rep['status'])."</td>";
-      echo "<td>".htmlspecialchars($rep['created_at'])."</td>";
-      echo "<td>&mdash;</td>";
-      echo "</tr>";
-    }
-  }
-  exit;
-}
 
 ?>
 <div class="roles-page">
