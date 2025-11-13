@@ -7,8 +7,8 @@ require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('comments');
 
-ini_set('display_errors', 0);
-header('Content-Type: application/json');
+// ini_set('display_errors', 0);
+// header('Content-Type: application/json');
 
 // AJAX actions: approve, reject, reply - HANDLE BEFORE HEADER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
