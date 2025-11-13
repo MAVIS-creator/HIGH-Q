@@ -1,10 +1,14 @@
 <?php
 // admin/pages/comments.php
+require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
+
 requirePermission('comments');
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../../public/config/functions.php';
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 $pageTitle = 'Comments';
 require_once __DIR__ . '/../includes/header.php';
@@ -311,11 +315,23 @@ document.getElementById('replySend').addEventListener('click', function(){
   fd.append('action', 'reply');
   fd.append('id', currentReplyParent);
   fd.append('content', content);
-  fd.append('_csrf', '<?= generateToken('comments_form') ?>');
+  fd.append('_csrf', document.getElementById('comments_csrf').value);
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'index.php?pages=comments', true);
+  xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-  xhr.onload = function(){ try{ var r = JSON.parse(xhr.responseText); } catch(e){ Swal.fire('Error','Invalid server response','error'); return; } if (r.status==='ok') { location.reload(); } else { Swal.fire('Failed', r.message || 'Failed to send reply', 'error'); } };
+  xhr.onload = function(){ 
+    try{ var r = JSON.parse(xhr.responseText); } catch(e){ 
+      console.error('Parse error:', e, xhr.responseText);
+      Swal.fire('Error','Invalid server response','error'); 
+      return; 
+    } 
+    if (r.status==='ok') { 
+      Swal.fire('Success', 'Reply sent', 'success').then(() => location.reload()); 
+    } else { 
+      Swal.fire('Failed', r.message || 'Failed to send reply', 'error'); 
+    } 
+  };
+  xhr.onerror = function(){ Swal.fire('Error','Network error','error'); };
   xhr.send(fd);
 });
 </script>
