@@ -7,6 +7,11 @@ function requirePermission($menuSlug) {
     // Accept either string or array of allowed menu slugs
     global $pdo;
 
+    // Detect AJAX/JSON requests so we can emit JSON instead of HTML redirects
+    $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+        || (isset($_GET['ajax']) || isset($_POST['ajax']))
+        || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false));
+
     $userId = $_SESSION['user']['id'] ?? null;
     if (!$userId) {
         // If there are no users in the system yet, redirect to signup for initial setup.
@@ -18,13 +23,19 @@ function requirePermission($menuSlug) {
             $total = 1;
         }
 
-        if ($total === 0) {
-            header("Location: ../signup.php");
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Unauthenticated']);
+            exit;
+        } else {
+            if ($total === 0) {
+                header("Location: ../signup.php");
+                exit;
+            }
+            header("Location: ../login.php");
             exit;
         }
-
-        header("Location: ../login.php");
-        exit;
     }
 
     // Fetch role_id
@@ -45,12 +56,24 @@ function requirePermission($menuSlug) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         if (!$stmt->fetch()) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(403);
+                echo json_encode(['status' => 'error', 'message' => 'Access denied: insufficient permission.']);
+                exit;
+            }
             die("Access denied: insufficient permission.");
         }
     } else {
         $stmt = $pdo->prepare("SELECT 1 FROM role_permissions WHERE role_id=? AND menu_slug=?");
         $stmt->execute([$roleId, $menuSlug]);
         if (!$stmt->fetch()) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(403);
+                echo json_encode(['status' => 'error', 'message' => 'Access denied: insufficient permission.']);
+                exit;
+            }
             die("Access denied: insufficient permission.");
         }
     }
@@ -66,6 +89,10 @@ function ensureAuthenticated(): void {
     $userId = $_SESSION['user']['id'] ?? null;
     if ($userId) return; // already logged in
 
+    $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+        || (isset($_GET['ajax']) || isset($_POST['ajax']))
+        || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false));
+
     // Determine if any users exist in the DB. If none, redirect to signup for first admin creation.
     try {
         $stmt = $pdo->query('SELECT COUNT(*) FROM users');
@@ -75,13 +102,19 @@ function ensureAuthenticated(): void {
         $total = 1;
     }
 
-    if ($total === 0) {
-        header('Location: ../signup.php');
+    if ($isAjax) {
+        header('Content-Type: application/json');
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Unauthenticated']);
+        exit;
+    } else {
+        if ($total === 0) {
+            header('Location: ../signup.php');
+            exit;
+        }
+        header('Location: ../login.php');
         exit;
     }
-
-    header('Location: ../login.php');
-    exit;
 }
 
 // -- Simple flash helpers --
