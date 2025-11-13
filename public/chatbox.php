@@ -415,29 +415,38 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 </head>
 
 <body>
-        <div class="chat-card">
-        <div class="chat-header">Live Chat — Online</div>
-        <div class="chat-body" id="chatMessages"></div>
-
+    <div class="chat-card">
+        <div class="chat-header">Live Chat Support</div>
+        
         <!-- Start form: visitor enters name/email/initial message first -->
         <div class="chat-start" id="chatStart">
-            <input type="text" id="start_name" placeholder="Your name" />
+            <h3>👋 Hi there!</h3>
+            <p>We're here to help. Please fill out the form below to start chatting with our support team.</p>
+            
+            <input type="text" id="start_name" placeholder="Your name *" required />
             <input type="email" id="start_email" placeholder="Your email (optional)" />
-            <textarea id="start_message" placeholder="Briefly tell us how we can help..." rows="3"></textarea>
-            <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
-                <button id="startBtn" class="btn">Start Chat</button>
-                <div style="font-size:0.9rem;color:#666;margin-left:auto">We will connect you to an agent shortly</div>
-            </div>
+            <textarea id="start_message" placeholder="How can we help you today?" rows="3" required></textarea>
+            
+            <button id="startBtn" class="start-btn">Start Conversation</button>
+            <p style="font-size: 12px; color: var(--hq-gray); text-align: center; margin-top: 8px;">
+                Typically replies within a few minutes
+            </p>
         </div>
 
+        <!-- Chat body: shows after form submission -->
+        <div class="chat-body" id="chatMessages" style="display:none;"></div>
+
+        <!-- Chat footer: shows after thread created -->
         <div class="chat-footer" id="chatFooter" style="display:none;">
-            <button type="button" class="btn-attachment" id="attachBtn"><i class="fas fa-paperclip"></i></button>
-            <input type="file" id="attachment" style="display:none;" multiple>
-            <input type="text" id="c_name" placeholder="Your Name">
-            <textarea id="c_message" rows="1" placeholder="Type a message..."></textarea>
+            <button type="button" class="btn-attachment" id="attachBtn" title="Attach files">📎</button>
+            <input type="file" id="attachment" style="display:none;" multiple accept="image/*,.pdf,.docx">
+            <input type="text" id="c_name" placeholder="Your Name" style="display:none;">
+            <textarea id="c_message" rows="1" placeholder="Type your message..."></textarea>
             <button id="sendBtn">Send</button>
             <div class="attachment-preview" id="attachmentPreview"></div>
         </div>
+        
+        <div class="chat-alert" id="chatAlert"></div>
     </div>
 
     <script>
