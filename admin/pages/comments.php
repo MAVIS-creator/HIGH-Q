@@ -70,9 +70,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     echo json_encode(['status'=>'error']); exit;
 }
 
-$perPage = 30; $page = max(1,(int)($_GET['page']??1)); $offset = ($page-1)*$perPage;
-$stmt = $pdo->prepare('SELECT * FROM comments ORDER BY created_at DESC LIMIT ? OFFSET ?'); $stmt->bindValue(1, $perPage, PDO::PARAM_INT); $stmt->bindValue(2, $offset, PDO::PARAM_INT); $stmt->execute();
-$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$perPage = 30; 
+$page = max(1,(int)($_GET['page']??1)); 
+$offset = ($page-1)*$perPage;
+
+try {
+    $stmt = $pdo->prepare('SELECT * FROM comments ORDER BY created_at DESC LIMIT ? OFFSET ?'); 
+    $stmt->bindValue(1, $perPage, PDO::PARAM_INT); 
+    $stmt->bindValue(2, $offset, PDO::PARAM_INT); 
+    $stmt->execute();
+    $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Comments query error: " . $e->getMessage());
+    $comments = [];
+}
 
 // If requested via AJAX fragment (polling), return only the tbody rows
 if (!empty($_GET['ajax'])) {
