@@ -1,4 +1,0 @@
-- [ ] Modify admin.js saveQuestionBtn to POST to server first, then update local allQuestions if success
-- [ ] Modify admin.js delete button to POST to server first, then update local allQuestions if success
-- [ ] Test adding a question and verify it saves to data/questions.json
-- [ ] Test loading questions on client side (quiz.html) to ensure they appear
