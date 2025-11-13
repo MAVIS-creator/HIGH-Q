@@ -164,6 +164,7 @@ function claim(id){
   var xhr=new XMLHttpRequest();
   xhr.open('POST',(window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  xhr.setRequestHeader('Accept','application/json');
 
     xhr.onload=function(){
       try{ var r=JSON.parse(xhr.responseText);}catch(e){
