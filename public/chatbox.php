@@ -458,17 +458,29 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const attachmentInput = document.getElementById('attachment');
             const attachBtn = document.getElementById('attachBtn');
             const attachmentPreview = document.getElementById('attachmentPreview');
-            // emoji removed
+            const chatAlertEl = document.getElementById('chatAlert');
+            const chatStartEl = document.getElementById('chatStart');
+            const chatFooterEl = document.getElementById('chatFooter');
+            const startBtn = document.getElementById('startBtn');
+            const startName = document.getElementById('start_name');
+            const startEmail = document.getElementById('start_email');
+            const startMsg = document.getElementById('start_message');
 
             function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
             function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
 
-            function appendMessage(sender, msg, is_staff = false, attachments = []) {
+            function appendMessage(sender, msg, is_staff = false, is_system = false, attachments = []) {
                 const div = document.createElement('div');
-                div.className = 'chat-message ' + (is_staff ? 'staff' : 'visitor');
-                div.innerHTML = '<strong>' + sender + ':</strong> ' + msg;
+                const className = is_system ? 'chat-message system' : (is_staff ? 'chat-message staff' : 'chat-message visitor');
+                div.className = className;
+                
+                if (is_system) {
+                    div.innerHTML = msg;
+                } else {
+                    div.innerHTML = '<strong>' + sender + ':</strong> ' + msg;
+                }
+                
                 attachments.forEach(a => {
-                    // if it's an object with type, render properly
                     if (typeof a === 'object' && a.type && a.type.startsWith('image')) {
                         const img = document.createElement('img');
                         img.src = a.url;
@@ -492,37 +504,69 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }
 
-            // Attachment handling with client-side validation
+            // Attachment handling
             attachBtn.addEventListener('click', () => { attachmentInput.click(); });
-            // create alert element if missing
-            let chatAlertEl = document.getElementById('chatAlert');
-            if (!chatAlertEl) {
-                chatAlertEl = document.createElement('div'); chatAlertEl.id = 'chatAlert'; chatAlertEl.className = 'chat-alert'; document.querySelector('.chat-card').appendChild(chatAlertEl);
-            }
+            
             attachmentInput.addEventListener('change', async () => {
                 attachmentPreview.innerHTML = '';
-                chatAlertEl.style.display = 'none'; chatAlertEl.textContent = '';
+                chatAlertEl.style.display = 'none';
+                chatAlertEl.textContent = '';
+                
                 const maxBytes = 100 * 1024 * 1024;
                 const allowed = ['image/jpeg','image/png','image/gif','image/webp','application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                
                 for (const file of Array.from(attachmentInput.files)) {
-                    if (file.size > maxBytes) { chatAlertEl.textContent = 'File too large: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
-                    if (!allowed.includes(file.type)) { chatAlertEl.textContent = 'Not allowed file type: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
-                    // magic-bytes checks for PDF/DOCX
+                    if (file.size > maxBytes) {
+                        chatAlertEl.textContent = 'File too large: ' + file.name;
+                        chatAlertEl.style.display = 'block';
+                        continue;
+                    }
+                    if (!allowed.includes(file.type)) {
+                        chatAlertEl.textContent = 'File type not allowed: ' + file.name;
+                        chatAlertEl.style.display = 'block';
+                        continue;
+                    }
+                    
+                    // Magic-bytes validation for PDF/DOCX
                     if (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                         try {
                             const buf = await file.slice(0, 8).arrayBuffer();
                             const bytes = new Uint8Array(buf);
                             const sig = String.fromCharCode.apply(null, Array.from(bytes));
-                            if (file.type === 'application/pdf' && !sig.startsWith('%PDF')) { chatAlertEl.textContent = 'Invalid PDF: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
-                            if (file.type.indexOf('wordprocessingml.document') !== -1 && !(bytes[0] === 0x50 && bytes[1] === 0x4B)) { chatAlertEl.textContent = 'Invalid DOCX: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
-                        } catch (e) { chatAlertEl.textContent = 'Unable to validate file: ' + file.name; chatAlertEl.style.display = 'block'; continue; }
+                            if (file.type === 'application/pdf' && !sig.startsWith('%PDF')) {
+                                chatAlertEl.textContent = 'Invalid PDF: ' + file.name;
+                                chatAlertEl.style.display = 'block';
+                                continue;
+                            }
+                            if (file.type.indexOf('wordprocessingml.document') !== -1 && !(bytes[0] === 0x50 && bytes[1] === 0x4B)) {
+                                chatAlertEl.textContent = 'Invalid DOCX: ' + file.name;
+                                chatAlertEl.style.display = 'block';
+                                continue;
+                            }
+                        } catch (e) {
+                            chatAlertEl.textContent = 'Unable to validate: ' + file.name;
+                            chatAlertEl.style.display = 'block';
+                            continue;
+                        }
                     }
+                    
+                    // Preview images
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
-                        reader.onload = e => { const img = document.createElement('img'); img.src = e.target.result; attachmentPreview.appendChild(img); };
+                        reader.onload = e => {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            attachmentPreview.appendChild(img);
+                        };
                         reader.readAsDataURL(file);
                     } else {
-                        const div = document.createElement('div'); div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)'; div.style.padding = '6px 8px'; div.style.borderRadius = '6px'; div.style.background = '#fff'; div.style.marginTop = '4px'; attachmentPreview.appendChild(div);
+                        const div = document.createElement('div');
+                        div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                        div.style.padding = '6px 8px';
+                        div.style.borderRadius = '6px';
+                        div.style.background = '#fff';
+                        div.style.fontSize = '12px';
+                        attachmentPreview.appendChild(div);
                     }
                 }
             });
@@ -534,9 +578,12 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             });
 
             async function sendMessage() {
+                const message = msgInput.value.trim();
+                if (!message) return;
+                
                 const fd = new FormData();
-                fd.append('name', nameInput.value);
-                fd.append('message', msgInput.value);
+                fd.append('name', nameInput.value || startName.value || 'Guest');
+                fd.append('message', message);
                 const tid = getThreadId();
                 if (tid) fd.append('thread_id', tid);
                 Array.from(attachmentInput.files).forEach((f, idx) => fd.append('attachments[]', f));
@@ -549,97 +596,126 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     const j = await res.json();
                     if (j.status === 'ok') {
                         setThreadId(j.thread_id);
-                        const attachedFiles = Array.from(attachmentInput.files).map(f => ({ url: URL.createObjectURL(f), name: f.name, type: f.type }));
-                        appendMessage(nameInput.value, msgInput.value, false, attachedFiles);
+                        const attachedFiles = Array.from(attachmentInput.files).map(f => ({
+                            url: URL.createObjectURL(f),
+                            name: f.name,
+                            type: f.type
+                        }));
+                        appendMessage(nameInput.value || startName.value || 'Guest', message, false, false, attachedFiles);
                         msgInput.value = '';
                         msgInput.style.height = 'auto';
                         attachmentInput.value = '';
                         attachmentPreview.innerHTML = '';
+                    } else {
+                        chatAlertEl.textContent = 'Failed to send message';
+                        chatAlertEl.style.display = 'block';
                     }
                 } catch (e) {
                     console.error(e);
+                    chatAlertEl.textContent = 'Network error. Please try again.';
+                    chatAlertEl.style.display = 'block';
                 }
             }
 
-            // Start flow: show start form, then show footer after starting
-            const chatStartEl = document.getElementById('chatStart');
-            const chatFooterEl = document.getElementById('chatFooter');
-            const startBtn = document.getElementById('startBtn');
-            const startName = document.getElementById('start_name');
-            const startEmail = document.getElementById('start_email');
-            const startMsg = document.getElementById('start_message');
-
-            startBtn.addEventListener('click', async function(){
-                const name = startName.value.trim() || 'Guest';
-                const email = startEmail.value.trim() || '';
-                const message = startMsg.value.trim() || 'Hi, I need help.';
-                // set visitor name/email into footer inputs
-                document.getElementById('c_name').value = name;
-                // post initial message via send_message flow to create thread and add message
-                const fd = new FormData(); fd.append('name', name); fd.append('email', email); fd.append('message', message);
+            // Start conversation flow
+            startBtn.addEventListener('click', async function() {
+                const name = startName.value.trim();
+                const email = startEmail.value.trim();
+                const message = startMsg.value.trim();
+                
+                if (!name || !message) {
+                    chatAlertEl.textContent = 'Please fill in your name and message';
+                    chatAlertEl.style.display = 'block';
+                    return;
+                }
+                
+                startBtn.disabled = true;
+                startBtn.textContent = 'Starting...';
+                
+                const fd = new FormData();
+                fd.append('name', name);
+                fd.append('email', email);
+                fd.append('message', message);
+                
                 try {
                     const res = await fetch('?action=send_message', { method: 'POST', body: fd });
                     const j = await res.json();
+                    
                     if (j.status === 'ok') {
                         setThreadId(j.thread_id);
-                        // hide start form and show footer
+                        nameInput.value = name;
+                        
+                        // Hide start form, show chat area
                         chatStartEl.style.display = 'none';
+                        chatDiv.style.display = 'flex';
                         chatFooterEl.style.display = 'flex';
-                        // show system message
-                        appendMessage('SYSTEM', 'An agent will be with you shortly. Meanwhile you can continue typing.', true);
-                        // trigger immediate refresh
+                        
+                        // Show user's first message
+                        appendMessage(name, message, false, false);
+                        
+                        // Show "waiting for agent" system message
+                        appendMessage('', '⏳ Please wait while we connect you with an agent. Feel free to add more details while you wait.', false, true);
+                        
+                        // Start polling for messages
                         getMessages();
+                    } else {
+                        chatAlertEl.textContent = 'Failed to start conversation. Please try again.';
+                        chatAlertEl.style.display = 'block';
+                        startBtn.disabled = false;
+                        startBtn.textContent = 'Start Conversation';
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error(e);
+                    chatAlertEl.textContent = 'Network error. Please try again.';
+                    chatAlertEl.style.display = 'block';
+                    startBtn.disabled = false;
+                    startBtn.textContent = 'Start Conversation';
+                }
             });
 
             sendBtn.addEventListener('click', sendMessage);
             msgInput.addEventListener('keypress', e => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
                 }
             });
 
-                // If a thread already exists in localStorage, skip start form and show footer
-                if (getThreadId()) {
-                    if (chatStartEl) chatStartEl.style.display = 'none';
-                    if (chatFooterEl) chatFooterEl.style.display = 'flex';
-                    // populate messages immediately
-                    getMessages();
-                }
+            // If thread already exists, skip start form
+            if (getThreadId()) {
+                chatStartEl.style.display = 'none';
+                chatDiv.style.display = 'flex';
+                chatFooterEl.style.display = 'flex';
+                getMessages();
+            }
 
             async function getMessages() {
                 const tid = getThreadId();
                 if (!tid) return;
+                
                 try {
                     const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
                     const j = await res.json();
+                    
                     if (j.status !== 'ok') return;
+                    
                     chatDiv.innerHTML = '';
                     j.messages.forEach(m => {
-                        // handle attachments in message: server may embed <img> or <a> tags; we'll display message HTML safely
-                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1);
+                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1, false);
                     });
-                    // if thread is closed, disable inputs
+                    
+                    // If thread is closed, disable inputs
                     if (j.thread_status && j.thread_status === 'closed') {
                         chatFooterEl.style.display = 'none';
-                        if (chatStartEl) chatStartEl.style.display = 'none';
-                        appendMessage('SYSTEM', 'This conversation has been closed by an agent.', true);
+                        appendMessage('', '✅ This conversation has been closed. Thank you for contacting us!', false, true);
                     }
                 } catch (e) {
                     console.error(e);
                 }
             }
+            
+            // Poll every 2 seconds
             setInterval(getMessages, 2000);
-
-            // Option buttons
-            document.querySelectorAll('.options-container button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    msgInput.value += btn.dataset.option + ' ';
-                    msgInput.dispatchEvent(new Event('input'));
-                });
-            });
         })();
     </script>
 </body>
