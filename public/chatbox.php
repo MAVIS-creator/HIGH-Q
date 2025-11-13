@@ -140,23 +140,18 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             font-family: 'Inter', sans-serif;
             background: transparent;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         .chat-card {
-            width: 420px;
-            max-width: 95%;
-            height: 580px;
+            width: 100%;
+            height: 100%;
             background: #fff;
-            border-radius: 16px;
+            border-radius: 0;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
             overflow: hidden;
-            margin: 0 auto;
             box-sizing: border-box;
         }
 
