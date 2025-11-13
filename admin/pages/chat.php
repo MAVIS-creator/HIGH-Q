@@ -174,7 +174,7 @@ function claim(id){
         if(r.status==='ok'){
         Swal.fire('Claimed!','You are now assigned to this thread.','success');
         // update button to Open without reloading
-        const li = document.querySelector('li[data-thread"'+id+'"]');
+        const li = document.querySelector('li[data-thread="'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
           right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
@@ -183,7 +183,7 @@ function claim(id){
         else if(r.status==='taken'){
         Swal.fire('Already Taken','This thread was claimed by ' + (r.assigned_admin_name || 'another admin') + '.','warning');
         // update UI to show Open link
-        const li = document.querySelector('li[data-thread"'+id+'"]');
+        const li = document.querySelector('li[data-thread="'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
           right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
