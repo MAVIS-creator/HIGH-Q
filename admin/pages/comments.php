@@ -12,6 +12,7 @@ requirePermission('comments');
 
 // AJAX actions: approve, reject, reply - HANDLE BEFORE HEADER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+  header('Content-Type: application/json');
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('comments_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
     $action = $_POST['action'] ?? '';
@@ -202,6 +203,7 @@ function doAction(action,id){
   var xhr = new XMLHttpRequest(); 
   xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', true); 
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  xhr.setRequestHeader('Accept','application/json');
     xhr.onload = function(){ 
       try{ var r = JSON.parse(xhr.responseText); } catch(e){ 
         console.error('Parse error:', e, xhr.responseText);
@@ -242,7 +244,8 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
             method: 'POST',
             body: fd,
             headers: {
-              'X-Requested-With': 'XMLHttpRequest'
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
             }
           })
           .then(response => response.json())
@@ -342,6 +345,7 @@ document.getElementById('replySend').addEventListener('click', function(){
   var xhr = new XMLHttpRequest();
   xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
+  xhr.setRequestHeader('Accept','application/json');
   xhr.onload = function(){ 
     try{ var r = JSON.parse(xhr.responseText); } catch(e){ 
       console.error('Parse error:', e, xhr.responseText);
