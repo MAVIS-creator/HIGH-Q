@@ -7,8 +7,8 @@ require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('comments');
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);
+header('Content-Type: application/json');
 
 // AJAX actions: approve, reject, reply - HANDLE BEFORE HEADER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
@@ -202,7 +202,6 @@ function doAction(action,id){
   var xhr = new XMLHttpRequest(); 
   xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', true); 
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-  xhr.setRequestHeader('Accept','application/json');
     xhr.onload = function(){ 
       try{ var r = JSON.parse(xhr.responseText); } catch(e){ 
         console.error('Parse error:', e, xhr.responseText);
@@ -243,8 +242,7 @@ document.querySelector('table.roles-table').addEventListener('click', function(e
             method: 'POST',
             body: fd,
             headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Accept': 'application/json'
+              'X-Requested-With': 'XMLHttpRequest'
             }
           })
           .then(response => response.json())
@@ -344,7 +342,6 @@ document.getElementById('replySend').addEventListener('click', function(){
   var xhr = new XMLHttpRequest();
   xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments', true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
-  xhr.setRequestHeader('Accept','application/json');
   xhr.onload = function(){ 
     try{ var r = JSON.parse(xhr.responseText); } catch(e){ 
       console.error('Parse error:', e, xhr.responseText);
