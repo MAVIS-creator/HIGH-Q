@@ -203,7 +203,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                   } else {
                     $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
                     if (is_readable($iconPath)) {
-                      echo "<img src=\"./assets/images/icons/" . rawurlencode($icon) . "\" alt=\"" . htmlspecialchars($title) . " icon\">";
+                      echo "<img src='" . app_url('assets/images/icons/' . rawurlencode($icon)) . "' alt='" . htmlspecialchars($title) . " icon'>";
                     } else {
                       // fallback default icon
                       echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";

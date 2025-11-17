@@ -26,8 +26,8 @@ if (function_exists('app_url')) {
     $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/\\');
     $BASE = rtrim($scheme . '://' . $host, '/') . ($scriptDir ? $scriptDir : '');
 }
-$logoUrl = $BASE . '/assets/images/hq-logo.jpeg';
-$cssUrl  = $BASE . '/assets/css/public.css';
+$logoUrl = app_url('assets/images/hq-logo.jpeg');
+$cssUrl  = app_url('assets/css/public.css');
 
 // Shared HTML (also used by PDF)
 $html = '<!doctype html>
