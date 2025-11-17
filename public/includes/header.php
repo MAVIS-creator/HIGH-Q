@@ -227,7 +227,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="./assets/css/public.css">
+  <link rel="stylesheet" href="/assets/css/public.css">
   <link rel="stylesheet" href="./assets/css/responsive.css">
   <link rel="stylesheet" href="./assets/css/ceo-responsive.css">
   <link rel="stylesheet" href="./assets/css/animations.css">
