@@ -124,12 +124,12 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           http_response_code(503);
           ?>
           <!doctype html>
-          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="/assets/css/public.css"></head><body>
+          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="<?= app_url('assets/css/public.css') ?>"></head><body>
           <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
             <div style="max-width:720px;padding:28px;border-radius:10px;background:linear-gradient(90deg,#ffd54f,#ffb300);box-shadow:0 8px 30px rgba(0,0,0,0.12);color:#111;">
               <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:12px;">
                 <div style="width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,0.08);">
-                  <img src="/assets/images/hq-logo.jpeg" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
+                  <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
                 </div>
                 <h1 style="margin:0;font-size:1.6rem;">We'll be back soon</h1>
               </div>
