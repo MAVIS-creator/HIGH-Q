@@ -80,11 +80,11 @@
     <div class="footer-links">
       <h3>Quick Links</h3>
       <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="about.php">About Us</a></li>
-        <li><a href="programs.php">Programs</a></li>
-        <li><a href="register.php">Admission</a></li>
-        <li><a href="contact.php">Contact</a></li>
+        <li><a href="<?= app_url('index.php') ?>">Home</a></li>
+        <li><a href="<?= app_url('about.php') ?>">About Us</a></li>
+        <li><a href="<?= app_url('programs.php') ?>">Programs</a></li>
+        <li><a href="<?= app_url('register.php') ?>">Admission</a></li>
+        <li><a href="<?= app_url('contact.php') ?>">Contact</a></li>
       </ul>
     </div>
 
@@ -99,11 +99,11 @@
           if (!empty($progs)) {
             foreach ($progs as $p) {
               $slug = $p['slug'] ?: 'programs.php';
-              echo '<li><a href="program.php?slug=' . htmlspecialchars($slug) . '">' . htmlspecialchars($p['title']) . '</a></li>';
+              echo '<li><a href="' . app_url('program.php?slug=' . htmlspecialchars($slug)) . '">' . htmlspecialchars($p['title']) . '</a></li>';
             }
           } else {
             // fallback static links
-            echo '<li><a href="programs.php">JAMB/Post-UTME</a></li><li><a href="programs.php">WAEC/NECO</a></li><li><a href="programs.php">Digital Skills Training</a></li>';
+            echo '<li><a href="' . app_url('programs.php') . '">JAMB/Post-UTME</a></li><li><a href="' . app_url('programs.php') . '">WAEC/NECO</a></li><li><a href="' . app_url('programs.php') . '">Digital Skills Training</a></li>';
           }
         ?>
       </ul>
@@ -136,8 +136,8 @@
   <div class="footer-bottom">
     <p>© <?= date('Y') ?> High Q Solid Academy Limited. All rights reserved.</p>
     <div class="links">
-      <a href="privacy.php">Privacy Policy</a>
-      <a href="terms.php">Terms of Service</a>
+      <a href="<?= app_url('privacy.php') ?>">Privacy Policy</a>
+      <a href="<?= app_url('terms.php') ?>">Terms of Service</a>
     </div>
   </div>
 </footer>
@@ -145,7 +145,7 @@
 </main>
 
 <!-- Floating Live Chat Button -->
-<a href="contact.php#livechat" class="floating-chat" aria-label="Live Chat with us">
+<a href="<?= app_url('contact.php#livechat') ?>" class="floating-chat" aria-label="Live Chat with us">
   <i class="bx bx-chat"></i>
 </a>
 <script src="<?= app_url('assets/js/viewport-inview.js') ?>"></script>
