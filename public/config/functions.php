@@ -19,6 +19,38 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
 }
 
 /**
+ * Return the application base URL (respects APP_URL from .env)
+ * @param string $path Optional path to append
+ * @return string Full URL
+ */
+function app_url(string $path = ''): string {
+    // Prefer explicit APP_URL from .env
+    $env = $_ENV['APP_URL'] ?? null;
+    if (!empty($env)) {
+        $base = rtrim($env, '/');
+        if ($path === '') return $base;
+        return $base . '/' . ltrim($path, '/');
+    }
+
+    // Fallback: derive from current request
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+
+    // Compute project base: if script contains 'public', assume project base is the path before 'public'
+    $proj = '';
+    $parts = explode('/', trim($script, '/'));
+    if (($idx = array_search('public', $parts)) !== false) {
+        $proj = '/' . implode('/', array_slice($parts, 0, $idx));
+        if ($proj === '/' || $proj === '\\') $proj = '';
+    }
+
+    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
+    if ($path === '') return $base;
+    return $base . '/' . ltrim($path, '/');
+}
+
+/**
  * Send email using PHPMailer (SMTP). Optionally attach files.
  * $attachments = ['/path/to/file1', '/path/to/file2']
  */
