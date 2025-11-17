@@ -1,5 +1,11 @@
 <?php
 // public/includes/header.php - lightweight public header
+
+// Load helper functions (includes app_url()) before anything else
+if (file_exists(__DIR__ . '/../config/functions.php')) {
+  require_once __DIR__ . '/../config/functions.php';
+}
+
 // Attempt to load site settings (contact phone, bank details, etc.) from database
 $contact_phone = '0807 208 8794';
 $siteSettings = [
