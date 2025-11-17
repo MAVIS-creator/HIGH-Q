@@ -49,7 +49,7 @@
 
       <div class="col-12 col-md-4 order-1 order-md-2 history-logo d-flex justify-content-md-center justify-content-end">
         <div class="logo-card">
-          <img src="./assets/images/hq-logo.jpeg" alt="HQ Logo" class="img-fluid">
+          <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="HQ Logo" class="img-fluid">
         </div>
       </div>
     </div>

@@ -98,7 +98,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <div class="ceo-left-column d-flex flex-column align-items-center align-items-lg-start">
         <div class="ceo-card text-center text-lg-start mb-4">
           <div class="ceo-photo mb-3">
-            <img src="./assets/images/quam.jpg" alt="Master Adebule Quam" class="img-fluid rounded">
+            <img src="<?= app_url('assets/images/quam.jpg') ?>" alt="Master Adebule Quam" class="img-fluid rounded">
           </div>
           <div class="ceo-info">
             <h3 class="mb-1">Master Adebule Quam</h3>

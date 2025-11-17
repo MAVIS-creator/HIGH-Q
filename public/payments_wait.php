@@ -76,7 +76,7 @@ $csrf = generateToken('signup_form');
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Payment in Progress - HIGH Q SOLID ACADEMY</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="./assets/css/payment.css">
+  <link rel="stylesheet" href="<?= app_url('assets/css/payment.css') ?>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
@@ -134,7 +134,7 @@ $csrf = generateToken('signup_form');
 <body>
   <div class="minimal-header" style="background:#fff;padding:12px;border-bottom:1px solid #eee;">
     <div class="container" style="display:flex;align-items:center;gap:12px;">
-  <img src="./assets/images/hq-logo.jpeg" alt="HQ" style="height:44px;">
+  <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="HQ" style="height:44px;">
       <div>
         <strong>HIGH Q SOLID ACADEMY</strong>
         <div style="font-size:12px;color:#666;">Secure payment</div>

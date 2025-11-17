@@ -240,6 +240,6 @@ require_once __DIR__ . '/includes/header.php';
 
 <!-- comment and like handling moved to external script to reduce inline JS -->
 <script>window.POST_ID = <?= (int)$postId ?>;</script>
-<script src="./assets/js/post.js"></script>
+<script src="<?= app_url('assets/js/post.js') ?>"></script>
 
 <?php require_once __DIR__ . '/includes/footer.php';

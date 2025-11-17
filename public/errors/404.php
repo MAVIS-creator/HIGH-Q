@@ -7,7 +7,8 @@ http_response_code(404);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found - HIGH Q SOLID ACADEMY</title>
-        <link rel="stylesheet" href="/assets/css/public.css">
+        <?php if (!function_exists('app_url')) { if (file_exists(__DIR__ . '/../config/functions.php')) require_once __DIR__ . '/../config/functions.php'; } ?>
+        <link rel="stylesheet" href="<?= function_exists('app_url') ? app_url('assets/css/public.css') : '/assets/css/public.css' ?>">
     <style>
         .error-container {
             min-height: 60vh;
