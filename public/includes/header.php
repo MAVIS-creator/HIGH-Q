@@ -209,16 +209,16 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/favicon-16x16.png">
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- HQ Theme overrides (must come after Bootstrap) -->
-  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="./assets/css/theme.css">
   <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
-  <link rel="stylesheet" href="/assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
+  <link rel="stylesheet" href="./assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
   <!-- Fallback to CDN if local not available -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <!-- Font Awesome (fallback for admin/backwards compatibility) -->
@@ -227,22 +227,22 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/public.css">
-  <link rel="stylesheet" href="/assets/css/responsive.css">
-  <link rel="stylesheet" href="/assets/css/ceo-responsive.css">
-  <link rel="stylesheet" href="/assets/css/animations.css">
-  <link rel="stylesheet" href="/assets/css/social-icons.css">
-  <link rel="stylesheet" href="/assets/css/post-toc.css">
-  <link rel="stylesheet" href="/assets/css/hero.css">
+  <link rel="stylesheet" href="./assets/css/public.css">
+  <link rel="stylesheet" href="./assets/css/responsive.css">
+  <link rel="stylesheet" href="./assets/css/ceo-responsive.css">
+  <link rel="stylesheet" href="./assets/css/animations.css">
+  <link rel="stylesheet" href="./assets/css/social-icons.css">
+  <link rel="stylesheet" href="./assets/css/post-toc.css">
+  <link rel="stylesheet" href="./assets/css/hero.css">
   <!-- Small site-specific hero overrides (loaded after hero.css) -->
-  <link rel="stylesheet" href="/assets/css/hero-fixed.css">
-  <link rel="stylesheet" href="/assets/css/offcanvas.css">
-  <link rel="stylesheet" href="/assets/css/contact-fixes.css">
-  <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./assets/css/hero-fixed.css">
+  <link rel="stylesheet" href="./assets/css/offcanvas.css">
+  <link rel="stylesheet" href="./assets/css/contact-fixes.css">
+  <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- HQ Animations helper -->
-  <script defer src="/assets/js/hq-animations.js"></script>
+  <script defer src="./assets/js/hq-animations.js"></script>
   </head>
 
   <body class="hq-public">
