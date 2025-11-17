@@ -287,7 +287,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <div class="container">
         <nav class="navbar navbar-expand-lg w-100 position-relative">
           <!-- Logo + Name -->
-          <a class="navbar-brand" href="index.php">
+          <a class="navbar-brand" href="<?= app_url('index.php') ?>">
             <div class="logo">
               <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="HQ Logo" class="brand-logo">
               <div>
@@ -307,10 +307,10 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             <?php $cur = basename($_SERVER['PHP_SELF'] ?? '') ?>
             <ul class="navbar-nav mx-auto d-none d-lg-flex">
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a>
+                <a class="nav-link <?= $cur === 'index.php' ? 'active' : '' ?>" href="<?= app_url('index.php') ?>">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a>
+                <a class="nav-link <?= $cur === 'about.php' ? 'active' : '' ?>" href="<?= app_url('about.php') ?>">About Us</a>
               </li>
 
               <!-- Programs Dropdown -->
@@ -319,8 +319,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                   Programs
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="programs.php">Programs</a></li>
-                  <li><a class="dropdown-item" href="exams.php">Exams</a></li>
+                  <li><a class="dropdown-item" href="<?= app_url('programs.php') ?>">Programs</a></li>
+                  <li><a class="dropdown-item" href="<?= app_url('exams.php') ?>">Exams</a></li>
                 </ul>
               </li>
 
@@ -330,22 +330,22 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                   News
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="news.php">News & Blog</a></li>
-                  <li><a class="dropdown-item" href="community.php">Community</a></li>
+                  <li><a class="dropdown-item" href="<?= app_url('news.php') ?>">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="<?= app_url('community.php') ?>">Community</a></li>
                 </ul>
               </li>
 
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a>
+                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="<?= app_url('register.php') ?>">Admission</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a>
+                <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="<?= app_url('contact.php') ?>">Contact</a>
               </li>
             </ul>
 
             <!-- Register Button -->
             <div class="d-none d-lg-block">
-              <a href="register.php" class="btn btn-primary">Register Now</a>
+              <a href="<?= app_url('register.php') ?>" class="btn btn-primary">Register Now</a>
             </div>
           </div>
 
@@ -395,17 +395,17 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
         </div>
         <div class="offcanvas-body p-3">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="index.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="about.php">About Us</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="programs.php">Programs</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="exams.php">Exams</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="news.php">News & Blog</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2" href="community.php">Community</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="register.php">Admission</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="contact.php">Contact</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'index.php' ? 'active' : '' ?>" href="<?= app_url('index.php') ?>">Home</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'about.php' ? 'active' : '' ?>" href="<?= app_url('about.php') ?>">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('programs.php') ?>">Programs</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('exams.php') ?>">Exams</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('news.php') ?>">News & Blog</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('community.php') ?>">Community</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="<?= app_url('register.php') ?>">Admission</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="<?= app_url('contact.php') ?>">Contact</a></li>
             </ul>
             <div class="mt-4 px-3">
-                <a href="register.php" class="btn btn-primary w-100 py-2">Register Now</a>
+                <a href="<?= app_url('register.php') ?>" class="btn btn-primary w-100 py-2">Register Now</a>
             </div>
         </div>
     </div>
