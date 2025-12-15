@@ -55,14 +55,14 @@
     const likeBtnC = wrapper.querySelector('.like-btn');
     likeBtnC.addEventListener('click', function () {
       const cid = this.getAttribute('data-id');
-      if (sessionStorage.getItem('liked_comment_' + cid) === '1') return;
+      if (getCookie('liked_comment_' + cid) === '1') return;
   fetch('api/comment_like.php', { method: 'POST', body: new URLSearchParams({ comment_id: cid }) })
         .then(r => r.json())
         .then(j => {
           if (j && typeof j.likes !== 'undefined') {
             this.querySelector('.like-count').textContent = j.likes;
           }
-          if (j && j.liked) sessionStorage.setItem('liked_comment_' + cid, '1');
+          if (j && j.liked) setCookie('liked_comment_' + cid, '1', 30);
         }).catch(()=>{});
     });
 
@@ -122,31 +122,44 @@
     }
   }
 
+  // Cookie helpers
+  function setCookie(name, value, days) {
+    var d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+    document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+  }
+  function getCookie(name) {
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  }
+  function deleteCookie(name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Lax';
+  }
+
   if (likeBtn && POST_ID) {
     // initial GET to learn current likes and whether visitor has liked
   fetch('api/like_post.php?post_id=' + encodeURIComponent(POST_ID))
       .then(r => r.json())
       .then(j => {
         if (j && typeof j.likes !== 'undefined') likesCountEl.textContent = j.likes;
-        var sessionLiked = sessionStorage.getItem('liked_post_' + POST_ID) === '1';
-        setLikedUI(j && j.liked || sessionLiked);
+        var cookieLiked = getCookie('liked_post_' + POST_ID) === '1';
+        setLikedUI(j && j.liked || cookieLiked);
       }).catch(() => {});
 
     likeBtn.addEventListener('click', function () {
       // toggle like: allow unliking by calling the same endpoint which now toggles
       // optimistically flip UI
-      const currentlyLiked = sessionStorage.getItem('liked_post_' + POST_ID) === '1';
+      const currentlyLiked = getCookie('liked_post_' + POST_ID) === '1';
       setLikedUI(!currentlyLiked);
   fetch('api/like_post.php', { method: 'POST', body: new URLSearchParams({ post_id: POST_ID }) })
         .then(r => r.json())
         .then(j => {
           if (j && typeof j.likes !== 'undefined') likesCountEl.textContent = j.likes;
           if (j && typeof j.liked !== 'undefined') {
-            if (j.liked) sessionStorage.setItem('liked_post_' + POST_ID, '1'); else sessionStorage.removeItem('liked_post_' + POST_ID);
+            if (j.liked) setCookie('liked_post_' + POST_ID, '1', 30); else deleteCookie('liked_post_' + POST_ID);
             setLikedUI(j.liked);
           } else {
             // no definite info: revert to previous
-            if (currentlyLiked) sessionStorage.setItem('liked_post_' + POST_ID, '1'); else sessionStorage.removeItem('liked_post_' + POST_ID);
+            if (currentlyLiked) setCookie('liked_post_' + POST_ID, '1', 30); else deleteCookie('liked_post_' + POST_ID);
             setLikedUI(currentlyLiked);
           }
         }).catch(() => {
