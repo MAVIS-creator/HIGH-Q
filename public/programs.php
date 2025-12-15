@@ -37,7 +37,7 @@
 					</div>
 				</article>
 
-				<article class="program-card">
+				<article class="program-card tight-gap">
 					<div class="program-card-head">
 						<div class="program-icon program-waec"><i class="bx bx-book"></i></div>
 					</div>
@@ -54,7 +54,7 @@
 					</div>
 				</article>
 
-				<article class="program-card">
+				<article class="program-card tight-gap">
 					<div class="program-card-head">
 						<div class="program-icon program-neco"><i class="bx bx-book-open"></i></div>
 					</div>
@@ -105,7 +105,7 @@
 					</div>
 				</article>
 
-				<article class="program-card">
+				<article class="program-card tight-gap">
 					<div class="program-card-head">
 						<div class="program-icon program-computer"><i class="bx bx-laptop"></i></div>
 					</div>
