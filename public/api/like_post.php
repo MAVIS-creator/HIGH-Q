@@ -14,10 +14,9 @@ if (!$postId) {
 	exit;
 }
 
-// determine session id and ip for lightweight guarding
+// determine session id for lightweight guarding (avoid IP-based sharing across browsers)
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $sessionId = session_id() ?: null;
-$ip = $_SERVER['REMOTE_ADDR'] ?? null;
 
 // Helper: get likes count
 function get_likes($pdo, $postId) {
@@ -36,8 +35,8 @@ try {
 	if ($method === 'GET') {
 		// return likes and whether this visitor already liked
 		$likes = get_likes($pdo, $postId);
-		$chk = $pdo->prepare('SELECT 1 FROM post_likes WHERE post_id = ? AND (session_id = ? OR ip = ?) LIMIT 1');
-		$chk->execute([$postId, $sessionId, $ip]);
+		$chk = $pdo->prepare('SELECT 1 FROM post_likes WHERE post_id = ? AND session_id = ? LIMIT 1');
+		$chk->execute([$postId, $sessionId]);
 		$liked = (bool)$chk->fetchColumn();
 		echo json_encode(['status' => 'ok', 'likes' => $likes, 'liked' => $liked]);
 		exit;
@@ -47,8 +46,8 @@ try {
 		// Toggle like: if this session/ip already liked, remove it; otherwise insert
 		try {
 			$pdo->beginTransaction();
-			$chk = $pdo->prepare('SELECT id FROM post_likes WHERE post_id = ? AND (session_id = ? OR ip = ?) LIMIT 1');
-			$chk->execute([$postId, $sessionId, $ip]);
+			$chk = $pdo->prepare('SELECT id FROM post_likes WHERE post_id = ? AND session_id = ? LIMIT 1');
+			$chk->execute([$postId, $sessionId]);
 			$row = $chk->fetch(PDO::FETCH_ASSOC);
 			$likedNow = false;
 			if ($row) {
@@ -61,7 +60,7 @@ try {
 			} else {
 				// not yet liked -> insert
 				$ins = $pdo->prepare('INSERT IGNORE INTO post_likes (post_id, session_id, ip) VALUES (?, ?, ?)');
-				$ins->execute([$postId, $sessionId, $ip]);
+				$ins->execute([$postId, $sessionId, null]);
 				$affected = $ins->rowCount();
 				if ($affected) {
 					try { $up = $pdo->prepare('UPDATE posts SET likes = COALESCE(likes,0) + 1 WHERE id = ?'); $up->execute([$postId]); } catch (Throwable $_) {}
