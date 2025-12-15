@@ -724,6 +724,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// Diagnostic: mark that registration DB work committed
 			try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " AFTER_REG_COMMIT: registrationId=" . ($registrationId ?? 'NULL') . " reference=" . ($reference ?? 'NULL') . " paymentId=" . ($paymentId ?? 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
 
+			// Remember the last registration id for admission letter download
+			if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+			if (!empty($registrationId)) {
+				$_SESSION['last_registration_id'] = (int)$registrationId;
+			}
+
 			// Create an admin notification and send email to admins about new registration
 			try {
 				// Fetch admin email from site_settings (fallback to settings table)
@@ -909,6 +915,21 @@ $csrf = generateToken('signup_form');
 														} catch(e) { console.error(e); }
 													});
 													</script>
+												<?php endif; ?>
+
+												<?php if (!empty($_SESSION['last_registration_id'])): ?>
+													<div class="card" style="margin:10px 0 16px 0;border:1px solid #e5f2e9;background:#f7fffa">
+														<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+															<div style="flex:1;min-width:220px">
+																<strong>Your Admission Letter is ready</strong>
+																<div class="muted">Download or print your admission letter now.</div>
+															</div>
+															<div>
+																<a class="btn-primary" href="admission_letter.php?rid=<?= (int)$_SESSION['last_registration_id'] ?>&format=pdf">Download PDF</a>
+																<a class="btn" style="margin-left:8px" href="admission_letter.php?rid=<?= (int)$_SESSION['last_registration_id'] ?>">View Letter</a>
+															</div>
+														</div>
+													</div>
 												<?php endif; ?>
 
 												<?php if (!empty($_GET['pending']) || !empty($_SESSION['registration_pending_id'])): ?>
