@@ -227,12 +227,24 @@
 		font-weight: 700;
 	}
 
+	/* Specifically reduce spacing for WAEC, NECO, and Computer Training */
+	.program-card .program-card-head:has(.program-icon.program-waec),
+	.program-card .program-card-head:has(.program-icon.program-neco),
+	.program-card .program-card-head:has(.program-icon.program-computer) {
+		margin-bottom: 2px;
+	}
+
 	/* Mobile-only: small vertical gap between icon and body to mimic a <br> without affecting desktop */
 	@media (max-width: 575.98px) {
 		.program-card .program-card-head { display: block; text-align: center; }
 		.program-card .program-icon { margin-bottom: 0.3rem; }
 		.program-card-head {
 			margin-bottom: 6px;
+		}
+		.program-card .program-card-head:has(.program-icon.program-waec),
+		.program-card .program-card-head:has(.program-icon.program-neco),
+		.program-card .program-card-head:has(.program-icon.program-computer) {
+			margin-bottom: 1px;
 		}
 	}
 
