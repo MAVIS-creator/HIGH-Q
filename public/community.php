@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/config/db.php';
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+require_once __DIR__ . '/includes/community_renderer.php';
+
+$PAGE_SIZE = 6;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$offset = ($page - 1) * $PAGE_SIZE;
 
 // Topics catalogue (soft-config)
 $TOPICS = ['Admissions', 'Exams', 'Payments', 'Courses', 'Tutorials', 'General'];
@@ -49,16 +54,7 @@ $sortParam = $_GET['sort'] ?? null; // avoid undefined index warning
 $sort = in_array($sortParam, ['newest', 'active'], true) ? $sortParam : 'newest';
 
 // Build query for questions
-$sql = 'SELECT
-    q.id,
-    q.name,
-    q.topic,
-    q.content,
-    q.created_at,
-    (SELECT COALESCE(SUM(vote),0) FROM forum_votes v WHERE v.question_id = q.id) AS vote_score,
-    (SELECT COUNT(*) FROM forum_replies fr WHERE fr.question_id = q.id) AS replies_count,
-    (SELECT COALESCE(MAX(created_at), q.created_at) FROM forum_replies fr2 WHERE fr2.question_id = q.id) AS last_activity
-  FROM forum_questions q';
+$baseSql = ' FROM forum_questions q';
 $where = [];
 $params = [];
 if ($qterm !== '') {
@@ -71,16 +67,44 @@ if ($ftopic !== '') {
   $params[] = $ftopic;
 }
 if (!empty($where)) {
-  $sql .= ' WHERE ' . implode(' AND ', $where);
+  $whereSql = ' WHERE ' . implode(' AND ', $where);
+} else {
+  $whereSql = '';
 }
+
+// Total count for pagination
+$countStmt = $pdo->prepare('SELECT COUNT(*)' . $baseSql . $whereSql);
+foreach ($params as $i => $p) {
+  $countStmt->bindValue($i + 1, $p, PDO::PARAM_STR);
+}
+$countStmt->execute();
+$totalQuestions = (int)$countStmt->fetchColumn();
+
+$sql = 'SELECT
+    q.id,
+    q.name,
+    q.topic,
+    q.content,
+    q.created_at,
+    (SELECT COALESCE(SUM(vote),0) FROM forum_votes v WHERE v.question_id = q.id) AS vote_score,
+    (SELECT COUNT(*) FROM forum_replies fr WHERE fr.question_id = q.id) AS replies_count,
+    (SELECT COALESCE(MAX(created_at), q.created_at) FROM forum_replies fr2 WHERE fr2.question_id = q.id) AS last_activity
+  ' . $baseSql . $whereSql;
+
 $sql .= ' ';
 $sql .= ($sort === 'active') ? ' ORDER BY last_activity DESC ' : ' ORDER BY q.created_at DESC ';
-$sql .= ' LIMIT 100';
+$sql .= ' LIMIT ? OFFSET ?';
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute($params);
+foreach ($params as $i => $p) {
+  $stmt->bindValue($i + 1, $p, PDO::PARAM_STR);
+}
+$stmt->bindValue(count($params) + 1, $PAGE_SIZE, PDO::PARAM_INT);
+$stmt->bindValue(count($params) + 2, $offset, PDO::PARAM_INT);
+$stmt->execute();
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $questionIds = array_column($questions, 'id');
+$hasMore = ($offset + count($questions) < $totalQuestions);
 
 // Fetch user votes for questions
 $userQuestionVotes = [];
