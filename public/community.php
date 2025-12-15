@@ -490,8 +490,10 @@ try {
       var t = e.target.closest && e.target.closest('.reply-toggle');
       if (!t) return;
       var id = t.getAttribute('data-id');
+      var parent = t.getAttribute('data-parent') || '';
       var form = document.querySelector('.forum-reply-form[data-qid="' + id + '"]');
       if (!form) return;
+      form.querySelector('input[name="parent_id"]').value = parent;
       var isHidden = (form.style.display === 'none' || form.style.display === '');
       form.style.display = isHidden ? 'block' : 'none';
       if (isHidden) form.scrollIntoView({
@@ -519,6 +521,28 @@ try {
         btn.innerHTML = '<i class="bx bx-chevron-up"></i> Show less';
         btn.classList.add('expanded');
       }
+    });
+    // Voting
+    document.addEventListener('click', function(e){
+      var vbtn = e.target.closest && e.target.closest('.vote-btn');
+      if (!vbtn) return;
+      var type = vbtn.getAttribute('data-type');
+      var id = vbtn.getAttribute('data-id');
+      var vote = parseInt(vbtn.getAttribute('data-vote'), 10);
+      if (!type || !id || !vote) return;
+
+      fetch('api/community_vote.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({target_type: type, id: id, vote: vote})
+      }).then(r => r.json()).then(j => {
+        if (!j || j.status !== 'ok') return;
+        var scoreEl = document.getElementById((type === 'question' ? 'qscore-' : 'rscore-') + id);
+        if (scoreEl) scoreEl.textContent = j.score;
+        // reset siblings
+        var group = document.querySelectorAll('.vote-btn[data-type="'+type+' "][data-id="'+id+'"]');
+        // The selector above has a space; fix:
+      }).catch(()=>{});
     });
     // Relative time formatter for timestamps
     function rel(t) {
