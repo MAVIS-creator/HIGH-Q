@@ -108,263 +108,98 @@ $hasMore = ($offset + count($questions) < $totalQuestions);
 
 // Fetch user votes for questions
 $userQuestionVotes = [];
-if (!empty($questionIds)) {
-  $in = implode(',', array_fill(0, count($questionIds), '?'));
-  $vq = $pdo->prepare("SELECT question_id, vote FROM forum_votes WHERE question_id IN ($in) AND (session_id = ? OR ip = ?)");
-  foreach ($questionIds as $i => $qid) { $vq->bindValue($i + 1, $qid, PDO::PARAM_INT); }
-  $vq->bindValue(count($questionIds) + 1, session_id(), PDO::PARAM_STR);
-  $vq->bindValue(count($questionIds) + 2, $_SERVER['REMOTE_ADDR'] ?? null, PDO::PARAM_STR);
-  $vq->execute();
-  foreach ($vq->fetchAll(PDO::FETCH_ASSOC) as $row) { $userQuestionVotes[(int)$row['question_id']] = (int)$row['vote']; }
-}
-
-// Fetch replies grouped by question, with vote scores and parent_id
-$repliesByQuestion = [];
-$replyIds = [];
-if (!empty($questionIds)) {
-  $in = implode(',', array_fill(0, count($questionIds), '?'));
-  $rs = $pdo->prepare("SELECT id, question_id, parent_id, name, content, created_at, (SELECT COALESCE(SUM(vote),0) FROM forum_votes v WHERE v.reply_id = fr.id) AS vote_score FROM forum_replies fr WHERE fr.question_id IN ($in) ORDER BY fr.created_at ASC");
-  foreach ($questionIds as $i => $qid) { $rs->bindValue($i + 1, $qid, PDO::PARAM_INT); }
-  $rs->execute();
-  $rows = $rs->fetchAll(PDO::FETCH_ASSOC);
-  foreach ($rows as $r) {
-    $replyIds[] = (int)$r['id'];
-    $repliesByQuestion[(int)$r['question_id']][] = $r;
-  }
-}
-
-// User votes for replies
-$userReplyVotes = [];
-if (!empty($replyIds)) {
-  $in = implode(',', array_fill(0, count($replyIds), '?'));
-  $vr = $pdo->prepare("SELECT reply_id, vote FROM forum_votes WHERE reply_id IN ($in) AND (session_id = ? OR ip = ?)");
-  foreach ($replyIds as $i => $rid) { $vr->bindValue($i + 1, $rid, PDO::PARAM_INT); }
-  $vr->bindValue(count($replyIds) + 1, session_id(), PDO::PARAM_STR);
-  $vr->bindValue(count($replyIds) + 2, $_SERVER['REMOTE_ADDR'] ?? null, PDO::PARAM_STR);
-  $vr->execute();
-  foreach ($vr->fetchAll(PDO::FETCH_ASSOC) as $row) { $userReplyVotes[(int)$row['reply_id']] = (int)$row['vote']; }
-}
-
-// Recent topics
-$recentTopics = [];
-try {
-  $rt = $pdo->query('SELECT topic, MAX(created_at) AS last_time, COUNT(*) AS cnt FROM forum_questions WHERE topic IS NOT NULL AND topic <> "" GROUP BY topic ORDER BY last_time DESC LIMIT 8');
-  $recentTopics = $rt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Throwable $e) {
-  $recentTopics = [];
-}
-?>
-<section style="padding:32px 0;">
-  <div class="container" style="display:grid;grid-template-columns: 1fr 320px;gap:20px;align-items:start;">
+?><section class="community-section">
+  <div class="container community-grid">
     <main>
-      <h1 style="margin:0 0 8px 0;">Community</h1>
-      <p class="muted">Ask questions anonymously, no account needed.</p>
+      <div class="community-head">
+        <div>
+          <h1 style="margin:0 0 6px 0;">Community</h1>
+          <p class="muted">Ask questions anonymously, no account needed.</p>
+        </div>
+        <span class="pill"><?= number_format($totalQuestions ?? 0) ?> posts</span>
+      </div>
 
       <style>
-        .forum-question {
-          border: 1px solid #e2e8f0;
-          background: #fff;
-          border-radius: 10px;
-          padding: 16px;
-          margin: 10px 0;
-          transition: box-shadow .2s, border-color .2s
-        }
+        .community-section { padding:32px 0; }
+        .community-grid { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:20px; align-items:start; }
+        .community-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+        .pill { background:#f8fafc; border:1px solid #e2e8f0; color:#0f172a; padding:6px 12px; border-radius:999px; font-weight:600; font-size:13px; }
+        .community-grid aside .card { position:sticky; top:110px; }
 
-        .forum-question:hover {
-          box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
-          border-color: #cbd5e1
-        }
+        .forum-question { border:1px solid #e2e8f0; background:#fff; border-radius:12px; padding:16px; transition:box-shadow .2s, border-color .2s; }
+        .forum-question:hover { box-shadow:0 4px 14px rgba(0,0,0,.08); border-color:#cbd5e1; }
+        .post-header { display:flex; align-items:flex-start; gap:12px; }
+        .avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:16px; flex-shrink:0; }
+        .post-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+        .post-meta .username { font-weight:600; color:#0f172a; }
+        .post-meta .time { color:#6b7280; font-size:13px; }
+        .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; background:#e0f2fe; color:#0369a1; font-size:12px; font-weight:500; }
+        .post-content { flex:1; min-width:0; }
+        .post-body { margin:4px 0 10px 0; line-height:1.65; color:#1e293b; font-size:15px; }
+        .post-actions { display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap; }
+        .post-actions .btn-lite { background:transparent; border:1px solid #e2e8f0; border-radius:6px; padding:6px 12px; font-size:13px; color:#475569; cursor:pointer; transition:all .2s; display:inline-flex; align-items:center; gap:6px; }
+        .post-actions .btn-lite:hover { background:#f8fafc; border-color:#cbd5e1; color:#0f172a; }
+        .post-actions .btn-lite i { font-size:16px; }
 
-        .post-header {
-          display: flex;
-          align-items: flex-start;
-          gap: 12px
-        }
-
-        .avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          font-weight: 700;
-          font-size: 16px;
-          flex-shrink: 0
-        }
-
-        .post-meta {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          flex-wrap: wrap;
-          margin-bottom: 6px
-        }
-
-        .post-meta .username {
-          font-weight: 600;
-          color: #0f172a
-        }
-
-        .post-meta .time {
-          color: #6b7280;
-          font-size: 13px
-        }
-
-        .badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          padding: 3px 10px;
-          border-radius: 999px;
-          background: #e0f2fe;
-          color: #0369a1;
-          font-size: 12px;
-          font-weight: 500
-        }
-
-        .counter {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          padding: 3px 9px;
-          border-radius: 999px;
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
-          font-size: 13px;
-          color: #475569;
-          font-weight: 500
-        }
-
-        .post-content {
-          flex: 1;
-          min-width: 0
-        }
-
-        .post-body {
-          margin: 4px 0 10px 0;
-          line-height: 1.65;
-          color: #1e293b;
-          font-size: 15px
-        }
-
-        .post-actions {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-top: 8px
-        }
-
-        .post-actions .btn-lite {
-          background: transparent;
-          border: 1px solid #e2e8f0;
-          border-radius: 6px;
-          padding: 6px 12px;
-          font-size: 13px;
-          color: #475569;
-          cursor: pointer;
-          transition: all .2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px
-        }
-
-        .post-actions .btn-lite:hover {
-          background: #f8fafc;
-          border-color: #cbd5e1;
-          color: #0f172a
-        }
-
-        .post-actions .btn-lite i {
-          font-size: 16px
-        }
-
-        .post-replies {
-          background: #f8fafc;
-          border-left: 3px solid #e2e8f0;
-          padding: 12px 14px;
-          margin: 12px 0 0 52px
-        }
-
-        .vote-stack {
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-          gap:6px;
-          margin-right:10px;
-        }
-
-        .vote-btn {
-          width:32px;
-          height:32px;
-          border:1px solid #e2e8f0;
-          border-radius:8px;
-          background:#fff;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          color:#475569;
-          cursor:pointer;
-          transition:all .15s;
-        }
-
+        .post-replies { background:#f8fafc; border-left:3px solid #e2e8f0; padding:12px 14px; margin:12px 0 0 48px; border-radius:10px; }
+        .vote-stack { display:flex; flex-direction:column; align-items:center; gap:6px; margin-right:10px; }
+        .vote-btn { width:32px; height:32px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; color:#475569; cursor:pointer; transition:all .15s; }
         .vote-btn:hover { background:#f8fafc; border-color:#cbd5e1; color:#0f172a; }
         .vote-btn.active { background:#0ea5e9; color:#fff; border-color:#0284c7; }
         .vote-score { font-weight:700; color:#0f172a; font-size:13px; }
 
-        .forum-reply {
-          border-bottom: 1px solid #e5e7eb;
-          padding: 10px 0;
-          margin: 0
-        }
+        .forum-reply { border-bottom:1px solid #e5e7eb; padding:10px 0; margin:0; }
+        .forum-reply:last-child { border-bottom:none; }
+        .forum-reply .avatar { width:32px; height:32px; font-size:14px; }
+        .forum-reply .post-body { font-size:14px; margin:4px 0 6px 0; }
+        .expand-replies { background:#e0f2fe; color:#0369a1; border:none; padding:6px 12px; border-radius:6px; font-size:13px; cursor:pointer; margin:8px 0; font-weight:500; }
+        .expand-replies:hover { background:#bae6fd; }
+        .hidden-reply { display:none; }
 
-        .forum-reply:last-child {
-          border-bottom: none
-        }
+        .questions-shell h3 { margin-top:22px; margin-bottom:10px; }
+        .questions-list { display:flex; flex-direction:column; gap:14px; }
+        .feed-loader, .no-more { display:flex; align-items:center; gap:12px; margin-top:14px; padding:14px; border-radius:14px; border:1px dashed #d8e2ec; background:#f8fafc; }
+        .feed-loader strong, .no-more strong { display:block; margin-bottom:4px; }
+        .loader-logo { width:68px; height:68px; border-radius:18px; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 30% 30%, rgba(255,214,79,0.45), rgba(255,193,7,0.15)); box-shadow:0 0 24px rgba(255,193,7,0.35); position:relative; overflow:hidden; }
+        .loader-logo img { width:54px; height:54px; object-fit:contain; filter:drop-shadow(0 0 10px rgba(255,193,7,.35)); }
+        .loader-logo::after { content:''; position:absolute; inset:-30%; background:radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 55%); animation:glow 2s ease-in-out infinite; }
+        @keyframes glow { 0%{transform:scale(0.8) rotate(0deg);} 50%{transform:scale(1.05) rotate(8deg);} 100%{transform:scale(0.8) rotate(0deg);} }
+        .no-more { background:#f1f5f9; color:#334155; border:1px dashed #cbd5e1; }
+        .empty-state { display:flex; align-items:center; gap:14px; padding:16px; border:1px dashed #e2e8f0; border-radius:14px; background:linear-gradient(135deg,#f8fafc,#f1f5f9); margin-top:10px; }
+        .empty-state h4 { margin:0; }
+        .feed-end { height:1px; }
 
-        .forum-reply .avatar {
-          width: 32px;
-          height: 32px;
-          font-size: 14px
-        }
+        .filters { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 18px 0; }
+        .filters .form-input { flex:1; min-width:160px; }
+        .filters .form-input[type="search"] { flex:2; min-width:200px; }
+        .filters .btn { flex:0 0 auto; }
 
-        .forum-reply .post-body {
-          font-size: 14px;
-          margin: 4px 0 6px 0
+        @media (max-width:1100px) { .community-grid { grid-template-columns:1fr; } .community-grid aside { order:-1; } .community-grid aside .card { position:relative; top:auto; } }
+        @media (max-width: 768px) {
+          .forum-question { padding:12px; }
+          .post-header { align-items:flex-start; gap:10px; }
+          .post-replies { margin:12px 0 0 0; }
+          .vote-stack { flex-direction:row; gap:8px; margin-right:0; }
+          .vote-btn { width:30px; height:30px; border-radius:6px; }
+          .vote-score { font-size:12px; }
         }
-
-        .expand-replies {
-          background: #e0f2fe;
-          color: #0369a1;
-          border: none;
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 13px;
-          cursor: pointer;
-          margin: 8px 0;
-          font-weight: 500
-        }
-
-        .expand-replies:hover {
-          background: #bae6fd
-        }
-
-        .hidden-reply {
-          display: none
+        @media (max-width:520px) {
+          .filters { flex-direction:column; }
+          .filters .btn { width:100%; }
+          .post-actions { gap:8px; }
         }
       </style>
 
       <!-- Filters -->
-      <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px 0;">
-        <input class="form-input" style="flex:2;min-width:200px" type="search" name="q" placeholder="Search questions..." value="<?= htmlspecialchars($qterm) ?>">
-        <select class="form-input" style="flex:1;min-width:160px" name="topic">
+      <form method="get" class="filters">
+        <input class="form-input" type="search" name="q" placeholder="Search questions..." value="<?= htmlspecialchars($qterm) ?>">
+        <select class="form-input" name="topic">
           <option value="">All topics</option>
           <?php foreach ($TOPICS as $t): ?>
             <option value="<?= htmlspecialchars($t) ?>" <?= $ftopic === $t ? 'selected' : '' ?>><?= htmlspecialchars($t) ?></option>
           <?php endforeach; ?>
         </select>
-        <select class="form-input" style="flex:0.8;min-width:140px" name="sort">
+        <select class="form-input" name="sort">
           <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Newest</option>
           <option value="active" <?= $sort === 'active' ? 'selected' : '' ?>>Active</option>
         </select>
@@ -386,82 +221,64 @@ try {
         </form>
       </div>
 
-      <h3 style="margin-top:22px;">Recent Questions</h3>
-      <?php foreach ($questions as $qq): ?>
-        <?php $hue = (int)(hexdec(substr(md5(($qq['name'] ?? 'A')), 0, 2)) / 255 * 360);
-        $iso = htmlspecialchars(date('c', strtotime($qq['created_at'])));
-        $qUserVote = $userQuestionVotes[$qq['id']] ?? 0;
-        ?>
-        <div class="forum-question" id="q<?= (int)$qq['id'] ?>">
-          <div class="post-header">
-            <div class="vote-stack">
-              <button class="vote-btn vote-up <?= $qUserVote === 1 ? 'active' : '' ?>" data-type="question" data-id="<?= $qq['id'] ?>" data-vote="1"><i class='bx bx-chevron-up'></i></button>
-              <div class="vote-score" id="qscore-<?= $qq['id'] ?>"><?= (int)($qq['vote_score'] ?? 0) ?></div>
-              <button class="vote-btn vote-down <?= $qUserVote === -1 ? 'active' : '' ?>" data-type="question" data-id="<?= $qq['id'] ?>" data-vote="-1"><i class='bx bx-chevron-down'></i></button>
-            </div>
-            <div class="avatar" style="background:linear-gradient(135deg,hsl(<?= $hue ?> 75% 55%),hsl(<?= ($hue + 30) % 360 ?> 75% 45%))">
-              <?= strtoupper(substr($qq['name'], 0, 1)) ?>
-            </div>
-            <div class="post-content">
-              <div class="post-meta">
-                <strong class="username"><?= htmlspecialchars($qq['name']) ?></strong>
-                <span class="time" data-time="<?= $iso ?>"><?= htmlspecialchars($qq['created_at']) ?></span>
-                <?php if (!empty($qq['topic'])): ?><span class="badge"><i class='bx bx-purchase-tag-alt'></i><?= htmlspecialchars($qq['topic']) ?></span><?php endif; ?>
+      <div class="questions-shell">
+        <h3>Recent Questions</h3>
+        <div id="questions-list" class="questions-list" data-page="<?= $page ?>" data-has-more="<?= $hasMore ? '1' : '0' ?>">
+          <?php if (empty($questions)): ?>
+            <div class="empty-state">
+              <div class="loader-logo">
+                <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="HQ Logo">
               </div>
-              <div class="post-body">
-                <?= nl2br(htmlspecialchars($qq['content'])) ?>
-              </div>
-              <div class="post-actions">
-                <button class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>"><i class='bx bx-message-rounded-dots'></i>Reply (<?= (int)($qq['replies_count'] ?? 0) ?>)</button>
-                <button class="btn-lite" onclick="navigator.clipboard.writeText(location.origin+location.pathname+'#q<?= (int)$qq['id'] ?>'); this.innerHTML='<i class=\'bx bx-check\'></i>Copied'; setTimeout(()=>this.innerHTML='<i class=\'bx bx-link-alt\'></i>Share',1500)"><i class='bx bx-link-alt'></i>Share</button>
+              <div>
+                <h4>No questions yet</h4>
+                <p class="muted" style="margin:4px 0 0 0;">Be the first to start a conversation.</p>
               </div>
             </div>
+          <?php else: ?>
+            <?php foreach ($questions as $qq): ?>
+              <?= hq_render_question_card($qq, $repliesByQuestion[$qq['id']] ?? [], $userQuestionVotes, $userReplyVotes); ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+
+        <div id="feed-loader" class="feed-loader" style="display:none;">
+          <div class="loader-logo">
+            <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="HQ Logo">
           </div>
+          <div>
+            <strong>Loading more...</strong>
+            <p class="muted" style="margin:0;">Bringing in fresh questions.</p>
+          </div>
+        </div>
 
-          <?php
-          $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
-          $rstmt->execute([$qq['id']]);
-          $reps = $rstmt->fetchAll();
-          if (!empty($reps)):
-            // Build tree
-            $byParent = [];
-            foreach ($reps as $rep) {
-              $byParent[(int)($rep['parent_id'] ?? 0)][] = $rep;
-            }
+        <div id="no-more" class="no-more" style="<?= $hasMore ? 'display:none;' : '' ?>">
+          <i class='bx bx-check-circle'></i>
+          <div>
+            <strong>No more posts for now</strong>
+            <p class="muted" style="margin:0;">Check back soon for more updates.</p>
+          </div>
+        </div>
 
-            $renderReplies = function($parentId, $depth = 0) use (&$renderReplies, $byParent, $qq, $userReplyVotes) {
-              if (empty($byParent[$parentId])) return;
-              $limit = ($parentId === 0) ? 3 : null;
-              $children = $byParent[$parentId];
-              $total = count($children);
-              foreach ($children as $idx => $rep) {
-                $h2 = (int)(hexdec(substr(md5(($rep['name'] ?? 'A')), 0, 2)) / 255 * 360);
-                $isoR = htmlspecialchars(date('c', strtotime($rep['created_at'])));
-                $hideClass = ($limit !== null && $idx >= $limit && $total > $limit) ? ' hidden-reply' : '';
-                $rUserVote = $userReplyVotes[$rep['id']] ?? 0;
-                ?>
-                <div class="forum-reply<?= $hideClass ?>" data-qid="<?= $qq['id'] ?>" data-rid="<?= $rep['id'] ?>" style="margin-left:<?= max(0, $depth) * 16 ?>px">
-                  <div class="post-header">
-                    <div class="vote-stack">
-                      <button class="vote-btn vote-up <?= $rUserVote === 1 ? 'active' : '' ?>" data-type="reply" data-id="<?= $rep['id'] ?>" data-vote="1"><i class='bx bx-chevron-up'></i></button>
-                      <div class="vote-score" id="rscore-<?= $rep['id'] ?>"><?= (int)($rep['vote_score'] ?? 0) ?></div>
-                      <button class="vote-btn vote-down <?= $rUserVote === -1 ? 'active' : '' ?>" data-type="reply" data-id="<?= $rep['id'] ?>" data-vote="-1"><i class='bx bx-chevron-down'></i></button>
-                    </div>
-                    <div class="avatar" style="background:linear-gradient(135deg,hsl(<?= $h2 ?> 75% 55%),hsl(<?= ($h2 + 30) % 360 ?> 75% 45%))"><?= strtoupper(substr($rep['name'], 0, 1)) ?></div>
-                    <div class="post-content">
-                      <div class="post-meta">
-                        <strong class="username"><?= htmlspecialchars($rep['name']) ?></strong>
-                        <span class="time" data-time="<?= $isoR ?>"><?= htmlspecialchars($rep['created_at']) ?></span>
-                      </div>
-                      <div class="post-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
-                      <div class="post-actions" style="margin-top:4px;">
-                        <button class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>" data-parent="<?= $rep['id'] ?>"><i class='bx bx-reply'></i> Reply</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <?php
-                $renderReplies((int)$rep['id'], $depth + 1);
+        <div id="feed-end" class="feed-end" aria-hidden="true"></div>
+      </div>
+    </main>
+
+    <aside>
+      <div class="card" style="padding:12px;">
+        <h3 style="margin-top:0">Recent Topics</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <?php if (empty($recentTopics)): ?>
+            <div class="muted">No topics yet.</div>
+            <?php else: foreach ($recentTopics as $rt): ?>
+              <a class="badge" href="community.php?topic=<?= urlencode($rt['topic']) ?>">#<?= htmlspecialchars($rt['topic']) ?></a>
+          <?php endforeach;
+          endif; ?>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
               }
               if ($limit !== null && $total > $limit) {
                 ?>
