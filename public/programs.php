@@ -210,6 +210,12 @@
 <!-- Call to Action: Ready to Excel -->
 
 <style>
+	/* Base card tweaks: avoid space-between stretching content */
+	.program-card {
+		justify-content: flex-start;
+		gap: 12px;
+	}
+
 	/* Reduce spacing between icon and title */
 	.program-card-head {
 		margin-bottom: 6px;
@@ -228,6 +234,9 @@
 	}
 
 	/* Tighten only WAEC, NECO, Computer Training via helper class */
+	.program-card.tight-gap {
+		gap: 8px;
+	}
 	.program-card.tight-gap .program-card-head {
 		margin-bottom: 2px;
 	}
