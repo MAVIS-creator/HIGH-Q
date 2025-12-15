@@ -77,21 +77,29 @@ try {
       <p class="muted">Ask questions anonymously — no account needed.</p>
 
       <style>
-        .forum-question{border:1px solid #eee;background:#fff;border-radius:12px;padding:14px 14px 10px 14px;margin:12px 0;transition:box-shadow .2s,border-color .2s}
-        .forum-question:hover{box-shadow:0 6px 18px rgba(0,0,0,.06);border-color:#e2e8f0}
-        .post-header{display:flex;align-items:center;gap:12px}
-        .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;letter-spacing:.5px}
-        .post-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-        .post-meta .username{font-weight:600}
-        .post-meta .time{color:#6b7280;font-size:12px}
-        .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#f1f5f9;color:#0f172a;font-size:12px;border:1px solid #e2e8f0}
-        .counter{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;background:#f8fafc;border:1px solid #e5e7eb;font-size:12px;color:#334155}
-        .post-body{margin:10px 0 6px 0;line-height:1.7;color:#111827}
-        .post-actions{display:flex;align-items:center;gap:8px;margin-top:4px}
-        .post-actions .btn-lite{background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:6px 10px;font-size:13px;color:#334155}
-        .post-replies{background:#fafafa;border:1px solid #eee;border-radius:10px;padding:10px;margin-top:10px}
-        .forum-reply{border-top:1px dashed #e5e7eb;padding-top:10px;margin-top:10px}
-        .forum-reply:first-child{border-top:none;padding-top:0;margin-top:0}
+        .forum-question{border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:16px;margin:10px 0;transition:box-shadow .2s,border-color .2s}
+        .forum-question:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);border-color:#cbd5e1}
+        .post-header{display:flex;align-items:flex-start;gap:12px}
+        .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0}
+        .post-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+        .post-meta .username{font-weight:600;color:#0f172a}
+        .post-meta .time{color:#6b7280;font-size:13px}
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;background:#e0f2fe;color:#0369a1;font-size:12px;font-weight:500}
+        .counter{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:13px;color:#475569;font-weight:500}
+        .post-content{flex:1;min-width:0}
+        .post-body{margin:4px 0 10px 0;line-height:1.65;color:#1e293b;font-size:15px}
+        .post-actions{display:flex;align-items:center;gap:10px;margin-top:8px}
+        .post-actions .btn-lite{background:transparent;border:1px solid #e2e8f0;border-radius:6px;padding:6px 12px;font-size:13px;color:#475569;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+        .post-actions .btn-lite:hover{background:#f8fafc;border-color:#cbd5e1;color:#0f172a}
+        .post-actions .btn-lite i{font-size:16px}
+        .post-replies{background:#f8fafc;border-left:3px solid #e2e8f0;padding:12px 14px;margin:12px 0 0 52px}
+        .forum-reply{border-bottom:1px solid #e5e7eb;padding:10px 0;margin:0}
+        .forum-reply:last-child{border-bottom:none}
+        .forum-reply .avatar{width:32px;height:32px;font-size:14px}
+        .forum-reply .post-body{font-size:14px;margin:4px 0 6px 0}
+        .expand-replies{background:#e0f2fe;color:#0369a1;border:none;padding:6px 12px;border-radius:6px;font-size:13px;cursor:pointer;margin:8px 0;font-weight:500}
+        .expand-replies:hover{background:#bae6fd}
+        .hidden-reply{display:none}
       </style>
 
       <!-- Filters -->
@@ -128,46 +136,59 @@ try {
       <h3 style="margin-top:22px;">Recent Questions</h3>
       <?php foreach($questions as $qq): ?>
         <?php $hue = (int)(hexdec(substr(md5(($qq['name'] ?? 'A')),0,2))/255*360); $iso = htmlspecialchars(date('c', strtotime($qq['created_at']))); ?>
-        <div class="forum-question">
+        <div class="forum-question" id="q<?= (int)$qq['id'] ?>">
           <div class="post-header">
             <div class="avatar" style="background:linear-gradient(135deg,hsl(<?= $hue ?> 75% 55%),hsl(<?= ($hue+30)%360 ?> 75% 45%))">
               <?= strtoupper(substr($qq['name'],0,1)) ?>
             </div>
-            <div class="post-meta">
-              <strong class="username"><?= htmlspecialchars($qq['name']) ?></strong>
-              <span class="time" data-time="<?= $iso ?>"><?= htmlspecialchars($qq['created_at']) ?></span>
-              <?php if (!empty($qq['topic'])): ?><span class="badge" style="margin-left:6px">#<?= htmlspecialchars($qq['topic']) ?></span><?php endif; ?>
-              <span class="counter" title="Replies"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a4 4 0 0 1-4 4H9l-6 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" stroke="#475569" stroke-width="1.5" fill="none"/></svg><?= (int)($qq['replies_count'] ?? 0) ?></span>
+            <div class="post-content">
+              <div class="post-meta">
+                <strong class="username"><?= htmlspecialchars($qq['name']) ?></strong>
+                <span class="time" data-time="<?= $iso ?>"><?= htmlspecialchars($qq['created_at']) ?></span>
+                <?php if (!empty($qq['topic'])): ?><span class="badge"><i class='bx bx-purchase-tag-alt'></i><?= htmlspecialchars($qq['topic']) ?></span><?php endif; ?>
+              </div>
+              <div class="post-body">
+                <?= nl2br(htmlspecialchars($qq['content'])) ?>
+              </div>
+              <div class="post-actions">
+                <button class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>"><i class='bx bx-message-rounded-dots'></i>Reply (<?= (int)($qq['replies_count'] ?? 0) ?>)</button>
+                <button class="btn-lite" onclick="navigator.clipboard.writeText(location.origin+location.pathname+'#q<?= (int)$qq['id'] ?>'); this.innerHTML='<i class=\'bx bx-check\'></i>Copied'; setTimeout(()=>this.innerHTML='<i class=\'bx bx-link-alt\'></i>Share',1500)"><i class='bx bx-link-alt'></i>Share</button>
+              </div>
             </div>
           </div>
-          <div class="post-body">
-            <?= nl2br(htmlspecialchars($qq['content'])) ?>
-          </div>
-          <div class="post-actions">
-            <button class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>">💬 Reply</button>
-            <a class="btn-lite" href="#q<?= (int)$qq['id'] ?>" onclick="navigator.clipboard.writeText(location.origin+location.pathname+'#q<?= (int)$qq['id'] ?>'); return false;">🔗 Copy link</a>
-          </div>
 
+          <?php
+            $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
+            $rstmt->execute([$qq['id']]);
+            $reps = $rstmt->fetchAll();
+            if (!empty($reps)):
+          ?>
           <div class="post-replies" id="replies-<?= $qq['id'] ?>">
             <?php
-              $rstmt = $pdo->prepare('SELECT id,name,content,created_at FROM forum_replies WHERE question_id = ? ORDER BY created_at ASC');
-              $rstmt->execute([$qq['id']]);
-              $reps = $rstmt->fetchAll();
-              foreach ($reps as $rep):
+              $showCount = 3;
+              foreach ($reps as $idx => $rep):
+                $h2 = (int)(hexdec(substr(md5(($rep['name'] ?? 'A')),0,2))/255*360);
+                $isoR = htmlspecialchars(date('c', strtotime($rep['created_at'])));
+                $hideClass = ($idx >= $showCount && count($reps) > $showCount) ? ' hidden-reply' : '';
             ?>
-              <div class="forum-reply">
+              <div class="forum-reply<?= $hideClass ?>" data-qid="<?= $qq['id'] ?>">
                 <div class="post-header">
-                  <?php $h2 = (int)(hexdec(substr(md5(($rep['name'] ?? 'A')),0,2))/255*360); $isoR = htmlspecialchars(date('c', strtotime($rep['created_at']))); ?>
                   <div class="avatar" style="background:linear-gradient(135deg,hsl(<?= $h2 ?> 75% 55%),hsl(<?= ($h2+30)%360 ?> 75% 45%))"><?= strtoupper(substr($rep['name'],0,1)) ?></div>
-                  <div class="post-meta">
-                    <strong class="username"><?= htmlspecialchars($rep['name']) ?></strong>
-                    <span class="time" data-time="<?= $isoR ?>"><?= htmlspecialchars($rep['created_at']) ?></span>
+                  <div class="post-content">
+                    <div class="post-meta">
+                      <strong class="username"><?= htmlspecialchars($rep['name']) ?></strong>
+                      <span class="time" data-time="<?= $isoR ?>"><?= htmlspecialchars($rep['created_at']) ?></span>
+                    </div>
+                    <div class="post-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
                   </div>
                 </div>
-                <div class="post-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
               </div>
             <?php endforeach; ?>
+            <?php if (count($reps) > $showCount): ?>
+              <button class="expand-replies" data-qid="<?= $qq['id'] ?>"><i class='bx bx-chevron-down'></i> Show <?= count($reps) - $showCount ?> more replies</button>
+            <?php endif; ?>
           </div>
+          <?php endif; ?>
 
           <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;">
             <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
@@ -211,6 +232,23 @@ try {
       var isHidden = (form.style.display === 'none' || form.style.display === '');
       form.style.display = isHidden ? 'block' : 'none';
       if (isHidden) form.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+    // Expand/collapse replies
+    document.addEventListener('click', function(e){
+      var btn = e.target.closest && e.target.closest('.expand-replies');
+      if (!btn) return;
+      var qid = btn.getAttribute('data-qid');
+      var hidden = document.querySelectorAll('.hidden-reply[data-qid="'+qid+'"]');
+      var isExpanded = btn.classList.contains('expanded');
+      if (isExpanded) {
+        hidden.forEach(function(el){ el.style.display = 'none'; });
+        btn.innerHTML = '<i class="bx bx-chevron-down"></i> Show '+hidden.length+' more replies';
+        btn.classList.remove('expanded');
+      } else {
+        hidden.forEach(function(el){ el.style.display = 'block'; });
+        btn.innerHTML = '<i class="bx bx-chevron-up"></i> Show less';
+        btn.classList.add('expanded');
+      }
     });
     // Relative time formatter for timestamps
     function rel(t){
