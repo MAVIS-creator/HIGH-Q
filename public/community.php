@@ -327,6 +327,17 @@ $userQuestionVotes = [];
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
 <script>
   (function() {
+    var feed = document.getElementById('questions-list');
+    var feedLoader = document.getElementById('feed-loader');
+    var noMore = document.getElementById('no-more');
+    var sentinel = document.getElementById('feed-end');
+    var currentPage = feed ? parseInt(feed.getAttribute('data-page') || '1', 10) : 1;
+    var hasMore = feed ? feed.getAttribute('data-has-more') === '1' : false;
+    var loading = false;
+    var qterm = <?= json_encode($qterm) ?>;
+    var topic = <?= json_encode($ftopic) ?>;
+    var sort = <?= json_encode($sort) ?>;
+
     document.addEventListener('click', function(e) {
       var t = e.target.closest && e.target.closest('.reply-toggle');
       if (!t) return;
@@ -391,6 +402,55 @@ $userQuestionVotes = [];
         }
       }).catch(()=>{});
     });
+
+    function refreshTimes(root) {
+      var scope = root || document;
+      scope.querySelectorAll && scope.querySelectorAll('.time[data-time]').forEach(function(el) {
+        var iso = el.getAttribute('data-time');
+        el.textContent = rel(iso);
+        el.title = iso;
+      });
+    }
+
+    function toggleLoader(show) {
+      if (!feedLoader) return;
+      feedLoader.style.display = show ? 'flex' : 'none';
+    }
+
+    function loadMore() {
+      if (!feed || loading || !hasMore) return;
+      loading = true;
+      toggleLoader(true);
+      var nextPage = currentPage + 1;
+      var params = new URLSearchParams({
+        page: String(nextPage),
+        q: qterm || '',
+        topic: topic || '',
+        sort: sort || 'newest'
+      });
+      fetch('api/community_feed.php?' + params.toString(), { credentials: 'same-origin' })
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+          if (!res || res.status !== 'ok') return;
+          if (res.html && feed) {
+            feed.insertAdjacentHTML('beforeend', res.html);
+            refreshTimes(feed);
+          }
+          currentPage = nextPage;
+          hasMore = !!res.has_more;
+          if (!hasMore && noMore) { noMore.style.display = 'flex'; }
+        })
+        .catch(function(){})
+        .finally(function(){ loading = false; toggleLoader(false); });
+    }
+
+    if (feed && sentinel && hasMore) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){ if (entry.isIntersecting) loadMore(); });
+      }, { rootMargin: '240px 0px' });
+      io.observe(sentinel);
+    }
+
     // Relative time formatter for timestamps
     function rel(t) {
       try {
@@ -415,10 +475,6 @@ $userQuestionVotes = [];
         return t;
       }
     }
-    document.querySelectorAll('.time[data-time]').forEach(function(el) {
-      var iso = el.getAttribute('data-time');
-      el.textContent = rel(iso);
-      el.title = iso;
-    });
+    refreshTimes(document);
   })();
 </script>
