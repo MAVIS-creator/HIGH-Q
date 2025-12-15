@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/config/db.php';
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 // Topics catalogue (soft-config)
 $TOPICS = ['Admissions', 'Exams', 'Payments', 'Courses', 'Tutorials', 'General'];
@@ -8,11 +9,12 @@ $TOPICS = ['Admissions', 'Exams', 'Payments', 'Courses', 'Tutorials', 'General']
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!empty($_POST['question_id'])) {
     $qid = (int)($_POST['question_id'] ?? 0);
+    $parent = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
     $rname = trim($_POST['rname'] ?? '');
     $rcontent = trim($_POST['rcontent'] ?? '');
     if ($qid > 0 && $rcontent !== '') {
-      $rstmt = $pdo->prepare('INSERT INTO forum_replies (question_id, name, content, created_at) VALUES (?, ?, ?, NOW())');
-      $rstmt->execute([$qid, $rname ?: 'Anonymous', $rcontent]);
+      $rstmt = $pdo->prepare('INSERT INTO forum_replies (question_id, parent_id, name, content, created_at) VALUES (?, ?, ?, ?, NOW())');
+      $rstmt->execute([$qid, $parent, $rname ?: 'Anonymous', $rcontent]);
     }
     header('Location: community.php');
     exit;
@@ -47,11 +49,16 @@ $sortParam = $_GET['sort'] ?? null; // avoid undefined index warning
 $sort = in_array($sortParam, ['newest', 'active'], true) ? $sortParam : 'newest';
 
 // Build query for questions
-$sql = 'SELECT q.id,q.name,q.topic,q.content,q.created_at,
-  COALESCE(MAX(r.created_at), q.created_at) AS last_activity,
-  COUNT(r.id) AS replies_count
-  FROM forum_questions q
-  LEFT JOIN forum_replies r ON r.question_id = q.id';
+$sql = 'SELECT
+    q.id,
+    q.name,
+    q.topic,
+    q.content,
+    q.created_at,
+    (SELECT COALESCE(SUM(vote),0) FROM forum_votes v WHERE v.question_id = q.id) AS vote_score,
+    (SELECT COUNT(*) FROM forum_replies fr WHERE fr.question_id = q.id) AS replies_count,
+    (SELECT COALESCE(MAX(created_at), q.created_at) FROM forum_replies fr2 WHERE fr2.question_id = q.id) AS last_activity
+  FROM forum_questions q';
 $where = [];
 $params = [];
 if ($qterm !== '') {
@@ -66,13 +73,26 @@ if ($ftopic !== '') {
 if (!empty($where)) {
   $sql .= ' WHERE ' . implode(' AND ', $where);
 }
-$sql .= ' GROUP BY q.id ';
+$sql .= ' ';
 $sql .= ($sort === 'active') ? ' ORDER BY last_activity DESC ' : ' ORDER BY q.created_at DESC ';
 $sql .= ' LIMIT 100';
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$questionIds = array_column($questions, 'id');
+
+// Fetch user votes for questions
+$userQuestionVotes = [];
+if (!empty($questionIds)) {
+  $in = implode(',', array_fill(0, count($questionIds), '?'));
+  $vq = $pdo->prepare("SELECT question_id, vote FROM forum_votes WHERE question_id IN ($in) AND (session_id = ? OR ip = ?)");
+  foreach ($questionIds as $i => $qid) { $vq->bindValue($i + 1, $qid, PDO::PARAM_INT); }
+  $vq->bindValue(count($questionIds) + 1, session_id(), PDO::PARAM_STR);
+  $vq->bindValue(count($questionIds) + 2, $_SERVER['REMOTE_ADDR'] ?? null, PDO::PARAM_STR);
+  $vq->execute();
+  foreach ($vq->fetchAll(PDO::FETCH_ASSOC) as $row) { $userQuestionVotes[(int)$row['question_id']] = (int)$row['vote']; }
+}
 
 // Recent topics
 $recentTopics = [];
