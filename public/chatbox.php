@@ -411,7 +411,13 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 
 <body>
     <div class="chat-card">
-        <div class="chat-header">Live Chat Support</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); color: var(--hq-dark); font-weight: 600; font-size: 17px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">💬</span>
+                <span class="chat-header">Live Chat Support</span>
+            </div>
+            <button id="newChatBtn" style="display: none; background: none; border: none; color: var(--hq-dark); cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 8px; text-decoration: underline; opacity: 0.8;" title="Start a new conversation">NEW CHAT</button>
+        </div>
         
         <!-- Start form: visitor enters name/email/initial message first -->
         <div class="chat-start" id="chatStart">
