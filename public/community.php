@@ -365,9 +365,16 @@ try {
       <h3 style="margin-top:22px;">Recent Questions</h3>
       <?php foreach ($questions as $qq): ?>
         <?php $hue = (int)(hexdec(substr(md5(($qq['name'] ?? 'A')), 0, 2)) / 255 * 360);
-        $iso = htmlspecialchars(date('c', strtotime($qq['created_at']))); ?>
+        $iso = htmlspecialchars(date('c', strtotime($qq['created_at'])));
+        $qUserVote = $userQuestionVotes[$qq['id']] ?? 0;
+        ?>
         <div class="forum-question" id="q<?= (int)$qq['id'] ?>">
           <div class="post-header">
+            <div class="vote-stack">
+              <button class="vote-btn vote-up <?= $qUserVote === 1 ? 'active' : '' ?>" data-type="question" data-id="<?= $qq['id'] ?>" data-vote="1"><i class='bx bx-chevron-up'></i></button>
+              <div class="vote-score" id="qscore-<?= $qq['id'] ?>"><?= (int)($qq['vote_score'] ?? 0) ?></div>
+              <button class="vote-btn vote-down <?= $qUserVote === -1 ? 'active' : '' ?>" data-type="question" data-id="<?= $qq['id'] ?>" data-vote="-1"><i class='bx bx-chevron-down'></i></button>
+            </div>
             <div class="avatar" style="background:linear-gradient(135deg,hsl(<?= $hue ?> 75% 55%),hsl(<?= ($hue + 30) % 360 ?> 75% 45%))">
               <?= strtoupper(substr($qq['name'], 0, 1)) ?>
             </div>
