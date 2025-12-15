@@ -210,10 +210,30 @@
 <!-- Call to Action: Ready to Excel -->
 
 <style>
+	/* Reduce spacing between icon and title */
+	.program-card-head {
+		margin-bottom: 8px;
+	}
+
+	.program-card-body {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.program-card-body h4 {
+		margin: 0;
+		font-size: 17px;
+		font-weight: 700;
+	}
+
 	/* Mobile-only: small vertical gap between icon and body to mimic a <br> without affecting desktop */
 	@media (max-width: 575.98px) {
 		.program-card .program-card-head { display: block; text-align: center; }
-		.program-card .program-icon { margin-bottom: 0.6rem; }
+		.program-card .program-icon { margin-bottom: 0.3rem; }
+		.program-card-head {
+			margin-bottom: 6px;
+		}
 	}
 
 	/* Desktop-only adjustments: reduce excessive space for specific program cards */
@@ -222,7 +242,7 @@
 		.program-card .program-icon.program-waec,
 		.program-card .program-icon.program-neco,
 		.program-card .program-icon.program-computer {
-			margin-bottom: 0.25rem; /* reduce the gap on desktop for these cards only */
+			margin-bottom: 0; /* reduce the gap on desktop for these cards only */
 		}
 
 		/* If icons have large padding, reduce it just on these cards */
