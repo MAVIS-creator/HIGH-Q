@@ -8,6 +8,10 @@
   margin: 0;
   text-decoration: none;
 }
+.navbar-brand .logo { display: flex; align-items: center; gap: 10px; }
+.navbar-brand .logo h1 { margin: 0; font-size: 1.1rem; line-height: 1.1; }
+.navbar-brand .logo small { display: block; font-size: 0.75rem; color: var(--hq-yellow); margin-top: 2px; }
+.navbar-brand .brand-logo { width: 40px; height: 40px; object-fit: contain; border-radius: 12px; }
 
 /* Bootstrap navbar customization */
 .navbar-nav .nav-link {
@@ -309,11 +313,13 @@
 }
 /* FAQ clamp/readmore moved to contact-fixes.css to avoid duplication */
 
-/* Hide brand text on very small screens to save space */
+/* Keep brand text visible on very small screens with tighter sizing */
 @media (max-width: 420px) {
-  .navbar-brand .logo h1,
-  .navbar-brand .logo small { display: none !important; }
-  .navbar-brand .brand-logo { width: 36px; height: 36px; object-fit:contain; }
+  .navbar-brand { max-width: 88%; }
+  .navbar-brand .logo { gap: 6px; }
+  .navbar-brand .brand-logo { width: 32px; height: 32px; object-fit:contain; border-radius: 10px; }
+  .navbar-brand .logo h1 { font-size: 0.95rem; line-height: 1.05; }
+  .navbar-brand .logo small { display: block; font-size: 0.65rem; color: var(--hq-yellow); margin-top: 0; }
 }
 
 /* Section Spacing */
