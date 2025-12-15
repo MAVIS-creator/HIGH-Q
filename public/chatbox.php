@@ -677,6 +677,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                         chatStartEl.style.display = 'none';
                         chatDiv.style.display = 'flex';
                         chatFooterEl.style.display = 'flex';
+                        newChatBtn.style.display = 'inline-block';
                         
                         // Show user's first message
                         appendMessage(name, message, false, false);
