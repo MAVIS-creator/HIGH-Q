@@ -524,17 +524,24 @@ document.addEventListener('DOMContentLoaded', function(){
 	// if there's an existing thread for this visitor, keep polling in background (uses iframe API when modal open)
 	try{ var existingThread = getCookie('hq_thread_id'); if(existingThread){ /* polling may be handled by iframe/chatbox */ } }catch(e){}
 
+	function openChatModal() {
+		var chatModal = document.getElementById('chatIframeModal');
+		if(chatModal){
+			chatModal.style.display = 'block';
+			chatModal.setAttribute('aria-hidden','false');
+			var iframe = document.getElementById('chatIframe'); 
+			if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
+		}
+	}
+
 	if(openLive){
-		openLive.addEventListener('click', function(){
-			var chatModal = document.getElementById('chatIframeModal');
-			if(chatModal){
-				chatModal.style.display = 'block';
-				chatModal.setAttribute('aria-hidden','false');
-				var iframe = document.getElementById('chatIframe'); 
-				if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
-			}
-		});
+		openLive.addEventListener('click', openChatModal);
 		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
+	}
+
+	// Auto-open chat modal if page loaded with #livechat hash
+	if(window.location.hash === '#livechat') {
+		openChatModal();
 	}
 
 	// chat iframe modal close button
