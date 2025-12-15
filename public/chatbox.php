@@ -466,12 +466,26 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const startName = document.getElementById('start_name');
             const startEmail = document.getElementById('start_email');
             const startMsg = document.getElementById('start_message');
+            const newChatBtn = document.getElementById('newChatBtn');
 
             function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
             function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
             
             // Clear thread ID for new chat (can be called from parent page)
             function clearThreadId() { localStorage.removeItem('hq_thread_id'); }
+            
+            // Handle new chat button
+            newChatBtn.addEventListener('click', function() {
+                clearThreadId();
+                chatStartEl.style.display = 'flex';
+                chatDiv.style.display = 'none';
+                chatFooterEl.style.display = 'none';
+                newChatBtn.style.display = 'none';
+                chatDiv.innerHTML = '';
+                startName.value = '';
+                startEmail.value = '';
+                startMsg.value = '';
+            });
             
             // Listen for clear messages from parent page
             window.addEventListener('message', function(ev) {
