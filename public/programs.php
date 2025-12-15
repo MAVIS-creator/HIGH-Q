@@ -212,7 +212,7 @@
 <style>
 	/* Reduce spacing between icon and title */
 	.program-card-head {
-		margin-bottom: 8px;
+		margin-bottom: 6px;
 	}
 
 	.program-card-body {
@@ -227,11 +227,12 @@
 		font-weight: 700;
 	}
 
-	/* Specifically reduce spacing for WAEC, NECO, and Computer Training */
-	.program-card .program-card-head:has(.program-icon.program-waec),
-	.program-card .program-card-head:has(.program-icon.program-neco),
-	.program-card .program-card-head:has(.program-icon.program-computer) {
+	/* Tighten only WAEC, NECO, Computer Training via helper class */
+	.program-card.tight-gap .program-card-head {
 		margin-bottom: 2px;
+	}
+	.program-card.tight-gap .program-icon {
+		margin-bottom: 0;
 	}
 
 	/* Mobile-only: small vertical gap between icon and body to mimic a <br> without affecting desktop */
@@ -241,9 +242,7 @@
 		.program-card-head {
 			margin-bottom: 6px;
 		}
-		.program-card .program-card-head:has(.program-icon.program-waec),
-		.program-card .program-card-head:has(.program-icon.program-neco),
-		.program-card .program-card-head:has(.program-icon.program-computer) {
+		.program-card.tight-gap .program-card-head {
 			margin-bottom: 1px;
 		}
 	}
