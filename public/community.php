@@ -94,6 +94,33 @@ if (!empty($questionIds)) {
   foreach ($vq->fetchAll(PDO::FETCH_ASSOC) as $row) { $userQuestionVotes[(int)$row['question_id']] = (int)$row['vote']; }
 }
 
+// Fetch replies grouped by question, with vote scores and parent_id
+$repliesByQuestion = [];
+$replyIds = [];
+if (!empty($questionIds)) {
+  $in = implode(',', array_fill(0, count($questionIds), '?'));
+  $rs = $pdo->prepare("SELECT id, question_id, parent_id, name, content, created_at, (SELECT COALESCE(SUM(vote),0) FROM forum_votes v WHERE v.reply_id = fr.id) AS vote_score FROM forum_replies fr WHERE fr.question_id IN ($in) ORDER BY fr.created_at ASC");
+  foreach ($questionIds as $i => $qid) { $rs->bindValue($i + 1, $qid, PDO::PARAM_INT); }
+  $rs->execute();
+  $rows = $rs->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($rows as $r) {
+    $replyIds[] = (int)$r['id'];
+    $repliesByQuestion[(int)$r['question_id']][] = $r;
+  }
+}
+
+// User votes for replies
+$userReplyVotes = [];
+if (!empty($replyIds)) {
+  $in = implode(',', array_fill(0, count($replyIds), '?'));
+  $vr = $pdo->prepare("SELECT reply_id, vote FROM forum_votes WHERE reply_id IN ($in) AND (session_id = ? OR ip = ?)");
+  foreach ($replyIds as $i => $rid) { $vr->bindValue($i + 1, $rid, PDO::PARAM_INT); }
+  $vr->bindValue(count($replyIds) + 1, session_id(), PDO::PARAM_STR);
+  $vr->bindValue(count($replyIds) + 2, $_SERVER['REMOTE_ADDR'] ?? null, PDO::PARAM_STR);
+  $vr->execute();
+  foreach ($vr->fetchAll(PDO::FETCH_ASSOC) as $row) { $userReplyVotes[(int)$row['reply_id']] = (int)$row['vote']; }
+}
+
 // Recent topics
 $recentTopics = [];
 try {
@@ -235,6 +262,32 @@ try {
           padding: 12px 14px;
           margin: 12px 0 0 52px
         }
+
+        .vote-stack {
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          gap:6px;
+          margin-right:10px;
+        }
+
+        .vote-btn {
+          width:32px;
+          height:32px;
+          border:1px solid #e2e8f0;
+          border-radius:8px;
+          background:#fff;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#475569;
+          cursor:pointer;
+          transition:all .15s;
+        }
+
+        .vote-btn:hover { background:#f8fafc; border-color:#cbd5e1; color:#0f172a; }
+        .vote-btn.active { background:#0ea5e9; color:#fff; border-color:#0284c7; }
+        .vote-score { font-weight:700; color:#0f172a; font-size:13px; }
 
         .forum-reply {
           border-bottom: 1px solid #e5e7eb;
