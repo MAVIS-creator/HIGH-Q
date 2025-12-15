@@ -539,9 +539,15 @@ try {
         if (!j || j.status !== 'ok') return;
         var scoreEl = document.getElementById((type === 'question' ? 'qscore-' : 'rscore-') + id);
         if (scoreEl) scoreEl.textContent = j.score;
-        // reset siblings
         var group = document.querySelectorAll('.vote-btn[data-type="'+type+' "][data-id="'+id+'"]');
-        // The selector above has a space; fix:
+        group.forEach(function(btn){ btn.classList.remove('active'); });
+        if (j.user_vote === 1) {
+          var up = document.querySelector('.vote-btn.vote-up[data-type="'+type+' "][data-id="'+id+'"]');
+          if (up) up.classList.add('active');
+        } else if (j.user_vote === -1) {
+          var dn = document.querySelector('.vote-btn.vote-down[data-type="'+type+' "][data-id="'+id+'"]');
+          if (dn) dn.classList.add('active');
+        }
       }).catch(()=>{});
     });
     // Relative time formatter for timestamps
