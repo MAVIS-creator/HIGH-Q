@@ -461,11 +461,21 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const startEmail = document.getElementById('start_email');
             const startMsg = document.getElementById('start_message');
 
-            function getThreadId() { return sessionStorage.getItem('hq_thread_id') || null; }
-            function setThreadId(id) { sessionStorage.setItem('hq_thread_id', id); }
+            function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
+            function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
             
-            // Clear thread ID on page load to ensure fresh form on new visit
-            function clearThreadId() { sessionStorage.removeItem('hq_thread_id'); }
+            // Clear thread ID for new chat (can be called from parent page)
+            function clearThreadId() { localStorage.removeItem('hq_thread_id'); }
+            
+            // Listen for clear messages from parent page
+            window.addEventListener('message', function(ev) {
+                try {
+                    if(ev.data && ev.data.hq_chat_action === 'clear_thread') {
+                        clearThreadId();
+                        location.reload();
+                    }
+                } catch(e) {}
+            });
 
             function appendMessage(sender, msg, is_staff = false, is_system = false, attachments = []) {
                 const div = document.createElement('div');
