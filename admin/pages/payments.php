@@ -262,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
 requirePermission('payments');
 
 $pageTitle = 'Payments';
+$pageCss = '<link rel="stylesheet" href="../assets/css/payments.css">';
 require_once __DIR__ . '/../includes/header.php';
 
 // List payments with pagination, search & filter
