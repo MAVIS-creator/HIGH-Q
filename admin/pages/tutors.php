@@ -309,8 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
   <?php include '../includes/sidebar.php'; ?>
 
   <div class="container">
-    <div class="tutors-page">
-      <div class="tutors-header">
+    <div class="tutors-header">
         <div class="tutors-header-info">
           <h1>Tutors Management</h1>
           <p>Manage teaching staff and their information</p>
@@ -405,7 +404,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
           <p>No tutors found.</p>
         <?php endif; ?>
       </div>
-    </div>
 
   <!-- Tutor Modal (single instance) -->
   <div class="modal" id="tutorModal">

@@ -41,8 +41,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to load and display notifications
     async function loadNotifications() {
         try {
+            // Use relative path from admin base to avoid cross-origin issues
+            // Since we're already in /HIGH-Q/admin/, api/notifications.php is at ../api/notifications.php relative to pages
+            // But from header context, we use absolute path construction
+            const apiUrl = ADMIN_BASE + '/api/notifications.php';
+            console.log('Fetching notifications from:', apiUrl);
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await fetch(ADMIN_BASE + '/api/notifications.php', { credentials: 'same-origin' });
+            const res = await fetch(apiUrl, { credentials: 'same-origin' });
             if (!res.ok) {
                 if (res.status === 401) {
                     console.warn('Not authenticated - please log in');
