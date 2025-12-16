@@ -209,7 +209,10 @@
         const tabs = document.querySelectorAll('.profile-tab');
         const uploadBtn = document.getElementById('profileUploadBtn');
         const avatarInput = document.getElementById('profileAvatarInput');
-        const setupOtpBtn = document.getElementById('setupOtpBtn');
+        const setupGoogle2faBtn = document.getElementById('setupGoogle2faBtn');
+        const verifyGoogle2faBtn = document.getElementById('verifyGoogle2faBtn');
+        const cancelGoogle2faBtn = document.getElementById('cancelGoogle2faBtn');
+        const disableGoogle2faBtn = document.getElementById('disableGoogle2faBtn');
 
         // Close modal
         closeBtn?.addEventListener('click', closeModal);
@@ -217,6 +220,150 @@
         overlay?.addEventListener('click', (e) => {
             if (e.target === overlay) closeModal();
         });
+    // Google 2FA Functions
+    async function setupGoogle2FA() {
+        try {
+            const response = await fetch(`${ADMIN_BASE}/api/google2fa_setup.php`, {
+                credentials: 'same-origin'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Show QR code and secret
+                document.getElementById('google2faQR').src = data.qr_code_url;
+                document.getElementById('google2faSecret').textContent = data.secret;
+                
+                // Hide setup button, show setup panel
+                document.getElementById('setupGoogle2faBtn').style.display = 'none';
+                document.getElementById('google2faSetup').style.display = 'block';
+            } else {
+                throw new Error(data.error || 'Failed to generate 2FA secret');
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Setup Failed',
+                text: error.message
+            });
+        }
+    }
+
+    async function verifyGoogle2FA() {
+        const code = document.getElementById('google2faCode').value;
+        
+        if (!code || code.length !== 6) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Code',
+                text: 'Please enter a 6-digit code'
+            });
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${ADMIN_BASE}/api/google2fa_verify.php`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code }),
+                credentials: 'same-origin'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Enabled!',
+                    text: 'Google Authenticator has been enabled successfully'
+                });
+                
+                // Update UI
+                document.getElementById('google2faSetup').style.display = 'none';
+                document.getElementById('google2faCode').value = '';
+                
+                const statusEl = document.getElementById('google2faStatus');
+                statusEl.innerHTML = '<i class="bx bx-check-circle"></i> Enabled';
+                statusEl.className = 'otp-status enabled';
+                
+                document.getElementById('setupGoogle2faBtn').style.display = 'none';
+                document.getElementById('disableGoogle2faBtn').style.display = 'inline-block';
+            } else {
+                throw new Error(data.message || 'Verification failed');
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Verification Failed',
+                text: error.message
+            });
+        }
+    }
+
+    function cancelGoogle2FASetup() {
+        document.getElementById('google2faSetup').style.display = 'none';
+        document.getElementById('setupGoogle2faBtn').style.display = 'inline-block';
+        document.getElementById('google2faCode').value = '';
+    }
+
+    async function disableGoogle2FA() {
+        const result = await Swal.fire({
+            title: 'Disable Google Authenticator?',
+            text: 'Enter your password to confirm',
+            input: 'password',
+            inputPlaceholder: 'Enter your password',
+            showCancelButton: true,
+            confirmButtonText: 'Disable',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Password is required';
+                }
+            }
+        });
+        
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`${ADMIN_BASE}/api/google2fa_disable.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password: result.value }),
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Disabled',
+                        text: 'Google Authenticator has been disabled'
+                    });
+                    
+                    // Update UI
+                    const statusEl = document.getElementById('google2faStatus');
+                    statusEl.innerHTML = '<i class="bx bx-x-circle"></i> Not Set Up';
+                    statusEl.className = 'otp-status disabled';
+                    
+                    document.getElementById('setupGoogle2faBtn').style.display = 'inline-block';
+                    document.getElementById('disableGoogle2faBtn').style.display = 'none';
+                } else {
+                    throw new Error(data.message || 'Failed to disable');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: error.message
+                });
+            }
+        }
+    }
+
 
         // Tab switching
         tabs.forEach(tab => {
@@ -230,10 +377,11 @@
         // Save button
         saveBtn?.addEventListener('click', handleSave);
 
-        // Setup OTP
-        setupOtpBtn?.addEventListener('click', () => {
-            window.location.href = `${ADMIN_BASE}/index.php?pages=settings#security`;
-        });
+        // Google 2FA
+        setupGoogle2faBtn?.addEventListener('click', setupGoogle2FA);
+        verifyGoogle2faBtn?.addEventListener('click', verifyGoogle2FA);
+        cancelGoogle2faBtn?.addEventListener('click', cancelGoogle2FASetup);
+        disableGoogle2faBtn?.addEventListener('click', disableGoogle2FA);
     }
 
     function openModal() {
