@@ -1,17 +1,30 @@
 <?php
 // admin/pages/chat.php
-require_once __DIR__ . '/../includes/db.php';      // Load DB connection first
-require_once __DIR__ . '/../includes/auth.php';    // Then auth
-require_once __DIR__ . '/../includes/csrf.php';
-require_once __DIR__ . '/../includes/functions.php';
-
-requirePermission('chat');
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// Claim thread (AJAX): handle XHR POSTs before any HTML header is output so we can return pure JSON
+// Handle AJAX requests FIRST before any includes to prevent HTML output
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+    header('Content-Type: application/json');
+    header('Cache-Control: no-cache, must-revalidate');
+    
+    require_once __DIR__ . '/../includes/db.php';
+    require_once __DIR__ . '/../includes/auth.php';
+    require_once __DIR__ . '/../includes/csrf.php';
+    require_once __DIR__ . '/../includes/functions.php';
+    
+    if (empty($_SESSION['user'])) {
+        http_response_code(401);
+        echo json_encode(['status'=>'error','message'=>'Unauthenticated']);
+        exit;
+    }
+    
+    // Check permission
+    $hasPermission = checkPermission('chat');
+    if (!$hasPermission) {
+        http_response_code(403);
+        echo json_encode(['status'=>'error','message'=>'Forbidden']);
+        exit;
+    }
+
+    // Claim thread (AJAX): handle XHR POSTs and return pure JSON
   $token = $_POST['_csrf'] ?? '';
   if (!verifyToken('chat_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
   $action = $_POST['action'] ?? '';

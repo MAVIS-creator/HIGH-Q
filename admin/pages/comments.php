@@ -1,17 +1,30 @@
 <?php
 // admin/pages/comments.php
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/csrf.php';
-require_once __DIR__ . '/../includes/functions.php';
-
-requirePermission('comments');
-
-// ini_set('display_errors', 0);
-// header('Content-Type: application/json');
-
-// AJAX actions: approve, reject, reply - HANDLE BEFORE HEADER
+// Handle AJAX requests FIRST before any includes to prevent HTML output
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+    header('Content-Type: application/json');
+    header('Cache-Control: no-cache, must-revalidate');
+    
+    require_once __DIR__ . '/../includes/db.php';
+    require_once __DIR__ . '/../includes/auth.php';
+    require_once __DIR__ . '/../includes/csrf.php';
+    require_once __DIR__ . '/../includes/functions.php';
+    
+    if (empty($_SESSION['user'])) {
+        http_response_code(401);
+        echo json_encode(['status'=>'error','message'=>'Unauthenticated']);
+        exit;
+    }
+    
+    // Check permission
+    $hasPermission = checkPermission('comments');
+    if (!$hasPermission) {
+        http_response_code(403);
+        echo json_encode(['status'=>'error','message'=>'Forbidden']);
+        exit;
+    }
+
+    // AJAX actions: approve, reject, reply
     $token = $_POST['_csrf'] ?? '';
     if (!verifyToken('comments_form', $token)) { echo json_encode(['status'=>'error','message'=>'Invalid CSRF']); exit; }
     $action = $_POST['action'] ?? '';
