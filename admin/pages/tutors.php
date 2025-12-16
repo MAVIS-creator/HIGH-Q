@@ -384,6 +384,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
                 ?>
               </div>
 
+              <p class="tutor-experience"><?= htmlspecialchars($t['short_bio'] ?? '') ?> years of experience</p>
+              <p class="tutor-description"><?= htmlspecialchars($t['long_bio'] ?? '') ?></p>
+
               <div class="tutor-actions">
                 <button type="button" class="edit-btn" onclick="editTutor(<?= $t['id'] ?>)">
                   <i class="bx bx-edit"></i> Edit
@@ -392,18 +395,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
                   <i class="bx bx-trash"></i> Delete
                 </button>
               </div>
-            </div>
 
-            <span class="date">
-              Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
-            </span>
-          </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p>No tutors found.</p>
-      <?php endif; ?>
+              <p class="tutor-date">
+                Added <?= (new DateTime($t['created_at']))->format('d/m/Y') ?>
+              </p>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p>No tutors found.</p>
+        <?php endif; ?>
+      </div>
     </div>
-  </div>
 
   <!-- Tutor Modal (single instance) -->
   <div class="modal" id="tutorModal">
