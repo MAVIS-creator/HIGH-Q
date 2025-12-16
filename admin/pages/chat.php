@@ -113,8 +113,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     logAction($pdo, $_SESSION['user']['id'], 'chat_closed', ['thread_id' => $threadId]);
     echo json_encode(['status'=>'ok']); exit;
   }
-  echo json_encode(['status'=>'error']); exit;
+  echo json_encode(['status'=>'error','message'=>'Invalid action']); exit;
 }
+
+// Normal HTML page flow - load requirements if not already loaded
+if (!defined('DB_HOST')) {
+    require_once __DIR__ . '/../includes/db.php';
+    require_once __DIR__ . '/../includes/auth.php';
+    require_once __DIR__ . '/../includes/csrf.php';
+    require_once __DIR__ . '/../includes/functions.php';
+    requirePermission('chat');
+}
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 $pageTitle = 'Chat Support';
 require_once __DIR__ . '/../includes/header.php';
