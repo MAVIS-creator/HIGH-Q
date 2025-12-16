@@ -145,26 +145,33 @@ http_response_code(404);
                 justify-content: center;
             }
         }
-        .back-link {
-            margin-top: 1rem;
-            color: var(--hq-yellow);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            background: var(--hq-black);
-        }
-        .back-link:hover {
-            background: var(--hq-yellow);
-            color: var(--hq-black);
-        }
     </style>
 </head>
 <body>
     <div class="error-container">
+        <div class="logo">
+            <img src="../../public/assets/images/hq-logo.jpeg" alt="HIGH Q Solid Academy">
+        </div>
+        
+        <i class='bx bx-search-alt error-icon'></i>
+        
         <div class="error-code">404</div>
         <h1>Page Not Found</h1>
-        <p class="error-message">The requested admin page could not be found.</p>
-        <a href="./index.php" class="back-link">← Return to Dashboard</a>
+        <p>
+            Oops! The admin page you're looking for doesn't exist or has been moved.
+            This might be because the page was removed, renamed, or you don't have permission to access it.
+        </p>
+        
+        <div class="error-actions">
+            <a href="../index.php" class="btn btn-primary">
+                <i class='bx bx-home'></i>
+                Back to Dashboard
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class='bx bx-arrow-back'></i>
+                Go Back
+            </a>
+        </div>
     </div>
 </body>
 </html>
