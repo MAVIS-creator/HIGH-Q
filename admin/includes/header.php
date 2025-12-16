@@ -56,6 +56,7 @@ if (!headers_sent()) {
     <link rel="stylesheet" href="../assets/css/admin-style.css">
     <link rel="stylesheet" href="../assets/css/notifications.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="stylesheet" href="../assets/css/profile-modal.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -64,6 +65,7 @@ if (!headers_sent()) {
     <script src="../assets/js/header-notifications.js" defer></script>
     <script src="../assets/js/viewport-check.js" defer></script>
     <script src="../assets/js/admin-forms.js" defer></script>
+    <script src="../assets/js/profile-modal.js" defer></script>
     <?php
     // Build a reliable path to the admin assets directory by locating the 'admin' segment
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
@@ -190,7 +192,7 @@ if (!headers_sent()) {
                                 </div>
                             </div>
                             <div class="profile-dropdown-divider"></div>
-                            <a href="index.php?pages=settings" class="profile-dropdown-item">
+                            <a href="javascript:void(0)" onclick="openProfileModal()" class="profile-dropdown-item">
                                 <i class='bx bx-user'></i>
                                 <span>Profile Settings</span>
                             </a>
