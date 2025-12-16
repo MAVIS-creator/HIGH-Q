@@ -145,6 +145,19 @@ $threads = $pdo->query(
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+const ADMIN_BASE = (function(){
+  const raw = window.HQ_ADMIN_BASE || '';
+  const path = window.HQ_ADMIN_PATH || '';
+  try {
+    if (!raw) return window.location.origin + path;
+    const u = new URL(raw, window.location.origin);
+    if (u.origin !== window.location.origin) return window.location.origin + (u.pathname ? u.pathname.replace(/\/$/, '') : path);
+    return u.origin + u.pathname.replace(/\/$/, '');
+  } catch(e){
+    return window.location.origin + path;
+  }
+})();
+
 function claim(id){
   Swal.fire({
     title: 'Take this thread?',
@@ -162,7 +175,7 @@ function claim(id){
     fd.append('_csrf','<?= generateToken('chat_form') ?>');
 
   var xhr=new XMLHttpRequest();
-  xhr.open('POST',(window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat',true);
+  xhr.open('POST', ADMIN_BASE + '/index.php?pages=chat',true);
   xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
   xhr.setRequestHeader('Accept','application/json');
 
@@ -178,7 +191,7 @@ function claim(id){
         const li = document.querySelector('li[data-thread="'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
+          right.innerHTML = '<a class="btn" href="' + ADMIN_BASE + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
         }
       }
         else if(r.status==='taken'){
@@ -187,7 +200,7 @@ function claim(id){
         const li = document.querySelector('li[data-thread="'+id+'"]');
         if(li){
           const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="' + (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
+          right.innerHTML = '<a class="btn" href="' + ADMIN_BASE + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
         }
       }
       else {
@@ -201,7 +214,7 @@ function claim(id){
 // Polling: use lightweight JSON API every 5 seconds
 async function pollThreads(){
   try{
-  const res = await fetch((window.HQ_ADMIN_BASE || '') + '/api/threads.php');
+  const res = await fetch(ADMIN_BASE + '/api/threads.php');
     if(!res.ok) return;
     const j = await res.json();
     if(!j.threads) return;
@@ -232,7 +245,7 @@ async function pollThreads(){
       } else {
       const a = document.createElement('a');
       a.className='btn';
-      a.href = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=chat_view&thread_id=' + t.id;
+      a.href = ADMIN_BASE + '/index.php?pages=chat_view&thread_id=' + t.id;
         a.textContent='Open';
         right.appendChild(a);
       }
