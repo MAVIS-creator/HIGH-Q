@@ -775,22 +775,6 @@ if ($hasRegistrations) {
 
 <?php include '../includes/footer.php'; ?>
 
-      <tr>
-    <td><?= htmlspecialchars($r['id']) ?></td>
-    <td>₦<?= number_format($r['amount'],2) ?></td>
-    <td><?= htmlspecialchars($emailTo) ?></td>
-    <td><?= htmlspecialchars(strlen($msgText) > 60 ? substr($msgText,0,57).'...' : $msgText) ?></td>
-        <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div></div></td>
-        <td class="small-muted"><?= (!empty($meta['emailed']) ? '<strong style="color:var(--hq-dark)">Yes</strong>' : '<span class="small-muted">No</span>') ?></td>
-        <td>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="admin-payment-copy action-btn" data-link="<?= htmlspecialchars($link) ?>">Copy</button>
-            <button class="admin-payment-resend action-btn" data-id="<?= htmlspecialchars($r['id']) ?>">Resend</button>
-          </div>
-        </td>
-        <td><?= htmlspecialchars($r['created_at']) ?></td>
-      </tr>
-</script>
 <script>
 // Client-side search/filter
 const searchInput = document.getElementById('searchInput');
