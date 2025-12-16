@@ -631,19 +631,21 @@ if ($hasRegistrations) {
   </div>
 
   <div class="user-filters">
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <a href="<?= admin_url('index.php?pages=students') ?>" class="btn <?= ($current_source==='regular' || $current_source==='') ? 'btn-active' : '' ?>">All / Regular</a>
+    <div class="source-toggle">
+      <a href="index.php?pages=students" class="source-btn <?= ($current_source==='regular' || $current_source==='') ? 'source-btn-active' : '' ?>">All / Regular</a>
       <?php if ($hasPostUtme): ?>
-        <a href="<?= admin_url('index.php?pages=students&source=postutme') ?>" class="btn <?= ($current_source==='postutme') ? 'btn-active' : '' ?>">Post‑UTME</a>
+        <a href="index.php?pages=students&source=postutme" class="source-btn <?= ($current_source==='postutme') ? 'source-btn-active' : '' ?>">Post‑UTME</a>
       <?php endif; ?>
     </div>
-    <input type="text" id="searchInput" placeholder="Search students by name or email">
-    <select id="statusFilter">
-      <option value="">All Status</option>
-      <option value="active">Active</option>
-      <option value="pending">Pending</option>
-      <option value="banned">Banned</option>
-    </select>
+    <div class="filter-controls">
+      <input type="text" id="searchInput" placeholder="Search students by name or email">
+      <select id="statusFilter">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="pending">Pending</option>
+        <option value="banned">Banned</option>
+      </select>
+    </div>
   </div>
 
   <div class="users-list" id="studentsList">
@@ -697,10 +699,10 @@ if ($hasRegistrations) {
       <?php endforeach; ?>
 
       <!-- Pagination -->
-      <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); ?>
+      <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); $baseLink = 'index.php?pages=students' . ($current_source==='postutme' ? '&source=postutme' : ''); ?>
         <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
       <?php for ($p=1;$p<=$pages;$p++): ?>
-  <a href="<?= admin_url('index.php?pages=students&page=' . $p) ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
+  <a href="<?= $baseLink . '&page=' . $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
           <?php endfor; ?>
         </div>
       <?php endif; ?>
