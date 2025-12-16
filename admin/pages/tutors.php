@@ -361,6 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
       </script>
     <?php endif; ?>
 
+  <div class="page-container">
     <div class="tutors-grid">
       <?php if (!empty($tutors)): ?>
         <?php foreach ($tutors as $t): ?>

@@ -240,6 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     </form>
   </div>
 
+  <div class="page-container">
    <div class="courses-grid">
   <?php if (empty($courses)): ?>
     <div class="course-card empty-state">

@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <link rel="stylesheet" href="../assets/css/payment.css">
 </head>
+<div class="page-container">
 <div class="admin-payment-card">
     <h3>Create Payment Link</h3>
     <div id="adminMsg" style="display:none;" class="alert"></div>
@@ -111,8 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endforeach; ?>
         </tbody></table>
     </div>
-<?php endif; ?>
-
+<?php endif; ?></div>
 <?php require_once __DIR__ . '/../includes/footer.php';
 ?>
 <script>

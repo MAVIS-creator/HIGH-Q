@@ -223,6 +223,7 @@ $users = $pdo->query("
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
+<div class="page-container">
 <div class="users-page">
 
   <!-- User Statistics -->
@@ -401,6 +402,7 @@ $users = $pdo->query("
   </div>
 </div>
 <div id="modalOverlay"></div>
+</div>
 
 <?php include '../includes/footer.php'; ?>
 
