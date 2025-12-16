@@ -55,4 +55,38 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSidebarToggle);
     else initSidebarToggle();
 })();
+
+// Profile dropdown toggle
+(function(){
+    function initProfileDropdown(){
+        try{
+            const avatarBtn = document.getElementById('avatarDropdownBtn');
+            const wrapper = avatarBtn?.closest('.header-avatar-wrapper');
+            if(!avatarBtn || !wrapper) return;
+
+            avatarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                wrapper.classList.toggle('open');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if(!wrapper.contains(e.target)){
+                    wrapper.classList.remove('open');
+                }
+            });
+
+            // Close dropdown when clicking a menu item (except logout which navigates away)
+            const dropdownItems = wrapper.querySelectorAll('.profile-dropdown-item:not(.profile-dropdown-item--logout)');
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    wrapper.classList.remove('open');
+                });
+            });
+        }catch(e){ console.error('initProfileDropdown failed', e); }
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initProfileDropdown);
+    else initProfileDropdown();
+})();
 </script>
