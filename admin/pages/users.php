@@ -223,48 +223,41 @@ $users = $pdo->query("
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<div class="page-container">
 <div class="users-page">
 
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-info">
+      <h1>User Management</h1>
+      <p>Manage user accounts, roles, and permissions</p>
+    </div>
+  </div>
+
   <!-- User Statistics -->
-  <div class="user-stats">
-    <div class="stat-card">
-      <div class="icon"><i class='bx bx-user'></i></div>
-      <div class="number"><?= $total_users ?></div>
-      <div class="label">Total Users</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon"><i class='bx bx-user-check'></i></div>
-      <div class="number"><?= $active_users ?></div>
-      <div class="label">Active</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon"><i class='bx bx-time-five'></i></div>
-      <div class="number"><?= $pending_users ?></div>
-      <div class="label">Pending</div>
-    </div>
-    <div class="stat-card">
-      <div class="icon"><i class='bx bx-user-x'></i></div>
-      <div class="number"><?= $banned_users ?></div>
-      <div class="label">Banned</div>
-    </div>
+  <div class="summary-cards">
+    <div class="card"><h3><?= $total_users ?></h3><p>Total Users</p></div>
+    <div class="card"><h3><?= $active_users ?></h3><p>Active</p></div>
+    <div class="card"><h3><?= $pending_users ?></h3><p>Pending</p></div>
+    <div class="card"><h3><?= $banned_users ?></h3><p>Banned</p></div>
   </div>
 
   <!-- Search + Filter -->
   <div class="user-filters">
-    <input type="text" id="searchInput" placeholder="Search by name or email">
-    <select id="statusFilter">
-      <option value="">All Status</option>
-      <option value="active">Active</option>
-      <option value="pending">Pending</option>
-      <option value="banned">Banned</option>
-    </select>
-    <select id="roleFilter">
-      <option value="">All Roles</option>
-      <?php foreach ($all_roles as $r): ?>
-        <option value="<?= htmlspecialchars($r['slug']) ?>"><?= htmlspecialchars($r['name']) ?></option>
-      <?php endforeach; ?>
-    </select>
+    <div class="filter-controls">
+      <input type="text" id="searchInput" placeholder="Search by name or email">
+      <select id="statusFilter">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="pending">Pending</option>
+        <option value="banned">Banned</option>
+      </select>
+      <select id="roleFilter">
+        <option value="">All Roles</option>
+        <?php foreach ($all_roles as $r): ?>
+          <option value="<?= htmlspecialchars($r['slug']) ?>"><?= htmlspecialchars($r['name']) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
   </div>
 
   <!-- User List -->
