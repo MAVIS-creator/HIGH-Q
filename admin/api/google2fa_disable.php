@@ -8,42 +8,50 @@ header('Content-Type: application/json');
 
 if (empty($_SESSION['user'])) {
     http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-$userId = $_SESSION['user']['id'];
+$userId = (int)($_SESSION['user']['id'] ?? 0);
 
 try {
     $data = json_decode(file_get_contents('php://input'), true);
     $password = $data['password'] ?? '';
 
-    if (empty($password)) {
-        throw new Exception('Password required to disable 2FA');
+    if ($password === '') {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Password required to disable 2FA']);
+        exit;
     }
 
-    // Verify password
-    $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
+    $stmt = $pdo->prepare('SELECT password FROM users WHERE id = ?');
     $stmt->execute([$userId]);
-    $user = $stmt->fetch();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user || !password_verify($password, $user['password'])) {
-        throw new Exception('Incorrect password');
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Incorrect password']);
+        exit;
     }
 
-    // Disable 2FA
-    $updateStmt = $pdo->prepare("UPDATE users SET google2fa_enabled = 0, google2fa_secret = NULL WHERE id = ?");
+    $updateStmt = $pdo->prepare('UPDATE users SET google2fa_enabled = 0, google2fa_secret = NULL WHERE id = ?');
     $updateStmt->execute([$userId]);
+
+    unset($_SESSION['google2fa_temp_secret']);
+    $_SESSION['user']['google2fa_enabled'] = false;
 
     echo json_encode([
         'success' => true,
         'message' => 'Google Authenticator disabled successfully'
     ]);
-
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ]);
+} catch (PDOException $e) {
+    http_response_code(500);
+    $msg = 'Database error while disabling 2FA';
+    if (stripos($e->getMessage(), 'unknown column') !== false) {
+        $msg = 'Missing google2fa columns on users table; please add google2fa_secret (VARCHAR) and google2fa_enabled (TINYINT)';
+    }
+    echo json_encode(['success' => false, 'message' => $msg, 'error' => $e->getMessage()]);
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Failed to disable 2FA', 'error' => $e->getMessage()]);
 }
