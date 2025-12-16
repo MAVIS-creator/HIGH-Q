@@ -7,6 +7,10 @@
     'use strict';
 
     const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/HIGH-Q/admin';
+    
+    // Track original values for email/phone verification
+    let originalEmail = '';
+    let originalPhone = '';
 
     // Initialize modal
     function initProfileModal() {
@@ -252,10 +256,6 @@
         const verifyPhoneBtn = document.getElementById('verifyPhoneBtn');
         const confirmEmailCodeBtn = document.getElementById('confirmEmailCodeBtn');
         const confirmPhoneCodeBtn = document.getElementById('confirmPhoneCodeBtn');
-
-        // Track original values
-        let originalEmail = '';
-        let originalPhone = '';
 
         // Monitor email changes to show verify button
         profileEmailInput?.addEventListener('change', () => {
