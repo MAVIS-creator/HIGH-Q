@@ -16,7 +16,8 @@ $userId = $_SESSION['user']['id'];
 try {
     // Get user data
     $stmt = $pdo->prepare("
-        SELECT u.name, u.email, u.phone, u.avatar, r.name as role
+         SELECT u.name, u.email, u.phone, u.avatar, r.name as role, 
+             u.google2fa_enabled, u.google2fa_secret
         FROM users u
         LEFT JOIN roles r ON u.role_id = r.id
         WHERE u.id = ?
@@ -28,11 +29,11 @@ try {
         throw new Exception('User not found');
     }
 
-    // Check if two-factor is enabled in site settings
-    $settingsStmt = $pdo->query("SELECT two_factor FROM site_settings LIMIT 1");
-    $settings = $settingsStmt->fetch(PDO::FETCH_ASSOC);
+    // Convert to boolean for JSON
+    $user['google2fa_enabled'] = !empty($user['google2fa_enabled']);
     
-    $user['two_factor_enabled'] = !empty($settings['two_factor']);
+    // Don't send secret to client
+    unset($user['google2fa_secret']);
 
     echo json_encode($user);
 } catch (Exception $e) {
