@@ -17,7 +17,7 @@ $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
 
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">'+;
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
 .tutor-card .status.active {
     background: #ffd700;
     color: #000;
