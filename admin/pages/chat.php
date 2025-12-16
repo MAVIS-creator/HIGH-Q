@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
   $threadId = intval($_POST['thread_id'] ?? 0);
   if ($action === 'claim' && $threadId) {
     // attempt to set assigned_admin_id where null
-    $stmt = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND assigned_admin_id IS NULL');
+    $stmt = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id = ? AND (assigned_admin_id IS NULL OR assigned_admin_id = 0)');
     $ok = $stmt->execute([$_SESSION['user']['id'], $threadId]);
     if ($stmt->rowCount() > 0) {
       // audit log: admin claimed thread
