@@ -623,28 +623,36 @@ if ($hasRegistrations) {
 
 <div class="users-page">
 
+  <div class="page-header">
+    <div class="page-header-info">
+      <h1>Admissions Management</h1>
+      <p>Manage student registration applications</p>
+      <p class="registration-count"><?= $total ?> registrations</p>
+    </div>
+  </div>
+
   <div class="summary-cards">
-    <div class="card"><span class="icon"><i class='bx bx-user'></i></span><div><h3><?= $total ?></h3><p>Total Students</p></div></div>
-    <div class="card"><span class="icon"><i class='bx bx-user-check'></i></span><div><h3><?= $active ?></h3><p>Active</p></div></div>
-    <div class="card"><span class="icon"><i class='bx bx-time-five'></i></span><div><h3><?= $pending ?></h3><p>Pending</p></div></div>
-    <div class="card"><span class="icon"><i class='bx bx-user-x'></i></span><div><h3><?= $banned ?></h3><p>Banned</p></div></div>
+    <div class="card"><h3><?= $total ?></h3><p>Total</p></div>
+    <div class="card"><h3><?= $active ?></h3><p>Approved</p></div>
+    <div class="card"><h3><?= $pending ?></h3><p>Enrolled</p></div>
+    <div class="card"><h3><?= $banned ?></h3><p>Rejected</p></div>
   </div>
 
   <div class="user-filters">
+    <div class="filter-controls">
+      <input type="text" id="searchInput" placeholder="Search by name, email, program, or phone…">
+      <select id="statusFilter">
+        <option value="">All Statuses</option>
+        <option value="active">Approved</option>
+        <option value="pending">Enrolled</option>
+        <option value="banned">Rejected</option>
+      </select>
+    </div>
     <div class="source-toggle">
       <a href="index.php?pages=students" class="source-btn <?= ($current_source==='regular' || $current_source==='') ? 'source-btn-active' : '' ?>">All / Regular</a>
       <?php if ($hasPostUtme): ?>
         <a href="index.php?pages=students&source=postutme" class="source-btn <?= ($current_source==='postutme') ? 'source-btn-active' : '' ?>">Post‑UTME</a>
       <?php endif; ?>
-    </div>
-    <div class="filter-controls">
-      <input type="text" id="searchInput" placeholder="Search students by name or email">
-      <select id="statusFilter">
-        <option value="">All Status</option>
-        <option value="active">Active</option>
-        <option value="pending">Pending</option>
-        <option value="banned">Banned</option>
-      </select>
     </div>
   </div>
 
