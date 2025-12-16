@@ -16,9 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         exit;
     }
     
-    // Check permission
-    $hasPermission = checkPermission('comments');
-    if (!$hasPermission) {
+    // Check permission - use try/catch to handle permission check gracefully
+    try {
+        requirePermission('comments');
+    } catch (Exception $e) {
         http_response_code(403);
         echo json_encode(['status'=>'error','message'=>'Forbidden']);
         exit;
