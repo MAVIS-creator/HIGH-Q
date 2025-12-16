@@ -27,12 +27,12 @@ echo "\nTesting requirePermission function...\n";
 session_start();
 include 'admin/includes/db.php';
 
-// Get an admin user
-$stmt = $pdo->query("SELECT id, name, email, role, role_id FROM users WHERE role = 'Admin' LIMIT 1");
+// Get a user
+$stmt = $pdo->query("SELECT id, name, email, role_id FROM users LIMIT 1");
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
-    die("No admin user found\n");
+    die("No user found\n");
 }
 
 $_SESSION['user'] = $user;
