@@ -109,12 +109,12 @@ if (!headers_sent()) {
     // Output only the correct admin CSS link for the detected admin path
     echo "<link rel=\"stylesheet\" href=\"" . $chosen . "\">\n";
     // If a page-specific CSS was provided, allow two modes:
-    //  - raw <link> tag (echo as-is)
+    //  - raw <link> tag or <style> tag (echo as-is)
     //  - relative path (treat as relative to admin base)
     if (!empty($pageCss)) {
         $trim = trim($pageCss);
-        if (strpos($trim, '<link') === 0) {
-            echo $pageCss;
+        if (strpos($trim, '<link') === 0 || strpos($trim, '<style') === 0) {
+            echo $pageCss . "\n";
         } else {
             $adminBaseForHref = $adminBase === '/' ? '' : $adminBase;
             echo "<link rel=\"stylesheet\" href=\"" . $adminBaseForHref . "/" . ltrim($pageCss, '/') . "\">\n";
