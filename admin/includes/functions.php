@@ -156,3 +156,43 @@ function admin_url(string $path = ''): string {
     if ($path === '') return $adminBase;
     return $adminBase . '/' . ltrim($path, '/');
 }
+
+/**
+ * Check if user has permission for a specific resource.
+ * Throws exception if permission denied. Returns true if allowed.
+ */
+function requirePermission(string $resource): bool {
+    global $pdo;
+    
+    if (empty($_SESSION['user'])) {
+        throw new Exception('User not authenticated');
+    }
+
+    $userId = (int)($_SESSION['user']['id'] ?? 0);
+    $userRole = $_SESSION['user']['role'] ?? 'User';
+
+    // Admin role has access to everything
+    if ($userRole === 'Admin' || $userRole === 'admin') {
+        return true;
+    }
+
+    // Map resources to required roles
+    $permissions = [
+        'chat' => ['Admin', 'Moderator', 'Support'],
+        'comments' => ['Admin', 'Moderator'],
+        'payments' => ['Admin'],
+        'users' => ['Admin'],
+        'courses' => ['Admin', 'Sub-Admin'],
+        'posts' => ['Admin', 'Sub-Admin'],
+        'settings' => ['Admin'],
+    ];
+
+    $requiredRoles = $permissions[$resource] ?? ['Admin'];
+
+    if (!in_array($userRole, $requiredRoles)) {
+        throw new Exception("Insufficient permissions for: $resource");
+    }
+
+    return true;
+}
+
