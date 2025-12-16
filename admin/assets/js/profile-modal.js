@@ -102,19 +102,48 @@
                         <div class="profile-tab-content" id="tab-security">
                             <div class="security-option">
                                 <div class="security-option-header">
-                                    <h4>
-                                        <i class='bx bx-key'></i>
-                                        Two-Factor Authentication (2FA)
-                                    </h4>
-                                    <span class="otp-status disabled" id="otpStatus">
-                                        <i class='bx bx-x-circle'></i> Disabled
+                                    <h4><i class='bx bxl-google'></i> Google Authenticator</h4>
+                                    <span class="otp-status disabled" id="google2faStatus">
+                                        <i class='bx bx-x-circle'></i> Not Set Up
                                     </span>
                                 </div>
                                 <p class="security-option-description">
-                                    Add an extra layer of security by requiring a verification code in addition to your password when logging in.
+                                    Use Google Authenticator app for secure two-factor authentication.
                                 </p>
-                                <button class="security-action-btn btn-setup" id="setupOtpBtn">
-                                    <i class='bx bx-plus-circle'></i> Setup 2FA
+                                <button class="security-action-btn btn-setup" id="setupGoogle2faBtn">
+                                    <i class='bx bx-plus-circle'></i> Setup Google Authenticator
+                                </button>
+                                
+                                <!-- Google 2FA Setup Panel (hidden by default) -->
+                                <div class="google2fa-setup" id="google2faSetup" style="display:none">
+                                    <div class="google2fa-qr">
+                                        <h4>Scan QR Code</h4>
+                                        <img src="" alt="QR Code" id="google2faQR" style="max-width:200px;margin:10px auto;display:block">
+                                        <p style="font-size:0.85rem;color:#666">
+                                            Scan this QR code with Google Authenticator app
+                                        </p>
+                                        <div class="manual-entry">
+                                            <strong>Manual Entry:</strong>
+                                            <code id="google2faSecret" style="background:#f5f5f5;padding:8px;display:block;border-radius:4px;margin:8px 0;font-family:monospace"></code>
+                                        </div>
+                                    </div>
+                                    <div class="google2fa-verify">
+                                        <label for="google2faCode">Enter 6-digit code from app:</label>
+                                        <input type="text" id="google2faCode" maxlength="6" placeholder="000000" style="text-align:center;font-size:1.5rem;letter-spacing:0.5rem">
+                                        <div style="display:flex;gap:10px;margin-top:10px">
+                                            <button class="profile-btn profile-btn-save" id="verifyGoogle2faBtn">
+                                                <i class='bx bx-check'></i> Verify & Enable
+                                            </button>
+                                            <button class="profile-btn profile-btn-cancel" id="cancelGoogle2faBtn">
+                                                <i class='bx bx-x'></i> Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Disable 2FA Button (shown when enabled) -->
+                                <button class="security-action-btn btn-danger" id="disableGoogle2faBtn" style="display:none;background:#dc3545">
+                                    <i class='bx bx-x-circle'></i> Disable Google Authenticator
                                 </button>
                             </div>
 
