@@ -166,7 +166,7 @@ if (!headers_sent()) {
                             <span id="notifBadge" style="display:none;background:#ff3b30;color:#fff;border-radius:999px;padding:2px 6px;margin-left:8px;font-size:0.8rem;">0</span>
                         </button>
                     </div>
-                    <div class="header-avatar">
+                    <div class="header-avatar-wrapper">
                         <?php
                         // Build a resilient avatar fallback using the computed app base so hardcoded /HIGH-Q paths are avoided
                         $avatar = $_SESSION['user']['avatar'] ?? null;
@@ -174,8 +174,36 @@ if (!headers_sent()) {
                             // Use app_url() to compute image path reliably (preserves subfolder when APP_URL is not set)
                             $avatar = app_url('public/assets/images/hq-logo.jpeg');
                         }
+                        $userName = $_SESSION['user']['name'] ?? 'User';
+                        $userRole = $_SESSION['user']['role'] ?? 'Admin';
                         ?>
-                        <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
+                        <div class="header-avatar" id="avatarDropdownBtn">
+                            <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
+                            <i class='bx bx-chevron-down'></i>
+                        </div>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
+                                <div class="profile-info">
+                                    <div class="profile-name"><?= htmlspecialchars($userName) ?></div>
+                                    <div class="profile-role"><?= htmlspecialchars($userRole) ?></div>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="index.php?pages=settings" class="profile-dropdown-item">
+                                <i class='bx bx-user'></i>
+                                <span>Profile Settings</span>
+                            </a>
+                            <a href="index.php?pages=settings" class="profile-dropdown-item">
+                                <i class='bx bx-cog'></i>
+                                <span>Account Settings</span>
+                            </a>
+                            <div class="profile-dropdown-divider"></div>
+                            <a href="logout.php" class="profile-dropdown-item profile-dropdown-item--logout">
+                                <i class='bx bx-log-out'></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
                     </div>
             <?php endif; ?>
         </div>
