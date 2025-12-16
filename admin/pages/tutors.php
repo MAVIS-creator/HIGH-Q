@@ -309,65 +309,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
   <?php include '../includes/sidebar.php'; ?>
 
   <div class="container">
-    <div class="tutors-header">
-      <h1>Tutors Management</h1>
-      <div class="tutors-actions">
-  <form method="get" action="index.php?pages=tutors" class="search-form">
-          <input type="text" name="q" placeholder="Search Tutors" value="<?= htmlspecialchars($q) ?>">
-        </form>
-        <button id="newTutorBtn" class="btn-approve">
+    <div class="tutors-page">
+      <div class="tutors-header">
+        <div class="tutors-header-info">
+          <h1>Tutors Management</h1>
+          <p>Manage teaching staff and their information</p>
+        </div>
+        <button id="newTutorBtn" class="btn-add-tutor">
           <i class="bx bx-plus"></i> Add Tutor
         </button>
       </div>
-    </div>
 
-    <?php if (!empty($success) || !empty($errors)): ?>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          <?php if (!empty($success)): ?>
-            Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
-              confirmButtonColor: '#3085d6'
-            });
-          <?php endif; ?>
-          <?php if (!empty($errors)): ?>
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
-              confirmButtonColor: '#d33'
-            });
-          <?php endif; ?>
-        });
-      </script>
-    <?php endif; ?>
+      <?php if (!empty($success) || !empty($errors)): ?>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            <?php if (!empty($success)): ?>
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
+                confirmButtonColor: '#3085d6'
+              });
+            <?php endif; ?>
+            <?php if (!empty($errors)): ?>
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
+                confirmButtonColor: '#d33'
+              });
+            <?php endif; ?>
+          });
+        </script>
+      <?php endif; ?>
 
-  <div class="page-container">
-    <div class="tutors-grid">
-      <?php if (!empty($tutors)): ?>
-        <?php foreach ($tutors as $t): ?>
-          <div class="tutor-card" data-id="<?= $t['id'] ?>" data-name="<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>" data-title="<?= htmlspecialchars($t['qualifications'] ?? '', ENT_QUOTES) ?>" data-subjects="<?= htmlspecialchars(implode(', ', json_decode($t['subjects'] ?? '[]', true)), ENT_QUOTES) ?>" data-years="<?= htmlspecialchars($t['short_bio'] ?? '', ENT_QUOTES) ?>" data-bio="<?= htmlspecialchars($t['long_bio'] ?? '', ENT_QUOTES) ?>" data-image="<?= htmlspecialchars($t['photo'] ?? '', ENT_QUOTES) ?>" data-email="<?= htmlspecialchars($t['contact_email'] ?? '', ENT_QUOTES) ?>" data-phone="<?= htmlspecialchars($t['phone'] ?? '', ENT_QUOTES) ?>">
-            <span class="status <?= $t['is_featured'] ? 'active' : 'normal' ?>">
-              <?= $t['is_featured'] ? 'Active' : 'Normal' ?>
-            </span>
+      <div class="tutors-search-section">
+        <h3>Search Tutors</h3>
+        <form method="get" action="index.php?pages=tutors" class="search-form">
+          <input type="text" name="q" placeholder="Search by name, title, or subject…" value="<?= htmlspecialchars($q) ?>">
+        </form>
+      </div>
 
-            <div class="tutor-photo">
-              <?php
-              $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '../../public/assets/images/hq-logo.jpeg';
-              ?>
-              <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
-            </div>
+      <div class="tutors-grid">
+        <?php if (!empty($tutors)): ?>
+          <?php foreach ($tutors as $t): ?>
+            <div class="tutor-card" data-id="<?= $t['id'] ?>" data-name="<?= htmlspecialchars($t['name'], ENT_QUOTES) ?>" data-title="<?= htmlspecialchars($t['qualifications'] ?? '', ENT_QUOTES) ?>" data-subjects="<?= htmlspecialchars(implode(', ', json_decode($t['subjects'] ?? '[]', true)), ENT_QUOTES) ?>" data-years="<?= htmlspecialchars($t['short_bio'] ?? '', ENT_QUOTES) ?>" data-bio="<?= htmlspecialchars($t['long_bio'] ?? '', ENT_QUOTES) ?>" data-image="<?= htmlspecialchars($t['photo'] ?? '', ENT_QUOTES) ?>" data-email="<?= htmlspecialchars($t['contact_email'] ?? '', ENT_QUOTES) ?>" data-phone="<?= htmlspecialchars($t['phone'] ?? '', ENT_QUOTES) ?>">
+              <div class="tutor-card-header">
+                <div class="tutor-photo">
+                  <?php
+                  $photoPath = $t['photo'] ? (strpos($t['photo'], 'http') === 0 ? $t['photo'] : '../../public/' . $t['photo']) : '../../public/assets/images/hq-logo.jpeg';
+                  ?>
+                  <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+                </div>
+                <div class="tutor-card-meta">
+                  <h3><?= htmlspecialchars($t['name']) ?></h3>
+                  <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
+                </div>
+              </div>
 
-            <div class="tutor-info">
-              <h3><?= htmlspecialchars($t['name']) ?></h3>
-              <p class="role"><?= htmlspecialchars($t['qualifications'] ?: 'Not specified') ?></p>
-              <div class="subjects">
+              <div class="tutor-card-subjects">
+                <strong>Subjects:</strong>
+              </div>
+              <div class="tutor-card-subjects">
                 <?php
                 $subjects = json_decode($t['subjects'] ?? '[]', true);
                 if (!empty($subjects)):
                   foreach ($subjects as $subject):
+
                 ?>
                     <span><?= htmlspecialchars($subject) ?></span>
                 <?php
