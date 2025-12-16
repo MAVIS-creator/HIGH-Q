@@ -16,8 +16,7 @@ $userId = $_SESSION['user']['id'];
 try {
     // Get user data
     $stmt = $pdo->prepare("
-         SELECT u.name, u.email, u.phone, u.avatar, r.name as role, 
-             u.google2fa_enabled, u.google2fa_secret
+        SELECT u.name, u.email, u.phone, u.avatar, r.name as role
         FROM users u
         LEFT JOIN roles r ON u.role_id = r.id
         WHERE u.id = ?
@@ -29,11 +28,18 @@ try {
         throw new Exception('User not found');
     }
 
-    // Convert to boolean for JSON
-    $user['google2fa_enabled'] = !empty($user['google2fa_enabled']);
-    
-    // Don't send secret to client
-    unset($user['google2fa_secret']);
+    // Try to get google2fa_enabled status (gracefully handle if columns don't exist)
+    $user['google2fa_enabled'] = false;
+    try {
+        $check = $pdo->prepare("SELECT google2fa_enabled FROM users WHERE id = ? LIMIT 1");
+        $check->execute([$userId]);
+        $result = $check->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $user['google2fa_enabled'] = !empty($result['google2fa_enabled']);
+        }
+    } catch (PDOException $e) {
+        // Column doesn't exist, default to false
+    }
 
     echo json_encode($user);
 } catch (Exception $e) {
