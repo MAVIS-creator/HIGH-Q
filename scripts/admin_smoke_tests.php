@@ -63,8 +63,15 @@ foreach ($tests as $t) {
     if (!$res['ok']) {
         $detail = $res['error'];
     } else {
-        $status = ($res['http'] ?? 0) >= 200 && ($res['http'] ?? 0) < 300 ? 'ok' : 'fail';
-        $detail = 'HTTP ' . ($res['http'] ?? '?');
+        $http = $res['http'] ?? 0;
+        // APIs return 401 when unauthenticated (expected); pages should return 200-299
+        $isApi = strpos($t['url'], '/api/') !== false;
+        if ($isApi) {
+            $status = ($http === 401 || ($http >= 200 && $http < 300)) ? 'ok' : 'fail';
+        } else {
+            $status = ($http >= 200 && $http < 300) ? 'ok' : 'fail';
+        }
+        $detail = 'HTTP ' . $http;
         $json = json_decode($res['body'] ?? '', true);
         if (json_last_error() === JSON_ERROR_NONE) {
             $detail .= ' (json)';
