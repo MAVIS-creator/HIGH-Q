@@ -77,7 +77,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
 
-    echo json_encode(['status'=>'error']); exit;
+    echo json_encode(['status'=>'error','message'=>'Invalid action']); exit;
+}
+
+// Normal HTML page flow - load requirements if not already loaded
+if (!defined('DB_HOST')) {
+    require_once __DIR__ . '/../includes/db.php';
+    require_once __DIR__ . '/../includes/auth.php';
+    require_once __DIR__ . '/../includes/csrf.php';
+    require_once __DIR__ . '/../includes/functions.php';
+    requirePermission('comments');
 }
 
 $perPage = 30; 
