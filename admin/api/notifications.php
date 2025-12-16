@@ -1,15 +1,20 @@
 <?php
 // admin/api/notifications.php - Aggregates recent admin notifications
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/functions.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, must-revalidate');
 
 if (empty($_SESSION['user'])) {
-    echo json_encode(['error'=>'unauthenticated']); 
+    http_response_code(401);
+    echo json_encode(['error'=>'unauthenticated','notifications'=>[]]); 
     exit;
 }
+
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $notifications = [];
 $debug = []; // collect debug info

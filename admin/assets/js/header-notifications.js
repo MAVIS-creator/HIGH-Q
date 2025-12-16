@@ -44,6 +44,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // include credentials so session cookie is sent and the API can authenticate the admin
             const res = await fetch(ADMIN_BASE + '/api/notifications.php', { credentials: 'same-origin' });
             if (!res.ok) {
+                if (res.status === 401) {
+                    console.warn('Not authenticated - please log in');
+                    badge.style.display = 'none';
+                    return;
+                }
                 console.warn('Notifications endpoint returned HTTP', res.status);
                 return;
             }
@@ -54,8 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 data = JSON.parse(txt);
             } catch (err) {
-                console.error('Notifications API returned non-JSON response:', txt);
-                panel.innerHTML = '<div class="notif-empty">Error loading notifications</div>';
+                console.error('Notifications API returned non-JSON response (session may be expired):', txt.substring(0, 200));
+                badge.style.display = 'none';
                 return;
             }
             

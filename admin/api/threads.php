@@ -1,15 +1,20 @@
 <?php
 // admin/api/threads.php - lightweight JSON API for admin thread list and unread counts
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../../public/config/functions.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, must-revalidate');
 
-// Only allow admins/sub-admins/moderators with permission
 if (empty($_SESSION['user'])) {
-    echo json_encode(['error'=>'unauthenticated']); exit;
+    http_response_code(401);
+    echo json_encode(['error'=>'unauthenticated','threads'=>[]]); 
+    exit;
 }
+
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../../public/config/functions.php';
 
 // Simple query: return recent open threads with minimal fields and unread counts
 $limit = 50;
