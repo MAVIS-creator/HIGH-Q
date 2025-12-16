@@ -63,13 +63,37 @@
                                     </div>
                                     <div class="profile-form-group">
                                         <label for="profileEmail">Email Address</label>
-                                        <input type="email" id="profileEmail" name="email" required>
+                                        <div style="display:flex;gap:8px">
+                                            <input type="email" id="profileEmail" name="email" style="flex:1" required>
+                                            <button type="button" class="profile-verify-btn" id="verifyEmailBtn" style="display:none;padding:8px 12px;background:#ffd600;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">
+                                                <i class='bx bx-mail-send'></i> Verify
+                                            </button>
+                                        </div>
+                                        <div id="emailVerifyPanel" style="display:none;margin-top:10px;padding:10px;background:#f0f8ff;border-radius:6px">
+                                            <label for="emailVerifyCode">Verification Code</label>
+                                            <input type="text" id="emailVerifyCode" maxlength="6" placeholder="000000" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;margin-bottom:8px">
+                                            <button type="button" id="confirmEmailCodeBtn" style="width:100%;padding:8px;background:#ffd600;border:none;border-radius:4px;cursor:pointer;font-weight:600">
+                                                Verify Code
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="profile-form-row">
                                     <div class="profile-form-group">
                                         <label for="profilePhone">Phone Number</label>
-                                        <input type="tel" id="profilePhone" name="phone">
+                                        <div style="display:flex;gap:8px">
+                                            <input type="tel" id="profilePhone" name="phone" style="flex:1">
+                                            <button type="button" class="profile-verify-btn" id="verifyPhoneBtn" style="display:none;padding:8px 12px;background:#ffd600;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">
+                                                <i class='bx bx-phone'></i> Verify
+                                            </button>
+                                        </div>
+                                        <div id="phoneVerifyPanel" style="display:none;margin-top:10px;padding:10px;background:#f0f8ff;border-radius:6px">
+                                            <label for="phoneVerifyCode">Verification Code</label>
+                                            <input type="text" id="phoneVerifyCode" maxlength="6" placeholder="000000" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;margin-bottom:8px">
+                                            <button type="button" id="confirmPhoneCodeBtn" style="width:100%;padding:8px;background:#ffd600;border:none;border-radius:4px;cursor:pointer;font-weight:600">
+                                                Verify Code
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="profile-form-group">
                                         <label for="profileRole">Role</label>
