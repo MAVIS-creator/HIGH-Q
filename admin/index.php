@@ -1,9 +1,8 @@
 <?php
 // Admin routing - forward ?pages parameter requests to pages/index.php
 if (isset($_GET['pages'])) {
-    // Redirect to the actual admin router at pages/index.php
-    $queryString = $_SERVER['QUERY_STRING'];
-    header("Location: pages/index.php?$queryString");
+    // Include the actual admin router (don't redirect, just include it)
+    include __DIR__ . '/pages/index.php';
     exit;
 }
 
