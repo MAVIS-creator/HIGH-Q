@@ -1,19 +1,10 @@
 <?php
-// Admin routing - handle ?pages parameter for AJAX and normal requests
+// Admin routing - forward ?pages parameter requests to pages/index.php
 if (isset($_GET['pages'])) {
-    $page = $_GET['pages'];
-    $pageFile = __DIR__ . '/pages/' . $page . '.php';
-    
-    // Security: only allow alphanumeric, dash, underscore in page names
-    if (preg_match('/^[a-zA-Z0-9_-]+$/', $page) && file_exists($pageFile)) {
-        // Include the requested page - this will handle both AJAX and regular requests
-        include $pageFile;
-        exit; // Important: exit after including page to prevent landing page from showing
-    } else {
-        // Invalid page requested
-        http_response_code(404);
-        die('Page not found');
-    }
+    // Redirect to the actual admin router at pages/index.php
+    $queryString = $_SERVER['QUERY_STRING'];
+    header("Location: pages/index.php?$queryString");
+    exit;
 }
 
 // If no page parameter, show landing page
