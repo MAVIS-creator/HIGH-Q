@@ -19,41 +19,49 @@ $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <style>
+.page-container{max-width:1360px;margin:0 auto;padding:0 18px;background:#f8f9fb;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.05)}
 .tutors-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    padding: 1rem;
+    padding: 1rem 0;
 }
 .tutor-card {
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     overflow: hidden;
     position: relative;
+    transition:transform 0.2s,box-shadow 0.2s;
 }
+.tutor-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
 .tutor-card .status {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight:600;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 .tutor-card .status.active {
     background: #ffd700;
     color: #000;
 }
 .tutor-card .status.normal {
-    background: #e0e0e0;
-    color: #333;
+    background: #e8e8e8;
+    color: #444;
 }
 .tutor-card .date {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 12px;
+    right: 12px;
     font-size: 12px;
-    color: #666;
+    color: #888;
+    background:rgba(255,255,255,0.9);
+    padding:4px 8px;
+    border-radius:6px;
 }
 .tutor-photo {
     width: 100%;
@@ -66,15 +74,18 @@ $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
     object-fit: cover;
 }
 .tutor-info {
-    padding: 1rem;
+    padding: 1.25rem;
 }
 .tutor-info h3 {
     margin: 0 0 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    color:#111;
+    font-weight:700;
 }
 .tutor-info .role {
-    color: #666;
+    color: #777;
     margin-bottom: 0.5rem;
+    font-size:0.95rem;
 }
 .tutor-info .subjects {
     display: flex;
