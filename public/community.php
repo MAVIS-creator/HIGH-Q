@@ -108,22 +108,60 @@ $hasMore = ($offset + count($questions) < $totalQuestions);
 
 // Fetch user votes for questions
 $userQuestionVotes = [];
+if (!empty($questionIds)) {
+  $in = implode(',', array_fill(0, count($questionIds), '?'));
+  $vq = $pdo->prepare("SELECT question_id, vote FROM forum_votes WHERE question_id IN ($in) AND (session_id = ? OR ip = ?)");
+  foreach ($questionIds as $i => $qid) { $vq->bindValue($i + 1, $qid, PDO::PARAM_INT); }
+  $vq->bindValue(count($questionIds) + 1, session_id(), PDO::PARAM_STR);
+  $vq->bindValue(count($questionIds) + 2, $_SERVER['REMOTE_ADDR'] ?? null, PDO::PARAM_STR);
+  $vq->execute();
+  foreach ($vq->fetchAll(PDO::FETCH_ASSOC) as $row) { $userQuestionVotes[(int)$row['question_id']] = (int)$row['vote']; }
+}
+
+// Fetch replies grouped by question, with vote scores and parent_id
+$repliesByQuestion = [];
+$replyIds = [];
+if (!empty($questionIds)) {
+  $in = implode(',', array_fill(0, count($questionIds), '?'));
+  $rs = $pdo->prepare("SELECT id, question_id, parent_id, name, content, created_at, (SELECT COALESCE(SUM(vote),0) FROM forum_votes v WHERE v.reply_id = fr.id) AS vote_score FROM forum_replies fr WHERE fr.question_id IN ($in) ORDER BY fr.created_at ASC");
+  foreach ($questionIds as $i => $qid) { $rs->bindValue($i + 1, $qid, PDO::PARAM_INT); }
+  $rs->execute();
+  $rows = $rs->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($rows as $r) {
+    $replyIds[] = (int)$r['id'];
+    $repliesByQuestion[(int)$r['question_id']][] = $r;
+  }
+}
+
+// User votes for replies
+$userReplyVotes = [];
+if (!empty($replyIds)) {
+  $in = implode(',', array_fill(0, count($replyIds), '?'));
+  $vr = $pdo->prepare("SELECT reply_id, vote FROM forum_votes WHERE reply_id IN ($in) AND (session_id = ? OR ip = ?)");
+  foreach ($replyIds as $i => $rid) { $vr->bindValue($i + 1, $rid, PDO::PARAM_INT); }
+  $vr->bindValue(count($replyIds) + 1, session_id(), PDO::PARAM_STR);
+  $vr->bindValue(count($replyIds) + 2, $_SERVER['REMOTE_ADDR'] ?? null, PDO::PARAM_STR);
+  $vr->execute();
+  foreach ($vr->fetchAll(PDO::FETCH_ASSOC) as $row) { $userReplyVotes[(int)$row['reply_id']] = (int)$row['vote']; }
+}
+
+// Recent topics
+$recentTopics = [];
+try {
+  $rt = $pdo->query('SELECT topic, MAX(created_at) AS last_time, COUNT(*) AS cnt FROM forum_questions WHERE topic IS NOT NULL AND topic <> "" GROUP BY topic ORDER BY last_time DESC LIMIT 8');
+  $recentTopics = $rt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+  $recentTopics = [];
+}
 ?><section class="community-section">
   <div class="container community-grid">
     <main>
-      <div class="community-head">
-        <div>
-          <h1 style="margin:0 0 6px 0;">Community</h1>
-          <p class="muted">Ask questions anonymously, no account needed.</p>
-        </div>
-        <span class="pill"><?= number_format($totalQuestions ?? 0) ?> posts</span>
-      </div>
+      <h1 style="margin:0 0 8px 0;">Community</h1>
+      <p class="muted">Ask questions anonymously, no account needed.</p>
 
       <style>
         .community-section { padding:32px 0; }
         .community-grid { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:20px; align-items:start; }
-        .community-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
-        .pill { background:#f8fafc; border:1px solid #e2e8f0; color:#0f172a; padding:6px 12px; border-radius:999px; font-weight:600; font-size:13px; }
         .community-grid aside .card { position:sticky; top:110px; }
 
         .forum-question { border:1px solid #e2e8f0; background:#fff; border-radius:12px; padding:16px; transition:box-shadow .2s, border-color .2s; }
