@@ -244,6 +244,177 @@
         overlay?.addEventListener('click', (e) => {
             if (e.target === overlay) closeModal();
         });
+
+        // Email/Phone verification
+        const profileEmailInput = document.getElementById('profileEmail');
+        const profilePhoneInput = document.getElementById('profilePhone');
+        const verifyEmailBtn = document.getElementById('verifyEmailBtn');
+        const verifyPhoneBtn = document.getElementById('verifyPhoneBtn');
+        const confirmEmailCodeBtn = document.getElementById('confirmEmailCodeBtn');
+        const confirmPhoneCodeBtn = document.getElementById('confirmPhoneCodeBtn');
+
+        // Track original values
+        let originalEmail = '';
+        let originalPhone = '';
+
+        // Monitor email changes to show verify button
+        profileEmailInput?.addEventListener('change', () => {
+            if (profileEmailInput.value !== originalEmail && profileEmailInput.value) {
+                verifyEmailBtn.style.display = 'inline-block';
+            } else {
+                verifyEmailBtn.style.display = 'none';
+                document.getElementById('emailVerifyPanel').style.display = 'none';
+            }
+        });
+
+        // Monitor phone changes to show verify button
+        profilePhoneInput?.addEventListener('change', () => {
+            if (profilePhoneInput.value !== originalPhone && profilePhoneInput.value) {
+                verifyPhoneBtn.style.display = 'inline-block';
+            } else {
+                verifyPhoneBtn.style.display = 'none';
+                document.getElementById('phoneVerifyPanel').style.display = 'none';
+            }
+        });
+
+        // Send email verification code
+        verifyEmailBtn?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = profileEmailInput.value;
+            if (!email) return;
+
+            try {
+                const response = await fetch(`${ADMIN_BASE}/api/send_verification_code.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'email', value: email }),
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('emailVerifyPanel').style.display = 'block';
+                    document.getElementById('emailVerifyCode').focus();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Code Sent',
+                        text: 'Verification code sent to your email'
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: error.message
+                });
+            }
+        });
+
+        // Verify email code
+        confirmEmailCodeBtn?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('emailVerifyCode').value;
+            if (!code) {
+                Swal.fire({ icon: 'error', text: 'Enter the code' });
+                return;
+            }
+
+            try {
+                const response = await fetch(`${ADMIN_BASE}/api/verify_code.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code }),
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('emailVerifyPanel').style.display = 'none';
+                    document.getElementById('emailVerifyCode').value = '';
+                    verifyEmailBtn.innerHTML = '<i class="bx bx-check-circle"></i> Verified';
+                    verifyEmailBtn.disabled = true;
+                    Swal.fire({ icon: 'success', text: 'Email verified successfully' });
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Verification Failed',
+                    text: error.message
+                });
+            }
+        });
+
+        // Send phone verification code
+        verifyPhoneBtn?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const phone = profilePhoneInput.value;
+            if (!phone) return;
+
+            try {
+                const response = await fetch(`${ADMIN_BASE}/api/send_verification_code.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'phone', value: phone }),
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('phoneVerifyPanel').style.display = 'block';
+                    document.getElementById('phoneVerifyCode').focus();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Code Sent',
+                        text: 'Verification code sent to your phone'
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: error.message
+                });
+            }
+        });
+
+        // Verify phone code
+        confirmPhoneCodeBtn?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('phoneVerifyCode').value;
+            if (!code) {
+                Swal.fire({ icon: 'error', text: 'Enter the code' });
+                return;
+            }
+
+            try {
+                const response = await fetch(`${ADMIN_BASE}/api/verify_code.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code }),
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('phoneVerifyPanel').style.display = 'none';
+                    document.getElementById('phoneVerifyCode').value = '';
+                    verifyPhoneBtn.innerHTML = '<i class="bx bx-check-circle"></i> Verified';
+                    verifyPhoneBtn.disabled = true;
+                    Swal.fire({ icon: 'success', text: 'Phone verified successfully' });
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Verification Failed',
+                    text: error.message
+                });
+            }
+        });
+
     // Google 2FA Functions
     async function setupGoogle2FA() {
         try {
