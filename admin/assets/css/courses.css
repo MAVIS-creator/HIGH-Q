@@ -1,4 +1,5 @@
-.courses-page {
+/* courses.css - courses page styling */
+.admin-main .container {
   width: 100%;
   max-width: 1360px;
   margin: 0 auto;

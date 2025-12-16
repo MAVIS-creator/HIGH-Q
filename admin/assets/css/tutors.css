@@ -17,7 +17,7 @@
 }
 
 /* tutors.css - admin tutors grid and card styles */
-.tutors-page {
+.admin-main .container {
 	width: 100%;
 	max-width: 1360px;
 	margin: 0 auto;
