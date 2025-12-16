@@ -629,6 +629,10 @@
         document.getElementById('profilePhone').value = data.phone || '';
         document.getElementById('profileRole').value = data.role || '';
         
+        // Store original values to detect changes
+        originalEmail = data.email || '';
+        originalPhone = data.phone || '';
+        
         if (data.avatar) {
             document.getElementById('profileAvatarPreview').src = data.avatar;
         }
