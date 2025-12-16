@@ -16,7 +16,7 @@ $errors  = [];
 $success = [];
 
 // Ensure per-page CSS for courses modal if not already set
-$pageCss = '<link rel="stylesheet" href="../assets/css/courses.css"><style>.page-container{max-width:1360px;margin:0 auto;padding:24px 18px;background:#f8f9fb;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.05)}</style>';
+$pageCss = '<link rel="stylesheet" href="../assets/css/courses.css">';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {

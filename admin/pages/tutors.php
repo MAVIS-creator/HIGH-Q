@@ -17,24 +17,7 @@ $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
 
 // Add SweetAlert2 assets and CSS
 $pageCss = '<link rel="stylesheet" href="../assets/css/tutors.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<style>
-.page-container{max-width:1360px;margin:0 auto;padding:0 18px;background:#f8f9fb;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.05)}
-.tutors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem 0;
-}
-.tutor-card {
-    background: white;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-    overflow: hidden;
-    position: relative;
-    transition:transform 0.2s,box-shadow 0.2s;
-}
-.tutor-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
 .tutor-card .status {
     position: absolute;
     top: 12px;

@@ -5,12 +5,12 @@
 
 $options = getopt('', ['base:', 'cookie::', 'help::']);
 if (isset($options['help'])) {
-    echo "Usage: php scripts/admin_smoke_tests.php --base=http://127.0.0.1/HIGH-Q/public/admin --cookie=PHPSESSID=xyz\n";
+    echo "Usage: php scripts/admin_smoke_tests.php --base=http://127.0.0.1/HIGH-Q/admin --cookie=PHPSESSID=xyz\n";
     echo "Provide an authenticated admin session cookie to hit protected endpoints.\n";
     exit(0);
 }
 
-$base = rtrim($options['base'] ?? '', '/');
+$base = rtrim($options['base'] ?? 'http://127.0.0.1/HIGH-Q/admin', '/');
 $cookie = $options['cookie'] ?? '';
 if ($base === '') {
     fwrite(STDERR, "Missing --base. Example: --base=http://127.0.0.1/HIGH-Q/public/admin\n");

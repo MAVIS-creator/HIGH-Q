@@ -8,7 +8,6 @@ require_once __DIR__ . '/../includes/functions.php';
 requirePermission('payments');
 $pageTitle = 'Create Payment Link';
 $pageCss = '../assets/css/payment.css';
-$pageCss .= '<style>.page-container{max-width:920px;margin:0 auto;padding:24px 18px;background:#f8f9fb;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.05)}.admin-payment-card{background:#fff;padding:28px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}</style>';
 require_once __DIR__ . '/../includes/header.php';
 
 $message = '';
