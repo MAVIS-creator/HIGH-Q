@@ -279,52 +279,6 @@ $userQuestionVotes = [];
   </div>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-              }
-              if ($limit !== null && $total > $limit) {
-                ?>
-                <button class="expand-replies" data-qid="<?= $qq['id'] ?>"><i class='bx bx-chevron-down'></i> Show <?= $total - $limit ?> more replies</button>
-                <?php
-              }
-            };
-          ?>
-            <div class="post-replies" id="replies-<?= $qq['id'] ?>">
-              <?php $renderReplies(0); ?>
-            </div>
-          <?php endif; ?>
-
-          <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;">
-            <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
-            <input type="hidden" name="parent_id" value="">
-            <div class="form-row">
-              <input class="form-input" type="text" name="rname" placeholder="Name (optional)">
-            </div>
-            <div class="form-row">
-              <textarea class="form-textarea" name="rcontent" rows="3" placeholder="Write your reply..." required></textarea>
-            </div>
-            <div class="form-actions">
-              <button class="btn-approve" type="submit">Post Reply</button>
-            </div>
-          </form>
-        </div>
-      <?php endforeach; ?>
-    </main>
-
-    <aside>
-      <div class="card" style="padding:12px;">
-        <h3 style="margin-top:0">Recent Topics</h3>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <?php if (empty($recentTopics)): ?>
-            <div class="muted">No topics yet.</div>
-            <?php else: foreach ($recentTopics as $rt): ?>
-              <a class="badge" href="community.php?topic=<?= urlencode($rt['topic']) ?>">#<?= htmlspecialchars($rt['topic']) ?></a>
-          <?php endforeach;
-          endif; ?>
-        </div>
-      </div>
-    </aside>
-  </div>
-</section>
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
 <script>
   (function() {
     var feed = document.getElementById('questions-list');

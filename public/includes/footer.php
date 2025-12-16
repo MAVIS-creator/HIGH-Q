@@ -142,7 +142,7 @@
     <div class="links" style="gap:10px; flex-wrap:wrap;">
       <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(90deg,#ffd54f,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700;">Made by MAVIS</a>
       <span style="color:#cbd5e1;">•</span>
-      <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(90deg,#ffd54f,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700;">Exam portal by GamerDave</a>
+      <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer">Exam portal by GamerDave</a>
     </div>
   </div>
 </footer>
