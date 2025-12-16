@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Chat/Comments AJAX</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h1>Test Chat/Comments AJAX Routing</h1>
+    
+    <h2>Test Comments Approve</h2>
+    <button onclick="testCommentsApprove()">Test Approve Comment ID 1</button>
+    
+    <h2>Test Chat Claim</h2>
+    <button onclick="testChatClaim()">Test Claim Thread ID 1</button>
+    
+    <h2>Response Log:</h2>
+    <div id="log" style="border: 1px solid #ccc; padding: 10px; min-height: 200px; font-family: monospace; white-space: pre-wrap;"></div>
+    
+    <script>
+        const ADMIN_BASE = window.location.origin + '/HIGH-Q/admin';
+        
+        function log(msg) {
+            document.getElementById('log').textContent += msg + '\n\n';
+        }
+        
+        function testCommentsApprove() {
+            log('=== Testing Comments Approve ===');
+            log('URL: ' + ADMIN_BASE + '/index.php?pages=comments');
+            
+            const fd = new FormData();
+            fd.append('action', 'approve');
+            fd.append('id', '1');
+            fd.append('_csrf', 'test_token'); // You'll need a real token
+            
+            fetch(ADMIN_BASE + '/index.php?pages=comments', {
+                method: 'POST',
+                body: fd,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                log('Status: ' + response.status);
+                log('Content-Type: ' + response.headers.get('Content-Type'));
+                return response.text();
+            })
+            .then(text => {
+                log('Response Text:\n' + text.substring(0, 500));
+                
+                try {
+                    const json = JSON.parse(text);
+                    log('Parsed JSON: ' + JSON.stringify(json, null, 2));
+                    Swal.fire('Success', 'Got JSON response!', 'success');
+                } catch(e) {
+                    log('NOT JSON! Error: ' + e.message);
+                    Swal.fire('Error', 'Got HTML instead of JSON', 'error');
+                }
+            })
+            .catch(error => {
+                log('Error: ' + error.message);
+                Swal.fire('Error', error.message, 'error');
+            });
+        }
+        
+        function testChatClaim() {
+            log('=== Testing Chat Claim ===');
+            log('URL: ' + ADMIN_BASE + '/index.php?pages=chat');
+            
+            const fd = new FormData();
+            fd.append('action', 'claim');
+            fd.append('thread_id', '1');
+            fd.append('_csrf', 'test_token'); // You'll need a real token
+            
+            fetch(ADMIN_BASE + '/index.php?pages=chat', {
+                method: 'POST',
+                body: fd,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                log('Status: ' + response.status);
+                log('Content-Type: ' + response.headers.get('Content-Type'));
+                return response.text();
+            })
+            .then(text => {
+                log('Response Text:\n' + text.substring(0, 500));
+                
+                try {
+                    const json = JSON.parse(text);
+                    log('Parsed JSON: ' + JSON.stringify(json, null, 2));
+                    Swal.fire('Success', 'Got JSON response!', 'success');
+                } catch(e) {
+                    log('NOT JSON! Error: ' + e.message);
+                    Swal.fire('Error', 'Got HTML instead of JSON', 'error');
+                }
+            })
+            .catch(error => {
+                log('Error: ' + error.message);
+                Swal.fire('Error', error.message, 'error');
+            });
+        }
+    </script>
+</body>
+</html>
