@@ -871,7 +871,7 @@ async function createPaymentLink(studentId) {
     const data = await res.json();
     if (data.success) {
       Swal.fire({
-        title: 'Payment Link Created ✅',
+        title: '<i class="bx bx-check-circle"></i> Payment Link Created',
         html: `
           <p>Reference: <code>${data.reference}</code></p>
           <p><a href="${data.link}" target="_blank">${data.link}</a></p>

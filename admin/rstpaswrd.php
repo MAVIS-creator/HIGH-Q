@@ -179,11 +179,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="subtitle">Update your .htpasswd authentication password</p>
 
         <?php if (isset($error)): ?>
-            <div class="alert alert-error">❌ <?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-error"><i class='bx bx-error-circle'></i> <?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <?php if (isset($success)): ?>
-            <div class="alert alert-success">✅ <?= htmlspecialchars($success) ?></div>
+            <div class="alert alert-success"><i class='bx bx-check-circle'></i> <?= htmlspecialchars($success) ?></div>
             <?php if (isset($showPassword)): ?>
                 <div class="password-display">
                     <strong>Your New Password (Save this!):</strong>
@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <div class="warning-box">
-            <strong>⚠️ Security Warning</strong>
+            <strong><i class='bx bx-error'></i> Security Warning</strong>
             <p>
                 This script allows anyone who can access it to reset your admin password. 
                 <strong>Delete or rename this file immediately after use!</strong>
