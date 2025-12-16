@@ -438,15 +438,21 @@
             document.getElementById('profileAvatarPreview').src = data.avatar;
         }
 
-        // Update OTP status
-        if (data.two_factor_enabled) {
-            const otpStatus = document.getElementById('otpStatus');
-            otpStatus.className = 'otp-status enabled';
-            otpStatus.innerHTML = '<i class=\'bx bx-check-circle\'></i> Enabled';
+        // Update Google 2FA status
+        if (data.google2fa_enabled) {
+            const statusEl = document.getElementById('google2faStatus');
+            statusEl.className = 'otp-status enabled';
+            statusEl.innerHTML = '<i class=\'bx bx-check-circle\'></i> Enabled';
             
-            const setupBtn = document.getElementById('setupOtpBtn');
-            setupBtn.className = 'security-action-btn btn-disable';
-            setupBtn.innerHTML = '<i class=\'bx bx-x-circle\'></i> Disable 2FA';
+            document.getElementById('setupGoogle2faBtn').style.display = 'none';
+            document.getElementById('disableGoogle2faBtn').style.display = 'inline-block';
+        } else {
+            const statusEl = document.getElementById('google2faStatus');
+            statusEl.className = 'otp-status disabled';
+            statusEl.innerHTML = '<i class=\'bx bx-x-circle\'></i> Not Set Up';
+            
+            document.getElementById('setupGoogle2faBtn').style.display = 'inline-block';
+            document.getElementById('disableGoogle2faBtn').style.display = 'none';
         }
     }
 
