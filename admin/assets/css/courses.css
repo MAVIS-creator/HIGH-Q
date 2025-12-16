@@ -1,48 +1,101 @@
 .courses-page {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1360px;
   margin: 0 auto;
-  /* reduce left padding so content sits closer to the fixed sidebar */
-  padding: 0.15rem 0.75rem 1rem 0.5rem;
-  /* make sure it sits within the admin-main area and is centered like roles.php */
-  box-sizing: border-box;
+  padding: 32px 20px 48px;
+  background: #f8f9fb;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
 }
-/* Override general admin left-margin to bring cards closer to sidebar but not touching */
-.courses-page { margin-left: 12px !important; }
 
-/* Ensure the courses page doesn't float to the right — align with admin-main padding */
-.admin-main .courses-page { padding-left: 20px; padding-right: 20px; }
-
-/* Page header like roles.php */
-.page-header {
+.courses-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-  padding-top: 2px;
-}
-.page-header h2 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--hq-black);
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
-/* Add button */
-.btn-add {
-  background: var(--hq-yellow);
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
+.courses-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
 }
-.btn-add:hover { background: var(--hq-yellow-light); }
+
+.courses-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.courses-header-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.courses-header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn-add-course {
+  background: linear-gradient(180deg,#ffd24d,#f6c23a);
+  border: none;
+  color: #111;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(246,194,58,0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-add-course:hover {
+  filter: brightness(0.98);
+}
+
+.courses-search-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+.courses-search-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.courses-search-section .search-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.courses-search-section .search-form input[type="text"] {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  font-size: 0.95rem;
+  min-width: 300px;
+}
 
 /* Grid: 3 columns on wide screens, 2 on medium, 1 on small */
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  gap: 1.5rem;
   align-items: start;
 }
 
