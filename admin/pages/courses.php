@@ -220,27 +220,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 
 <div class="courses-page">
 
-  <?php if ($errors): ?>
-   <div class="alert error">
-        <?php foreach ($errors as $err): ?><p><?= htmlspecialchars($err) ?></p><?php endforeach; ?>
+  <div class="container">
+    <div class="courses-header">
+      <div class="courses-header-info">
+        <h1>Courses & Programs</h1>
+        <p>Manage all academic courses and programs offered</p>
       </div>
-  <?php endif; ?>
-  <?php if ($success): ?>
-   <div class="alert success server-success">
-        <?php foreach ($success as $s): ?><p><?= htmlspecialchars($s) ?></p><?php endforeach; ?>
+      <div class="courses-header-actions">
+        <button id="newCourseBtn" class="btn-add-course">
+          <i class="bx bx-plus"></i> New Course
+        </button>
+        <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
+          <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+          <button type="submit" class="btn-convert" title="Convert legacy icons to Boxicons">
+            <i class="bx bx-sync"></i> Convert Icons
+          </button>
+        </form>
       </div>
-  <?php endif; ?>
+    </div>
 
+    <?php if (!empty($success) || !empty($errors)): ?>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          <?php if (!empty($success)): ?>
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              html: '<?php echo implode("<br>", array_map("htmlspecialchars", $success)); ?>',
+              confirmButtonColor: '#ffd600'
+            });
+          <?php endif; ?>
+          <?php if (!empty($errors)): ?>
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              html: '<?php echo implode("<br>", array_map("htmlspecialchars", $errors)); ?>',
+              confirmButtonColor: '#ff4b2b'
+            });
+          <?php endif; ?>
+        });
+      </script>
+    <?php endif; ?>
 
-  <div class="page-actions" style="display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-bottom:12px;">
-    <button id="newCourseBtn" class="header-cta">New Course</button>
-  <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
-      <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-      <button type="submit" class="header-cta" style="background:#f7c948;color:#222">Bulk Convert Icons</button>
-    </form>
-  </div>
+    <div class="courses-search-section">
+      <h3>Search Courses</h3>
+      <div class="search-form">
+        <input type="text" id="courseSearch" placeholder="Search by title, description, or duration…">
+      </div>
+    </div>
 
-  <div class="page-container">
+    <div class="page-container">
    <div class="courses-grid">
   <?php if (empty($courses)): ?>
     <div class="course-card empty-state">
