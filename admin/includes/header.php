@@ -134,8 +134,13 @@ if (!headers_sent()) {
     // Expose admin base and app base to client-side JS so scripts can build URLs dynamically
     // Prefer the canonical helpers so APP_URL (from .env) is honoured. admin_url() and app_url() return full URLs.
     $adminBaseFull = rtrim(admin_url(''), '/');
+    $adminParsed = parse_url($adminBaseFull);
+    $adminPath = isset($adminParsed['path']) ? rtrim($adminParsed['path'], '/') : '';
+    if ($adminPath === '') { $adminPath = '/admin'; }
     $appBaseFull = rtrim(app_url(''), '/');
-    echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseFull . "'; window.HQ_APP_BASE='" . $appBaseFull . "';</script>\n";
+    echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseFull . "'; window.HQ_ADMIN_PATH='" . $adminPath . "'; window.HQ_APP_BASE='" . $appBaseFull . "';</script>\n";
+    // Normalize admin base to the current origin to avoid CORS when the host differs (e.g., 127.0.0.1 vs localhost)
+    echo "<script>(function(){try{var serverBase='" . $adminBaseFull . "';var adminPath='" . $adminPath . "';var u=new URL(serverBase, window.location.origin);if(u.origin!==window.location.origin){serverBase=window.location.origin+adminPath;}else{serverBase=u.origin+u.pathname.replace(/\\/$/, '');}window.HQ_ADMIN_BASE=serverBase;window.HQ_ADMIN_PATH=adminPath;if(!window.HQ_APP_BASE){window.HQ_APP_BASE=window.location.origin;} }catch(e){window.HQ_ADMIN_BASE=window.location.origin+'" . $adminPath . "';window.HQ_ADMIN_PATH='" . $adminPath . "';if(!window.HQ_APP_BASE){window.HQ_APP_BASE=window.location.origin;}}})();</script>\n";
     ?>
 </head>
 

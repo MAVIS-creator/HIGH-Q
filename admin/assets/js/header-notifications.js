@@ -1,5 +1,20 @@
 // Initialize notifications
 document.addEventListener('DOMContentLoaded', function() {
+    const ADMIN_BASE = (function(){
+        const raw = window.HQ_ADMIN_BASE || '';
+        const path = window.HQ_ADMIN_PATH || '';
+        try {
+            if (!raw) return window.location.origin + path;
+            const u = new URL(raw, window.location.origin);
+            if (u.origin !== window.location.origin) {
+                return window.location.origin + (u.pathname ? u.pathname.replace(/\/$/, '') : path);
+            }
+            return u.origin + u.pathname.replace(/\/$/, '');
+        } catch (e) {
+            return window.location.origin + path;
+        }
+    })();
+
     const btn = document.getElementById('notifBtn');
     if (!btn) return;
 
@@ -27,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadNotifications() {
         try {
             // include credentials so session cookie is sent and the API can authenticate the admin
-            const res = await fetch((window.HQ_ADMIN_BASE || '') + '/api/notifications.php', { credentials: 'same-origin' });
+            const res = await fetch(ADMIN_BASE + '/api/notifications.php', { credentials: 'same-origin' });
             if (!res.ok) {
                 console.warn('Notifications endpoint returned HTTP', res.status);
                 return;
@@ -69,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.setAttribute('data-notification-id', n.id);
                 item.setAttribute('data-notification-type', n.type);
                 const u = (data.urls[n.type] || '').replace(/^\//, '');
-                item.href = (window.HQ_ADMIN_BASE || '') + '/' + u + n.id;
+                item.href = ADMIN_BASE + '/' + u + n.id;
                 
                 const title = document.createElement('div');
                 title.className = 'notification-title';
@@ -98,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('type', n.type);
                     formData.append('id', n.id);
                     try {
-                        await fetch((window.HQ_ADMIN_BASE || '') + '/api/mark_read.php', {
+                        await fetch(ADMIN_BASE + '/api/mark_read.php', {
                             method: 'POST',
                             body: formData,
                             credentials: 'same-origin'
@@ -135,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             const fd = new FormData(); 
                             fd.append('type', n.type); 
                             fd.append('id', n.id);
-                            return fetch((window.HQ_ADMIN_BASE || '') + '/api/mark_read.php', {
+                            return fetch(ADMIN_BASE + '/api/mark_read.php', {
                                 method: 'POST', 
                                 body: fd, 
                                 credentials: 'same-origin'
