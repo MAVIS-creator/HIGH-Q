@@ -18,21 +18,52 @@ try {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
+    $currentEmail = $_SESSION['user']['email'] ?? '';
 
-    if (empty($name) || empty($email)) {
-        throw new Exception('Name and email are required');
+    if (empty($name)) {
+        throw new Exception('Name is required');
     }
 
-    // Validate email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        throw new Exception('Invalid email address');
+    // If email changed, require verification
+    if (!empty($email) && $email !== $currentEmail) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Invalid email address');
+        }
+
+        // Check if email is already used
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $stmt->execute([$email, $userId]);
+        if ($stmt->fetch()) {
+            throw new Exception('Email is already in use');
+        }
+
+        // Require email verification
+        $verifiedEmail = $_SESSION['verified_email'] ?? null;
+        if ($verifiedEmail !== $email) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Email change requires verification. Send verification code first.']);
+            exit;
+        }
+
+        // Clear verified flag after use
+        unset($_SESSION['verified_email']);
     }
 
-    // Check if email is already used by another user
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-    $stmt->execute([$email, $userId]);
-    if ($stmt->fetch()) {
-        throw new Exception('Email is already in use');
+    // If phone changed, require verification
+    if (!empty($phone) && $phone !== ($_SESSION['user']['phone'] ?? '')) {
+        if (!preg_match('/^[0-9\s\-\+\(\)]{10,}$/', $phone)) {
+            throw new Exception('Invalid phone number');
+        }
+
+        $verifiedPhone = $_SESSION['verified_phone'] ?? null;
+        if ($verifiedPhone !== $phone) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Phone change requires verification. Send verification code first.']);
+            exit;
+        }
+
+        // Clear verified flag after use
+        unset($_SESSION['verified_phone']);
     }
 
     // Handle avatar upload
@@ -62,21 +93,54 @@ try {
         }
     }
 
-    // Update user
-    if ($avatarPath) {
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, avatar = ? WHERE id = ?");
-        $stmt->execute([$name, $email, $phone, $avatarPath, $userId]);
-    } else {
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ?");
-        $stmt->execute([$name, $email, $phone, $userId]);
+    // Build update statement dynamically
+    $updates = ['name = ?'];
+    $params = [$name];
+
+    if (!empty($email)) {
+        $updates[] = 'email = ?';
+        $params[] = $email;
     }
+
+    if (!empty($phone)) {
+        $updates[] = 'phone = ?';
+        $params[] = $phone;
+    }
+
+    if ($avatarPath) {
+        $updates[] = 'avatar = ?';
+        $params[] = $avatarPath;
+    }
+
+    $params[] = $userId;
+
+    $stmt = $pdo->prepare("UPDATE users SET " . implode(', ', $updates) . " WHERE id = ?");
+    $stmt->execute($params);
 
     // Update session
     $_SESSION['user']['name'] = $name;
-    $_SESSION['user']['email'] = $email;
+    if (!empty($email)) {
+        $_SESSION['user']['email'] = $email;
+    }
+    if (!empty($phone)) {
+        $_SESSION['user']['phone'] = $phone;
+    }
     if ($avatarPath) {
         $_SESSION['user']['avatar'] = $avatarPath;
     }
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Profile updated successfully'
+    ]);
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
+}
+
 
     echo json_encode([
         'success' => true,
