@@ -61,6 +61,25 @@
   filter: brightness(0.98);
 }
 
+.btn-convert {
+  background: #f7c948;
+  border: none;
+  color: #222;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(247,201,72,0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-convert:hover {
+  filter: brightness(0.95);
+}
+
 .courses-search-section {
   background: #fff;
   border-radius: 12px;

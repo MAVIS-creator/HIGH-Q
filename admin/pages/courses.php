@@ -16,7 +16,8 @@ $errors  = [];
 $success = [];
 
 // Ensure per-page CSS for courses modal if not already set
-$pageCss = '<link rel="stylesheet" href="../assets/css/courses.css">';
+$pageCss = '<link rel="stylesheet" href="../assets/css/courses.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
