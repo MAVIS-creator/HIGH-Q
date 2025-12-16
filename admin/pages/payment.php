@@ -112,7 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endforeach; ?>
         </tbody></table>
     </div>
-<?php endif; ?></div>
+<?php endif; ?>
+</div>
+</div>
 <?php require_once __DIR__ . '/../includes/footer.php';
 ?>
 <script>
