@@ -43,6 +43,12 @@ $tests = [
     ['name' => 'threads_api', 'method' => 'GET', 'url' => $base . '/api/threads.php'],
     ['name' => 'notifications_api', 'method' => 'GET', 'url' => $base . '/api/notifications.php'],
     ['name' => 'chat_page_ajax', 'method' => 'GET', 'url' => $base . '/index.php?pages=chat', 'headers' => ['X-Requested-With: XMLHttpRequest']],
+    ['name' => 'students_regular', 'method' => 'GET', 'url' => $base . '/index.php?pages=students'],
+    ['name' => 'students_postutme', 'method' => 'GET', 'url' => $base . '/index.php?pages=students&source=postutme'],
+    ['name' => 'payment_link_page', 'method' => 'GET', 'url' => $base . '/index.php?pages=payment'],
+    ['name' => 'settings_page', 'method' => 'GET', 'url' => $base . '/index.php?pages=settings'],
+    ['name' => 'appointments_page', 'method' => 'GET', 'url' => $base . '/index.php?pages=appointments'],
+    ['name' => 'news_blog_page', 'method' => 'GET', 'url' => $base . '/index.php?pages=post'],
 ];
 
 $results = [];
