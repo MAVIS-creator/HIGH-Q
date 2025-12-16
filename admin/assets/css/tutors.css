@@ -17,71 +17,264 @@
 }
 
 /* tutors.css - admin tutors grid and card styles */
-.tutors-grid{
-	display:grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
-	gap:1rem;
-	margin-top:1rem;
-	align-items:start;
-	max-width:1100px;
-	margin-left:auto;
-	margin-right:auto;
+.tutors-page {
+	width: 100%;
+	max-width: 1360px;
+	margin: 0 auto;
+	padding: 32px 20px 48px;
+	background: #f8f9fb;
+	border-radius: 16px;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.05);
 }
 
-/* Card design (based on requested styles) */
-.tutor-card{
-	background:#fff;
-	border:1px solid var(--hq-gray, #eef0f2);
-	padding:14px;
-	border-radius:12px;
-	display:flex;
-	gap:12px;
-	align-items:flex-start;
-	box-shadow: 0 6px 18px rgba(0,0,0,0.04);
-	position:relative;
+.tutors-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 1.5rem;
+	gap: 1rem;
 }
 
-.tutor-card .tutor-photo img, .tutor-card .avatar{ width:90px; height:90px; border-radius:50%; object-fit:cover }
-.tutor-card .tutor-photo{ width:90px; height:90px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--hq-gray); flex-shrink:0 }
-.tutor-card .tutor-info{ flex:1 }
-.tutor-card .actions, .tutor-card .tutor-actions{ display:flex; gap:8px }
-
-.tutor-card .status{
-	position:absolute;
-	top:12px;
-	right:12px;
-	font-size:0.8rem;
-	font-weight:600;
-	padding:4px 10px;
-	border-radius:20px;
+.tutors-header h1 {
+	margin: 0;
+	font-size: 2rem;
+	font-weight: 700;
+	color: #111;
 }
 
-.tutor-card .status.active{ background:var(--hq-yellow); color:var(--hq-black) }
-.tutor-card .status.normal{ background:var(--hq-gray); color:#555 }
+.tutors-header-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
 
-.tutor-info h3{ margin:0; font-size:1.1rem; font-weight:600; color:var(--hq-black) }
-.tutor-info .role{ font-size:0.9rem; color:#666; margin:2px 0 6px }
-.tutor-info .subjects{ display:flex; flex-wrap:wrap; gap:0.4rem; margin:0.5rem 0 }
-.tutor-info .subjects span{ background:var(--hq-gray); color:var(--hq-black); font-size:0.75rem; padding:3px 10px; border-radius:20px; font-weight:500 }
-.tutor-experience{ font-size:0.85rem; color:#444; margin-bottom:0.5rem }
+.tutors-header-info p {
+	margin: 0;
+	color: #666;
+	font-size: 0.95rem;
+}
 
-.tutor-actions{ display:flex; gap:0.5rem; margin-top:0.5rem }
-.tutor-actions button{ border:none; border-radius:8px; padding:6px 10px; font-size:0.8rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:4px; transition:background 0.2s }
-.tutor-actions .edit-btn{ background:var(--hq-gray); color:var(--hq-black) }
-.tutor-actions .edit-btn:hover{ background:#e1e2e6 }
-.tutor-actions .delete-btn{ background:var(--hq-red); color:#fff }
-.tutor-actions .delete-btn:hover{ opacity:0.9 }
+.tutors-header-actions {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
 
-.date{ font-size:0.75rem; color:#888; position:absolute; bottom:10px; right:15px }
+.btn-add-tutor {
+	background: linear-gradient(180deg,#ffd24d,#f6c23a);
+	border: none;
+	color: #111;
+	padding: 10px 20px;
+	border-radius: 10px;
+	cursor: pointer;
+	font-weight: 600;
+	box-shadow: 0 4px 12px rgba(246,194,58,0.25);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	white-space: nowrap;
+}
+
+.btn-add-tutor:hover {
+	filter: brightness(0.98);
+}
+
+.tutors-search-section {
+	background: #fff;
+	border-radius: 12px;
+	padding: 1rem;
+	margin-bottom: 1.5rem;
+	box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+.tutors-search-section h3 {
+	margin: 0 0 1rem 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #111;
+}
+
+.tutors-search-section .search-form {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.tutors-search-section .search-form input[type="text"] {
+	flex: 1;
+	padding: 0.8rem 1rem;
+	border-radius: 10px;
+	border: 1px solid #eee;
+	background: #fafafa;
+	font-size: 0.95rem;
+	min-width: 300px;
+}
+
+.tutors-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+	align-items: start;
+}
+
+/* Card design */
+.tutor-card {
+	background: #fff;
+	border: 1px solid #eef0f2;
+	padding: 1.5rem;
+	border-radius: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+	position: relative;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tutor-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.tutor-card-header {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.tutor-card .tutor-photo {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--hq-yellow);
+	flex-shrink: 0;
+}
+
+.tutor-card .tutor-photo img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.tutor-card-meta {
+	flex: 1;
+}
+
+.tutor-card .status {
+	position: absolute;
+	top: 1.25rem;
+	right: 1.25rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	padding: 6px 12px;
+	border-radius: 20px;
+	background: var(--hq-yellow);
+	color: var(--hq-black);
+}
+
+.tutor-info h3 {
+	margin: 0 0 0.25rem;
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: var(--hq-black);
+}
+
+.tutor-info .role {
+	font-size: 0.9rem;
+	color: #666;
+	margin: 0 0 0.75rem;
+}
+
+.tutor-card-subjects {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-bottom: 0.75rem;
+}
+
+.tutor-card-subjects span {
+	background: #f0f0f0;
+	color: var(--hq-black);
+	font-size: 0.8rem;
+	padding: 4px 10px;
+	border-radius: 20px;
+	font-weight: 500;
+}
+
+.tutor-experience {
+	font-size: 0.85rem;
+	color: #666;
+	margin-bottom: 0.5rem;
+}
+
+.tutor-description {
+	font-size: 0.85rem;
+	color: #555;
+	line-height: 1.4;
+	margin-bottom: 0.75rem;
+}
+
+.tutor-date {
+	font-size: 0.75rem;
+	color: #999;
+	margin-top: auto;
+}
 
 /* Keep tutors grid centered inside admin-main like roles page */
-.admin-main .tutors-grid { margin-left: 0 }
+.admin-main .tutors-grid {
+	margin-left: 0;
+}
 
-.tutors-header { display:flex; justify-content:space-between; align-items:center; gap:12px }
-.tutors-header .tutors-actions { display:flex; gap:12px; align-items:center }
-.search-form input[type="text"] { width:520px; padding:0.8rem 1rem; border-radius:10px; border:1px solid #eee; background:#fafafa }
+.tutors-actions {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
 
-@media (max-width:1000px){ .search-form input[type="text"]{ width:100% } .tutors-grid{ grid-template-columns: repeat(auto-fill, minmax(200px,1fr)) } }
+.search-form {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex: 1;
+}
+
+.search-form input[type="text"] {
+	flex: 1;
+	padding: 0.8rem 1rem;
+	border-radius: 10px;
+	border: 1px solid #eee;
+	background: #fafafa;
+	font-size: 0.95rem;
+}
+
+@media (max-width: 1200px) {
+	.tutors-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+	.tutors-grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.tutors-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	.tutors-search-section .search-form {
+		flex-direction: column;
+	}
+	
+	.tutors-search-section .search-form input[type="text"] {
+		width: 100%;
+	}
+}
 
 /* Modal styling for tutor form */
 .modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:all .18s ease; z-index:1200 }
