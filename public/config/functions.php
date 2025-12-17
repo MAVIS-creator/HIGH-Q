@@ -24,20 +24,32 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
  * @return string Full URL
  */
 function app_url(string $path = ''): string {
-    // Always derive from current request (dynamic - works with any domain)
+    // Derive scheme/host from current request
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $script = $_SERVER['SCRIPT_NAME'] ?? '';
 
-    // Compute project base: if script contains 'public', assume project base is the path before 'public'
-    $proj = '';
-    $parts = explode('/', trim($script, '/'));
-    if (($idx = array_search('public', $parts)) !== false) {
-        $proj = '/' . implode('/', array_slice($parts, 0, $idx));
-        if ($proj === '/' || $proj === '\\') $proj = '';
+    // Compute project prefix reliably using filesystem paths relative to DOCUMENT_ROOT
+    // This avoids inconsistencies when SCRIPT_NAME/REQUEST_URI hide the sub-directory (e.g., /HIGH-Q)
+    $docroot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $docroot = $docroot ? str_replace('\\', '/', rtrim($docroot, '/\\')) : '';
+    $publicDir = str_replace('\\', '/', realpath(__DIR__ . '/../')) ?: '';
+
+    $projPrefix = '';
+    if ($docroot !== '' && $publicDir !== '') {
+        $relativePublic = ltrim(str_replace($docroot, '', $publicDir), '/'); // e.g., "HIGH-Q/public" or "public"
+        $segments = $relativePublic !== '' ? explode('/', $relativePublic) : [];
+        if (!empty($segments)) {
+            // remove trailing 'public' segment to get project prefix
+            if (strtolower(end($segments)) === 'public') {
+                array_pop($segments);
+            }
+            if (!empty($segments)) {
+                $projPrefix = '/' . implode('/', $segments); // e.g., "/HIGH-Q"
+            }
+        }
     }
 
-    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '') . '/public';
+    $base = $scheme . '://' . $host . $projPrefix . '/public';
     if ($path === '') return $base;
     return $base . '/' . ltrim($path, '/');
 }
