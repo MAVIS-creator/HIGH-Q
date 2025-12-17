@@ -24,8 +24,15 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
  * @return string Full URL
  */
 function app_url(string $path = ''): string {
-    // Derive scheme/host from current request
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    // Derive scheme/host from current request, honoring reverse proxy headers
+    $scheme = 'http';
+    if (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on')
+    ) {
+        $scheme = 'https';
+    }
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
     // Compute project prefix reliably using filesystem paths relative to DOCUMENT_ROOT
