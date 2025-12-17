@@ -5,8 +5,8 @@
     # Root-level rewrite base for production hosting
     RewriteBase /
 
-    # Serve public assets - absolute substitution for per-dir context reliability
-    RewriteRule ^assets(?:/(.*))?$ /public/assets/$1 [L,NC]
+    # Serve public assets - relative substitution keeps directory prefix (e.g., /HIGH-Q)
+    RewriteRule ^assets(?:/(.*))?$ public/assets/$1 [L,NC]
 
     # Normalize accidental double /public/public paths (defensive)
     # Use THE_REQUEST to avoid internal rewrite loops and issue a clean 301
