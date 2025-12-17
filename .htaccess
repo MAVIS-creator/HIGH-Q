@@ -2,7 +2,7 @@
     RewriteEngine On
     Options -Indexes
 
-    RewriteBase /
+    RewriteBase /HIGH-Q/
 
     # Serve public assets when requests omit the /public prefix (common with ngrok or subfolder URLs)
     # This ensures requests like /HIGH-Q/assets/css/public.css are served from /public/assets/css/public.css
