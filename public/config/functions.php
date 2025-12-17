@@ -24,8 +24,8 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
  * @return string Full URL
  */
 function app_url(string $path = ''): string {
-    // Prefer explicit APP_URL from .env
-    $env = $_ENV['APP_URL'] ?? null;
+    // Prefer explicit APP_URL from .env (check both $_ENV and getenv)
+    $env = $_ENV['APP_URL'] ?? getenv('APP_URL') ?: null;
     if (!empty($env)) {
         $base = rtrim($env, '/');
         if ($path === '') return $base;
@@ -34,18 +34,22 @@ function app_url(string $path = ''): string {
 
     // Fallback: derive from current request
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
-    $script = $_SERVER['SCRIPT_NAME'] ?? '';
-
-    // Compute project base: if script contains 'public', assume project base is the path before 'public'
-    $proj = '';
-    $parts = explode('/', trim($script, '/'));
-    if (($idx = array_search('public', $parts)) !== false) {
-        $proj = '/' . implode('/', array_slice($parts, 0, $idx));
-        if ($proj === '/' || $proj === '\\') $proj = '';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // For XAMPP local development, use the REQUEST_URI to detect project folder
+    if (isset($_SERVER['REQUEST_URI'])) {
+        $requestUri = $_SERVER['REQUEST_URI'];
+        // Extract the base path (everything before /public/ or the script name)
+        if (preg_match('#^(/[^/]+)/#', $requestUri, $matches)) {
+            // If accessing like /HIGH-Q/public/home.php, extract /HIGH-Q
+            $base = $scheme . '://' . $host . $matches[1];
+            if ($path === '') return $base;
+            return $base . '/' . ltrim($path, '/');
+        }
     }
-
-    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
+    
+    // Final fallback - assume root
+    $base = $scheme . '://' . $host;
     if ($path === '') return $base;
     return $base . '/' . ltrim($path, '/');
 }
