@@ -19,22 +19,14 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
 }
 
 /**
- * Return the application base URL (respects APP_URL from .env)
+ * Return the application base URL - dynamically from current request
  * @param string $path Optional path to append
  * @return string Full URL
  */
 function app_url(string $path = ''): string {
-    // Prefer explicit APP_URL from .env
-    $env = $_ENV['APP_URL'] ?? null;
-    if (!empty($env)) {
-        $base = rtrim($env, '/');
-        if ($path === '') return $base;
-        return $base . '/' . ltrim($path, '/');
-    }
-
-    // Fallback: derive from current request
+    // Always derive from current request (dynamic - works with any domain)
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
 
     // Compute project base: if script contains 'public', assume project base is the path before 'public'
