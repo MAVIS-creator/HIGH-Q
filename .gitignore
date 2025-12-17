@@ -3,3 +3,4 @@ progress.md
 
 /vendor/
 .env
+/.venv
