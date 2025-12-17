@@ -30,8 +30,8 @@
     # Protected downloads
     RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
 
-    # Redirect root to home
-    RewriteRule ^$ public/home.php [L]
+    # Redirect root to index.php (which includes header/home/footer)
+    RewriteRule ^$ public/index.php [L]
 
     # Handle public pages
     RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
