@@ -30,13 +30,19 @@ function app_url(string $path = ''): string {
 
     // Compute project prefix reliably using filesystem paths relative to DOCUMENT_ROOT
     // This avoids inconsistencies when SCRIPT_NAME/REQUEST_URI hide the sub-directory (e.g., /HIGH-Q)
-    $docroot = $_SERVER['DOCUMENT_ROOT'] ?? '';
-    $docroot = $docroot ? str_replace('\\', '/', rtrim($docroot, '/\\')) : '';
-    $publicDir = str_replace('\\', '/', realpath(__DIR__ . '/../')) ?: '';
+    $docrootRaw = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $docrootNorm = $docrootRaw ? str_replace('\\', '/', rtrim($docrootRaw, '/\\')) : '';
+    $publicDirRaw = realpath(__DIR__ . '/../') ?: '';
+    $publicDirNorm = $publicDirRaw ? str_replace('\\', '/', $publicDirRaw) : '';
 
     $projPrefix = '';
-    if ($docroot !== '' && $publicDir !== '') {
-        $relativePublic = ltrim(str_replace($docroot, '', $publicDir), '/'); // e.g., "HIGH-Q/public" or "public"
+    if ($docrootNorm !== '' && $publicDirNorm !== '') {
+        $docrootLower = strtolower($docrootNorm);
+        $publicLower = strtolower($publicDirNorm);
+        $relativePublic = '';
+        if (strpos($publicLower, $docrootLower) === 0) {
+            $relativePublic = ltrim(substr($publicDirNorm, strlen($docrootNorm)), '/'); // preserve original case
+        }
         $segments = $relativePublic !== '' ? explode('/', $relativePublic) : [];
         if (!empty($segments)) {
             // remove trailing 'public' segment to get project prefix
