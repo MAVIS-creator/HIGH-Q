@@ -29,7 +29,7 @@ function app_url(string $path = ''): string {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
     // Compute project prefix reliably using filesystem paths relative to DOCUMENT_ROOT
-    // This avoids inconsistencies when SCRIPT_NAME/REQUEST_URI hide the sub-directory (e.g., /HIGH-Q)
+    // and fall back to REQUEST_URI inspection when needed.
     $docrootRaw = $_SERVER['DOCUMENT_ROOT'] ?? '';
     $docrootNorm = $docrootRaw ? str_replace('\\', '/', rtrim($docrootRaw, '/\\')) : '';
     $publicDirRaw = realpath(__DIR__ . '/../') ?: '';
@@ -51,6 +51,28 @@ function app_url(string $path = ''): string {
             }
             if (!empty($segments)) {
                 $projPrefix = '/' . implode('/', $segments); // e.g., "/HIGH-Q"
+            }
+        }
+    }
+
+    // Fallback: infer prefix from REQUEST_URI when DOCUMENT_ROOT comparison isn't conclusive
+    if ($projPrefix === '') {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $uri = is_string($uri) ? $uri : '';
+        $uriParts = $uri !== '' ? explode('/', trim($uri, '/')) : [];
+        if (!empty($uriParts)) {
+            $idx = array_search('public', $uriParts);
+            if ($idx !== false && $idx > 0) {
+                $projPrefix = '/' . implode('/', array_slice($uriParts, 0, $idx));
+            } else {
+                // Try using the project folder name derived from filesystem (e.g., HIGH-Q)
+                $projectRootName = '';
+                if ($publicDirNorm !== '') {
+                    $projectRootName = basename(dirname($publicDirNorm));
+                }
+                if ($projectRootName !== '' && strpos($uri, '/' . $projectRootName . '/') === 0) {
+                    $projPrefix = '/' . $projectRootName;
+                }
             }
         }
     }
