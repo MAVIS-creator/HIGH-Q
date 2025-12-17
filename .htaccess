@@ -2,12 +2,14 @@
     RewriteEngine On
     Options -Indexes
 
-    # RewriteBase dynamically determined: /HIGH-Q/ for local, / for ngrok
-    RewriteBase /HIGH-Q/
+    # Use / as base for compatibility with both local (/HIGH-Q/) and ngrok (no prefix)
+    RewriteBase /
 
-    # Serve public assets when requests omit the /public prefix (common with ngrok or subfolder URLs)
-    # This ensures requests like /HIGH-Q/assets/css/public.css are served from /public/assets/css/public.css
-    RewriteRule ^assets(?:/(.*))?$ public/assets/$1 [L,NC]
+    # Serve public assets - handle /HIGH-Q/assets requests
+    RewriteRule ^HIGH-Q/assets(?:/(.*))?$ HIGH-Q/public/assets/$1 [L,NC]
+    
+    # Serve public assets - handle /assets requests (for ngrok at root)
+    RewriteRule ^assets(?:/(.*))?$ HIGH-Q/public/assets/$1 [L,NC]
 
     # Normalize accidental double /public/public paths (defensive)
     # Use THE_REQUEST to avoid internal rewrite loops and issue a clean 301
@@ -15,7 +17,7 @@
     RewriteRule ^public/public/(.*)$ /public/$1 [L,R=301]
 
     # Allow direct access to static files and directories
-    RewriteRule ^(public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
+    RewriteRule ^(HIGH-Q/public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
 
     # Handle admin section
     RewriteRule ^admin/(.*)$ admin/$1 [L]
