@@ -20,7 +20,8 @@
     RewriteRule ^(HIGH-Q/public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
 
     # Handle admin section
-    RewriteRule ^admin/(.*)$ admin/$1 [L]
+    RewriteRule ^HIGH-Q/admin/(.*)$ HIGH-Q/admin/$1 [L]
+    RewriteRule ^admin/(.*)$ HIGH-Q/admin/$1 [L]
 
     # Handle direct file access
     RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -28,22 +29,22 @@
     RewriteRule ^ - [L]
 
     # Pretty payment URL
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ HIGH-Q/public/payments_wait.php?ref=$1 [L,QSA]
 
     # Protected downloads
-    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
+    RewriteRule ^downloads/(.*)$ HIGH-Q/public/download_attachment.php?file=$1 [L,QSA]
 
-    # Redirect root to index.php (which includes header/home/footer)
-    RewriteRule ^$ public/index.php [L]
+    # Redirect root to HIGH-Q/public/index.php
+    RewriteRule ^$ HIGH-Q/public/index.php [L]
 
     # Handle public pages
-    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
+    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ HIGH-Q/public/$1.php [L]
 
-    # Default handler for other URLs (avoid re-prefixing when already under /public)
+    # Default handler for other URLs
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/public/ [NC]
-    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteCond %{REQUEST_URI} !^/HIGH-Q/public/ [NC]
+    RewriteRule ^(.*)$ HIGH-Q/public/$1 [L]
 
 </IfModule>
 # Protect sensitive files
