@@ -37,7 +37,7 @@ function app_url(string $path = ''): string {
         if ($proj === '/' || $proj === '\\') $proj = '';
     }
 
-    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
+    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '') . '/public';
     if ($path === '') return $base;
     return $base . '/' . ltrim($path, '/');
 }
