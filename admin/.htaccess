@@ -1,7 +1,7 @@
 # Basic Authentication (temporarily disabled for local debugging)
 # AuthType Basic
 # AuthName "Admin Login"
-# AuthUserFile "C:/xampp/htdocsQ/admin/.htpasswd"
+# AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
 # Require valid-user
 
 # Allow accessing assets after authentication

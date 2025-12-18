@@ -8,7 +8,7 @@
  * IMPORTANT: Delete or rename this file after use for security!
  */
 
-$htpasswdFile = __DIR__ . '/.htpasswd';
+$htpasswdFile = realpath(__DIR__) . DIRECTORY_SEPARATOR . '.htpasswd';
 $username = 'admin';
 
 // Handle form submission
@@ -23,15 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($newPassword) < 6) {
         $error = "Password must be at least 6 characters";
     } else {
-        // Generate Apache MD5 hash (compatible with .htpasswd)
-        $hash = crypt($newPassword, '$apr1$' . substr(base64_encode(random_bytes(6)), 0, 8) . '$');
+        // Prefer bcrypt (Apache supports $2y$ hashes). Fallback to APR1-MD5 if bcrypt is unavailable.
+        $hash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
+        if ($hash === false) {
+            $hash = crypt($newPassword, '$apr1$' . substr(base64_encode(random_bytes(6)), 0, 8) . '$');
+        }
+
         $content = "$username:$hash\n";
-        
-        if (file_put_contents($htpasswdFile, $content)) {
+
+        if (file_put_contents($htpasswdFile, $content, LOCK_EX)) {
             $success = "Password successfully updated!";
             $showPassword = $newPassword; // Store to display once
         } else {
-            $error = "Failed to write to .htpasswd file. Check permissions.";
+            $error = "Failed to write to .htpasswd file. Check permissions at: {$htpasswdFile}";
         }
     }
 }
