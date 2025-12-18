@@ -5,13 +5,13 @@ require_once __DIR__ . '/config/functions.php';
 
 $slug = trim($_GET['slug'] ?? '');
 // Fetch program from database
+
 $program = null;
 try {
-  $stmt = $pdo->prepare("SELECT id, title, slug, description, image_url, price, duration FROM courses WHERE slug = ? AND is_active = 1");
+  $stmt = $pdo->prepare("SELECT id, title, slug, description, price, duration FROM courses WHERE slug = ? AND is_active = 1");
   $stmt->execute([$slug]);
   $program = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (Throwable $_) {}
-
 // Show fallback if program doesn't exist
 if (!$program) {
   include __DIR__ . '/includes/header.php';
