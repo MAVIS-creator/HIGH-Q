@@ -17,15 +17,14 @@ if (!$program) {
     <h2 style="font-size: 2rem; color: #2d3748; margin-bottom: 16px;">Program Not Found</h2>
     <p style="color: #718096; font-size: 1.1rem; margin-bottom: 28px;">The program you're looking for was not found. Please browse all our programs.</p>
     <a href="programs.php" style="display: inline-block; padding: 14px 32px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='#764ba2';" onmouseout="this.style.background='#667eea';">Browse All Programs</a>
+?>
   </div>
   <?php
   include __DIR__ . '/includes/footer.php';
   exit;
 }
 
-$p = $programs[$slug];
 include __DIR__ . '/includes/header.php';
-?>
 
 <section class="program-detail" style="padding: 64px 0; background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);">
   <div class="container">
@@ -41,8 +40,8 @@ include __DIR__ . '/includes/header.php';
     <div class="program-header" style="margin-bottom: 56px; padding: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white; box-shadow: 0 16px 48px rgba(102, 126, 234, 0.2);">
       <h1 style="font-size: 2.8rem; margin: 0 0 20px; font-weight: 800; line-height: 1.2;"><?= htmlspecialchars($p['title']) ?></h1>
       <p style="font-size: 1.15rem; margin: 0; opacity: 0.95; max-width: 750px; line-height: 1.6;"><?= htmlspecialchars($p['overview']) ?></p>
-    </div>
 
+    </div>
     <!-- Main Content Grid -->
     <div class="program-detail-grid" style="display: grid; grid-template-columns: 1fr 340px; gap: 48px; margin-bottom: 56px;">
       
