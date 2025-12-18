@@ -1,6 +1,9 @@
 <?php
-$slug = trim($_GET['slug'] ?? '');
 
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/functions.php';
+
+$slug = trim($_GET['slug'] ?? '');
 // Fetch program from database
 $program = null;
 try {
