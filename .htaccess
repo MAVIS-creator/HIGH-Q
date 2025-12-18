@@ -41,6 +41,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} !^/public/ [NC]
+        RewriteCond %{REQUEST_URI} !^/pay/ [NC]
+        RewriteCond %{REQUEST_URI} !^/downloads/ [NC]
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 # Protect sensitive files
