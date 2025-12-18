@@ -174,7 +174,7 @@ if (!headers_sent()) {
                         $avatar = $_SESSION['user']['avatar'] ?? null;
                         if (empty($avatar)) {
                             // Use app_url() to compute image path reliably (preserves subfolder when APP_URL is not set)
-                            $avatar = app_url('public/assets/images/hq-logo.jpeg');
+                            $avatar = app_url('assets/images/hq-logo.jpeg');
                         }
                         $userName = $_SESSION['user']['name'] ?? 'User';
                         $userRole = $_SESSION['user']['role'] ?? 'Admin';
