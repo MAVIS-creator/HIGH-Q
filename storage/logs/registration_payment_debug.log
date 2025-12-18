@@ -170,3 +170,4 @@
 2025-12-18T17:22:32+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=557
 2025-12-18T17:22:32+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":82500,"method":"bank","programs":["7"],"selectedFixedIds":[7],"selectedVariesIds":[]}
 2025-12-18T17:22:32+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251218172232-91fd99 session_last_payment_id=NULL session_last_payment_reference=NULL
+2025-12-18T17:52:45+01:00 PAY_WAIT_MISS: ref=TEST-123 session_last_payment_id=NULL
