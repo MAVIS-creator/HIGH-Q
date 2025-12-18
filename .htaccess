@@ -25,10 +25,10 @@
     RewriteRule ^ - [L]
 
     # Pretty payment URL
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA,NC]
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ /HIGH-Q/public/payments_wait.php?ref=$1 [L,QSA,NC]
 
     # Protected downloads
-    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA,NC]
+    RewriteRule ^downloads/(.*)$ /HIGH-Q/public/download_attachment.php?file=$1 [L,QSA,NC]
 
     # Redirect root to public/index.php
     RewriteRule ^$ public/index.php [L]
