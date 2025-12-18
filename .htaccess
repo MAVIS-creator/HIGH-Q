@@ -25,16 +25,16 @@
     RewriteRule ^ - [L]
 
     # Pretty payment URL
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA,NC]
 
     # Protected downloads
-    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
+    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA,NC]
 
     # Redirect root to public/index.php
     RewriteRule ^$ public/index.php [L]
 
     # Handle public pages
-    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
+    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L,NC]
 
     # Default handler for other URLs
     RewriteCond %{REQUEST_FILENAME} !-f
