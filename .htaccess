@@ -36,12 +36,12 @@
     # Handle public pages
     RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L,NC]
 
-    # Default handler for other URLs
+
+    # DEFAULT HANDLER MUST BE LAST - executes only if no other rules matched
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} !^/public/ [NC]
     RewriteRule ^(.*)$ public/$1 [L]
-
 </IfModule>
 # Protect sensitive files
 <FilesMatch "^\.(env|htaccess|git|config)|\.(sql|bak|config|json|lock)$">

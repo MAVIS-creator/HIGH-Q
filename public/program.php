@@ -1,64 +1,16 @@
 <?php
 $slug = trim($_GET['slug'] ?? '');
 
-$programs = [
-  'jamb-preparation' => [
-    'title' => 'JAMB / Post-UTME Preparation',
-    'overview' => 'Comprehensive preparation for JAMB and university entrance exams with practice tests, topic mastery and exam techniques.',
-    'curriculum' => [
-      'English Language fundamentals',
-      'Core Mathematics and Problem Solving',
-      'Subject-specific modules (Biology, Chemistry, Physics, etc.)',
-      'Timed practice tests and past questions',
-    ],
-    'who' => ['Senior secondary students preparing for JAMB', 'Students seeking university admission through UTME or Post-UTME'],
-    'fees' => '₦9,000/month',
-    'duration' => '4–6 months',
-  ],
-  'waec-preparation' => [
-    'title' => 'WAEC Preparation',
-    'overview' => 'Complete WAEC preparation including theory, practicals, and mock exams to secure high grades.',
-    'curriculum' => ['Core subject mastery', 'Practical skill sessions', 'Mock exams and marking'],
-    'who' => ['Secondary school students sitting WAEC'],
-    'fees' => '₦8,000/month',
-    'duration' => '6–12 months',
-  ],
-  'neco-preparation' => [
-    'title' => 'NECO Preparation',
-    'overview' => 'Focused NECO preparation with extensive practice tests and study materials.',
-    'curriculum' => ['Complete syllabus coverage', 'Mock exams', 'Exam technique workshops'],
-    'who' => ['Students taking NECO examinations'],
-    'fees' => '₦8,000/month',
-    'duration' => '6–12 months',
-  ],
-  'post-utme' => [
-    'title' => 'Post-UTME',
-    'overview' => 'University-specific Post-UTME preparation tailored to faculties and institutions.',
-    'curriculum' => ['University-specific past questions', 'Interview prep', 'Subject depth training'],
-    'who' => ['UTME candidates applying to university'],
-    'fees' => '₦7,000/month',
-    'duration' => '2–4 months',
-  ],
-  'special-tutorials' => [
-    'title' => 'Special Tutorials',
-    'overview' => 'One-on-one or small group intensive tutorials focused on rapid improvement and subject mastery.',
-    'curriculum' => ['Personalized lesson plans', 'Targeted revision', 'Homework feedback & guidance'],
-    'who' => ['Students needing intensive academic support', 'Learners with tight schedules'],
-    'fees' => 'By arrangement',
-    'duration' => 'Flexible',
-  ],
-  'computer-training' => [
-    'title' => 'Computer Training',
-    'overview' => 'Digital literacy and computer skills training including Office tools, internet usage, and basic programming.',
-    'curriculum' => ['MS Office Suite (Word, Excel, PowerPoint)', 'Internet & research skills', 'Introduction to coding'],
-    'who' => ['Beginners in digital literacy', 'Students or professionals needing computer skills'],
-    'fees' => '₦80,000',
-    'duration' => '3–6 months',
-  ],
-];
+// Fetch program from database
+$program = null;
+try {
+  $stmt = $pdo->prepare("SELECT id, title, slug, description, image_url, price, duration FROM courses WHERE slug = ? AND is_active = 1");
+  $stmt->execute([$slug]);
+  $program = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (Throwable $_) {}
 
-// Show fallback if slug doesn't exist
-if (!array_key_exists($slug, $programs)) {
+// Show fallback if program doesn't exist
+if (!$program) {
   include __DIR__ . '/includes/header.php';
   ?>
   <div class="container" style="padding: 80px 0; text-align: center;">
