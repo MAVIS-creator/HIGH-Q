@@ -103,7 +103,7 @@ include __DIR__ . '/includes/header.php';
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;">
             <div style="padding: 20px; background: white; border-radius: 10px; border: 1px solid #ffe680; box-shadow: 0 2px 8px rgba(245,185,4,0.1);">
               <p style="margin: 0 0 8px; color: var(--hq-gray); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Duration</p>
-              <p style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--hq-black);"><?= htmlspecialchars($program['duration'] ?: 'Flexible') ?></p>
+              <p style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--hq-blue-white);"><?= htmlspecialchars($program['duration'] ?: 'Flexible') ?></p>
             </div>
             <div style="padding: 20px; background: white; border-radius: 10px; border: 1px solid #e8d5ff; box-shadow: 0 2px 8px rgba(57,58,147,0.1);">
               <p style="margin: 0 0 8px; color: var(--hq-gray); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Tuition Fee</p>
