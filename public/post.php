@@ -144,37 +144,423 @@ function format_plain_text_to_html($txt) {
   return $out;
 }
 
+function hq_comment_initial($name) {
+  $n = trim($name ?: 'G');
+  $initial = strtoupper(substr($n, 0, 1));
+  return htmlspecialchars($initial);
+}
+
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
-<div class="container" style="max-width:1150px;margin:24px auto;padding:0 12px;">
-  <article class="post-article">
-    <h1><?= htmlspecialchars($post['title']) ?></h1>
-    <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
+<style>
+  .post-shell {
+    max-width: 1180px;
+    margin: 26px auto;
+    padding: 0 16px 28px;
+  }
 
-    <div class="post-top" style="display:flex;gap:20px;align-items:flex-start;margin-top:12px;">
-      <div class="post-main" style="flex:1;">
-        <div class="post-content">
-      <?php if (!empty($post['featured_image'])): ?>
-        <?php
-          $fi = $post['featured_image'];
-          if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
-            $imgSrc = $fi;
-          } else {
-            // Use a document-relative path so assets resolve correctly when site is in a subfolder
-            $imgSrc = './' . ltrim($fi, '/');
-          }
-        ?>
-        <div class="post-thumb" style="margin-bottom:12px;">
-          <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover">
-        </div>
-      <?php endif; ?>
+  .post-article-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e9f2;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 26px 22px;
+  }
 
-  <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
+  .post-header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.9rem, 2.7vw, 2.6rem);
+    font-weight: 800;
+    color: var(--hq-black);
+    line-height: 1.25;
+  }
+
+  .post-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: 0.78rem;
+    color: var(--hq-blue-white);
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: #f4f6fb;
+    border-radius: 999px;
+    color: var(--hq-gray);
+    font-size: 0.9rem;
+    border: 1px solid #e6eaf3;
+  }
+
+  .post-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 22px;
+    align-items: start;
+    margin-top: 18px;
+  }
+
+  .post-main-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    border: 1px solid #e7ecf5;
+    border-radius: 14px;
+    padding: 18px 18px 22px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+  }
+
+  .post-thumb {
+    margin-bottom: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .post-thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .post-content-body {
+    color: var(--hq-gray);
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+
+  .post-content-body h2,
+  .post-content-body h3,
+  .post-content-body h4 {
+    color: var(--hq-black);
+    margin-top: 22px;
+    margin-bottom: 10px;
+  }
+
+  .post-content-body p {
+    margin: 0 0 14px;
+  }
+
+  .post-aside {
+    position: relative;
+  }
+
+  .post-toc {
+    position: sticky;
+    top: 18px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e7ecf5;
+    padding: 16px 16px 12px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+  }
+
+  .post-toc h4 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--hq-black);
+  }
+
+  .post-toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .post-toc a {
+    color: var(--hq-blue-white);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .post-toc a:hover {
+    color: var(--hq-yellow);
+  }
+
+  .toc-toggle {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #e7ecf5;
+    background: #f4f6fb;
+    color: var(--hq-black);
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .post-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 14px;
+  }
+
+  .btn.btn-like,
+  .btn.btn-comment {
+    border: 1px solid #e6eaf3;
+    background: #f8fafc;
+    color: var(--hq-black);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+
+  .btn.btn-like:hover,
+  .btn.btn-comment:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .comments-shell {
+    margin-top: 30px;
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.07);
+    padding: 22px 20px 24px;
+  }
+
+  .comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .comments-header h2 {
+    margin: 2px 0 0;
+  }
+
+  .comment-stack {
+    display: grid;
+    gap: 12px;
+  }
+
+  .comment-card {
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+  }
+
+  .comment-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .comment-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eef1fb;
+    color: var(--hq-blue-white);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+
+  .comment-meta {
+    display: grid;
+    gap: 2px;
+  }
+
+  .comment-author {
+    font-weight: 700;
+    color: var(--hq-black);
+  }
+
+  .comment-date {
+    color: var(--hq-gray);
+    font-size: 0.9rem;
+  }
+
+  .comment-body {
+    margin-top: 10px;
+    color: var(--hq-gray);
+    line-height: 1.6;
+  }
+
+  .comment-replies {
+    margin-top: 12px;
+    padding-left: 16px;
+    border-left: 2px solid #e8edf5;
+    display: grid;
+    gap: 10px;
+  }
+
+  .comment-reply {
+    background: #f7f9fc;
+    border: 1px solid #e6eaf3;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .chip,
+  .reply-btn.small {
+    border: 1px solid #e6eaf3;
+    background: #f4f6fb;
+    color: var(--hq-black);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chip:hover,
+  .reply-btn.small:hover {
+    border-color: var(--hq-blue-white);
+  }
+
+  .comment-form-card {
+    margin-top: 18px;
+    border: 1px solid #e6eaf3;
+    border-radius: 12px;
+    padding: 16px 14px 12px;
+    background: #fafbff;
+  }
+
+  .comment-form-card h3 {
+    margin-top: 0;
+  }
+
+  .comment-form-card .form-row {
+    margin-bottom: 10px;
+  }
+
+  .comment-form-card .form-input,
+  .comment-form-card .form-textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #e6eaf3;
+    padding: 10px 12px;
+  }
+
+  .comment-form-card .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-approve {
+    background: var(--hq-blue-white);
+    color: #ffffff;
+    border: 1px solid var(--hq-blue-white);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+
+  .btn-approve:hover {
+    opacity: 0.92;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px dashed #cfd6e4;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+    color: var(--hq-gray);
+  }
+
+  @media (max-width: 992px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .post-aside {
+      order: -1;
+    }
+
+    .post-toc {
+      position: static;
+    }
+
+    .toc-toggle {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .post-article-card,
+    .comments-shell {
+      padding: 18px 14px;
+    }
+
+    .post-actions {
+      flex-wrap: wrap;
+    }
+
+    .comment-head {
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<div class="post-shell">
+  <article class="post-article-card">
+    <header class="post-header">
+      <p class="post-eyebrow">Insight</p>
+      <h1><?= htmlspecialchars($post['title']) ?></h1>
+      <div class="meta-row">
+        <span class="meta-chip"><i class="fa-regular fa-calendar"></i> Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></span>
+        <span class="meta-chip"><i class="fa-regular fa-comment-dots"></i> <?= intval($comments_count ?? 0) ?> comments</span>
+      </div>
+    </header>
+
+    <div class="post-layout">
+      <div class="post-main-card">
+        <?php if (!empty($post['featured_image'])): ?>
+          <?php
+            $fi = $post['featured_image'];
+            if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
+              $imgSrc = $fi;
+            } else {
+              // Use a document-relative path so assets resolve correctly when site is in a subfolder
+              $imgSrc = './' . ltrim($fi, '/');
+            }
+          ?>
+          <div class="post-thumb">
+            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>">
+          </div>
+        <?php endif; ?>
+
+        <div class="post-content-body">
+          <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
         </div>
       </div>
 
-      <aside class="post-toc" style="width:260px;">
+      <aside class="post-aside">
         <?php if ($tocHtml !== ''): ?>
           <?= $tocHtml ?>
         <?php else: ?>
@@ -185,46 +571,59 @@ require_once __DIR__ . '/includes/header.php';
         <?php endif; ?>
       </aside>
     </div>
-      <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
-        <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
-        <div class="meta small muted"><i class="fa-regular fa-heart"></i> <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span></div>
-        <button id="commentToggle" class="btn btn-comment"><i class="fa-regular fa-comment-dots"></i> Comment</button>
-        <div class="meta small muted" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></div>
-      </div>
+
+    <div class="post-actions">
+      <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
+      <div class="meta small muted"><i class="fa-regular fa-heart"></i> <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span></div>
+      <button id="commentToggle" class="btn btn-comment"><i class="fa-regular fa-comment-dots"></i> Comment</button>
+      <div class="meta small muted"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></div>
+    </div>
   </article>
 
-  <section id="commentsSection" style="margin-top:28px;">
-    <h2>Comments</h2>
+  <section id="commentsSection" class="comments-shell">
+    <div class="comments-header">
+      <div>
+        <p class="post-eyebrow" style="margin:0;">Join the discussion</p>
+        <h2 style="margin:0;">Comments</h2>
+      </div>
+      <span class="meta-chip"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCountClone"><?= intval($comments_count ?? 0) ?></strong></span>
+    </div>
 
-    <div id="commentsList">
+    <div id="commentsList" class="comment-stack">
       <?php foreach($comments as $c): ?>
-        <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
-          <div class="comment-header">
-            <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
-            <div>
-              <button class="reply-btn small" data-id="<?= $c['id'] ?>">Reply</button>
+        <div class="comment-card" data-id="<?= $c['id'] ?>">
+          <div class="comment-head">
+            <div class="comment-avatar"><?= hq_comment_initial($c['name'] ?: 'Anonymous') ?></div>
+            <div class="comment-meta">
+              <div class="comment-author"><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></div>
+              <div class="comment-date"><?= htmlspecialchars($c['created_at']) ?></div>
             </div>
+            <button class="chip reply-btn small" data-id="<?= $c['id'] ?>"><i class="fa-regular fa-reply"></i> Reply</button>
           </div>
           <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
 
           <?php
-            // fetch replies for this comment
             $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
             $rstmt->execute([$c['id']]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach($replies as $rep):
+            if ($replies):
           ?>
-            <div class="comment reply">
-              <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
-              <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+            <div class="comment-replies">
+              <?php foreach($replies as $rep): ?>
+                <div class="comment-reply">
+                  <div class="comment-author"><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></div>
+                  <div class="comment-date" style="font-size:0.88rem;"><?= htmlspecialchars($rep['created_at']) ?></div>
+                  <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+                </div>
+              <?php endforeach; ?>
             </div>
-          <?php endforeach; ?>
+          <?php endif; ?>
 
         </div>
       <?php endforeach; ?>
     </div>
 
-    <div style="margin-top:18px;">
+    <div class="comment-form-card">
       <h3>Leave a comment</h3>
       <form id="commentForm" class="comment-form-wrap">
         <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
@@ -232,13 +631,12 @@ require_once __DIR__ . '/includes/header.php';
         <div class="form-row"><label class="form-label">Name</label><input class="form-input" type="text" name="name"></div>
         <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
         <div class="form-row"><label class="form-label">Comment</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
-  <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
+        <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
       </form>
     </div>
   </section>
 </div>
 
-<!-- comment and like handling moved to external script to reduce inline JS -->
 <script>window.POST_ID = <?= (int)$postId ?>;</script>
 <script src="<?= app_url('assets/js/post.js') ?>"></script>
 
