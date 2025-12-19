@@ -805,6 +805,7 @@ require_once __DIR__ . '/includes/header.php';
                 $rpDate = $hasPublishedAt ? ($rp['published_at'] ?? $rp['created_at']) : $rp['created_at'];
                 $rpAuthor = trim($rp['author_name'] ?? '') ?: $authorName;
                 $rpImg = $rp['featured_image'] ?? '';
+                $rpThumb = '';
                 if ($rpImg) {
                   if (preg_match('#^https?://#i', $rpImg) || strpos($rpImg, '//') === 0 || strpos($rpImg, '/') === 0) {
                     $rpThumb = $rpImg;
@@ -900,5 +901,29 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>window.POST_ID = <?= (int)$postId ?>;</script>
 <script src="<?= app_url('assets/js/post.js') ?>"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const copyBtn = document.querySelector('.share-btn.copy-link');
+  if (!copyBtn) return;
+  const original = copyBtn.textContent;
+
+  copyBtn.addEventListener('click', async function() {
+    const url = copyBtn.getAttribute('data-url') || window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      copyBtn.textContent = 'Copied';
+      copyBtn.disabled = true;
+      setTimeout(() => {
+        copyBtn.textContent = original;
+        copyBtn.disabled = false;
+      }, 1800);
+    } catch (e) {
+      console.error('Copy failed', e);
+      copyBtn.textContent = 'Copy failed';
+      setTimeout(() => { copyBtn.textContent = original; }, 1800);
+    }
+  });
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php';
