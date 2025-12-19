@@ -526,11 +526,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$_SESSION['last_payment_id'] = $paymentId;
 					$_SESSION['last_payment_reference'] = $reference;
 					// Use app_url() when available so redirects respect APP_URL and subfolder installs
-					if (function_exists('app_url')) {
-						$redirect = app_url('pay/' . urlencode($reference));
-					} else {
-						$redirect = 'payments_wait.php?ref=' . urlencode($reference);
-					}
+					$redirect = function_exists('app_url')
+						? app_url('payments_wait.php?ref=' . urlencode($reference))
+						: 'payments_wait.php?ref=' . urlencode($reference);
 					header('Location: ' . $redirect);
 					exit;
 				}
@@ -785,11 +783,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$_SESSION['last_payment_id'] = $paymentId;
 					$_SESSION['last_payment_reference'] = $reference;
 					// Use canonical app_url() helper when available so APP_URL and subfolder are respected
-					if (function_exists('app_url')) {
-						$redirect = app_url('pay/' . urlencode($reference));
-					} else {
-						$redirect = 'payments_wait.php?ref=' . urlencode($reference);
-					}
+					$redirect = function_exists('app_url')
+						? app_url('payments_wait.php?ref=' . urlencode($reference))
+						: 'payments_wait.php?ref=' . urlencode($reference);
 					header('Location: ' . $redirect);
 					exit;
 				} else {
