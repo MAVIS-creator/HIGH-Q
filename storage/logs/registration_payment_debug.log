@@ -224,3 +224,4 @@
 2025-12-19T17:51:07+01:00 CREATE REG: context={"posted_reg_type":null,"detected_reg_type":null,"verifyBeforePayment":false,"selectedHasAnyFixed":true,"selectedAllVaries":false,"amount":10500,"method":"bank","fixedIds":[8],"variesIds":[],"programs_post":["8"]}
 2025-12-19T17:51:07+01:00 AFTER_REG_COMMIT: registrationId=34 reference=REG-20251219175107-cab16a paymentId=55
 2025-12-19T17:51:08+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251219175107-cab16a session_last_payment_id=NULL session_last_payment_reference=NULL
+2025-12-19T17:51:24+01:00 PAY_WAIT_MISS: ref=REG-20251219175107-cab16a session_last_payment_id=NULL
