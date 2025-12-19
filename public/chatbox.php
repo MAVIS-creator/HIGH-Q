@@ -417,12 +417,22 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     <div class="chat-card">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); color: var(--hq-dark); font-weight: 600; font-size: 17px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 24px;">💬</span>
+                <i class="bx bx-chat" style="font-size:24px"></i>
                 <span class="chat-header"><i class='bx bx-message-dots'></i> Live Chat Support</span>
             </div>
             <button id="newChatBtn" style="display: none; background: none; border: none; color: var(--hq-dark); cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 8px; text-decoration: underline; opacity: 0.8;" title="Start a new conversation">NEW CHAT</button>
         </div>
         
+        <!-- Landing panel: choose to resume or start new chat -->
+        <div id="chatLanding" style="display:flex;flex-direction:column;gap:12px;padding:18px 20px;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,0.06)">
+            <div style="font-weight:700;color:#333;display:flex;align-items:center;gap:8px"><i class="bx bx-chat"></i> Welcome to Support</div>
+            <div id="landingHint" style="font-size:13px;color:#555;text-align:center">Start a new chat or resume the previous conversation.</div>
+            <div style="display:flex;gap:10px">
+                <button id="resumeChatBtn" class="start-btn" style="background:#fff;color:#333;border:1px solid #ddd">Resume Previous</button>
+                <button id="startNewBtn" class="start-btn">Start New Chat</button>
+            </div>
+        </div>
+
         <!-- Start form: visitor enters name/email/initial message first -->
         <div class="chat-start" id="chatStart">
             <h3>👋 Hi there!</h3>
@@ -471,6 +481,10 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const startEmail = document.getElementById('start_email');
             const startMsg = document.getElementById('start_message');
             const newChatBtn = document.getElementById('newChatBtn');
+            const landingEl = document.getElementById('chatLanding');
+            const resumeChatBtn = document.getElementById('resumeChatBtn');
+            const startNewBtn = document.getElementById('startNewBtn');
+            const landingHint = document.getElementById('landingHint');
 
             function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
             function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
