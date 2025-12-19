@@ -208,48 +208,6 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         .landing-links a { color:var(--hq-yellow-dark); font-weight:700; text-decoration:none; }
         .landing-links a:hover { text-decoration:underline; }
 
-        /* Chatbot Panel Styles */
-        .chatbot-panel { width:100%; height:100%; background:#fff; display:flex; flex-direction:column; }
-        .chatbot-header { background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); padding:1.5rem; display:flex; align-items:center; gap:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-        .back-btn { background:rgba(255,255,255,0.3); border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; font-size:20px; color:#111; }
-        .back-btn:hover { background:rgba(255,255,255,0.5); transform:scale(1.1); }
-        .chatbot-header h3 { margin:0; font-size:1.2rem; color:#111; display:flex; align-items:center; gap:0.5rem; }
-        .chatbot-header p { margin:0; font-size:0.85rem; color:rgba(17,17,17,0.7); }
-        .chatbot-content { flex:1; overflow-y:auto; padding:1.5rem; }
-        .faq-options { display:flex; flex-direction:column; gap:0.75rem; }
-        .faq-option { background:#fff; border:2px solid #f0f0f0; border-radius:12px; padding:1rem; display:flex; align-items:center; gap:1rem; cursor:pointer; transition:all 0.2s ease; text-align:left; font-size:0.95rem; }
-        .faq-option i { font-size:24px; color:var(--hq-yellow); flex-shrink:0; }
-        .faq-option span { color:#333; font-weight:500; }
-        .faq-option:hover { background:#fffbf0; border-color:var(--hq-yellow); transform:translateX(4px); }
-        .chatbot-answer { padding:1rem; background:#f8f9fa; border-radius:12px; }
-        .answer-content { display:flex; gap:1rem; margin-bottom:1.5rem; padding:1rem; background:#fff; border-radius:8px; border-left:4px solid var(--hq-yellow); }
-        .bot-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .bot-avatar i { font-size:22px; color:#111; }
-        .answer-content p { margin:0; color:#333; line-height:1.6; font-size:0.95rem; }
-        .answer-actions { display:flex; gap:0.75rem; flex-wrap:wrap; }
-        .answer-actions button { flex:1; min-width:140px; }
-
-        /* Chatbot Panel Styles */
-        .chatbot-panel { width:100%; height:100%; background:#fff; display:flex; flex-direction:column; }
-        .chatbot-header { background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); padding:1.5rem; display:flex; align-items:center; gap:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-        .back-btn { background:rgba(255,255,255,0.3); border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; font-size:20px; color:#111; }
-        .back-btn:hover { background:rgba(255,255,255,0.5); transform:scale(1.1); }
-        .chatbot-header h3 { margin:0; font-size:1.2rem; color:#111; display:flex; align-items:center; gap:0.5rem; }
-        .chatbot-header p { margin:0; font-size:0.85rem; color:rgba(17,17,17,0.7); }
-        .chatbot-content { flex:1; overflow-y:auto; padding:1.5rem; }
-        .faq-options { display:flex; flex-direction:column; gap:0.75rem; }
-        .faq-option { background:#fff; border:2px solid #f0f0f0; border-radius:12px; padding:1rem; display:flex; align-items:center; gap:1rem; cursor:pointer; transition:all 0.2s ease; text-align:left; font-size:0.95rem; }
-        .faq-option i { font-size:24px; color:var(--hq-yellow); flex-shrink:0; }
-        .faq-option span { color:#333; font-weight:500; }
-        .faq-option:hover { background:#fffbf0; border-color:var(--hq-yellow); transform:translateX(4px); }
-        .chatbot-answer { padding:1rem; background:#f8f9fa; border-radius:12px; }
-        .answer-content { display:flex; gap:1rem; margin-bottom:1.5rem; padding:1rem; background:#fff; border-radius:8px; border-left:4px solid var(--hq-yellow); }
-        .bot-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .bot-avatar i { font-size:22px; color:#111; }
-        .answer-content p { margin:0; color:#333; line-height:1.6; font-size:0.95rem; }
-        .answer-actions { display:flex; gap:0.75rem; flex-wrap:wrap; }
-        .answer-actions button { flex:1; min-width:140px; }
-
         .chat-header {
             padding: 18px 20px;
             background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%);
@@ -514,7 +472,20 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             <button id="newChatBtn" style="display: none; background: none; border: none; color: var(--hq-dark); cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 8px; text-decoration: underline; opacity: 0.8;" title="Start a new conversation">NEW CHAT</button>
         </div>
         
-        <!-- Landing Panel: Resume or Start New -->\n\t<div id=\"landingPanel\" class=\"landing-panel\">\n\t\t<div class=\"landing-content\">\n\t\t\t<div class=\"landing-icon\">\n\t\t\t\t<i class=\"bx bx-chat\"></i>\n\t\t\t</div>\n\t\t\t<h2>Welcome to HIGH Q Support</h2>\n\t\t\t<p>How can we help you today?</p>\n\t\t\t<div class=\"landing-actions\">\n\t\t\t\t<button class=\"btn-ghost\" id=\"btnResume\">\n\t\t\t\t\t<i class=\"bx bx-message-dots\"></i> Resume Previous Chat\n\t\t\t\t</button>\n\t\t\t\t<button class=\"btn-solid\" id=\"btnQuickQuestion\">\n\t\t\t\t\t<i class=\"bx bx-bot\"></i> Ask Quick Question\n\t\t\t\t</button>\n\t\t\t\t<button class=\"btn-solid\" id=\"btnAgent\">\n\t\t\t\t\t<i class=\"bx bx-user\"></i> Talk to Agent\n\t\t\t\t</button>\n\t\t\t</div>\n\t\t\t<div class=\"landing-links\">\n\t\t\t\t<a href=\"<?= app_url('faq.php') ?>\" target=\"_blank\">\n\t\t\t\t\t<i class=\"bx bx-book-open\"></i> FAQ\n\t\t\t\t</a>\n\t\t\t\t<a href=\"<?= app_url('community.php') ?>\" target=\"_blank\">\n\t\t\t\t\t<i class=\"bx bx-group\"></i> Community\n\t\t\t\t</a>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t\n\t<!-- Chatbot FAQ Panel -->\n\t<div id=\"chatbotPanel\" class=\"chatbot-panel\" style=\"display:none;\">\n\t\t<div class=\"chatbot-header\">\n\t\t\t<button id=\"backToLanding\" class=\"back-btn\">\n\t\t\t\t<i class=\"bx bx-arrow-back\"></i>\n\t\t\t</button>\n\t\t\t<div>\n\t\t\t\t<h3><i class=\"bx bx-bot\"></i> Quick Answers</h3>\n\t\t\t\t<p>Select a topic or chat with an agent</p>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"chatbot-content\">\n\t\t\t<div class=\"faq-options\">\n\t\t\t\t<button class=\"faq-option\" data-answer=\"We offer JAMB, WAEC, NECO preparation, and various undergraduate courses. Visit our Programs page for full details.\">\n\t\t\t\t\t<i class=\"bx bx-book\"></i>\n\t\t\t\t\t<span>What programs do you offer?</span>\n\t\t\t\t</button>\n\t\t\t\t<button class=\"faq-option\" data-answer=\"Registration is simple! Click 'Register' on our homepage, choose your program, fill in your details, and complete payment. You'll receive confirmation within 24 hours.\">\n\t\t\t\t\t<i class=\"bx bx-user-plus\"></i>\n\t\t\t\t\t<span>How do I register?</span>\n\t\t\t\t</button>\n\t\t\t\t<button class=\"faq-option\" data-answer=\"We accept bank transfers, card payments via Paystack, and cash payments at our office. All payment details are provided after registration.\">\n\t\t\t\t\t<i class=\"bx bx-money\"></i>\n\t\t\t\t\t<span>What payment methods do you accept?</span>\n\t\t\t\t</button>\n\t\t\t\t<button class=\"faq-option\" data-answer=\"Classes run Monday to Friday, 9AM-4PM. Weekend intensive classes are available for working students. Check your program schedule after registration.\">\n\t\t\t\t\t<i class=\"bx bx-time\"></i>\n\t\t\t\t\t<span>What are your class schedules?</span>\n\t\t\t\t</button>\n\t\t\t\t<button class=\"faq-option\" data-answer=\"We're located at High Q Solid Academy, Lagos. Visit our Contact page for full address, map, and directions.\">\n\t\t\t\t\t<i class=\"bx bx-map\"></i>\n\t\t\t\t\t<span>Where are you located?</span>\n\t\t\t\t</button>\n\t\t\t\t<button class=\"faq-option\" data-answer=\"You can reach us at 0807 208 8794 (call/WhatsApp) or email info@highqacademy.com. We respond within 2 hours during business hours.\">\n\t\t\t\t\t<i class=\"bx bx-phone\"></i>\n\t\t\t\t\t<span>How can I contact you?</span>\n\t\t\t\t</button>\n\t\t\t</div>\n\t\t\t<div class=\"chatbot-answer\" id=\"chatbotAnswer\" style=\"display:none;\">\n\t\t\t\t<div class=\"answer-content\">\n\t\t\t\t\t<div class=\"bot-avatar\"><i class=\"bx bx-bot\"></i></div>\n\t\t\t\t\t<p id=\"answerText\"></p>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"answer-actions\">\n\t\t\t\t\t<button class=\"btn-ghost\" id=\"anotherQuestion\">Ask Another Question</button>\n\t\t\t\t\t<button class=\"btn-solid\" id=\"talkToAgent\">Talk to Agent</button>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>
+        <!-- Landing panel: choose to resume or start new chat -->
+        <div id="chatLanding" style="display:flex;flex-direction:column;gap:12px;padding:18px 20px;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,0.06)">
+            <div style="font-weight:700;color:#333;display:flex;align-items:center;gap:8px"><i class="bx bx-chat"></i> Welcome to Support</div>
+            <div id="landingHint" style="font-size:13px;color:#555;text-align:center">Start a new chat or resume the previous conversation.</div>
+            <div class="landing-actions">
+                <button id="resumeChatBtn" class="btn-ghost">Resume Previous</button>
+                <button id="startNewBtn" class="btn-solid">Start New Chat</button>
+            </div>
+            <div class="landing-links">
+                <i class="bx bx-book-open"></i> <a href="contact.php#faq" target="_blank" rel="noopener">FAQs</a>
+                <span style="color:#ccc">|</span>
+                <i class="bx bx-group"></i> <a href="community.php" target="_blank" rel="noopener">Community</a>
+            </div>
+        </div>
 
         <!-- Start form: visitor enters name/email/initial message first -->
         <div class="chat-start" id="chatStart">
@@ -564,17 +535,10 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const startEmail = document.getElementById('start_email');
             const startMsg = document.getElementById('start_message');
             const newChatBtn = document.getElementById('newChatBtn');
-            const landingEl = document.getElementById('landingPanel');
-            const chatbotPanel = document.getElementById('chatbotPanel');
-            const btnResume = document.getElementById('btnResume');
-            const btnQuickQuestion = document.getElementById('btnQuickQuestion');
-            const btnAgent = document.getElementById('btnAgent');
-            const backToLanding = document.getElementById('backToLanding');
-            const faqOptions = document.querySelectorAll('.faq-option');
-            const chatbotAnswer = document.getElementById('chatbotAnswer');
-            const answerText = document.getElementById('answerText');
-            const anotherQuestion = document.getElementById('anotherQuestion');
-            const talkToAgent = document.getElementById('talkToAgent');
+            const landingEl = document.getElementById('chatLanding');
+            const resumeChatBtn = document.getElementById('resumeChatBtn');
+            const startNewBtn = document.getElementById('startNewBtn');
+            const landingHint = document.getElementById('landingHint');
 
             function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
             function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
