@@ -263,14 +263,14 @@ requirePermission('payments');
 
 $pageTitle = 'Payments';
 $pageCss = '<style>
-.payments-filter-section { background:#fff; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 2px 10px rgba(0,0,0,0.04); }
+.payments-filter-section { background:#fff; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 2px 10px rgba(0,0,0,0.04); border:1px solid #f1f1f1; display:block !important; }
 .payments-filter-section h3 { margin:0 0 1.25rem 0; font-size:1.1rem; font-weight:600; color:#111; display:flex; align-items:center; gap:8px; }
 .payments-filter-section h3 i { font-size:20px; color:#ffd600; }
-.payment-filters { display:flex; flex-direction:column; gap:1rem; }
-.filter-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; align-items:end; }
+.payment-filters { display:flex !important; flex-direction:column; gap:1rem; }
+.filter-row { display:grid !important; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; align-items:end; }
 .filter-group { display:flex; flex-direction:column; gap:0.5rem; }
 .filter-group label { font-size:0.9rem; font-weight:600; color:#444; }
-.filter-group input, .filter-group select { padding:0.75rem 1rem; border-radius:8px; border:1px solid #e0e0e0; background:#fafafa; font-size:0.95rem; transition:all 0.2s ease; }
+.filter-group input, .filter-group select { padding:0.75rem 1rem; border-radius:8px; border:1px solid #e0e0e0; background:#fafafa; font-size:0.95rem; transition:all 0.2s ease; box-shadow:inset 0 1px 2px rgba(0,0,0,0.04); }
 .filter-group input:focus, .filter-group select:focus { outline:none; border-color:#ffd600; background:#fff; box-shadow:0 0 0 3px rgba(255,214,0,0.1); }
 .filter-actions { display:flex; gap:0.75rem; align-items:center; }
 .btn-filter { background:linear-gradient(180deg, #ffd24d, #f6c23a); border:none; color:#111; padding:0.75rem 1.5rem; border-radius:8px; cursor:pointer; font-weight:600; font-size:0.95rem; box-shadow:0 4px 12px rgba(246,194,58,0.25); display:flex; align-items:center; gap:8px; transition:all 0.2s ease; }
