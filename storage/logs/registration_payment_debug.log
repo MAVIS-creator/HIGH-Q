@@ -189,3 +189,12 @@
 2025-12-19T17:30:36+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=555
 2025-12-19T17:30:36+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":10500,"method":"bank","programs":["8"],"selectedFixedIds":[8],"selectedVariesIds":[]}
 2025-12-19T17:30:36+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251219173036-8bc01f session_last_payment_id=NULL session_last_payment_reference=NULL
+2025-12-19T17:30:50+01:00 ENTER_CREATE_REG: reached registration creation block. keys=gender,emergency_name,last_name,previous_education,agreed_terms,emergency_phone,emergency_relationship,first_name,academic_goals,_csrf_token,email_contact,programs,home_address
+2025-12-19T17:30:50+01:00 AFTER_ENTER_CREATE_REG: continuing setup before branch checks.
+2025-12-19T17:30:50+01:00 PRE-BRANCH: posted_reg_type=NULL detected_reg_type=regular selectedHasAnyFixed=1 selectedAllVaries=0 method=NULL keys=gender,emergency_name,last_name,previous_education,agreed_terms,emergency_phone,emergency_relationship,first_name,academic_goals,_csrf_token,email_contact,programs,home_address
+2025-12-19T17:30:50+01:00 SKIP POST-UTME BLOCK: registration_type=regular (expected regular).
+2025-12-19T17:30:50+01:00 BEFORE_CREATE_REG_TRY: about to begin registration transaction.
+2025-12-19T17:30:50+01:00 BEFORE_INSERT_STUDENT_REG: first_name=Regular programs=["8"]
+2025-12-19T17:30:50+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=555
+2025-12-19T17:30:50+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":10500,"method":"bank","programs":["8"],"selectedFixedIds":[8],"selectedVariesIds":[]}
+2025-12-19T17:30:50+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251219173050-f0efdb session_last_payment_id=NULL session_last_payment_reference=NULL
