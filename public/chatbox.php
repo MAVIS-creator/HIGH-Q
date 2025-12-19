@@ -125,6 +125,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         $stmt->execute([':tid' => $thread_id]);
         $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $attachmentsTableExists = null;
         // Enrich each message with attachments from chat_attachments (if table exists)
         try {
             $attStmt = $pdo->prepare('SELECT id, file_url, original_name, mime_type, created_at FROM chat_attachments WHERE message_id = ?');
@@ -141,12 +142,18 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 }, $atts);
             }
             unset($m);
-        } catch (Throwable $_) { /* ignore if attachments table missing */ }
+            $attachmentsTableExists = true;
+        } catch (Throwable $_) { 
+            // If table missing, ensure attachments key exists as empty array for clients
+            foreach ($msgs as &$m) { $m['attachments'] = []; }
+            unset($m);
+            $attachmentsTableExists = false;
+        }
 
         $t = $pdo->prepare('SELECT status FROM chat_threads WHERE id=? LIMIT 1');
         $t->execute([$thread_id]);
         $threadStatus = $t->fetchColumn() ?: 'open';
-        jsonResponse(['status' => 'ok', 'messages' => $msgs, 'thread_status' => $threadStatus]);
+        jsonResponse(['status' => 'ok', 'messages' => $msgs, 'thread_status' => $threadStatus, 'attachments_table' => $attachmentsTableExists]);
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
     }
