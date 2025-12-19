@@ -263,147 +263,159 @@ requirePermission('payments');
 
 $pageTitle = 'Payments';
 $pageCss = '<style>
-/* Modern Payment Filters - Using theme variables */
-.payments-filter-section {
-    background: #fff !important;
-    border-radius: 8px !important;
-    padding: 18px !important;
-    margin-bottom: 12px !important;
-    border: 1px solid #eee !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
-    display: block !important;
+/* HQ Payments Filter Card - Clean Modern Design */
+.hq-payments-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
 }
-.payments-filter-section h3 {
-    margin: 0 0 18px 0 !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    color: var(--hq-black) !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
+.hq-payments-card h3 {
+    margin: 0 0 18px 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--hq-black);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-.payments-filter-section h3 i {
-    font-size: 18px !important;
-    color: var(--hq-yellow) !important;
+.hq-payments-card h3 i {
+    font-size: 18px;
+    color: var(--hq-yellow);
 }
-.payment-filters {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 12px !important;
-    align-items: flex-end !important;
+
+/* Filter Form Layout */
+.hq-filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
 }
-.filter-row {
-    display: contents !important;
+.hq-filter-row {
+    display: contents;
 }
-.filter-group {
-    flex: 1 1 150px !important;
-    min-width: 150px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 5px !important;
+.hq-filter-field {
+    flex: 1 1 150px;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
-.filter-group label {
-    font-size: 0.8rem !important;
-    font-weight: 600 !important;
-    color: #555 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.03em !important;
-    margin: 0 !important;
+.hq-filter-field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0;
 }
-.filter-group input,
-.filter-group select {
-    padding: 8px 12px !important;
-    border-radius: 6px !important;
-    border: 1px solid #ddd !important;
-    background: #fafafa !important;
-    font-size: 0.9rem !important;
-    color: #333 !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
+.hq-filter-field input,
+.hq-filter-field select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
-.filter-group input:focus,
-.filter-group select:focus {
-    outline: none !important;
-    border-color: var(--hq-yellow) !important;
-    background: #fff !important;
-    box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.12) !important;
+.hq-filter-field input:hover,
+.hq-filter-field select:hover {
+    border-color: #bbb;
+    background: #fff;
 }
-.filter-group input::placeholder {
-    color: #999 !important;
+.hq-filter-field input:focus,
+.hq-filter-field select:focus {
+    outline: none;
+    border-color: var(--hq-yellow);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.12);
 }
-.filter-actions {
-    flex: 0 0 auto !important;
-    display: flex !important;
-    gap: 8px !important;
-    align-items: flex-end !important;
-    margin-left: auto !important;
+.hq-filter-field input::placeholder {
+    color: #999;
 }
-.btn-filter {
-    background: var(--hq-yellow) !important;
-    border: none !important;
-    color: #111 !important;
-    padding: 8px 16px !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
-    font-weight: 700 !important;
-    font-size: 0.85rem !important;
-    box-shadow: 0 4px 10px rgba(255,214,0,0.25) !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    transition: all 0.2s ease !important;
-    white-space: nowrap !important;
+
+/* Filter Actions */
+.hq-filter-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    margin-left: auto;
 }
-.btn-filter:hover {
-    filter: brightness(0.95) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 14px rgba(255,214,0,0.35) !important;
+.hq-btn-primary {
+    background: var(--hq-yellow);
+    border: none;
+    color: #111;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 10px rgba(255,214,0,0.25);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
-.btn-filter:active {
-    transform: translateY(0) !important;
+.hq-btn-primary:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(255,214,0,0.35);
 }
-.btn-filter i { font-size: 16px !important; }
-.btn-clear {
-    background: #fff !important;
-    border: 1px solid #ddd !important;
-    color: #666 !important;
-    padding: 8px 14px !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
-    font-weight: 600 !important;
-    font-size: 0.85rem !important;
-    text-decoration: none !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    transition: all 0.2s ease !important;
-    white-space: nowrap !important;
+.hq-btn-primary:active {
+    transform: translateY(0);
 }
-.btn-clear:hover {
-    background: #f5f5f5 !important;
-    border-color: #bbb !important;
-    color: #333 !important;
-    transform: translateY(-1px) !important;
+.hq-btn-primary i {
+    font-size: 16px;
 }
-.btn-clear i { font-size: 16px !important; }
-.page-header-info { font-size: 0.9rem !important; color: #666 !important; margin-top: 8px !important; }
-.page-header-info em { color: var(--hq-yellow) !important; font-weight: 600 !important; font-style: normal !important; }
+.hq-btn-secondary {
+    background: #fff;
+    border: 1px solid #ddd;
+    color: #666;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.hq-btn-secondary:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+    color: #333;
+    transform: translateY(-1px);
+}
+.hq-btn-secondary i {
+    font-size: 16px;
+}
+
+/* Responsive Design */
 @media (max-width: 1024px) {
-    .filter-group { flex: 1 1 120px !important; min-width: 120px !important; }
+    .hq-filter-field { flex: 1 1 120px; min-width: 120px; }
 }
 @media (max-width: 768px) {
-    .payment-filters { flex-direction: column !important; align-items: stretch !important; }
-    .filter-group { flex: 1 1 auto !important; min-width: 100% !important; }
-    .filter-actions {
-        margin-left: 0 !important;
-        width: 100% !important;
-        flex-direction: row !important;
+    .hq-filter-form { flex-direction: column; align-items: stretch; }
+    .hq-filter-field { flex: 1 1 auto; min-width: 100%; }
+    .hq-filter-actions {
+        margin-left: 0;
+        width: 100%;
+        flex-direction: row;
     }
-    .btn-filter, .btn-clear {
-        flex: 1 !important;
-        justify-content: center !important;
+    .hq-btn-primary, .hq-btn-secondary {
+        flex: 1;
+        justify-content: center;
     }
 }
 </style>';
@@ -449,7 +461,63 @@ $totalPages = (int)ceil($total / $perPage);
     </div>
     <script>window.__PAYMENTS_CSRF = '<?= generateToken('payments_form') ?>';</script>
     
-    <!-- FILTER SECTION REMOVED - AWAITING CONFIRMATION -->
+    <div class="hq-payments-card">
+        <h3><i class="bx bx-filter"></i> Filter Payments</h3>
+        <form method="get" action="index.php?pages=payments" class="hq-filter-form">
+            <input type="hidden" name="pages" value="payments">
+            
+            <!-- Row 1 -->
+            <div class="hq-filter-row">
+                <div class="hq-filter-field">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter" name="status">
+                        <option value=""<?= $statusFilter===''? ' selected':'' ?>>All Statuses</option>
+                        <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
+                        <option value="sent"<?= $statusFilter==='sent'? ' selected':'' ?>>Sent</option>
+                        <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
+                        <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
+                    </select>
+                </div>
+                
+                <div class="hq-filter-field">
+                    <label for="from_date">From Date</label>
+                    <input type="date" id="from_date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
+                </div>
+                
+                <div class="hq-filter-field">
+                    <label for="to_date">To Date</label>
+                    <input type="date" id="to_date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
+                </div>
+                
+                <div class="hq-filter-field">
+                    <label for="gateway">Gateway</label>
+                    <input type="text" id="gateway" name="gateway" placeholder="e.g. paystack, stripe" value="<?= htmlspecialchars($_GET['gateway'] ?? '') ?>">
+                </div>
+            </div>
+            
+            <!-- Row 2 -->
+            <div class="hq-filter-row">
+                <div class="hq-filter-field">
+                    <label for="ref">Reference</label>
+                    <input type="text" id="ref" name="ref" placeholder="Payment reference" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>">
+                </div>
+                
+                <div class="hq-filter-field">
+                    <label for="user_email">Email/User</label>
+                    <input type="text" id="user_email" name="user_email" placeholder="User email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>">
+                </div>
+                
+                <div class="hq-filter-actions">
+                    <button type="submit" class="hq-btn-primary">
+                        <i class="bx bx-search"></i> Apply
+                    </button>
+                    <a href="index.php?pages=payments" class="hq-btn-secondary">
+                        <i class="bx bx-x"></i> Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
     
     <table class="roles-table">
     <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
