@@ -525,7 +525,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					if (!empty($reference)) {
 						$_SESSION['last_payment_id'] = $paymentId;
 						$_SESSION['last_payment_reference'] = $reference;
-						$redirect = app_url('payments_wait.php?ref=' . urlencode($reference));
+						if (function_exists('app_url')) {
+							$redirect = app_url('pay/' . urlencode($reference));
+						} else {
+							$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+						}
 						header('Location: ' . $redirect);
 						exit;
 					}
@@ -815,7 +819,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/" . urlencode($reference) . " session_last_payment_id=" . (isset($_SESSION['last_payment_id']) ? $_SESSION['last_payment_id'] : 'NULL') . " session_last_payment_reference=" . (isset($_SESSION['last_payment_reference']) ? $_SESSION['last_payment_reference'] : 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
 			$_SESSION['last_payment_id'] = $paymentId;
 			$_SESSION['last_payment_reference'] = $reference;
-			$redirect = app_url('payments_wait.php?ref=' . urlencode($reference));
+			if (function_exists('app_url')) {
+				$redirect = app_url('pay/' . urlencode($reference));
+			} else {
+				$redirect = 'payments_wait.php?ref=' . urlencode($reference);
+			}
 			header('Location: ' . $redirect);
 			exit;
 		}
