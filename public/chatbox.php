@@ -110,6 +110,25 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         $stmt = $pdo->prepare('SELECT id, sender_name, message, is_from_staff, created_at FROM chat_messages WHERE thread_id=:tid ORDER BY created_at ASC');
         $stmt->execute([':tid' => $thread_id]);
         $msgs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Enrich each message with attachments from chat_attachments (if table exists)
+        try {
+            $attStmt = $pdo->prepare('SELECT id, file_url, original_name, mime_type, created_at FROM chat_attachments WHERE message_id = ?');
+            foreach ($msgs as &$m) {
+                $attStmt->execute([$m['id']]);
+                $atts = $attStmt->fetchAll(PDO::FETCH_ASSOC);
+                $m['attachments'] = array_map(function($a){
+                    return [
+                        'url' => $a['file_url'],
+                        'name' => $a['original_name'],
+                        'type' => $a['mime_type'],
+                        'created_at' => $a['created_at']
+                    ];
+                }, $atts);
+            }
+            unset($m);
+        } catch (Throwable $_) { /* ignore if attachments table missing */ }
+
         $t = $pdo->prepare('SELECT status FROM chat_threads WHERE id=? LIMIT 1');
         $t->execute([$thread_id]);
         $threadStatus = $t->fetchColumn() ?: 'open';
