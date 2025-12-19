@@ -100,7 +100,7 @@
 							<span class="tag">Flexible Schedule</span>
 							<span class="tag">Subject Focus</span>
 						</div>
-						<p class="duration">Duration: Flexible</p>
+					<p class="duration" style="color: #536387; font-weight: 600;">Duration: Flexible</p>
 						<a href="program.php?slug=special-tutorials" class="btn-primary">Learn More</a>
 					</div>
 				</article>

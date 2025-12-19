@@ -263,6 +263,9 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             white-space: pre-wrap;
             display: inline-block;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-message.new-message {
             animation: slideIn 0.3s ease-out;
         }
 
@@ -497,9 +500,10 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 } catch(e) {}
             });
 
-            function appendMessage(sender, msg, is_staff = false, is_system = false, attachments = []) {
+            function appendMessage(sender, msg, is_staff = false, is_system = false, attachments = [], isNew = false) {
                 const div = document.createElement('div');
-                const className = is_system ? 'chat-message system' : (is_staff ? 'chat-message staff' : 'chat-message visitor');
+                let className = is_system ? 'chat-message system' : (is_staff ? 'chat-message staff' : 'chat-message visitor');
+                if (isNew) className += ' new-message';
                 div.className = className;
                 
                 if (is_system) {
@@ -629,7 +633,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                             name: f.name,
                             type: f.type
                         }));
-                        appendMessage(nameInput.value || startName.value || 'Guest', message, false, false, attachedFiles);
+                        appendMessage(nameInput.value || startName.value || 'Guest', message, false, false, attachedFiles, true);
                         msgInput.value = '';
                         msgInput.style.height = 'auto';
                         attachmentInput.value = '';
@@ -680,10 +684,10 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                         newChatBtn.style.display = 'inline-block';
                         
                         // Show user's first message
-                        appendMessage(name, message, false, false);
+                        appendMessage(name, message, false, false, [], true);
                         
                         // Show "waiting for agent" system message
-                        appendMessage('', '⏳ Please wait while we connect you with an agent. Feel free to add more details while you wait.', false, true);
+                        appendMessage('', '⏳ Please wait while we connect you with an agent. Feel free to add more details while you wait.', false, true, [], false);
                         
                         // Start polling for messages
                         getMessages();
