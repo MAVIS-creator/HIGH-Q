@@ -128,6 +128,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Chat</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
         :root {
             --hq-yellow: #ffbf00;
@@ -417,7 +418,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); color: var(--hq-dark); font-weight: 600; font-size: 17px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 24px;">💬</span>
-                <span class="chat-header">Live Chat Support</span>
+                <span class="chat-header"><i class='bx bx-message-dots'></i> Live Chat Support</span>
             </div>
             <button id="newChatBtn" style="display: none; background: none; border: none; color: var(--hq-dark); cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 8px; text-decoration: underline; opacity: 0.8;" title="Start a new conversation">NEW CHAT</button>
         </div>
@@ -442,7 +443,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 
         <!-- Chat footer: shows after thread created -->
         <div class="chat-footer" id="chatFooter" style="display:none;">
-            <button type="button" class="btn-attachment" id="attachBtn" title="Attach files">📎</button>
+            <button type="button" class="btn-attachment" id="attachBtn" title="Attach files"><i class='bx bx-paperclip'></i></button>
             <input type="file" id="attachment" style="display:none;" multiple accept="image/*,.pdf,.docx">
             <input type="text" id="c_name" placeholder="Your Name" style="display:none;">
             <textarea id="c_message" rows="1" placeholder="Type your message..."></textarea>
@@ -735,13 +736,13 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     
                     chatDiv.innerHTML = '';
                     j.messages.forEach(m => {
-                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1, false);
+                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1, false, (m.attachments || []));
                     });
                     
                     // If thread is closed, disable inputs
                     if (j.thread_status && j.thread_status === 'closed') {
                         chatFooterEl.style.display = 'none';
-                        appendMessage('', '✅ This conversation has been closed. Thank you for contacting us!', false, true);
+                        appendMessage('', '<i class="bx bx-check-circle"></i> This conversation has been closed. Thank you for contacting us!', false, true);
                     }
                 } catch (e) {
                     console.error(e);
