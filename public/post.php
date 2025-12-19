@@ -358,7 +358,8 @@ require_once __DIR__ . '/includes/header.php';
     gap: 12px;
   }
 
-  .comment-card {
+  .comment-card,
+  #commentsList .comment {
     border: 1px solid #e8edf5;
     border-radius: 12px;
     padding: 14px 14px 12px;
@@ -366,14 +367,16 @@ require_once __DIR__ . '/includes/header.php';
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
   }
 
-  .comment-head {
+  .comment-head,
+  #commentsList .comment .comment-head {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
   }
 
-  .comment-avatar {
+  .comment-avatar,
+  #commentsList .avatar {
     width: 42px;
     height: 42px;
     border-radius: 12px;
@@ -390,23 +393,27 @@ require_once __DIR__ . '/includes/header.php';
     gap: 2px;
   }
 
-  .comment-author {
+  .comment-author,
+  #commentsList .comment strong {
     font-weight: 700;
     color: var(--hq-black);
   }
 
-  .comment-date {
+  .comment-date,
+  #commentsList .comment .meta {
     color: var(--hq-gray);
     font-size: 0.9rem;
   }
 
-  .comment-body {
+  .comment-body,
+  #commentsList .comment .comment-body {
     margin-top: 10px;
     color: var(--hq-gray);
     line-height: 1.6;
   }
 
-  .comment-replies {
+  .comment-replies,
+  #commentsList .replies {
     margin-top: 12px;
     padding-left: 16px;
     border-left: 2px solid #e8edf5;
@@ -414,11 +421,21 @@ require_once __DIR__ . '/includes/header.php';
     gap: 10px;
   }
 
-  .comment-reply {
+  .comment-reply,
+  #commentsList .comment.reply {
     background: #f7f9fc;
     border: 1px solid #e6eaf3;
     border-radius: 10px;
     padding: 10px 12px;
+  }
+
+  .comment-actions,
+  #commentsList .comment-actions {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .chip,
@@ -437,6 +454,27 @@ require_once __DIR__ . '/includes/header.php';
 
   .chip:hover,
   .reply-btn.small:hover {
+    border-color: var(--hq-blue-white);
+  }
+
+  #commentsList .reply-btn,
+  #commentsList .like-btn,
+  #commentsList .delete-btn {
+    border: 1px solid #e6eaf3;
+    background: #f4f6fb;
+    color: var(--hq-black);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #commentsList .reply-btn:hover,
+  #commentsList .like-btn:hover,
+  #commentsList .delete-btn:hover {
     border-color: var(--hq-blue-white);
   }
 
