@@ -42,7 +42,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (($files['error'][$i] ?? 1) !== UPLOAD_ERR_OK) continue;
                 $size = $files['size'][$i] ?? 0;
                 if ($size > $maxBytes) continue; // too large
-                $type = $files['type'][$i] ?? '';
+                $type = trim($files['type'][$i] ?? '');
                 if (!in_array($type, $allowed, true)) continue;
                 $tmp = $files['tmp_name'][$i] ?? null;
                 if (!$tmp || !is_uploaded_file($tmp)) continue;
