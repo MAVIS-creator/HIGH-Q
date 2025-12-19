@@ -515,6 +515,51 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 } catch(e) {}
             });
 
+            // Landing logic: show choices first
+            function showLanding() {
+                if (!landingEl) return;
+                landingEl.style.display = 'flex';
+                chatStartEl.style.display = 'none';
+                chatDiv.style.display = 'none';
+                chatFooterEl.style.display = 'none';
+                newChatBtn.style.display = 'none';
+
+                const tid = getThreadId();
+                if (tid) {
+                    resumeChatBtn.disabled = false;
+                    resumeChatBtn.title = 'Resume chat #' + tid;
+                    landingHint.textContent = 'You have an existing chat. Resume or start a new one.';
+                } else {
+                    resumeChatBtn.disabled = true;
+                    resumeChatBtn.title = 'No previous chat';
+                    landingHint.textContent = 'Start a new chat to begin.';
+                }
+            }
+
+            if (resumeChatBtn) {
+                resumeChatBtn.addEventListener('click', () => {
+                    const tid = getThreadId();
+                    if (!tid) return;
+                    landingEl.style.display = 'none';
+                    chatStartEl.style.display = 'none';
+                    chatDiv.style.display = 'flex';
+                    chatFooterEl.style.display = 'flex';
+                    newChatBtn.style.display = 'inline-block';
+                    getMessages();
+                });
+            }
+
+            if (startNewBtn) {
+                startNewBtn.addEventListener('click', () => {
+                    clearThreadId();
+                    landingEl.style.display = 'none';
+                    chatStartEl.style.display = 'flex';
+                    chatDiv.style.display = 'none';
+                    chatFooterEl.style.display = 'none';
+                    newChatBtn.style.display = 'none';
+                });
+            }
+
             function appendMessage(sender, msg, is_staff = false, is_system = false, attachments = [], isNew = false) {
                 const div = document.createElement('div');
                 let className = is_system ? 'chat-message system' : (is_staff ? 'chat-message staff' : 'chat-message visitor');
@@ -729,14 +774,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 }
             });
 
-            // If thread already exists, skip start form
-            if (getThreadId()) {
-                chatStartEl.style.display = 'none';
-                chatDiv.style.display = 'flex';
-                chatFooterEl.style.display = 'flex';
-                newChatBtn.style.display = 'inline-block';
-                getMessages();
-            }
+            // Show landing first; user can resume or start new
+            showLanding();
 
             async function getMessages() {
                 const tid = getThreadId();
