@@ -49,7 +49,7 @@
 							<span class="tag">Electives</span>
 							<span class="tag">Practicals</span>
 						</div>
-						<p class="duration">Duration: 6-12 months</p>
+					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 6-12 months</p>
 						<a href="program.php?slug=waec-preparation" class="btn-primary">Learn More</a>
 					</div>
 				</article>
@@ -66,7 +66,7 @@
 							<span class="tag">Mock Exams</span>
 							<span class="tag">Study Materials</span>
 						</div>
-						<p class="duration">Duration: 6-12 months</p>
+					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 6-12 months</p>
 						<a href="program.php?slug=neco-preparation" class="btn-primary">Learn More</a>
 					</div>
 				</article>
@@ -83,7 +83,7 @@
 							<span class="tag">Practice Tests</span>
 							<span class="tag">Interview Prep</span>
 						</div>
-						<p class="duration">Duration: 2-4 months</p>
+					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 2-4 months</p>
 						<a href="program.php?slug=post-utme" class="btn-primary">Learn More</a>
 					</div>
 				</article>
@@ -117,7 +117,7 @@
 							<span class="tag">Internet Skills</span>
 							<span class="tag">Programming</span>
 						</div>
-						<p class="duration">Duration: 3-6 months</p>
+					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 3-6 months</p>
 						<a href="program.php?slug=computer-training" class="btn-primary">Learn More</a>
 					</div>
 				</article>
