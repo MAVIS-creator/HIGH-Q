@@ -564,10 +564,17 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             const startEmail = document.getElementById('start_email');
             const startMsg = document.getElementById('start_message');
             const newChatBtn = document.getElementById('newChatBtn');
-            const landingEl = document.getElementById('chatLanding');
-            const resumeChatBtn = document.getElementById('resumeChatBtn');
-            const startNewBtn = document.getElementById('startNewBtn');
-            const landingHint = document.getElementById('landingHint');
+            const landingEl = document.getElementById('landingPanel');
+            const chatbotPanel = document.getElementById('chatbotPanel');
+            const btnResume = document.getElementById('btnResume');
+            const btnQuickQuestion = document.getElementById('btnQuickQuestion');
+            const btnAgent = document.getElementById('btnAgent');
+            const backToLanding = document.getElementById('backToLanding');
+            const faqOptions = document.querySelectorAll('.faq-option');
+            const chatbotAnswer = document.getElementById('chatbotAnswer');
+            const answerText = document.getElementById('answerText');
+            const anotherQuestion = document.getElementById('anotherQuestion');
+            const talkToAgent = document.getElementById('talkToAgent');
 
             function getThreadId() { return localStorage.getItem('hq_thread_id') || null; }
             function setThreadId(id) { localStorage.setItem('hq_thread_id', id); }
