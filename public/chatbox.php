@@ -435,7 +435,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
 
         <!-- Start form: visitor enters name/email/initial message first -->
         <div class="chat-start" id="chatStart">
-            <h3>👋 Hi there!</h3>
+            <h3><i class="bx bx-hand"></i> Hi there!</h3>
             <p>We're here to help. Please fill out the form below to start chatting with our support team.</p>
             
             <input type="text" id="start_name" placeholder="Your name *" required />
