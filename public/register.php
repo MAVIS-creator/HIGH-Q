@@ -525,11 +525,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					if (!empty($reference)) {
 						$_SESSION['last_payment_id'] = $paymentId;
 						$_SESSION['last_payment_reference'] = $reference;
-						if (function_exists('app_url')) {
-							$redirect = app_url('pay/' . urlencode($reference));
-						} else {
-							$redirect = 'payments_wait.php?ref=' . urlencode($reference);
-						}
+						$redirect = function_exists('app_url')
+							? app_url('payments_wait.php?ref=' . urlencode($reference))
+							: 'payments_wait.php?ref=' . urlencode($reference);
 						header('Location: ' . $redirect);
 						exit;
 					}
