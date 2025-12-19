@@ -43,9 +43,9 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $size = $files['size'][$i] ?? 0;
                 if ($size > $maxBytes) continue; // too large
                 $type = trim($files['type'][$i] ?? '');
-                if (!in_array($type, $allowed, true)) continue;
+                if (!in_array($type, $allowed, true)) { try { @file_put_contents($uploadLog, date('c') . " skip disallowed type {$type} for {$files['name'][$i]}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {} continue; }
                 $tmp = $files['tmp_name'][$i] ?? null;
-                if (!$tmp || !is_uploaded_file($tmp)) continue;
+                if (!$tmp || !is_uploaded_file($tmp)) { try { @file_put_contents($uploadLog, date('c') . " not an uploaded file: {$files['name'][$i]} tmp={$tmp}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {} continue; }
 
                 // Basic magic-byte checks
                 $fh = fopen($tmp, 'rb');
@@ -68,6 +68,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
                 $dest = $uploadDir . $nameSafe;
                 if (move_uploaded_file($tmp, $dest)) {
+                    try { @file_put_contents($uploadLog, date('c') . " saved {$files['name'][$i]} -> {$dest}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
                     $rel = 'uploads/chat/' . $nameSafe;
                     $url = function_exists('app_url') ? app_url($rel) : $rel;
                     $savedAttachUrls[] = ['url' => $url, 'orig' => $files['name'][$i], 'mime' => $type];
