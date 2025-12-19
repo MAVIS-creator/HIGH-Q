@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HIGH Q SOLID ACADEMY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="http://localhost/HIGH-Q/public/assets/images/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://localhost/HIGH-Q/public/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://localhost/HIGH-Q/public/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://localhost/HIGH-Q/public/assets/images/favicon-16x16.png">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- HQ Theme overrides (must come after Bootstrap) -->
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/theme.css">
+  <!-- Prefer local Boxicons if available (place CSS+fonts in public/assets/vendor/boxicons/) -->
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/vendor/boxicons/boxicons.min.css" onerror="this.remove();" />
+  <!-- Fallback to CDN if local not available -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <!-- Font Awesome (fallback for admin/backwards compatibility) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- BoxIcons CSS -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/public.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/responsive.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/ceo-responsive.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/animations.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/social-icons.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/post-toc.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/hero.css">
+  <!-- Small site-specific hero overrides (loaded after hero.css) -->
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/hero-fixed.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/offcanvas.css">
+  <link rel="stylesheet" href="http://localhost/HIGH-Q/public/assets/css/contact-fixes.css">
+  <link rel="shortcut icon" href="http://localhost/HIGH-Q/public/assets/images/favicon.ico" type="image/x-icon">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- HQ Animations helper -->
+  <script defer src="http://localhost/HIGH-Q/public/assets/js/hq-animations.js"></script>
+  </head>
+
+  <body class="hq-public">
+  
+  <script>
+    // HQ base available for public JS. window.HQ_APP_BASE preferred; keep HQ_BASE for legacy pages.
+    window.HQ_APP_BASE = "http:\/\/localhost\/HIGH-Q\/public";
+    if (!window.HQ_BASE) window.HQ_BASE = window.HQ_APP_BASE;
+  </script>
+  <header>
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="container">
+  <span><i class="fas fa-phone"></i> +2348072088794</span>
+  <span><i class="fas fa-envelope"></i> highqsolidacademy@gmail.com</span>
+        <span class="motto">"Always Ahead of Others"</span>
+      </div>
+    </div>
+
+    <!-- Main nav -->
+    <div class="main-header">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg w-100 position-relative">
+          <!-- Logo + Name -->
+          <a class="navbar-brand" href="http://localhost/HIGH-Q/public/index.php">
+            <div class="logo">
+              <img src="http://localhost/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+              <div>
+                <h1>HIGH Q SOLID ACADEMY</h1>
+                <small>Limited</small>
+              </div>
+            </div>
+          </a>
+
+          <!-- Toggle for mobile - opens offcanvas -->
+          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+            <i class="bx bx-menu"></i>
+          </button>
+
+          <!-- Desktop Navigation -->
+          <div class="collapse navbar-collapse" id="mainNav">
+                        <ul class="navbar-nav mx-auto d-none d-lg-flex">
+              <li class="nav-item">
+                <a class="nav-link " href="http://localhost/HIGH-Q/public/index.php">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link " href="http://localhost/HIGH-Q/public/about.php">About Us</a>
+              </li>
+
+              <!-- Programs Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  Programs
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="http://localhost/HIGH-Q/public/programs.php">Programs</a></li>
+                  <li><a class="dropdown-item" href="http://localhost/HIGH-Q/public/exams.php">Exams</a></li>
+                </ul>
+              </li>
+
+              <!-- News Dropdown -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  News
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="http://localhost/HIGH-Q/public/news.php">News & Blog</a></li>
+                  <li><a class="dropdown-item" href="http://localhost/HIGH-Q/public/community.php">Community</a></li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link active" href="http://localhost/HIGH-Q/public/register.php">Admission</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link " href="http://localhost/HIGH-Q/public/contact.php">Contact</a>
+              </li>
+            </ul>
+
+            <!-- Register Button -->
+            <div class="d-none d-lg-block">
+              <a href="http://localhost/HIGH-Q/public/register.php" class="btn btn-primary">Register Now</a>
+            </div>
+          </div>
+
+          <!-- Toggle for mobile - opens offcanvas -->
+          <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">
+            <i class="bx bx-menu"></i>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Add .is-loaded after first paint for CSS animations
+    document.addEventListener('DOMContentLoaded', function(){
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          document.documentElement.classList.add('is-loaded');
+          // Add stagger classes to common groups
+          try {
+            var groups = [
+              {selector: '.programs-grid .program-card', base: 'stagger'},
+              {selector: '.tutors-grid .tutor-card', base: 'stagger'},
+              {selector: '.core-grid .value-card', base: 'stagger'},
+              {selector: '.ceo-stats .stat', base: 'stagger'}
+            ];
+            groups.forEach(function(g){
+              document.querySelectorAll(g.selector).forEach(function(n, i){
+                var idx = Math.min(4, Math.max(1, Math.ceil((i+1)/1)));
+                n.classList.add(g.base + '-' + idx, 'hover-zoom');
+              });
+            });
+          } catch (err) { /* ignore */ }
+        });
+      });
+    });
+  </script>
+
+  <!-- Offcanvas Side Nav for Mobile -->
+    <div class="offcanvas offcanvas-start custom-offcanvas d-lg-none" tabindex="-1" id="mobileNav">
+        <div class="offcanvas-header py-3">
+            <h5 class="offcanvas-title fw-bold mb-0">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-3">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link px-3 py-2 " href="http://localhost/HIGH-Q/public/index.php">Home</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 " href="http://localhost/HIGH-Q/public/about.php">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="http://localhost/HIGH-Q/public/programs.php">Programs</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="http://localhost/HIGH-Q/public/exams.php">Exams</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="http://localhost/HIGH-Q/public/news.php">News & Blog</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2" href="http://localhost/HIGH-Q/public/community.php">Community</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 active" href="http://localhost/HIGH-Q/public/register.php">Admission</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 " href="http://localhost/HIGH-Q/public/contact.php">Contact</a></li>
+            </ul>
+            <div class="mt-4 px-3">
+                <a href="http://localhost/HIGH-Q/public/register.php" class="btn btn-primary w-100 py-2">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+  <main class="public-main"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Hero (reuse about-hero styling used across the site) -->
+<section class="about-hero">
+	<div class="about-hero-overlay"></div>
+	<div class="container about-hero-inner">
+		<h1>Register with HIGH Q Academy</h1>
+		<p class="lead">Start your journey towards academic excellence. Register for our programs and join thousands of successful students.</p>
+	</div>
+</section>
+										
+										<div class="container register-layout">
+										<main class="register-main">
+											<div class="card">
+												<h3>Student Registration Form</h3>
+												<p class="card-desc">Fill out this form to begin your registration process. Our team will contact you within 24 hours to complete your enrollment.</p>
+																																				
+												
+																									<!-- Choice screen -->
+													<div class="choice-container" style="margin:12px 0;display:flex;gap:12px;align-items:center;">
+														<div style="flex:1">
+															<label style="font-weight:600;display:block;margin-bottom:6px">Select Registration Type</label>
+															<div>
+																<a id="chooseRegular" class="btn" href="register.php?type=regular" style="background:#fff;border:1px solid #ddd;margin-right:8px;display:inline-block;padding:8px 12px;text-decoration:none;color:inherit;">Regular Admission</a>
+																<a id="choosePost" class="btn" href="post-utme.php" style="background:#fff;border:1px solid #ddd;display:inline-block;padding:8px 12px;text-decoration:none;color:inherit;">Post-UTME Admission</a>
+															</div>
+															<p style="color:#666;margin-top:8px;font-size:13px">Choose the registration flow that applies to you.</p>
+														</div>
+													</div>
+
+													<!-- Regular form -->
+													<form id="regularForm" class="registration-form form-regular" method="post" enctype="multipart/form-data" style="display:none;">
+														<input type="hidden" name="_csrf_token" value="57b4e286a55437a32f362e44a7e6d61b.Xy4bghbDj3xfiyM3N86SjdjRiq6yv40l9vz_ZR3gyZ0.AGZu-kaM1jQW_U8GRKn46qvjwcHh2v1glKSoJHOBnMhqamv4fLHdBTfSGw">
+														<input type="hidden" name="client_total" value="">
+														<input type="hidden" name="method" value="bank">
+														<input type="hidden" name="registration_type" value="regular">
+
+														<!-- Payment method selector: let user choose bank or online (online may be disabled when Paystack not configured) -->
+														<div class="form-row payment-method-selector" style="margin:8px 0;padding:8px;border-radius:6px;background:#fafafa;border:1px solid #eee;">
+															<label style="margin-right:12px;"><input type="radio" name="payment_method_choice_regular" value="bank" checked> High Q Transfer (Bank Transfer)</label>
+															<label>
+																<input type="radio" name="payment_method_choice_regular" value="online" disabled> Online Card Payment
+																<small style="color:#a33;margin-left:6px">(Currently unavailable)</small>															</label>
+														</div>
+
+														<div class="form-row" style="margin-bottom:8px;"><button type="button" class="btn btn-secondary go-back">Change Type</button></div>
+
+														<h4 class="section-title"><i class="bx bxs-user"></i> Personal Information</h4>
+														<div class="section-body">
+															<div class="form-row form-inline" id="regularPersonalTop"><div><label>First Name *</label><input type="text" name="first_name" placeholder="Enter your first name" required value=""></div><div><label>Last Name *</label><input type="text" name="last_name" placeholder="Enter your last name" required value=""></div></div>
+															<div class="form-row">
+																<label>Passport Photo (passport-size, face visible)</label>
+																<div class="hq-file-input main-passport-input">
+																	<button type="button" class="btn">Choose file</button>
+																	<input type="file" name="passport" id="passport_input" accept="image/*" style="display:none">
+																	<span id="passport_chosen" style="margin-left:10px;color:#444;font-size:0.95rem">No file chosen</span>
+																</div>
+															</div>
+
+															<div id="regularFields">
+																<div class="form-row form-inline"><div class="form-col"><label>Contact Email</label><input name="email_contact" type="email" placeholder="your.email@example.com" value=""></div><div class="form-col"><label>Phone Number</label><input name="phone" placeholder="+234 XXX XXX XXXX" value=""></div></div>
+																<div class="form-row"><label>Date of Birth</label><input name="date_of_birth" type="date" placeholder="dd/mm/yyyy" value=""></div>
+																<div class="form-row">
+																	<label>Gender</label>
+																	<select name="gender">
+																		<option value="">Prefer not to say</option>
+																		<option value="male" >Male</option>
+																		<option value="female" >Female</option>
+																		<option value="other" >Other</option>
+																	</select>
+																</div>
+																<div class="form-row"><label>Home Address</label><textarea name="home_address" placeholder="Enter your complete home address"></textarea></div>
+															</div>
+														</div>
+
+														<h4 class="section-title"><i class="bx bx-collection"></i> Program Selection</h4>
+														<div class="programs-grid">
+																																														<label class="program-label">
+																	<input type="checkbox" name="programs[]" value="6"> CBT Training <small class="program-price">(Varies)</small>
+																	<div class="program-duration">2-4 weeks</div>
+																</label>
+																															<label class="program-label">
+																	<input type="checkbox" name="programs[]" value="7"> Digital Skills <small class="program-price">(₦80,000.00)</small>
+																	<div class="program-duration">3-6 months</div>
+																</label>
+																															<label class="program-label">
+																	<input type="checkbox" name="programs[]" value="3"> JAMB/Other Enquires on JAMB <small class="program-price">(₦9,000.00)</small>
+																	<div class="program-duration">4-6 months</div>
+																</label>
+																															<label class="program-label">
+																	<input type="checkbox" name="programs[]" value="5"> Professional Services <small class="program-price">(Varies)</small>
+																	<div class="program-duration">As needed</div>
+																</label>
+																															<label class="program-label">
+																	<input type="checkbox" name="programs[]" value="9"> Tutorial Classes <small class="program-price">(Varies)</small>
+																	<div class="program-duration">Flexible</div>
+																</label>
+																															<label class="program-label">
+																	<input type="checkbox" name="programs[]" value="8"> WAEC/NECO <small class="program-price">(₦8,000.00)</small>
+																	<div class="program-duration">6-12 months</div>
+																</label>
+																													</div>
+
+														<div class="form-row"><label>Previous Education</label><textarea name="previous_education" placeholder="Tell us about your educational background (schools attended, certificates obtained, etc.)"></textarea></div>
+														<div class="form-row"><label>Academic Goals</label><textarea name="academic_goals" placeholder="What are your academic and career aspirations? How can we help you achieve them?"></textarea></div>
+
+														<h4 class="section-title"><i class="bx bxs-phone"></i> Emergency Contact</h4>
+														<div class="section-body">
+															<div class="form-row"><label>Parent/Guardian Name</label><input type="text" name="emergency_name" placeholder="Full name of parent/guardian" value=""></div>
+															<div class="form-row"><label>Parent/Guardian Phone</label><input type="tel" name="emergency_phone" placeholder="+234 XXX XXX XXXX" value=""></div>
+															<div class="form-row"><label>Relationship to student</label><input type="text" name="emergency_relationship" placeholder="e.g. Father, Mother, Guardian" value=""></div>
+														</div>
+
+														<div class="form-row terms-row">
+															<div class="checkbox-wrapper">
+																<input type="checkbox" name="agreed_terms" id="agreed_terms_reg"  required>
+																<label for="agreed_terms_reg" class="terms-label"><span>I agree to the <a href="/terms.php" target="_blank">terms and conditions</a></span></label>
+															</div>
+														</div>
+
+														<div class="submit-row"><button class="btn-primary btn-submit" type="submit" name="form_action" value="regular">Submit Registration</button></div>
+
+														<div class="payment-summary">
+															<h5 class="payment-summary-title">Payment Summary</h5>
+															<div class="payment-summary-body">
+																<div>Programs subtotal: <strong id="ps-subtotal">₦0.00</strong></div>
+																<div>Form fee: <strong id="ps-form">₦1,000.00</strong></div>
+																<div>Card fee: <strong id="ps-card">₦1,500.00</strong></div>
+																<hr class="ps-divider">
+																<div>Total payable: <strong id="ps-total">₦0.00</strong></div>
+															</div>
+															<p class="payment-note">Note: A processing Form fee (₦1,000) and Card fee (₦1,500) apply once you select any program. These fees are included in the total amount shown and are required at checkout.</p>
+														</div>
+													</form>
+
+													<!-- Post-UTME flow moved to separate page: public/post-utme.php -->
+											</div>
+										</main>
+
+										<aside class="register-sidebar hq-aside-target">
+						<div class="sidebar-card admission-box">
+							<h4>Admission Requirements</h4>
+							<hr>
+							<ul style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
+								<li>Completed O'Level certificate (for JAMB/Post‑UTME)</li>
+								<li>Valid identification document</li>
+								<li>Passport photograph (2 copies)</li>
+								<li>Registration fee payment</li>
+								<li>Commitment to academic excellence</li>
+							</ul>
+						</div>
+
+							<div class="sidebar-card payment-box">
+								<h4>Payment Options</h4>
+						<div class="payment-method" data-method="bank">
+							<strong>Bank Transfer</strong>
+									<p>Account Name: High Q Solid Academy<br>
+									Bank: Moniepoint PBS<br>
+									Account Number: 5017167271</p>
+						</div>
+						<div class="payment-method" data-method="cash">
+							<strong>Cash Payment</strong>
+							<p>Visit our office locations<br>8 Pineapple Avenue, Aiyetoro, Maya<br>Shop 18, World Star Complex, Aiyetoro</p>
+						</div>
+						<div class="payment-method" data-method="online" id="payment-method-online">
+							<strong>Online Payment</strong>
+							<p>Secure online payment portal. Credit/Debit card accepted.</p>
+						</div>
+
+						<!-- payment summary moved to main form for desktop; mobile clones it into floating panel -->
+					</div>
+
+							<div class="sidebar-card help-box">
+						<h4>Need Help?</h4>
+								<p><strong>Call Us</strong><br>+2348072088794</p>
+								<p><strong>Email Us</strong><br>info@hqacademy.com</p>
+								<p><strong>Visit Us</strong><br>8 Pineapple Avenue, Aiyetoro<br />
+Maya, Ikorodu</p>
+					</div>
+
+					<div class="sidebar-card why-box" id="whyChooseUs">
+						<h4>Why Choose Us?</h4>
+						<div class="why-stats">
+							<div class="stat">
+								<div class="icon">
+									<i class="bx bx-trophy"></i>
+								</div>
+								<div class="stat-body">
+									<strong>305</strong>
+									<span>Highest JAMB Score 2025</span>
+								</div>
+							</div>
+							<div class="stat">
+								<div class="icon">
+									<i class="bx bx-group"></i>
+								</div>
+								<div class="stat-body">
+									<strong>1000+</strong>
+									<span>Students Trained</span>
+								</div>
+							</div>
+							<div class="stat">
+								<div class="icon">
+									<i class="bx bx-bar-chart"></i>
+								</div>
+								<div class="stat-body">
+									<strong>99%</strong>
+									<span>Success Rate</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</aside>
+			</div>
+	</div>
+</section>
+
+<!-- What Happens Next? -->
+<section class="next-section">
+	<div class="container">
+	<div class="ceo-heading ceo-heading--center">
+			<h2>What Happens <span class="highlight">Next?</span></h2>
+			<p class="ceo-subtext">After submitting your registration, here's what you can expect from us.</p>
+		</div>
+
+		<div class="achievements-grid">
+				<div class="next-stat yellow">
+					<div class="next-icon"><i class="bx bx-check-circle"></i></div>
+				<strong>1. Confirmation</strong>
+				<span>You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
+			</div>
+
+				<div class="next-stat yellow">
+					<div class="next-icon"><i class="bx bx-book-open"></i></div>
+				<strong>2. Assessment</strong>
+				<span>We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
+			</div>
+
+				<div class="next-stat red">
+					<div class="next-icon"><i class="bx bx-rocket"></i></div>
+				<strong>3. Start Learning</strong>
+				<span>Begin your journey with our expert tutors and join the ranks of our successful students.</span>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- ===== FOOTER START ===== -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+
+    <!-- Logo & About -->
+  <div class="footer-about">
+      <div class="logo">
+  <img src="http://localhost/HIGH-Q/public/assets/images/hq-logo.jpeg" alt="HQ Logo" class="brand-logo">
+        <div>
+          <h2>HIGH Q SOLID ACADEMY</h2>
+          <small>Limited</small>
+        </div>
+      </div>
+      <p>
+        Nigeria’s premier tutorial academy committed to academic excellence and 
+        student success since 2018.
+      </p>
+      <p class="motto">"<span>Always Ahead of Others</span>"</p>
+      <div class="socials">
+                
+        <a href="https://facebook.com/highqsolidacademy" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+          <i class="bx bxl-facebook-circle"></i>
+        </a>
+        
+        <a href="https://instagram.com/highqsolidacademy" target="_blank" rel="noopener noreferrer" class="social-link instagram" aria-label="Instagram">
+          <i class="bx bxl-instagram-alt"></i>
+        </a>
+        
+        <a href="https://tiktok.com/@highqsolidacademy" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
+          <i class="bx bxl-tiktok"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-links">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="http://localhost/HIGH-Q/public/index.php">Home</a></li>
+        <li><a href="http://localhost/HIGH-Q/public/about.php">About Us</a></li>
+        <li><a href="http://localhost/HIGH-Q/public/programs.php">Programs</a></li>
+        <li><a href="http://localhost/HIGH-Q/public/register.php">Admission</a></li>
+        <li><a href="http://localhost/HIGH-Q/public/contact.php">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Programs -->
+      <div class="footer-programs">
+      <h3>Our Programs</h3>
+      <ul>
+        <li><a href="http://localhost/HIGH-Q/public/program.php?slug=cbt">CBT Training</a></li><li><a href="http://localhost/HIGH-Q/public/program.php?slug=digital-skills">Digital Skills</a></li><li><a href="http://localhost/HIGH-Q/public/program.php?slug=jamb-post-utme">JAMB/Other Enquires on JAMB</a></li><li><a href="http://localhost/HIGH-Q/public/program.php?slug=professional">Professional Services</a></li><li><a href="http://localhost/HIGH-Q/public/program.php?slug=tutorial-classes">Tutorial Classes</a></li><li><a href="http://localhost/HIGH-Q/public/program.php?slug=professional-services">WAEC/NECO</a></li>      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-contact">
+      <h3>Contact Information</h3>
+      <div class="address-box">
+        <strong><i class="fas fa-map-marker-alt"></i> Tutorial Address</strong>
+        <p>8 Pineapple Avenue, Aiyetoro<br>Ikorodu North LCDA, Maya, Ikorodu</p>
+      </div>
+      <div class="address-box">
+        <strong><i class="fas fa-building"></i> Area Office</strong>
+        <p>Shop 3, 17, 18, World Star Complex<br>Opposite London Street, Aiyetoro Maya, Ikorodu, Lagos State</p>
+      </div>
+            <p><i class="fas fa-phone"></i> +2348072088794</p>
+      <p><i class="fas fa-envelope"></i> highqsolidacademy@gmail.com</p>
+      <p><i class="fas fa-clock"></i> Mon - Fri: 8:00 AM - 6:00 PM<br>Sat: 9:00 AM - 4:00 PM</p>
+    </div>
+
+  </div>
+
+  <!-- Bottom -->
+  <div class="footer-bottom">
+    <p>© 2025 High Q Solid Academy Limited. All rights reserved.</p>
+    <div class="links" style="gap:10px; flex-wrap:wrap;">
+      <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(90deg,#ffd54f,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700;">Made by MAVIS</a>
+      <span style="color:#cbd5e1;">•</span>
+      <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer">Exam portal by GamerDave</a>
+    </div>
+    <div class="links">
+      <a href="http://localhost/HIGH-Q/public/privacy.php">Privacy Policy</a>
+      <a href="http://localhost/HIGH-Q/public/terms.php">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+<!-- ===== FOOTER END ===== -->
+</main>
+
+<!-- Floating Live Chat Button -->
+<a href="http://localhost/HIGH-Q/public/contact.php#livechat" class="floating-chat" aria-label="Live Chat with us">
+  <i class="bx bx-chat"></i>
+</a>
+<script src="http://localhost/HIGH-Q/public/assets/js/viewport-inview.js"></script>
+<script src="http://localhost/HIGH-Q/public/assets/js/contact-helpers.js"></script>
+
+<!-- Debug overrides removed; consolidated styles are in public/css/register.css -->
+
+<script>
+// Live payment summary for registration page
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		const formatN = (n) => '₦' + Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+		const checkboxes = Array.from(document.querySelectorAll('input[name="programs[]"]'));
+		const subtotalEl = document.getElementById('ps-subtotal');
+		const formEl = document.getElementById('ps-form');
+		const cardEl = document.getElementById('ps-card');
+		const totalEl = document.getElementById('ps-total');
+		const formFee = 1000;
+		const cardFee = 1500;
+
+	function compute(){
+			let subtotalFixed = 0;
+			let anyVaries = false;
+			let anyFixed = false;
+			checkboxes.forEach(cb => {
+				if (!cb.checked) return;
+				const label = cb.closest('label');
+				const priceText = label ? label.querySelector('small') : null;
+				if (priceText) {
+					const txt = priceText.textContent || '';
+					if (/Varies/i.test(txt)) { anyVaries = true; }
+					const m = txt.match(/₦([0-9,\.]+)/);
+					if (m) { subtotalFixed += parseFloat(m[1].replace(/,/g,'')); anyFixed = true; }
+				}
+			});
+
+			// total payable on the client: only fixed-priced items + fees (if any fixed items selected)
+			let total = subtotalFixed;
+			if (anyFixed) {
+				total += formFee + cardFee;
+			}
+
+							// Set the payment method for the server per form. Respect any explicit user choice (radio input) if present.
+							try {
+								var forms = document.querySelectorAll('.registration-form');
+								forms.forEach(function(f){
+									var userChoice = f.querySelector('input[name^="payment_method_choice"]:checked');
+									var chosen = null;
+									if (userChoice) {
+										chosen = userChoice.value; // 'bank' or 'online'
+									} else {
+										// fallback: if there are any fixed-priced items prefer online, otherwise bank
+										chosen = anyFixed ? 'online' : 'bank';
+									}
+									var methodInputs = f.querySelectorAll('input[name="method"]');
+									if (methodInputs && methodInputs.length) {
+										methodInputs.forEach(function(mi){ try{ mi.value = (chosen === 'online' ? 'paystack' : 'bank'); }catch(e){} });
+									}
+								});
+							} catch(e) {}
+
+			subtotalEl.textContent = formatN(subtotalFixed);
+			formEl.textContent = formatN(formFee);
+			cardEl.textContent = formatN(cardFee);
+			totalEl.textContent = formatN(total);
+
+			// persist client-side total to hidden inputs for server-side recheck (works for both forms)
+			try {
+				var clientInputs = document.querySelectorAll('input[name="client_total"]');
+				if (clientInputs && clientInputs.length) {
+					clientInputs.forEach(function(ci){ try{ ci.value = total.toFixed(2); }catch(e){} });
+				}
+			} catch(e) {}
+
+			// Enable/disable online payment UI: only disable when ALL selected are variable-priced
+			try {
+				var onlineBlock = document.getElementById('payment-method-online');
+				var paymentSummary = document.querySelector('.payment-summary');
+				// add/remove disabled class
+				if (onlineBlock) {
+					if (anyVaries && !anyFixed) onlineBlock.classList.add('disabled'); else onlineBlock.classList.remove('disabled');
+				}
+				// show a small inline note in payment summary if there are variable-priced items
+				if (paymentSummary) {
+					var existing = paymentSummary.querySelector('.varies-note');
+					if (anyVaries) {
+						if (!existing) {
+							var n = document.createElement('div');
+							n.className = 'varies-note';
+							n.style.color = '#a33';
+							n.style.marginTop = '8px';
+							if (anyVaries && !anyFixed) {
+								n.textContent = 'Online payment disabled for variable-priced programs. An admin will confirm final pricing.';
+							} else {
+								n.textContent = 'Some selected programs have variable pricing. Online payment will proceed for fixed-priced items; an admin will confirm the variable items.';
+							}
+							paymentSummary.appendChild(n);
+						}
+					} else {
+						if (existing) existing.remove();
+					}
+				}
+			} catch(e) {}
+
+			// Inform the user appropriately
+			if (anyVaries) {
+				if (typeof Swal !== 'undefined') {
+					if (anyVaries && !anyFixed) {
+						Swal.fire({
+							icon: 'info',
+							title: 'Price varies',
+							text: 'All selected programs have variable pricing. An administrator will contact you to confirm pricing before payment.',
+							toast: true,
+							position: 'top-end',
+							timer: 6000,
+							showConfirmButton: false
+						});
+					} else {
+						Swal.fire({
+							icon: 'info',
+							title: 'Mixed selection',
+							text: 'Some selected programs have variable pricing. Online payment will proceed for fixed-priced items.',
+							toast: true,
+							position: 'top-end',
+							timer: 6000,
+							showConfirmButton: false
+						});
+					}
+				} else {
+					console.log('Selected program(s) include variable-priced items; admin will contact the student.');
+				}
+			}
+		}
+
+			// Expose compute globally so other scripts (mobile panel, debug helpers) can call or wrap it
+			try { window.compute = compute; } catch(e) { /* ignore */ }
+
+			// expose last computed state for use on submit
+			try { window.hqPaymentState = { anyVaries: anyVaries, anyFixed: anyFixed, subtotalFixed: subtotalFixed, total: total }; } catch(e) {}
+
+		// Attach listeners
+		checkboxes.forEach(cb => cb.addEventListener('change', compute));
+		// init
+		compute();
+	}catch(e){/* ignore */}
+});
+</script>
+<script>
+// Client-side validation for Post-UTME fields
+document.addEventListener('DOMContentLoaded', function(){
+	var form = document.getElementById('postutmeForm');
+	if (!form) return;
+	form.addEventListener('submit', function(e){
+		try {
+			var errors = [];
+			// overall JAMB score
+			var jambScoreEl = form.querySelector('input[name="jamb_score"]');
+			if (jambScoreEl) {
+				var v = jambScoreEl.value.trim();
+				if (v !== '' && (isNaN(v) || Number(v) < 0 || Number(v) > 100)) errors.push('JAMB score must be a number between 0 and 100.');
+			}
+			// per-subject checks
+			for (var i=1;i<=4;i++){
+				var subj = (form.querySelector('input[name="jamb_subj_' + i + '"]') || {}).value || '';
+				var sc = (form.querySelector('input[name="jamb_score_' + i + '"]') || {}).value || '';
+				if (i === 1) {
+					if (!/eng/i.test(subj)) errors.push('JAMB Subject 1 must be English.');
+				} else {
+					if (!subj.trim()) errors.push('Please provide JAMB subject ' + i + '.');
+				}
+				if (sc.trim() !== '') {
+					if (isNaN(sc) || Number(sc) < 0 || Number(sc) > 100) errors.push('JAMB subject ' + i + ' score must be a number between 0 and 100.');
+				}
+			}
+
+			// WAEC required subjects check: English Language, Mathematics, Civic Education
+			var found = {english:false, mathematics:false, civic:false};
+			for (var j=1;j<=8;j++){
+				var s = (form.querySelector('input[name="olevel_subj_' + j + '"]') || {}).value || '';
+				var low = s.toLowerCase();
+				if (/eng/i.test(low)) found.english = true;
+				if (/math|mth/i.test(low)) found.mathematics = true;
+				if (/civic/i.test(low)) found.civic = true;
+			}
+			if (!found.english) errors.push('O\'Level must include English Language.');
+			if (!found.mathematics) errors.push('O\'Level must include Mathematics.');
+			if (!found.civic) errors.push('O\'Level must include Civic Education.');
+
+			if (errors.length) {
+				e.preventDefault();
+				var msg = errors.join('<br>');
+				if (typeof Swal !== 'undefined') {
+					Swal.fire({icon:'error',title:'Please fix the following',html: msg,customClass:{popup:'hq-swal'}});
+				} else {
+					alert(errors.join('\n'));
+				}
+				return false;
+			}
+		} catch(err) {
+			console.error(err);
+		}
+	});
+});
+</script>
+<!-- Mobile payment summary and computed-style logger -->
+<style>
+/* Mobile payment summary panel */
+#mobilePaymentSummary {
+	display: none;
+	position: fixed;
+	left: 12px;
+	right: 12px;
+	bottom: 12px;
+	background: #fff;
+	border-radius: 10px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+	z-index: 1500;
+	padding: 12px;
+	max-height: 60vh;
+	overflow: auto;
+}
+#mobilePaymentSummary .mps-close { position:absolute; right:12px; top:8px; background:transparent; border:none; font-size:18px; cursor:pointer }
+@media (min-width: 901px) {
+	#mobilePaymentSummary { display:none; }
+}
+</style>
+
+<script>
+// Passport file input wiring (support main and post-UTME inputs)
+document.addEventListener('DOMContentLoaded', function(){
+	// main passport input (regular mode)
+	var mainBtn = document.querySelector('.main-passport-input button');
+	var mainInput = document.getElementById('passport_input');
+	var mainChosen = document.getElementById('passport_chosen');
+	if (mainBtn && mainInput) {
+		mainBtn.addEventListener('click', function(){ mainInput.click(); });
+		mainInput.addEventListener('change', function(){ if (mainInput.files && mainInput.files.length) mainChosen.textContent = mainInput.files[0].name; else mainChosen.textContent = 'No file chosen'; });
+	}
+
+	// post-UTME passport input (inside post block)
+	var postBtn = document.querySelector('.post-passport-input button');
+	var postInput = document.getElementById('passport_input_post');
+	var postChosen = document.getElementById('passport_chosen_post');
+	if (postBtn && postInput) {
+		postBtn.addEventListener('click', function(){ postInput.click(); });
+		postInput.addEventListener('change', function(){ if (postInput.files && postInput.files.length) postChosen.textContent = postInput.files[0].name; else postChosen.textContent = 'No file chosen'; });
+	}
+});
+</script>
+
+<div id="mobilePaymentSummary" aria-hidden="true">
+	<button class="mps-close" aria-label="Close">✕</button>
+	<div class="mps-content"></div>
+</div>
+
+<script>
+// Computed-style logger for debugging: logs computed values and attempts to find matching stylesheet rules
+function hqLogComputedStyles() {
+	const selectors = ['.container.register-layout', '.register-layout .register-main', '.register-layout .register-sidebar', '.payment-summary', '.why-box .why-stats'];
+	selectors.forEach(sel => {
+		const el = document.querySelector(sel);
+		console.groupCollapsed('Computed style for ' + sel);
+		if (!el) { console.log('Element not found: ' + sel); console.groupEnd(); return; }
+		const cs = getComputedStyle(el);
+		console.log('inline style:', el.style && el.style.cssText);
+		console.log('display:', cs.getPropertyValue('display'));
+		console.log('width:', cs.getPropertyValue('width'));
+		console.log('max-width:', cs.getPropertyValue('max-width'));
+		console.log('grid-template-columns:', cs.getPropertyValue('grid-template-columns'));
+		console.log('flex:', cs.getPropertyValue('flex'));
+		console.log('box-sizing:', cs.getPropertyValue('box-sizing'));
+		// Try to find rules in document stylesheets that mention the selector or class
+		try {
+			const rulesFound = [];
+			Array.from(document.styleSheets).forEach(sheet => {
+				try {
+					Array.from(sheet.cssRules || []).forEach(r => {
+						if (r.selectorText && r.selectorText.indexOf(sel.replace(/\s+/g,' ')) !== -1) rulesFound.push(r.cssText);
+						// also match class fragments
+						if (r.selectorText && sel.split(' ').some(s => s.startsWith('.') && r.selectorText.indexOf(s) !== -1)) rulesFound.push(r.cssText);
+					});
+				} catch(e) { /* cross-origin or inaccessible stylesheet */ }
+			});
+			if (rulesFound.length) { console.log('Matching rules (first 20):', rulesFound.slice(0,20)); }
+			else { console.log('No matching stylesheet rules found (or CORS blocked).'); }
+		} catch(e) { console.log('Error scanning stylesheets:', e); }
+		console.groupEnd();
+	});
+}
+
+// Add a console-friendly helper
+window.hqLogComputedStyles = hqLogComputedStyles;
+
+// Mobile payment summary: clone payment-summary content into the mobile panel and show when programs are tapped (mobile only)
+function initMobilePaymentSummary() {
+	const mobile = document.getElementById('mobilePaymentSummary');
+	const mpsContent = mobile.querySelector('.mps-content');
+	const paymentSummary = document.querySelector('.payment-summary');
+	const closeBtn = mobile.querySelector('.mps-close');
+	function updateMobileContent() {
+		if (!paymentSummary) return;
+		mpsContent.innerHTML = paymentSummary.innerHTML;
+	}
+	// show panel
+	function showMobilePanel() {
+		updateMobileContent();
+		mobile.style.display = 'block';
+		mobile.setAttribute('aria-hidden','false');
+	}
+	function hideMobilePanel() {
+		mobile.style.display = 'none';
+		mobile.setAttribute('aria-hidden','true');
+	}
+	closeBtn.addEventListener('click', hideMobilePanel);
+
+	// show when any program checkbox or label clicked on small screens
+	function attachShowHandlers() {
+		const programInputs = Array.from(document.querySelectorAll('input[name="programs[]"]'));
+		const programLabels = Array.from(document.querySelectorAll('.program-label'));
+		const showIfMobile = (e) => {
+			if (window.innerWidth <= 900) {
+				// small delay to let compute update values
+				setTimeout(showMobilePanel, 120);
+			}
+		};
+		programInputs.forEach(i => i.addEventListener('change', showIfMobile));
+		programLabels.forEach(l => l.addEventListener('click', showIfMobile));
+	}
+
+	// keep mobile content in sync when compute() runs: override compute to also update mobile panel if visible
+	const originalCompute = window.compute;
+	if (typeof originalCompute === 'function') {
+		window.compute = function(){
+			try { originalCompute(); } catch(e){}
+			try { if (mobile.style.display !== 'none') updateMobileContent(); } catch(e){}
+		};
+	}
+
+	attachShowHandlers();
+}
+
+// Initialize mobile summary after DOM ready
+document.addEventListener('DOMContentLoaded', function(){
+	try { initMobilePaymentSummary(); } catch(e) { console.warn('Mobile payment summary init failed', e); }
+});
+</script>
+<script>
+// Attach submit handlers to both forms (regular and postutme). Post-UTME always forces bank flow.
+(function(){
+	function attachSubmit(form){
+		if (!form) return;
+		form.addEventListener('submit', function(e){
+			try { if (typeof window.compute === 'function') window.compute(); } catch(err){}
+			var state = window.hqPaymentState || {};
+			// target method inputs inside this form (safer than global id)
+			var methodInputs = form.querySelectorAll('input[name="method"]');
+			// If this is the Post-UTME form, force bank flow on submit so the server creates a Post-UTME payment (PTU ref)
+			if (form.classList && form.classList.contains('form-postutme')) {
+				if (methodInputs && methodInputs.length) methodInputs.forEach(function(mi){ try{ mi.value = 'bank'; }catch(e){} });
+				// allow normal submission
+				return;
+			}
+
+			// Regular registrations: prefer online when there are fixed-priced items
+			if (methodInputs && methodInputs.length) {
+				var val = (state && state.anyFixed) ? 'paystack' : 'bank';
+				methodInputs.forEach(function(mi){ try{ mi.value = val; }catch(e){} });
+			}
+
+			// If we're about to go to online payment, show a brief confirm so the user knows they'll be redirected
+			var currentMethod = (methodInputs && methodInputs[0]) ? methodInputs[0].value : null;
+			if (currentMethod === 'paystack') {
+				e.preventDefault();
+				// Ensure the server receives which form was submitted. programmatic form.submit()
+				// does not include the clicked submit button's name/value. Inject a hidden
+				// form_action input derived from registration_type (or fallback to 'regular').
+				function submitWithAction() {
+					try {
+						var btn = form.querySelector('button[type="submit"][name="form_action"]');
+						var faVal = btn ? btn.value : (form.querySelector('input[name="registration_type"]') ? form.querySelector('input[name="registration_type"]').value : 'regular');
+						// remove any existing injected marker to avoid duplicates
+						var prev = form.querySelector('input.__hq_injected_form_action');
+						if (prev) prev.parentNode.removeChild(prev);
+						var hidden = document.createElement('input');
+						hidden.type = 'hidden';
+						hidden.name = 'form_action';
+						hidden.value = faVal;
+						hidden.className = '__hq_injected_form_action';
+						form.appendChild(hidden);
+					} catch (err) { /* ignore */ }
+					form.submit();
+				}
+				if (typeof Swal !== 'undefined') {
+					Swal.fire({ title: 'Proceed to payment', text: 'You will be redirected to a secure payment page to complete payment for the fixed-priced programs. Continue?', icon: 'question', showCancelButton: true }).then(function(res){ if (res.isConfirmed) submitWithAction(); });
+				} else {
+					if (confirm('You will be redirected to a secure payment page. Continue?')) submitWithAction();
+				}
+			}
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', function(){
+		attachSubmit(document.getElementById('regularForm'));
+		attachSubmit(document.getElementById('postutmeForm'));
+	});
+})();
+</script>
+<script>
+// Program label selection visuals
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		document.querySelectorAll('.program-label').forEach(label => {
+			const input = label.querySelector('input[type="checkbox"]');
+			if (!input) return;
+			// sync initial state
+			if (input.checked) label.classList.add('selected');
+			input.addEventListener('change', function(){
+				if (this.checked) label.classList.add('selected'); else label.classList.remove('selected');
+			});
+			// also toggle when label clicked
+			label.addEventListener('click', function(e){
+				// let input handle it normally
+				setTimeout(()=>{ if (input.checked) label.classList.add('selected'); else label.classList.remove('selected'); }, 30);
+			});
+		});
+	}catch(e){}
+});
+
+// Desktop/Mobile: show the floating payment panel when a program with a fixed price is selected
+function programClickShowsPanel() {
+	try{
+		const mobile = document.getElementById('mobilePaymentSummary');
+		const paymentSummary = document.querySelector('.payment-summary');
+		if (!mobile || !paymentSummary) return;
+
+		function maybeShow(e) {
+			const target = e.target.closest('.program-label') || e.target.closest('label');
+			if (!target) return;
+			// detect if program has a fixed price (not 'Varies')
+			const priceEl = target.querySelector('.program-price');
+			const txt = priceEl ? priceEl.textContent || '' : '';
+			if (/Varies/i.test(txt)) return; // don't show for 'Varies'
+			// update content and show
+			const mpsContent = mobile.querySelector('.mps-content');
+			mpsContent.innerHTML = paymentSummary.innerHTML;
+			mobile.style.display = 'block';
+			mobile.setAttribute('aria-hidden','false');
+		}
+
+		document.querySelectorAll('.program-label').forEach(l => {
+			l.addEventListener('click', maybeShow);
+		});
+		document.querySelectorAll('input[name="programs[]"]').forEach(i => i.addEventListener('change', maybeShow));
+	}catch(e){ console.warn(e); }
+}
+document.addEventListener('DOMContentLoaded', programClickShowsPanel);
+</script>
+<script>
+// FAQ read-more toggle: attach to buttons with .faq-readmore
+document.addEventListener('DOMContentLoaded', function(){
+	try{
+		Array.from(document.querySelectorAll('.faq-readmore')).forEach(btn => {
+			btn.addEventListener('click', function(e){
+				const target = this.closest('.faq-card') || document.querySelector(this.getAttribute('data-target'));
+				if (!target) return;
+				const clamped = target.querySelector('.faq-clamped');
+				if (!clamped) return;
+				const expanded = clamped.classList.toggle('faq-clamped--expanded');
+				this.textContent = expanded ? 'Show less' : 'Read more';
+			});
+		});
+	}catch(e){/* ignore */}
+});
+</script>
+<!-- Debug overrides removed: styles are consolidated into public/css/register.css -->
+<script>
+// Choice screen + show selected form
+document.addEventListener('DOMContentLoaded', function(){
+	const chooseRegular = document.getElementById('chooseRegular');
+	const choosePost = document.getElementById('choosePost');
+	const regularForm = document.getElementById('regularForm');
+	const postForm = document.getElementById('postutmeForm');
+	const choiceContainer = document.querySelector('.choice-container');
+
+	function showForm(type) {
+		if (type === 'regular') {
+			if (choiceContainer) choiceContainer.style.display = 'none';
+			if (regularForm) regularForm.style.display = 'block';
+			if (postForm) postForm.style.display = 'none';
+			// scroll into view
+			if (regularForm) regularForm.scrollIntoView({behavior:'smooth'});
+		} else if (type === 'postutme') {
+			if (choiceContainer) choiceContainer.style.display = 'none';
+			if (postForm) postForm.style.display = 'block';
+			if (regularForm) regularForm.style.display = 'none';
+			if (postForm) postForm.scrollIntoView({behavior:'smooth'});
+		}
+	}
+
+	if (chooseRegular) chooseRegular.addEventListener('click', function(e){
+		e.preventDefault();
+		showForm('regular');
+		// Persist selection in URL without reloading
+		try {
+			if (window.history && history.replaceState) {
+				const url = new URL(window.location);
+				url.searchParams.set('type','regular');
+				history.replaceState(null, '', url.toString());
+			}
+		} catch(_) {}
+	});
+	if (choosePost) choosePost.addEventListener('click', function(){ showForm('postutme'); });
+
+	// Go-back / Change Type buttons inside forms
+	try {
+		var backBtns = document.querySelectorAll('.go-back');
+		backBtns.forEach(function(b){ b.addEventListener('click', function(){ if (choiceContainer) choiceContainer.style.display = 'flex'; if (regularForm) regularForm.style.display = 'none'; if (postForm) postForm.style.display = 'none'; if (choiceContainer) choiceContainer.scrollIntoView({behavior:'smooth'}); }); });
+	} catch(e) {}
+
+	// allow direct linking to a form via query param (e.g. ?type=postutme)
+	try {
+		var urlParams = new URLSearchParams(window.location.search);
+		var t = urlParams.get('type');
+		if (t === 'postutme') showForm('postutme');
+		else if (t === 'regular') showForm('regular');
+	} catch(e) {}
+});
+</script>
