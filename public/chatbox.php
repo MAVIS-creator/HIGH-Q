@@ -29,6 +29,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Handle attachments[] (allow images + pdf/docx)
         $savedAttachUrls = [];
+        $attachmentsTableExists = null;
         if (!empty($_FILES['attachments'])) {
             $files = $_FILES['attachments'];
             $uploadLog = __DIR__ . '/../storage/logs/chat_uploads.log';
@@ -99,8 +100,10 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $ins = $pdo->prepare('INSERT INTO chat_attachments (message_id, file_url, original_name, mime_type, created_at) VALUES (?, ?, ?, ?, NOW())');
                     $ins->execute([$messageId, $attach['url'], $attach['orig'], $attach['mime']]);
+                    $attachmentsTableExists = true;
                 } catch (Throwable $_) {
                     // ignore if table/columns missing
+                    $attachmentsTableExists = false;
                 }
             }
         }
@@ -108,7 +111,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id=:id');
         $u->execute([':id' => $thread_id]);
 
-        jsonResponse(['status' => 'ok', 'thread_id' => $thread_id]);
+        jsonResponse(['status' => 'ok', 'thread_id' => $thread_id, 'attachments' => $savedAttachUrls, 'attachments_table' => $attachmentsTableExists]);
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
     }
@@ -466,9 +469,14 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         <div id="chatLanding" style="display:flex;flex-direction:column;gap:12px;padding:18px 20px;align-items:center;justify-content:center;border-bottom:1px solid rgba(0,0,0,0.06)">
             <div style="font-weight:700;color:#333;display:flex;align-items:center;gap:8px"><i class="bx bx-chat"></i> Welcome to Support</div>
             <div id="landingHint" style="font-size:13px;color:#555;text-align:center">Start a new chat or resume the previous conversation.</div>
-            <div style="display:flex;gap:10px">
-                <button id="resumeChatBtn" class="start-btn" style="background:#fff;color:#333;border:1px solid #ddd">Resume Previous</button>
-                <button id="startNewBtn" class="start-btn">Start New Chat</button>
+            <div class="landing-actions">
+                <button id="resumeChatBtn" class="btn-ghost">Resume Previous</button>
+                <button id="startNewBtn" class="btn-solid">Start New Chat</button>
+            </div>
+            <div class="landing-links">
+                <i class="bx bx-book-open"></i> <a href="contact.php#faq" target="_blank" rel="noopener">FAQs</a>
+                <span style="color:#ccc">|</span>
+                <i class="bx bx-group"></i> <a href="community.php" target="_blank" rel="noopener">Community</a>
             </div>
         </div>
 
