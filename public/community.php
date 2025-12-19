@@ -212,7 +212,9 @@ try {
         .filters .form-input[type="search"] { flex:2; min-width:200px; }
         .filters .btn { flex:0 0 auto; }
 
-        @media (max-width:1100px) { .community-grid { grid-template-columns:1fr; } .community-grid aside { order:-1; } .community-grid aside .card { position:relative; top:auto; } }
+        .forum-reply-form { display:none; margin:10px 0 0 48px; border:1px solid #e2e8f0; border-radius:12px; padding:12px; background:#fff; }
+        .forum-reply-form.active { display:block; }
+        @media (max-width:1100px) { .community-grid { grid-template-columns:1fr; } .community-grid aside { order:-1; } .community-grid aside .card { position:relative; top:auto; } .forum-reply-form { margin-left:0; } }
         @media (max-width: 768px) {
           .forum-question { padding:12px; }
           .post-header { align-items:flex-start; gap:10px; }
@@ -338,8 +340,8 @@ try {
       var form = document.querySelector('.forum-reply-form[data-qid="' + id + '"]');
       if (!form) return;
       form.querySelector('input[name="parent_id"]').value = parent;
-      var isHidden = (form.style.display === 'none' || form.style.display === '');
-      form.style.display = isHidden ? 'block' : 'none';
+      var isHidden = !form.classList.contains('active');
+      form.classList.toggle('active');
       if (isHidden) form.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
