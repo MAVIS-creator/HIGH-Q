@@ -449,61 +449,8 @@ $totalPages = (int)ceil($total / $perPage);
     </div>
     <script>window.__PAYMENTS_CSRF = '<?= generateToken('payments_form') ?>';</script>
     
-    <div class="payments-filter-section">
-        <h3><i class="bx bx-filter"></i> Filter Payments</h3>
-        <form method="get" action="index.php?pages=payments" class="payment-filters">
-            <input type="hidden" name="pages" value="payments">
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="statusFilter">Status</label>
-                    <select id="statusFilter" name="status">
-                        <option value=""<?= $statusFilter===''? ' selected':'' ?>>All Statuses</option>
-                        <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
-                        <option value="sent"<?= $statusFilter==='sent'? ' selected':'' ?>>Sent</option>
-                        <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
-                        <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="from_date">From Date</label>
-                    <input type="date" id="from_date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="to_date">To Date</label>
-                    <input type="date" id="to_date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="gateway">Gateway</label>
-                    <input type="text" id="gateway" name="gateway" placeholder="e.g. paystack, stripe" value="<?= htmlspecialchars($_GET['gateway'] ?? '') ?>">
-                </div>
-            </div>
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="ref">Reference</label>
-                    <input type="text" id="ref" name="ref" placeholder="Payment reference" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="user_email">Email/User</label>
-                    <input type="text" id="user_email" name="user_email" placeholder="User email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>">
-                </div>
-                
-                <div class="filter-actions">
-                    <button type="submit" class="btn-filter">
-                        <i class="bx bx-search"></i> Apply Filters
-                    </button>
-                    <a href="index.php?pages=payments" class="btn-clear">
-                        <i class="bx bx-x"></i> Clear
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
+    <!-- FILTER SECTION REMOVED - AWAITING CONFIRMATION -->
+    
     <table class="roles-table">
     <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
