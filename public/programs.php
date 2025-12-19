@@ -32,10 +32,8 @@
 							<span class="tag">Sciences</span>
 							<span class="tag">Arts</span>
 						</div>
-						<p class="duration">Duration: 4-6 months</p>
-						<a href="program.php?slug=jamb-preparation" class="btn-primary">Learn More</a>
-					</div>
-				</article>
+				<p class="duration" style="color: #536387; font-weight: 600;">Duration: 4-6 months</p>
+				<a href="<?= app_url('program.php?slug=jamb-post-utme') ?>" class="btn-primary">Learn More</a>
 
 				<article class="program-card tight-gap">
 					<div class="program-card-head">
@@ -50,10 +48,7 @@
 							<span class="tag">Practicals</span>
 						</div>
 					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 6-12 months</p>
-						<a href="program.php?slug=waec-preparation" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
+				<a href="<?= app_url('register.php') ?>" class="btn-primary">Enroll Now</a>
 				<article class="program-card tight-gap">
 					<div class="program-card-head">
 						<div class="program-icon program-neco"><i class="bx bx-book-open"></i></div>
@@ -67,10 +62,7 @@
 							<span class="tag">Study Materials</span>
 						</div>
 					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 6-12 months</p>
-						<a href="program.php?slug=neco-preparation" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
+				<a href="<?= app_url('register.php') ?>" class="btn-primary">Enroll Now</a>
 				<article class="program-card">
 					<div class="program-card-head">
 						<div class="program-icon"><i class="bx bx-award"></i></div>
@@ -84,10 +76,7 @@
 							<span class="tag">Interview Prep</span>
 						</div>
 					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 2-4 months</p>
-						<a href="program.php?slug=post-utme" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
+				<a href="<?= app_url('post-utme.php') ?>" class="btn-primary">Register Now</a>
 				<article class="program-card">
 					<div class="program-card-head">
 						<div class="program-icon"><i class="bx bx-star"></i></div>
@@ -101,10 +90,7 @@
 							<span class="tag">Subject Focus</span>
 						</div>
 					<p class="duration" style="color: #536387; font-weight: 600;">Duration: Flexible</p>
-						<a href="program.php?slug=special-tutorials" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
+				<a href="<?= app_url('register.php') ?>" class="btn-primary">Enroll Now</a>
 				<article class="program-card tight-gap">
 					<div class="program-card-head">
 						<div class="program-icon program-computer"><i class="bx bx-laptop"></i></div>
@@ -118,10 +104,7 @@
 							<span class="tag">Programming</span>
 						</div>
 					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 3-6 months</p>
-						<a href="program.php?slug=computer-training" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
+				<a href="<?= app_url('program.php?slug=cbt') ?>" class="btn-primary">Learn More</a>
 			</div>
 	</div>
 </section>
