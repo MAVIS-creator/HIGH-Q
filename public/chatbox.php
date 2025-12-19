@@ -189,6 +189,15 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             box-sizing: border-box;
         }
 
+        .landing-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+        .landing-actions .btn-ghost { border:1px solid #e2e8f0; background:#fff; color:#111; padding:10px 14px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.15s ease; box-shadow:0 4px 10px rgba(0,0,0,0.04); }
+        .landing-actions .btn-ghost:hover { border-color:var(--hq-yellow-dark); box-shadow:0 6px 16px rgba(0,0,0,0.08); transform:translateY(-1px); }
+        .landing-actions .btn-solid { border:none; background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); color:#111; padding:10px 16px; border-radius:10px; font-weight:800; font-size:13px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,0.16); transition:all 0.15s ease; }
+        .landing-actions .btn-solid:hover { filter:brightness(0.97); transform:translateY(-1px); }
+        .landing-links { display:flex; gap:12px; font-size:12px; color:#444; align-items:center; justify-content:center; margin-top:6px; }
+        .landing-links a { color:var(--hq-yellow-dark); font-weight:700; text-decoration:none; }
+        .landing-links a:hover { text-decoration:underline; }
+
         .chat-header {
             padding: 18px 20px;
             background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%);
