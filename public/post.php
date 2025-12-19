@@ -5,11 +5,64 @@ require_once __DIR__ . '/config/functions.php';
 $postId = (int)($_GET['id'] ?? 0);
 if (!$postId) { header('Location: index.php'); exit; }
 
-// fetch post
-$stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
+// Inspect posts table to safely join optional columns (author_id/created_by/status/published_at)
+try {
+  $colStmt = $pdo->prepare("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts'");
+  $colStmt->execute();
+  $postColumns = $colStmt->fetchAll(PDO::FETCH_COLUMN);
+} catch (Throwable $e) {
+  $postColumns = [];
+}
+
+$hasAuthorId    = in_array('author_id', $postColumns, true);
+$hasCreatedBy   = in_array('created_by', $postColumns, true);
+$hasStatus      = in_array('status', $postColumns, true);
+$hasPublishedAt = in_array('published_at', $postColumns, true);
+$hasFeaturedImg = in_array('featured_image', $postColumns, true);
+$hasSlug        = in_array('slug', $postColumns, true);
+
+$authorJoinCol = $hasCreatedBy ? 'created_by' : ($hasAuthorId ? 'author_id' : null);
+
+// fetch post with author name when available
+$postSelect = 'SELECT p.*';
+$postJoin = '';
+if ($authorJoinCol) {
+  $postSelect .= ', u.name AS author_name';
+  $postJoin = ' LEFT JOIN users u ON u.id = p.' . $authorJoinCol;
+}
+
+$postSql = $postSelect . ' FROM posts p' . $postJoin . ' WHERE p.id = ? LIMIT 1';
+$stmt = $pdo->prepare($postSql);
 $stmt->execute([$postId]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$post) { echo "<p>Post not found.</p>"; exit; }
+
+$authorName = trim($post['author_name'] ?? $post['author'] ?? '');
+if ($authorName === '') { $authorName = 'Admin Team'; }
+$publishedDisplay = $post['published_at'] ?? $post['created_at'];
+$shareUrl = app_url('post.php?id=' . urlencode($postId));
+$shareUrlEnc = urlencode($shareUrl);
+$shareTextEnc = urlencode(($post['title'] ?? 'Check this out') . ' — HIGH-Q');
+
+// recent posts (published where supported, excluding current)
+$recentPosts = [];
+try {
+  $recentSelect = 'SELECT p.id, p.title, p.created_at';
+  if ($hasPublishedAt) { $recentSelect .= ', p.published_at'; }
+  if ($hasSlug) { $recentSelect .= ', p.slug'; }
+  if ($hasFeaturedImg) { $recentSelect .= ', p.featured_image'; }
+  if ($authorJoinCol) { $recentSelect .= ', u.name AS author_name'; }
+
+  $recentSql = $recentSelect . ' FROM posts p';
+  if ($authorJoinCol) { $recentSql .= ' LEFT JOIN users u ON u.id = p.' . $authorJoinCol; }
+  $recentSql .= ' WHERE p.id <> ?';
+  if ($hasStatus) { $recentSql .= " AND (p.status = 'published' OR p.status IS NULL)"; }
+  $recentSql .= ' ORDER BY ' . ($hasPublishedAt ? 'p.published_at' : 'p.created_at') . ' DESC LIMIT 5';
+
+  $rpStmt = $pdo->prepare($recentSql);
+  $rpStmt->execute([$postId]);
+  $recentPosts = $rpStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) { $recentPosts = []; }
 
 // fetch approved comments (top-level)
 $cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
@@ -220,6 +273,55 @@ require_once __DIR__ . '/includes/header.php';
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
   }
 
+  .post-share {
+    margin: 10px 0 14px;
+    padding: 12px;
+    border: 1px dashed #e6eaf3;
+    border-radius: 12px;
+    background: #f9fbff;
+    display: grid;
+    gap: 8px;
+  }
+
+  .share-label {
+    font-weight: 700;
+    color: var(--hq-black);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #e6eaf3;
+    background: #ffffff;
+    color: var(--hq-black);
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+
+  .share-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+    border-color: var(--hq-blue-white);
+  }
+
+  .share-btn.copy-link {
+    background: #f4f6fb;
+  }
+
   .post-thumb {
     margin-bottom: 14px;
     border-radius: 10px;
@@ -254,6 +356,8 @@ require_once __DIR__ . '/includes/header.php';
 
   .post-aside {
     position: relative;
+    display: grid;
+    gap: 14px;
   }
 
   .post-toc {
@@ -290,6 +394,75 @@ require_once __DIR__ . '/includes/header.php';
 
   .post-toc a:hover {
     color: var(--hq-yellow);
+  }
+
+  .recent-card {
+    position: sticky;
+    top: 18px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e7ecf5;
+    padding: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+    display: grid;
+    gap: 10px;
+  }
+
+  .recent-head {
+    font-weight: 800;
+    margin: 0;
+    font-size: 1rem;
+    color: var(--hq-black);
+  }
+
+  .recent-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .recent-item {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .recent-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f4f6fb;
+    display: grid;
+    place-items: center;
+    border: 1px solid #e7ecf5;
+  }
+
+  .recent-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .recent-title {
+    font-weight: 700;
+    color: var(--hq-black);
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .recent-title:hover {
+    color: var(--hq-blue-white);
+  }
+
+  .recent-meta {
+    color: var(--hq-gray);
+    font-size: 0.9rem;
+    margin-top: 4px;
   }
 
   .toc-toggle {
@@ -546,6 +719,10 @@ require_once __DIR__ . '/includes/header.php';
 
     .toc-toggle {
       display: inline-flex;
+    }
+
+    .recent-card {
+      position: static;
     }
   }
 
