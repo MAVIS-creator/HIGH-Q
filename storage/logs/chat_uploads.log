@@ -3,3 +3,7 @@
 2025-12-19T18:29:06+01:00 incoming $_FILES: {"name":["test_passport.jpg"],"full_path":["test_passport.jpg"],"type":["image\/jpeg"],"tmp_name":["C:\\xampp\\tmp\\phpC1A3.tmp"],"error":[0],"size":[85]}
 2025-12-19T18:29:41+01:00 incoming $_FILES: {"name":["test_passport.jpg"],"full_path":["test_passport.jpg"],"type":["image\/jpeg"],"tmp_name":["C:\\xampp\\tmp\\php4BA4.tmp"],"error":[0],"size":[85]}
 2025-12-19T18:29:41+01:00 loop idx=0 name=test_passport.jpg type_raw=image/jpeg size=85
+2025-12-19T18:30:42+01:00 incoming $_FILES: {"name":["test_passport.jpg"],"full_path":["test_passport.jpg"],"type":["image\/jpeg"],"tmp_name":["C:\\xampp\\tmp\\php3C8D.tmp"],"error":[0],"size":[85]}
+2025-12-19T18:30:42+01:00 loop idx=0 name=test_passport.jpg type_raw=image/jpeg size=85
+2025-12-19T18:30:42+01:00 getimagesize failed for test_passport.jpg
+2025-12-19T18:30:42+01:00 invalid file test_passport.jpg type=image/jpeg

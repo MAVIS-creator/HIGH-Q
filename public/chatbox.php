@@ -56,14 +56,18 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 $valid = false;
                 if (strpos($type, 'image/') === 0) {
                     // validate image by getimagesize
-                    if (@getimagesize($tmp) !== false) $valid = true;
+                    if (@getimagesize($tmp) !== false) {
+                        $valid = true;
+                    } else {
+                        try { @file_put_contents($uploadLog, date('c') . " getimagesize failed for {$files['name'][$i]}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+                    }
                 } elseif ($type === 'application/pdf') {
                     if (substr($magic, 0, 4) === '%PDF') $valid = true;
                 } elseif ($type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                     // DOCX are zip packages; check for PK.. signature
                     if (substr($magic, 0, 2) === "PK") $valid = true;
                 }
-                if (!$valid) continue;
+                if (!$valid) { try { @file_put_contents($uploadLog, date('c') . " invalid file {$files['name'][$i]} type={$type}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {} continue; }
 
                 $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
                 $nameSafe = bin2hex(random_bytes(8)) . '.' . $ext;
