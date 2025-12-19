@@ -747,7 +747,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                         appendMessage(name, message, false, false, [], true);
                         
                         // Show "waiting for agent" system message
-                        appendMessage('', '⏳ Please wait while we connect you with an agent. Feel free to add more details while you wait.', false, true, [], false);
+                        appendMessage('', '<i class="bx bx-loader-alt bx-spin"></i> Please wait while we connect you with an agent. Feel free to add more details while you wait.', false, true, [], false);
                         
                         // Start polling for messages
                         getMessages();
