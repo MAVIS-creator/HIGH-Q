@@ -222,11 +222,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (session_status() !== PHP_SESSION_ACTIVE) session_start();
             $_SESSION['last_payment_id'] = $paymentId;
             $_SESSION['last_payment_reference'] = $reference;
-            if (function_exists('app_url')) {
-                $redirect = app_url('pay/' . urlencode($reference));
-            } else {
-                $redirect = 'payments_wait.php?ref=' . urlencode($reference);
-            }
+            // Always use payments_wait to avoid missing /pay route on some hosts
+            $redirect = function_exists('app_url')
+                ? app_url('payments_wait.php?ref=' . urlencode($reference))
+                : 'payments_wait.php?ref=' . urlencode($reference);
             header('Location: ' . $redirect);
             exit;
         } catch (Exception $e) {
