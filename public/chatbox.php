@@ -208,6 +208,27 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
         .landing-links a { color:var(--hq-yellow-dark); font-weight:700; text-decoration:none; }
         .landing-links a:hover { text-decoration:underline; }
 
+        /* Chatbot Panel Styles */
+        .chatbot-panel { width:100%; height:100%; background:#fff; display:flex; flex-direction:column; }
+        .chatbot-header { background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); padding:1.5rem; display:flex; align-items:center; gap:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        .back-btn { background:rgba(255,255,255,0.3); border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; font-size:20px; color:#111; }
+        .back-btn:hover { background:rgba(255,255,255,0.5); transform:scale(1.1); }
+        .chatbot-header h3 { margin:0; font-size:1.2rem; color:#111; display:flex; align-items:center; gap:0.5rem; }
+        .chatbot-header p { margin:0; font-size:0.85rem; color:rgba(17,17,17,0.7); }
+        .chatbot-content { flex:1; overflow-y:auto; padding:1.5rem; }
+        .faq-options { display:flex; flex-direction:column; gap:0.75rem; }
+        .faq-option { background:#fff; border:2px solid #f0f0f0; border-radius:12px; padding:1rem; display:flex; align-items:center; gap:1rem; cursor:pointer; transition:all 0.2s ease; text-align:left; font-size:0.95rem; }
+        .faq-option i { font-size:24px; color:var(--hq-yellow); flex-shrink:0; }
+        .faq-option span { color:#333; font-weight:500; }
+        .faq-option:hover { background:#fffbf0; border-color:var(--hq-yellow); transform:translateX(4px); }
+        .chatbot-answer { padding:1rem; background:#f8f9fa; border-radius:12px; }
+        .answer-content { display:flex; gap:1rem; margin-bottom:1.5rem; padding:1rem; background:#fff; border-radius:8px; border-left:4px solid var(--hq-yellow); }
+        .bot-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .bot-avatar i { font-size:22px; color:#111; }
+        .answer-content p { margin:0; color:#333; line-height:1.6; font-size:0.95rem; }
+        .answer-actions { display:flex; gap:0.75rem; flex-wrap:wrap; }
+        .answer-actions button { flex:1; min-width:140px; }
+
         .chat-header {
             padding: 18px 20px;
             background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-dark) 100%);
