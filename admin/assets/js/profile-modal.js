@@ -6,7 +6,20 @@
 (function() {
     'use strict';
 
-    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/HIGH-Q/admin';
+    const ADMIN_BASE = (function(){
+        const raw = window.HQ_ADMIN_BASE || '';
+        try {
+            if (raw) {
+                const u = new URL(raw, window.location.origin);
+                return u.origin !== window.location.origin
+                    ? window.location.origin + u.pathname.replace(/\/$/, '')
+                    : u.origin + u.pathname.replace(/\/$/, '');
+            }
+        } catch (e) {}
+        // Fallback keeps subfolder path when header injected only HQ_ADMIN_PATH
+        const path = window.HQ_ADMIN_PATH || '/admin';
+        return window.location.origin + path.replace(/\/$/, '');
+    })();
     
     // Track original values for email/phone verification
     let originalEmail = '';
