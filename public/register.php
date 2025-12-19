@@ -30,6 +30,10 @@ $success = '';
 $form_fee = 1000; // ₦1,000 form processing
 $card_fee = 1500; // ₦1,500 card fee
 
+// Initialize variables to prevent undefined warnings in logs/redirect bodies
+$posted_reg_type = '';
+$registration_type = 'regular';
+
 // Load site settings to respect registration toggle (structured site_settings preferred)
 $siteSettings = [];
 try {
