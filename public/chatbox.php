@@ -31,6 +31,9 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $savedAttachUrls = [];
         if (!empty($_FILES['attachments'])) {
             $files = $_FILES['attachments'];
+            $uploadLog = __DIR__ . '/../storage/logs/chat_uploads.log';
+            if (!is_dir(dirname($uploadLog))) @mkdir(dirname($uploadLog), 0755, true);
+            try { @file_put_contents($uploadLog, date('c') . ' incoming $_FILES: ' . json_encode($files) . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
             $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             $uploadDir = __DIR__ . '/uploads/chat/';
             if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
@@ -75,6 +78,8 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                         $dl = function_exists('app_url') ? app_url('download_attachment.php?file=' . urlencode($nameSafe)) : ('download_attachment.php?file=' . urlencode($nameSafe));
                         $messageHtml .= '<br><a href="' . htmlspecialchars($dl, ENT_QUOTES, 'UTF-8') . '" target="_blank">' . htmlspecialchars($files['name'][$i]) . '</a>';
                     }
+                } else {
+                    try { @file_put_contents($uploadLog, date('c') . " move_uploaded_file failed for {$files['name'][$i]} tmp={$tmp}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
                 }
             }
         }
