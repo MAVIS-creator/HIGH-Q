@@ -39,6 +39,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
             $maxBytes = 100 * 1024 * 1024; // 100 MB
             for ($i = 0; $i < count($files['name']); $i++) {
+                try { @file_put_contents($uploadLog, date('c') . " loop idx={$i} name={$files['name'][$i]} type_raw={$files['type'][$i]} size={$files['size'][$i]}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
                 if (($files['error'][$i] ?? 1) !== UPLOAD_ERR_OK) continue;
                 $size = $files['size'][$i] ?? 0;
                 if ($size > $maxBytes) continue; // too large
