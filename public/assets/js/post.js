@@ -11,8 +11,15 @@
   const cancelReply = document.getElementById('cancelReply');
   const parentInput = document.getElementById('parent_id');
 
+  function updateCommentCounters(count) {
+    const n = typeof count === 'number' ? count : 0;
+    if (commentsCountEl) commentsCountEl.textContent = n;
+    const clone = document.getElementById('commentsCountClone');
+    if (clone) clone.textContent = n;
+  }
+
   function fetchComments() {
-  fetch('api/comments.php?post_id=' + encodeURIComponent(POST_ID))
+    fetch('api/comments.php?post_id=' + encodeURIComponent(POST_ID))
       .then(r => r.json())
       .then(data => {
         commentsList.innerHTML = '';
@@ -21,6 +28,7 @@
           const el = renderComment(c);
           commentsList.appendChild(el);
         });
+        updateCommentCounters(data.length);
       }).catch(() => { commentsList.innerHTML = '<p class="muted">Unable to load comments.</p>'; });
   }
 
