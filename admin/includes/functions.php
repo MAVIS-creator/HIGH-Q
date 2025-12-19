@@ -91,19 +91,12 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
 }
 
 /**
- * Return the configured application base URL.
- * Prefer APP_URL from environment (.env). If not set, compute from the current request.
+ * Compute canonical URL parts (scheme, host, project prefix like /HIGH-Q) once per request.
  */
-function app_url(string $path = ''): string {
-    // prefer explicit APP_URL from .env
-    $env = $_ENV['APP_URL'] ?? null;
-    if (!empty($env)) {
-        $base = rtrim($env, '/');
-        if ($path === '') return $base;
-        return $base . '/' . ltrim($path, '/');
-    }
+function hq_url_parts(): array {
+    static $parts = null;
+    if ($parts !== null) return $parts;
 
-    // fallback: derive from current request. Detect HTTPS from reverse proxy headers (ngrok, cloudflare, etc.)
     $scheme = 'http';
     if (
         (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
@@ -112,56 +105,94 @@ function app_url(string $path = ''): string {
     ) {
         $scheme = 'https';
     }
-    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'example.com');
-    $script = $_SERVER['SCRIPT_NAME'] ?? '';
 
-    // compute project base conservatively: if URL contains an 'admin' segment, assume project base is the path before 'admin'
-    $proj = '';
-    $parts = explode('/', trim($script, '/'));
-    $idx = array_search('admin', $parts, true);
-    if ($idx !== false) {
-        $proj = '/' . implode('/', array_slice($parts, 0, $idx));
-    } else {
-        $proj = rtrim(dirname(dirname($script)), '/');
-        if ($proj === '\\' || $proj === '.') $proj = '';
-    }
-    // Additional fallback: some server setups present the project path in REQUEST_URI but not in SCRIPT_NAME
-    // (for example when the app is accessed via http://localhost/HIGH-Q/... but SCRIPT_NAME is '/admin/...').
-    // If we didn't detect a project segment above, try extracting it from REQUEST_URI when '/admin' appears there.
-    if (empty($proj)) {
-        $req = $_SERVER['REQUEST_URI'] ?? '';
-        if (!empty($req)) {
-            $pos = strpos($req, '/admin');
-            if ($pos !== false && $pos > 0) {
-                $proj = substr($req, 0, $pos);
+    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
+
+    // Derive project prefix from filesystem vs document root to support subfolder installs (e.g., /HIGH-Q)
+    $docrootRaw = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $docrootNorm = $docrootRaw ? str_replace('\\', '/', rtrim($docrootRaw, '/\\')) : '';
+    $publicDirRaw = realpath(__DIR__ . '/../../public') ?: '';
+    $publicDirNorm = $publicDirRaw ? str_replace('\\', '/', $publicDirRaw) : '';
+
+    $projPrefix = '';
+    if ($docrootNorm !== '' && $publicDirNorm !== '') {
+        $docrootLower = strtolower($docrootNorm);
+        $publicLower = strtolower($publicDirNorm);
+        if (strpos($publicLower, $docrootLower) === 0) {
+            $relativePublic = ltrim(substr($publicDirNorm, strlen($docrootNorm)), '/');
+            $segments = $relativePublic !== '' ? explode('/', $relativePublic) : [];
+            if (!empty($segments) && strtolower(end($segments)) === 'public') {
+                array_pop($segments);
+            }
+            if (!empty($segments)) {
+                $projPrefix = '/' . implode('/', $segments);
             }
         }
-        // normalize
-        if ($proj === '/' || $proj === '\\') $proj = '';
     }
 
-    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
-    if ($path === '') return $base;
-    return $base . '/' . ltrim($path, '/');
+    // Fallback: infer from REQUEST_URI when SCRIPT_NAME/docroot are misleading
+    if ($projPrefix === '') {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $uri = is_string($uri) ? $uri : '';
+        $uriParts = $uri !== '' ? explode('/', trim($uri, '/')) : [];
+        if (!empty($uriParts)) {
+            $idx = array_search('admin', $uriParts, true);
+            if ($idx !== false && $idx > 0) {
+                $projPrefix = '/' . implode('/', array_slice($uriParts, 0, $idx));
+            } else {
+                $projectRootName = $publicDirNorm !== '' ? basename(dirname($publicDirNorm)) : '';
+                if ($projectRootName !== '' && strpos($uri, '/' . $projectRootName . '/') === 0) {
+                    $projPrefix = '/' . $projectRootName;
+                }
+            }
+        }
+    }
+
+    $parts = [$scheme, $host, $projPrefix];
+    return $parts;
 }
 
 /**
- * Return the admin base URL (app_url + /admin)
+ * Return the configured application base URL (public site).
+ * Prefer APP_URL from environment; otherwise derive from request so ngrok/local/prod and subfolders work.
+ */
+function app_url(string $path = ''): string {
+    $env = $_ENV['APP_URL'] ?? null;
+    if (!empty($env)) {
+        $base = rtrim($env, '/');
+        return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+    }
+
+    [$scheme, $host, $projPrefix] = hq_url_parts();
+    $base = $scheme . '://' . $host . $projPrefix . '/public';
+    return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+}
+
+/**
+ * Return the admin base URL (admin area lives alongside /public as /admin).
  */
 function admin_url(string $path = ''): string {
-    // Prefer explicit ADMIN_URL from .env when available (allows admin area to live on a different host/path)
     $env = $_ENV['ADMIN_URL'] ?? null;
     if (!empty($env)) {
         $base = rtrim($env, '/');
-        if ($path === '') return $base;
-        return $base . '/' . ltrim($path, '/');
+        return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
     }
 
-    // Fallback: derive from app_url
-    $base = rtrim(app_url(''), '/');
-    $adminBase = $base . '/admin';
-    if ($path === '') return $adminBase;
-    return $adminBase . '/' . ltrim($path, '/');
+    // If APP_URL is set, derive admin path from it by swapping /public for /admin (or appending /admin)
+    $envApp = $_ENV['APP_URL'] ?? null;
+    if (!empty($envApp)) {
+        $base = rtrim($envApp, '/');
+        if (preg_match('#/public$#', $base)) {
+            $base = preg_replace('#/public$#', '/admin', $base);
+        } else {
+            $base .= '/admin';
+        }
+        return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+    }
+
+    [$scheme, $host, $projPrefix] = hq_url_parts();
+    $base = $scheme . '://' . $host . $projPrefix . '/admin';
+    return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
 }
 
 /**
