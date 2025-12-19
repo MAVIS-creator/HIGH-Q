@@ -4,15 +4,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const raw = window.HQ_ADMIN_BASE || '';
         const path = window.HQ_ADMIN_PATH || '';
         try {
-            if (!raw) return window.location.origin + path;
-            const u = new URL(raw, window.location.origin);
-            if (u.origin !== window.location.origin) {
-                return window.location.origin + (u.pathname ? u.pathname.replace(/\/$/, '') : path);
+            // Prefer the injected base (built from admin_url/app_url so APP_URL is honoured)
+            if (raw) {
+                const u = new URL(raw, window.location.origin);
+                // If origin differs (ngrok / custom domain), re-anchor to current origin but keep path
+                return u.origin !== window.location.origin
+                    ? window.location.origin + (u.pathname ? u.pathname.replace(/\/$/, '') : path)
+                    : u.origin + u.pathname.replace(/\/$/, '');
             }
-            return u.origin + u.pathname.replace(/\/$/, '');
         } catch (e) {
-            return window.location.origin + path;
+            // fall through
         }
+        return window.location.origin + path;
     })();
 
     const btn = document.getElementById('notifBtn');

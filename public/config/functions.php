@@ -19,12 +19,19 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
 }
 
 /**
- * Return the application base URL - dynamically from current request
- * @param string $path Optional path to append
- * @return string Full URL
+ * Return the application base URL.
+ * - Prefer APP_URL from .env (works for production/ngrok/custom domains).
+ * - Otherwise derive from the current request and filesystem so subfolder installs work (e.g., /HIGH-Q/public).
  */
 function app_url(string $path = ''): string {
-    // Derive scheme/host from current request, honoring reverse proxy headers
+    // 1) Explicit APP_URL wins
+    $envBase = $_ENV['APP_URL'] ?? null;
+    if (!empty($envBase)) {
+        $base = rtrim($envBase, '/');
+        return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+    }
+
+    // 2) Derive scheme/host honoring reverse proxies
     $scheme = 'http';
     if (
         (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
@@ -35,48 +42,38 @@ function app_url(string $path = ''): string {
     }
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
-    // Compute project prefix reliably using filesystem paths relative to DOCUMENT_ROOT
-    // and fall back to REQUEST_URI inspection when needed.
+    // 3) Compute project prefix using filesystem vs document root (captures /HIGH-Q when hosted in a subfolder)
     $docrootRaw = $_SERVER['DOCUMENT_ROOT'] ?? '';
     $docrootNorm = $docrootRaw ? str_replace('\\', '/', rtrim($docrootRaw, '/\\')) : '';
     $publicDirRaw = realpath(__DIR__ . '/../') ?: '';
     $publicDirNorm = $publicDirRaw ? str_replace('\\', '/', $publicDirRaw) : '';
-
     $projPrefix = '';
     if ($docrootNorm !== '' && $publicDirNorm !== '') {
         $docrootLower = strtolower($docrootNorm);
         $publicLower = strtolower($publicDirNorm);
-        $relativePublic = '';
         if (strpos($publicLower, $docrootLower) === 0) {
-            $relativePublic = ltrim(substr($publicDirNorm, strlen($docrootNorm)), '/'); // preserve original case
-        }
-        $segments = $relativePublic !== '' ? explode('/', $relativePublic) : [];
-        if (!empty($segments)) {
-            // remove trailing 'public' segment to get project prefix
-            if (strtolower(end($segments)) === 'public') {
+            $relativePublic = ltrim(substr($publicDirNorm, strlen($docrootNorm)), '/');
+            $segments = $relativePublic !== '' ? explode('/', $relativePublic) : [];
+            if (!empty($segments) && strtolower(end($segments)) === 'public') {
                 array_pop($segments);
             }
             if (!empty($segments)) {
-                $projPrefix = '/' . implode('/', $segments); // e.g., "/HIGH-Q"
+                $projPrefix = '/' . implode('/', $segments);
             }
         }
     }
 
-    // Fallback: infer prefix from REQUEST_URI when DOCUMENT_ROOT comparison isn't conclusive
+    // 4) Fallback to REQUEST_URI inspection when DOCUMENT_ROOT comparison fails
     if ($projPrefix === '') {
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         $uri = is_string($uri) ? $uri : '';
         $uriParts = $uri !== '' ? explode('/', trim($uri, '/')) : [];
         if (!empty($uriParts)) {
-            $idx = array_search('public', $uriParts);
+            $idx = array_search('public', $uriParts, true);
             if ($idx !== false && $idx > 0) {
                 $projPrefix = '/' . implode('/', array_slice($uriParts, 0, $idx));
             } else {
-                // Try using the project folder name derived from filesystem (e.g., HIGH-Q)
-                $projectRootName = '';
-                if ($publicDirNorm !== '') {
-                    $projectRootName = basename(dirname($publicDirNorm));
-                }
+                $projectRootName = $publicDirNorm !== '' ? basename(dirname($publicDirNorm)) : '';
                 if ($projectRootName !== '' && strpos($uri, '/' . $projectRootName . '/') === 0) {
                     $projPrefix = '/' . $projectRootName;
                 }
@@ -85,8 +82,7 @@ function app_url(string $path = ''): string {
     }
 
     $base = $scheme . '://' . $host . $projPrefix . '/public';
-    if ($path === '') return $base;
-    return $base . '/' . ltrim($path, '/');
+    return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
 }
 
 /**
