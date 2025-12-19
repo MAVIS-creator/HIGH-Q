@@ -1,5 +1,8 @@
 <?php
 http_response_code(404);
+require_once __DIR__ . '/../includes/functions.php';
+$home = admin_url('index.php');
+$logo = app_url('assets/images/hq-logo.jpeg');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -150,7 +153,7 @@ http_response_code(404);
 <body>
     <div class="error-container">
         <div class="logo">
-            <img src="../../public/assets/images/hq-logo.jpeg" alt="HIGH Q Solid Academy">
+            <img src="<?= htmlspecialchars($logo) ?>" alt="HIGH Q Solid Academy">
         </div>
         
         <i class='bx bx-search-alt error-icon'></i>
@@ -163,7 +166,7 @@ http_response_code(404);
         </p>
         
         <div class="error-actions">
-            <a href="../index.php" class="btn btn-primary">
+            <a href="<?= htmlspecialchars($home) ?>" class="btn btn-primary">
                 <i class='bx bx-home'></i>
                 Back to Dashboard
             </a>
