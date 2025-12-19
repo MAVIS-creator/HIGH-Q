@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
     $id     = (int)($_GET['id'] ?? 0);
 
     if ($action === 'delete' && $id) {
-      // ✅ Delete logic (no name required)
+      // Delete logic (no name required)
       $pdo->prepare("DELETE FROM tutors WHERE id=?")->execute([$id]);
       logAction($pdo, $_SESSION['user']['id'], 'tutor_deleted', ['tutor_id' => $id]);
       $success[] = "Tutor deleted.";
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['action']) || isset($_
         exit;
       }
     } else {
-      // ✅ Create / Edit logic
+      // Create / Edit logic
       $name     = trim($_POST['name'] ?? '');
       $title    = trim($_POST['title'] ?? '');
       $years    = trim($_POST['years_experience'] ?? '');

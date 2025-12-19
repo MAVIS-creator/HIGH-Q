@@ -2,7 +2,7 @@
 // admin/includes/sidebar.php
 require_once __DIR__ . '/db.php';
 
-$current = $_GET['pages'] ?? 'dashboard'; // ✅ match index.php
+$current = $_GET['pages'] ?? 'dashboard'; // match index.php
 
 // Defensive: if no session user present, show a minimal sidebar
 $userRoleId = $_SESSION['user']['role_id'] ?? null;

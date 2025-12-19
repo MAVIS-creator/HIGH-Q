@@ -464,7 +464,7 @@ $posts = $stmt->fetchAll();
                                 <span style="background:#f3f3f3;color:#666;padding:2px 6px;border-radius:4px;font-size:0.8rem;margin-left:8px">Draft</span>
                             <?php endif; ?>
                             <?php if ($p['status'] === 'published' && (empty($p['excerpt']) || empty($p['featured_image']))): ?>
-                                <span title="Missing excerpt or image" style="color:var(--hq-yellow);margin-left:8px">⚠</span>
+                                <span title="Missing excerpt or image" style="color:var(--hq-yellow);margin-left:8px"><i class="bx bx-error"></i></span>
                             <?php endif; ?>
                         </div>
                         <div class="excerpt"><?= nl2br(htmlspecialchars($p['excerpt'] ?: '')) ?></div>

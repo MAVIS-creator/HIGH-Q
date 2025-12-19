@@ -159,7 +159,7 @@ try {
     $debug['notifications_read_error'] = $e->getMessage();
 }
 
-// ✅ Normal mode
+// Normal mode
 $response = [
     'notifications' => $notifications,
     'count' => count($notifications),
@@ -173,7 +173,7 @@ $response = [
     ]
 ];
 
-// ✅ Debug mode toggle via ?debug=1
+// Debug mode toggle via ?debug=1
 if (!empty($_GET['debug'])) {
     $response['debug'] = $debug;
     $response['session'] = $_SESSION;
