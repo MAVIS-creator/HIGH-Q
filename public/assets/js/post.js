@@ -41,7 +41,7 @@
     if (c && c.status === 'pending') {
       wrapper.classList.add('pending-comment');
       const bodyEl = wrapper.querySelector('.comment-body');
-      if (bodyEl) bodyEl.insertAdjacentHTML('beforeend', '<div class="muted small">⏳ Awaiting moderation</div>');
+      if (bodyEl) bodyEl.insertAdjacentHTML('beforeend', '<div class="muted small"><i class="bx bx-time"></i> Awaiting moderation</div>');
     }
 
     // bind reply
