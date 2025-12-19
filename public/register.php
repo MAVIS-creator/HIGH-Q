@@ -1418,7 +1418,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <div id="mobilePaymentSummary" aria-hidden="true">
-	<button class="mps-close" aria-label="Close">✕</button>
+	<button class="mps-close" aria-label="Close"><i class="bx bx-x"></i></button>
 	<div class="mps-content"></div>
 </div>
 
