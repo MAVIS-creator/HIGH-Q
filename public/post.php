@@ -748,7 +748,8 @@ require_once __DIR__ . '/includes/header.php';
       <p class="post-eyebrow">Insight</p>
       <h1><?= htmlspecialchars($post['title']) ?></h1>
       <div class="meta-row">
-        <span class="meta-chip"><i class="fa-regular fa-calendar"></i> Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></span>
+        <span class="meta-chip"><i class="fa-regular fa-user"></i> By <?= htmlspecialchars($authorName) ?></span>
+        <span class="meta-chip"><i class="fa-regular fa-calendar"></i> Published: <?= htmlspecialchars($publishedDisplay) ?></span>
         <span class="meta-chip"><i class="fa-regular fa-comment-dots"></i> <?= intval($comments_count ?? 0) ?> comments</span>
       </div>
     </header>
@@ -770,6 +771,17 @@ require_once __DIR__ . '/includes/header.php';
           </div>
         <?php endif; ?>
 
+        <div class="post-share" aria-label="Share this post">
+          <span class="share-label"><i class="fa-regular fa-share-from-square"></i> Share</span>
+          <div class="share-buttons">
+            <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=<?= $shareUrlEnc ?>" target="_blank" rel="noopener">Facebook</a>
+            <a class="share-btn" href="https://twitter.com/intent/tweet?url=<?= $shareUrlEnc ?>&text=<?= $shareTextEnc ?>" target="_blank" rel="noopener">X/Twitter</a>
+            <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=<?= $shareUrlEnc ?>" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="share-btn" href="https://api.whatsapp.com/send?text=<?= $shareTextEnc ?>%20<?= $shareUrlEnc ?>" target="_blank" rel="noopener">WhatsApp</a>
+            <button type="button" class="share-btn copy-link" data-url="<?= htmlspecialchars($shareUrl) ?>">Copy link</button>
+          </div>
+        </div>
+
         <div class="post-content-body">
           <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
         </div>
@@ -782,6 +794,40 @@ require_once __DIR__ . '/includes/header.php';
           <div class="post-toc">
             <h4>Table of Contents</h4>
             <p class="muted">No sections found for this article.</p>
+          </div>
+        <?php endif; ?>
+
+        <?php if (!empty($recentPosts)): ?>
+          <div class="recent-card" aria-label="Recent posts">
+            <p class="recent-head">Recent posts</p>
+            <ul class="recent-list">
+              <?php foreach ($recentPosts as $rp):
+                $rpDate = $hasPublishedAt ? ($rp['published_at'] ?? $rp['created_at']) : $rp['created_at'];
+                $rpAuthor = trim($rp['author_name'] ?? '') ?: $authorName;
+                $rpImg = $rp['featured_image'] ?? '';
+                if ($rpImg) {
+                  if (preg_match('#^https?://#i', $rpImg) || strpos($rpImg, '//') === 0 || strpos($rpImg, '/') === 0) {
+                    $rpThumb = $rpImg;
+                  } else {
+                    $rpThumb = './' . ltrim($rpImg, '/');
+                  }
+                }
+              ?>
+              <li class="recent-item">
+                <div class="recent-thumb">
+                  <?php if (!empty($rpThumb)): ?>
+                    <img src="<?= htmlspecialchars($rpThumb) ?>" alt="<?= htmlspecialchars($rp['title']) ?>">
+                  <?php else: ?>
+                    <i class="fa-regular fa-image" aria-hidden="true"></i>
+                  <?php endif; ?>
+                </div>
+                <div>
+                  <a class="recent-title" href="post.php?id=<?= $rp['id'] ?>"><?= htmlspecialchars($rp['title']) ?></a>
+                  <div class="recent-meta"><?= htmlspecialchars($rpAuthor) ?> • <?= htmlspecialchars($rpDate) ?></div>
+                </div>
+              </li>
+              <?php endforeach; ?>
+            </ul>
           </div>
         <?php endif; ?>
       </aside>
