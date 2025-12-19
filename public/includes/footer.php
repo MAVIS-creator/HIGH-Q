@@ -102,8 +102,18 @@
               echo '<li><a href="' . app_url('program.php?slug=' . htmlspecialchars($slug)) . '">' . htmlspecialchars($p['title']) . '</a></li>';
             }
           } else {
-            // fallback static links
-            echo '<li><a href="' . app_url('programs.php') . '">JAMB/Post-UTME</a></li><li><a href="' . app_url('programs.php') . '">WAEC/NECO</a></li><li><a href="' . app_url('programs.php') . '">Digital Skills Training</a></li>';
+            // fallback static links with working slugs
+            $fallbackPrograms = [
+              ['title' => 'JAMB Preparation', 'slug' => 'jamb-preparation'],
+              ['title' => 'WAEC Preparation', 'slug' => 'waec-preparation'],
+              ['title' => 'NECO Preparation', 'slug' => 'neco-preparation'],
+              ['title' => 'Post-UTME', 'slug' => 'post-utme'],
+              ['title' => 'Special Tutorials', 'slug' => 'special-tutorials'],
+              ['title' => 'Computer Training', 'slug' => 'computer-training'],
+            ];
+            foreach ($fallbackPrograms as $fp) {
+              echo '<li><a href="' . app_url('program.php?slug=' . urlencode($fp['slug'])) . '">' . htmlspecialchars($fp['title']) . '</a></li>';
+            }
           }
         ?>
       </ul>
