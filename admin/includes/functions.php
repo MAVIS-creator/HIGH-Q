@@ -103,8 +103,15 @@ function app_url(string $path = ''): string {
         return $base . '/' . ltrim($path, '/');
     }
 
-    // fallback: derive from current request. Avoid hardcoding localhost as the ultimate fallback.
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    // fallback: derive from current request. Detect HTTPS from reverse proxy headers (ngrok, cloudflare, etc.)
+    $scheme = 'http';
+    if (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on')
+    ) {
+        $scheme = 'https';
+    }
     $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'example.com');
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
 
