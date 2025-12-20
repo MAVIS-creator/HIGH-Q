@@ -148,6 +148,14 @@ function hq_url_parts(): array {
         }
     }
 
+    // Last-resort fallback: derive from filesystem folder name (e.g., /HIGH-Q) if still empty
+    if ($projPrefix === '') {
+        $projectRootName = basename(dirname(__DIR__, 2));
+        if (!empty($projectRootName) && $projectRootName !== '.' && $projectRootName !== '/') {
+            $projPrefix = '/' . $projectRootName;
+        }
+    }
+
     $parts = [$scheme, $host, $projPrefix];
     return $parts;
 }

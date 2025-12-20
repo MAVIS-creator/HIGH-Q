@@ -139,7 +139,13 @@ if (!headers_sent()) {
     $adminBaseFull = rtrim(admin_url(''), '/');
     $adminParsed = parse_url($adminBaseFull);
     $adminPath = isset($adminParsed['path']) ? rtrim($adminParsed['path'], '/') : '';
-    if ($adminPath === '') { $adminPath = '/admin'; }
+    // If parsing failed to produce a path (e.g., missing project prefix), fall back to filesystem project name
+    if ($adminPath === '' || $adminPath === '/') {
+        $projName = basename(dirname(__DIR__, 1)); // admin
+        $rootName = basename(dirname(__DIR__, 2)); // project folder e.g., HIGH-Q
+        $adminPath = '/' . ($rootName ?: '') . '/admin';
+        $adminPath = preg_replace('#/+/#', '/', $adminPath);
+    }
     $appBaseFull = rtrim(app_url(''), '/');
     echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseFull . "'; window.HQ_ADMIN_PATH='" . $adminPath . "'; window.HQ_APP_BASE='" . $appBaseFull . "';</script>\n";
     // Normalize admin base to the current origin to avoid CORS when the host differs (e.g., 127.0.0.1 vs localhost)
