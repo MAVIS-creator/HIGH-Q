@@ -1,0 +1,1 @@
+Create Sentinel scanner backend with static regex scan, integrity monitor, supply chain audit, and reporting.

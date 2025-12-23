@@ -1,0 +1,1 @@
+Create Patcher UI with code editor, file selector, diff preview, and backend connection.
