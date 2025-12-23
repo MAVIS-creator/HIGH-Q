@@ -217,7 +217,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
               <div class="program-body">
                 <h4>
-                  <a href="program.php?slug=<?= $slug ?>" class="program-title-link">
+                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
                     <?= $title ?>
                   </a>
 
