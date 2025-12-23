@@ -1,1 +1,0 @@
-Create Trap (Canary tokens) module to plant fake admin user/password in DB and alert on access.

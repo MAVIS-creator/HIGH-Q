@@ -1,1 +1,0 @@
-Create Automator (Sitemap Engine) to generate sitemap.xml on patcher save and CMS news post events.
