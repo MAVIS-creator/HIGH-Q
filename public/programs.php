@@ -2,19 +2,87 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-// If a slug is provided, redirect to the single program page
-if (isset($_GET['slug']) && !empty($_GET['slug'])) {
+// Redirect slug to single page
+if (!empty($_GET['slug'])) {
 	header('Location: program-single.php?slug=' . urlencode($_GET['slug']));
 	exit;
 }
 
-$programs = [];
-try {
-  $stmt = $pdo->query("SELECT c.id, c.title, c.slug, c.description, c.duration, c.price, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text ORDER BY cf.position SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.title");
-  $programs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Throwable $_) {
-  $programs = [];
-}
+// Static program containers (slugs still power single pages)
+$programs = [
+  [
+    'title' => 'SSCE & GCE Exams',
+    'slug' => 'ssce-gce-exams',
+    'subtitle' => "Registration and intensive coaching for O'Level success.",
+    'duration' => '8-24 weeks (exam-calendar aligned)',
+    'features' => [
+      'WAEC & NECO (School Candidates - May/June)',
+      'WAEC GCE & NECO GCE (Private Candidates)',
+      'NABTEB (Optional, fits same track)',
+      'Intensive drills, past questions, timed practice'
+    ],
+  ],
+  [
+    'title' => 'JAMB & University Admission',
+    'slug' => 'jamb-university-admission',
+    'subtitle' => 'Comprehensive JAMB CBT simulations and admission processing.',
+    'duration' => '6-12 weeks (CBT-focused)',
+    'features' => [
+      'JAMB / UTME (Registration & Training)',
+      'CBT Training (core tool for JAMB success)',
+      'Post-UTME (University screening prep)',
+      'Admission guidance and application support'
+    ],
+  ],
+  [
+    'title' => 'Advanced & International Studies',
+    'slug' => 'advanced-international-studies',
+    'subtitle' => 'Global certifications and Direct Entry programs for university admission.',
+    'duration' => '10-24 weeks (modular)',
+    'features' => [
+      "Study Abroad: SAT, TOEFL, IELTS, GMAT, GRE",
+      'Direct Entry: JUPEB, A-Levels (Cambridge/IJMB)',
+      "International O'Level: IGCSE",
+      'Application strategy and test readiness'
+    ],
+  ],
+  [
+    'title' => 'Remedial & Foundation Tutorials',
+    'slug' => 'remedial-foundation-tutorials',
+    'subtitle' => 'Structured academic grooming from Primary 1 to SSS 3.',
+    'duration' => '4-16 weeks (modular by class)',
+    'features' => [
+      'Junior Secondary: BECE (Junior WAEC) Prep',
+      'Primary School: Common Entrance & Foundation',
+      'Senior School: After-school subject tutorials (SSS 1-3)',
+      'Small-group coaching and continuous assessment'
+    ],
+  ],
+  [
+    'title' => 'Digital Skills & Tech',
+    'slug' => 'digital-skills-tech',
+    'subtitle' => 'Practical tech skills for the modern workplace.',
+    'duration' => '4-10 weeks (hands-on)',
+    'features' => [
+      'Computer Literacy (Word/Excel)',
+      'Graphic Design & Programming',
+      'Data Analysis fundamentals',
+      'Portfolio-driven, project-based learning'
+    ],
+  ],
+  [
+    'title' => 'Professional Services',
+    'slug' => 'professional-services',
+    'subtitle' => 'Expert guidance on admissions and career paths.',
+    'duration' => 'On-demand (book a slot)',
+    'features' => [
+      'Educational Consulting & Career Counseling',
+      'University/Visa Application Assistance',
+      'Data Entry & Document Processing',
+      'Personalized advisory sessions'
+    ],
+  ],
+];
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
