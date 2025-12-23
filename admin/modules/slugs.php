@@ -5,9 +5,11 @@
  */
 
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 requirePermission('manage_settings');
 
-$db = getDB();
+$db = $pdo; // use shared PDO connection from db.php
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -52,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 }
                 
                 // Log audit
-                logAudit($db, $_SESSION['user_id'] ?? null, 'slug_updated', null, null, [
+                $userId = intval($_SESSION['user']['id'] ?? 0);
+                logAction($db, $userId, 'slug_updated', [
                     'type' => $type,
                     'id' => $id,
                     'new_slug' => $newSlug
@@ -71,7 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $stmt = $db->prepare("UPDATE courses SET is_active = 0 WHERE id = ?");
                 $stmt->execute([$id]);
                 
-                logAudit($db, $_SESSION['user_id'] ?? null, 'course_deleted', null, null, ['course_id' => $id]);
+                $userId = intval($_SESSION['user']['id'] ?? 0);
+                logAction($db, $userId, 'course_deleted', ['course_id' => $id]);
                 
                 echo json_encode(['success' => true, 'message' => 'Course deleted successfully']);
                 exit;
