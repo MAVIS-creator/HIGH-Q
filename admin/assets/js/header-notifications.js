@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return window.location.origin + '/admin';
     })();
 
+    console.log('NOTIFICATIONS ADMIN_BASE:', ADMIN_BASE);
+
     const btn = document.getElementById('notifBtn');
     if (!btn) return;
 

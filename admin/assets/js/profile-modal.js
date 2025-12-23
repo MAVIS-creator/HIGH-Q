@@ -39,6 +39,8 @@
         return window.location.origin + '/admin';
     })();
     
+    console.log('PROFILE_MODAL ADMIN_BASE:', ADMIN_BASE);
+    
     // Track original values for email/phone verification
     let originalEmail = '';
     let originalPhone = '';
