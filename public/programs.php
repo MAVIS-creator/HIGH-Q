@@ -2,6 +2,12 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
+// If a slug is provided, redirect to the single program page
+if (isset($_GET['slug']) && !empty($_GET['slug'])) {
+	header('Location: program-single.php?slug=' . urlencode($_GET['slug']));
+	exit;
+}
+
 $programs = [];
 try {
   $stmt = $pdo->query("SELECT c.id, c.title, c.slug, c.description, c.duration, c.price, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text ORDER BY cf.position SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.title");
