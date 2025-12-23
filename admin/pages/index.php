@@ -31,6 +31,18 @@ $pageMeta = [
     'posts' => [
         'subtitle' => 'Create and manage news articles and blog posts',
     ],
+    'sentinel' => [
+        'subtitle' => 'Run advanced security checks and view reports.',
+    ],
+    'patcher' => [
+        'subtitle' => 'Safely edit code with backups and diff preview.',
+    ],
+    'automator' => [
+        'subtitle' => 'SEO and maintenance automation.',
+    ],
+    'trap' => [
+        'subtitle' => 'Active defense: canary tokens.',
+    ],
 ];
 
 // If the page hasn't set its own pageTitle/subtitle/css, use defaults from mapping

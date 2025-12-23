@@ -26,4 +26,15 @@ try {
     $menus = $configMenus;
 }
 
+// Ensure new modules are always present
+$required = [
+    'sentinel' => ['title' => 'Security Scan', 'icon' => 'bx bxs-shield-alt', 'url' => 'index.php?pages=sentinel'],
+    'patcher' => ['title' => 'Smart Patcher', 'icon' => 'bx bx-wrench', 'url' => 'index.php?pages=patcher'],
+    'automator' => ['title' => 'Automator', 'icon' => 'bx bx-cog', 'url' => 'index.php?pages=automator'],
+    'trap' => ['title' => 'Canary Trap', 'icon' => 'bx bx-bug', 'url' => 'index.php?pages=trap'],
+];
+foreach ($required as $slug => $item) {
+    if (!isset($menus[$slug])) $menus[$slug] = $item;
+}
+
 return $menus;
