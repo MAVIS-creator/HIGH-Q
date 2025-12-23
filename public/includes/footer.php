@@ -93,27 +93,16 @@
       <h3>Our Programs</h3>
       <ul>
         <?php
-          try {
-            $progs = $pdo->query("SELECT title, slug FROM courses WHERE is_active=1 ORDER BY title LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
-          } catch(Throwable $_) { $progs = []; }
-          if (!empty($progs)) {
-            foreach ($progs as $p) {
-              $slug = $p['slug'] ?: 'programs.php';
-              echo '<li><a href="' . app_url('program.php?slug=' . htmlspecialchars($slug)) . '">' . htmlspecialchars($p['title']) . '</a></li>';
-            }
-          } else {
-            // fallback static links with working slugs
-            $fallbackPrograms = [
-              ['title' => 'JAMB Preparation', 'slug' => 'jamb-preparation'],
-              ['title' => 'WAEC Preparation', 'slug' => 'waec-preparation'],
-              ['title' => 'NECO Preparation', 'slug' => 'neco-preparation'],
-              ['title' => 'Post-UTME', 'slug' => 'post-utme'],
-              ['title' => 'Special Tutorials', 'slug' => 'special-tutorials'],
-              ['title' => 'Computer Training', 'slug' => 'computer-training'],
-            ];
-            foreach ($fallbackPrograms as $fp) {
-              echo '<li><a href="' . app_url('program.php?slug=' . urlencode($fp['slug'])) . '">' . htmlspecialchars($fp['title']) . '</a></li>';
-            }
+          $staticPrograms = [
+            ['title' => 'SSCE & GCE Exams', 'slug' => 'ssce-gce-exams'],
+            ['title' => 'JAMB & University Admission', 'slug' => 'jamb-university-admission'],
+            ['title' => 'Advanced & International Studies', 'slug' => 'advanced-international-studies'],
+            ['title' => 'Remedial & Foundation Tutorials', 'slug' => 'remedial-foundation-tutorials'],
+            ['title' => 'Digital Skills & Tech', 'slug' => 'digital-skills-tech'],
+            ['title' => 'Professional Services', 'slug' => 'professional-services'],
+          ];
+          foreach ($staticPrograms as $fp) {
+            echo '<li><a href="' . app_url('program-single.php?slug=' . urlencode($fp['slug'])) . '">' . htmlspecialchars($fp['title']) . '</a></li>';
           }
         ?>
       </ul>

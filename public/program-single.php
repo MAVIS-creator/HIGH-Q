@@ -7,6 +7,87 @@ $slug = trim($_GET['slug'] ?? '');
 $program = null;
 $featureLines = [];
 
+$staticPrograms = [
+    'ssce-gce-exams' => [
+        'title' => 'SSCE & GCE Exams',
+        'description' => "Registration and intensive coaching for O'Level success.",
+        'price' => 'Contact us (Reg fee + Form fee)',
+        'duration' => '8-24 weeks (exam-calendar aligned)',
+        'highlight_badge' => 'Exam-focused coaching',
+        'features' => [
+            'WAEC & NECO (School Candidates - May/June)',
+            'WAEC GCE & NECO GCE (Private Candidates)',
+            'NABTEB (Optional, fits same track)',
+            'Intensive drills, past questions, timed practice',
+        ],
+    ],
+    'jamb-university-admission' => [
+        'title' => 'JAMB & University Admission',
+        'description' => 'Comprehensive JAMB CBT simulations and admission processing.',
+        'price' => 'Contact us (Reg fee + Form fee)',
+        'duration' => '6-12 weeks (CBT-focused)',
+        'highlight_badge' => 'CBT-driven training',
+        'features' => [
+            'JAMB / UTME (Registration & Training)',
+            'CBT Training (core tool for JAMB success)',
+            'Post-UTME (University screening prep)',
+            'Admission guidance and application support',
+        ],
+    ],
+    'advanced-international-studies' => [
+        'title' => 'Advanced & International Studies',
+        'description' => 'Global certifications and Direct Entry programs for university admission.',
+        'price' => 'Contact us (Reg fee + Form fee)',
+        'duration' => '10-24 weeks (modular)',
+        'highlight_badge' => 'International pathways',
+        'features' => [
+            'Study Abroad: SAT, TOEFL, IELTS, GMAT, GRE',
+            'Direct Entry: JUPEB, A-Levels (Cambridge/IJMB)',
+            "International O'Level: IGCSE",
+            'Application strategy and test readiness',
+        ],
+    ],
+    'remedial-foundation-tutorials' => [
+        'title' => 'Remedial & Foundation Tutorials',
+        'description' => 'Structured academic grooming from Primary 1 to SSS 3.',
+        'price' => 'Contact us (Reg fee + Form fee)',
+        'duration' => '4-16 weeks (modular by class)',
+        'highlight_badge' => 'Small-group coaching',
+        'features' => [
+            'Junior Secondary: BECE (Junior WAEC) Prep',
+            'Primary School: Common Entrance & Foundation',
+            'Senior School: After-school subject tutorials (SSS 1-3)',
+            'Continuous assessment and progress tracking',
+        ],
+    ],
+    'digital-skills-tech' => [
+        'title' => 'Digital Skills & Tech',
+        'description' => 'Practical tech skills for the modern workplace.',
+        'price' => 'Contact us (Reg fee + Form fee)',
+        'duration' => '4-10 weeks (hands-on)',
+        'highlight_badge' => 'Project-based learning',
+        'features' => [
+            'Computer Literacy (Word/Excel)',
+            'Graphic Design & Programming',
+            'Data Analysis fundamentals',
+            'Portfolio-driven, project-based learning',
+        ],
+    ],
+    'professional-services' => [
+        'title' => 'Professional Services',
+        'description' => 'Expert guidance on admissions and career paths.',
+        'price' => 'Contact us (Reg fee + Form fee)',
+        'duration' => 'On-demand (book a slot)',
+        'highlight_badge' => 'Advisory & processing',
+        'features' => [
+            'Educational Consulting & Career Counseling',
+            'University/Visa Application Assistance',
+            'Data Entry & Document Processing',
+            'Personalized advisory sessions',
+        ],
+    ],
+];
+
 if ($slug !== '') {
     try {
         $stmt = $pdo->prepare("SELECT c.id, c.title, c.slug, c.description, c.price, c.duration, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text ORDER BY cf.position SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.slug = ? AND c.is_active = 1 GROUP BY c.id LIMIT 1");
@@ -17,6 +98,12 @@ if ($slug !== '') {
         }
     } catch (Throwable $_) {
         $program = null;
+    }
+
+    // Fallback to static definitions when not found in DB
+    if (!$program && isset($staticPrograms[$slug])) {
+        $program = $staticPrograms[$slug];
+        $featureLines = $staticPrograms[$slug]['features'];
     }
 }
 
