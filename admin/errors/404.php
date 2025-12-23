@@ -13,131 +13,46 @@ http_response_code(404);
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
         }
-
-        h1 {
-            font-size: 3rem;
-            color: #111;
-            margin-bottom: 0.5rem;
-            font-weight: 800;
-        }
-
-        .error-code {
-            font-size: 6rem;
-            font-weight: 900;
-            color: #ffd600;
-            line-height: 1;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            color: #666;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .error-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(180deg, #ffd24d, #f6c23a);
-            color: #111;
-            box-shadow: 0 4px 15px rgba(246, 194, 58, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(246, 194, 58, 0.4);
-        }
-
-        .btn-secondary {
-            background: #fff;
-            color: #666;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-secondary:hover {
-            background: #f8f8f8;
-            border-color: #ccc;
-        }
-
-        .logo {
-            margin-bottom: 2rem;
-        }
-
-        .logo img {
-            height: 60px;
-            width: auto;
-        }
-
-        @media (max-width: 768px) {
-            .error-container {
-                padding: 2rem;
-            }
-
-            .error-code {
-                font-size: 4rem;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            p {
-                font-size: 1rem;
-            }
-
-            .error-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+        .float { animation: float 3s ease-in-out infinite; }
     </style>
 </head>
-<body>
-    <div class="error-container">
-        <div class="logo">
-            <img src="<?= htmlspecialchars($logo) ?>" alt="HIGH Q Solid Academy">
-        </div>
-        
-        <i class='bx bx-search-alt error-icon'></i>
-        
-        <div class="error-code">404</div>
-        <h1>Page Not Found</h1>
-        <p>
-            Oops! The admin page you're looking for doesn't exist or has been moved.
-            This might be because the page was removed, renamed, or you don't have permission to access it.
-        </p>
-        
-        <div class="error-actions">
-            <a href="<?= htmlspecialchars($home) ?>" class="btn btn-primary">
-                <i class='bx bx-home'></i>
-                Back to Dashboard
-            </a>
-            <a href="javascript:history.back()" class="btn btn-secondary">
-                <i class='bx bx-arrow-back'></i>
-                Go Back
-            </a>
+<body class="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+            <div class="flex justify-center mb-6">
+                <div class="float bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full w-24 h-24 flex items-center justify-center text-4xl font-bold shadow-lg">
+                    404
+                </div>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                Admin Page Not Found
+            </h1>
+            
+            <p class="text-gray-600 text-lg mb-8">
+                The admin page you're looking for doesn't exist.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="../index.php?pages=dashboard" 
+                   class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Go to Dashboard
+                </a>
+                <button onclick="window.history.back()" 
+                        class="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Go Back
+                </button>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-gray-200">
+                <p class="text-sm text-gray-500">© <?= date('Y') ?> HIGH Q SOLID ACADEMY - Admin Panel</p>
+            </div>
         </div>
     </div>
 </body>
