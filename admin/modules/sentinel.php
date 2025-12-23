@@ -22,9 +22,9 @@ if (!is_dir($reportDir)) @mkdir($reportDir, 0755, true);
 
 // Layer A: Static Regex Scan
 $patterns = [
-$    'webshell' => '/eval\s*\(\s*base64_decode\s*\(/i',
-$    'debug'    => '/APP_DEBUG\s*=\s*true/i',
-$    'vuln_inc' => '/include\s*\(\s*\$_GET/i',
+	'webshell' => '/eval\s*\(\s*base64_decode\s*\(/i',
+	'debug'    => '/APP_DEBUG\s*=\s*true/i',
+	'vuln_inc' => '/include\s*\(\s*\$_GET/i',
 ];
 
 function scanFile($file, $patterns) {
@@ -124,4 +124,3 @@ if (!empty($findings) || !empty($changed) || !empty($composerIssues)) {
 // Output summary
 header('Content-Type: application/json');
 echo json_encode($report);
-Create Sentinel scanner backend with static regex scan, integrity monitor, supply chain audit, and reporting.
