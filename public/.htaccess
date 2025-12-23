@@ -2,9 +2,9 @@
 RewriteEngine On
 
 # Error Documents
-ErrorDocument 403 /public/403.php
-ErrorDocument 404 /public/404.php
-ErrorDocument 500 /public/500.php
+ErrorDocument 403 /public/errors/403.php
+ErrorDocument 404 /public/errors/404.php
+ErrorDocument 500 /public/errors/500.php
 
 # Collapse accidental duplicate /public/public paths to /public (environment-agnostic)
 # THE_REQUEST ensures it only triggers on client requests, not internal rewrites
