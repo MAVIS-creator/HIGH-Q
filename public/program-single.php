@@ -132,67 +132,285 @@ if (!$program): ?>
     <p style="color: var(--hq-gray); font-size: 1.1rem; margin-bottom: 28px;">The program you're looking for was not found. Please browse all our programs.</p>
     <a href="programs.php" style="display: inline-block; padding: 14px 32px; background: var(--hq-blue-white); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='var(--hq-yellow)';" onmouseout="this.style.background='var(--hq-blue-white)';">Browse All Programs</a>
   </div>
-<?php else: ?>
+<?php 
+include __DIR__ . '/includes/footer.php';
+exit; 
+endif; ?>
 
 <style>
-.single-program {
-  padding: 64px 0;
-  background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
-}
-.single-card {
-  max-width: 960px;
-  margin: 0 auto;
-  background: #fff;
-  border: 1px solid #e6e9f0;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
-}
-.single-card h1 { margin-top: 0; font-weight: 800; }
-.single-meta { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 20px; color: var(--hq-gray); }
-.feature-list { list-style: none; padding: 0; margin: 0; }
-.feature-list li { padding: 10px 0 10px 28px; border-bottom: 1px solid #f2f4f8; position: relative; }
-.feature-list li:last-child { border-bottom: none; }
-.feature-list li::before { content: '✓'; color: var(--hq-yellow); position: absolute; left: 0; top: 10px; font-weight: 700; }
-.cta-box { margin-top: 24px; padding: 18px; border-radius: 12px; background: linear-gradient(135deg, var(--hq-blue-white) 0%, var(--hq-yellow) 100%); color: #fff; text-align: center; box-shadow: 0 8px 24px rgba(57,58,147,0.25); }
-.cta-box a { display: inline-block; margin-top: 10px; padding: 12px 24px; background: #fff; color: var(--hq-blue-white); border-radius: 8px; font-weight: 700; text-decoration: none; }
+  .program-detail-page {
+    padding: 64px 0;
+    background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+  }
+
+  .program-breadcrumb a {
+    color: var(--hq-blue-white);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+    font-size: 0.95rem;
+  }
+
+  .program-breadcrumb a:hover {
+    color: var(--hq-yellow);
+  }
+
+  .program-hero {
+    margin-bottom: 48px;
+    padding: 48px;
+    background: linear-gradient(135deg, var(--hq-blue-white) 0%, var(--hq-yellow) 100%);
+    border-radius: 16px;
+    color: #ffffff;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  }
+
+  .program-hero h1 {
+    font-size: clamp(2rem, 2.6vw, 2.9rem);
+    margin: 0 0 16px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .program-hero p {
+    font-size: 1.05rem;
+    margin: 0;
+    opacity: 0.95;
+    max-width: 820px;
+    line-height: 1.6;
+  }
+
+  .program-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 36px;
+    align-items: start;
+    margin-bottom: 56px;
+  }
+
+  .program-card {
+    margin-bottom: 28px;
+    padding: 32px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e6e9f0;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .program-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  }
+
+  .program-card h3 {
+    font-size: 1.5rem;
+    margin: 0 0 18px;
+    color: var(--hq-black);
+    font-weight: 700;
+  }
+
+  .program-card--accent-blue {
+    border-left: 5px solid var(--hq-blue-white);
+  }
+
+  .program-card--soft-yellow {
+    background: linear-gradient(135deg, var(--hq-yellow-pale) 0%, #fffbf0 100%);
+    border-left: 5px solid var(--hq-yellow);
+    box-shadow: 0 6px 18px rgba(245, 185, 4, 0.12);
+  }
+
+  .program-card p,
+  .program-card li {
+    color: var(--hq-gray);
+    line-height: 1.75;
+    font-size: 1rem;
+  }
+
+  .program-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .program-feature-list li {
+    padding: 14px 0 14px 36px;
+    position: relative;
+    border-bottom: 1px solid #f1f3f7;
+  }
+
+  .program-feature-list li:last-child {
+    border-bottom: none;
+  }
+
+  .program-feature-list li span {
+    position: absolute;
+    left: 0;
+    color: var(--hq-yellow);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  .quick-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .quick-card {
+    padding: 18px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #f1f3f7;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .quick-card .label {
+    margin: 0 0 8px;
+    color: var(--hq-gray);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+
+  .quick-card .value {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--hq-blue-white);
+  }
+
+  .program-sidebar {
+    position: sticky;
+    top: 16px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .program-cta {
+    padding: 28px 22px;
+    background: linear-gradient(135deg, var(--hq-blue-white) 0%, var(--hq-yellow) 100%);
+    border-radius: 12px;
+    color: #ffffff;
+    box-shadow: 0 12px 32px rgba(57, 58, 147, 0.25);
+    text-align: center;
+  }
+
+  .program-cta h4 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .program-cta p {
+    margin: 0 0 18px;
+    font-size: 0.92rem;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+
+  .program-enroll-btn {
+    display: block;
+    padding: 14px 0;
+    background: var(--hq-yellow);
+    color: var(--hq-black);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .program-enroll-btn:hover {
+    background: #f4aa01;
+    transform: translateY(-2px);
+  }
+
+  .info-note {
+    padding: 14px 16px;
+    background: rgba(245, 185, 4, 0.08);
+    border-left: 3px solid var(--hq-yellow);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    color: var(--hq-gray);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 991px) {
+    .program-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .program-sidebar {
+      position: relative;
+      top: 0;
+    }
+  }
 </style>
 
-<section class="single-program">
+<section class="program-detail-page">
   <div class="container">
-    <div class="single-card">
-      <a href="programs.php" style="text-decoration:none; color: var(--hq-blue-white); font-weight:700; display:inline-flex; gap:6px; align-items:center; margin-bottom:14px;">
-        <i class='bx bx-chevron-left'></i> Back to Programs
-      </a>
+    <a href="programs.php" class="program-breadcrumb"><i class="bx bx-chevron-left"></i> Back to Programs</a>
+
+    <div class="program-hero">
       <h1><?= htmlspecialchars($program['title']) ?></h1>
-      <div class="single-meta">
-        <span><i class='bx bx-time-five'></i> <?= htmlspecialchars($program['duration'] ?: 'Flexible') ?></span>
-        <span><i class='bx bx-purchase-tag'></i> <?= htmlspecialchars($program['price'] ?: 'Contact us') ?></span>
-        <?php if (!empty($program['highlight_badge'])): ?>
-          <span><i class='bx bx-star'></i> <?= htmlspecialchars($program['highlight_badge']) ?></span>
+      <p><?= htmlspecialchars($program['description']) ?></p>
+    </div>
+
+    <div class="program-grid">
+      <div>
+        <div class="quick-info-grid">
+          <div class="quick-card">
+            <p class="label">Duration</p>
+            <p class="value"><?= htmlspecialchars($program['duration'] ?: 'Flexible') ?></p>
+          </div>
+          <?php if (!empty($program['highlight_badge'])): ?>
+            <div class="quick-card">
+              <p class="label">Badge</p>
+              <p class="value" style="font-size: 1rem; color: var(--hq-gray);"><?= htmlspecialchars($program['highlight_badge']) ?></p>
+            </div>
+          <?php endif; ?>
+        </div>
+
+        <?php if (!empty($featureLines)): ?>
+          <div class="program-card program-card--accent-blue">
+            <h3><i class="bx bx-check-circle" style="color: var(--hq-yellow); margin-right: 10px;"></i>What You'll Learn</h3>
+            <ul class="program-feature-list">
+              <?php foreach ($featureLines as $line): if (trim($line) === '') continue; ?>
+                <li><span>✓</span> <?= htmlspecialchars($line) ?></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
         <?php endif; ?>
-      </div>
-      <p style="color: var(--hq-gray); line-height:1.7; font-size:1.02rem;">
-        <?= htmlspecialchars($program['description'] ?: ($program['title'] . ' is designed to help you excel.')) ?>
-      </p>
 
-      <?php if (!empty($featureLines)): ?>
-        <h3 style="margin-top: 28px;">Key Features</h3>
-        <ul class="feature-list">
-          <?php foreach ($featureLines as $line): if (trim($line)==='') continue; ?>
-            <li><?= htmlspecialchars($line) ?></li>
-          <?php endforeach; ?>
-        </ul>
-      <?php endif; ?>
-
-      <div class="cta-box">
-        <h4>Ready to enroll?</h4>
-        <p style="margin:6px 0 10px;">Join thousands of successful students today.</p>
-        <a href="register.php?ref=<?= rawurlencode($program['slug']) ?>">Enroll Now</a>
+        <div class="program-card program-card--soft-yellow">
+          <h3>Why This Program?</h3>
+          <p>This program is designed with your specific learning goals in mind. Our experienced instructors combine proven teaching methods with personalized attention to ensure you achieve the best possible results. Whether you're preparing for exams, building career skills, or pursuing higher education, we have the expertise and resources to support your success.</p>
+        </div>
       </div>
+
+      <aside class="program-sidebar">
+        <div class="program-cta">
+          <h4>Ready to Enroll?</h4>
+          <p>Take the next step toward your academic and career goals today.</p>
+          <a href="register.php?ref=<?= rawurlencode($program['slug']) ?>" class="program-enroll-btn">Enroll Now</a>
+        </div>
+
+        <div class="info-note">
+          <strong>Questions?</strong><br>
+          Contact us via the <a href="contact.php" style="color: var(--hq-blue-white); font-weight: 600;">contact form</a> or call <strong>0807 208 8794</strong> to discuss your needs.
+        </div>
+      </aside>
     </div>
   </div>
 </section>
-<?php endif; ?>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
