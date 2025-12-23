@@ -34,9 +34,11 @@ $required = [
     'patcher' => ['title' => 'Smart Patcher', 'icon' => 'bx bx-wrench', 'url' => 'index.php?pages=patcher'],
     'automator' => ['title' => 'Automator', 'icon' => 'bx bx-cog', 'url' => 'index.php?pages=automator'],
     'trap' => ['title' => 'Canary Trap', 'icon' => 'bx bx-bug', 'url' => 'index.php?pages=trap'],
+    'slugs' => ['title' => 'Slug Management', 'icon' => 'bx bx-link', 'url' => 'index.php?pages=slugs'],
 ];
 foreach ($required as $slug => $item) {
     if (!isset($menus[$slug])) $menus[$slug] = $item;
 }
 
 return $menus;
+
