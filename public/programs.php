@@ -2,14 +2,79 @@
 // Fetch programs from database
 require_once __DIR__ . '/config/db.php';
 
+// Fallback content for known slugs so pages stay meaningful even if DB is empty
+$fallbackPrograms = [
+	'jamb-preparation' => [
+		'title' => 'JAMB Preparation',
+		'slug' => 'jamb-preparation',
+		'description' => 'Comprehensive preparation for JAMB with mock CBT drills and targeted tutoring.',
+		'duration' => '4-6 months',
+		'icon' => 'bx bx-target-lock',
+		'highlight_badge' => '305 - Highest JAMB Score 2025',
+	],
+	'waec-preparation' => [
+		'title' => 'WAEC Preparation',
+		'slug' => 'waec-preparation',
+		'description' => 'Complete WAEC prep covering core subjects, practicals, and past questions.',
+		'duration' => '6-12 months',
+		'icon' => 'bx bx-book',
+		'highlight_badge' => '98% Success Rate',
+	],
+	'neco-preparation' => [
+		'title' => 'NECO Preparation',
+		'slug' => 'neco-preparation',
+		'description' => 'NECO prep with experienced tutors, mock exams, and curated study materials.',
+		'duration' => '6-12 months',
+		'icon' => 'bx bx-book-open',
+		'highlight_badge' => 'Proven Excellence',
+	],
+	'post-utme' => [
+		'title' => 'Post-UTME',
+		'slug' => 'post-utme',
+		'description' => 'University-specific Post-UTME preparation with practice tests and interview prep.',
+		'duration' => '2-4 months',
+		'icon' => 'bx bx-award',
+		'highlight_badge' => 'University Ready',
+	],
+	'special-tutorials' => [
+		'title' => 'Special Tutorials',
+		'slug' => 'special-tutorials',
+		'description' => 'Intensive one-on-one and small group tutorials tailored to your goals.',
+		'duration' => 'Flexible',
+		'icon' => 'bx bx-star',
+		'highlight_badge' => 'Personalized Learning',
+	],
+	'computer-training' => [
+		'title' => 'Computer Training',
+		'slug' => 'computer-training',
+		'description' => 'Modern computer skills and digital literacy: MS Office, internet skills, programming basics.',
+		'duration' => '3-6 months',
+		'icon' => 'bx bx-laptop',
+		'highlight_badge' => 'Digital Skills',
+	],
+];
+
 $programs = [];
 try {
-    $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, icon, highlight_badge FROM courses WHERE is_active = 1 ORDER BY title ASC");
-    $stmt->execute();
-    $programs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$stmt = $pdo->prepare("SELECT id, title, slug, description, duration, icon, highlight_badge FROM courses WHERE is_active = 1 ORDER BY title ASC");
+	$stmt->execute();
+	$programs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    // Fallback to empty array
-    $programs = [];
+	$programs = [];
+}
+
+// If DB is empty, fall back to static definitions
+if (empty($programs)) {
+	$programs = array_values($fallbackPrograms);
+} else {
+	// Enrich any missing fields with fallback content by slug
+	foreach ($programs as &$prog) {
+		$slug = $prog['slug'] ?? '';
+		if ($slug && isset($fallbackPrograms[$slug])) {
+			$prog = array_merge($fallbackPrograms[$slug], $prog);
+		}
+	}
+	unset($prog);
 }
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
