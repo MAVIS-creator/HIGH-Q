@@ -125,16 +125,16 @@
                             <form id="profilePasswordForm">
                                 <div class="profile-form-group">
                                     <label for="currentPassword">Current Password</label>
-                                    <input type="password" id="currentPassword" name="current_password" required>
+                                    <input type="password" id="currentPassword" name="current_password" required autocomplete="current-password">
                                 </div>
                                 <div class="profile-form-group">
                                     <label for="newPassword">New Password</label>
-                                    <input type="password" id="newPassword" name="new_password" required minlength="8">
+                                    <input type="password" id="newPassword" name="new_password" required minlength="8" autocomplete="new-password">
                                     <small style="color:#666;font-size:0.85rem">Must be at least 8 characters long</small>
                                 </div>
                                 <div class="profile-form-group">
                                     <label for="confirmPassword">Confirm New Password</label>
-                                    <input type="password" id="confirmPassword" name="confirm_password" required>
+                                    <input type="password" id="confirmPassword" name="confirm_password" required autocomplete="new-password">
                                 </div>
                             </form>
                         </div>
