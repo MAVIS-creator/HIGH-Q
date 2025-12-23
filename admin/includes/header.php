@@ -135,20 +135,43 @@ if (!headers_sent()) {
         "label{display:block;margin:6px 0;font-weight:600;}input.input, textarea.input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;}\n" .
         "</style>\n";
 
-    // Expose admin base and app base to client-side JS so scripts can build URLs dynamically
-    // Prefer the canonical helpers so APP_URL (from .env) is honoured. admin_url() and app_url() return full URLs.
-    $adminBaseFull = rtrim(admin_url(''), '/');
-    $adminParsed = parse_url($adminBaseFull);
-    $adminPath = isset($adminParsed['path']) ? rtrim($adminParsed['path'], '/') : '';
-    // If parsing failed to produce a path (e.g., missing project prefix), fall back to filesystem project name
-    if ($adminPath === '' || $adminPath === '/') {
-        $projName = basename(dirname(__DIR__, 1)); // admin
-        $rootName = basename(dirname(__DIR__, 2)); // project folder e.g., HIGH-Q
-        $adminPath = '/' . ($rootName ?: '') . '/admin';
-        $adminPath = preg_replace('#/+/#', '/', $adminPath);
+    // Expose admin base dynamically from current request URL (just like public site)
+    // Extract scheme and host from the actual request
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // Extract the admin base path from the current request URI
+    // E.g., /HIGH-Q/admin/pages/index.php?pages=dashboard -> /HIGH-Q/admin
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    
+    // Find where '/admin' appears in the URI
+    $adminPos = strpos($requestUri, '/admin');
+    if ($adminPos !== false) {
+        // Extract everything up to and including '/admin'
+        $endPos = $adminPos + strlen('/admin');
+        $adminPath = substr($requestUri, 0, $endPos);
+    } else {
+        // Fallback: extract from script name
+        $adminPos = strpos($scriptName, '/admin');
+        if ($adminPos !== false) {
+            $adminPath = substr($scriptName, 0, $adminPos + strlen('/admin'));
+        } else {
+            // Last resort: use filesystem project name
+            $rootName = basename(dirname(__DIR__, 2));
+            $adminPath = '/' . $rootName . '/admin';
+        }
     }
-    $appBaseFull = rtrim(app_url(''), '/');
-    echo "<script>\n(function(){\n  var adminBase = '" . $adminBaseFull . "';\n  var adminPath = '" . $adminPath . "';\n  console.log('SERVER adminBaseFull:', '" . $adminBaseFull . "');\n  console.log('SERVER adminPath:', '" . $adminPath . "');\n  try {\n    var u = new URL(adminBase, window.location.origin);\n    if (u.origin !== window.location.origin) {\n      adminBase = window.location.origin + adminPath;\n    } else {\n      adminBase = u.origin + u.pathname.replace(/\/$/, '');\n    }\n  } catch (e) {\n    adminBase = window.location.origin + adminPath;\n  }\n  // Fallback: if adminBase doesn't end with /admin, append it\n  if (!/\\/admin$/.test(adminBase)) {\n    adminBase = adminBase.replace(/\/$/, '') + '/admin';\n  }\n  console.log('COMPUTED adminBase:', adminBase);\n  window.HQ_ADMIN_BASE = adminBase;\n  window.HQ_ADMIN_PATH = adminPath;\n  if (!window.HQ_APP_BASE) {\n    window.HQ_APP_BASE = window.location.origin;\n  }\n})();\n</script>\n";
+    
+    // Build the full admin base URL
+    $adminBaseFull = $scheme . '://' . $host . $adminPath;
+    
+    echo "<script>\n";
+    echo "window.HQ_ADMIN_BASE = '" . $adminBaseFull . "';\n";
+    echo "window.HQ_ADMIN_PATH = '" . $adminPath . "';\n";
+    echo "window.HQ_APP_BASE = '" . $scheme . '://' . $host . "';\n";
+    echo "console.log('ADMIN_BASE derived from request:', '" . $adminBaseFull . "');\n";
+    echo "</script>\n";
     ?>
 </head>
 
