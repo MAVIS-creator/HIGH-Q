@@ -623,7 +623,9 @@
     async function loadUserData() {
         try {
             // Load user data from session or API
-            const response = await fetch(`${ADMIN_BASE}/api/user_profile.php`, {
+            // Fallback if ADMIN_BASE is missing or empty
+            let apiBase = (typeof ADMIN_BASE !== 'undefined' && ADMIN_BASE) ? ADMIN_BASE : (window.location.origin + '/admin');
+            const response = await fetch(`${apiBase}/api/user_profile.php`, {
                 credentials: 'same-origin'
             });
 

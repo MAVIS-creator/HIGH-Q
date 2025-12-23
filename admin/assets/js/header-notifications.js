@@ -47,7 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Use relative path from admin base to avoid cross-origin issues
             // Since we're already in /HIGH-Q/admin/, api/notifications.php is at ../api/notifications.php relative to pages
             // But from header context, we use absolute path construction
-            const apiUrl = ADMIN_BASE + '/api/notifications.php';
+            // Fallback if ADMIN_BASE is missing or empty
+            let apiBase = (typeof ADMIN_BASE !== 'undefined' && ADMIN_BASE) ? ADMIN_BASE : (window.location.origin + '/admin');
+            const apiUrl = apiBase + '/api/notifications.php';
             console.log('Fetching notifications from:', apiUrl);
             // include credentials so session cookie is sent and the API can authenticate the admin
             const res = await fetch(apiUrl, { credentials: 'same-origin' });

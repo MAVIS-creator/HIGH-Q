@@ -147,9 +147,7 @@ if (!headers_sent()) {
         $adminPath = preg_replace('#/+/#', '/', $adminPath);
     }
     $appBaseFull = rtrim(app_url(''), '/');
-    echo "<script>window.HQ_ADMIN_BASE='" . $adminBaseFull . "'; window.HQ_ADMIN_PATH='" . $adminPath . "'; window.HQ_APP_BASE='" . $appBaseFull . "';</script>\n";
-    // Normalize admin base to the current origin to avoid CORS when the host differs (e.g., 127.0.0.1 vs localhost)
-    echo "<script>(function(){try{var serverBase='" . $adminBaseFull . "';var adminPath='" . $adminPath . "';var u=new URL(serverBase, window.location.origin);if(u.origin!==window.location.origin){serverBase=window.location.origin+adminPath;}else{serverBase=u.origin+u.pathname.replace(/\\/$/, '');}window.HQ_ADMIN_BASE=serverBase;window.HQ_ADMIN_PATH=adminPath;if(!window.HQ_APP_BASE){window.HQ_APP_BASE=window.location.origin;} }catch(e){window.HQ_ADMIN_BASE=window.location.origin+'" . $adminPath . "';window.HQ_ADMIN_PATH='" . $adminPath . "';if(!window.HQ_APP_BASE){window.HQ_APP_BASE=window.location.origin;}}})();</script>\n";
+    echo "<script>\n(function(){\n  var adminBase = '" . $adminBaseFull . "';\n  var adminPath = '" . $adminPath . "';\n  try {\n    var u = new URL(adminBase, window.location.origin);\n    if (u.origin !== window.location.origin) {\n      adminBase = window.location.origin + adminPath;\n    } else {\n      adminBase = u.origin + u.pathname.replace(/\/$/, '');\n    }\n  } catch (e) {\n    adminBase = window.location.origin + adminPath;\n  }\n  // Fallback: if adminBase doesn't end with /admin, append it\n  if (!/\/admin$/.test(adminBase)) {\n    adminBase = adminBase.replace(/\/$/, '') + '/admin';\n  }\n  window.HQ_ADMIN_BASE = adminBase;\n  window.HQ_ADMIN_PATH = adminPath;\n  if (!window.HQ_APP_BASE) {\n    window.HQ_APP_BASE = window.location.origin;\n  }\n})();\n</script>\n";
     ?>
 </head>
 
