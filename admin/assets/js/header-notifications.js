@@ -1,42 +1,8 @@
 // Initialize notifications
 document.addEventListener('DOMContentLoaded', function() {
-    const ADMIN_BASE = (function(){
-        const raw = window.HQ_ADMIN_BASE || '';
-        const path = window.HQ_ADMIN_PATH || '';
-        try {
-            // Prefer the injected base (built from admin_url/app_url so APP_URL is honoured)
-            if (raw) {
-                const u = new URL(raw, window.location.origin);
-                // If origin differs (ngrok / custom domain), re-anchor to current origin but keep path
-                return u.origin !== window.location.origin
-                    ? window.location.origin + (u.pathname ? u.pathname.replace(/\/$/, '') : path)
-                    : u.origin + u.pathname.replace(/\/$/, '');
-            }
-        } catch (e) {
-            // fall through
-        }
-        // Fallback: extract project path from current URL
-        if (path) {
-            return window.location.origin + path;
-        }
-        // Extract from current location pathname (e.g., /HIGH-Q/admin/index.php -> /HIGH-Q/admin)
-        const currentPath = window.location.pathname;
-        const adminIndex = currentPath.indexOf('/admin');
-        if (adminIndex > 0) {
-            return window.location.origin + currentPath.substring(0, adminIndex + 6); // include '/admin'
-        }
-        // Last resort: try to detect from script tag src
-        const scripts = document.getElementsByTagName('script');
-        for (let i = 0; i < scripts.length; i++) {
-            const src = scripts[i].src;
-            if (src && src.includes('/admin/assets/')) {
-                const match = src.match(/(.*?\/admin)\//); 
-                if (match) return match[1];
-            }
-        }
-        return window.location.origin + '/admin';
-    })();
-
+    // Use the admin base provided by the server (derived from actual request URL)
+    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
+    
     console.log('NOTIFICATIONS ADMIN_BASE:', ADMIN_BASE);
 
     const btn = document.getElementById('notifBtn');

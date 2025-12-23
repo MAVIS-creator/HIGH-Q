@@ -6,38 +6,8 @@
 (function() {
     'use strict';
 
-    const ADMIN_BASE = (function(){
-        const raw = window.HQ_ADMIN_BASE || '';
-        try {
-            if (raw) {
-                const u = new URL(raw, window.location.origin);
-                return u.origin !== window.location.origin
-                    ? window.location.origin + u.pathname.replace(/\/$/, '')
-                    : u.origin + u.pathname.replace(/\/$/, '');
-            }
-        } catch (e) {}
-        // Fallback: extract project path from current URL
-        const path = window.HQ_ADMIN_PATH || '';
-        if (path) {
-            return window.location.origin + path;
-        }
-        // Extract from current location pathname (e.g., /HIGH-Q/admin/index.php -> /HIGH-Q/admin)
-        const currentPath = window.location.pathname;
-        const adminIndex = currentPath.indexOf('/admin');
-        if (adminIndex > 0) {
-            return window.location.origin + currentPath.substring(0, adminIndex + 6); // include '/admin'
-        }
-        // Last resort: try to detect from script tag src
-        const scripts = document.getElementsByTagName('script');
-        for (let i = 0; i < scripts.length; i++) {
-            const src = scripts[i].src;
-            if (src && src.includes('/admin/assets/')) {
-                const match = src.match(/(.*?\/admin)\//); 
-                if (match) return match[1];
-            }
-        }
-        return window.location.origin + '/admin';
-    })();
+    // Use the admin base provided by the server (derived from actual request URL)
+    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
     
     console.log('PROFILE_MODAL ADMIN_BASE:', ADMIN_BASE);
     
