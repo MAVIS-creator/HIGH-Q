@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label>Password</label>
             <div style="position:relative;">
-                <input type="password" name="password" id="login_password" placeholder="********" required>
+                <input type="password" name="password" id="login_password" placeholder="********" required autocomplete="current-password">
                 <span class="toggle-eye" onclick="togglePassword('login_password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
                     &#128065;
                 </span>

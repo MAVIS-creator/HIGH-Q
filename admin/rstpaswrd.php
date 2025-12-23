@@ -204,12 +204,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="password">New Password</label>
-                <input type="password" id="password" name="password" required minlength="6" placeholder="Enter new password">
+                <input type="password" id="password" name="password" required minlength="6" placeholder="Enter new password" autocomplete="new-password">
             </div>
 
             <div class="form-group">
                 <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required minlength="6" placeholder="Confirm new password">
+                <input type="password" id="confirm_password" name="confirm_password" required minlength="6" placeholder="Confirm new password" autocomplete="new-password">
             </div>
 
             <button type="submit" class="btn">Reset Password</button>

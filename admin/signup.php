@@ -400,7 +400,7 @@ input[type="file"]:focus {
             <label>Email</label>
             <input type="email" name="email" placeholder="you@example.com" required>
             <label>Password</label>
-            <input type="password" name="password" placeholder="********" required>
+            <input type="password" name="password" placeholder="********" required autocomplete="new-password">
             <label>Upload Passport Photo</label>
             <input type="file" name="avatar" accept="image/png, image/jpeg, image/webp" <?php if (!empty($recfg['enabled'])) echo 'required'; ?>>
             <button type="submit">Create Account</button>

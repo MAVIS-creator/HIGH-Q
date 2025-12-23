@@ -195,13 +195,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <input type="text" name="otp" placeholder="Enter OTP" required>
                 <div style="position:relative;">
-                    <input type="password" name="password" id="password" placeholder="New Password" required>
+                    <input type="password" name="password" id="password" placeholder="New Password" required autocomplete="new-password">
                     <span class="toggle-eye" onclick="togglePassword('password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
                         &#128065;
                     </span>
                 </div>
                 <div style="position:relative;">
-                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required autocomplete="new-password">
                     <span class="toggle-eye" onclick="togglePassword('confirm_password', this)" title="Show/Hide Password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer;">
                         &#128065;
                     </span>
