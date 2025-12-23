@@ -27,7 +27,9 @@ try {
 }
 
 // Ensure new modules are always present
+// Also update students to academic
 $required = [
+    'academic' => ['title' => 'Academic Management', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?pages=academic'],
     'sentinel' => ['title' => 'Security Scan', 'icon' => 'bx bxs-shield-alt', 'url' => 'index.php?pages=sentinel'],
     'patcher' => ['title' => 'Smart Patcher', 'icon' => 'bx bx-wrench', 'url' => 'index.php?pages=patcher'],
     'automator' => ['title' => 'Automator', 'icon' => 'bx bx-cog', 'url' => 'index.php?pages=automator'],
