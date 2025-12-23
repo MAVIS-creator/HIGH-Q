@@ -12,64 +12,6 @@ if (!isset($pdo) || !$pdo) {
   }
 }
 
-// Fallback content so home cards stay informative even if DB is empty
-$fallbackPrograms = [
-  'jamb-preparation' => [
-    'title' => 'JAMB Preparation',
-    'slug' => 'jamb-preparation',
-    'description' => 'Comprehensive JAMB prep with mock CBT drills and targeted tutoring.',
-    'duration' => '4-6 months',
-    'icon' => 'bx bx-target-lock',
-    'highlight_badge' => '305 - Highest JAMB Score 2025',
-    'features_list' => "English Language\nMathematics\nSciences\nArts",
-  ],
-  'waec-preparation' => [
-    'title' => 'WAEC Preparation',
-    'slug' => 'waec-preparation',
-    'description' => 'Complete WAEC prep covering core subjects, practicals, and past questions.',
-    'duration' => '6-12 months',
-    'icon' => 'bx bx-book',
-    'highlight_badge' => '98% Success Rate',
-    'features_list' => "Core Subjects\nElectives\nPracticals",
-  ],
-  'neco-preparation' => [
-    'title' => 'NECO Preparation',
-    'slug' => 'neco-preparation',
-    'description' => 'NECO prep with experienced tutors, mock exams, and curated study materials.',
-    'duration' => '6-12 months',
-    'icon' => 'bx bx-book-open',
-    'highlight_badge' => 'Proven Excellence',
-    'features_list' => "All Subjects\nMock Exams\nStudy Materials",
-  ],
-  'post-utme' => [
-    'title' => 'Post-UTME',
-    'slug' => 'post-utme',
-    'description' => 'University-specific Post-UTME prep with practice tests and interview prep.',
-    'duration' => '2-4 months',
-    'icon' => 'bx bx-award',
-    'highlight_badge' => 'University Ready',
-    'features_list' => "University Focus\nPractice Tests\nInterview Prep",
-  ],
-  'special-tutorials' => [
-    'title' => 'Special Tutorials',
-    'slug' => 'special-tutorials',
-    'description' => 'Intensive one-on-one and small group tutorials tailored to individual needs.',
-    'duration' => 'Flexible',
-    'icon' => 'bx bx-star',
-    'highlight_badge' => 'Personalized Learning',
-    'features_list' => "Personalized\nFlexible Schedule\nSubject Focus",
-  ],
-  'computer-training' => [
-    'title' => 'Computer Training',
-    'slug' => 'computer-training',
-    'description' => 'Modern computer skills and digital literacy training: MS Office, internet skills, programming basics.',
-    'duration' => '3-6 months',
-    'icon' => 'bx bx-laptop',
-    'highlight_badge' => 'Digital Skills',
-    'features_list' => "MS Office\nInternet Skills\nProgramming",
-  ],
-];
-
 // Fetch up to 6 active courses added by the admin (only if $pdo is available)
 if (isset($pdo) && $pdo instanceof PDO) {
   try {
@@ -80,19 +22,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   } catch (Throwable $e) {
     $programs = [];
   }
-}
-
-// Enrich or fallback
-if (empty($programs)) {
-  $programs = array_values($fallbackPrograms);
-} else {
-  foreach ($programs as &$prog) {
-    $slug = $prog['slug'] ?? '';
-    if ($slug && isset($fallbackPrograms[$slug])) {
-      $prog = array_merge($fallbackPrograms[$slug], $prog);
-    }
-  }
-  unset($prog);
 }
 ?>
 
