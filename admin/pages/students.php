@@ -1,5 +1,5 @@
 <?php
-// admin/pages/students.php
+// admin/pages/academic.php
 // Remove any visible code output from the top of the page
 // Ensure no script or debug code is rendered at the top of the page
 require_once '../includes/auth.php';

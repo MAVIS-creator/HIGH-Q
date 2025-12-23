@@ -10,7 +10,7 @@ return [
     'settings'  => ['title' => 'Site Settings', 'icon' => 'bx bxs-cog', 'url' => 'index.php?pages=settings'],
     'courses'   => ['title' => 'Courses', 'icon' => 'bx bxs-book', 'url' => 'index.php?pages=courses'],
     'tutors'    => ['title' => 'Tutors', 'icon' => 'bx bxs-chalkboard', 'url' => 'index.php?pages=tutors'],
-    'students'  => ['title' => 'Students', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?pages=students'],
+    'academic'  => ['title' => 'Academic Management', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?pages=academic'],
     'payments'  => ['title' => 'Payments', 'icon' => 'bx bxs-credit-card', 'url' => 'index.php?pages=payments'],
     'create_payment_link' => ['title' => 'Create Payment Link', 'icon' => 'bx bx-link', 'url' => 'index.php?pages=payment'],
     'icons'     => ['title' => 'Icons', 'icon' => 'bx bx-image', 'url' => 'index.php?pages=icons'],
