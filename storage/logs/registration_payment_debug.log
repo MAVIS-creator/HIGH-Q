@@ -225,3 +225,41 @@
 2025-12-19T17:51:07+01:00 AFTER_REG_COMMIT: registrationId=34 reference=REG-20251219175107-cab16a paymentId=55
 2025-12-19T17:51:08+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251219175107-cab16a session_last_payment_id=NULL session_last_payment_reference=NULL
 2025-12-19T17:51:24+01:00 PAY_WAIT_MISS: ref=REG-20251219175107-cab16a session_last_payment_id=NULL
+2025-12-23T17:10:53+01:00 ENTER_CREATE_REG: reached registration creation block. keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:53+01:00 AFTER_ENTER_CREATE_REG: continuing setup before branch checks.
+2025-12-23T17:10:54+01:00 PRE-BRANCH: posted_reg_type=regular detected_reg_type=regular selectedHasAnyFixed=1 selectedAllVaries=0 method=bank keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:54+01:00 SKIP POST-UTME BLOCK: registration_type=regular (expected regular).
+2025-12-23T17:10:54+01:00 BEFORE_CREATE_REG_TRY: about to begin registration transaction.
+2025-12-23T17:10:54+01:00 BEFORE_INSERT_STUDENT_REG: first_name=Balikis programs=["3"]
+2025-12-23T17:10:54+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=559
+2025-12-23T17:10:54+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":11500,"method":"bank","programs":["3"],"selectedFixedIds":[3],"selectedVariesIds":[]}
+2025-12-23T17:10:54+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251223171054-ea892c session_last_payment_id=NULL session_last_payment_reference=NULL
+2025-12-23T17:10:54+01:00 ENTER_CREATE_REG: reached registration creation block. keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:54+01:00 AFTER_ENTER_CREATE_REG: continuing setup before branch checks.
+2025-12-23T17:10:54+01:00 PRE-BRANCH: posted_reg_type=regular detected_reg_type=regular selectedHasAnyFixed=1 selectedAllVaries=0 method=bank keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:54+01:00 SKIP POST-UTME BLOCK: registration_type=regular (expected regular).
+2025-12-23T17:10:54+01:00 BEFORE_CREATE_REG_TRY: about to begin registration transaction.
+2025-12-23T17:10:54+01:00 BEFORE_INSERT_STUDENT_REG: first_name=Balikis programs=["3"]
+2025-12-23T17:10:54+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=559
+2025-12-23T17:10:54+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":11500,"method":"bank","programs":["3"],"selectedFixedIds":[3],"selectedVariesIds":[]}
+2025-12-23T17:10:54+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251223171054-a8124f session_last_payment_id=56 session_last_payment_reference=REG-20251223171054-ea892c
+2025-12-23T17:10:55+01:00 PAY_WAIT_MISS: ref=REG-20251223171054-a8124f session_last_payment_id=57
+2025-12-23T17:10:55+01:00 ENTER_CREATE_REG: reached registration creation block. keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:55+01:00 AFTER_ENTER_CREATE_REG: continuing setup before branch checks.
+2025-12-23T17:10:55+01:00 PRE-BRANCH: posted_reg_type=regular detected_reg_type=regular selectedHasAnyFixed=1 selectedAllVaries=0 method=bank keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:55+01:00 SKIP POST-UTME BLOCK: registration_type=regular (expected regular).
+2025-12-23T17:10:55+01:00 BEFORE_CREATE_REG_TRY: about to begin registration transaction.
+2025-12-23T17:10:55+01:00 BEFORE_INSERT_STUDENT_REG: first_name=Balikis programs=["3"]
+2025-12-23T17:10:55+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=559
+2025-12-23T17:10:55+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":11500,"method":"bank","programs":["3"],"selectedFixedIds":[3],"selectedVariesIds":[]}
+2025-12-23T17:10:55+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251223171055-dc753f session_last_payment_id=57 session_last_payment_reference=REG-20251223171054-a8124f
+2025-12-23T17:10:56+01:00 ENTER_CREATE_REG: reached registration creation block. keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:56+01:00 AFTER_ENTER_CREATE_REG: continuing setup before branch checks.
+2025-12-23T17:10:56+01:00 PRE-BRANCH: posted_reg_type=regular detected_reg_type=regular selectedHasAnyFixed=1 selectedAllVaries=0 method=bank keys=_csrf_token,client_total,method,registration_type,payment_method_choice_regular,first_name,last_name,email_contact,phone,date_of_birth,gender,home_address,programs,previous_education,academic_goals,emergency_name,emergency_phone,emergency_relationship,agreed_terms,form_action
+2025-12-23T17:10:56+01:00 SKIP POST-UTME BLOCK: registration_type=regular (expected regular).
+2025-12-23T17:10:56+01:00 BEFORE_CREATE_REG_TRY: about to begin registration transaction.
+2025-12-23T17:10:56+01:00 BEFORE_INSERT_STUDENT_REG: first_name=Balikis programs=["3"]
+2025-12-23T17:10:56+01:00 CATCH_EXCEPTION: err=There is already an active transaction file=C:\xampp\htdocs\HIGH-Q\public\register.php line=559
+2025-12-23T17:10:56+01:00 REG FALLBACK (POST-TRY): creating payment due to missing reference. context={"amount":11500,"method":"bank","programs":["3"],"selectedFixedIds":[3],"selectedVariesIds":[]}
+2025-12-23T17:10:56+01:00 ABOUT_TO_REDIRECT_PAY (POST-TRY): redirect=pay/REG-20251223171056-46c03e session_last_payment_id=58 session_last_payment_reference=REG-20251223171055-dc753f
+2025-12-23T17:10:56+01:00 PAY_WAIT_MISS: ref=REG-20251223171056-46c03e session_last_payment_id=59
