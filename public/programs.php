@@ -1,4 +1,16 @@
 <?php
+// Fetch programs from database
+require_once __DIR__ . '/config/db.php';
+
+$programs = [];
+try {
+    $stmt = $pdo->prepare("SELECT id, title, slug, description, duration, icon, highlight_badge FROM courses WHERE is_active = 1 ORDER BY title ASC");
+    $stmt->execute();
+    $programs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    // Fallback to empty array
+    $programs = [];
+}
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
@@ -10,119 +22,49 @@
 	</div>
 </section>
 
-<!-- Programs listing (placeholder) -->
+<!-- Programs listing (from database) -->
 <section class="programs-content">
 	<div class="container">
 		<div class="ceo-heading">
 			<h2>Explore Our <span class="high">Programs</span></h2>
 			<p class="lead">Choose a course tailored to your needs — from exam prep to digital skills.</p>
 		</div>
-			<!-- Static program cards (not pulled from SQL) -->
-			<div class="programs-grid">
-				<article class="program-card">
-					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-target-lock"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>JAMB Preparation</h4>
-						<p class="muted">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
-						<div class="subjects">
-							<span class="tag">English Language</span>
-							<span class="tag">Mathematics</span>
-							<span class="tag">Sciences</span>
-							<span class="tag">Arts</span>
-						</div>
-						<p class="duration">Duration: 4-6 months</p>
-						<a href="program.php?slug=jamb-preparation" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
-				<article class="program-card tight-gap">
-					<div class="program-card-head">
-						<div class="program-icon program-waec"><i class="bx bx-book"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>WAEC Preparation</h4>
-						<p class="muted">Complete preparation for West African Senior School Certificate Examination</p>
-						<div class="subjects">
-							<span class="tag">Core Subjects</span>
-							<span class="tag">Electives</span>
-							<span class="tag">Practicals</span>
-						</div>
-					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 6-12 months</p>
-						<a href="program.php?slug=waec-preparation" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
-				<article class="program-card tight-gap">
-					<div class="program-card-head">
-						<div class="program-icon program-neco"><i class="bx bx-book-open"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>NECO Preparation</h4>
-						<p class="muted">National Examination Council preparation with experienced tutors</p>
-						<div class="subjects">
-							<span class="tag">All Subjects</span>
-							<span class="tag">Mock Exams</span>
-							<span class="tag">Study Materials</span>
-						</div>
-					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 6-12 months</p>
-						<a href="program.php?slug=neco-preparation" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
-				<article class="program-card">
-					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-award"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>Post-UTME</h4>
-						<p class="muted">University-specific entrance examination preparation</p>
-						<div class="subjects">
-							<span class="tag">University Focus</span>
-							<span class="tag">Practice Tests</span>
-							<span class="tag">Interview Prep</span>
-						</div>
-					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 2-4 months</p>
-						<a href="program.php?slug=post-utme" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
-				<article class="program-card">
-					<div class="program-card-head">
-						<div class="program-icon"><i class="bx bx-star"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>Special Tutorials</h4>
-						<p class="muted">Intensive one-on-one and small group tutorial sessions</p>
-						<div class="subjects">
-							<span class="tag">Personalized</span>
-							<span class="tag">Flexible Schedule</span>
-							<span class="tag">Subject Focus</span>
-						</div>
-					<p class="duration" style="color: #536387; font-weight: 600;">Duration: Flexible</p>
-						<a href="program.php?slug=special-tutorials" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
-				<article class="program-card tight-gap">
-					<div class="program-card-head">
-						<div class="program-icon program-computer"><i class="bx bx-laptop"></i></div>
-					</div>
-					<div class="program-card-body">
-						<h4>Computer Training</h4>
-						<p class="muted">Modern computer skills and digital literacy training</p>
-						<div class="subjects">
-							<span class="tag">MS Office</span>
-							<span class="tag">Internet Skills</span>
-							<span class="tag">Programming</span>
-						</div>
-					<p class="duration" style="color: #536387; font-weight: 600;">Duration: 3-6 months</p>
-						<a href="program.php?slug=computer-training" class="btn-primary">Learn More</a>
-					</div>
-				</article>
-
-			</div>
+        
+        <?php if (empty($programs)): ?>
+            <div style="text-align: center; padding: 64px 24px; color: var(--hq-gray);">
+                <i class='bx bx-folder-open' style="font-size: 48px; color: #d1d5db; margin-bottom: 16px;"></i>
+                <p>No programs available at the moment. Check back soon!</p>
+            </div>
+        <?php else: ?>
+            <div class="programs-grid">
+                <?php foreach ($programs as $program): ?>
+                    <?php
+                    $icon = htmlspecialchars($program['icon'] ?? 'bx bx-book');
+                    $title = htmlspecialchars($program['title']);
+                    $slug = htmlspecialchars($program['slug']);
+                    $description = htmlspecialchars($program['description'] ?? '');
+                    $duration = htmlspecialchars($program['duration'] ?? 'Flexible');
+                    $highlight = htmlspecialchars($program['highlight_badge'] ?? '');
+                    ?>
+                    <article class="program-card">
+                        <div class="program-card-head">
+                            <div class="program-icon"><i class="<?= $icon ?>"></i></div>
+                        </div>
+                        <div class="program-card-body">
+                            <h4><?= $title ?></h4>
+                            <p class="muted"><?= $description ?></p>
+                            <?php if ($highlight): ?>
+                                <div class="subjects">
+                                    <span class="tag highlight-badge"><?= $highlight ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <p class="duration" style="color: #536387; font-weight: 600;">Duration: <?= $duration ?></p>
+                            <a href="program.php?slug=<?= $slug ?>" class="btn-primary">Learn More</a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 	</div>
 </section>
 
