@@ -1,10 +1,13 @@
 <?php
 // Admin Security Scan page: Sentinel
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/sidebar.php';
 $pageTitle = 'Security Scan';
 $pageSubtitle = 'Run advanced security checks and view reports.';
+
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+requirePermission('sentinel');
+require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 <div class="admin-main">
     <div class="page-header">
