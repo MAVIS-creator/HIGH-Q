@@ -127,7 +127,7 @@ $programs = [
 		          </div>
 		        <?php endif; ?>
 		        <p class="duration" style="color: #536387; font-weight: 600;">Duration: <?= htmlspecialchars($duration ?: 'Contact us') ?></p>
-		        <p class="muted" style="font-weight:600; margin-top:-6px;">Reg fee + Form fee: Contact us</p>
+
 		        <a href="program-single.php?slug=<?= $slug ?>" class="btn-primary">Learn More</a>
 		      </div>
 		    </article>
