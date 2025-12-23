@@ -372,6 +372,14 @@ endif; ?>
             <p class="label">Duration</p>
             <p class="value"><?= htmlspecialchars($program['duration'] ?: 'Flexible') ?></p>
           </div>
+          <div class="quick-card">
+            <p class="label">Registration Fee</p>
+            <p class="value">₦1,500</p>
+          </div>
+          <div class="quick-card">
+            <p class="label">Form Fee</p>
+            <p class="value">₦1,000</p>
+          </div>
           <?php if (!empty($program['highlight_badge'])): ?>
             <div class="quick-card">
               <p class="label">Badge</p>
