@@ -1,29 +1,4 @@
-<?php
-// Ensure we have a PDO connection available. Header may already include DB; try loading it if not.
-$programs = [];
-if (!isset($pdo) || !$pdo) {
-  $dbPath = __DIR__ . '/config/db.php';
-  if (file_exists($dbPath)) {
-    try {
-      require_once $dbPath;
-    } catch (Throwable $e) {
-      // ignore - we'll gracefully fall back to empty programs
-    }
-  }
-}
 
-// Fetch up to 6 active courses added by the admin (only if $pdo is available)
-if (isset($pdo) && $pdo instanceof PDO) {
-  try {
-    // include icon, highlight_badge and aggregated features so we can render icons and feature lists
-    $stmt = $pdo->prepare("SELECT c.id, c.title, c.slug, c.description, c.duration, c.price, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.created_at DESC LIMIT 6");
-    $stmt->execute();
-    $programs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (Throwable $e) {
-    $programs = [];
-  }
-}
-?>
 
 <section class="hero py-5">
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
@@ -169,88 +144,134 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <div class="programs-grid">
-      <?php if (empty($programs)): ?>
-        <p>No programs have been published yet. Check back later.</p>
-      <?php else: ?>
-        <?php foreach ($programs as $p): ?>
-          <?php
-          $title = htmlspecialchars($p['title']);
-          $slug = htmlspecialchars($p['slug']);
-          $desc = trim($p['description'] ?? '');
-          $icon = trim($p['icon'] ?? '');
-          $features_list = trim($p['features_list'] ?? '');
-          $highlight_badge = trim($p['highlight_badge'] ?? '');
+      
+      <!-- Static Program Cards -->
+      <article class="program-card">
+        <div class="program-card-inner">
+          <div class="program-icon">
+            <i class='bx bx-target-lock' aria-hidden='true'></i>
+          </div>
+          <div class="program-body">
+            <h4><a href="programs.php#jamb" class="program-title-link">JAMB Preparation</a></h4>
+            <p class="program-summary">Comprehensive preparation for Joint Admissions and Matriculation Board examinations</p>
+            <ul class="program-features">
+              <li>English Language</li>
+              <li>Mathematics</li>
+              <li>Sciences & Arts</li>
+              <li>CBT Practice</li>
+            </ul>
+          </div>
+        </div>
+        <div class="program-card-footer">
+          <div class="program-highlight"><span class="highlight-icon">✺</span> 305 - Highest Score 2025</div>
+        </div>
+      </article>
 
-          // If description contains multiple lines, treat each line as a bullet
-          $lines = preg_split('/\r?\n/', $desc);
-          $hasList = count($lines) > 1;
+      <article class="program-card">
+        <div class="program-card-inner">
+          <div class="program-icon">
+            <i class='bx bx-book' aria-hidden='true'></i>
+          </div>
+          <div class="program-body">
+            <h4><a href="programs.php#waec" class="program-title-link">WAEC Preparation</a></h4>
+            <p class="program-summary">Complete preparation for West African Senior School Certificate Examination</p>
+            <ul class="program-features">
+              <li>Core Subjects</li>
+              <li>Electives</li>
+              <li>Practicals</li>
+              <li>Past Questions</li>
+            </ul>
+          </div>
+        </div>
+        <div class="program-card-footer">
+          <span class="badge">Learn More</span>
+        </div>
+      </article>
 
-          // prefer features_list from normalized table
-          $features_lines = $features_list !== '' ? preg_split('/\r?\n/', $features_list) : ($hasList ? $lines : []);
+      <article class="program-card">
+        <div class="program-card-inner">
+          <div class="program-icon">
+            <i class='bx bx-book-open' aria-hidden='true'></i>
+          </div>
+          <div class="program-body">
+            <h4><a href="programs.php#neco" class="program-title-link">NECO Preparation</a></h4>
+            <p class="program-summary">National Examination Council preparation with experienced tutors</p>
+            <ul class="program-features">
+              <li>All Subjects</li>
+              <li>Mock Exams</li>
+              <li>Study Materials</li>
+              <li>Expert Tutors</li>
+            </ul>
+          </div>
+        </div>
+        <div class="program-card-footer">
+          <span class="badge">Learn More</span>
+        </div>
+      </article>
 
-          // fallback short summary
-          $summary = (empty($features_lines) && !$hasList) ? (strlen($desc) > 220 ? substr($desc, 0, 217) . '...' : $desc) : null;
-          ?>
+      <article class="program-card">
+        <div class="program-card-inner">
+          <div class="program-icon">
+            <i class='bx bx-award' aria-hidden='true'></i>
+          </div>
+          <div class="program-body">
+            <h4><a href="programs.php#postutme" class="program-title-link">Post-UTME</a></h4>
+            <p class="program-summary">University-specific entrance examination preparation</p>
+            <ul class="program-features">
+              <li>University Focus</li>
+              <li>Practice Tests</li>
+              <li>Interview Prep</li>
+              <li>Counseling</li>
+            </ul>
+          </div>
+        </div>
+        <div class="program-card-footer">
+          <span class="badge">Learn More</span>
+        </div>
+      </article>
 
-          <article class="program-card">
-            <div class="program-card-inner">
-              <div class="program-icon">
-                <?php
-                // Prefer Boxicons class stored in icon, otherwise try image filename under assets/images/icons
-                if ($icon !== '') {
-                  if (strpos($icon, 'bx') !== false) {
-                    echo "<i class='" . htmlspecialchars($icon) . "' aria-hidden='true'></i>";
-                  } else {
-                    $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-                    if (is_readable($iconPath)) {
-                      echo "<img src='" . app_url('assets/images/icons/' . rawurlencode($icon)) . "' alt='" . htmlspecialchars($title) . " icon'>";
-                    } else {
-                      // fallback default icon
-                      echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                    }
-                  }
-                } else {
-                  echo "<i class='bx bxs-book-open' aria-hidden='true'></i>";
-                }
-                ?>
-              </div>
+      <article class="program-card">
+        <div class="program-card-inner">
+          <div class="program-icon">
+            <i class='bx bx-star' aria-hidden='true'></i>
+          </div>
+          <div class="program-body">
+            <h4><a href="programs.php#tutorials" class="program-title-link">Special Tutorials</a></h4>
+            <p class="program-summary">Intensive one-on-one and small group tutorial sessions</p>
+            <ul class="program-features">
+              <li>Personalized</li>
+              <li>Flexible Schedule</li>
+              <li>Subject Focus</li>
+              <li>Individual Attention</li>
+            </ul>
+          </div>
+        </div>
+        <div class="program-card-footer">
+          <span class="badge">Learn More</span>
+        </div>
+      </article>
 
-              <div class="program-body">
-                <h4>
-                  <a href="programs.php?slug=<?= $slug ?>" class="program-title-link">
-                    <?= $title ?>
-                  </a>
+      <article class="program-card">
+        <div class="program-card-inner">
+          <div class="program-icon">
+            <i class='bx bx-laptop' aria-hidden='true'></i>
+          </div>
+          <div class="program-body">
+            <h4><a href="programs.php#computer" class="program-title-link">Computer Training</a></h4>
+            <p class="program-summary">Modern computer skills and digital literacy training</p>
+            <ul class="program-features">
+              <li>MS Office</li>
+              <li>Internet Skills</li>
+              <li>Programming</li>
+              <li>Web Design</li>
+            </ul>
+          </div>
+        </div>
+        <div class="program-card-footer">
+          <span class="badge">Learn More</span>
+        </div>
+      </article>
 
-                </h4>
-
-                <?php if (!empty($desc)): ?>
-                  <p class="program-summary"><?= htmlspecialchars($desc) ?></p>
-                <?php endif; ?>
-
-                <?php if (!empty($features_lines)): ?>
-                  <ul class="program-features">
-                    <?php foreach (array_slice($features_lines, 0, 5) as $line): ?>
-                      <?php $li = trim($line);
-                      if ($li === '') continue; ?>
-                      <li><?= htmlspecialchars($li) ?></li>
-                    <?php endforeach; ?>
-                  </ul>
-                <?php endif; ?>
-
-              </div>
-            </div>
-
-            <div class="program-card-footer">
-              <?php if ($highlight_badge !== ''): ?>
-                <div class="program-highlight"><span class="highlight-icon">✺</span> <?= htmlspecialchars($highlight_badge) ?></div>
-              <?php else: ?>
-                <span class="badge">Learn More</span>
-              <?php endif; ?>
-            </div>
-          </article>
-
-        <?php endforeach; ?>
-      <?php endif; ?>
     </div>
   </div>
 </section>
