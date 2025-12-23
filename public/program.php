@@ -7,10 +7,14 @@ $slug = trim($_GET['slug'] ?? '');
 
 // Pull program with its feature list from the database
 $program = null;
+ $featureLines = [];
 try {
   $stmt = $pdo->prepare("SELECT c.id, c.title, c.slug, c.description, c.price, c.duration, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text ORDER BY cf.position SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.slug = ? AND c.is_active = 1 GROUP BY c.id LIMIT 1");
   $stmt->execute([$slug]);
   $program = $stmt->fetch(PDO::FETCH_ASSOC);
+  if ($program) {
+    $featureLines = array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $program['features_list'] ?? ''))));
+  }
 } catch (Throwable $_) {}
 
 // Show fallback if program doesn't exist
@@ -445,11 +449,22 @@ include __DIR__ . '/includes/header.php';
         <section class="program-card program-card--accent-yellow">
           <h3><i class='bx bx-check-double' style="font-size: 1.8rem; color: var(--hq-yellow);"></i>Key Features & Benefits</h3>
           <ul class="program-feature-list">
-            <li><span>✓</span>Expert instructors with years of experience</li>
-            <li><span>✓</span>Comprehensive study materials and resources</li>
-            <li><span>✓</span>Regular mock exams and practice tests</li>
-            <li><span>✓</span>One-on-one guidance and support</li>
-            <li><span>✓</span>Flexible scheduling to fit your needs</li>
+            <?php
+            $featureItems = !empty($featureLines)
+              ? $featureLines
+              : [
+                  'Expert instructors with years of experience',
+                  'Comprehensive study materials and resources',
+                  'Regular mock exams and practice tests',
+                  'One-on-one guidance and support',
+                  'Flexible scheduling to fit your needs'
+                ];
+            foreach ($featureItems as $line):
+              $line = trim($line);
+              if ($line === '') continue;
+            ?>
+              <li><span>✓</span><?= htmlspecialchars($line) ?></li>
+            <?php endforeach; ?>
           </ul>
         </section>
 
