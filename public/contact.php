@@ -32,12 +32,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// }
 				$to = 'highqsolidacademy@gmail.com';
 				$subject = 'Website Contact: ' . ($program ? $program : 'General Inquiry');
-				$html = "<h3>Contact form submission</h3>";
-				$html .= "<p><strong>Name:</strong> " . htmlspecialchars($first_name . ' ' . $last_name) . "</p>";
-				$html .= "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>";
-				$html .= "<p><strong>Phone:</strong> " . htmlspecialchars($phone) . "</p>";
-				$html .= "<p><strong>Program of interest:</strong> " . htmlspecialchars($program) . "</p>";
-				$html .= "<p><strong>Message:</strong><br>" . nl2br(htmlspecialchars($message)) . "</p>";
+
+				// Styled HTML email for better readability
+				$fullName = htmlspecialchars(trim($first_name . ' ' . $last_name));
+				$safeEmail = htmlspecialchars($email);
+				$safePhone = htmlspecialchars($phone);
+				$safeProgram = htmlspecialchars($program ?: 'Not specified');
+				$safeMessage = nl2br(htmlspecialchars($message));
+
+				$html = <<<HTML
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#f5f7fb;padding:24px;font-family:'Segoe UI',Arial,sans-serif;">
+	<tr>
+		<td align="center">
+			<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="640" style="background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;box-shadow:0 10px 30px rgba(0,0,0,0.06);">
+				<tr>
+					<td style="background:linear-gradient(135deg,#0f172a,#1e293b);padding:18px 24px;color:#f8fafc;">
+						<div style="font-size:18px;font-weight:700;">High Q Solid Academy</div>
+						<div style="font-size:14px;color:#cbd5e1;margin-top:4px;">New website contact message</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding:24px 24px 12px 24px;color:#0f172a;">
+						<div style="font-size:18px;font-weight:700;margin-bottom:4px;">Contact Form Submission</div>
+						<div style="font-size:14px;color:#475569;">Submitted via highqsolidacademy.com</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding:0 24px 24px 24px;">
+						<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+							<tr style="background:#f8fafc;">
+								<td style="padding:12px 16px;font-size:14px;color:#475569;width:32%;">Name</td>
+								<td style="padding:12px 16px;font-size:15px;font-weight:600;color:#0f172a;">{$fullName}</td>
+							</tr>
+							<tr>
+								<td style="padding:12px 16px;font-size:14px;color:#475569;width:32%;">Email</td>
+								<td style="padding:12px 16px;font-size:15px;font-weight:600;color:#0f172a;">{$safeEmail}</td>
+							</tr>
+							<tr style="background:#f8fafc;">
+								<td style="padding:12px 16px;font-size:14px;color:#475569;width:32%;">Phone</td>
+								<td style="padding:12px 16px;font-size:15px;font-weight:600;color:#0f172a;">{$safePhone}</td>
+							</tr>
+							<tr>
+								<td style="padding:12px 16px;font-size:14px;color:#475569;width:32%;">Program of Interest</td>
+								<td style="padding:12px 16px;font-size:15px;font-weight:600;color:#0f172a;">{$safeProgram}</td>
+							</tr>
+						</table>
+
+						<div style="margin-top:16px;padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#0f172a;color:#e2e8f0;">
+							<div style="font-size:14px;letter-spacing:0.02em;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px;">Message</div>
+							<div style="font-size:15px;line-height:1.6;">{$safeMessage}</div>
+						</div>
+
+						<div style="margin-top:16px;font-size:13px;color:#94a3b8;">This email was sent automatically from the website contact form.</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="background:#f8fafc;padding:14px 24px;color:#475569;font-size:13px;text-align:center;">
+						High Q Solid Academy &bull; Always Ahead of Others
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+HTML;
 
 				$sent = sendEmail($to, $subject, $html);
 				if ($sent) {
