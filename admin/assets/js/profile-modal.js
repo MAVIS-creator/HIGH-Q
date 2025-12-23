@@ -27,8 +27,16 @@
         if (adminIndex > 0) {
             return window.location.origin + currentPath.substring(0, adminIndex + 6); // include '/admin'
         }
-        const path2 = window.HQ_ADMIN_PATH || '/admin';
-        return window.location.origin + path.replace(/\/$/, '');
+        // Last resort: try to detect from script tag src
+        const scripts = document.getElementsByTagName('script');
+        for (let i = 0; i < scripts.length; i++) {
+            const src = scripts[i].src;
+            if (src && src.includes('/admin/assets/')) {
+                const match = src.match(/(.*?\/admin)\//); 
+                if (match) return match[1];
+            }
+        }
+        return window.location.origin + '/admin';
     })();
     
     // Track original values for email/phone verification
@@ -133,7 +141,7 @@
                         <!-- Password Tab -->
                         <div class="profile-tab-content" id="tab-password">
                             <form id="profilePasswordForm">
-                                <input type="text" name="username" autocomplete="username" style="display:none;" readonly value="${data.email || ''}">
+                                <input type="text" name="username" autocomplete="username" style="display:none;" readonly>
                                 <div class="profile-form-group">
                                     <label for="currentPassword">Current Password</label>
                                     <input type="password" id="currentPassword" name="current_password" required autocomplete="current-password">
