@@ -16,8 +16,18 @@
                     : u.origin + u.pathname.replace(/\/$/, '');
             }
         } catch (e) {}
-        // Fallback keeps subfolder path when header injected only HQ_ADMIN_PATH
-        const path = window.HQ_ADMIN_PATH || '/admin';
+        // Fallback: extract project path from current URL
+        const path = window.HQ_ADMIN_PATH || '';
+        if (path) {
+            return window.location.origin + path;
+        }
+        // Extract from current location pathname (e.g., /HIGH-Q/admin/index.php -> /HIGH-Q/admin)
+        const currentPath = window.location.pathname;
+        const adminIndex = currentPath.indexOf('/admin');
+        if (adminIndex > 0) {
+            return window.location.origin + currentPath.substring(0, adminIndex + 6); // include '/admin'
+        }
+        const path2 = window.HQ_ADMIN_PATH || '/admin';
         return window.location.origin + path.replace(/\/$/, '');
     })();
     
@@ -123,6 +133,7 @@
                         <!-- Password Tab -->
                         <div class="profile-tab-content" id="tab-password">
                             <form id="profilePasswordForm">
+                                <input type="text" name="username" autocomplete="username" style="display:none;" readonly value="${data.email || ''}">
                                 <div class="profile-form-group">
                                     <label for="currentPassword">Current Password</label>
                                     <input type="password" id="currentPassword" name="current_password" required autocomplete="current-password">
@@ -623,9 +634,7 @@
     async function loadUserData() {
         try {
             // Load user data from session or API
-            // Fallback if ADMIN_BASE is missing or empty
-            let apiBase = (typeof ADMIN_BASE !== 'undefined' && ADMIN_BASE) ? ADMIN_BASE : (window.location.origin + '/admin');
-            const response = await fetch(`${apiBase}/api/user_profile.php`, {
+            const response = await fetch(`${ADMIN_BASE}/api/user_profile.php`, {
                 credentials: 'same-origin'
             });
 

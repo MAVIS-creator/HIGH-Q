@@ -15,7 +15,17 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             // fall through
         }
-        return window.location.origin + path;
+        // Fallback: extract project path from current URL
+        if (path) {
+            return window.location.origin + path;
+        }
+        // Extract from current location pathname (e.g., /HIGH-Q/admin/index.php -> /HIGH-Q/admin)
+        const currentPath = window.location.pathname;
+        const adminIndex = currentPath.indexOf('/admin');
+        if (adminIndex > 0) {
+            return window.location.origin + currentPath.substring(0, adminIndex + 6); // include '/admin'
+        }
+        return window.location.origin + '/admin';
     })();
 
     const btn = document.getElementById('notifBtn');
@@ -44,12 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to load and display notifications
     async function loadNotifications() {
         try {
-            // Use relative path from admin base to avoid cross-origin issues
-            // Since we're already in /HIGH-Q/admin/, api/notifications.php is at ../api/notifications.php relative to pages
-            // But from header context, we use absolute path construction
-            // Fallback if ADMIN_BASE is missing or empty
-            let apiBase = (typeof ADMIN_BASE !== 'undefined' && ADMIN_BASE) ? ADMIN_BASE : (window.location.origin + '/admin');
-            const apiUrl = apiBase + '/api/notifications.php';
+            // Use ADMIN_BASE with robust fallback
+            const apiUrl = ADMIN_BASE + '/api/notifications.php';
             console.log('Fetching notifications from:', apiUrl);
             // include credentials so session cookie is sent and the API can authenticate the admin
             const res = await fetch(apiUrl, { credentials: 'same-origin' });
