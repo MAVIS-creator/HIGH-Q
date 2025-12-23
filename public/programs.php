@@ -102,62 +102,36 @@ $programs = [
 		</div>
 
 		<div class="programs-grid">
-		  <?php if (empty($programs)): ?>
-		    <div class="program-card" style="grid-column: span 3; text-align:center; padding:32px;">
-		      <h4 style="margin-bottom:8px;">No programs published yet</h4>
-		      <p class="muted" style="margin-bottom:16px;">Please check back soon or contact us for custom tutorials.</p>
-		      <a class="btn-primary" href="contact.php">Contact Us</a>
-		    </div>
-		  <?php else: ?>
-		    <?php foreach ($programs as $p): ?>
-		      <?php
-		        $title = htmlspecialchars($p['title']);
-		        $slug  = htmlspecialchars($p['slug']);
-		        $desc  = trim($p['description'] ?? '');
-		        $duration = trim($p['duration'] ?? '');
-		        $icon = trim($p['icon'] ?? '');
-		        $badge = trim($p['highlight_badge'] ?? '');
-		        $features = array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $p['features_list'] ?? ''))));
-		      ?>
-		      <article class="program-card">
-		        <div class="program-card-head">
-		          <div class="program-icon <?php echo ($slug === 'waec-preparation' ? 'program-waec' : ($slug === 'neco-preparation' ? 'program-neco' : ($slug === 'computer-training' ? 'program-computer' : ''))); ?>">
-		            <?php
-		              if ($icon !== '') {
-		                if (strpos($icon, 'bx') !== false) {
-		                  echo "<i class='" . htmlspecialchars($icon) . "'></i>";
-		                } else {
-		                  $iconPath = __DIR__ . '/assets/images/icons/' . $icon;
-		                  if (is_readable($iconPath)) {
-		                    echo "<img src='" . app_url('assets/images/icons/' . rawurlencode($icon)) . "' alt='" . $title . " icon'>";
-		                  } else {
-		                    echo "<i class='bx bxs-book-open'></i>";
-		                  }
-		                }
-		              } else {
-		                echo "<i class='bx bxs-book-open'></i>";
-		              }
-		            ?>
+		  <?php foreach ($programs as $p): ?>
+		    <?php
+		      $title = htmlspecialchars($p['title']);
+		      $slug  = htmlspecialchars($p['slug']);
+		      $subtitle = trim($p['subtitle'] ?? '');
+		      $duration = trim($p['duration'] ?? '');
+		      $features = $p['features'] ?? [];
+		    ?>
+		    <article class="program-card">
+		      <div class="program-card-head">
+		        <div class="program-icon"><i class="bx bxs-book-open"></i></div>
+		      </div>
+		      <div class="program-card-body">
+		        <h4><?= $title ?></h4>
+		        <?php if ($subtitle !== ''): ?>
+		          <p class="muted"><?= htmlspecialchars($subtitle) ?></p>
+		        <?php endif; ?>
+		        <?php if (!empty($features)): ?>
+		          <div class="subjects">
+		            <?php foreach (array_slice($features, 0, 4) as $ft): ?>
+		              <span class="tag"><?= htmlspecialchars($ft) ?></span>
+		            <?php endforeach; ?>
 		          </div>
-		        </div>
-		        <div class="program-card-body">
-		          <h4><?= $title ?></h4>
-		          <?php if ($desc !== ''): ?>
-		            <p class="muted"><?= htmlspecialchars(strlen($desc) > 180 ? substr($desc, 0, 177) . '…' : $desc) ?></p>
-		          <?php endif; ?>
-		          <?php if (!empty($features)): ?>
-		            <div class="subjects">
-		              <?php foreach (array_slice($features, 0, 4) as $ft): ?>
-		                <span class="tag"><?= htmlspecialchars($ft) ?></span>
-		              <?php endforeach; ?>
-		            </div>
-		          <?php endif; ?>
-		          <p class="duration" style="color: #536387; font-weight: 600;">Duration: <?= htmlspecialchars($duration ?: 'Flexible') ?></p>
-		          <a href="program.php?slug=<?= $slug ?>" class="btn-primary">Learn More</a>
-		        </div>
-		      </article>
-		    <?php endforeach; ?>
-		  <?php endif; ?>
+		        <?php endif; ?>
+		        <p class="duration" style="color: #536387; font-weight: 600;">Duration: <?= htmlspecialchars($duration ?: 'Contact us') ?></p>
+		        <p class="muted" style="font-weight:600; margin-top:-6px;">Reg fee + Form fee: Contact us</p>
+		        <a href="program-single.php?slug=<?= $slug ?>" class="btn-primary">Learn More</a>
+		      </div>
+		    </article>
+		  <?php endforeach; ?>
 		</div>
 	</div>
 </section>
