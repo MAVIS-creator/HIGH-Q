@@ -1,6 +1,35 @@
 <?php
+// Secure session configuration
 if (session_status() === PHP_SESSION_NONE) {
+    // 1. Prevent Javascript from accessing cookies (Stops XSS stealing)
+    ini_set('session.cookie_httponly', 1);
+    
+    // 2. Only send cookie over HTTPS in production (Stops network sniffing)
+    // Enable this in production: ini_set('session.cookie_secure', 1);
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        ini_set('session.cookie_secure', 1);
+    }
+    
+    // 3. Strict Mode (Prevents using session ID from a link)
+    ini_set('session.use_strict_mode', 1);
+    
+    // 4. SameSite cookie protection
+    ini_set('session.cookie_samesite', 'Lax');
+    
     session_start();
+    
+    // 5. IP Binding (Security lock - kills session if IP changes)
+    if (isset($_SESSION['user_ip']) && $_SESSION['user_ip'] !== $_SERVER['REMOTE_ADDR']) {
+        session_unset();
+        session_destroy();
+        header('Location: ../login.php?error=session_invalid');
+        exit('Session invalid (IP Change Detected). Please log in again.');
+    }
+    
+    // Set the IP when they first log in
+    if (!empty($_SESSION['user']) && !isset($_SESSION['user_ip'])) {
+        $_SESSION['user_ip'] = $_SERVER['REMOTE_ADDR'];
+    }
 }
 
 function requirePermission($menuSlug) {
