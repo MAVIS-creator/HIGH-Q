@@ -4,64 +4,14 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
 $slug = trim($_GET['slug'] ?? '');
-// Fetch program from database
 
+// Pull program with its feature list from the database
 $program = null;
 try {
-  $stmt = $pdo->prepare("SELECT id, title, slug, description, price, duration FROM courses WHERE slug = ? AND is_active = 1");
+  $stmt = $pdo->prepare("SELECT c.id, c.title, c.slug, c.description, c.price, c.duration, c.icon, c.highlight_badge, GROUP_CONCAT(cf.feature_text ORDER BY cf.position SEPARATOR '\n') AS features_list FROM courses c LEFT JOIN course_features cf ON cf.course_id = c.id WHERE c.slug = ? AND c.is_active = 1 GROUP BY c.id LIMIT 1");
   $stmt->execute([$slug]);
   $program = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (Throwable $_) {}
-
-// Fallback map for static programs when database rows are missing
-$staticPrograms = [
-  'jamb-preparation' => [
-    'title' => 'JAMB Preparation',
-    'slug' => 'jamb-preparation',
-    'description' => 'Comprehensive preparation for Joint Admissions and Matriculation Board examinations with mock tests and targeted tutoring.',
-    'price' => 'Contact us',
-    'duration' => '4-6 months',
-  ],
-  'waec-preparation' => [
-    'title' => 'WAEC Preparation',
-    'slug' => 'waec-preparation',
-    'description' => 'Complete preparation for West African Senior School Certificate Examination covering core subjects and practicals.',
-    'price' => 'Contact us',
-    'duration' => '6-12 months',
-  ],
-  'neco-preparation' => [
-    'title' => 'NECO Preparation',
-    'slug' => 'neco-preparation',
-    'description' => 'National Examination Council preparation with experienced tutors, mock exams, and curated study materials.',
-    'price' => 'Contact us',
-    'duration' => '6-12 months',
-  ],
-  'post-utme' => [
-    'title' => 'Post-UTME',
-    'slug' => 'post-utme',
-    'description' => 'University-specific entrance examination preparation with practice tests and interview prep.',
-    'price' => 'Contact us',
-    'duration' => '2-4 months',
-  ],
-  'special-tutorials' => [
-    'title' => 'Special Tutorials',
-    'slug' => 'special-tutorials',
-    'description' => 'Intensive one-on-one and small group tutorial sessions tailored to individual needs.',
-    'price' => 'Flexible',
-    'duration' => 'Flexible',
-  ],
-  'computer-training' => [
-    'title' => 'Computer Training',
-    'slug' => 'computer-training',
-    'description' => 'Modern computer skills and digital literacy training covering MS Office, internet skills, and programming basics.',
-    'price' => 'Contact us',
-    'duration' => '3-6 months',
-  ],
-];
-
-if (!$program && $slug !== '' && isset($staticPrograms[$slug])) {
-  $program = $staticPrograms[$slug];
-}
 
 // Show fallback if program doesn't exist
 if (!$program) {
