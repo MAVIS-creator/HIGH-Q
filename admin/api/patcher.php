@@ -26,7 +26,7 @@ try {
             break;
         case 'readFile':
             $path = $_GET['path'] ?? '';
-            $response = readFile($path);
+            $response = getFileContent($path);
             break;
         case 'previewDiff':
             $data = json_decode(file_get_contents('php://input'), true);
@@ -141,7 +141,7 @@ function listFiles() {
     return ['files' => $files];
 }
 
-function readFile($relPath) {
+function getFileContent($relPath) {
     $fullPath = validatePath($relPath);
     
     if (!is_readable($fullPath)) {
