@@ -245,112 +245,170 @@ function applyFix($data) {
     $path = $data['path'] ?? '';
     $content = $data['content'] ?? '';
 
-    $baseDir = dirname(__DIR__, 2);
-    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path));
-    
-    if (!$fullPath || !is_file($fullPath) || strpos($fullPath, realpath($baseDir)) !== 0) {
-        throw new Exception('Invalid file path');
-    }
+    $fullPath = validatePath($path);
 
     if (!is_writable($fullPath)) {
         throw new Exception('File is not writable');
     }
 
-    // Create backup
+    // Create backup directory
     $backupDir = dirname($fullPath) . '/.backups';
     if (!is_dir($backupDir)) {
-        mkdir($backupDir, 0755, true);
+        if (!mkdir($backupDir, 0755, true)) {
+            throw new Exception('Cannot create backup directory');
+        }
     }
 
-    $backupFile = $backupDir . '/' . basename($fullPath) . '.' . date('Y-m-d-H-i-s') . '.bak';
-    copy($fullPath, $backupFile);
+    // Create timestamped backup
+    $backupFile = $backupDir . '/' . basename($fullPath) . '.bak.' . date('Ymd_His');
+    if (!copy($fullPath, $backupFile)) {
+        throw new Exception('Failed to create backup');
+    }
 
     // Write new content
-    file_put_contents($fullPath, $content);
+    if (file_put_contents($fullPath, $content) === false) {
+        throw new Exception('Failed to write file');
+    }
 
     // Log action
-    $logFile = $baseDir . '/.backups/patcher.log';
-    $logDir = dirname($logFile);
+    $baseDir = dirname(__DIR__, 2);
+    $logDir = $baseDir . '/storage/logs';
     if (!is_dir($logDir)) mkdir($logDir, 0755, true);
     
+    $logFile = $logDir . '/patcher_audit.log';
     $logEntry = sprintf(
-        "[%s] Admin %s modified %s (backup: %s)\n",
+        "[%s] Admin %s modified %s (backup: %s) | Lines: %d\n",
         date('Y-m-d H:i:s'),
         $_SESSION['admin_username'] ?? 'Unknown',
         $path,
-        basename($backupFile)
+        basename($backupFile),
+        count(explode("\n", $content))
     );
-    file_put_contents($logFile, $logEntry, FILE_APPEND);
+    @file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
 
     return [
         'success' => true,
         'backup' => basename($backupFile),
         'path' => $path,
+        'message' => 'File updated successfully'
     ];
 }
 
 function listBackups($relPath) {
-    $baseDir = dirname(__DIR__, 2);
-    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relPath));
+    $fullPath = validatePath($relPath);
     
-    if (!$fullPath || !is_file($fullPath)) {
-        throw new Exception('Invalid file path');
+    if (!is_file($fullPath)) {
+        throw new Exception('File not found');
     }
 
     $backupDir = dirname($fullPath) . '/.backups';
     $backups = [];
 
     if (is_dir($backupDir)) {
-        $files = glob($backupDir . '/' . basename($fullPath) . '*.bak');
+        $pattern = $backupDir . '/' . basename($fullPath) . '.bak.*';
+        $files = glob($pattern);
         rsort($files);
 
-        foreach (array_slice($files, 0, 10) as $file) {
-            $backups[] = [
-                'name' => basename($file),
-                'created' => date('Y-m-d H:i:s', filemtime($file)),
-                'size' => filesize($file),
-            ];
+        foreach (array_slice($files, 0, 20) as $file) {
+            if (is_file($file)) {
+                $backups[] = [
+                    'name' => basename($file),
+                    'created' => date('Y-m-d H:i:s', filemtime($file)),
+                    'size' => filesize($file),
+                    'path' => $relPath,
+                ];
+            }
         }
     }
 
-    return ['backups' => $backups, 'count' => count($backups)];
+    return [
+        'backups' => $backups,
+        'count' => count($backups),
+        'total_available' => count(glob($backupDir . '/' . basename($fullPath) . '.bak.*') ?? [])
+    ];
 }
 
 function createFile($data) {
     $path = $data['path'] ?? '';
-    if (strpos($path, '..') !== false) {
-        throw new Exception('Invalid path');
+    $content = $data['content'] ?? '';
+    
+    if (empty($path)) {
+        throw new Exception('Path is required');
+    }
+
+    // Validate the path
+    $path = trim($path, '/\\');
+    
+    // Ensure it's in an allowed directory
+    $parts = explode('/', str_replace('\\', '/', $path));
+    if (empty($parts[0]) || !in_array($parts[0], ALLOWED_DIRS, true)) {
+        throw new Exception('File must be in an allowed directory');
+    }
+    
+    // Check extension
+    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    if (!in_array($ext, ALLOWED_EXTENSIONS, true)) {
+        throw new Exception('File extension not allowed');
+    }
+    
+    if (in_array($ext, BLOCKED_EXTENSIONS, true)) {
+        throw new Exception('File extension is blocked');
     }
 
     $baseDir = dirname(__DIR__, 2);
-    $fullPath = $baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
-    $dir = dirname($fullPath);
-
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
+    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path));
+    
+    if (!$fullPath || strpos($fullPath, realpath($baseDir)) !== 0) {
+        throw new Exception('Invalid file path');
     }
 
     if (file_exists($fullPath)) {
         throw new Exception('File already exists');
     }
 
-    file_put_contents($fullPath, '');
-    return ['success' => true, 'path' => $path];
+    $dir = dirname($fullPath);
+    if (!is_dir($dir)) {
+        if (!mkdir($dir, 0755, true)) {
+            throw new Exception('Cannot create directory');
+        }
+    }
+
+    if (file_put_contents($fullPath, $content) === false) {
+        throw new Exception('Failed to create file');
+    }
+
+    return ['success' => true, 'path' => $path, 'message' => 'File created successfully'];
 }
 
 function createFolder($data) {
     $path = $data['path'] ?? '';
-    if (strpos($path, '..') !== false) {
-        throw new Exception('Invalid path');
+    
+    if (empty($path)) {
+        throw new Exception('Path is required');
+    }
+
+    $path = trim($path, '/\\');
+    
+    // Ensure it's in an allowed directory
+    $parts = explode('/', str_replace('\\', '/', $path));
+    if (empty($parts[0]) || !in_array($parts[0], ALLOWED_DIRS, true)) {
+        throw new Exception('Folder must be in an allowed directory');
     }
 
     $baseDir = dirname(__DIR__, 2);
-    $fullPath = $baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path));
+    
+    if (!$fullPath || strpos($fullPath, realpath($baseDir)) !== 0) {
+        throw new Exception('Invalid folder path');
+    }
 
     if (is_dir($fullPath)) {
         throw new Exception('Folder already exists');
     }
 
-    mkdir($fullPath, 0755, true);
-    return ['success' => true, 'path' => $path];
+    if (!mkdir($fullPath, 0755, true)) {
+        throw new Exception('Failed to create folder');
+    }
+
+    return ['success' => true, 'path' => $path, 'message' => 'Folder created successfully'];
 }
