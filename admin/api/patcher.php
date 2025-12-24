@@ -114,40 +114,49 @@ function validatePath($relPath) {
 }
 
 function listFiles() {
-    $allowedDirs = [
-        __DIR__ . '/../../public' => 'public',
-        __DIR__ . '/../../admin' => 'admin',
-        __DIR__ . '/../../config' => 'config',
-        __DIR__ . '/../../migrations' => 'migrations',
-    ];
-
+    $baseDir = dirname(__DIR__, 2);
     $files = [];
     
-    foreach ($allowedDirs as $dir => $prefix) {
+    foreach (ALLOWED_DIRS as $dirName) {
+        $dir = realpath($baseDir . DIRECTORY_SEPARATOR . $dirName);
         if (!is_dir($dir)) continue;
         
-        $iterator = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
-        $filter = new RecursiveCallbackFilterIterator($iterator, function($file, $key, $iterator) {
-            if ($iterator->hasChildren()) return true;
-            $name = $file->getFilename();
-            $ext = pathinfo($name, PATHINFO_EXTENSION);
-            $allowed = ['php', 'html', 'css', 'js', 'json', 'sql'];
-            return in_array($ext, $allowed) && $name[0] !== '.';
-        });
+        try {
+            $iterator = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
+            $filter = new RecursiveCallbackFilterIterator($iterator, function($file, $key, $iterator) {
+                if ($iterator->hasChildren()) return true;
+                $name = $file->getFilename();
+                $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                return in_array($ext, ALLOWED_EXTENSIONS, true) && $name[0] !== '.';
+            });
 
-        foreach (new RecursiveIteratorIterator($filter) as $file) {
-            if ($file->isFile()) {
-                $fullPath = $file->getRealPath();
-                $relPath = str_replace(dirname($dir) . DIRECTORY_SEPARATOR, '', $fullPath);
-                $relPath = str_replace('\\', '/', $relPath);
-                
-                $files[] = [
-                    'name' => $file->getFilename(),
-                    'path' => $relPath,
-                    'extension' => $file->getExtension(),
-                    'dir' => $prefix . '/' . str_replace('\\', '/', dirname(str_replace($dir, '', $fullPath))),
-                ];
+            foreach (new RecursiveIteratorIterator($filter) as $file) {
+                if ($file->isFile()) {
+                    $fullPath = $file->getRealPath();
+                    $relPath = str_replace($baseDir . DIRECTORY_SEPARATOR, '', $fullPath);
+                    $relPath = str_replace('\\', '/', $relPath);
+                    
+                    // Double-check against blocked files
+                    $isBlocked = false;
+                    foreach (BLOCKED_FILES as $blocked) {
+                        if ($relPath === $blocked) {
+                            $isBlocked = true;
+                            break;
+                        }
+                    }
+                    if ($isBlocked) continue;
+                    
+                    $files[] = [
+                        'name' => $file->getFilename(),
+                        'path' => $relPath,
+                        'extension' => $file->getExtension(),
+                        'dir' => dirname($relPath),
+                    ];
+                }
             }
+        } catch (Exception $e) {
+            // Skip directories we can't read
+            continue;
         }
     }
 
@@ -160,19 +169,14 @@ function listFiles() {
 }
 
 function readFile($relPath) {
-    $baseDir = dirname(__DIR__, 2);
-    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relPath));
+    $fullPath = validatePath($relPath);
     
-    if (!$fullPath || !is_file($fullPath) || strpos($fullPath, realpath($baseDir)) !== 0) {
-        throw new Exception('Invalid file path');
-    }
-
     if (!is_readable($fullPath)) {
         throw new Exception('File is not readable');
     }
 
     $content = file_get_contents($fullPath);
-    $ext = pathinfo($fullPath, PATHINFO_EXTENSION);
+    $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
 
     return [
         'path' => $relPath,
@@ -188,11 +192,10 @@ function previewDiff($data) {
     $path = $data['path'] ?? '';
     $newContent = $data['content'] ?? '';
 
-    $baseDir = dirname(__DIR__, 2);
-    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path));
-    
-    if (!$fullPath || !is_file($fullPath) || strpos($fullPath, realpath($baseDir)) !== 0) {
-        throw new Exception('Invalid file path');
+    $fullPath = validatePath($path);
+
+    if (!is_file($fullPath)) {
+        throw new Exception('File not found');
     }
 
     $oldContent = file_get_contents($fullPath);
