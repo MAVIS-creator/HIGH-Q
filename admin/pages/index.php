@@ -97,11 +97,6 @@ if (in_array($page, $allowed_pages)) {
     }
 }
 
-        // For sentinel, patcher, automator, trap: link upgrades to scan API/module
-        if (in_array($page, ['sentinel', 'patcher', 'automator', 'trap'])) {
-            require $pageFile;
-            exit;
-        }
 // If this is a POST that includes an action, allow the requested page to be included so
 // the page's own permission checks and POST handlers can run. This avoids returning the
 // dashboard HTML for background POSTs where the role-permissions mapping might not match
