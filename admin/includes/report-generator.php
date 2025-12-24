@@ -15,7 +15,7 @@
 
 class ReportGenerator {
     private $companyName = 'HIGH Q SOLID ACADEMY';
-    private $companyEmail = 'akintunde.dolapo1@gmail.com';
+    private $companyEmail = 'highqsolidacademy@gmail.com';
     private $report;
     private $scanType;
     
