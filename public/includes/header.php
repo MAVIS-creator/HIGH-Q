@@ -84,38 +84,9 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           }
         }
 
-        // Secure session configuration
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            // 1. Prevent Javascript from accessing cookies (Stops XSS stealing)
-            ini_set('session.cookie_httponly', 1);
-            
-            // 2. Only send cookie over HTTPS in production
-            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-                ini_set('session.cookie_secure', 1);
-            }
-            
-            // 3. Strict Mode (Prevents using session ID from a link)
-            ini_set('session.use_strict_mode', 1);
-            
-            // 4. SameSite cookie protection
-            ini_set('session.cookie_samesite', 'Lax');
-            
-            session_start();
-            
-            // 5. IP Binding for logged-in users
-            if (!empty($_SESSION['user']) && isset($_SESSION['user_ip']) && $_SESSION['user_ip'] !== $_SERVER['REMOTE_ADDR']) {
-                session_unset();
-                session_destroy();
-                session_start(); // Restart for guest
-            }
-            
-            if (!empty($_SESSION['user']) && !isset($_SESSION['user_ip'])) {
-                $_SESSION['user_ip'] = $_SERVER['REMOTE_ADDR'];
-            }
-        }
-        
         // Decide whether the visitor is a logged-in admin via flexible session checks
         $isAdminBySession = false;
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         if (!empty($_SESSION['user']) && is_array($_SESSION['user'])) {
           $u = $_SESSION['user'];
           // Common shapes: ['role'] => 'admin', ['role_slug'] => 'admin', ['is_admin'] => true, ['role_id'] => 1

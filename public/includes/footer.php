@@ -93,16 +93,17 @@
       <h3>Our Programs</h3>
       <ul>
         <?php
-          $staticPrograms = [
-            ['title' => 'SSCE & GCE Exams', 'slug' => 'ssce-gce-exams'],
-            ['title' => 'JAMB & University Admission', 'slug' => 'jamb-university-admission'],
-            ['title' => 'Advanced & International Studies', 'slug' => 'advanced-international-studies'],
-            ['title' => 'Remedial & Foundation Tutorials', 'slug' => 'remedial-foundation-tutorials'],
-            ['title' => 'Digital Skills & Tech', 'slug' => 'digital-skills-tech'],
-            ['title' => 'Professional Services', 'slug' => 'professional-services'],
-          ];
-          foreach ($staticPrograms as $fp) {
-            echo '<li><a href="' . app_url('program-single.php?slug=' . urlencode($fp['slug'])) . '">' . htmlspecialchars($fp['title']) . '</a></li>';
+          try {
+            $progs = $pdo->query("SELECT title, slug FROM courses WHERE is_active=1 ORDER BY title LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
+          } catch(Throwable $_) { $progs = []; }
+          if (!empty($progs)) {
+            foreach ($progs as $p) {
+              $slug = $p['slug'] ?: 'programs.php';
+              echo '<li><a href="' . app_url('program.php?slug=' . htmlspecialchars($slug)) . '">' . htmlspecialchars($p['title']) . '</a></li>';
+            }
+          } else {
+            // fallback static links
+            echo '<li><a href="' . app_url('programs.php') . '">JAMB/Post-UTME</a></li><li><a href="' . app_url('programs.php') . '">WAEC/NECO</a></li><li><a href="' . app_url('programs.php') . '">Digital Skills Training</a></li>';
           }
         ?>
       </ul>
@@ -134,11 +135,6 @@
   <!-- Bottom -->
   <div class="footer-bottom">
     <p>© <?= date('Y') ?> High Q Solid Academy Limited. All rights reserved.</p>
-    <div class="links" style="gap:10px; flex-wrap:wrap;">
-      <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(90deg,#ffd54f,#3b82f6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-weight:700;">Made by MAVIS</a>
-      <span style="color:#cbd5e1;">•</span>
-      <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer">Exam portal by GamerDave</a>
-    </div>
     <div class="links">
       <a href="<?= app_url('privacy.php') ?>">Privacy Policy</a>
       <a href="<?= app_url('terms.php') ?>">Terms of Service</a>
@@ -148,8 +144,9 @@
 <!-- ===== FOOTER END ===== -->
 </main>
 
-<!-- Global Chat Widget -->
-<?php include __DIR__ . '/chat-widget.php'; ?>
-
+<!-- Floating Live Chat Button -->
+<a href="<?= app_url('contact.php#livechat') ?>" class="floating-chat" aria-label="Live Chat with us">
+  <i class="bx bx-chat"></i>
+</a>
 <script src="<?= app_url('assets/js/viewport-inview.js') ?>"></script>
 <script src="<?= app_url('assets/js/contact-helpers.js') ?>"></script>

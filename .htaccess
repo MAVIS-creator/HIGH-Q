@@ -2,10 +2,10 @@
     RewriteEngine On
     Options -Indexes
 
-    # Root-level rewrite base for production hosting
     RewriteBase /
 
-    # Serve public assets - relative substitution keeps directory prefix (e.g., /HIGH-Q)
+    # Serve public assets when requests omit the /public prefix (common with ngrok or subfolder URLs)
+    # This ensures requests like /HIGH-Q/assets/css/public.css are served from /public/assets/css/public.css
     RewriteRule ^assets(?:/(.*))?$ public/assets/$1 [L,NC]
 
     # Normalize accidental double /public/public paths (defensive)
@@ -25,26 +25,23 @@
     RewriteRule ^ - [L]
 
     # Pretty payment URL
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ /HIGH-Q/public/payments_wait.php?ref=$1 [L,QSA,NC]
+    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
 
     # Protected downloads
-    RewriteRule ^downloads/(.*)$ /HIGH-Q/public/download_attachment.php?file=$1 [L,QSA,NC]
+    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
 
-    # Redirect root to public/index.php
-    RewriteRule ^$ public/index.php [L]
+    # Redirect root to home
+    RewriteRule ^$ public/home.php [L]
 
     # Handle public pages
-    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L,NC]
+    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
 
-
-    # DEFAULT HANDLER MUST BE LAST - executes only if no other rules matched
+    # Default handler for other URLs (avoid re-prefixing when already under /public)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} !^/public/ [NC]
-    RewriteCond %{REQUEST_URI} !^/admin/ [NC]
-    RewriteCond %{REQUEST_URI} !^/pay/ [NC]
-    RewriteCond %{REQUEST_URI} !^/downloads/ [NC]
     RewriteRule ^(.*)$ public/$1 [L]
+
 </IfModule>
 # Protect sensitive files
 <FilesMatch "^\.(env|htaccess|git|config)|\.(sql|bak|config|json|lock)$">
