@@ -1,5 +1,5 @@
 <?php
-// Admin Security Scan page: Sentinel
+// Admin Security Scan page: Sentinel (Enhanced)
 $pageTitle = 'Security Scan';
 $pageSubtitle = 'Monitor security threats and run comprehensive scans';
 
@@ -28,10 +28,66 @@ try {
 <html>
 <head>
     <style>
+        .sentinel-wrapper {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .sentinel-header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sentinel-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: drift 20s linear infinite;
+        }
+        
+        @keyframes drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .sentinel-header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sentinel-header h1 {
+            margin: 0 0 12px 0;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .sentinel-header p {
+            margin: 0;
+            opacity: 0.96;
+            font-size: 15px;
+            font-weight: 300;
+        }
+        
         .sentinel-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 24px;
             margin-bottom: 30px;
         }
         
@@ -42,17 +98,27 @@ try {
         }
         
         .scan-controls {
-            background: #fff;
+            background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .scan-controls:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
         
         .scan-controls h3 {
             margin-top: 0;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             color: #1f2937;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .scan-options {
@@ -63,11 +129,12 @@ try {
         }
         
         .scan-option {
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            background: #fafbfc;
         }
         
         .scan-option:hover {
@@ -76,61 +143,146 @@ try {
         }
         
         .scan-option input[type="radio"] {
-            margin-right: 8px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .scan-option strong {
+            font-size: 14px;
+            color: #1f2937;
+        }
+        
+        .scan-option small {
+            display: block;
+            color: #6b7280;
+            margin-left: 24px;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        
+        .email-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .email-label {
+            font-size: 13px;
+            color: #374151;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        #reportEmail {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        #reportEmail:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .email-helper {
+            color: #6b7280;
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
         }
         
         .scan-buttons {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 20px;
         }
         
         .btn-scan {
-            flex: 1;
-            padding: 10px 16px;
-            background: #6366f1;
-            color: white;
+            padding: 12px 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         
-        .btn-scan:hover {
-            background: #4f46e5;
+        .btn-scan-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-scan-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-scan-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-scan-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
         }
         
         .btn-scan:disabled {
             background: #d1d5db;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         .scan-progress {
             display: none;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            border: 2px solid #86efac;
+            border-radius: 8px;
             padding: 20px;
             margin-top: 20px;
         }
         
         .scan-progress.active {
             display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 10px;
             background: #e5e7eb;
-            border-radius: 4px;
+            border-radius: 5px;
             overflow: hidden;
             margin-top: 12px;
         }
         
         .progress-fill {
             height: 100%;
-            background: #10b981;
+            background: linear-gradient(90deg, #10b981 0%, #6366f1 100%);
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -139,70 +291,94 @@ try {
             font-size: 12px;
             color: #059669;
             margin-top: 8px;
+            font-weight: 600;
         }
         
         .threat-summary {
-            background: #fff;
+            background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .threat-summary:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
         
         .threat-summary h3 {
             margin-top: 0;
             color: #1f2937;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .threat-boxes {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 16px;
-            margin-top: 16px;
+            margin-top: 20px;
         }
         
         .threat-box {
-            padding: 16px;
-            border-radius: 6px;
+            padding: 20px;
+            border-radius: 8px;
             text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .threat-box:hover {
+            transform: translateY(-2px);
         }
         
         .threat-box.critical {
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-color: #fca5a5;
             color: #991b1b;
         }
         
         .threat-box.warning {
-            background: #fef3c7;
-            border: 1px solid #fde68a;
+            background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+            border-color: #fde68a;
             color: #92400e;
         }
         
         .threat-box.info {
-            background: #dbeafe;
-            border: 1px solid #bfdbfe;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-color: #93c5fd;
             color: #1e40af;
         }
         
         .threat-box strong {
-            font-size: 24px;
+            font-size: 32px;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            font-weight: 700;
         }
         
         .threat-box span {
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
         }
         
         .scan-reports {
-            margin-top: 30px;
+            margin-top: 40px;
         }
         
         .scan-reports h3 {
             margin-top: 0;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             color: #1f2937;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .report-table {
@@ -210,23 +386,25 @@ try {
             border-collapse: collapse;
             background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
         
         .report-table th {
-            background: #f3f4f6;
-            padding: 12px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 16px;
             text-align: left;
             font-weight: 600;
             color: #374151;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 2px solid #e5e7eb;
             font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .report-table td {
-            padding: 12px;
+            padding: 16px;
             border-bottom: 1px solid #e5e7eb;
             font-size: 13px;
         }
@@ -235,92 +413,105 @@ try {
             border-bottom: none;
         }
         
+        .report-table tbody tr:hover {
+            background: #f9fafb;
+        }
+        
         .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 600;
             display: inline-block;
         }
         
         .status-badge.success {
-            background: #dcfce7;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
             color: #166534;
         }
         
         .status-badge.warning {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
         }
         
         .status-badge.danger {
-            background: #fee2e2;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: #991b1b;
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: #6b7280;
+            background: #fafbfc;
+            border-radius: 12px;
+            border: 2px dashed #e5e7eb;
         }
         
         .empty-state i {
-            font-size: 48px;
+            font-size: 52px;
             opacity: 0.3;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-<div class="admin-main">
-    <div class="page-header">
-        <h1><i class='bx bxs-shield-alt' style="vertical-align: middle; margin-right: 8px;"></i><?= htmlspecialchars($pageTitle) ?></h1>
-        <p><?= htmlspecialchars($pageSubtitle) ?></p>
+<div class="admin-main sentinel-wrapper">
+    <div class="sentinel-header">
+        <div class="sentinel-header-content">
+            <h1><?= htmlspecialchars($pageTitle) ?></h1>
+            <p><?= htmlspecialchars($pageSubtitle) ?></p>
+        </div>
     </div>
 
     <div class="sentinel-container">
         <!-- Scan Controls -->
         <div class="scan-controls">
-            <h3><i class='bx bx-play-circle'></i> Start Security Scan</h3>
+            <h3><i class='bx bx-play-circle' style="font-size: 20px;"></i> Start Security Scan</h3>
             
             <div class="scan-options">
                 <label class="scan-option">
                     <input type="radio" name="scan_type" value="quick" checked>
-                    <strong>Quick Scan</strong>
-                    <small style="display: block; color: #6b7280; margin-left: 24px; margin-top: 4px;">Check common vulnerabilities (2-5 min)</small>
+                    <strong>⚡ Quick Scan</strong>
+                    <small>Check common vulnerabilities (2-5 min)</small>
                 </label>
                 <label class="scan-option">
                     <input type="radio" name="scan_type" value="full">
-                    <strong>Full Scan</strong>
-                    <small style="display: block; color: #6b7280; margin-left: 24px; margin-top: 4px;">Complete system audit (10-15 min)</small>
+                    <strong>🔍 Full Scan</strong>
+                    <small>Complete system audit (10-15 min)</small>
                 </label>
                 <label class="scan-option">
                     <input type="radio" name="scan_type" value="malware">
-                    <strong>Malware Scan</strong>
-                    <small style="display: block; color: #6b7280; margin-left: 24px; margin-top: 4px;">Detect suspicious files (5-10 min)</small>
+                    <strong>🦠 Malware Scan</strong>
+                    <small>Detect suspicious files (5-10 min)</small>
                 </label>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="font-size: 13px; color: #374151; display: block; margin-bottom: 6px;">
-                    <strong>Email Report To:</strong>
-                </label>
-                <input type="email" id="reportEmail" placeholder="Enter email address" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;">
-                <small style="color: #6b7280; display: block; margin-top: 4px;">Leave blank to use default company email</small>
+            <div class="email-section">
+                <label class="email-label">📧 Email Report To:</label>
+                <input type="email" id="reportEmail" placeholder="Enter email address" />
+                <small class="email-helper">Leave blank to use default company email</small>
             </div>
 
             <div class="scan-buttons">
-                <button class="btn-scan" onclick="startScan()">
+                <button class="btn-scan btn-scan-primary" id="scanBtn" onclick="startScan()">
                     <i class='bx bx-play'></i> Start Scan
                 </button>
-                <button class="btn-scan" onclick="emailReport()" style="background: #10b981;">
+                <button class="btn-scan btn-scan-secondary" onclick="emailReport()">
                     <i class='bx bx-envelope'></i> Email Report
                 </button>
             </div>
 
             <!-- Scanning Progress -->
             <div class="scan-progress" id="scanProgress">
-                <p id="scanStatus">Initializing scan...</p>
+                <p id="scanStatus" style="margin: 0 0 12px 0; font-weight: 600; color: #059669;">Initializing scan...</p>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
@@ -330,7 +521,7 @@ try {
 
         <!-- Threat Summary -->
         <div class="threat-summary">
-            <h3><i class='bx bx-bar-chart'></i> Latest Scan Summary</h3>
+            <h3><i class='bx bx-bar-chart-alt' style="font-size: 20px;"></i> Latest Scan Summary</h3>
             <div class="threat-boxes">
                 <div class="threat-box critical" id="criticalCount">
                     <strong>0</strong>
@@ -345,7 +536,7 @@ try {
                     <span>Info</span>
                 </div>
             </div>
-            <p style="margin-top: 16px; color: #6b7280; font-size: 13px;" id="lastScanTime">
+            <p style="margin-top: 20px; color: #6b7280; font-size: 13px; font-weight: 500;" id="lastScanTime">
                 No scans performed yet
             </p>
         </div>
@@ -353,7 +544,7 @@ try {
 
     <!-- Scan Reports -->
     <div class="scan-reports">
-        <h3><i class='bx bx-history'></i> Scan Reports</h3>
+        <h3><i class='bx bx-history' style="font-size: 20px;"></i> Scan Reports</h3>
         <?php if (count($latestScans) > 0): ?>
             <table class="report-table">
                 <thead>
@@ -390,14 +581,14 @@ try {
                             </td>
                             <td><?= (int)$scan['threat_count'] ?> threat<?= $scan['threat_count'] != 1 ? 's' : '' ?></td>
                             <td><?= htmlspecialchars($scan['duration']) ?>s</td>
-                            <td><a href="#" onclick="viewReport(<?= $scan['id'] ?>)" style="color: #6366f1; text-decoration: none;">View</a></td>
+                            <td><a href="#" onclick="viewReport(<?= $scan['id'] ?>); return false;" style="color: #6366f1; text-decoration: none; font-weight: 600;">View</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php else: ?>
             <div class="empty-state">
-                <i class='bx bx-shield-quarter'></i>
+                <i class='bx bxs-shield-alt'></i>
                 <p>No scans performed yet. Click "Start Scan" to run your first security check.</p>
             </div>
         <?php endif; ?>
@@ -408,7 +599,7 @@ try {
 function startScan() {
     const scanType = document.querySelector('input[name="scan_type"]:checked').value;
     const progressDiv = document.getElementById('scanProgress');
-    const scanButton = document.querySelector('.btn-scan');
+    const scanButton = document.getElementById('scanBtn');
     
     progressDiv.classList.add('active');
     scanButton.disabled = true;
@@ -571,7 +762,6 @@ function emailReport() {
         alert('Error sending report: ' + error.message);
     });
 }
-</script>
 </script>
 
 </body>
