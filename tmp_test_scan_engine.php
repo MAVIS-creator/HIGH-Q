@@ -3,12 +3,18 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
-
-// Mock $_SERVER to prevent API endpoint code from executing
-$_SERVER['REQUEST_METHOD'] = 'GET';
+set_time_limit(300);
 
 require 'admin/includes/db.php';
-require 'admin/api/scan-engine.php';
+
+// Load just the class part of scan-engine.php
+$file = file_get_contents('admin/api/scan-engine.php');
+$classStart = strpos($file, 'class SecurityScanEngine');
+$classEnd = strpos($file, '// ============================================================================\n// API ENDPOINT');
+if ($classStart !== false && $classEnd !== false) {
+    $classCode = substr($file, $classStart, $classEnd - $classStart);
+    eval('?>' . $classCode);
+}
 
 try {
     echo "========================================\n";
