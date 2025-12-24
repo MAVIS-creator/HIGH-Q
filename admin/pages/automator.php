@@ -3,11 +3,11 @@
 $pageTitle = 'Automator';
 $pageSubtitle = 'SEO and maintenance automation.';
 
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../admin/includes/auth.php';
+require_once __DIR__ . '/../admin/includes/db.php';
 requirePermission('automator');
-require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . '/../admin/includes/header.php';
+require_once __DIR__ . '/../admin/includes/sidebar.php';
 ?>
 <style>
     .automator-header {
@@ -56,4 +56,4 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <iframe src="../modules/automator.php"></iframe>
     </div>
 </div>
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../admin/includes/footer.php'; ?>
