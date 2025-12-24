@@ -4,3 +4,4 @@ progress.md
 /vendor/
 .env
 /.venv
+/node_modules/
