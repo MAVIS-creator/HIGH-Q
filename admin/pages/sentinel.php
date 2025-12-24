@@ -409,65 +409,109 @@ function startScan() {
     
     const phases = [
         'Initializing security scanner...',
-        'Scanning file permissions...',
-        'Checking configuration files...',
-        'Analyzing code integrity...',
-        'Checking for malware signatures...',
-        'Verifying database security...',
-        'Analyzing active sessions...',
-        'Finalizing report...'
+        'Scanning files for threats...',
+        'Checking configuration...',
+        'Analyzing code patterns...',
+        'Running dependency audit...',
+        'Verifying integrity...',
+        'Compiling report...',
+        'Finalizing results...'
     ];
     
     let phaseIndex = 0;
-    const interval = setInterval(() => {
-        if (progress >= 100) {
-            clearInterval(interval);
-            statusElement.textContent = 'Scan completed!';
-            fillElement.style.width = '100%';
-            textElement.textContent = '100%';
-            scanButton.disabled = false;
-            
-            // Update summary
-            setTimeout(() => {
-                updateScanSummary(scanType);
-            }, 1000);
-            return;
+    
+    // Show progress while we wait for the actual scan
+    const progressInterval = setInterval(() => {
+        if (progress < 90) {
+            progress += Math.random() * 12;
+            if (progress > 90) progress = 90;
         }
-        
-        progress += Math.random() * 15;
-        if (progress > 100) progress = 100;
         
         fillElement.style.width = Math.floor(progress) + '%';
         textElement.textContent = Math.floor(progress) + '%';
         
-        if (phaseIndex < phases.length && progress > (phaseIndex * 100 / phases.length)) {
+        if (phaseIndex < phases.length && progress > (phaseIndex * 90 / phases.length)) {
             statusElement.textContent = phases[phaseIndex];
             phaseIndex++;
         }
-    }, 800);
+    }, 300);
+    
+    // Call the actual backend API
+    fetch('../api/scan-engine.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'scan_type=' + encodeURIComponent(scanType)
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(progressInterval);
+        progress = 100;
+        
+        fillElement.style.width = '100%';
+        textElement.textContent = '100%';
+        statusElement.textContent = 'Scan completed!';
+        scanButton.disabled = false;
+        
+        if (data.status === 'ok' && data.report) {
+            // Display real results
+            updateScanSummary(data.report);
+        } else {
+            console.error('Scan error:', data.message);
+            statusElement.textContent = 'Error: ' + (data.message || 'Unknown error');
+        }
+    })
+    .catch(error => {
+        clearInterval(progressInterval);
+        console.error('Scan failed:', error);
+        statusElement.textContent = 'Error: ' + error.message;
+        scanButton.disabled = false;
+    });
 }
 
-function updateScanSummary(scanType) {
-    // Simulate threat detection based on scan type
-    const threats = {
-        quick: { critical: Math.floor(Math.random() * 2), warning: Math.floor(Math.random() * 3), info: Math.floor(Math.random() * 5) },
-        full: { critical: Math.floor(Math.random() * 3), warning: Math.floor(Math.random() * 5), info: Math.floor(Math.random() * 10) },
-        malware: { critical: Math.floor(Math.random() * 1), warning: Math.floor(Math.random() * 2), info: Math.floor(Math.random() * 3) }
-    };
+function updateScanSummary(report) {
+    // Display real threat counts from backend
+    const critical = report.totals.critical_issues || report.critical.length || 0;
+    const warnings = report.totals.warnings || report.warnings.length || 0;
+    const info = report.totals.info_messages || report.info.length || 0;
     
-    const scanThreats = threats[scanType];
+    document.getElementById('criticalCount').innerHTML = `<strong>${critical}</strong><span>Critical</span>`;
+    document.getElementById('warningCount').innerHTML = `<strong>${warnings}</strong><span>Warnings</span>`;
+    document.getElementById('infoCount').innerHTML = `<strong>${info}</strong><span>Info</span>`;
     
-    document.getElementById('criticalCount').innerHTML = `<strong>${scanThreats.critical}</strong><span>Critical</span>`;
-    document.getElementById('warningCount').innerHTML = `<strong>${scanThreats.warning}</strong><span>Warnings</span>`;
-    document.getElementById('infoCount').innerHTML = `<strong>${scanThreats.info}</strong><span>Info</span>`;
+    // Store report data for view functionality
+    window.lastScanReport = report;
     
     const now = new Date();
     document.getElementById('lastScanTime').textContent = `Last scan: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`;
 }
 
 function viewReport(id) {
-    alert('Report view for scan #' + id + ' coming soon!');
+    if (window.lastScanReport) {
+        console.log('Scan Report:', window.lastScanReport);
+        const critical = window.lastScanReport.critical || [];
+        const warnings = window.lastScanReport.warnings || [];
+        const info = window.lastScanReport.info || [];
+        
+        let msg = 'Scan Report\n\n';
+        msg += 'CRITICAL (' + critical.length + '):\n';
+        critical.slice(0, 5).forEach(item => {
+            msg += '  • ' + (item.message || item.type) + '\n';
+        });
+        
+        msg += '\nWARNINGS (' + warnings.length + '):\n';
+        warnings.slice(0, 5).forEach(item => {
+            msg += '  • ' + (item.message || item.type) + '\n';
+        });
+        
+        alert(msg);
+    } else {
+        alert('No scan data available. Run a scan first.');
+    }
 }
+</script>
 </script>
 
 </body>
