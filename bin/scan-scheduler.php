@@ -170,8 +170,8 @@ try {
             }
         } catch (Throwable $e) {}
         
-        // Fallback email
-        $recipients[] = 'admin@example.com';
+        // Fallback to env email
+        $recipients[] = $_ENV['MAIL_FROM_ADDRESS'] ?? 'admin@example.com';
         
         // Get all admin users
         try {
@@ -183,34 +183,21 @@ try {
             }
         } catch (Throwable $e) {}
         
-        $subject = "⚠️ Security Alert: $criticalCount critical issue(s) detected";
+        // Generate professional report
+        $reportData = [
+            'status' => 'completed',
+            'report' => $report
+        ];
+        $generator = new ReportGenerator($reportData);
+        $htmlReport = $generator->generateHtmlEmail();
         
-        $html = '<h2>Security Scan Alert</h2>';
-        $html .= '<p><strong>Scan Type:</strong> ' . ucfirst($scanType) . '</p>';
-        $html .= '<p><strong>Time:</strong> ' . $now->format('Y-m-d H:i:s') . '</p>';
-        $html .= '<p><strong>Critical Issues:</strong> ' . $criticalCount . '</p>';
-        $html .= '<hr>';
-        $html .= '<h3>Critical Findings:</h3>';
-        $html .= '<ul>';
-        foreach (array_slice($report['critical'], 0, 5) as $item) {
-            $html .= '<li><strong>' . htmlspecialchars($item['type'] ?? 'Unknown') . ':</strong> ';
-            $html .= htmlspecialchars($item['message'] ?? $item['file'] ?? '');
-            if (!empty($item['file'])) {
-                $html .= ' (' . htmlspecialchars($item['file']) . ')';
-            }
-            $html .= '</li>';
-        }
-        $html .= '</ul>';
-        
-        if ($criticalCount > 5) {
-            $html .= '<p><em>... and ' . ($criticalCount - 5) . ' more critical issue(s)</em></p>';
-        }
+        $subject = "🔒 [HIGH Q] Security Scan Report - " . ucfirst($scanType) . " Scan";
         
         foreach (array_unique($recipients) as $to) {
             if (empty($to)) continue;
             try {
-                sendEmail($to, $subject, $html, [$filepath]);
-                error_log("scan-scheduler: Email sent to $to");
+                sendEmail($to, $subject, $htmlReport, [$filepath]);
+                error_log("scan-scheduler: Report email sent to $to");
             } catch (Throwable $e) {
                 error_log("scan-scheduler: Failed to send email to $to: " . $e->getMessage());
             }
