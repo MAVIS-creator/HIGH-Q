@@ -9,6 +9,126 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit;
 }
 
+// === SECURITY VALIDATION ===
+
+// Blocked files that cannot be edited under any circumstances
+$BLOCKED_FILES = [
+    'db.php',
+    '.env',
+    '.htaccess',
+    'config.php',
+    '.git',
+    '.gitignore',
+    'vendor',
+    'node_modules',
+    'composer.lock',
+    'package-lock.json'
+];
+
+// Allowed file extensions
+$ALLOWED_EXTENSIONS = [
+    'php', 'html', 'css', 'js', 'json', 'sql', 'txt',
+    'md', 'yaml', 'yml', 'xml', 'ini', 'env'
+];
+
+// Project root for file operations
+$PROJECT_ROOT = realpath(__DIR__ . '/../../');
+
+function validatePath($path) {
+    global $PROJECT_ROOT, $BLOCKED_FILES, $ALLOWED_EXTENSIONS;
+    
+    // Check for path traversal
+    if (strpos($path, '..') !== false || strpos($path, '\\') !== false) {
+        throw new Exception('Invalid path: path traversal detected');
+    }
+    
+    // Get real path and check it's within project
+    $realPath = realpath($PROJECT_ROOT . '/' . $path);
+    if ($realPath === false || strpos($realPath, $PROJECT_ROOT) !== 0) {
+        throw new Exception('Invalid path: outside project root');
+    }
+    
+    // Check blocked files
+    $basename = basename($path);
+    if (in_array(strtolower($basename), array_map('strtolower', $BLOCKED_FILES))) {
+        throw new Exception("File '{$basename}' is protected and cannot be edited");
+    }
+    
+    // Check extension if file (not directory)
+    if (is_file($realPath)) {
+        $ext = strtolower(pathinfo($realPath, PATHINFO_EXTENSION));
+        if (!in_array($ext, $ALLOWED_EXTENSIONS)) {
+            throw new Exception("File type '.{$ext}' is not allowed");
+        }
+    }
+    
+    return $realPath;
+}
+
+function generateDiff($original, $modified) {
+    $originalLines = explode("\n", $original);
+    $modifiedLines = explode("\n", $modified);
+    
+    $diff = [];
+    $maxLines = max(count($originalLines), count($modifiedLines));
+    
+    for ($i = 0; $i < $maxLines; $i++) {
+        $origLine = $originalLines[$i] ?? '';
+        $modLine = $modifiedLines[$i] ?? '';
+        
+        if ($origLine === $modLine) {
+            $diff[] = [
+                'type' => 'unchanged',
+                'line' => $i + 1,
+                'content' => htmlspecialchars($origLine)
+            ];
+        } else {
+            if (isset($originalLines[$i])) {
+                $diff[] = [
+                    'type' => 'removed',
+                    'line' => $i + 1,
+                    'content' => htmlspecialchars($origLine)
+                ];
+            }
+            if (isset($modifiedLines[$i])) {
+                $diff[] = [
+                    'type' => 'added',
+                    'line' => $i + 1,
+                    'content' => htmlspecialchars($modLine)
+                ];
+            }
+        }
+    }
+    
+    return $diff;
+}
+
+function logPatcherAction($action, $path, $status, $details = '') {
+    $logDir = __DIR__ . '/../../logs';
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    
+    $logFile = $logDir . '/patcher_audit.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $user = $_SESSION['admin_name'] ?? 'Unknown User';
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown IP';
+    
+    $logEntry = sprintf(
+        "[%s] Action: %s | Path: %s | Status: %s | User: %s | IP: %s | Details: %s\n",
+        $timestamp,
+        $action,
+        $path,
+        $status,
+        $user,
+        $ip,
+        $details
+    );
+    
+    file_put_contents($logFile, $logEntry, FILE_APPEND);
+}
+
+
 $action = $_GET['action'] ?? '';
 $response = ['error' => 'Unknown action'];
 
