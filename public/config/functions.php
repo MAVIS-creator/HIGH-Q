@@ -35,14 +35,32 @@ function app_url(string $path = ''): string {
     // Fallback: derive from current request
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
-    $script = $_SERVER['SCRIPT_NAME'] ?? '';
-
-    // Compute project base: if script contains 'public', assume project base is the path before 'public'
+    
+    // Get the project base path
+    // Look for 'HIGH-Q' or 'public' in real filesystem path to determine base
+    $realPath = realpath(__DIR__ . '/../../');  // This should be /path/to/HIGH-Q
+    $documentRoot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '');
+    
     $proj = '';
-    $parts = explode('/', trim($script, '/'));
-    if (($idx = array_search('public', $parts)) !== false) {
-        $proj = '/' . implode('/', array_slice($parts, 0, $idx));
-        if ($proj === '/' || $proj === '\\') $proj = '';
+    
+    // If we can determine the relative path from document root
+    if (!empty($documentRoot) && strpos($realPath, $documentRoot) === 0) {
+        $relativePath = substr($realPath, strlen($documentRoot));
+        $proj = str_replace('\\', '/', $relativePath);  // Convert Windows backslashes to forward slashes
+    } else {
+        // Fallback: look for HIGH-Q in SCRIPT_NAME
+        $script = $_SERVER['SCRIPT_NAME'] ?? '';
+        $parts = explode('/', trim($script, '/'));
+        
+        // Look for project directory name (HIGH-Q, project, app, etc.)
+        if (in_array('HIGH-Q', $parts, true)) {
+            $idx = array_search('HIGH-Q', $parts);
+            $proj = '/' . implode('/', array_slice($parts, 0, $idx + 1));
+        } elseif (($idx = array_search('public', $parts)) !== false) {
+            // Older logic: if 'public' found, take everything before it
+            $proj = '/' . implode('/', array_slice($parts, 0, $idx));
+            if ($proj === '/' || $proj === '\\') $proj = '';
+        }
     }
 
     $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
