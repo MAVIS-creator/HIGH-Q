@@ -89,6 +89,7 @@ error_log("scan-scheduler: Running $scanType scan. Reason: $reason");
 // ============================================================================
 
 require_once __DIR__ . '/../admin/api/scan-engine.php';
+require_once __DIR__ . '/../admin/includes/report-generator.php';
 
 try {
     // Create engine instance (PDO available from includes/db.php)
