@@ -301,9 +301,20 @@ try {
                 </label>
             </div>
 
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 13px; color: #374151; display: block; margin-bottom: 6px;">
+                    <strong>Email Report To:</strong>
+                </label>
+                <input type="email" id="reportEmail" placeholder="Enter email address" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;">
+                <small style="color: #6b7280; display: block; margin-top: 4px;">Leave blank to use default company email</small>
+            </div>
+
             <div class="scan-buttons">
                 <button class="btn-scan" onclick="startScan()">
                     <i class='bx bx-play'></i> Start Scan
+                </button>
+                <button class="btn-scan" onclick="emailReport()" style="background: #10b981;">
+                    <i class='bx bx-envelope'></i> Email Report
                 </button>
             </div>
 
