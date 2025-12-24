@@ -229,7 +229,7 @@ if (!headers_sent()) {
                                 <span>Account Settings</span>
                             </a>
                             <div class="profile-dropdown-divider"></div>
-                            <a href="logout.php" class="profile-dropdown-item profile-dropdown-item--logout">
+                            <a href="../" class="profile-dropdown-item profile-dropdown-item--logout">
                                 <i class='bx bx-log-out'></i>
                                 <span>Logout</span>
                             </a>
