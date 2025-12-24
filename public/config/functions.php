@@ -19,53 +19,57 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
 }
 
 /**
- * Return the application base URL (respects APP_URL from .env)
+ * Return the application base URL
+ * Works both in production (at root /) and development (in subfolders like /HIGH-Q)
  * @param string $path Optional path to append
  * @return string Full URL
  */
 function app_url(string $path = ''): string {
-    // Prefer explicit APP_URL from .env
-    $env = $_ENV['APP_URL'] ?? null;
-    if (!empty($env)) {
-        $base = rtrim($env, '/');
-        if ($path === '') return $base;
-        return $base . '/' . ltrim($path, '/');
+    static $cachedBase = null;
+    
+    // Return cached base URL if already computed
+    if ($cachedBase !== null) {
+        if ($path === '') return $cachedBase;
+        return $cachedBase . '/' . ltrim($path, '/');
     }
 
-    // Fallback: derive from current request
+    // Determine scheme and host
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
     
-    // Get the project base path
-    // Look for 'HIGH-Q' or 'public' in real filesystem path to determine base
-    $realPath = realpath(__DIR__ . '/../../');  // This should be /path/to/HIGH-Q
+    // Get the project base path from filesystem
+    // __DIR__ = /path/to/project/public/config
+    // realpath(__DIR__ . '/../../') = /path/to/project
+    $projectRoot = realpath(__DIR__ . '/../../');
     $documentRoot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '');
     
-    $proj = '';
+    $baseUri = '';
     
-    // If we can determine the relative path from document root
-    if (!empty($documentRoot) && strpos($realPath, $documentRoot) === 0) {
-        $relativePath = substr($realPath, strlen($documentRoot));
-        $proj = str_replace('\\', '/', $relativePath);  // Convert Windows backslashes to forward slashes
-    } else {
-        // Fallback: look for HIGH-Q in SCRIPT_NAME
-        $script = $_SERVER['SCRIPT_NAME'] ?? '';
-        $parts = explode('/', trim($script, '/'));
+    // If both paths are available, compute relative path from document root
+    if (!empty($documentRoot) && !empty($projectRoot) && strpos($projectRoot, $documentRoot) === 0) {
+        $relPath = substr($projectRoot, strlen($documentRoot));
+        $baseUri = str_replace('\\', '/', $relPath);  // Normalize Windows backslashes
         
-        // Look for project directory name (HIGH-Q, project, app, etc.)
-        if (in_array('HIGH-Q', $parts, true)) {
-            $idx = array_search('HIGH-Q', $parts);
-            $proj = '/' . implode('/', array_slice($parts, 0, $idx + 1));
-        } elseif (($idx = array_search('public', $parts)) !== false) {
-            // Older logic: if 'public' found, take everything before it
-            $proj = '/' . implode('/', array_slice($parts, 0, $idx));
-            if ($proj === '/' || $proj === '\\') $proj = '';
+        // If project IS at document root, baseUri will be empty - that's correct for production
+        // If project is in a subfolder (like /HIGH-Q for dev), baseUri will be /HIGH-Q - also correct
+    } else {
+        // Fallback: try to extract from SCRIPT_NAME when filesystem detection fails
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $scriptPath = str_replace('\\', '/', $scriptName);
+        
+        // Extract the path portion (everything before /public or the project folder)
+        // For /HIGH-Q/public/index.php → /HIGH-Q
+        // For /public/index.php → / (which means document root)
+        if (preg_match('|^(/.+?)?/public/|', $scriptPath, $matches)) {
+            $baseUri = $matches[1] ?? '';  // Will be /HIGH-Q, /projects/myapp, or empty string
         }
     }
 
-    $base = $scheme . '://' . $host . ($proj !== '' ? $proj : '');
-    if ($path === '') return $base;
-    return $base . '/' . ltrim($path, '/');
+    // Build the complete base URL
+    $cachedBase = $scheme . '://' . $host . ($baseUri !== '' ? $baseUri : '');
+    
+    if ($path === '') return $cachedBase;
+    return $cachedBase . '/' . ltrim($path, '/');
 }
 
 /**

@@ -37,7 +37,13 @@ if ($token) {
 <head>
     <meta charset="utf-8">
     <title>Email Verification</title>
-    <link rel="stylesheet" href="/public/assets/css/public.css">
+    <?php
+        // Ensure functions are loaded
+        if (!function_exists('app_url')) {
+            require_once __DIR__ . '/config/functions.php';
+        }
+    ?>
+    <link rel="stylesheet" href="<?= app_url('assets/css/public.css') ?>">
     <style>.container{max-width:720px;margin:40px auto;padding:20px}</style>
 </head>
 <body>

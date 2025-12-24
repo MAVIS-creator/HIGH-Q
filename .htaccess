@@ -2,44 +2,21 @@
     RewriteEngine On
     Options -Indexes
 
-    RewriteBase /
+    # RewriteBase needs to be the location of THIS .htaccess file relative to DocumentRoot
+    RewriteBase /HIGH-Q/
 
-    # Serve public assets when requests omit the /public prefix (common with ngrok or subfolder URLs)
-    # This ensures requests like /HIGH-Q/assets/css/public.css are served from /public/assets/css/public.css
-    RewriteRule ^assets(?:/(.*))?$ public/assets/$1 [L,NC]
+    # Allow direct access to files that exist
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
 
-    # Normalize accidental double /public/public paths (defensive)
-    # Use THE_REQUEST to avoid internal rewrite loops and issue a clean 301
-    RewriteCond %{THE_REQUEST} \s/public/public/ [NC]
-    RewriteRule ^public/public/(.*)$ /public/$1 [L,R=301]
-
-    # Allow direct access to static files and directories
-    RewriteRule ^(public/assets|admin/assets|uploads|favicon\.ico|robots\.txt)($|/) - [L]
-
-    # Handle admin section
-    RewriteRule ^admin/(.*)$ admin/$1 [L]
-
-    # Handle direct file access
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    # Allow direct access to directories that exist
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Pretty payment URL
-    RewriteRule ^pay/([A-Za-z0-9_-]+)/?$ public/payments_wait.php?ref=$1 [L,QSA]
+    # Don't rewrite requests that are already in public/
+    RewriteRule ^public/ - [L]
 
-    # Protected downloads
-    RewriteRule ^downloads/(.*)$ public/download_attachment.php?file=$1 [L,QSA]
-
-    # Redirect root to home
-    RewriteRule ^$ public/home.php [L]
-
-    # Handle public pages
-    RewriteRule ^(about|contact|programs|program|news|post|community|privacy|exams)/?$ public/$1.php [L]
-
-    # Default handler for other URLs (avoid re-prefixing when already under /public)
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/public/ [NC]
+    # Rewrite everything else to public/
     RewriteRule ^(.*)$ public/$1 [L]
 
 </IfModule>
