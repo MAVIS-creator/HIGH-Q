@@ -375,7 +375,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Handle AJAX actions (runScan / clearIPs / clearLogs)
+// Handle AJAX actions (clearIPs / clearLogs)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     $action = $_POST['action'];
     $token = $_POST['_csrf'] ?? '';
@@ -384,49 +384,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($
         exit;
     }
     try {
-        if ($action === 'runScan') {
-            // Queue the CLI scan runner asynchronously so large scans don't time out.
-            $php = PHP_BINARY;
-            $root = realpath(__DIR__ . '/../../');
-            $runner = $root . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'scan-runner.php';
-
-            header('Content-Type: application/json'); // be explicit for AJAX
-
-            if (!is_file($runner) || !is_readable($runner)) {
-                error_log('runScan: runner not found at ' . $runner);
-                echo json_encode(['status' => 'error', 'message' => 'Scan runner not available on server']);
-                exit;
-            }
-
-            // Build platform-specific command and attempt to launch
-            try {
-                if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
-                    // Windows: use start /B via COMSPEC to avoid shell redirection issues
-                    $comspec = getenv('COMSPEC') ?: 'C:\\Windows\\System32\\cmd.exe';
-                    // /C will run the command then exit; use start to launch background
-                    $cmd = 'start /B ' . escapeshellarg($php) . ' ' . escapeshellarg($runner);
-                    // Use pclose+popen to detach
-                    $proc = @popen($cmd, 'r');
-                    if ($proc !== false) { pclose($proc); }
-                    else throw new Exception('Failed to spawn background process on Windows');
-                } else {
-                    // Unix-like: nohup & disown
-                    $cmd = "nohup " . escapeshellarg($php) . ' ' . escapeshellarg($runner) . " > /dev/null 2>&1 &";
-                    @exec($cmd, $out, $rc);
-                    if ($rc !== 0) throw new Exception('Non-zero exit when launching runner: ' . intval($rc));
-                }
-            } catch (Exception $e) {
-                error_log('runScan: failed to queue runner: ' . $e->getMessage());
-                echo json_encode(['status' => 'error', 'message' => 'Failed to queue security scan: ' . $e->getMessage()]);
-                exit;
-            }
-
-            // Log queue action
-            try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'security_scan_queued', ['by' => $_SESSION['user']['email'] ?? null]); } catch (Exception $e) { error_log('runScan logAction failed: ' . $e->getMessage()); }
-
-            echo json_encode(['status' => 'ok', 'message' => 'Security scan queued; you will receive an email when it completes.']);
-            exit;
-        }
         if ($action === 'clearIPs') {
             // Clear login attempts table
             $count = $pdo->exec("DELETE FROM login_attempts");
@@ -721,7 +678,6 @@ $csrf = generateToken('settings_form');
                     <input type="number" min="1" name="settings[advanced][session_timeout]" value="<?= htmlspecialchars($current['advanced']['session_timeout']) ?>" class="input">
 
                     <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-                        <button type="button" id="runScan" class="header-cta">Run Security Scan</button>
                         <button type="button" id="clearIPs" class="btn">Clear Blocked IPs</button>
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
                         <button type="button" id="downloadLogs" class="btn">Download Logs</button>
