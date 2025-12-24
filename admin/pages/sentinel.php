@@ -522,6 +522,55 @@ function viewReport(id) {
         alert('No scan data available. Run a scan first.');
     }
 }
+
+function emailReport() {
+    if (!window.lastScanReport) {
+        alert('No scan data available. Run a scan first.');
+        return;
+    }
+    
+    const recipient = document.getElementById('reportEmail').value || '';
+    const button = event.target;
+    button.disabled = true;
+    button.textContent = '⟳ Sending...';
+    
+    // Prepare scan data for send-report API
+    const reportData = {
+        status: 'completed',
+        report: window.lastScanReport
+    };
+    
+    fetch('../api/send-report.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            scan_data: reportData,
+            recipient_email: recipient,
+            send_email: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.disabled = false;
+        button.textContent = '✉️ Email Report';
+        
+        if (data.status === 'success' && data.sent) {
+            alert('✅ Report sent successfully to ' + (recipient || 'company email') + '!');
+        } else if (data.status === 'success') {
+            alert('Report generated but email could not be sent. Check email configuration.');
+        } else {
+            alert('Error: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        button.disabled = false;
+        button.textContent = '✉️ Email Report';
+        alert('Error sending report: ' + error.message);
+    });
+}
 </script>
 </script>
 
