@@ -1,6 +1,7 @@
 <?php
 // Patcher API v2.0 - Enhanced Security
-require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 // Check admin session
 session_start();
