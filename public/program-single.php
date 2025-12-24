@@ -8,6 +8,7 @@ $featureLines = [];
 
 $staticPrograms = [
     'ssce-gce-exams' => [
+        'slug' => 'ssce-gce-exams',
         'title' => 'SSCE & GCE Exams',
         'description' => "Complete preparation for West African Examinations Council (WAEC) and National Examination Council (NECO) exams. Our structured program provides intensive coaching for school candidates sitting for May/June examinations and private candidates. We also offer NABTEB preparation and specialized training for WAEC GCE and NECO GCE candidates, ensuring you're ready for every assessment.",
         'duration' => '8-24 weeks (exam-calendar aligned)',
@@ -24,6 +25,7 @@ $staticPrograms = [
         ],
     ],
     'jamb-university-admission' => [
+        'slug' => 'jamb-university-admission',
         'title' => 'JAMB & University Admission',
         'description' => "Navigate your path to Nigerian university admission with our comprehensive JAMB and Post-UTME program. Our specialized CBT training covers the full JAMB/UTME syllabus with practice tests that simulate the actual examination environment. We guide you through registration, test preparation, and Post-UTME university screening preparation to maximize your admission chances.",
         'duration' => '6-12 weeks (CBT-focused)',
@@ -40,6 +42,7 @@ $staticPrograms = [
         ],
     ],
     'advanced-international-studies' => [
+        'slug' => 'advanced-international-studies',
         'title' => 'Advanced & International Studies',
         'description' => "Prepare for global academic opportunities with our advanced programs. Whether you're pursuing Direct Entry to Nigerian universities through JUPEB or A-Levels, or seeking international qualifications like SAT, TOEFL, IELTS, GMAT, or GRE for study abroad, we provide comprehensive training to meet international academic standards.",
         'duration' => '10-24 weeks (modular)',
@@ -56,6 +59,7 @@ $staticPrograms = [
         ],
     ],
     'remedial-foundation-tutorials' => [
+        'slug' => 'remedial-foundation-tutorials',
         'title' => 'Remedial & Foundation Tutorials',
         'description' => "Academic foundation and remedial programs for students from Primary through Senior Secondary School levels. We provide structured grooming to strengthen foundational knowledge, boost exam readiness, and ensure continuous academic improvement. Small-group sessions and individualized attention help each student succeed at their level.",
         'duration' => '4-16 weeks (modular by class)',
@@ -72,6 +76,7 @@ $staticPrograms = [
         ],
     ],
     'digital-skills-tech' => [
+        'slug' => 'digital-skills-tech',
         'title' => 'Digital Skills & Tech',
         'description' => "Master practical technology skills essential for the modern workplace. Our hands-on programs cover productivity tools, design software, and programming fundamentals. Whether you're starting your tech journey or upgrading existing skills, we provide project-based learning that translates directly to real-world applications.",
         'duration' => '4-10 weeks (hands-on)',
@@ -88,6 +93,7 @@ $staticPrograms = [
         ],
     ],
     'professional-services' => [
+        'slug' => 'professional-services',
         'title' => 'Professional Services',
         'description' => "Dedicated professional services to support your educational and career goals. From university application assistance to visa processing consultation, educational counseling, and document preparation, our expert advisors provide personalized support for your unique needs.",
         'duration' => 'On-demand (book a slot)',
@@ -358,9 +364,9 @@ endif; ?>
 
 <section class="program-detail-page">
   <div class="container">
-    <a href="programs.php" class="program-breadcrumb"><i class="bx bx-chevron-left"></i> Back to Programs</a>
+    <a href="programs.php" class="program-breadcrumb" style="margin-bottom: 24px; display: inline-flex; padding: 8px 16px; background: rgba(245, 185, 4, 0.1); border-radius: 8px; transition: all 0.2s;"><i class="bx bx-chevron-left"></i> Back to Programs</a>
 
-    <div class="program-hero">
+    <div class="program-hero" style="margin-top: 32px;">
       <h1><?= htmlspecialchars($program['title']) ?></h1>
       <p><?= htmlspecialchars($program['description']) ?></p>
     </div>
