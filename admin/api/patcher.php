@@ -9,6 +9,30 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit;
 }
 
+// Security: Define safe directories and blocked items
+const ALLOWED_DIRS = [
+    'public',
+    'admin',
+    'config',
+    'src',
+    'migrations',
+];
+
+const BLOCKED_FILES = [
+    '.env',
+    '.htaccess',
+    'config/db.php',
+    'admin/auth_check.php',
+];
+
+const ALLOWED_EXTENSIONS = [
+    'php', 'html', 'css', 'js', 'json', 'sql', 'txt', 'md'
+];
+
+const BLOCKED_EXTENSIONS = [
+    'exe', 'sh', 'bat', 'cmd', 'com', 'bin'
+];
+
 $action = $_GET['action'] ?? '';
 $response = ['error' => 'Unknown action'];
 
@@ -43,11 +67,51 @@ try {
             break;
     }
 } catch (Exception $e) {
+    http_response_code(400);
     $response = ['error' => $e->getMessage()];
 }
 
 header('Content-Type: application/json');
-echo json_encode($response);
+echo json_encode($response, JSON_UNESCAPED_SLASHES);
+
+
+/**
+ * Validate file path for security (prevent path traversal, etc.)
+ */
+function validatePath($relPath) {
+    // Remove leading/trailing slashes and normalize
+    $relPath = trim($relPath, '/\\');
+    
+    // Prevent path traversal attacks
+    if (strpos($relPath, '..') !== false || strpos($relPath, '//') !== false) {
+        throw new Exception('Invalid path: traversal not allowed');
+    }
+    
+    $parts = explode('/', str_replace('\\', '/', $relPath));
+    
+    // Check first part is in allowed dirs
+    if (empty($parts[0]) || !in_array($parts[0], ALLOWED_DIRS, true)) {
+        throw new Exception('Path not in allowed directories');
+    }
+    
+    // Check for blocked files
+    foreach (BLOCKED_FILES as $blocked) {
+        if ($relPath === $blocked || str_ends_with($relPath, '/' . $blocked)) {
+            throw new Exception('Access to this file is blocked');
+        }
+    }
+    
+    // Get full path
+    $baseDir = dirname(__DIR__, 2);
+    $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relPath));
+    
+    // Verify resolved path is still within base directory
+    if (!$fullPath || strpos($fullPath, realpath($baseDir)) !== 0) {
+        throw new Exception('Invalid file path');
+    }
+    
+    return $fullPath;
+}
 
 function listFiles() {
     $allowedDirs = [
