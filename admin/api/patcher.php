@@ -1,4 +1,5 @@
 <?php
+// Patcher API v2.0 - Enhanced Security
 require_once __DIR__ . '/../../config/db.php';
 
 // Check admin session
