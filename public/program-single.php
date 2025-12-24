@@ -143,6 +143,11 @@ endif; ?>
     background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
   }
 
+  .program-breadcrumb {
+    display: inline-block;
+    margin-bottom: 28px;
+  }
+
   .program-breadcrumb a {
     color: var(--hq-blue-white);
     text-decoration: none;
@@ -150,12 +155,15 @@ endif; ?>
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
     font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 6px;
   }
 
   .program-breadcrumb a:hover {
     color: var(--hq-yellow);
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .program-hero {
@@ -409,7 +417,7 @@ endif; ?>
         <div class="program-cta">
           <h4>Ready to Enroll?</h4>
           <p>Take the next step toward your academic and career goals today.</p>
-          <a href="register.php?ref=<?php echo rawurlencode($program['slug']); ?>" class="program-enroll-btn">Enroll Now</a>
+          <a href="register.php?ref=<?php echo htmlspecialchars(rawurlencode($program['slug'] ?? $program['path'] ?? 'program')); ?>" class="program-enroll-btn">Enroll Now</a>
         </div>
 
         <div class="info-note">
