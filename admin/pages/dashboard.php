@@ -78,12 +78,9 @@ try {
     $dbServer = null;
 }
 $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unknown'];
-$adminUrl = null;
-if (function_exists('admin_url')) {
-    $adminUrl = rtrim(admin_url(''), '/') . '/';
-} else {
-    $adminUrl = $siteUrl ? rtrim($siteUrl, '/') . '/admin/' : null;
-}
+
+// For admin URL, use the same base URL but add admin path
+$adminUrl = rtrim(app_url(''), '/') . '/admin/';
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
 ?>
 <div class="dashboard">
