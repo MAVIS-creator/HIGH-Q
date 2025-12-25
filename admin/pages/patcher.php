@@ -132,6 +132,52 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
             color: #858585;
         }
         
+        /* Folder structure with collapse */
+        .folder-item {
+            user-select: none;
+        }
+        
+        .folder-header {
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #cccccc;
+            transition: all 0.15s;
+        }
+        
+        .folder-header:hover {
+            background: #2a2d2e;
+        }
+        
+        .folder-header .folder-icon {
+            font-size: 16px;
+            color: #dcb67a;
+        }
+        
+        .folder-header .chevron {
+            font-size: 14px;
+            color: #858585;
+            transition: transform 0.2s;
+        }
+        
+        .folder-header.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+        
+        .folder-contents {
+            padding-left: 12px;
+            overflow: hidden;
+            max-height: 2000px;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .folder-contents.hidden {
+            max-height: 0;
+        }
+        
         .file-item {
             padding: 6px 16px;
             font-size: 13px;
@@ -172,6 +218,132 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
             margin-top: 8px;
             text-overflow: ellipsis;
             overflow: hidden;
+        }
+        
+        /* Terminal Panel */
+        .terminal-panel {
+            background: #1e1e1e;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            height: 200px;
+        }
+        
+        .terminal-panel.collapsed {
+            height: 36px;
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            cursor: pointer;
+        }
+        
+        .terminal-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .terminal-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            font-size: 12px;
+            color: #cccccc;
+            cursor: pointer;
+        }
+        
+        .terminal-tab.active {
+            background: #1e1e1e;
+            color: #ffd600;
+            border-color: #ffd600;
+        }
+        
+        .terminal-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .terminal-btn {
+            background: none;
+            border: none;
+            color: #858585;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 16px;
+            border-radius: 3px;
+            transition: all 0.15s;
+        }
+        
+        .terminal-btn:hover {
+            background: #3e3e42;
+            color: #cccccc;
+        }
+        
+        .terminal-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .terminal-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #cccccc;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .terminal-output .cmd-line {
+            color: #4ec9b0;
+        }
+        
+        .terminal-output .error-line {
+            color: #f14c4c;
+        }
+        
+        .terminal-output .success-line {
+            color: #4ec9b0;
+        }
+        
+        .terminal-input-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: #252527;
+            border-top: 1px solid #3e3e42;
+        }
+        
+        .terminal-prompt {
+            color: #569cd6;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+        
+        .terminal-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: #cccccc;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 13px;
         }
         
         .main-editor {
