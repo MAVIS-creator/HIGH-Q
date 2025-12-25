@@ -224,27 +224,55 @@ $users = $pdo->query("
 <?php include '../includes/sidebar.php'; ?>
 
 <div class="users-page">
-
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="page-header-info">
-      <h1>User Management</h1>
-      <p>Manage user accounts, roles, and permissions</p>
+  <!-- Page Hero -->
+  <div class="page-hero">
+    <div class="page-hero-content">
+      <div>
+        <span class="page-hero-badge"><i class='bx bxs-user-detail'></i> User Management</span>
+        <h1 class="page-hero-title">Manage Users</h1>
+        <p class="page-hero-subtitle">View and manage user accounts, roles, and permissions</p>
+      </div>
+      <div class="page-hero-actions">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-sm font-medium text-slate-900">
+          <i class='bx bxs-group'></i>
+          <?= $total_users ?> Total Users
+        </span>
+      </div>
     </div>
   </div>
 
   <!-- User Statistics -->
   <div class="summary-cards">
-    <div class="card"><h3><?= $total_users ?></h3><p>Total Users</p></div>
-    <div class="card"><h3><?= $active_users ?></h3><p>Active</p></div>
-    <div class="card"><h3><?= $pending_users ?></h3><p>Pending</p></div>
-    <div class="card"><h3><?= $banned_users ?></h3><p>Banned</p></div>
+    <div class="card animate-fadeIn" style="animation-delay: 0ms">
+      <div>
+        <h3><?= $total_users ?></h3>
+        <p>Total Users</p>
+      </div>
+    </div>
+    <div class="card animate-fadeIn" style="animation-delay: 50ms">
+      <div>
+        <h3><?= $active_users ?></h3>
+        <p>Active</p>
+      </div>
+    </div>
+    <div class="card animate-fadeIn" style="animation-delay: 100ms">
+      <div>
+        <h3><?= $pending_users ?></h3>
+        <p>Pending</p>
+      </div>
+    </div>
+    <div class="card animate-fadeIn" style="animation-delay: 150ms">
+      <div>
+        <h3><?= $banned_users ?></h3>
+        <p>Banned</p>
+      </div>
+    </div>
   </div>
 
   <!-- Search + Filter -->
-  <div class="user-filters">
+  <div class="user-filters animate-fadeIn" style="animation-delay: 200ms">
     <div class="filter-controls">
-      <input type="text" id="searchInput" placeholder="Search by name or email">
+      <input type="text" id="searchInput" placeholder="Search by name or email...">
       <select id="statusFilter">
         <option value="">All Status</option>
         <option value="active">Active</option>
