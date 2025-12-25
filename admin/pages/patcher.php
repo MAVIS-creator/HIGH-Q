@@ -1,7 +1,7 @@
 <?php
-// Admin Smart Patcher page - Consolidated Patcher Tool
+// Admin Smart Patcher - Standalone Full-Screen Code Editor
 $pageTitle = 'Smart Patcher';
-$pageSubtitle = 'Safely edit code with backups and diff preview.';
+$pageSubtitle = 'Safely edit code with backups and diff preview';
 
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -35,18 +35,590 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        body {
+        html, body {
+            height: 100%;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #1e1e1e;
             color: #e0e0e0;
         }
         
-        .editor-wrapper {
+        .patcher-container {
             display: flex;
-            height: calc(100vh - 120px);
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .patcher-header {
+            background: linear-gradient(to right, #f59e0b, #fbbf24);
+            color: #1f2937;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        
+        .patcher-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .patcher-header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .patcher-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
             gap: 1px;
             background: #2d2d2d;
         }
+        
+        .sidebar {
+            width: 300px;
+            background: #252526;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #3e3e42;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #858585;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sidebar-actions {
+            display: flex;
+            gap: 6px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .btn-new-file, .btn-new-folder {
+            flex: 1;
+            padding: 7px 12px;
+            font-size: 12px;
+            border: 1px solid #3e3e42;
+            background: #2d2d30;
+            color: #cccccc;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .btn-new-file:hover, .btn-new-folder:hover {
+            background: #37373d;
+            border-color: #007acc;
+        }
+        
+        .file-search {
+            margin: 8px 12px;
+            padding: 8px 12px;
+            background: #3e3e42;
+            border: 1px solid #555;
+            border-radius: 4px;
+            color: #cccccc;
+            font-size: 12px;
+            outline: none;
+        }
+        
+        .file-search::placeholder {
+            color: #858585;
+        }
+        
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        
+        .folder-item { user-select: none; }
+        .folder-header {
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #cccccc;
+            transition: all 0.15s;
+        }
+        .folder-header:hover { background: #2a2d2e; }
+        .folder-header .chevron {
+            font-size: 14px;
+            color: #858585;
+            transition: transform 0.2s;
+        }
+        .folder-header.collapsed .chevron { transform: rotate(-90deg); }
+        .folder-header .folder-icon { font-size: 16px; color: #dcb67a; }
+        .folder-contents {
+            padding-left: 12px;
+            overflow: hidden;
+            max-height: 2000px;
+            transition: max-height 0.3s ease-out;
+        }
+        .folder-contents.hidden { max-height: 0; }
+        
+        .file-item {
+            padding: 6px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cccccc;
+            transition: background 0.15s;
+        }
+        .file-item:hover { background: #37373d; color: #ffffff; }
+        .file-item.active { background: #094771; color: #ffffff; border-left: 3px solid #007acc; padding-left: 13px; }
+        .file-item i { flex-shrink: 0; font-size: 16px; }
+        
+        .main-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .editor-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .editor-title h2 {
+            font-size: 16px;
+            color: #cccccc;
+        }
+        
+        .breadcrumb {
+            font-size: 11px;
+            color: #858585;
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .editor-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: #0e639c;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .editor-btn:hover { background: #1177bb; }
+        .editor-btn.btn-edit { background: #0e639c; }
+        .editor-btn.btn-edit.editing { background: #059669; }
+        .editor-btn.btn-backups { background: #6366f1; }
+        .editor-btn.btn-backups:hover { background: #4f46e5; }
+        
+        .editor-container {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .CodeMirror {
+            flex: 1 !important;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+            font-size: 13px !important;
+            line-height: 1.6 !important;
+            background: #1e1e1e !important;
+            color: #d4d4d4 !important;
+        }
+        
+        .CodeMirror-linenumber {
+            background: #1e1e1e !important;
+            color: #858585 !important;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+        }
+        
+        .CodeMirror-gutters {
+            background: #1e1e1e !important;
+            border-right: 1px solid #3e3e42 !important;
+        }
+        
+        .CodeMirror-cursor {
+            border-left: 1px solid #aeafad !important;
+        }
+        
+        .CodeMirror-selected {
+            background: #264f78 !important;
+        }
+        
+        .editor-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #858585;
+            font-size: 14px;
+        }
+        
+        .editor-placeholder i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+        
+        .controls-bar {
+            background: #2d2d30;
+            border-top: 1px solid #3e3e42;
+            padding: 12px 20px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            padding: 8px 16px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-preview {
+            background: #0e639c;
+            color: white;
+        }
+        .btn-preview:hover:not(:disabled) { background: #1177bb; }
+        
+        .btn-apply {
+            background: #13a10e;
+            color: white;
+        }
+        .btn-apply:hover:not(:disabled) { background: #16c60c; }
+        
+        .btn-cancel {
+            background: #4d4d4d;
+            color: #e0e0e0;
+        }
+        .btn-cancel:hover { background: #5d5d5d; }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .terminal-panel {
+            background: #1e1e1e;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            height: 200px;
+        }
+        
+        .terminal-panel.collapsed {
+            height: 36px;
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            cursor: pointer;
+        }
+        
+        .terminal-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .terminal-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            font-size: 12px;
+            color: #cccccc;
+            cursor: pointer;
+        }
+        
+        .terminal-tab.active {
+            background: #1e1e1e;
+            color: #ffd600;
+            border-color: #ffd600;
+        }
+        
+        .terminal-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .terminal-btn {
+            background: none;
+            border: none;
+            color: #858585;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 16px;
+            border-radius: 3px;
+            transition: all 0.15s;
+        }
+        
+        .terminal-btn:hover {
+            background: #3e3e42;
+            color: #cccccc;
+        }
+        
+        .terminal-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .terminal-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #cccccc;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .terminal-output .cmd-line { color: #4ec9b0; }
+        .terminal-output .error-line { color: #f14c4c; }
+        .terminal-output .success-line { color: #4ec9b0; }
+        
+        .terminal-input-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: #252527;
+            border-top: 1px solid #3e3e42;
+        }
+        
+        .terminal-prompt {
+            color: #569cd6;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+        
+        .terminal-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: #cccccc;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            font-size: 13px;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #464647;
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #545455;
+        }
+        
+        .diff-line {
+            padding: 2px 8px;
+            border-left: 3px solid transparent;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+        }
+        
+        .diff-added {
+            background-color: #1d3a1d;
+            border-left-color: #4ec9b0;
+        }
+        
+        .diff-removed {
+            background-color: #3a1d1d;
+            border-left-color: #ce7b7b;
+        }
+        
+        .diff-unchanged {
+            background-color: #2d2d30;
+            border-left-color: #3e3e42;
+        }
+    </style>
+</head>
+<body>
+    <div class="patcher-container">
+        <!-- Header -->
+        <header class="patcher-header">
+            <h1>
+                <i class='bx bx-code-alt'></i>
+                Smart Patcher
+            </h1>
+            <div class="patcher-header-right">
+                <span style="font-size: 14px;">👤 <?php echo htmlspecialchars($adminUsername); ?></span>
+                <a href="index.php" style="padding: 8px 16px; background: rgba(0,0,0,0.15); hover: rgba(0,0,0,0.25); border-radius: 6px; text-decoration: none; color: #1f2937; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                    <i class='bx bx-arrow-back'></i> Back to Dashboard
+                </a>
+            </div>
+        </header>
+        
+        <!-- Body -->
+        <div class="patcher-body">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <i class='bx bx-folder'></i>
+                    Files
+                </div>
+                
+                <div class="sidebar-actions">
+                    <button class="btn-new-file" onclick="promptNewFile()" title="New File">
+                        <i class='bx bx-file-plus'></i> New
+                    </button>
+                    <button class="btn-new-folder" onclick="promptNewFolder()" title="New Folder">
+                        <i class='bx bx-folder-plus'></i> Folder
+                    </button>
+                </div>
+                
+                <input 
+                    type="text" 
+                    id="fileSearch" 
+                    class="file-search"
+                    placeholder="Search files..."
+                />
+                
+                <div class="file-list" id="fileList">
+                    <div style="padding: 20px; text-align: center; color: #858585; font-size: 12px;">
+                        <i class='bx bx-loader-alt bx-spin' style="font-size: 24px; display: block; margin-bottom: 8px;"></i>
+                        Loading files...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Editor -->
+            <div class="main-editor">
+                <div class="editor-header" id="editorHeader" style="display: none;">
+                    <div class="editor-title">
+                        <i class='bx bx-file' id="fileIcon"></i>
+                        <div>
+                            <h2 id="currentFileName">Untitled</h2>
+                            <div class="breadcrumb" id="currentFilePath"></div>
+                        </div>
+                    </div>
+                    <div class="editor-actions">
+                        <button onclick="viewBackups()" class="editor-btn btn-backups">
+                            <i class='bx bx-history'></i> Backups
+                        </button>
+                        <button onclick="toggleEditMode()" id="editBtn" class="editor-btn btn-edit">
+                            <i class='bx bx-edit'></i> Edit
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-container" id="editorContainer">
+                    <div class="editor-placeholder">
+                        <i class='bx bx-file-blank'></i>
+                        <p>Select a file from the left to begin editing</p>
+                    </div>
+                </div>
+
+                <!-- Terminal Panel -->
+                <div class="terminal-panel" id="terminalPanel">
+                    <div class="terminal-header" onclick="toggleTerminal()">
+                        <div class="terminal-tabs">
+                            <div class="terminal-tab active">
+                                <i class='bx bx-terminal'></i> Terminal
+                            </div>
+                        </div>
+                        <div class="terminal-actions">
+                            <button class="terminal-btn" onclick="clearTerminal(event)" title="Clear Terminal"><i class='bx bx-trash'></i></button>
+                            <button class="terminal-btn" onclick="toggleTerminal(event)" title="Toggle Terminal"><i class='bx bx-chevron-down' id="terminalToggleIcon"></i></button>
+                        </div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-output" id="terminalOutput">
+                            <div style="color: #858585; margin-bottom: 8px;">High Q CLI [Version 1.0.0]</div>
+                            <div style="color: #858585; margin-bottom: 8px;">Type 'help' for available commands.</div>
+                        </div>
+                        <div class="terminal-input-row">
+                            <span class="terminal-prompt">admin@highq:~$</span>
+                            <input type="text" class="terminal-input" id="terminalInput" autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls-bar" id="controlsBar" style="display: none;">
+                    <button onclick="previewDiff()" id="previewBtn" class="btn-primary btn-preview" disabled>
+                        <i class='bx bx-show'></i> Preview Changes
+                    </button>
+                    <button onclick="applyFix()" id="applyBtn" class="btn-primary btn-apply" disabled>
+                        <i class='bx bx-check-circle'></i> Apply Fix
+                    </button>
+                    <button onclick="cancelEdit()" id="cancelBtn" class="btn-primary btn-cancel" style="display: none;">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
         
         .sidebar {
             width: 280px;

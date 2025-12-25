@@ -3,9 +3,12 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 
+header('Content-Type: application/json');
+
 // Check admin session
-session_start();
-if (!isset($_SESSION['admin_logged_in'])) {
+try {
+    requirePermission('patcher');
+} catch (Exception $e) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
     exit;
