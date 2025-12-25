@@ -182,8 +182,30 @@ try {
                     <input type="number" id="experience" name="experience" min="0">
                 </div>
                 <div class="form-group">
-                    <label for="photo">Photo URL</label>
-                    <input type="url" id="photo" name="photo" placeholder="https://...">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="tutor@example.com">
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+234 xxx xxx xxxx">
+                </div>
+                <div class="form-group">
+                    <label for="qualifications">Qualifications</label>
+                    <input type="text" id="qualifications" name="qualifications" placeholder="B.Sc Mathematics, M.Ed">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Photo</label>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button type="button" onclick="document.getElementById('photoFile').click()" class="btn-secondary" style="flex: 1; min-width: 200px;">
+                        <i class='bx bx-upload'></i> Upload Photo
+                    </button>
+                    <input type="file" id="photoFile" accept="image/*" style="display: none;">
+                    <input type="url" id="photo" name="photo" placeholder="Or enter URL..." style="flex: 2; min-width: 300px;">
                 </div>
             </div>
             
