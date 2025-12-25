@@ -2,19 +2,39 @@
 // admin/includes/footer.php
 ?>
     </main>
-    <footer class="admin-footer">
-        <div class="footer-card footer-card--highlight">
-            <div class="footer-card-left">
-                <span class="footer-icon"><i class='bx bx-award'></i></span>
+    <footer class="relative ml-[var(--sidebar-width)] w-[calc(100%-var(--sidebar-width))] bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] z-50 transition-all duration-300 ease-in-out">
+        <div class="flex items-center gap-5 px-6 py-4 max-w-full">
+            <div class="flex-shrink-0">
+                <span class="text-2xl text-amber-800"><i class='bx bx-award'></i></span>
             </div>
-            <div class="footer-card-body">
-                <div class="footer-title">HIGH Q SOLID ACADEMY</div>
-                <div class="footer-sub">Always Ahead of Others</div>
-                <div class="footer-desc muted">Empowering students since 2018 with quality education and excellent results</div>
+            <div class="flex-grow">
+                <div class="font-semibold text-slate-900">HIGH Q SOLID ACADEMY</div>
+                <div class="text-sm text-slate-700">Always Ahead of Others</div>
+                <div class="text-xs text-slate-600">Empowering students since 2018 with quality education and excellent results</div>
             </div>
-            <div class="footer-card-right">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</div>
+            <div class="flex-shrink-0 text-sm text-slate-700">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</div>
         </div>
     </footer>
+
+    <style>
+        /* Ensure footer responds to sidebar collapse */
+        body.sidebar-collapsed footer {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+        
+        @media (max-width: 768px) {
+            footer {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            footer > div {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+        }
+    </style>
 
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
