@@ -82,167 +82,483 @@ $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unkn
 // For admin URL, use the same base URL but add admin path
 $adminUrl = rtrim(app_url(''), '/') . '/admin/';
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-</head>
-<body class="bg-slate-50">
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
 
-<div class="min-h-screen w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 ml-[var(--sidebar-width)] transition-all duration-300">
-    <!-- Header Section -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 shadow-xl text-white">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.1),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_25%)]"></div>
-        <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+// Get recent activity
+$recentPayments = [];
+try {
+    $stmt = $pdo->query("SELECT p.*, u.name as user_name FROM payments p LEFT JOIN users u ON p.user_id = u.id ORDER BY p.created_at DESC LIMIT 5");
+    $recentPayments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+$recentUsers = [];
+try {
+    $stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 5");
+    $recentUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+?>
+
+<div class="dashboard-container">
+    <!-- Hero Section -->
+    <div class="page-hero">
+        <div class="page-hero-content">
             <div>
-                <p class="text-xs uppercase tracking-[0.2em] text-indigo-100/80">Overview</p>
-                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight">Dashboard</h1>
-                <p class="mt-2 text-indigo-100/90 max-w-2xl">Welcome back, <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Admin') ?></p>
+                <span class="page-hero-badge"><i class='bx bx-home-circle'></i> Overview</span>
+                <h1 class="page-hero-title">Welcome back, <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Admin') ?>!</h1>
+                <p class="page-hero-subtitle">Here's what's happening with your academy today.</p>
             </div>
-            <div class="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
-                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                <span class="text-white font-medium">System Online</span>
+            <div class="page-hero-actions">
+                <span class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-sm font-medium text-slate-900">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    All Systems Operational
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Widgets Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <!-- Stats Grid -->
+    <div class="stat-grid">
         <?php if (in_array('users', $permissions)): ?>
-            <a href="index.php?pages=users" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-indigo-300 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <a href="index.php?pages=users" class="stat-card animate-fadeIn" style="animation-delay: 0ms">
+                <div class="stat-icon stat-icon--blue">
                     <i class='bx bxs-user-detail'></i>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM users") ?></h3>
-                    <p class="text-sm text-slate-500 font-medium">Total Users</p>
+                <div class="stat-content">
+                    <div class="stat-value"><?= safeCount($pdo, "SELECT COUNT(*) FROM users") ?></div>
+                    <div class="stat-label">Total Users</div>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('courses', $permissions)): ?>
-            <a href="index.php?pages=courses" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-amber-300 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    <i class='bx bxs-book'></i>
+            <a href="index.php?pages=courses" class="stat-card animate-fadeIn" style="animation-delay: 50ms">
+                <div class="stat-icon stat-icon--amber">
+                    <i class='bx bxs-book-content'></i>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM courses") ?></h3>
-                    <p class="text-sm text-slate-500 font-medium">Courses</p>
+                <div class="stat-content">
+                    <div class="stat-value"><?= safeCount($pdo, "SELECT COUNT(*) FROM courses") ?></div>
+                    <div class="stat-label">Active Courses</div>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('students', $permissions)): ?>
-            <a href="index.php?pages=students" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-rose-300 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <a href="index.php?pages=students" class="stat-card animate-fadeIn" style="animation-delay: 100ms">
+                <div class="stat-icon stat-icon--green">
                     <i class='bx bxs-graduation'></i>
                 </div>
-                <div>
+                <div class="stat-content">
                     <?php
                     $studentsCount = safeCount($pdo, "SELECT COUNT(*) FROM students");
                     if ($studentsCount === 0) {
                         $studentsCount = safeCount($pdo, "SELECT COUNT(*) FROM users u LEFT JOIN roles r ON r.id=u.role_id WHERE r.slug='student' OR u.role_id IS NULL");
                     }
                     ?>
-                    <h3 class="text-2xl font-bold text-slate-800"><?= $studentsCount ?></h3>
-                    <p class="text-sm text-slate-500 font-medium">Students</p>
+                    <div class="stat-value"><?= $studentsCount ?></div>
+                    <div class="stat-label">Enrolled Students</div>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('posts', $permissions)): ?>
-            <a href="index.php?pages=posts" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-emerald-300 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <a href="index.php?pages=posts" class="stat-card animate-fadeIn" style="animation-delay: 150ms">
+                <div class="stat-icon stat-icon--purple">
                     <i class='bx bxs-news'></i>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM posts") ?></h3>
-                    <p class="text-sm text-slate-500 font-medium">Posts</p>
-                </div>
-            </a>
-        <?php endif; ?>
-
-        <?php if (in_array('comments', $permissions)): ?>
-            <a href="index.php?pages=comments" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-slate-300 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    <i class='bx bxs-comment-detail'></i>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM comments WHERE status='pending'") ?></h3>
-                    <p class="text-sm text-slate-500 font-medium">Pending Comments</p>
+                <div class="stat-content">
+                    <div class="stat-value"><?= safeCount($pdo, "SELECT COUNT(*) FROM posts") ?></div>
+                    <div class="stat-label">Published Posts</div>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('payments', $permissions)): ?>
-            <a href="index.php?pages=payments" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-yellow-300 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <a href="index.php?pages=payments" class="stat-card animate-fadeIn" style="animation-delay: 200ms">
+                <div class="stat-icon stat-icon--primary">
                     <i class='bx bxs-credit-card'></i>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM payments WHERE status='pending'") ?></h3>
-                    <p class="text-sm text-slate-500 font-medium">Pending Payments</p>
+                <div class="stat-content">
+                    <div class="stat-value"><?= safeCount($pdo, "SELECT COUNT(*) FROM payments WHERE status='pending'") ?></div>
+                    <div class="stat-label">Pending Payments</div>
                 </div>
             </a>
         <?php endif; ?>
-        
+
+        <?php if (in_array('comments', $permissions)): ?>
+            <a href="index.php?pages=comments" class="stat-card animate-fadeIn" style="animation-delay: 250ms">
+                <div class="stat-icon" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">
+                    <i class='bx bxs-comment-detail'></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value"><?= safeCount($pdo, "SELECT COUNT(*) FROM comments WHERE status='pending'") ?></div>
+                    <div class="stat-label">Pending Comments</div>
+                </div>
+            </a>
+        <?php endif; ?>
+
+        <?php if (in_array('tutors', $permissions)): ?>
+            <a href="index.php?pages=tutors" class="stat-card animate-fadeIn" style="animation-delay: 300ms">
+                <div class="stat-icon stat-icon--red">
+                    <i class='bx bxs-user-voice'></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value"><?= safeCount($pdo, "SELECT COUNT(*) FROM tutors") ?></div>
+                    <div class="stat-label">Tutors</div>
+                </div>
+            </a>
+        <?php endif; ?>
+
         <?php if (in_array('settings', $permissions)): ?>
-            <a href="index.php?pages=settings" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-slate-400 flex items-center gap-4">
-                <div class="h-14 w-14 rounded-xl bg-slate-800 text-white flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <a href="index.php?pages=settings" class="stat-card animate-fadeIn" style="animation-delay: 350ms">
+                <div class="stat-icon" style="background: var(--hq-gray-800); color: #fff;">
                     <i class='bx bxs-cog'></i>
                 </div>
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800">Settings</h3>
-                    <p class="text-sm text-slate-500 font-medium">Manage Site</p>
+                <div class="stat-content">
+                    <div class="stat-value" style="font-size: 1.25rem;">Settings</div>
+                    <div class="stat-label">Manage Site</div>
                 </div>
             </a>
         <?php endif; ?>
     </div>
 
-    <!-- System Status -->
-    <?php if (in_array('settings', $permissions)): ?>
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="h-10 w-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                <i class='bx bxs-dashboard text-xl'></i>
+    <!-- Two Column Layout -->
+    <div class="dashboard-grid">
+        <!-- System Status Card -->
+        <?php if (in_array('settings', $permissions)): ?>
+        <div class="admin-card animate-fadeIn" style="animation-delay: 400ms">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class='bx bxs-dashboard'></i>
+                    System Status
+                </h3>
+                <span class="badge badge-success"><i class='bx bx-check-circle'></i> All Systems Go</span>
             </div>
-            <h2 class="text-lg font-bold text-slate-800">System Status</h2>
+            <div class="admin-card-body">
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-indicator <?= $dbStatus['ok'] ? 'status-indicator--success' : 'status-indicator--danger' ?>"></div>
+                        <div class="status-info">
+                            <span class="status-label">Database</span>
+                            <span class="status-value"><?= htmlspecialchars($dbStatus['message']) ?></span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator <?= $siteStatus['ok'] ? 'status-indicator--success' : 'status-indicator--danger' ?>"></div>
+                        <div class="status-info">
+                            <span class="status-label">Website</span>
+                            <span class="status-value"><?= htmlspecialchars($siteStatus['message']) ?></span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator <?= $adminStatus['ok'] ? 'status-indicator--success' : 'status-indicator--danger' ?>"></div>
+                        <div class="status-info">
+                            <span class="status-label">Admin Panel</span>
+                            <span class="status-value"><?= htmlspecialchars($adminStatus['message']) ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Database</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="h-2.5 w-2.5 rounded-full <?= $dbStatus['ok'] ? 'bg-emerald-500' : 'bg-rose-500' ?>"></span>
-                    <span class="font-medium text-slate-700"><?= htmlspecialchars($dbStatus['message']) ?></span>
-                </div>
+        <?php endif; ?>
+
+        <!-- Quick Actions Card -->
+        <div class="admin-card animate-fadeIn" style="animation-delay: 450ms">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class='bx bxs-zap'></i>
+                    Quick Actions
+                </h3>
             </div>
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Website</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="h-2.5 w-2.5 rounded-full <?= $siteStatus['ok'] ? 'bg-emerald-500' : 'bg-rose-500' ?>"></span>
-                    <span class="font-medium text-slate-700"><?= htmlspecialchars($siteStatus['message']) ?></span>
-                </div>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Admin Panel</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="h-2.5 w-2.5 rounded-full <?= $adminStatus['ok'] ? 'bg-emerald-500' : 'bg-rose-500' ?>"></span>
-                    <span class="font-medium text-slate-700"><?= htmlspecialchars($adminStatus['message']) ?></span>
+            <div class="admin-card-body">
+                <div class="quick-actions-grid">
+                    <?php if (in_array('users', $permissions)): ?>
+                    <a href="index.php?pages=users&action=new" class="quick-action-btn">
+                        <i class='bx bx-user-plus'></i>
+                        <span>Add User</span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if (in_array('posts', $permissions)): ?>
+                    <a href="index.php?pages=post_edit" class="quick-action-btn">
+                        <i class='bx bx-edit'></i>
+                        <span>New Post</span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if (in_array('courses', $permissions)): ?>
+                    <a href="index.php?pages=courses&action=new" class="quick-action-btn">
+                        <i class='bx bx-book-add'></i>
+                        <span>Add Course</span>
+                    </a>
+                    <?php endif; ?>
+                    <?php if (in_array('payments', $permissions)): ?>
+                    <a href="index.php?pages=payments" class="quick-action-btn">
+                        <i class='bx bx-receipt'></i>
+                        <span>View Payments</span>
+                    </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
-    <?php endif; ?>
+
+    <!-- Recent Activity Section -->
+    <div class="dashboard-grid">
+        <!-- Recent Users -->
+        <?php if (in_array('users', $permissions) && !empty($recentUsers)): ?>
+        <div class="admin-card animate-fadeIn" style="animation-delay: 500ms">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class='bx bxs-user-account'></i>
+                    Recent Users
+                </h3>
+                <a href="index.php?pages=users" class="btn btn-sm btn-secondary">View All</a>
+            </div>
+            <div class="admin-card-body" style="padding: 0;">
+                <div class="recent-list">
+                    <?php foreach ($recentUsers as $user): ?>
+                    <div class="recent-item">
+                        <div class="recent-avatar">
+                            <img src="<?= !empty($user['avatar']) ? htmlspecialchars($user['avatar']) : app_url('assets/images/hq-logo.jpeg') ?>" alt="">
+                        </div>
+                        <div class="recent-info">
+                            <span class="recent-name"><?= htmlspecialchars($user['name'] ?? 'Unknown') ?></span>
+                            <span class="recent-meta"><?= htmlspecialchars($user['email'] ?? '') ?></span>
+                        </div>
+                        <span class="recent-time"><?= date('M d', strtotime($user['created_at'])) ?></span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Recent Payments -->
+        <?php if (in_array('payments', $permissions) && !empty($recentPayments)): ?>
+        <div class="admin-card animate-fadeIn" style="animation-delay: 550ms">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class='bx bxs-wallet'></i>
+                    Recent Payments
+                </h3>
+                <a href="index.php?pages=payments" class="btn btn-sm btn-secondary">View All</a>
+            </div>
+            <div class="admin-card-body" style="padding: 0;">
+                <div class="recent-list">
+                    <?php foreach ($recentPayments as $payment): ?>
+                    <div class="recent-item">
+                        <div class="recent-icon <?= $payment['status'] === 'success' ? 'recent-icon--success' : 'recent-icon--pending' ?>">
+                            <i class='bx <?= $payment['status'] === 'success' ? 'bx-check' : 'bx-time' ?>'></i>
+                        </div>
+                        <div class="recent-info">
+                            <span class="recent-name">₦<?= number_format($payment['amount'] ?? 0, 2) ?></span>
+                            <span class="recent-meta"><?= htmlspecialchars($payment['user_name'] ?? 'Unknown') ?></span>
+                        </div>
+                        <span class="badge <?= $payment['status'] === 'success' ? 'badge-success' : 'badge-warning' ?>">
+                            <?= ucfirst($payment['status'] ?? 'pending') ?>
+                        </span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
 </div>
 
-<?php include '../includes/footer.php'; ?>
-</body>
-</html>
+<style>
+/* Dashboard Specific Styles */
+.dashboard-container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Status Grid */
+.status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--hq-gray-50);
+    border-radius: var(--radius);
+    border: 1px solid var(--hq-gray-100);
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-indicator--success { background: var(--hq-success); box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
+.status-indicator--danger { background: var(--hq-danger); box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+.status-indicator--warning { background: var(--hq-warning); box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+
+.status-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--hq-gray-500);
+    font-weight: 600;
+}
+
+.status-value {
+    font-weight: 600;
+    color: var(--hq-gray-800);
+}
+
+/* Quick Actions */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 1.25rem 1rem;
+    background: var(--hq-gray-50);
+    border: 1px solid var(--hq-gray-200);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--hq-gray-700);
+    transition: all var(--transition);
+}
+
+.quick-action-btn:hover {
+    background: var(--hq-yellow-100);
+    border-color: var(--hq-yellow);
+    color: var(--hq-black);
+    transform: translateY(-2px);
+}
+
+.quick-action-btn i {
+    font-size: 1.5rem;
+    color: var(--hq-yellow-dark);
+}
+
+.quick-action-btn span {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Recent Lists */
+.recent-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.recent-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--hq-gray-100);
+    transition: background var(--transition);
+}
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
+.recent-item:hover {
+    background: var(--hq-gray-50);
+}
+
+.recent-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.recent-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.recent-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.recent-icon--success {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--hq-success);
+}
+
+.recent-icon--pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--hq-warning);
+}
+
+.recent-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.recent-name {
+    font-weight: 600;
+    color: var(--hq-gray-800);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recent-meta {
+    font-size: 0.8rem;
+    color: var(--hq-gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recent-time {
+    font-size: 0.75rem;
+    color: var(--hq-gray-400);
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 
