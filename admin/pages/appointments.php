@@ -83,153 +83,138 @@ $stats = $pdo->query($statsQuery)->fetch();
         </div>
     </div>
 
-<?php if (isset($_SESSION['success_message'])): ?>
-    <div class="alert alert-success">
-        <i class="bx bx-check-circle"></i> <?= htmlspecialchars($_SESSION['success_message']) ?>
-    </div>
-    <?php unset($_SESSION['success_message']); ?>
-<?php endif; ?>
-
-<?php if (isset($_SESSION['error_message'])): ?>
-    <div class="alert alert-danger">
-        <i class="bx bx-error-circle"></i> <?= htmlspecialchars($_SESSION['error_message']) ?>
-    </div>
-    <?php unset($_SESSION['error_message']); ?>
-<?php endif; ?>
-
-<div class="stats-grid" style="margin-bottom:24px;">
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#e3f2fd;color:#2196f3;"><i class="bx bx-calendar"></i></div>
-        <div class="stat-info">
-            <span>Total Appointments</span>
-            <strong><?= number_format($stats['total']) ?></strong>
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 flex items-center gap-3">
+            <i class="bx bx-check-circle text-emerald-600 text-xl"></i>
+            <span class="text-emerald-800"><?= htmlspecialchars($_SESSION['success_message']) ?></span>
         </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#fff3e0;color:#ff9800;"><i class="bx bx-time"></i></div>
-        <div class="stat-info">
-            <span>Pending</span>
-            <strong><?= number_format($stats['pending']) ?></strong>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#e8f5e9;color:#4caf50;"><i class="bx bx-check-circle"></i></div>
-        <div class="stat-info">
-            <span>Confirmed</span>
-            <strong><?= number_format($stats['confirmed']) ?></strong>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#f3e5f5;color:#9c27b0;"><i class="bx bx-check-double"></i></div>
-        <div class="stat-info">
-            <span>Completed</span>
-            <strong><?= number_format($stats['completed']) ?></strong>
-        </div>
-    </div>
-</div>
-
-<div class="card" style="margin-bottom:20px;">
-    <form method="get" class="filters-form" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
-        <div style="flex:1;min-width:200px;">
-            <label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px;">Search</label>
-            <input type="text" name="search" placeholder="Search by name, email, or phone" value="<?= htmlspecialchars($searchQuery) ?>" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;">
-        </div>
-        <div style="min-width:160px;">
-            <label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px;">Status</label>
-            <select name="status" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;">
-                <option value="all" <?= $statusFilter === 'all' ? 'selected' : '' ?>>All Statuses</option>
-                <option value="pending" <?= $statusFilter === 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="confirmed" <?= $statusFilter === 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
-                <option value="rejected" <?= $statusFilter === 'rejected' ? 'selected' : '' ?>>Rejected</option>
-                <option value="completed" <?= $statusFilter === 'completed' ? 'selected' : '' ?>>Completed</option>
-            </select>
-        </div>
-        <div style="min-width:160px;">
-            <label style="display:block;margin-bottom:6px;font-weight:600;font-size:14px;">Date</label>
-            <input type="date" name="date" value="<?= htmlspecialchars($dateFilter) ?>" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;">
-        </div>
-        <button type="submit" class="btn-primary" style="padding:8px 20px;">
-            <i class="bx bx-filter"></i> Filter
-        </button>
-        <?php if ($statusFilter !== 'all' || $searchQuery !== '' || $dateFilter !== ''): ?>
-            <a href="index.php?pages=appointments" class="btn-secondary" style="padding:8px 20px;text-decoration:none;display:inline-block;">
-                <i class="bx bx-x"></i> Clear
-            </a>
-        <?php endif; ?>
-    </form>
-</div>
-
-<div class="card">
-    <div class="card-header"><h3>Appointments List</h3></div>
-    <?php if (empty($appointments)): ?>
-        <div style="padding:40px;text-align:center;color:#999;">
-            <i class="bx bx-calendar-x" style="font-size:48px;margin-bottom:12px;"></i>
-            <p>No appointments found.</p>
-        </div>
-    <?php else: ?>
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Contact</th>
-                    <th>Visit Date & Time</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($appointments as $apt): ?>
-                <tr>
-                    <td>#<?= $apt['id'] ?></td>
-                    <td>
-                        <strong><?= htmlspecialchars($apt['name']) ?></strong>
-                        <?php if ($apt['message']): ?>
-                            <br><small style="color:#666;" title="<?= htmlspecialchars($apt['message']) ?>"><i class="bx bx-message-detail"></i> Has message</small>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <div style="font-size:13px;">
-                            <i class="bx bx-envelope"></i> <?= htmlspecialchars($apt['email']) ?><br>
-                            <?php if ($apt['phone']): ?><i class="bx bx-phone"></i> <?= htmlspecialchars($apt['phone']) ?><?php endif; ?>
-                        </div>
-                    </td>
-                    <td>
-                        <strong><?= date('M j, Y', strtotime($apt['visit_date'])) ?></strong><br>
-                        <small><?= date('g:i A', strtotime($apt['visit_time'])) ?></small>
-                    </td>
-                    <td>
-                        <?php
-                        $statusColors = [
-                            'pending' => 'background:#fff3e0;color:#f57c00;',
-                            'confirmed' => 'background:#e8f5e9;color:#2e7d32;',
-                            'rejected' => 'background:#ffebee;color:#c62828;',
-                            'completed' => 'background:#f3e5f5;color:#7b1fa2;'
-                        ];
-                        $statusIcons = [
-                            'pending' => 'bx-time',
-                            'confirmed' => 'bx-check-circle',
-                            'rejected' => 'bx-x-circle',
-                            'completed' => 'bx-check-double'
-                        ];
-                        ?>
-                        <span class="badge" style="<?= $statusColors[$apt['status']] ?? '' ?>">
-                            <i class="bx <?= $statusIcons[$apt['status']] ?? '' ?>"></i>
-                            <?= ucfirst($apt['status']) ?>
-                        </span>
-                    </td>
-                    <td><small><?= date('M j, Y', strtotime($apt['created_at'])) ?></small></td>
-                    <td>
-                        <button class="btn-sm btn-primary" onclick="viewAppointment(<?= $apt['id'] ?>)"><i class="bx bx-show"></i> View</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+        <?php unset($_SESSION['success_message']); ?>
     <?php endif; ?>
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <div class="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 flex items-center gap-3">
+            <i class="bx bx-error-circle text-rose-600 text-xl"></i>
+            <span class="text-rose-800"><?= htmlspecialchars($_SESSION['error_message']) ?></span>
+        </div>
+        <?php unset($_SESSION['error_message']); ?>
+    <?php endif; ?>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div class="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><i class="bx bx-calendar text-2xl"></i></div>
+            <div><p class="text-xs text-slate-500 font-semibold">Total</p><p class="text-2xl font-bold text-slate-800"><?= number_format($stats['total']) ?></p></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div class="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><i class="bx bx-time text-2xl"></i></div>
+            <div><p class="text-xs text-slate-500 font-semibold">Pending</p><p class="text-2xl font-bold text-slate-800"><?= number_format($stats['pending']) ?></p></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div class="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><i class="bx bx-check-circle text-2xl"></i></div>
+            <div><p class="text-xs text-slate-500 font-semibold">Confirmed</p><p class="text-2xl font-bold text-slate-800"><?= number_format($stats['confirmed']) ?></p></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+            <div class="h-12 w-12 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600"><i class="bx bx-check-double text-2xl"></i></div>
+            <div><p class="text-xs text-slate-500 font-semibold">Completed</p><p class="text-2xl font-bold text-slate-800"><?= number_format($stats['completed']) ?></p></div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <form method="get" class="flex flex-wrap items-end gap-3">
+            <input type="hidden" name="pages" value="appointments">
+            <div class="flex-1 min-w-[180px]">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Search</label>
+                <input type="text" name="search" placeholder="Name, email, or phone" value="<?= htmlspecialchars($searchQuery) ?>" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100">
+            </div>
+            <div class="min-w-[140px]">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                <select name="status" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100">
+                    <option value="all" <?= $statusFilter === 'all' ? 'selected' : '' ?>>All</option>
+                    <option value="pending" <?= $statusFilter === 'pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="confirmed" <?= $statusFilter === 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
+                    <option value="rejected" <?= $statusFilter === 'rejected' ? 'selected' : '' ?>>Rejected</option>
+                    <option value="completed" <?= $statusFilter === 'completed' ? 'selected' : '' ?>>Completed</option>
+                </select>
+            </div>
+            <div class="min-w-[140px]">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+                <input type="date" name="date" value="<?= htmlspecialchars($dateFilter) ?>" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100">
+            </div>
+            <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold px-4 py-2 text-sm transition"><i class="bx bx-filter"></i>Filter</button>
+            <?php if ($statusFilter !== 'all' || $searchQuery !== '' || $dateFilter !== ''): ?>
+                <a href="index.php?pages=appointments" class="inline-flex items-center gap-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 text-sm transition"><i class="bx bx-x"></i>Clear</a>
+            <?php endif; ?>
+        </form>
+    </div>
+
+    <!-- Appointments Table -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
+            <h2 class="text-lg font-semibold text-slate-800">Appointments List</h2>
+        </div>
+        <?php if (empty($appointments)): ?>
+            <div class="p-10 text-center text-slate-500">
+                <div class="mx-auto mb-3 h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center"><i class="bx bx-calendar-x text-3xl text-slate-400"></i></div>
+                <p class="font-semibold">No appointments found</p>
+                <p class="text-sm">Try adjusting your filters.</p>
+            </div>
+        <?php else: ?>
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
+                    <tr>
+                        <th class="px-4 py-3 text-left">ID</th>
+                        <th class="px-4 py-3 text-left">Name</th>
+                        <th class="px-4 py-3 text-left">Contact</th>
+                        <th class="px-4 py-3 text-left">Visit Date & Time</th>
+                        <th class="px-4 py-3 text-left">Status</th>
+                        <th class="px-4 py-3 text-left">Created</th>
+                        <th class="px-4 py-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <?php foreach ($appointments as $apt): ?>
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3 text-slate-700 font-mono">#<?= $apt['id'] ?></td>
+                        <td class="px-4 py-3">
+                            <p class="font-semibold text-slate-800"><?= htmlspecialchars($apt['name']) ?></p>
+                            <?php if ($apt['message']): ?>
+                                <p class="text-xs text-slate-500"><i class="bx bx-message-detail"></i> Has message</p>
+                            <?php endif; ?>
+                        </td>
+                        <td class="px-4 py-3 text-slate-600 text-xs">
+                            <p><i class="bx bx-envelope"></i> <?= htmlspecialchars($apt['email']) ?></p>
+                            <?php if ($apt['phone']): ?><p><i class="bx bx-phone"></i> <?= htmlspecialchars($apt['phone']) ?></p><?php endif; ?>
+                        </td>
+                        <td class="px-4 py-3">
+                            <p class="font-semibold text-slate-800"><?= date('M j, Y', strtotime($apt['visit_date'])) ?></p>
+                            <p class="text-xs text-slate-500"><?= date('g:i A', strtotime($apt['visit_time'])) ?></p>
+                        </td>
+                        <td class="px-4 py-3">
+                            <?php
+                            $statusClasses = [
+                                'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                'confirmed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                'rejected' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                'completed' => 'bg-violet-50 text-violet-700 border-violet-200'
+                            ];
+                            $statusIcons = ['pending' => 'bx-time', 'confirmed' => 'bx-check-circle', 'rejected' => 'bx-x-circle', 'completed' => 'bx-check-double'];
+                            ?>
+                            <span class="inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-semibold <?= $statusClasses[$apt['status']] ?? '' ?>">
+                                <i class="bx <?= $statusIcons[$apt['status']] ?? '' ?>"></i><?= ucfirst($apt['status']) ?>
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-xs text-slate-500"><?= date('M j, Y', strtotime($apt['created_at'])) ?></td>
+                        <td class="px-4 py-3">
+                            <button onclick="viewAppointment(<?= $apt['id'] ?>)" class="inline-flex items-center gap-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold px-3 py-1.5 text-xs transition"><i class="bx bx-show"></i>View</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+    </div>
 </div>
 
 <div id="appointmentModal" class="modal" style="display:none;">
