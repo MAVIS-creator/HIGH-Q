@@ -151,14 +151,15 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </head>
 <body>
 
-<div class="roles-page">
-  <div class="page-header">
+<main class="main-content">
+<div class="roles-page" style="max-width: 1400px; margin: 0 auto;">
+  <div class="page-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2rem; color: white; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);">
     <div class="page-title-block">
-      <h1>Roles Management</h1>
-      <p>Manage roles and permissions</p>
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0;">Roles Management</h1>
+      <p style="font-size: 1.1rem; opacity: 0.95; margin: 0;">Manage roles and permissions</p>
     </div>
-    <button id="newRoleBtn" class="btn-approve">
-      <i class='bx bx-plus'></i> New Role
+    <button id="newRoleBtn" class="btn-approve" style="background: white; color: #6366f1; font-weight: 700; padding: 0.875rem 1.75rem; border-radius: 0.75rem; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);">
+      <i class='bx bx-plus' style="font-size: 1.25rem;"></i> New Role
     </button>
   </div>
 
@@ -176,58 +177,77 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <p><?= htmlspecialchars($err) ?></p>
       <?php endforeach; ?>
     </div>
+  <?php if ($errors): ?>
+    <div class="alert error" style="background: #fee2e2; border: 2px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+      <?php foreach ($errors as $err): ?>
+        <p style="color: #991b1b; margin: 0; font-weight: 600;"><?= htmlspecialchars($err) ?></p>
+      <?php endforeach; ?>
+    </div>
   <?php endif; ?>
 
-
-  <table class="roles-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Slug</th>
-        <th>Max Users</th>
-        <th>Menus</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($roles as $r): ?>
-      <tr>
-        <td><?= $r['id'] ?></td>
-        <td><?= htmlspecialchars($r['name']) ?></td>
-        <td><?= htmlspecialchars($r['slug']) ?></td>
-        <td><?= $r['max_count'] ?? '∞' ?></td>
-  <td class="menus-col">
+  <!-- Roles Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <?php foreach ($roles as $r): ?>
+    <div style="background: white; border-radius: 1rem; border: 2px solid #e2e8f0; padding: 1.75rem; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" onmouseover="this.style.boxShadow='0 8px 20px rgba(0,0,0,0.1)'; this.style.borderColor='#6366f1'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'; this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+        <div>
+          <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin: 0 0 0.5rem 0;"><?= htmlspecialchars($r['name']) ?></h3>
+          <span style="background: #f1f5f9; color: #475569; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em;"><?= htmlspecialchars($r['slug']) ?></span>
+        </div>
+        <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);"><?= $r['id'] ?></div>
+      </div>
+      
+      <div style="margin: 1.25rem 0; padding: 1rem; background: #f8fafc; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <i class='bx bx-group' style="font-size: 1.25rem; color: #6366f1;"></i>
+          <span style="font-weight: 700; color: #475569; font-size: 0.9rem;">Max Users:</span>
+          <span style="font-weight: 800; color: #1e293b; font-size: 1.1rem;"><?= $r['max_count'] ?? '∞' ?></span>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-weight: 700; color: #475569; font-size: 0.85rem; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Permissions:</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           <?php
             $roleMenus = $permissionsByRole[$r['id']] ?? [];
-            foreach ($roleMenus as $menu) {
-                echo "<span class='role-badge role-$menu'>" . htmlspecialchars($allMenus[$menu] ?? $menu) . "</span> ";
-            }
+            $colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#06b6d4'];
+            $colorIndex = 0;
+            foreach ($roleMenus as $menu):
+              $color = $colors[$colorIndex % count($colors)];
+              $colorIndex++;
           ?>
-        </td>
-  <td class="actions-col">
-          <button class="btn-editRole"
-                  data-id="<?= $r['id'] ?>"
-                  data-name="<?= htmlspecialchars($r['name']) ?>"
-                  data-slug="<?= htmlspecialchars($r['slug']) ?>"
-                  data-max="<?= $r['max_count'] ?>"
-                  data-menus='<?= json_encode($roleMenus) ?>'>
-            <i class='bx bx-edit'></i> Edit
+            <span style="background: <?= $color ?>15; color: <?= $color ?>; padding: 0.4rem 0.85rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 700; border: 2px solid <?= $color ?>30;">
+              <i class='bx bx-check-circle' style="font-size: 0.9rem;"></i> <?= htmlspecialchars($allMenus[$menu] ?? $menu) ?>
+            </span>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 2px solid #f1f5f9;">
+        <button class="btn-editRole" style="flex: 1; padding: 0.75rem; background: #6366f1; color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                data-id="<?= $r['id'] ?>"
+                data-name="<?= htmlspecialchars($r['name']) ?>"
+                data-slug="<?= htmlspecialchars($r['slug']) ?>"
+                data-max="<?= $r['max_count'] ?>"
+                data-menus='<?= json_encode($roleMenus) ?>'
+                onmouseover="this.style.background='#4f46e5'; this.style.transform='translateY(-2px)'"
+                onmouseout="this.style.background='#6366f1'; this.style.transform='translateY(0)'">
+          <i class='bx bx-edit-alt' style="font-size: 1.1rem;"></i> Edit
+        </button>
+        <form method="post" action="index.php?pages=roles&action=delete&id=<?= $r['id'] ?>" style="flex: 1;" onsubmit="return confirm('Delete this role?');">
+          <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+          <button type="submit" style="width: 100%; padding: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                  onmouseover="this.style.background='#dc2626'; this.style.transform='translateY(-2px)'"
+                  onmouseout="this.style.background='#ef4444'; this.style.transform='translateY(0)'">
+            <i class='bx bx-trash' style="font-size: 1.1rem;"></i> Delete
           </button>
-          <form method="post" action="index.php?pages=roles&action=delete&id=<?= $r['id'] ?>" style="display:inline">
-            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-            <button type="submit" class="btn-banish">
-              <i class='bx bx-trash'></i> Delete
-            </button>
-          </form>
-          <!-- Permanent remove (AJAX) -->
-          <button class="btn" data-action="destroy" data-id="<?= $r['id'] ?>" title="Remove role permanently">Remove</button>
-        </td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+        </form>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
 </div>
+</main>
 
 <!-- Role Modal -->
 <div class="modal" id="roleModal" aria-hidden="true">

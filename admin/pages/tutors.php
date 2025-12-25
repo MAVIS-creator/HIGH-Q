@@ -795,6 +795,70 @@ async function editTutor(id) {
     }
 }
 
+// Handle photo file upload
+function handlePhotoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        Swal.fire('Error', 'Please select an image file', 'error');
+        input.value = '';
+        return;
+    }
+    
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        Swal.fire('Error', 'Image must be less than 2MB', 'error');
+        input.value = '';
+        return;
+    }
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('photoPreviewImg');
+        const previewContainer = document.getElementById('photoPreview');
+        if (preview && previewContainer) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+    
+    // Upload file
+    uploadPhotoFile(file);
+}
+
+async function uploadPhotoFile(file) {
+    const formData = new FormData();
+    formData.append('photo', file);
+    formData.append('action', 'upload_photo');
+    
+    try {
+        Swal.fire({
+            title: 'Uploading...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+        
+        const res = await fetch('../api/tutors.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        
+        if (data.success && data.path) {
+            document.getElementById('photo').value = data.path;
+            Swal.fire('Success', 'Photo uploaded successfully', 'success');
+        } else {
+            throw new Error(data.message || 'Upload failed');
+        }
+    } catch (e) {
+        Swal.fire('Error', e.message || 'Failed to upload photo', 'error');
+    }
+}
+
 async function saveTutor() {
     const form = document.getElementById('tutorForm');
     const formData = new FormData(form);
