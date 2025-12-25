@@ -45,179 +45,188 @@ try {
         </div>
     </div>
 
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- Scan Controls -->
-        <div class="xl:col-span-2 bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-            <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-                <div>
-                    <p class="text-xs font-semibold tracking-wide text-slate-500">Run a scan</p>
-                    <h2 class="text-lg font-semibold text-slate-800">Scan orchestrator</h2>
+    <!-- Main Content -->
+    <div class="sentinel-main">
+        <div class="sentinel-grid">
+            <!-- Scan Controls -->
+            <div class="sentinel-card sentinel-card--wide">
+                <div class="sentinel-card-header">
+                    <div class="sentinel-card-title-group">
+                        <p class="sentinel-card-label">Run a scan</p>
+                        <h2 class="sentinel-card-title">Scan orchestrator</h2>
+                    </div>
+                    <span class="sentinel-status-badge sentinel-status-badge--success">
+                        <span class="status-dot status-dot--success"></span>
+                        Engine idle
+                    </span>
                 </div>
-                <div class="flex items-center gap-2 text-xs text-slate-500">
-                    <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                    <span>Engine idle</span>
-                </div>
-            </div>
 
-            <div class="p-5 sm:p-6 space-y-6">
-                <div class="grid md:grid-cols-3 gap-4">
-                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
-                        <input type="radio" name="scan_type" value="quick" class="peer sr-only" checked>
-                        <div class="flex items-start gap-3">
-                            <div class="h-10 w-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i class='bx bx-bolt-circle text-xl'></i></div>
-                            <div>
-                                <p class="text-sm font-semibold text-slate-900">Quick Scan</p>
-                                <p class="text-xs text-slate-500">Fast health check (2-5 min)</p>
+                <div class="sentinel-card-body">
+                    <div class="scan-type-grid">
+                        <label class="scan-type-option">
+                            <input type="radio" name="scan_type" value="quick" checked>
+                            <div class="scan-type-content">
+                                <div class="scan-type-icon scan-type-icon--amber">
+                                    <i class='bx bx-bolt-circle'></i>
+                                </div>
+                                <div class="scan-type-info">
+                                    <p class="scan-type-name">Quick Scan</p>
+                                    <p class="scan-type-desc">Fast health check (2-5 min)</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
-                    </label>
+                            <div class="scan-type-ring"></div>
+                        </label>
 
-                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
-                        <input type="radio" name="scan_type" value="full" class="peer sr-only">
-                        <div class="flex items-start gap-3">
-                            <div class="h-10 w-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i class='bx bx-target-lock text-xl'></i></div>
-                            <div>
-                                <p class="text-sm font-semibold text-slate-900">Full Scan</p>
-                                <p class="text-xs text-slate-500">Complete audit (10-15 min)</p>
+                        <label class="scan-type-option">
+                            <input type="radio" name="scan_type" value="full">
+                            <div class="scan-type-content">
+                                <div class="scan-type-icon scan-type-icon--amber">
+                                    <i class='bx bx-target-lock'></i>
+                                </div>
+                                <div class="scan-type-info">
+                                    <p class="scan-type-name">Full Scan</p>
+                                    <p class="scan-type-desc">Complete audit (10-15 min)</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
-                    </label>
+                            <div class="scan-type-ring"></div>
+                        </label>
 
-                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
-                        <input type="radio" name="scan_type" value="malware" class="peer sr-only">
-                        <div class="flex items-start gap-3">
-                            <div class="h-10 w-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center"><i class='bx bx-bug-alt text-xl'></i></div>
-                            <div>
-                                <p class="text-sm font-semibold text-slate-900">Malware Scan</p>
-                                <p class="text-xs text-slate-500">Threat sweep (5-10 min)</p>
+                        <label class="scan-type-option">
+                            <input type="radio" name="scan_type" value="malware">
+                            <div class="scan-type-content">
+                                <div class="scan-type-icon scan-type-icon--rose">
+                                    <i class='bx bx-bug-alt'></i>
+                                </div>
+                                <div class="scan-type-info">
+                                    <p class="scan-type-name">Malware Scan</p>
+                                    <p class="scan-type-desc">Threat sweep (5-10 min)</p>
+                                </div>
                             </div>
+                            <div class="scan-type-ring"></div>
+                        </label>
+                    </div>
+
+                    <div class="scan-actions-row">
+                        <div class="scan-email-field">
+                            <label for="reportEmail">Email report to</label>
+                            <input id="reportEmail" type="email" placeholder="Leave blank to use company email" />
+                            <p class="scan-email-hint">We will send the latest scan report when you click Email Report.</p>
                         </div>
-                        <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
-                    </label>
-                </div>
+                        <div class="scan-buttons">
+                            <button id="scanBtn" onclick="startScan()" class="btn-scan btn-scan--primary">
+                                <i class='bx bx-play'></i>
+                                Start Scan
+                            </button>
+                            <button onclick="emailReport()" class="btn-scan btn-scan--secondary">
+                                <i class='bx bx-envelope'></i>
+                                Email Report
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="grid gap-4 lg:grid-cols-2">
-                    <div class="space-y-2">
-                        <label for="reportEmail" class="text-sm font-semibold text-slate-700">Email report to</label>
-                        <input id="reportEmail" type="email" placeholder="Leave blank to use company email" class="w-full rounded-lg border border-slate-200 px-3 py-3 text-sm shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
-                        <p class="text-xs text-slate-500">We will send the latest scan report when you click Email Report.</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 items-end">
-                        <button id="scanBtn" onclick="startScan()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-3 text-sm font-semibold text-slate-900 shadow-md hover:shadow-lg transition disabled:opacity-50">
-                            <i class='bx bx-play'></i>
-                            Start Scan
-                        </button>
-                        <button onclick="emailReport()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-slate-700 to-slate-800 px-4 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition">
-                            <i class='bx bx-envelope'></i>
-                            Email Report
-                        </button>
+                    <div id="scanProgress" class="scan-progress hidden">
+                        <div class="scan-progress-header">
+                            <span id="scanStatus">Initializing scan...</span>
+                            <span id="progressText">0%</span>
+                        </div>
+                        <div class="scan-progress-bar">
+                            <div id="progressFill" class="scan-progress-fill"></div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div id="scanProgress" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-4">
-                    <div class="flex items-center justify-between text-sm text-amber-700">
-                        <span id="scanStatus" class="font-semibold">Initializing scan...</span>
-                        <span id="progressText" class="font-semibold">0%</span>
+            <!-- Threat Dashboard -->
+            <div class="sentinel-card">
+                <div class="sentinel-card-header">
+                    <div class="sentinel-card-title-group">
+                        <p class="sentinel-card-label">Latest results</p>
+                        <h2 class="sentinel-card-title">Threat dashboard</h2>
                     </div>
-                    <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-amber-100">
-                        <div id="progressFill" class="h-2 w-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-300"></div>
+                </div>
+                <div class="sentinel-card-body">
+                    <div class="threat-stats-grid">
+                        <div class="threat-stat threat-stat--critical">
+                            <p class="threat-stat-label">Critical</p>
+                            <p id="criticalCount" class="threat-stat-value">0</p>
+                        </div>
+                        <div class="threat-stat threat-stat--warning">
+                            <p class="threat-stat-label">Warnings</p>
+                            <p id="warningCount" class="threat-stat-value">0</p>
+                        </div>
+                        <div class="threat-stat threat-stat--info">
+                            <p class="threat-stat-label">Info</p>
+                            <p id="infoCount" class="threat-stat-value">0</p>
+                        </div>
                     </div>
+                    <p id="lastScanTime" class="last-scan-time">No scans performed yet</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-            <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-                <div>
-                    <p class="text-xs font-semibold tracking-wide text-slate-500">Latest results</p>
-                    <h2 class="text-lg font-semibold text-slate-800">Threat dashboard</h2>
-                </div>
-            </div>
-            <div class="p-5 sm:p-6 space-y-5">
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="rounded-xl bg-gradient-to-br from-rose-50 to-rose-100 border border-rose-200/80 p-4 text-center">
-                        <p class="text-xs font-semibold text-rose-700">Critical</p>
-                        <p id="criticalCount" class="mt-2 text-3xl font-bold text-rose-700">0</p>
-                    </div>
-                    <div class="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200/80 p-4 text-center">
-                        <p class="text-xs font-semibold text-amber-700">Warnings</p>
-                        <p id="warningCount" class="mt-2 text-3xl font-bold text-amber-700">0</p>
-                    </div>
-                    <div class="rounded-xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200/80 p-4 text-center">
-                        <p class="text-xs font-semibold text-indigo-700">Info</p>
-                        <p id="infoCount" class="mt-2 text-3xl font-bold text-indigo-700">0</p>
-                    </div>
-                </div>
-                <p id="lastScanTime" class="text-xs font-semibold text-slate-500">No scans performed yet</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Reports -->
-    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-        <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-            <div>
-                <p class="text-xs font-semibold tracking-wide text-slate-500">History</p>
-                <h2 class="text-lg font-semibold text-slate-800">Recent scan reports</h2>
+        <!-- Reports Table -->
+        <div class="sentinel-card sentinel-card--table">
+            <div class="sentinel-card-header">
+                <div class="sentinel-card-title-group">
+                    <p class="sentinel-card-label">History</p>
+                    <h2 class="sentinel-card-title">Recent scan reports</h2>
+                </div>
             </div>
-        </div>
-        <?php if (count($latestScans) > 0): ?>
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
-                    <tr>
-                        <th class="px-4 py-3 text-left">Scan Type</th>
-                        <th class="px-4 py-3 text-left">Date & Time</th>
-                        <th class="px-4 py-3 text-left">Status</th>
-                        <th class="px-4 py-3 text-left">Threats</th>
-                        <th class="px-4 py-3 text-left">Duration</th>
-                        <th class="px-4 py-3 text-left">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    <?php foreach ($latestScans as $scan): ?>
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-4 py-3">
-                            <?php if ($scan['scan_type'] === 'quick'): ?>
-                                <span class="inline-flex items-center gap-2 text-indigo-700 font-semibold"><i class='bx bx-bolt-circle'></i>Quick</span>
-                            <?php elseif ($scan['scan_type'] === 'full'): ?>
-                                <span class="inline-flex items-center gap-2 text-slate-700 font-semibold"><i class='bx bx-target-lock'></i>Full</span>
-                            <?php else: ?>
-                                <span class="inline-flex items-center gap-2 text-rose-700 font-semibold"><i class='bx bx-bug-alt'></i>Malware</span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="px-4 py-3 text-slate-700"><?= date('M d, Y H:i', strtotime($scan['scan_date'])) ?></td>
-                        <td class="px-4 py-3">
-                            <?php if ($scan['status'] === 'completed'): ?>
-                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-semibold">✓ Completed</span>
-                            <?php elseif ($scan['status'] === 'running'): ?>
-                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-xs font-semibold">⟳ Running</span>
-                            <?php else: ?>
-                                <span class="inline-flex items-center gap-1 rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold">✗ Error</span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="px-4 py-3 text-slate-700">
-                            <?= (int)$scan['threat_count'] ?> threat<?= $scan['threat_count'] != 1 ? 's' : '' ?>
-                        </td>
-                        <td class="px-4 py-3 text-slate-700"><?= htmlspecialchars($scan['duration']) ?>s</td>
-                        <td class="px-4 py-3">
-                            <a href="#" onclick="viewReport(<?= $scan['id'] ?>); return false;" class="text-indigo-600 font-semibold hover:text-indigo-800">View</a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php else: ?>
-        <div class="p-8 text-center text-slate-500">
-            <div class="mx-auto mb-3 h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                <i class='bx bxs-shield-alt-2 text-2xl'></i>
+            <?php if (count($latestScans) > 0): ?>
+            <div class="sentinel-table-wrapper">
+                <table class="sentinel-table">
+                    <thead>
+                        <tr>
+                            <th>Scan Type</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Threats</th>
+                            <th>Duration</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($latestScans as $scan): ?>
+                        <tr>
+                            <td>
+                                <?php if ($scan['scan_type'] === 'quick'): ?>
+                                    <span class="scan-type-badge scan-type-badge--quick"><i class='bx bx-bolt-circle'></i>Quick</span>
+                                <?php elseif ($scan['scan_type'] === 'full'): ?>
+                                    <span class="scan-type-badge scan-type-badge--full"><i class='bx bx-target-lock'></i>Full</span>
+                                <?php else: ?>
+                                    <span class="scan-type-badge scan-type-badge--malware"><i class='bx bx-bug-alt'></i>Malware</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= date('M d, Y H:i', strtotime($scan['scan_date'])) ?></td>
+                            <td>
+                                <?php if ($scan['status'] === 'completed'): ?>
+                                    <span class="status-pill status-pill--success"><i class='bx bx-check-circle'></i> Completed</span>
+                                <?php elseif ($scan['status'] === 'running'): ?>
+                                    <span class="status-pill status-pill--warning"><i class='bx bx-loader-alt bx-spin'></i> Running</span>
+                                <?php else: ?>
+                                    <span class="status-pill status-pill--danger"><i class='bx bx-x-circle'></i> Error</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= (int)$scan['threat_count'] ?> threat<?= $scan['threat_count'] != 1 ? 's' : '' ?></td>
+                            <td><?= htmlspecialchars($scan['duration']) ?>s</td>
+                            <td>
+                                <a href="#" onclick="viewReport(<?= $scan['id'] ?>); return false;" class="view-report-link">View</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
-            <p class="font-semibold">No scans performed yet</p>
-            <p class="text-sm">Run your first scan to see reports here.</p>
+            <?php else: ?>
+            <div class="sentinel-empty-state">
+                <div class="sentinel-empty-icon">
+                    <i class='bx bxs-shield-alt-2'></i>
+                </div>
+                <p class="sentinel-empty-title">No scans performed yet</p>
+                <p class="sentinel-empty-desc">Run your first scan to see reports here.</p>
+            </div>
+            <?php endif; ?>
         </div>
-        <?php endif; ?>
     </div>
 </div>
 
