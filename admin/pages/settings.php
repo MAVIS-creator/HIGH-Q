@@ -510,11 +510,11 @@ $csrf = generateToken('settings_form');
     <form id="settingsForm" method="post">
         <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
         <div class="settings-tabs">
-            <button type="button" class="settings-tab-btn active" data-tab="site"><i class='bx bxs-building'></i> Site Info</button>
-            <button type="button" class="settings-tab-btn" data-tab="contact"><i class='bx bxs-phone'></i> Contact</button>
-            <button type="button" class="settings-tab-btn" data-tab="security"><i class='bx bxs-shield'></i> Security</button>
-            <button type="button" class="settings-tab-btn" data-tab="notifications"><i class='bx bxs-bell'></i> Notifications</button>
-            <button type="button" class="settings-tab-btn" data-tab="advanced"><i class='bx bxs-lock-alt'></i> Advanced</button>
+            <button type="button" class="settings-tab-btn tab-btn active" data-tab="site"><i class='bx bxs-building'></i> Site Info</button>
+            <button type="button" class="settings-tab-btn tab-btn" data-tab="contact"><i class='bx bxs-phone'></i> Contact</button>
+            <button type="button" class="settings-tab-btn tab-btn" data-tab="security"><i class='bx bxs-shield'></i> Security</button>
+            <button type="button" class="settings-tab-btn tab-btn" data-tab="notifications"><i class='bx bxs-bell'></i> Notifications</button>
+            <button type="button" class="settings-tab-btn tab-btn" data-tab="advanced"><i class='bx bxs-lock-alt'></i> Advanced</button>
         </div>
 
         <div class="tab-panels">
@@ -557,6 +557,9 @@ $csrf = generateToken('settings_form');
                             <label class="form-label">About Description</label>
                             <textarea name="settings[site][about]" placeholder="Providing quality education and training programs" class="form-input" rows="4"><?= htmlspecialchars($current['site']['about']) ?></textarea>
                         </div>
+                        <div class="form-actions" style="margin-top: 24px;">
+                            <button type="submit" class="btn-primary"><i class='bx bx-save'></i> Save Changes</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -575,13 +578,27 @@ $csrf = generateToken('settings_form');
                         <div class="form-group">
                             <label class="form-label">Email Address</label>
                             <input name="settings[contact][email]" placeholder="contact@academy.com" value="<?= htmlspecialchars($current['contact']['email']) ?>" class="form-input">
-                                        <label>Physical Address</label>
-                                        <textarea name="settings[contact][address]" placeholder="123 Education Street, Learning City" class="input" rows="3"><?= htmlspecialchars($current['contact']['address']) ?></textarea>
-                                        <div style="display:flex;gap:8px;">
-                                            <input name="settings[contact][facebook]" placeholder="https://facebook.com/..." value="<?= htmlspecialchars($current['contact']['facebook']) ?>" class="input">
-                                            <input name="settings[contact][tiktok]" placeholder="https://www.tiktok.com/@username or full URL" value="<?= htmlspecialchars($current['contact']['tiktok'] ?? $current['contact']['twitter'] ?? '') ?>" class="input">
-                                            <input name="settings[contact][instagram]" placeholder="https://instagram.com/..." value="<?= htmlspecialchars($current['contact']['instagram']) ?>" class="input">
-                                        </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Physical Address</label>
+                            <textarea name="settings[contact][address]" placeholder="123 Education Street, Learning City" class="form-input" rows="3"><?= htmlspecialchars($current['contact']['address']) ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Facebook URL</label>
+                            <input name="settings[contact][facebook]" placeholder="https://facebook.com/..." value="<?= htmlspecialchars($current['contact']['facebook']) ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">TikTok URL</label>
+                            <input name="settings[contact][tiktok]" placeholder="https://www.tiktok.com/@username" value="<?= htmlspecialchars($current['contact']['tiktok'] ?? $current['contact']['twitter'] ?? '') ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Instagram URL</label>
+                            <input name="settings[contact][instagram]" placeholder="https://instagram.com/..." value="<?= htmlspecialchars($current['contact']['instagram']) ?>" class="form-input">
+                        </div>
+                        <div class="form-actions" style="margin-top: 24px;">
+                            <button type="submit" class="btn-primary"><i class='bx bx-save'></i> Save Changes</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -638,6 +655,10 @@ $csrf = generateToken('settings_form');
                                 </label>
                             </div>
                         </div>
+                        <div class="form-actions" style="margin-top: 24px;">
+                            <button type="submit" class="btn-primary"><i class='bx bx-save'></i> Save Changes</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -667,6 +688,10 @@ $csrf = generateToken('settings_form');
                             </div>
                         </div>
                     <?php } ?>
+                        <div class="form-actions" style="margin-top: 24px;">
+                            <button type="submit" class="btn-primary"><i class='bx bx-save'></i> Save Changes</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -712,13 +737,11 @@ $csrf = generateToken('settings_form');
                         <button type="button" id="openMacManager" class="btn">Manage MAC Blocklist</button>
                         <button type="button" id="openIpLogs" class="btn">View IP Logs</button>
                     </div>
+                        <div class="form-actions" style="margin-top: 24px;">
+                            <button type="submit" class="btn-primary"><i class='bx bx-save'></i> Save Changes</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div style="margin-top:18px;">
-            <div class="sticky-actions">
-                <button type="submit" class="btn-primary">Save Changes</button>
             </div>
         </div>
     </form>
