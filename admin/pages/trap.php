@@ -17,7 +17,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50">
-    <div class="min-h-screen w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div class="min-h-screen max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 p-8 shadow-xl text-slate-900">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,0,0,0.05),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(0,0,0,0.05),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(0,0,0,0.04),transparent_30%)]"></div>
             <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
