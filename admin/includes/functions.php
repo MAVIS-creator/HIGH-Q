@@ -6,11 +6,18 @@ use Dotenv\Dotenv;
 // Autoload (Composer)
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Load .env (project root is 2 levels up from /admin/includes/)
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+// Load admin folder's .env first (admin-specific settings)
+$adminDotenv = Dotenv::createImmutable(__DIR__ . '/../');
 try {
-    // Use safeLoad to avoid fatal errors when .env is missing or has parse issues
-    $dotenv->safeLoad();
+    $adminDotenv->safeLoad();
+} catch (Throwable $e) {
+    // Non-fatal
+}
+
+// Also load project root .env as fallback (shared settings)
+$rootDotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+try {
+    $rootDotenv->safeLoad();
 } catch (Throwable $e) {
     // Non-fatal: rely on getenv()/defaults below
 }
