@@ -19,7 +19,7 @@
     color: #111;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
     border-top: none;
-    z-index: 50;
+    z-index: 100;
 }
 
 body.sidebar-collapsed .admin-footer {
