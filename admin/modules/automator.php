@@ -65,20 +65,28 @@ $sitemapDate = $sitemapExists ? date('Y-m-d H:i:s', filemtime($sitemapPath)) : '
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #fafbff; }
         .auto-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .auto-form button { padding: 12px 24px; background: #5f27cd; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        .auto-form button { padding: 12px 24px; background: #5f27cd; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; }
         .auto-form button:hover { background: #481caf; }
         .message { padding: 12px; background: #d4edda; border: 1px solid #c3e6cb; color: #155724; border-radius: 6px; margin-bottom: 15px; }
         .error { padding: 12px; background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; border-radius: 6px; margin-bottom: 15px; }
         .stat { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .stat-value { display: inline-flex; align-items: center; gap: 6px; }
         .info-box { background: #e7f3ff; border: 1px solid #74b9ff; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .info-box i { color: #5f27cd; }
+        .auto-list { color:#666; line-height:1.8; list-style: none; padding-left: 0; }
+        .auto-list li { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+        .auto-list li i { color: #22c55e; }
+        .view-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; color: #5f27cd; text-decoration: none; }
+        .view-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="info-box">
-        <strong>🤖 Automator:</strong> Automatically generates sitemap.xml for SEO when content changes.
+        <strong><i class='bx bx-bot'></i> Automator:</strong> Automatically generates sitemap.xml for SEO when content changes.
     </div>
 
     <?php if ($message): ?>
@@ -93,7 +101,7 @@ $sitemapDate = $sitemapExists ? date('Y-m-d H:i:s', filemtime($sitemapPath)) : '
         <h3>Sitemap Generator</h3>
         <div class="stat">
             <span>Status:</span>
-            <strong><?= $sitemapExists ? '✅ Active' : '❌ Not Generated' ?></strong>
+            <strong class="stat-value"><?= $sitemapExists ? '<i class="bx bx-check-circle" style="color:#22c55e;"></i> Active' : '<i class="bx bx-x-circle" style="color:#ef4444;"></i> Not Generated' ?></strong>
         </div>
         <div class="stat">
             <span>Last Updated:</span>
@@ -105,19 +113,19 @@ $sitemapDate = $sitemapExists ? date('Y-m-d H:i:s', filemtime($sitemapPath)) : '
         </div>
         <form method="POST" class="auto-form">
             <input type="hidden" name="action" value="generate_sitemap">
-            <button type="submit">🗺️ Generate Sitemap Now</button>
+            <button type="submit"><i class='bx bx-map-alt'></i> Generate Sitemap Now</button>
         </form>
         <?php if ($sitemapExists): ?>
-            <a href="../../sitemap.xml" target="_blank" style="display:inline-block;margin-top:10px;color:#5f27cd;">📄 View Sitemap</a>
+            <a href="../../sitemap.xml" target="_blank" class="view-link"><i class='bx bx-file'></i> View Sitemap</a>
         <?php endif; ?>
     </div>
 
     <div class="auto-card">
         <h3>Automation Rules</h3>
-        <ul style="color:#666;line-height:1.8;">
-            <li>✅ Auto-generate sitemap when new post is published</li>
-            <li>✅ Auto-update sitemap when post is edited</li>
-            <li>✅ Notify search engines of sitemap changes</li>
+        <ul class="auto-list">
+            <li><i class='bx bx-check'></i> Auto-generate sitemap when new post is published</li>
+            <li><i class='bx bx-check'></i> Auto-update sitemap when post is edited</li>
+            <li><i class='bx bx-check'></i> Notify search engines of sitemap changes</li>
         </ul>
     </div>
 </body>
