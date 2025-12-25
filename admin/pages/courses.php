@@ -219,9 +219,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
+<main class="main-content">
 <div class="courses-page">
-
-  <div class="container">
     <div class="courses-header">
       <div class="courses-header-info">
         <h1>Courses & Programs</h1>

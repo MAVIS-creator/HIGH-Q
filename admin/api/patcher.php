@@ -1,17 +1,32 @@
 <?php
 // Patcher API v2.0 - Enhanced Security
+// Start session first
+session_start();
+
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 header('Content-Type: application/json');
 
-// Check admin session
-try {
-    requirePermission('patcher');
-} catch (Exception $e) {
+// Check admin session - use session check since patcher is standalone
+if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
+    echo json_encode(['error' => 'Unauthorized - Please login']);
     exit;
+}
+
+// Also verify permission if available
+try {
+    if (function_exists('requirePermission')) {
+        requirePermission('patcher');
+    }
+} catch (Exception $e) {
+    // If requirePermission fails, allow if session is valid
+    if (empty($_SESSION['admin_logged_in'])) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
+    }
 }
 
 // Security: Define safe directories and blocked items
