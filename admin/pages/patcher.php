@@ -812,47 +812,198 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
             if (e) e.stopPropagation();
             document.getElementById('terminalOutput').innerHTML = '';
         }
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 12px;
+        
+        function getFileIcon(ext) {
+            const icons = {
+                'php': 'bx-file-code',
+                'js': 'bx-file-code',
+                'html': 'bx-file-code',
+                'css': 'bx-file-code',
+                'json': 'bx-file-code',
+                'sql': 'bx-file-code',
+                'txt': 'bx-file-document',
+                'md': 'bx-file-document',
+                'default': 'bx-file'
+            };
+            return icons[ext] || icons['default'];
         }
         
-        .diff-added {
-            background-color: #1d3a1d;
-            border-left-color: #4ec9b0;
+        async function loadFile(path) {
+            try {
+                currentFile = path;
+                document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+                document.querySelector(`[data-path="${path}"]`)?.classList.add('active');
+                
+                const res = await fetch(`${API}?action=readFile&path=${encodeURIComponent(path)}`);
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                originalContent = data.content;
+                isEditMode = false;
+                
+                if (editor) editor.destroy();
+                
+                const container = document.getElementById('editorCode');
+                container.innerHTML = '';
+                
+                const ext = path.split('.').pop().toLowerCase();
+                const mode = {'php': 'text/x-php', 'js': 'text/javascript', 'html': 'text/html', 'css': 'text/css', 'json': 'application/json'}[ext] || 'text/plain';
+                
+                editor = CodeMirror(container, {
+                    value: originalContent,
+                    mode: mode,
+                    theme: 'monokai',
+                    lineNumbers: true,
+                    readOnly: true,
+                    lineWrapping: true,
+                    indentUnit: 4,
+                    tabSize: 4,
+                    styleActiveLine: true
+                });
+                
+                document.getElementById('editorPath').textContent = path;
+                document.getElementById('editorPath').parentElement.parentElement.style.display = 'flex';
+                
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
         }
         
-        .diff-removed {
-            background-color: #3a1d1d;
-            border-left-color: #ce7b7b;
+        function toggleEditMode() {
+            if (!currentFile) return;
+            isEditMode = !isEditMode;
+            const btn = event.target.closest('button');
+            
+            if (isEditMode) {
+                editor.setOption('readOnly', false);
+                btn.textContent = 'Save & Preview';
+                btn.classList.add('editing');
+            } else {
+                editor.setOption('readOnly', true);
+                btn.textContent = 'Edit';
+                btn.classList.remove('editing');
+            }
         }
         
-        .diff-unchanged {
-            background-color: #2d2d30;
-            border-left-color: #3e3e42;
+        async function previewDiff() {
+            if (!currentFile || !isEditMode) return;
+            
+            const newContent = editor.getValue();
+            
+            try {
+                const res = await fetch(`${API}?action=diff`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({path: currentFile, content: newContent})
+                });
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                showDiffModal(data.diff);
+            } catch (err) {
+                alert('Diff error: ' + err.message);
+            }
         }
         
-        ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+        async function applyFix() {
+            if (!currentFile || !isEditMode) return;
+            
+            const newContent = editor.getValue();
+            
+            try {
+                const res = await fetch(`${API}?action=saveFile`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({path: currentFile, content: newContent})
+                });
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                originalContent = newContent;
+                isEditMode = false;
+                editor.setOption('readOnly', true);
+                document.querySelector('.btn-edit').textContent = 'Edit';
+                document.querySelector('.btn-edit').classList.remove('editing');
+                alert('File saved successfully!');
+                
+            } catch (err) {
+                alert('Save error: ' + err.message);
+            }
         }
         
-        ::-webkit-scrollbar-track {
-            background: #1e1e1e;
+        function showDiffModal(diff) {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+                    <div style="background: #1e1e1e; border: 1px solid #3e3e42; border-radius: 8px; max-width: 800px; max-height: 600px; overflow: auto; padding: 20px;">
+                        <h3 style="margin-top: 0; color: #fbbf24;">Diff Preview</h3>
+                        <div style="font-family: monospace; font-size: 12px; line-height: 1.5;">
+                            ${diff.split('\\n').map(line => {
+                                let className = '';
+                                if (line.startsWith('+')) className = 'diff-added';
+                                else if (line.startsWith('-')) className = 'diff-removed';
+                                else className = 'diff-unchanged';
+                                return `<div class="${className}" style="padding: 2px 8px;">${escapeHtml(line)}</div>`;
+                            }).join('')}
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top: 16px; padding: 8px 16px; background: #fbbf24; color: #1e1e1e; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: #464647;
-            border-radius: 6px;
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
-        ::-webkit-scrollbar-thumb:hover {
-            background: #545455;
+        function promptNewFile() {
+            const path = prompt('Enter file path (e.g., public/test.php):');
+            if (path) createFile(path);
         }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-900 shadow-lg">
+        
+        function promptNewFolder() {
+            const path = prompt('Enter folder path (e.g., public/myfolder):');
+            if (path) createFolder(path);
+        }
+        
+        async function createFile(path) {
+            try {
+                const res = await fetch(`${API}?action=createFile`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({path})
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                await loadFiles();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        async function createFolder(path) {
+            try {
+                const res = await fetch(`${API}?action=createFolder`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({path})
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                await loadFiles();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
                 <div>
