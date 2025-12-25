@@ -1,100 +1,81 @@
+/* Users page styles - Modern Admin Theme
+   ============================================= */
 
-/* Users page styles - summary cards, filters, user cards */
 .users-page {
     width: 100%;
-    max-width: 1360px;
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 32px 20px 48px;
-    background: #f8f9fb;
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
 }
 
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+/* Page Header - Using hero from admin-modern.css */
+.users-page .page-header {
+    display: none; /* We'll use page-hero instead */
 }
 
-.page-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #111;
-}
-
-.page-header-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.page-header-info p {
-    margin: 0;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.registration-count {
-    color: #888;
-    font-size: 0.9rem !important;
-}
-
+/* Summary Cards - Modern Stat Grid */
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(4, minmax(180px, 1fr));
-    gap: 1.25rem;
-    margin: 1.5rem 0 2rem 0;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .summary-cards .card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 1.5rem 1.25rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    background: var(--hq-white);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--hq-gray-200);
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 110px;
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    align-items: center;
+    gap: 1rem;
+    min-height: auto;
+    text-align: left;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
 }
 
+.summary-cards .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.summary-cards .card:nth-child(1)::before { background: var(--hq-yellow); }
+.summary-cards .card:nth-child(2)::before { background: var(--hq-success); }
+.summary-cards .card:nth-child(3)::before { background: var(--hq-gray-400); }
+.summary-cards .card:nth-child(4)::before { background: var(--hq-danger); }
+
 .summary-cards .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--hq-gray-300);
 }
 
 .summary-cards .card h3 {
-    margin: 0 0 0.5rem 0;
+    margin: 0;
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
+    line-height: 1;
 }
 
 .summary-cards .card p {
-    margin: 0;
-    color: #666;
-    font-size: 0.95rem;
+    margin: 0.25rem 0 0;
+    color: var(--hq-gray-500);
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
-/* Color each summary card differently */
-.summary-cards .card:nth-child(1) h3 {
-    color: #ffd700;
-}
-
-.summary-cards .card:nth-child(2) h3 {
-    color: #10b981;
-}
-
-.summary-cards .card:nth-child(3) h3 {
-    color: #999;
-}
-
-.summary-cards .card:nth-child(4) h3 {
-    color: #ef4444;
-}
+/* Color stat numbers */
+.summary-cards .card:nth-child(1) h3 { color: var(--hq-yellow-dark); }
+.summary-cards .card:nth-child(2) h3 { color: var(--hq-success); }
+.summary-cards .card:nth-child(3) h3 { color: var(--hq-gray-500); }
+.summary-cards .card:nth-child(4) h3 { color: var(--hq-danger); }
 
 .user-filters {
     display: flex;
