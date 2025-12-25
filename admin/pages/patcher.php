@@ -235,20 +235,21 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
         }
         
         .btn-edit {
-            background: #0e639c;
-            color: white;
+            background: #fbbf24;
+            color: #1e1e1e;
         }
         
         .btn-edit:hover {
-            background: #1177bb;
+            background: #f59e0b;
         }
         
         .btn-edit.editing {
-            background: #d99f00;
+            background: #10b981;
+            color: white;
         }
         
         .btn-edit.editing:hover {
-            background: #e8ac2e;
+            background: #059669;
         }
         
         .editor-container {
