@@ -666,13 +666,13 @@ if ($hasRegistrations) {
 <main class="main-content">
 <div class="academic-page px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     <!-- Header Section -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 p-8 shadow-xl text-white">
+    <div class="page-hero-academic relative overflow-hidden rounded-2xl p-8 shadow-xl text-white">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.1),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_25%)]"></div>
         <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <p class="text-xs uppercase tracking-[0.2em] text-blue-100/80">Student Affairs</p>
+                <p class="text-xs uppercase tracking-[0.2em] opacity-80">Student Affairs</p>
                 <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight">Admissions Management</h1>
-                <p class="mt-2 text-blue-100/90 max-w-2xl">Manage student registrations and applications</p>
+                <p class="mt-2 opacity-90 max-w-2xl">Manage student registrations and applications</p>
             </div>
             <div class="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
                 <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
