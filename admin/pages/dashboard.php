@@ -83,103 +83,166 @@ $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unkn
 $adminUrl = rtrim(app_url(''), '/') . '/admin/';
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
 ?>
-<div class="dashboard">
-    <div class="dashboard-intro">
-        <h1><?= htmlspecialchars($pageTitle) ?></h1>
-        <p class="role-label">Role: <?= htmlspecialchars($_SESSION['user']['role_name']); ?></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50">
+<?php include '../includes/header.php'; ?>
+<?php include '../includes/sidebar.php'; ?>
+
+<div class="min-h-screen w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 ml-[var(--sidebar-width)] transition-all duration-300">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 p-8 shadow-xl text-white">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.1),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_25%)]"></div>
+        <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <p class="text-xs uppercase tracking-[0.2em] text-indigo-100/80">Overview</p>
+                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight">Dashboard</h1>
+                <p class="mt-2 text-indigo-100/90 max-w-2xl">Welcome back, <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Admin') ?></p>
+            </div>
+            <div class="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                <span class="text-white font-medium">System Online</span>
+            </div>
+        </div>
     </div>
 
-    <div class="dashboard-widgets">
+    <!-- Widgets Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <?php if (in_array('users', $permissions)): ?>
-            <a href="index.php?pages=users" class="widget-card red widget-link">
-                <i class='bx bxs-user-detail'></i>
-                <div>
-                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM users") ?></h3>
-                    <p>Total Users</p>
+            <a href="index.php?pages=users" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-indigo-300 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-user-detail'></i>
                 </div>
-            </a>
-        <?php endif; ?>
-
-        <?php if (in_array('settings', $permissions)): ?>
-            <a href="index.php?pages=settings" class="widget-card black widget-link">
-                <i class='bx bxs-cog'></i>
                 <div>
-                    <h3>Settings</h3>
-                    <p>Manage Site</p>
+                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM users") ?></h3>
+                    <p class="text-sm text-slate-500 font-medium">Total Users</p>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('courses', $permissions)): ?>
-            <a href="index.php?pages=courses" class="widget-card yellow widget-link">
-                <i class='bx bxs-book'></i>
+            <a href="index.php?pages=courses" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-amber-300 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-book'></i>
+                </div>
                 <div>
-                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM courses") ?></h3>
-                    <p>Courses</p>
+                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM courses") ?></h3>
+                    <p class="text-sm text-slate-500 font-medium">Courses</p>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('students', $permissions)): ?>
-            <a href="index.php?pages=students" class="widget-card red widget-link">
-                <i class='bx bxs-graduation'></i>
+            <a href="index.php?pages=students" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-rose-300 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-graduation'></i>
+                </div>
                 <div>
                     <?php
-                    // Some installs store students in `users` with a student role; try students table then fallback
                     $studentsCount = safeCount($pdo, "SELECT COUNT(*) FROM students");
                     if ($studentsCount === 0) {
                         $studentsCount = safeCount($pdo, "SELECT COUNT(*) FROM users u LEFT JOIN roles r ON r.id=u.role_id WHERE r.slug='student' OR u.role_id IS NULL");
                     }
                     ?>
-                    <h3><?= $studentsCount ?></h3>
-                    <p>Students</p>
+                    <h3 class="text-2xl font-bold text-slate-800"><?= $studentsCount ?></h3>
+                    <p class="text-sm text-slate-500 font-medium">Students</p>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('posts', $permissions)): ?>
-            <a href="index.php?pages=posts" class="widget-card yellow widget-link">
-                <i class='bx bxs-news'></i>
+            <a href="index.php?pages=posts" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-emerald-300 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-news'></i>
+                </div>
                 <div>
-                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM posts") ?></h3>
-                    <p>Posts</p>
+                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM posts") ?></h3>
+                    <p class="text-sm text-slate-500 font-medium">Posts</p>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('comments', $permissions)): ?>
-            <a href="index.php?pages=comments" class="widget-card black widget-link">
-                <i class='bx bxs-comment-detail'></i>
+            <a href="index.php?pages=comments" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-slate-300 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-comment-detail'></i>
+                </div>
                 <div>
-                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM comments WHERE status='pending'") ?></h3>
-                    <p>Pending Comments</p>
+                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM comments WHERE status='pending'") ?></h3>
+                    <p class="text-sm text-slate-500 font-medium">Pending Comments</p>
                 </div>
             </a>
         <?php endif; ?>
 
         <?php if (in_array('payments', $permissions)): ?>
-            <a href="index.php?pages=payments" class="widget-card yellow widget-link">
-                <i class='bx bxs-credit-card'></i>
+            <a href="index.php?pages=payments" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-yellow-300 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-credit-card'></i>
+                </div>
                 <div>
-                    <h3><?= safeCount($pdo, "SELECT COUNT(*) FROM payments WHERE status='pending'") ?></h3>
-                    <p>Pending Payments</p>
+                    <h3 class="text-2xl font-bold text-slate-800"><?= safeCount($pdo, "SELECT COUNT(*) FROM payments WHERE status='pending'") ?></h3>
+                    <p class="text-sm text-slate-500 font-medium">Pending Payments</p>
                 </div>
             </a>
         <?php endif; ?>
-
+        
         <?php if (in_array('settings', $permissions)): ?>
-            <div class="widget-card system-status">
-                <i class='bx bxs-dashboard'></i>
-                <div class="system-content">
-                    <h3>System Status</h3>
-                    <ul class="system-list">
-                        <li>Database: <strong class="status-<?= $dbStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($dbStatus['message']) ?></strong></li>
-                        <li>Website: <strong class="status-<?= $siteStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($siteStatus['message']) ?></strong></li>
-                        <li>Admin Panel: <strong class="status-<?= $adminStatus['ok'] ? 'ok' : 'bad' ?>"><?= htmlspecialchars($adminStatus['message']) ?></strong></li>
-                    </ul>
-                    <p><a href="index.php?pages=settings">Open settings</a></p>
+            <a href="index.php?pages=settings" class="group relative bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-slate-400 flex items-center gap-4">
+                <div class="h-14 w-14 rounded-xl bg-slate-800 text-white flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class='bx bxs-cog'></i>
                 </div>
-            </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Settings</h3>
+                    <p class="text-sm text-slate-500 font-medium">Manage Site</p>
+                </div>
+            </a>
         <?php endif; ?>
     </div>
+
+    <!-- System Status -->
+    <?php if (in_array('settings', $permissions)): ?>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="h-10 w-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i class='bx bxs-dashboard text-xl'></i>
+            </div>
+            <h2 class="text-lg font-bold text-slate-800">System Status</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Database</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="h-2.5 w-2.5 rounded-full <?= $dbStatus['ok'] ? 'bg-emerald-500' : 'bg-rose-500' ?>"></span>
+                    <span class="font-medium text-slate-700"><?= htmlspecialchars($dbStatus['message']) ?></span>
+                </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Website</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="h-2.5 w-2.5 rounded-full <?= $siteStatus['ok'] ? 'bg-emerald-500' : 'bg-rose-500' ?>"></span>
+                    <span class="font-medium text-slate-700"><?= htmlspecialchars($siteStatus['message']) ?></span>
+                </div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Admin Panel</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="h-2.5 w-2.5 rounded-full <?= $adminStatus['ok'] ? 'bg-emerald-500' : 'bg-rose-500' ?>"></span>
+                    <span class="font-medium text-slate-700"><?= htmlspecialchars($adminStatus['message']) ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
+
+<?php include '../includes/footer.php'; ?>
+</body>
+</html>
+
