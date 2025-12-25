@@ -728,25 +728,26 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
                 return;
             }
 
-            let lastDir = '';
-            let html = '';
+            // Build tree structure
+            const tree = { __files: [], __folders: {} };
             
             files.forEach(file => {
-                if (file.dir !== lastDir) {
-                    html += `<div class="file-dir">${file.dir}</div>`;
-                    lastDir = file.dir;
-                }
+                const dir = file.dir.replace(/\\/g, '/');
+                const parts = dir ? dir.split('/').filter(p => p) : [];
                 
-                const icon = getFileIcon(file.extension);
-                html += `
-                    <div class="file-item" data-path="${file.path}" onclick="loadFile('${file.path}')">
-                        <i class='bx ${icon}'></i>
-                        <span>${file.name}</span>
-                    </div>
-                `;
+                let current = tree;
+                
+                parts.forEach(part => {
+                    if (!current.__folders[part]) {
+                        current.__folders[part] = { __files: [], __folders: {} };
+                    }
+                    current = current.__folders[part];
+                });
+                
+                current.__files.push(file);
             });
-            
-            container.innerHTML = html;
+
+            container.innerHTML = renderTree(tree);
         }
 
         function filterFiles(search) {
@@ -755,6 +756,132 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
             );
             renderFiles(filtered);
         }
+
+        function renderTree(node, path = '') {
+            let html = '';
+            
+            // Render folders
+            const folders = Object.keys(node.__folders).sort();
+            
+            folders.forEach(folder => {
+                const folderPath = path ? `${path}/${folder}` : folder;
+                const isCollapsed = true; 
+                
+                html += `
+                    <div class="folder-item">
+                        <div class="folder-header ${isCollapsed ? 'collapsed' : ''}" onclick="toggleFolder(this)">
+                            <i class='bx bx-chevron-down chevron'></i>
+                            <i class='bx bx-folder folder-icon'></i>
+                            <span>${folder}</span>
+                        </div>
+                        <div class="folder-contents ${isCollapsed ? 'hidden' : ''}">
+                            ${renderTree(node.__folders[folder], folderPath)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Render files
+            if (node.__files && node.__files.length > 0) {
+                html += renderFilesList(node.__files);
+            }
+            
+            return html;
+        }
+
+        function renderFilesList(files) {
+            if (!files) return '';
+            // Sort files by name
+            files.sort((a, b) => a.name.localeCompare(b.name));
+            
+            return files.map(file => {
+                const icon = getFileIcon(file.extension);
+                return `
+                    <div class="file-item" data-path="${file.path}" onclick="loadFile('${file.path}')">
+                        <i class='bx ${icon}'></i>
+                        <span>${file.name}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFolder(header) {
+            header.classList.toggle('collapsed');
+            const contents = header.nextElementSibling;
+            contents.classList.toggle('hidden');
+        }
+
+        // Terminal Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const termInput = document.getElementById('terminalInput');
+            if(termInput) termInput.addEventListener('keydown', handleTerminalInput);
+        });
+
+        async function handleTerminalInput(e) {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                const cmd = input.value.trim();
+                if (!cmd) return;
+                
+                addToTerminal(`admin@highq:~$ ${cmd}`, 'cmd-line');
+                input.value = '';
+                
+                if (cmd === 'clear') {
+                    document.getElementById('terminalOutput').innerHTML = '';
+                    return;
+                }
+                
+                if (cmd === 'help') {
+                    addToTerminal('Available commands: git, ls, dir, echo, composer, php, whoami, ver, clear');
+                    return;
+                }
+                
+                try {
+                    const res = await fetch(`${API}?action=runCommand`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ command: cmd })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.output) {
+                        addToTerminal(data.output);
+                    } else if (data.error) {
+                        addToTerminal(`Error: ${data.error}`, 'error-line');
+                    }
+                } catch (err) {
+                    addToTerminal(`Error: ${err.message}`, 'error-line');
+                }
+            }
+        }
+        
+        function addToTerminal(text, className = '') {
+            const output = document.getElementById('terminalOutput');
+            const div = document.createElement('div');
+            div.textContent = text;
+            if (className) div.className = className;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function toggleTerminal(e) {
+            if (e) e.stopPropagation();
+            const panel = document.getElementById('terminalPanel');
+            const icon = document.getElementById('terminalToggleIcon');
+            panel.classList.toggle('collapsed');
+            
+            if (panel.classList.contains('collapsed')) {
+                icon.className = 'bx bx-chevron-up';
+            } else {
+                icon.className = 'bx bx-chevron-down';
+            }
+        }
+        
+        function clearTerminal(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('terminalOutput').innerHTML = '';
+        }
+
 
         async function loadFile(path) {
             try {
