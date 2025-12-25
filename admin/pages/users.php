@@ -537,5 +537,7 @@ searchInput.addEventListener('input', filterTable);
 statusFilter.addEventListener('change', filterTable);
 roleFilter.addEventListener('change', filterTable);
 </script>
+</div> <!-- .users-page -->
+</main> <!-- .main-content -->
 </body>
 </html>
