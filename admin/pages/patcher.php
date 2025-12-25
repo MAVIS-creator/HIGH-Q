@@ -619,485 +619,199 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
             </div>
         </div>
     </div>
-        
-        .sidebar {
-            width: 280px;
-            background: #252526;
-            border-right: 1px solid #3e3e42;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .sidebar-header {
-            padding: 16px;
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .sidebar-actions {
-            display: flex;
-            gap: 8px;
-            padding: 8px;
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-        }
-        
-        .sidebar-actions button {
-            flex: 1;
-            padding: 6px 8px;
-            font-size: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .btn-new-file {
-            background: #fbbf24;
-            color: #1e1e1e;
-        }
-        
-        .btn-new-file:hover {
-            background: #f59e0b;
-        }
-        
-        .btn-new-folder {
-            background: #475569;
-            color: white;
-        }
-        
-        .btn-new-folder:hover {
-            background: #7d52d6;
-        }
-        
-        .file-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 0;
-        }
-        
-        .file-search {
-            margin: 8px;
-            padding: 8px 12px;
-            background: #3e3e42;
-            border: 1px solid #555;
-            border-radius: 4px;
-            color: #e0e0e0;
-            font-size: 12px;
-        }
-        
-        .file-search::placeholder {
-            color: #858585;
-        }
-        
-        /* Folder structure with collapse */
-        .folder-item {
-            user-select: none;
-        }
-        
-        .folder-header {
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #cccccc;
-            transition: all 0.15s;
-        }
-        
-        .folder-header:hover {
-            background: #2a2d2e;
-        }
-        
-        .folder-header .folder-icon {
-            font-size: 16px;
-            color: #dcb67a;
-        }
-        
-        .folder-header .chevron {
-            font-size: 14px;
-            color: #858585;
-            transition: transform 0.2s;
-        }
-        
-        .folder-header.collapsed .chevron {
-            transform: rotate(-90deg);
-        }
-        
-        .folder-contents {
-            padding-left: 12px;
-            overflow: hidden;
-            max-height: 2000px;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        .folder-contents.hidden {
-            max-height: 0;
-        }
-        
-        .file-item {
-            padding: 6px 16px;
-            font-size: 13px;
-            cursor: pointer;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #cccccc;
-            transition: background 0.15s;
-        }
-        
-        .file-item:hover {
-            background: #37373d;
-            color: #ffffff;
-        }
-        
-        .file-item.active {
-            background: #094771;
-            color: #ffffff;
-            border-left: 3px solid #007acc;
-            padding-left: 13px;
-        }
-        
-        .file-item i {
-            flex-shrink: 0;
-            font-size: 16px;
-        }
-        
-        .file-dir {
-            padding: 4px 16px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #858585;
-            margin-top: 8px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-        
-        /* Terminal Panel */
-        .terminal-panel {
-            background: #1e1e1e;
-            border-top: 1px solid #3e3e42;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            height: 200px;
-        }
-        
-        .terminal-panel.collapsed {
-            height: 36px;
-        }
-        
-        .terminal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            cursor: pointer;
-        }
-        
-        .terminal-tabs {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .terminal-tab {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: #1e1e1e;
-            border: 1px solid #3e3e42;
-            border-bottom: none;
-            border-radius: 4px 4px 0 0;
-            font-size: 12px;
-            color: #cccccc;
-            cursor: pointer;
-        }
-        
-        .terminal-tab.active {
-            background: #1e1e1e;
-            color: #ffd600;
-            border-color: #ffd600;
-        }
-        
-        .terminal-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .terminal-btn {
-            background: none;
-            border: none;
-            color: #858585;
-            cursor: pointer;
-            padding: 4px;
-            font-size: 16px;
-            border-radius: 3px;
-            transition: all 0.15s;
-        }
-        
-        .terminal-btn:hover {
-            background: #3e3e42;
-            color: #cccccc;
-        }
-        
-        .terminal-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .terminal-output {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            color: #cccccc;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        
-        .terminal-output .cmd-line {
-            color: #4ec9b0;
+
+    <script>
+        const API = './api/patcher.php';
+        let currentFile = null;
+        let originalContent = '';
+        let isEditMode = false;
+        let allFiles = [];
+        let editor = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFiles();
+            document.getElementById('fileSearch').addEventListener('input', (e) => {
+                filterFiles(e.target.value);
+            });
+        });
+
+        async function loadFiles() {
+            try {
+                const res = await fetch(`${API}?action=listFiles`);
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                allFiles = data.files;
+                renderFiles(allFiles);
+            } catch (err) {
+                document.getElementById('fileList').innerHTML = 
+                    `<div style="padding: 20px; color: #ff6b6b; font-size: 12px;">${err.message}</div>`;
+            }
+        }
+
+        function renderFiles(files) {
+            const container = document.getElementById('fileList');
+            
+            if (files.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #858585; font-size: 12px;">No files found</div>';
+                return;
+            }
+
+            // Build tree structure
+            const tree = { __files: [], __folders: {} };
+            
+            files.forEach(file => {
+                const dir = file.dir.replace(/\\\\/g, '/');
+                const parts = dir ? dir.split('/').filter(p => p) : [];
+                
+                let current = tree;
+                
+                parts.forEach(part => {
+                    if (!current.__folders[part]) {
+                        current.__folders[part] = { __files: [], __folders: {} };
+                    }
+                    current = current.__folders[part];
+                });
+                
+                current.__files.push(file);
+            });
+
+            container.innerHTML = renderTree(tree);
+        }
+
+        function filterFiles(search) {
+            const filtered = allFiles.filter(f => 
+                f.name.toLowerCase().includes(search.toLowerCase())
+            );
+            renderFiles(filtered);
+        }
+
+        function renderTree(node, path = '') {
+            let html = '';
+            
+            // Render folders
+            const folders = Object.keys(node.__folders).sort();
+            
+            folders.forEach(folder => {
+                const folderPath = path ? `${path}/${folder}` : folder;
+                const isCollapsed = true; 
+                
+                html += `
+                    <div class="folder-item">
+                        <div class="folder-header ${isCollapsed ? 'collapsed' : ''}" onclick="toggleFolder(this)">
+                            <i class='bx bx-chevron-down chevron'></i>
+                            <i class='bx bx-folder folder-icon'></i>
+                            <span>${folder}</span>
+                        </div>
+                        <div class="folder-contents ${isCollapsed ? 'hidden' : ''}">
+                            ${renderTree(node.__folders[folder], folderPath)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Render files
+            if (node.__files && node.__files.length > 0) {
+                html += renderFilesList(node.__files);
+            }
+            
+            return html;
+        }
+
+        function renderFilesList(files) {
+            if (!files) return '';
+            // Sort files by name
+            files.sort((a, b) => a.name.localeCompare(b.name));
+            
+            return files.map(file => {
+                const icon = getFileIcon(file.extension);
+                return `
+                    <div class="file-item" data-path="${file.path}" onclick="loadFile('${file.path}')">
+                        <i class='bx ${icon}'></i>
+                        <span>${file.name}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFolder(header) {
+            header.classList.toggle('collapsed');
+            const contents = header.nextElementSibling;
+            contents.classList.toggle('hidden');
+        }
+
+        // Terminal Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const termInput = document.getElementById('terminalInput');
+            if(termInput) termInput.addEventListener('keydown', handleTerminalInput);
+        });
+
+        async function handleTerminalInput(e) {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                const cmd = input.value.trim();
+                if (!cmd) return;
+                
+                addToTerminal(`admin@highq:~$ ${cmd}`, 'cmd-line');
+                input.value = '';
+                
+                if (cmd === 'clear') {
+                    document.getElementById('terminalOutput').innerHTML = '';
+                    return;
+                }
+                
+                if (cmd === 'help') {
+                    addToTerminal('Available commands: git, ls, dir, echo, composer, php, whoami, ver, clear');
+                    return;
+                }
+                
+                try {
+                    const res = await fetch(`${API}?action=runCommand`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ command: cmd })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.output) {
+                        addToTerminal(data.output);
+                    } else if (data.error) {
+                        addToTerminal(`Error: ${data.error}`, 'error-line');
+                    }
+                } catch (err) {
+                    addToTerminal(`Error: ${err.message}`, 'error-line');
+                }
+            }
+        }
+        
+        function addToTerminal(text, className = '') {
+            const output = document.getElementById('terminalOutput');
+            const div = document.createElement('div');
+            div.textContent = text;
+            if (className) div.className = className;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function toggleTerminal(e) {
+            if (e) e.stopPropagation();
+            const panel = document.getElementById('terminalPanel');
+            const icon = document.getElementById('terminalToggleIcon');
+            panel.classList.toggle('collapsed');
+            
+            if (panel.classList.contains('collapsed')) {
+                icon.className = 'bx bx-chevron-up';
+            } else {
+                icon.className = 'bx bx-chevron-down';
+            }
+        }
+        
+        function clearTerminal(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('terminalOutput').innerHTML = '';
         }
-        
-        .terminal-output .error-line {
-            color: #f14c4c;
-        }
-        
-        .terminal-output .success-line {
-            color: #4ec9b0;
-        }
-        
-        .terminal-input-row {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            background: #252527;
-            border-top: 1px solid #3e3e42;
-        }
-        
-        .terminal-prompt {
-            color: #569cd6;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-            font-size: 13px;
-            margin-right: 8px;
-        }
-        
-        .terminal-input {
-            flex: 1;
-            background: none;
-            border: none;
-            outline: none;
-            color: #cccccc;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-            font-size: 13px;
-        }
-        
-        .main-editor {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #1e1e1e;
-            overflow: hidden;
-        }
-        
-        .editor-header {
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .editor-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-        }
-        
-        .editor-title h2 {
-            font-size: 14px;
-            font-weight: 500;
-            color: #e0e0e0;
-            margin: 0;
-        }
-        
-        .editor-title .breadcrumb {
-            font-size: 12px;
-            color: #858585;
-        }
-        
-        .editor-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .editor-btn {
-            padding: 6px 14px;
-            font-size: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .btn-backups {
-            background: #4d4d4d;
-            color: #e0e0e0;
-        }
-        
-        .btn-backups:hover {
-            background: #5d5d5d;
-        }
-        
-        .btn-edit {
-            background: #fbbf24;
-            color: #1e1e1e;
-        }
-        
-        .btn-edit:hover {
-            background: #f59e0b;
-        }
-        
-        .btn-edit.editing {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-edit.editing:hover {
-            background: #059669;
-        }
-        
-        .editor-container {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .CodeMirror {
-            flex: 1 !important;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
-            font-size: 13px !important;
-            line-height: 1.6 !important;
-            background: #1e1e1e !important;
-            color: #d4d4d4 !important;
-        }
-        
-        .CodeMirror-linenumber {
-            background: #1e1e1e !important;
-            color: #858585 !important;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
-        }
-        
-        .CodeMirror-gutters {
-            background: #1e1e1e !important;
-            border-right: 1px solid #3e3e42 !important;
-        }
-        
-        .CodeMirror-cursor {
-            border-left: 1px solid #aeafad !important;
-        }
-        
-        .CodeMirror-selected {
-            background: #264f78 !important;
-        }
-        
-        .editor-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #858585;
-            font-size: 14px;
-        }
-        
-        .editor-placeholder i {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.3;
-        }
-        
-        .controls-bar {
-            background: #2d2d30;
-            border-top: 1px solid #3e3e42;
-            padding: 12px 20px;
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            padding: 8px 16px;
-            font-size: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .btn-preview {
-            background: #0e639c;
-            color: white;
-        }
-        
-        .btn-preview:hover:not(:disabled) {
-            background: #1177bb;
-        }
-        
-        .btn-apply {
-            background: #13a10e;
-            color: white;
-        }
-        
-        .btn-apply:hover:not(:disabled) {
-            background: #16c60c;
-        }
-        
-        .btn-cancel {
-            background: #4d4d4d;
-            color: #e0e0e0;
-        }
-        
-        .btn-cancel:hover {
-            background: #5d5d5d;
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .diff-line {
-            padding: 2px 8px;
-            border-left: 3px solid transparent;
             font-family: 'Monaco', 'Menlo', monospace;
             font-size: 12px;
         }

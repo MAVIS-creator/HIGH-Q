@@ -491,63 +491,90 @@ require_once __DIR__ . '/../includes/sidebar.php';
 // CSRF token for form
 $csrf = generateToken('settings_form');
 ?>
-<div class="roles-page">
-    <div class="page-header">
-        <div>
-            <h1><i class="bx bxs-cog"></i> System Settings</h1>
-            <p>Configure site settings and security options</p>
-        </div>
-        <div>
-            <!-- top save button removed to avoid duplication; use the form submit button below -->
+<div class="settings-page">
+    <!-- Page Hero -->
+    <div class="page-hero">
+        <div class="page-hero-content">
+            <div>
+                <span class="page-hero-badge"><i class='bx bxs-cog'></i> Configuration</span>
+                <h1 class="page-hero-title">System Settings</h1>
+                <p class="page-hero-subtitle">Configure site settings and security options</p>
+            </div>
         </div>
     </div>
 
     <?php if ($flash = getFlash()): ?>
-        <div class="alert <?= $flash['type'] === 'error' ? 'error' : 'success' ?>"><?= htmlspecialchars($flash['message']) ?></div>
+        <div class="alert <?= $flash['type'] === 'error' ? 'alert-error' : 'alert-success' ?>"><?= htmlspecialchars($flash['message']) ?></div>
     <?php endif; ?>
 
     <form id="settingsForm" method="post">
         <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
-        <div class="tabs">
-            <button type="button" class="tab-btn active" data-tab="site">Site Information</button>
-            <button type="button" class="tab-btn" data-tab="contact">Contact Information</button>
-            <button type="button" class="tab-btn" data-tab="security">Security & System Settings</button>
-            <button type="button" class="tab-btn" data-tab="notifications">Notifications</button>
-            <button type="button" class="tab-btn" data-tab="advanced">Advanced Security</button>
+        <div class="settings-tabs">
+            <button type="button" class="settings-tab-btn active" data-tab="site"><i class='bx bxs-building'></i> Site Info</button>
+            <button type="button" class="settings-tab-btn" data-tab="contact"><i class='bx bxs-phone'></i> Contact</button>
+            <button type="button" class="settings-tab-btn" data-tab="security"><i class='bx bxs-shield'></i> Security</button>
+            <button type="button" class="settings-tab-btn" data-tab="notifications"><i class='bx bxs-bell'></i> Notifications</button>
+            <button type="button" class="settings-tab-btn" data-tab="advanced"><i class='bx bxs-lock-alt'></i> Advanced</button>
         </div>
 
         <div class="tab-panels">
             <div class="tab-panel" data-panel="site" style="display:block">
-                <div class="card">
-                    <h3><i class="bx bxs-building"></i> Site Information</h3>
-                    <p class="muted">Basic details that appear across the site (name, logo and short descriptions).</p>
-                    <label>Site Name</label>
-                    <input name="settings[site][name]" placeholder="Education Academy" value="<?= htmlspecialchars($current['site']['name']) ?>" class="input">
-                    <label>Tagline</label>
-                    <input name="settings[site][tagline]" placeholder="Excellence in Education" value="<?= htmlspecialchars($current['site']['tagline']) ?>" class="input">
-                    <label>Logo URL</label>
-                    <input name="settings[site][logo]" placeholder="https://example.com/logo.png" value="<?= htmlspecialchars($current['site']['logo']) ?>" class="input">
-                    <label>Bank Name</label>
-                    <input name="settings[site][bank_name]" placeholder="Bank Name" value="<?= htmlspecialchars($current['site']['bank_name'] ?? '') ?>" class="input">
-                    <label>Account Name</label>
-                    <input name="settings[site][bank_account_name]" placeholder="Account Name" value="<?= htmlspecialchars($current['site']['bank_account_name'] ?? '') ?>" class="input">
-                    <label>Account Number</label>
-                    <input name="settings[site][bank_account_number]" placeholder="Account Number" value="<?= htmlspecialchars($current['site']['bank_account_number'] ?? '') ?>" class="input">
-                    <label>Vision Statement</label>
-                    <textarea name="settings[site][vision]" placeholder="To be the leading educational institution in our region" class="input" rows="3"><?= htmlspecialchars($current['site']['vision']) ?></textarea>
-                    <label>About Description</label>
-                    <textarea name="settings[site][about]" placeholder="Providing quality education and training programs" class="input" rows="4"><?= htmlspecialchars($current['site']['about']) ?></textarea>
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><i class="bx bxs-building"></i> Site Information</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted mb-4">Basic details that appear across the site (name, logo and short descriptions).</p>
+                        <div class="form-group">
+                            <label class="form-label">Site Name</label>
+                            <input name="settings[site][name]" placeholder="Education Academy" value="<?= htmlspecialchars($current['site']['name']) ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tagline</label>
+                            <input name="settings[site][tagline]" placeholder="Excellence in Education" value="<?= htmlspecialchars($current['site']['tagline']) ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Logo URL</label>
+                            <input name="settings[site][logo]" placeholder="https://example.com/logo.png" value="<?= htmlspecialchars($current['site']['logo']) ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bank Name</label>
+                            <input name="settings[site][bank_name]" placeholder="Bank Name" value="<?= htmlspecialchars($current['site']['bank_name'] ?? '') ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Name</label>
+                            <input name="settings[site][bank_account_name]" placeholder="Account Name" value="<?= htmlspecialchars($current['site']['bank_account_name'] ?? '') ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Number</label>
+                            <input name="settings[site][bank_account_number]" placeholder="Account Number" value="<?= htmlspecialchars($current['site']['bank_account_number'] ?? '') ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Vision Statement</label>
+                            <textarea name="settings[site][vision]" placeholder="To be the leading educational institution in our region" class="form-input" rows="3"><?= htmlspecialchars($current['site']['vision']) ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">About Description</label>
+                            <textarea name="settings[site][about]" placeholder="Providing quality education and training programs" class="form-input" rows="4"><?= htmlspecialchars($current['site']['about']) ?></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="tab-panel" data-panel="contact">
-                <div class="card">
-                                        <h3><i class="bx bxs-phone"></i> Contact Information</h3>
-                                        <p class="muted">Contact details used on public pages and in communications.</p>
-                                        <label>Phone Number</label>
-                                        <input name="settings[contact][phone]" placeholder="+1234567890" value="<?= htmlspecialchars($current['contact']['phone']) ?>" class="input">
-                                        <label>Email Address</label>
-                                        <input name="settings[contact][email]" placeholder="contact@academy.com" value="<?= htmlspecialchars($current['contact']['email']) ?>" class="input">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><i class="bx bxs-phone"></i> Contact Information</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted mb-4">Contact details used on public pages and in communications.</p>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input name="settings[contact][phone]" placeholder="+1234567890" value="<?= htmlspecialchars($current['contact']['phone']) ?>" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input name="settings[contact][email]" placeholder="contact@academy.com" value="<?= htmlspecialchars($current['contact']['email']) ?>" class="form-input">
                                         <label>Physical Address</label>
                                         <textarea name="settings[contact][address]" placeholder="123 Education Street, Learning City" class="input" rows="3"><?= htmlspecialchars($current['contact']['address']) ?></textarea>
                                         <div style="display:flex;gap:8px;">
