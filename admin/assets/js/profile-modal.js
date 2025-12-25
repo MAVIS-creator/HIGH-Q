@@ -585,10 +585,19 @@
     }
 
     function openModal() {
+        // Ensure modal is initialized first
+        if (!document.getElementById('profileModalOverlay')) {
+            console.log('Modal not found, initializing...');
+            initProfileModal();
+        }
+        
         const overlay = document.getElementById('profileModalOverlay');
         if (overlay) {
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
+            loadUserData();
+        } else {
+            console.error('Failed to find profile modal overlay');
         }
     }
 
