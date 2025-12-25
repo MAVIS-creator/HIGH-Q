@@ -451,6 +451,37 @@ try {
     color: #f59e0b;
     font-weight: 500;
     margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.tutor-contact {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0.4rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.tutor-contact i {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+.tutor-qualification {
+    font-size: 0.85rem;
+    color: #8b5cf6;
+    font-weight: 500;
+    margin: 0.4rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.tutor-qualification i {
+    color: #a78bfa;
 }
 
 .tutor-bio {
