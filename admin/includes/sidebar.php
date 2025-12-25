@@ -34,10 +34,10 @@ try {
 ?>
 
 <aside class="admin-sidebar">
-    <a href="index.php?pages=dashboard" class="sidebar-logo" style="text-decoration:none;">
+    <a href="index.php?pages=dashboard" class="sidebar-logo">
         <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
-        <h3 style="color:#fff;">HIGH Q SOLID ACADEMY</h3>
-        <small style="color:#bbb;"><?= htmlspecialchars($_SESSION['user']['role_name'] ?? ''); ?></small>
+        <h3>HIGH Q SOLID ACADEMY</h3>
+        <small><?= htmlspecialchars($_SESSION['user']['role_name'] ?? 'Administrator'); ?></small>
     </a>
     <nav class="sidebar-nav">
         <ul>
@@ -53,12 +53,20 @@ try {
                     if (!$show && $slug === 'appointments' && (in_array('settings', $permissions) || in_array('students', $permissions))) $show = true;
                 ?>
                 <?php if ($show): ?>
-                    <li><a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
-                            <i class='<?= $item['icon']; ?>'></i> <?= $item['title']; ?>
-                        </a></li>
+                    <li>
+                        <a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
+                            <i class='<?= $item['icon']; ?>'></i>
+                            <span><?= $item['title']; ?></span>
+                        </a>
+                    </li>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <li><a href="../logout.php" class="logout-link"><i class='bx bx-log-out'></i> Logout</a></li>
+            <li>
+                <a href="../logout.php" class="logout-link">
+                    <i class='bx bx-log-out'></i>
+                    <span>Logout</span>
+                </a>
+            </li>
         </ul>
     </nav>
 </aside>
