@@ -398,7 +398,7 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
+    <header class="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-900 shadow-lg">
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
                 <div>
@@ -406,11 +406,11 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
                         <i class='bx bx-code-alt text-3xl mr-2'></i>
                         Smart Patcher
                     </h1>
-                    <p class="text-indigo-100 text-sm mt-1">Safe Code Repair Tool with Backups & Diff Preview</p>
+                    <p class="text-amber-900/70 text-sm mt-1">Safe Code Repair Tool with Backups & Diff Preview</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="text-sm">👤 <?php echo htmlspecialchars($adminUsername); ?></span>
-                    <a href="index.php?pages=dashboard" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition">
+                    <span class="text-sm font-medium">👤 <?php echo htmlspecialchars($adminUsername); ?></span>
+                    <a href="index.php?pages=dashboard" class="px-4 py-2 bg-slate-900/10 hover:bg-slate-900/20 rounded-lg transition font-semibold">
                         <i class='bx bx-arrow-back'></i> Back to Dashboard
                     </a>
                 </div>
