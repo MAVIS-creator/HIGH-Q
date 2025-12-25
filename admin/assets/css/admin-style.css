@@ -1,4 +1,8 @@
 /* Admin layout and footer styles */
+.admin-sidebar {
+    z-index: 100; /* Ensure sidebar is above footer */
+}
+
 .admin-main {
     min-height: calc(100vh - 180px);
     padding: 24px 32px 32px;

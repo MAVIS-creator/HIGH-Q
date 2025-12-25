@@ -54,6 +54,7 @@ class SecurityScanEngine {
             'critical' => [],   // High-priority findings
             'warnings' => [],   // Medium-priority findings
             'info' => [],       // Low-priority findings
+            'scanned_files' => [], // List of all scanned files
         ];
     }
     
@@ -142,34 +143,44 @@ class SecurityScanEngine {
             if ($file->getSize() > 5 * 1024 * 1024) continue;
             
             $this->report['totals']['files_scanned']++;
+            $this->report['scanned_files'][] = $rel; // Track scanned file
             $content = @file_get_contents($path);
             if ($content === false) continue;
             
             $rel = str_replace($this->root . DIRECTORY_SEPARATOR, '', $path);
             
-            // Check critical patterns
+            // Check critical patterns with line numbers
+            $lines = explode("\n", $content);
             foreach ($criticalPatterns as $name => $pattern) {
-                if (preg_match($pattern, $content)) {
-                    $this->report['critical'][] = [
-                        'type' => $name,
-                        'file' => $rel,
-                        'message' => "Suspicious pattern detected: {$name}",
-                    ];
-                    $this->report['totals']['critical_issues']++;
-                    break; // Only report first match per file
+                foreach ($lines as $lineNum => $line) {
+                    if (preg_match($pattern, $line)) {
+                        $this->report['critical'][] = [
+                            'type' => $name,
+                            'file' => $rel,
+                            'line' => $lineNum + 1,
+                            'message' => "Suspicious pattern detected: {$name}",
+                            'snippet' => trim(substr($line, 0, 100)),
+                        ];
+                        $this->report['totals']['critical_issues']++;
+                        break 2; // Only report first match per file
+                    }
                 }
             }
             
-            // Check warning patterns
+            // Check warning patterns with line numbers
             foreach ($warningPatterns as $name => $pattern) {
-                if (preg_match($pattern, $content)) {
-                    $this->report['warnings'][] = [
-                        'type' => $name,
-                        'file' => $rel,
-                        'message' => "Potentially suspicious code: {$name}",
-                    ];
-                    $this->report['totals']['warnings']++;
-                    break;
+                foreach ($lines as $lineNum => $line) {
+                    if (preg_match($pattern, $line)) {
+                        $this->report['warnings'][] = [
+                            'type' => $name,
+                            'file' => $rel,
+                            'line' => $lineNum + 1,
+                            'message' => "Potentially suspicious code: {$name}",
+                            'snippet' => trim(substr($line, 0, 100)),
+                        ];
+                        $this->report['totals']['warnings']++;
+                        break 2;
+                    }
                 }
             }
             

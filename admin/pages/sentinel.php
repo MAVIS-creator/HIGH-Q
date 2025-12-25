@@ -30,9 +30,10 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-slate-50">
-<div class="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="min-h-screen w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 p-8 shadow-xl text-slate-900">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,0,0,0.05),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(0,0,0,0.05),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(0,0,0,0.04),transparent_30%)]"></div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -75,8 +76,8 @@ try {
                         <div class="flex items-start gap-3">
                             <div class="h-10 w-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i class='bx bx-bolt-circle text-xl'></i></div>
                             <div>
-                                <p class="text-sm font-semibold text-slate-900">Quick Scan</p>
-                                <p class="text-xs text-slate-500">Fast health check (2-5 min)</p>
+                                <p class="text-sm font-semibold text-slate-900 break-words">Quick Scan</p>
+                                <p class="text-xs text-slate-500 break-words">Fast health check (2-5 min)</p>
                             </div>
                         </div>
                         <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
@@ -87,8 +88,8 @@ try {
                         <div class="flex items-start gap-3">
                             <div class="h-10 w-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i class='bx bx-target-lock text-xl'></i></div>
                             <div>
-                                <p class="text-sm font-semibold text-slate-900">Full Scan</p>
-                                <p class="text-xs text-slate-500">Complete audit (10-15 min)</p>
+                                <p class="text-sm font-semibold text-slate-900 break-words">Full Scan</p>
+                                <p class="text-xs text-slate-500 break-words">Complete audit (10-15 min)</p>
                             </div>
                         </div>
                         <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
@@ -314,42 +315,218 @@ function updateScanSummary(report) {
     window.lastScanReport = report;
     const now = new Date();
     document.getElementById('lastScanTime').textContent = `Last scan: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`;
+    
+    // Auto-show report modal after scan
+    showReportModal();
 }
 
 function viewReport(id) {
     if (!window.lastScanReport) {
-        alert('No scan data available. Run a scan first.');
+        Swal.fire({
+            icon: 'info',
+            title: 'No Scan Data',
+            text: 'Run a scan first to view reports.',
+            confirmButtonColor: '#f59e0b'
+        });
         return;
     }
+    showReportModal();
+}
 
-    const critical = window.lastScanReport.critical || [];
-    const warnings = window.lastScanReport.warnings || [];
-    const info = window.lastScanReport.info || [];
+function showReportModal() {
+    const report = window.lastScanReport;
+    if (!report) return;
+    
+    const critical = report.critical || [];
+    const warnings = report.warnings || [];
+    const info = report.info || [];
+    const filesScanned = report.totals?.files_scanned || report.scanned_files?.length || 0;
+    const scannedFiles = report.scanned_files || [];
+    
+    // Risk level
+    const riskLevel = critical.length > 0 ? 'CRITICAL' : (warnings.length > 3 ? 'HIGH' : (warnings.length > 0 ? 'MEDIUM' : 'LOW'));
+    const riskColors = { CRITICAL: '#dc2626', HIGH: '#ea580c', MEDIUM: '#f59e0b', LOW: '#22c55e' };
+    
+    let html = `
+        <div style="text-align: left; max-height: 60vh; overflow-y: auto;">
+            <!-- Summary Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+                <div style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid #fecaca;">
+                    <div style="font-size: 28px; font-weight: bold; color: #dc2626;">${critical.length}</div>
+                    <div style="font-size: 11px; color: #991b1b; text-transform: uppercase; font-weight: 600;">Critical</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid #fde68a;">
+                    <div style="font-size: 28px; font-weight: bold; color: #d97706;">${warnings.length}</div>
+                    <div style="font-size: 11px; color: #92400e; text-transform: uppercase; font-weight: 600;">Warnings</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid #bfdbfe;">
+                    <div style="font-size: 28px; font-weight: bold; color: #2563eb;">${info.length}</div>
+                    <div style="font-size: 11px; color: #1e40af; text-transform: uppercase; font-weight: 600;">Info</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid #bbf7d0;">
+                    <div style="font-size: 28px; font-weight: bold; color: #16a34a;">${filesScanned}</div>
+                    <div style="font-size: 11px; color: #166534; text-transform: uppercase; font-weight: 600;">Files</div>
+                </div>
+            </div>
+            
+            <!-- Risk Badge -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="display: inline-block; padding: 8px 20px; border-radius: 20px; background: ${riskColors[riskLevel]}; color: white; font-weight: bold; font-size: 12px;">
+                    ${riskLevel === 'CRITICAL' ? '🚨' : riskLevel === 'HIGH' ? '⚠️' : riskLevel === 'MEDIUM' ? '⚡' : '✅'} Risk Level: ${riskLevel}
+                </span>
+            </div>
+    `;
+    
+    // Critical Issues
+    if (critical.length > 0) {
+        html += `<div style="margin-bottom: 16px;"><h4 style="font-size: 14px; font-weight: bold; color: #dc2626; margin-bottom: 8px; border-bottom: 2px solid #dc2626; padding-bottom: 4px;">🚨 Critical Issues</h4>`;
+        critical.slice(0, 5).forEach(item => {
+            html += renderFinding(item, 'critical');
+        });
+        if (critical.length > 5) html += `<p style="font-size: 11px; color: #666; font-style: italic;">... and ${critical.length - 5} more</p>`;
+        html += `</div>`;
+    }
+    
+    // Warnings
+    if (warnings.length > 0) {
+        html += `<div style="margin-bottom: 16px;"><h4 style="font-size: 14px; font-weight: bold; color: #d97706; margin-bottom: 8px; border-bottom: 2px solid #d97706; padding-bottom: 4px;">⚠️ Warnings</h4>`;
+        warnings.slice(0, 5).forEach(item => {
+            html += renderFinding(item, 'warning');
+        });
+        if (warnings.length > 5) html += `<p style="font-size: 11px; color: #666; font-style: italic;">... and ${warnings.length - 5} more</p>`;
+        html += `</div>`;
+    }
+    
+    // Info
+    if (info.length > 0) {
+        html += `<div style="margin-bottom: 16px;"><h4 style="font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px; border-bottom: 2px solid #2563eb; padding-bottom: 4px;">ℹ️ Information</h4>`;
+        info.slice(0, 3).forEach(item => {
+            html += renderFinding(item, 'info');
+        });
+        if (info.length > 3) html += `<p style="font-size: 11px; color: #666; font-style: italic;">... and ${info.length - 3} more</p>`;
+        html += `</div>`;
+    }
+    
+    html += `</div>`;
+    
+    Swal.fire({
+        title: '📊 Security Scan Report',
+        html: html,
+        width: '800px',
+        showCancelButton: true,
+        confirmButtonText: '<i class="bx bxs-file-pdf"></i> Download PDF',
+        confirmButtonColor: '#dc2626',
+        cancelButtonText: 'Close',
+        cancelButtonColor: '#64748b',
+        showDenyButton: true,
+        denyButtonText: '<i class="bx bx-envelope"></i> Email Report',
+        denyButtonColor: '#f59e0b',
+        customClass: {
+            popup: 'swal-wide'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            generatePdfReport();
+        } else if (result.isDenied) {
+            emailReport();
+        }
+    });
+}
 
-    let msg = 'Scan Report\n\n';
-    msg += 'CRITICAL (' + critical.length + '):\n';
-    critical.slice(0, 5).forEach(item => { msg += '  • ' + (item.message || item.type || 'Issue') + '\n'; });
+function renderFinding(item, type) {
+    const colors = { critical: '#fef2f2', warning: '#fffbeb', info: '#eff6ff' };
+    const borders = { critical: '#dc2626', warning: '#d97706', info: '#2563eb' };
+    
+    let html = `<div style="background: ${colors[type]}; border-left: 4px solid ${borders[type]}; padding: 10px 12px; margin-bottom: 8px; border-radius: 0 6px 6px 0;">`;
+    html += `<div style="font-weight: 600; font-size: 12px; color: #1f2937;">${item.message || item.type || 'Issue detected'}</div>`;
+    
+    if (item.file) {
+        html += `<div style="font-size: 11px; color: #6b7280; font-family: monospace; margin-top: 4px;">📄 ${item.file}`;
+        if (item.line) html += ` <span style="color: ${borders[type]}; font-weight: bold;">Line ${item.line}</span>`;
+        html += `</div>`;
+    }
+    
+    if (item.snippet) {
+        html += `<div style="font-size: 10px; color: #9ca3af; font-family: monospace; margin-top: 4px; background: #f3f4f6; padding: 4px 8px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(item.snippet)}</div>`;
+    }
+    
+    html += `</div>`;
+    return html;
+}
 
-    msg += '\nWARNINGS (' + warnings.length + '):\n';
-    warnings.slice(0, 5).forEach(item => { msg += '  • ' + (item.message || item.type || 'Warning') + '\n'; });
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
-    msg += '\nINFO (' + info.length + '):\n';
-    info.slice(0, 3).forEach(item => { msg += '  • ' + (item.message || item.type || 'Info') + '\n'; });
-
-    alert(msg);
+function generatePdfReport() {
+    if (!window.lastScanReport) {
+        Swal.fire('Error', 'No scan data available', 'error');
+        return;
+    }
+    
+    Swal.fire({
+        title: 'Generating PDF...',
+        html: 'Creating your detailed report...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+    
+    const reportData = { status: 'completed', report: window.lastScanReport };
+    
+    fetch('../api/send-report.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            scan_data: reportData,
+            send_email: false,
+            generate_pdf: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success' && data.pdf_path) {
+            Swal.fire({
+                icon: 'success',
+                title: 'PDF Generated!',
+                html: `<p>Report saved: <code>${data.pdf_filename}</code></p>
+                       <a href="../storage/reports/${data.pdf_filename}" download class="swal2-confirm swal2-styled" style="display: inline-block; margin-top: 10px;">
+                           <i class='bx bx-download'></i> Download PDF
+                       </a>`,
+                confirmButtonColor: '#22c55e'
+            });
+        } else {
+            Swal.fire('Error', data.message || 'Failed to generate PDF', 'error');
+        }
+    })
+    .catch(error => {
+        Swal.fire('Error', error.message, 'error');
+    });
 }
 
 function emailReport() {
     if (!window.lastScanReport) {
-        alert('No scan data available. Run a scan first.');
+        Swal.fire({
+            icon: 'info',
+            title: 'No Scan Data',
+            text: 'Run a scan first to email reports.',
+            confirmButtonColor: '#f59e0b'
+        });
         return;
     }
 
     const recipient = document.getElementById('reportEmail').value || '';
-    const button = event.target;
-    button.disabled = true;
-    const originalText = button.textContent;
-    button.textContent = 'Sending...';
+    
+    Swal.fire({
+        title: 'Sending Report...',
+        html: 'Generating PDF and sending email...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
 
     const reportData = { status: 'completed', report: window.lastScanReport };
 
@@ -362,26 +539,33 @@ function emailReport() {
         body: JSON.stringify({
             scan_data: reportData,
             recipient_email: recipient,
-            send_email: true
+            send_email: true,
+            generate_pdf: true
         })
     })
     .then(response => response.json())
     .then(data => {
-        button.disabled = false;
-        button.textContent = originalText;
-
         if (data.status === 'success' && data.sent) {
-            alert('Report sent to ' + (recipient || 'company email'));
+            Swal.fire({
+                icon: 'success',
+                title: 'Report Sent!',
+                html: `<p>Email sent to: <strong>${data.recipient}</strong></p>
+                       ${data.pdf_filename ? '<p>PDF report attached ✓</p>' : ''}`,
+                confirmButtonColor: '#22c55e'
+            });
         } else if (data.status === 'success') {
-            alert('Report generated but email could not be sent. Check email configuration.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Partial Success',
+                text: 'Report generated but email could not be sent. Check email configuration.',
+                confirmButtonColor: '#f59e0b'
+            });
         } else {
-            alert('Error: ' + (data.message || 'Unknown error'));
+            Swal.fire('Error', data.message || 'Unknown error', 'error');
         }
     })
     .catch(error => {
-        button.disabled = false;
-        button.textContent = originalText;
-        alert('Error sending report: ' + error.message);
+        Swal.fire('Error', error.message, 'error');
     });
 }
 </script>

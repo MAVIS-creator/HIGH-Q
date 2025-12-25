@@ -7,13 +7,8 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 requirePermission('patcher');
 
-// Verify admin session for patcher functionality
-if (!isset($_SESSION['admin_logged_in'])) {
-    header('Location: ../login.php');
-    exit;
-}
-
 $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

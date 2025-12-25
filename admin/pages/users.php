@@ -210,253 +210,320 @@ $users = $pdo->query("
     ORDER BY u.created_at DESC
 ")->fetchAll();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>User Management - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href="../assets/css/users.css">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - HIGH Q SOLID ACADEMY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
+<body class="bg-slate-50">
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<div class="users-page">
-
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="page-header-info">
-      <h1>User Management</h1>
-      <p>Manage user accounts, roles, and permissions</p>
-    </div>
-  </div>
-
-  <!-- User Statistics -->
-  <div class="summary-cards">
-    <div class="card"><h3><?= $total_users ?></h3><p>Total Users</p></div>
-    <div class="card"><h3><?= $active_users ?></h3><p>Active</p></div>
-    <div class="card"><h3><?= $pending_users ?></h3><p>Pending</p></div>
-    <div class="card"><h3><?= $banned_users ?></h3><p>Banned</p></div>
-  </div>
-
-  <!-- Search + Filter -->
-  <div class="user-filters">
-    <div class="filter-controls">
-      <input type="text" id="searchInput" placeholder="Search by name or email">
-      <select id="statusFilter">
-        <option value="">All Status</option>
-        <option value="active">Active</option>
-        <option value="pending">Pending</option>
-        <option value="banned">Banned</option>
-      </select>
-      <select id="roleFilter">
-        <option value="">All Roles</option>
-        <?php foreach ($all_roles as $r): ?>
-          <option value="<?= htmlspecialchars($r['slug']) ?>"><?= htmlspecialchars($r['name']) ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-  </div>
-
-  <!-- User List -->
-  <div class="user-list" id="userTableBody">
-    <?php foreach ($users as $u): 
-      $status = $u['is_active']==1 ? 'Active' : ($u['is_active']==0 ? 'Pending' : 'Banned');
-      $roleClass = 'role-' . strtolower($u['role_slug'] ?? 'student');
-    ?>
-    <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
-      <div class="user-avatar">
-        <img src="<?= htmlspecialchars($u['avatar'] ? app_url($u['avatar']) : app_url('public/assets/images/hq-logo.jpeg')) ?>" alt="Avatar">
-      </div>
-      <div class="user-info">
-        <div class="user-name"><?= htmlspecialchars($u['name']) ?></div>
-        <div class="user-email"><?= htmlspecialchars($u['email']) ?></div>
-        <div class="user-meta">
-          <span class="user-role <?= strtolower($u['role_slug'] ?? 'student') ?>"><?= htmlspecialchars($u['role_name'] ?? 'Student') ?></span>
-          <span class="user-status <?= strtolower($status) ?>"><?= $status ?></span>
+<div class="min-h-screen w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 ml-[var(--sidebar-width)] transition-all duration-300">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 p-8 shadow-xl text-white">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.1),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_25%)]"></div>
+        <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <p class="text-xs uppercase tracking-[0.2em] text-blue-100/80">Administration</p>
+                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight">User Management</h1>
+                <p class="mt-2 text-blue-100/90 max-w-2xl">Manage user accounts, roles, and permissions</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3 text-center min-w-[100px]">
+                    <div class="text-2xl font-bold"><?= $total_users ?></div>
+                    <div class="text-xs text-blue-100">Total Users</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3 text-center min-w-[100px]">
+                    <div class="text-2xl font-bold"><?= $active_users ?></div>
+                    <div class="text-xs text-blue-100">Active</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="user-actions">
-        <div class="card-actions">
-          <button class="btn-secondary btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
-          <button class="btn-primary btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
-          <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
-              <?php if($u['is_active']===0): ?>
-              <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <select name="role_id" required>
-                  <option value="">Assign Role</option>
-                  <?php foreach ($all_roles as $r): ?>
-                    <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
-                  <?php endforeach; ?>
+    </div>
+
+    <!-- Controls & List -->
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+        <!-- Filters -->
+        <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <div class="relative w-full sm:w-96">
+                <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+                <input type="text" id="searchInput" placeholder="Search users..." 
+                       class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+            </div>
+            <div class="flex gap-3 w-full sm:w-auto">
+                <select id="statusFilter" class="px-4 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none bg-white text-sm">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="banned">Banned</option>
                 </select>
-                <button type="submit" class="btn-approve">Approve</button>
-              </form>
-              <form method="post" action="index.php?pages=users&action=resend_verification&id=<?= $u['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn">Resend Verification</button>
-              </form>
-              <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
-              <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-banish">Reject</button>
-              </form>
-              <?php endif; ?>
-            <?php elseif($u['is_active']===1): ?>
-              <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
-              <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-banish">Deactivate</button>
-              </form>
-              <?php endif; ?>
-            <?php else: ?>
-              <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-approve">Reactivate</button>
-              </form>
-            <?php endif; ?>
-          <?php endif; ?>
+                <select id="roleFilter" class="px-4 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none bg-white text-sm">
+                    <option value="">All Roles</option>
+                    <?php foreach ($all_roles as $r): ?>
+                        <option value="<?= htmlspecialchars($r['slug']) ?>"><?= htmlspecialchars($r['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
-        <?php if ($u['id'] === 1): ?>
-          <div class="main-admin-badge">Main Admin</div>
-        <?php endif; ?>
-      </div>
-    </div>
-    <?php endforeach; ?>
-  </div>
-</div>
 
-<!-- User Modal -->
-<div class="modal" id="userModal">
-  <div class="modal-content">
-    <span class="modal-close" id="userModalClose"><i class='bx bx-x'></i></span>
-    <div class="modal-tabs">
-      <button class="tab-btn active" data-tab="viewTab">Profile</button>
-      <button class="tab-btn" data-tab="editTab">Edit</button>
-    </div>
+        <!-- User Grid -->
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="userTableBody">
+            <?php foreach ($users as $u): 
+                $status = $u['is_active']==1 ? 'Active' : ($u['is_active']==0 ? 'Pending' : 'Banned');
+                $statusColor = $u['is_active']==1 ? 'bg-emerald-100 text-emerald-700' : ($u['is_active']==0 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700');
+                $roleSlug = strtolower($u['role_slug'] ?? 'student');
+            ?>
+            <div class="user-card group relative bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-all duration-200 hover:border-blue-300"
+                 data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" 
+                 data-role="<?= $roleSlug ?>">
+                
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="h-12 w-12 rounded-full overflow-hidden bg-slate-100 ring-2 ring-white shadow-sm">
+                            <img src="<?= htmlspecialchars($u['avatar'] ? app_url($u['avatar']) : app_url('public/assets/images/hq-logo.jpeg')) ?>" 
+                                 alt="Avatar" class="h-full w-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900 card-name"><?= htmlspecialchars($u['name']) ?></h3>
+                            <p class="text-xs text-slate-500 card-email"><?= htmlspecialchars($u['email']) ?></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-slate-100 text-slate-600">
+                            <?= htmlspecialchars($u['role_name'] ?? 'Student') ?>
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider <?= $statusColor ?>">
+                            <?= $status ?>
+                        </span>
+                    </div>
+                </div>
 
-    <!-- View Tab -->
-    <div id="viewTab" class="tab-pane active">
-    <div class="profile-header">
-  <img id="mAvatar" src="<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>" alt="Avatar">
-        <div>
-          <h3 id="mName">Name</h3>
-          <p id="mRole" class="role-badge role-student">Role</p>
-          <p id="mStatus" class="status-badge status-pending">Status</p>
-        </div>
-      </div>
-      <div class="profile-grid">
-        <div><span class="label">Email:</span> <span id="mEmail"></span></div>
-        <div><span class="label">Last Login:</span> <span id="mLastLogin"></span></div>
-        <div><span class="label">Created:</span> <span id="mCreated"></span></div>
-        <div><span class="label">Updated:</span> <span id="mUpdated"></span></div>
-        <div><span class="label">Posts:</span> <span id="mPosts"></span></div>
-        <div><span class="label">Comments:</span> <span id="mComments"></span></div>
-      </div>
-    </div>
-
-    <!-- Edit Tab -->
-    <div id="editTab" class="tab-pane">
-      <form id="editForm" method="post">
-        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-        <div class="form-row">
-          <label>Name</label>
-          <input type="text" name="name" id="fName" required>
-        </div>
-        <div class="form-row">
-          <label>Email</label>
-          <input type="email" name="email" id="fEmail" required>
-        </div>
-        <div class="form-row">
-          <label>Role</label>
-          <select name="role_id" id="fRole">
-            <?php foreach ($all_roles as $r): ?>
-            <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div class="text-xs text-slate-400">
+                        Joined <?= date('M j, Y', strtotime($u['created_at'])) ?>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="btn-view p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
+                                data-user-id="<?= $u['id'] ?>" title="View Details">
+                            <i class='bx bx-show text-lg'></i>
+                        </button>
+                        <button class="btn-edit p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
+                                data-user-id="<?= $u['id'] ?>" title="Edit User">
+                            <i class='bx bx-edit text-lg'></i>
+                        </button>
+                        
+                        <!-- Actions Dropdown Logic Simplified for UI -->
+                        <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
+                            <?php if($u['is_active']===0): ?>
+                                <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-block">
+                                    <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                                    <input type="hidden" name="role_id" value="<?= $u['role_id'] ?: 3 ?>"> <!-- Default to student if not set -->
+                                    <button type="submit" class="p-2 text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors" title="Approve">
+                                        <i class='bx bx-check text-lg'></i>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                            
+                            <?php if ($u['id'] != 1 && $u['id'] != $_SESSION['user']['id']): ?>
+                                <?php if($u['is_active']!==2): ?>
+                                    <form method="post" action="index.php?pages=users&action=banish&id=<?= $u['id'] ?>" class="inline-block">
+                                        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                                        <button type="submit" class="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Ban/Deactivate">
+                                            <i class='bx bx-block text-lg'></i>
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <form method="post" action="index.php?pages=users&action=reactivate&id=<?= $u['id'] ?>" class="inline-block">
+                                        <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                                        <button type="submit" class="p-2 text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors" title="Reactivate">
+                                            <i class='bx bx-refresh text-lg'></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
             <?php endforeach; ?>
-          </select>
         </div>
-        <div class="form-row">
-          <label>Status</label>
-          <select name="is_active" id="fStatus">
-            <option value="1">Active</option>
-            <option value="0">Pending</option>
-            <option value="2">Banned</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <div class="sticky-actions">
-              <button type="submit" class="btn-primary">Save Changes</button>
-          </div>
-        </div>
-      </form>
     </div>
-  </div>
 </div>
-<div id="modalOverlay"></div>
+
+<!-- Tailwind Modal -->
+<div id="userModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" id="modalOverlay"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                
+                <!-- Modal Header -->
+                <div class="bg-slate-50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-slate-100">
+                    <h3 class="text-base font-semibold leading-6 text-slate-900" id="modalTitle">User Details</h3>
+                    <button type="button" id="userModalClose" class="text-slate-400 hover:text-slate-500">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="px-4 py-5 sm:p-6">
+                    <!-- Tabs -->
+                    <div class="flex space-x-1 rounded-xl bg-slate-100 p-1 mb-6">
+                        <button class="tab-btn w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-slate-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2 shadow bg-white" data-tab="viewTab">
+                            Profile
+                        </button>
+                        <button class="tab-btn w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-slate-500 hover:text-slate-700 focus:outline-none" data-tab="editTab">
+                            Edit
+                        </button>
+                    </div>
+
+                    <!-- View Tab -->
+                    <div id="viewTab" class="tab-pane block space-y-4">
+                        <div class="flex items-center gap-4 mb-6">
+                            <img id="mAvatar" src="" alt="Avatar" class="h-16 w-16 rounded-full object-cover ring-2 ring-slate-100">
+                            <div>
+                                <h4 id="mName" class="text-lg font-bold text-slate-900"></h4>
+                                <div class="flex gap-2 mt-1">
+                                    <span id="mRole" class="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600"></span>
+                                    <span id="mStatus" class="px-2 py-0.5 rounded text-xs font-medium"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-500 text-xs">Email</p>
+                                <p id="mEmail" class="font-medium text-slate-900 break-all"></p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-xs">Last Login</p>
+                                <p id="mLastLogin" class="font-medium text-slate-900"></p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-xs">Created</p>
+                                <p id="mCreated" class="font-medium text-slate-900"></p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-xs">Activity</p>
+                                <p class="font-medium text-slate-900"><span id="mPosts">0</span> Posts, <span id="mComments">0</span> Comments</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Tab -->
+                    <div id="editTab" class="tab-pane hidden">
+                        <form id="editForm" method="post" class="space-y-4">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700">Name</label>
+                                <input type="text" name="name" id="fName" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700">Email</label>
+                                <input type="email" name="email" id="fEmail" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700">Role</label>
+                                <select name="role_id" id="fRole" class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                    <?php foreach ($all_roles as $r): ?>
+                                    <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700">Status</label>
+                                <select name="is_active" id="fStatus" class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                    <option value="1">Active</option>
+                                    <option value="0">Pending</option>
+                                    <option value="2">Banned</option>
+                                </select>
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?php include '../includes/footer.php'; ?>
 
-<!-- Inline JS -->
 <script>
-// Modal control
+// Modal Logic
 const userModal = document.getElementById('userModal');
-const overlay   = document.getElementById('modalOverlay');
-const closeBtn  = document.getElementById('userModalClose');
+const overlay = document.getElementById('modalOverlay');
+const closeBtn = document.getElementById('userModalClose');
 
-function openModal(){ userModal.classList.add('open'); overlay.classList.add('open'); }
-function closeModal(){ userModal.classList.remove('open'); overlay.classList.remove('open'); }
+function openModal() { userModal.classList.remove('hidden'); }
+function closeModal() { userModal.classList.add('hidden'); }
 
 overlay.addEventListener('click', closeModal);
 closeBtn.addEventListener('click', closeModal);
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 
-// Tabs
+// Tabs Logic
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabPanes = document.querySelectorAll('.tab-pane');
-function activateTab(id){
-  tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
-  tabPanes.forEach(p=>p.classList.toggle('active', p.id===id));
-}
-tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.dataset.tab)));
 
-// AJAX: Load user data
+function activateTab(id) {
+    tabButtons.forEach(btn => {
+        if(btn.dataset.tab === id) {
+            btn.classList.add('bg-white', 'shadow', 'text-slate-700');
+            btn.classList.remove('text-slate-500', 'hover:text-slate-700');
+        } else {
+            btn.classList.remove('bg-white', 'shadow', 'text-slate-700');
+            btn.classList.add('text-slate-500', 'hover:text-slate-700');
+        }
+    });
+    tabPanes.forEach(pane => {
+        if(pane.id === id) pane.classList.remove('hidden');
+        else pane.classList.add('hidden');
+    });
+}
+
+tabButtons.forEach(btn => btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
+
+// Data Loading
 async function loadUser(id, mode='view'){
   const res = await fetch((window.HQ_ADMIN_BASE || '') + '/index.php?pages=users&action=view&id=' + encodeURIComponent(id), { credentials: 'same-origin' });
   let data = null;
   try {
     data = await res.json();
   } catch (e) {
-    // Probably an auth redirect or HTML response; show friendly message and redirect to login
-    const text = await res.text();
-    if (typeof Swal !== 'undefined') {
-      Swal.fire({ title: 'Session expired', text: 'Your session may have expired. Please login again.', icon: 'warning' }).then(()=> window.location = (window.HQ_ADMIN_BASE || '') + '/login.php');
-    } else {
-      alert('Session expired. Please login again.'); window.location = (window.HQ_ADMIN_BASE || '') + '/login.php';
-    }
+    alert('Session expired. Please login again.'); window.location = (window.HQ_ADMIN_BASE || '') + '/login.php';
     return;
   }
   if(data.error) {
-    if (typeof Swal !== 'undefined') Swal.fire('Error', data.error, 'error'); else alert(data.error);
+    alert(data.error);
     return;
   }
 
+  // Populate View
   document.getElementById('mName').textContent = data.name;
   document.getElementById('mEmail').textContent = data.email;
   document.getElementById('mRole').textContent = data.role_name;
-  document.getElementById('mRole').className = `role-badge role-${data.role_slug}`;
-  document.getElementById('mStatus').textContent = data.status;
-  document.getElementById('mStatus').className = `status-badge ${data.status_value===1?'status-active':data.status_value===0?'status-pending':'status-banned'}`;
+  
+  const statusEl = document.getElementById('mStatus');
+  statusEl.textContent = data.status;
+  statusEl.className = `px-2 py-0.5 rounded text-xs font-medium ${data.status_value===1 ? 'bg-emerald-100 text-emerald-700' : (data.status_value===0 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')}`;
+
   document.getElementById('mLastLogin').textContent = data.last_login ?? '—';
   document.getElementById('mCreated').textContent = data.created_at ?? '—';
-  document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
   document.getElementById('mPosts').textContent = data.posts_count;
   document.getElementById('mComments').textContent = data.comments_count;
   document.getElementById('mAvatar').src = data.avatar ? ((window.HQ_APP_BASE || '') + '/' + data.avatar.replace(/^\/+/, '')) : ((window.HQ_APP_BASE || '') + '/public/assets/images/hq-logo.jpeg');
 
-  // Fill edit form
+  // Populate Edit
   const form = document.getElementById('editForm');
   form.action = `index.php?pages=users&action=edit&id=${data.id}`;
   document.getElementById('fName').value = data.name;
@@ -468,7 +535,6 @@ async function loadUser(id, mode='view'){
   openModal();
 }
 
-// Button handlers
 document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click', e=>{
   e.preventDefault(); loadUser(btn.dataset.userId,'view');
 }));
@@ -476,7 +542,7 @@ document.querySelectorAll('.btn-edit').forEach(btn=>btn.addEventListener('click'
   e.preventDefault(); loadUser(btn.dataset.userId,'edit');
 }));
 
-// Search + filter
+// Search Filter
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 const roleFilter = document.getElementById('roleFilter');
