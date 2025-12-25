@@ -70,31 +70,31 @@ try {
 
             <div class="p-5 sm:p-6 space-y-6">
                 <div class="grid md:grid-cols-3 gap-4">
-                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-indigo-400 hover:shadow-md transition cursor-pointer">
+                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
                         <input type="radio" name="scan_type" value="quick" class="peer sr-only" checked>
                         <div class="flex items-start gap-3">
-                            <div class="h-10 w-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class='bx bx-bolt-circle text-xl'></i></div>
+                            <div class="h-10 w-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i class='bx bx-bolt-circle text-xl'></i></div>
                             <div>
                                 <p class="text-sm font-semibold text-slate-900">Quick Scan</p>
                                 <p class="text-xs text-slate-500">Fast health check (2-5 min)</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 rounded-xl ring-2 ring-indigo-500 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
+                        <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
                     </label>
 
-                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-indigo-400 hover:shadow-md transition cursor-pointer">
+                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
                         <input type="radio" name="scan_type" value="full" class="peer sr-only">
                         <div class="flex items-start gap-3">
-                            <div class="h-10 w-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class='bx bx-target-lock text-xl'></i></div>
+                            <div class="h-10 w-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i class='bx bx-target-lock text-xl'></i></div>
                             <div>
                                 <p class="text-sm font-semibold text-slate-900">Full Scan</p>
                                 <p class="text-xs text-slate-500">Complete audit (10-15 min)</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 rounded-xl ring-2 ring-indigo-500 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
+                        <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
                     </label>
 
-                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-indigo-400 hover:shadow-md transition cursor-pointer">
+                    <label class="group relative border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
                         <input type="radio" name="scan_type" value="malware" class="peer sr-only">
                         <div class="flex items-start gap-3">
                             <div class="h-10 w-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center"><i class='bx bx-bug-alt text-xl'></i></div>
@@ -103,18 +103,18 @@ try {
                                 <p class="text-xs text-slate-500">Threat sweep (5-10 min)</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 rounded-xl ring-2 ring-indigo-500 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
+                        <div class="absolute inset-0 rounded-xl ring-2 ring-amber-400 ring-offset-2 opacity-0 peer-checked:opacity-100 transition"></div>
                     </label>
                 </div>
 
                 <div class="grid gap-4 lg:grid-cols-2">
                     <div class="space-y-2">
                         <label for="reportEmail" class="text-sm font-semibold text-slate-700">Email report to</label>
-                        <input id="reportEmail" type="email" placeholder="Leave blank to use company email" class="w-full rounded-lg border border-slate-200 px-3 py-3 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200" />
+                        <input id="reportEmail" type="email" placeholder="Leave blank to use company email" class="w-full rounded-lg border border-slate-200 px-3 py-3 text-sm shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
                         <p class="text-xs text-slate-500">We will send the latest scan report when you click Email Report.</p>
                     </div>
                     <div class="grid grid-cols-2 gap-3 items-end">
-                        <button id="scanBtn" onclick="startScan()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition disabled:opacity-50">
+                        <button id="scanBtn" onclick="startScan()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-3 text-sm font-semibold text-slate-900 shadow-md hover:shadow-lg transition disabled:opacity-50">
                             <i class='bx bx-play'></i>
                             Start Scan
                         </button>
