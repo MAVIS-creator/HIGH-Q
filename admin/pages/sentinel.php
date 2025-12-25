@@ -982,7 +982,7 @@ function showReportModal() {
     
     // Info
     if (info.length > 0) {
-        html += `<div style="margin-bottom: 16px;"><h4 style="font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px; border-bottom: 2px solid #2563eb; padding-bottom: 4px;">ℹ️ Information</h4>`;
+        html += `<div style="margin-bottom: 16px;"><h4 style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold; color: #2563eb; margin-bottom: 8px; border-bottom: 2px solid #2563eb; padding-bottom: 4px;"><i class='bx bx-info-circle'></i> Information</h4>`;
         info.slice(0, 3).forEach(item => {
             html += renderFinding(item, 'info');
         });
@@ -993,7 +993,7 @@ function showReportModal() {
     html += `</div>`;
     
     Swal.fire({
-        title: '📊 Security Scan Report',
+        title: '<i class="bx bx-bar-chart-alt-2" style="margin-right: 8px;"></i> Security Scan Report',
         html: html,
         width: '800px',
         showCancelButton: true,
@@ -1024,7 +1024,7 @@ function renderFinding(item, type) {
     html += `<div style="font-weight: 600; font-size: 12px; color: #1f2937;">${item.message || item.type || 'Issue detected'}</div>`;
     
     if (item.file) {
-        html += `<div style="font-size: 11px; color: #6b7280; font-family: monospace; margin-top: 4px;">📄 ${item.file}`;
+        html += `<div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6b7280; font-family: monospace; margin-top: 4px;"><i class='bx bx-file'></i> ${item.file}`;
         if (item.line) html += ` <span style="color: ${borders[type]}; font-weight: bold;">Line ${item.line}</span>`;
         html += `</div>`;
     }
@@ -1152,8 +1152,5 @@ function emailReport() {
     });
 }
 </script>
-
-</body>
-</html>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
