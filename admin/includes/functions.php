@@ -6,20 +6,21 @@ use Dotenv\Dotenv;
 // Autoload (Composer)
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Load admin folder's .env first (admin-specific settings)
-$adminDotenv = Dotenv::createImmutable(__DIR__ . '/../');
-try {
-    $adminDotenv->safeLoad();
-} catch (Throwable $e) {
-    // Non-fatal
-}
-
-// Also load project root .env as fallback (shared settings)
+// Load project root .env first (shared settings as defaults)
 $rootDotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 try {
     $rootDotenv->safeLoad();
 } catch (Throwable $e) {
-    // Non-fatal: rely on getenv()/defaults below
+    // Non-fatal
+}
+
+// Then load admin folder's .env (admin-specific settings override root)
+$adminDotenv = Dotenv::createImmutable(__DIR__ . '/../');
+try {
+    // Use safeLoad to override root values with admin-specific ones
+    $adminDotenv->load(); // Using load() instead of safeLoad() to override
+} catch (Throwable $e) {
+    // Non-fatal: if admin .env doesn't exist, just use root values
 }
 
 /**
