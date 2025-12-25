@@ -55,6 +55,7 @@ try {
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; background: #fafbff; }
         .trap-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
@@ -71,7 +72,7 @@ try {
 </head>
 <body>
     <div class="info-box">
-        <strong>🎯 Canary Tokens:</strong> Fake honeypot users/credentials that trigger alerts when accessed by attackers.
+        <strong><i class='bx bx-target-lock'></i> Canary Tokens:</strong> Fake honeypot users/credentials that trigger alerts when accessed by attackers.
     </div>
 
     <?php if ($message): ?>
@@ -91,7 +92,7 @@ try {
             </select>
             <input type="text" name="trap_name" placeholder="Trap Name (e.g., admin_backup)" required>
             <input type="email" name="trap_email" placeholder="Trap Email (e.g., backup@system.local)" required>
-            <button type="submit">🚨 Deploy Canary</button>
+            <button type="submit"><i class='bx bx-error-circle'></i> Deploy Canary</button>
         </form>
     </div>
 
@@ -111,7 +112,7 @@ try {
         </div>
         <form method="POST" style="margin-top:15px;">
             <input type="hidden" name="action" value="check_traps">
-            <button type="submit" style="background:#3742fa;">🔍 Check for Alerts</button>
+            <button type="submit" style="background:#3742fa;"><i class='bx bx-search-alt'></i> Check for Alerts</button>
         </form>
     </div>
 </body>
