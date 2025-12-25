@@ -191,10 +191,10 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);"><?= $r['id'] ?></div>
       </div>
       
-      <div style="margin: 1.25rem 0; padding: 1rem; background: #f8fafc; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+      <div style="margin: 1.25rem 0; padding: 1rem; background: #fef3c7; border-radius: 0.75rem; border: 2px solid #fbbf24;">
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-          <i class='bx bx-group' style="font-size: 1.25rem; color: #6366f1;"></i>
-          <span style="font-weight: 700; color: #475569; font-size: 0.9rem;">Max Users:</span>
+          <i class='bx bx-group' style="font-size: 1.25rem; color: #f59e0b;"></i>
+          <span style="font-weight: 700; color: #92400e; font-size: 0.9rem;">Max Users:</span>
           <span style="font-weight: 800; color: #1e293b; font-size: 1.1rem;"><?= $r['max_count'] ?? '∞' ?></span>
         </div>
       </div>
@@ -204,7 +204,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           <?php
             $roleMenus = $permissionsByRole[$r['id']] ?? [];
-            $colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#06b6d4'];
+            $colors = ['#f59e0b', '#fbbf24', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4'];
             $colorIndex = 0;
             foreach ($roleMenus as $menu):
               $color = $colors[$colorIndex % count($colors)];
@@ -218,14 +218,14 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
       </div>
       
       <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 2px solid #f1f5f9;">
-        <button class="btn-editRole" style="flex: 1; padding: 0.75rem; background: #6366f1; color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+        <button class="btn-editRole" style="flex: 1; padding: 0.75rem; background: #fbbf24; color: #1e293b; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
                 data-id="<?= $r['id'] ?>"
                 data-name="<?= htmlspecialchars($r['name']) ?>"
                 data-slug="<?= htmlspecialchars($r['slug']) ?>"
                 data-max="<?= $r['max_count'] ?>"
                 data-menus='<?= json_encode($roleMenus) ?>'
-                onmouseover="this.style.background='#4f46e5'; this.style.transform='translateY(-2px)'"
-                onmouseout="this.style.background='#6366f1'; this.style.transform='translateY(0)'">
+                onmouseover="this.style.background='#f59e0b'; this.style.transform='translateY(-2px)'"
+                onmouseout="this.style.background='#fbbf24'; this.style.transform='translateY(0)'">
           <i class='bx bx-edit-alt' style="font-size: 1.1rem;"></i> Edit
         </button>
         <form method="post" action="index.php?pages=roles&action=delete&id=<?= $r['id'] ?>" style="flex: 1;" onsubmit="return confirm('Delete this role?');">
