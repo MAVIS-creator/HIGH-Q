@@ -862,8 +862,10 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
                     styleActiveLine: true
                 });
                 
-                document.getElementById('editorPath').textContent = path;
-                document.getElementById('editorPath').parentElement.parentElement.style.display = 'flex';
+                // Show editor header
+                document.getElementById('editorHeader').style.display = 'flex';
+                document.getElementById('currentFileName').textContent = path.split('/').pop();
+                document.getElementById('currentFilePath').textContent = path;
                 
             } catch (err) {
                 alert('Error: ' + err.message);
