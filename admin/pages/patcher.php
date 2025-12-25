@@ -574,7 +574,7 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
                 </div>
 
                 <div class="editor-container" id="editorContainer">
-                    <div class="editor-placeholder">
+                    <div id="editorCode" class="editor-placeholder">
                         <i class='bx bx-file-blank'></i>
                         <p>Select a file from the left to begin editing</p>
                     </div>
