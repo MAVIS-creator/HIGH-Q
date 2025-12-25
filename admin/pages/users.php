@@ -223,6 +223,7 @@ $users = $pdo->query("
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
+<main class="main-content">
 <div class="users-page">
   <!-- Page Hero -->
   <div class="page-hero">
