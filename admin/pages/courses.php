@@ -668,5 +668,7 @@ function escapeHtml(s){
     });
   });
   </script>
+</div> <!-- .courses-page -->
+</main> <!-- .main-content -->
 </body>
 </html>

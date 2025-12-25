@@ -17,8 +17,9 @@
 
     // Initialize modal
     function initProfileModal() {
-        // Check if modal already exists
-        if (document.getElementById('profileModal')) {
+        // Check if modal already exists - check for the actual overlay ID
+        if (document.getElementById('profileModalOverlay')) {
+            console.log('Profile modal already exists, skipping creation');
             return;
         }
 
