@@ -16,26 +16,6 @@
         </div>
     </footer>
 
-    <style>
-        /* Ensure footer responds to sidebar collapse */
-        body.sidebar-collapsed footer {
-            margin-left: 0 !important;
-            width: 100% !important;
-        }
-        
-        @media (max-width: 768px) {
-            footer {
-                margin-left: 0 !important;
-                width: 100% !important;
-            }
-            footer > div {
-                flex-direction: column;
-                text-align: center;
-                gap: 12px;
-            }
-        }
-    </style>
-
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 </body>
