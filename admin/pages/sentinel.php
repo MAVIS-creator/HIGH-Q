@@ -494,7 +494,7 @@ function generatePdfReport() {
                 icon: 'success',
                 title: 'PDF Generated!',
                 html: `<p>Report saved: <code>${data.pdf_filename}</code></p>
-                       <a href="../storage/reports/${data.pdf_filename}" download class="swal2-confirm swal2-styled" style="display: inline-block; margin-top: 10px;">
+                       <a href="../api/download-report.php?file=${encodeURIComponent(data.pdf_filename)}" download class="swal2-confirm swal2-styled" style="display: inline-block; margin-top: 10px;">
                            <i class='bx bx-download'></i> Download PDF
                        </a>`,
                 confirmButtonColor: '#22c55e'
