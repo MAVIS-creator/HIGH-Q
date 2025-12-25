@@ -183,7 +183,7 @@ if (!headers_sent()) {
     <header class="admin-header">
         <div class="header-left">
             <i class='bx bx-menu' id="menuToggle"></i>
-            <div>
+            <div class="header-title-group">
                 <span class="header-title"><?= isset($pageTitle) ? $pageTitle : 'Dashboard'; ?></span>
                 <?php if (!empty($pageSubtitle)): ?>
                     <p class="header-subtitle"><?= htmlspecialchars($pageSubtitle) ?></p>
@@ -192,12 +192,12 @@ if (!headers_sent()) {
         </div>
         <div class="header-right">
             <?php if (empty($_SESSION['user'])): ?>
-                <a href="../signup.php" class="header-cta">Sign up</a>
+                <a href="../signup.php" class="header-cta"><i class='bx bx-user-plus'></i> Sign up</a>
             <?php else: ?>
                     <div class="header-notifications">
                         <button id="notifBtn" class="header-cta" title="Notifications">
                             <i class='bx bx-bell'></i>
-                            <span id="notifBadge" style="display:none;background:#ff3b30;color:#fff;border-radius:999px;padding:2px 6px;margin-left:8px;font-size:0.8rem;">0</span>
+                            <span id="notifBadge" style="display:none;background:var(--hq-red);color:#fff;border-radius:999px;padding:2px 6px;margin-left:4px;font-size:0.75rem;font-weight:700;">0</span>
                         </button>
                     </div>
                     <div class="header-avatar-wrapper">
