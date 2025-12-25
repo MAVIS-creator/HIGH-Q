@@ -9,7 +9,7 @@ requirePermission('patcher');
 
 // Verify admin session for patcher functionality
 if (!isset($_SESSION['admin_logged_in'])) {
-    header('Location: login.php');
+    header('Location: ../login.php');
     exit;
 }
 
