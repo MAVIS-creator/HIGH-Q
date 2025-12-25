@@ -72,7 +72,17 @@ try {
                 <div class="tutor-card" data-name="<?= strtolower(htmlspecialchars($tutor['name'] ?? '')) ?>" data-subject="<?= strtolower(htmlspecialchars($tutor['subject'] ?? '')) ?>">
                     <div class="tutor-avatar">
                         <?php if (!empty($tutor['photo'])): ?>
-                            <img src="<?= htmlspecialchars($tutor['photo']) ?>" alt="<?= htmlspecialchars($tutor['name']) ?>">
+                            <?php 
+                            $photoPath = $tutor['photo'];
+                            // Fix path if it doesn't start with uploads/ or http
+                            if (!preg_match('#^(https?://|uploads/)#', $photoPath)) {
+                                $photoPath = '../uploads/tutors/' . basename($photoPath);
+                            } elseif (strpos($photoPath, 'uploads/') === 0) {
+                                $photoPath = '../' . $photoPath;
+                            }
+                            ?>
+                            <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($tutor['name']) ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                            <span class="avatar-initial" style="display:none"><?= strtoupper(substr($tutor['name'] ?? 'T', 0, 1)) ?></span>
                         <?php else: ?>
                             <span class="avatar-initial"><?= strtoupper(substr($tutor['name'] ?? 'T', 0, 1)) ?></span>
                         <?php endif; ?>
@@ -85,6 +95,22 @@ try {
                             </span>
                         </div>
                         <p class="tutor-title"><?= htmlspecialchars($tutor['title'] ?? '') ?></p>
+                        
+                        <?php if (!empty($tutor['email'])): ?>
+                            <p class="tutor-contact"><i class='bx bx-envelope'></i> <?= htmlspecialchars($tutor['email']) ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($tutor['phone'])): ?>
+                            <p class="tutor-contact"><i class='bx bx-phone'></i> <?= htmlspecialchars($tutor['phone']) ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($tutor['qualifications'])): ?>
+                            <p class="tutor-qualification"><i class='bx bx-medal'></i> <?= htmlspecialchars($tutor['qualifications']) ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($tutor['experience'])): ?>
+                            <p class="tutor-experience"><i class='bx bx-briefcase'></i> <?= htmlspecialchars($tutor['experience']) ?> years experience</p>
+                        <?php endif; ?>
                         
                         <?php if (!empty($tutor['subjects'])): ?>
                             <div class="tutor-subjects">
@@ -296,8 +322,22 @@ try {
 
 .tutors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+    .tutors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .tutors-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .tutor-card {
