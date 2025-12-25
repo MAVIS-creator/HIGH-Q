@@ -290,24 +290,9 @@
         grid-template-columns: 1fr;
     }
     
-    .footer-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-    
-    .footer-card-right {
-        margin-top: 10px;
-    }
-    
     .notif-panel {
         width: calc(100vw - 40px);
         left: 20px;
         right: 20px;
-    }
-    
-    .admin-footer {
-        width: 100%;
-        margin-left: 0;
     }
 }
