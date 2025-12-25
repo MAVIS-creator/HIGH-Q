@@ -151,32 +151,26 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 </head>
 <body>
 
-<main class="main-content">
-<div class="roles-page" style="max-width: 1400px; margin: 0 auto;">
-  <div class="page-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2rem; color: white; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);">
+<main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
+<div class="roles-page">
+  <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(251, 191, 36, 0.25); display: flex; justify-content: space-between; align-items: center;">
     <div class="page-title-block">
-      <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0;">Roles Management</h1>
-      <p style="font-size: 1.1rem; opacity: 0.95; margin: 0;">Manage roles and permissions</p>
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0; color: #1e293b;">Roles Management</h1>
+      <p style="font-size: 1.1rem; opacity: 0.85; margin: 0; color: #1e293b;">Manage roles and permissions</p>
     </div>
-    <button id="newRoleBtn" class="btn-approve" style="background: white; color: #6366f1; font-weight: 700; padding: 0.875rem 1.75rem; border-radius: 0.75rem; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);">
+    <button id="newRoleBtn" class="btn-approve" style="background: #1e293b; color: white; font-weight: 700; padding: 0.875rem 1.75rem; border-radius: 0.75rem; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);">
       <i class='bx bx-plus' style="font-size: 1.25rem;"></i> New Role
     </button>
   </div>
 
   <?php if ($flash): ?>
-    <div class="alert success">
+    <div class="alert success" style="background: #d1fae5; border: 2px solid #86efac; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
       <?php foreach ($flash as $msg): ?>
-        <p><?= htmlspecialchars($msg) ?></p>
+        <p style="color: #065f46; margin: 0; font-weight: 600;"><?= htmlspecialchars($msg) ?></p>
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
 
-  <?php if ($errors): ?>
-    <div class="alert error">
-      <?php foreach ($errors as $err): ?>
-        <p><?= htmlspecialchars($err) ?></p>
-      <?php endforeach; ?>
-    </div>
   <?php if ($errors): ?>
     <div class="alert error" style="background: #fee2e2; border: 2px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
       <?php foreach ($errors as $err): ?>
@@ -188,13 +182,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
   <!-- Roles Grid -->
   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
     <?php foreach ($roles as $r): ?>
-    <div style="background: white; border-radius: 1rem; border: 2px solid #e2e8f0; padding: 1.75rem; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" onmouseover="this.style.boxShadow='0 8px 20px rgba(0,0,0,0.1)'; this.style.borderColor='#6366f1'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'; this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
+    <div style="background: white; border-radius: 1rem; border: 2px solid #e2e8f0; padding: 1.75rem; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" onmouseover="this.style.boxShadow='0 8px 24px rgba(251, 191, 36, 0.2)'; this.style.borderColor='#fbbf24'; this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'; this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)'">
       <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
         <div>
           <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin: 0 0 0.5rem 0;"><?= htmlspecialchars($r['name']) ?></h3>
-          <span style="background: #f1f5f9; color: #475569; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em;"><?= htmlspecialchars($r['slug']) ?></span>
+          <span style="background: #fef3c7; color: #92400e; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em;"><?= htmlspecialchars($r['slug']) ?></span>
         </div>
-        <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);"><?= $r['id'] ?></div>
+        <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);"><?= $r['id'] ?></div>
       </div>
       
       <div style="margin: 1.25rem 0; padding: 1rem; background: #f8fafc; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
