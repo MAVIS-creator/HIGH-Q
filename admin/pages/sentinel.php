@@ -928,6 +928,7 @@ function showReportModal() {
     // Risk level
     const riskLevel = critical.length > 0 ? 'CRITICAL' : (warnings.length > 3 ? 'HIGH' : (warnings.length > 0 ? 'MEDIUM' : 'LOW'));
     const riskColors = { CRITICAL: '#dc2626', HIGH: '#ea580c', MEDIUM: '#f59e0b', LOW: '#22c55e' };
+    const riskIcons = { CRITICAL: 'bx-error-circle', HIGH: 'bx-error', MEDIUM: 'bx-info-circle', LOW: 'bx-check-circle' };
     
     let html = `
         <div style="text-align: left; max-height: 60vh; overflow-y: auto;">
@@ -953,15 +954,15 @@ function showReportModal() {
             
             <!-- Risk Badge -->
             <div style="text-align: center; margin-bottom: 20px;">
-                <span style="display: inline-block; padding: 8px 20px; border-radius: 20px; background: ${riskColors[riskLevel]}; color: white; font-weight: bold; font-size: 12px;">
-                    ${riskLevel === 'CRITICAL' ? '🚨' : riskLevel === 'HIGH' ? '⚠️' : riskLevel === 'MEDIUM' ? '⚡' : '✅'} Risk Level: ${riskLevel}
+                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; border-radius: 20px; background: ${riskColors[riskLevel]}; color: white; font-weight: bold; font-size: 12px;">
+                    <i class='bx ${riskIcons[riskLevel]}'></i> Risk Level: ${riskLevel}
                 </span>
             </div>
     `;
     
     // Critical Issues
     if (critical.length > 0) {
-        html += `<div style="margin-bottom: 16px;"><h4 style="font-size: 14px; font-weight: bold; color: #dc2626; margin-bottom: 8px; border-bottom: 2px solid #dc2626; padding-bottom: 4px;">🚨 Critical Issues</h4>`;
+        html += `<div style="margin-bottom: 16px;"><h4 style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold; color: #dc2626; margin-bottom: 8px; border-bottom: 2px solid #dc2626; padding-bottom: 4px;"><i class='bx bx-error-circle'></i> Critical Issues</h4>`;
         critical.slice(0, 5).forEach(item => {
             html += renderFinding(item, 'critical');
         });
@@ -971,7 +972,7 @@ function showReportModal() {
     
     // Warnings
     if (warnings.length > 0) {
-        html += `<div style="margin-bottom: 16px;"><h4 style="font-size: 14px; font-weight: bold; color: #d97706; margin-bottom: 8px; border-bottom: 2px solid #d97706; padding-bottom: 4px;">⚠️ Warnings</h4>`;
+        html += `<div style="margin-bottom: 16px;"><h4 style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold; color: #d97706; margin-bottom: 8px; border-bottom: 2px solid #d97706; padding-bottom: 4px;"><i class='bx bx-error'></i> Warnings</h4>`;
         warnings.slice(0, 5).forEach(item => {
             html += renderFinding(item, 'warning');
         });
