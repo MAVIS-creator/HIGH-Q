@@ -33,22 +33,22 @@ try {
 </head>
 <body class="bg-slate-50">
 <div class="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500 p-8 shadow-xl text-white">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.12),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(255,255,255,0.1),transparent_30%)]"></div>
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 p-8 shadow-xl text-slate-900">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,0,0,0.05),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(0,0,0,0.05),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(0,0,0,0.04),transparent_30%)]"></div>
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-                <p class="text-xs uppercase tracking-[0.25em] text-indigo-100/80">Security Automation</p>
-                <h1 class="mt-2 text-3xl sm:text-4xl font-semibold leading-tight"><?= htmlspecialchars($pageTitle) ?></h1>
-                <p class="mt-2 text-indigo-50/90 max-w-2xl"><?= htmlspecialchars($pageSubtitle) ?></p>
+                <p class="text-xs uppercase tracking-[0.25em] text-amber-900/70">Security Automation</p>
+                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight"><?= htmlspecialchars($pageTitle) ?></h1>
+                <p class="mt-2 text-slate-800/80 max-w-2xl"><?= htmlspecialchars($pageSubtitle) ?></p>
             </div>
             <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
-                <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
-                    <span class="h-2 w-2 rounded-full bg-emerald-300"></span>
-                    <span>Engine Ready</span>
+                <span class="inline-flex items-center gap-2 bg-slate-900/10 backdrop-blur-md border border-slate-900/20 rounded-full px-4 py-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-slate-900">Engine Ready</span>
                 </span>
-                <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
+                <span class="inline-flex items-center gap-2 bg-slate-900/10 backdrop-blur-md border border-slate-900/20 rounded-full px-4 py-2">
                     <i class='bx bx-shield'></i>
-                    <span>Real-time defenses</span>
+                    <span class="text-slate-900">Real-time defenses</span>
                 </span>
             </div>
         </div>

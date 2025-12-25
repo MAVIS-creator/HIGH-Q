@@ -217,13 +217,14 @@ $stats = $pdo->query($statsQuery)->fetch();
     </div>
 </div>
 
-<div id="appointmentModal" class="modal" style="display:none;">
-    <div class="modal-content" style="max-width:700px;">
-        <div class="modal-header">
-            <h3><i class="bx bx-calendar"></i> Appointment Details</h3>
-            <button class="modal-close" onclick="closeModal()">&times;</button>
+<!-- Modal -->
+<div id="appointmentModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <h3 class="text-lg font-semibold text-slate-800 flex items-center gap-2"><i class="bx bx-calendar text-amber-500"></i>Appointment Details</h3>
+            <button onclick="closeModal()" class="h-8 w-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 transition">&times;</button>
         </div>
-        <div class="modal-body" id="appointmentDetails"></div>
+        <div class="p-6" id="appointmentDetails"></div>
     </div>
 </div>
 
@@ -235,83 +236,57 @@ function viewAppointment(id) {
     const visitDate = new Date(apt.visit_date + ' ' + apt.visit_time);
     const formattedDate = visitDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const formattedTime = visitDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    const statusColors = { 'pending': '#ff9800', 'confirmed': '#4caf50', 'rejected': '#f44336', 'completed': '#9c27b0' };
+    const statusColors = { 'pending': 'bg-amber-50 text-amber-700', 'confirmed': 'bg-emerald-50 text-emerald-700', 'rejected': 'bg-rose-50 text-rose-700', 'completed': 'bg-violet-50 text-violet-700' };
 
     let html = `
-        <div style="display:grid;gap:20px;">
-            <div style="background:#f5f5f5;padding:16px;border-radius:8px;">
-                <h4 style="margin:0 0 12px 0;color:#333;">Visitor Information</h4>
-                <div style="display:grid;gap:8px;">
-                    <div><strong>Name:</strong> ${apt.name}</div>
-                    <div><strong>Email:</strong> <a href="mailto:${apt.email}">${apt.email}</a></div>
-                    ${apt.phone ? `<div><strong>Phone:</strong> <a href="tel:${apt.phone}">${apt.phone}</a></div>` : ''}
-                </div>
+    <div class="space-y-5">
+        <div class="rounded-xl bg-slate-50 p-4">
+            <p class="text-xs font-semibold text-slate-500 mb-2">Visitor Information</p>
+            <p class="font-semibold text-slate-800">${apt.name}</p>
+            <p class="text-sm text-slate-600"><a href="mailto:${apt.email}" class="text-amber-600 hover:underline">${apt.email}</a></p>
+            ${apt.phone ? `<p class="text-sm text-slate-600"><a href="tel:${apt.phone}" class="text-amber-600 hover:underline">${apt.phone}</a></p>` : ''}
+        </div>
+        <div class="rounded-xl bg-slate-50 p-4">
+            <p class="text-xs font-semibold text-slate-500 mb-2">Visit Details</p>
+            <p class="text-sm"><span class="font-semibold">Date:</span> ${formattedDate}</p>
+            <p class="text-sm"><span class="font-semibold">Time:</span> ${formattedTime}</p>
+            <p class="text-sm mt-2"><span class="font-semibold">Status:</span> <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${statusColors[apt.status]}">${apt.status.toUpperCase()}</span></p>
+        </div>
+        ${apt.message ? `<div class="rounded-xl bg-slate-50 p-4"><p class="text-xs font-semibold text-slate-500 mb-2">Message</p><p class="text-sm text-slate-700 whitespace-pre-wrap">${apt.message}</p></div>` : ''}
+        <form method="post" class="rounded-xl border-2 border-slate-100 p-4 space-y-4">
+            <input type="hidden" name="action" value="update_status">
+            <input type="hidden" name="appointment_id" value="${apt.id}">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Update Status</label>
+                <select name="status" required class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-amber-400">
+                    <option value="pending" ${apt.status === 'pending' ? 'selected' : ''}>Pending</option>
+                    <option value="confirmed" ${apt.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                    <option value="rejected" ${apt.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                    <option value="completed" ${apt.status === 'completed' ? 'selected' : ''}>Completed</option>
+                </select>
             </div>
-            <div style="background:#f5f5f5;padding:16px;border-radius:8px;">
-                <h4 style="margin:0 0 12px 0;color:#333;">Visit Details</h4>
-                <div style="display:grid;gap:8px;">
-                    <div><strong>Date:</strong> ${formattedDate}</div>
-                    <div><strong>Time:</strong> ${formattedTime}</div>
-                    <div><strong>Status:</strong> <span style="background:${statusColors[apt.status]};color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;">${apt.status.toUpperCase()}</span></div>
-                    <div><strong>Requested:</strong> ${new Date(apt.created_at).toLocaleString()}</div>
-                </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Admin Notes</label>
+                <textarea name="admin_notes" rows="3" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm resize-none focus:border-amber-400" placeholder="Optional notes...">${apt.admin_notes || ''}</textarea>
             </div>
-            ${apt.message ? `<div style=\"background:#f5f5f5;padding:16px;border-radius:8px;\"><h4 style=\"margin:0 0 12px 0;color:#333;\">Message from Visitor</h4><p style=\"margin:0;white-space:pre-wrap;\">${apt.message}</p></div>` : ''}
-            <form method="post" style="background:#fff;border:2px solid #f0f0f0;padding:20px;border-radius:8px;">
-                <input type="hidden" name="action" value="update_status">
-                <input type="hidden" name="appointment_id" value="${apt.id}">
-                <div style="margin-bottom:16px;">
-                    <label style="display:block;margin-bottom:6px;font-weight:600;">Update Status</label>
-                    <select name="status" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;">
-                        <option value="pending" ${apt.status === 'pending' ? 'selected' : ''}>Pending</option>
-                        <option value="confirmed" ${apt.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
-                        <option value="rejected" ${apt.status === 'rejected' ? 'selected' : ''}>Rejected</option>
-                        <option value="completed" ${apt.status === 'completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </div>
-                <div style="margin-bottom:16px;">
-                    <label style="display:block;margin-bottom:6px;font-weight:600;">Admin Notes (visible to user in email)</label>
-                    <textarea name="admin_notes" rows="4" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;resize:vertical;" placeholder="Add any additional information or instructions for the visitor...">${apt.admin_notes || ''}</textarea>
-                </div>
-                <div style="display:flex;gap:12px;justify-content:flex-end;">
-                    <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
-                    <button type="submit" class="btn-primary"><i class="bx bx-save"></i> Save & Send Notification</button>
-                </div>
-            </form>
-            <div style="border-top:2px solid #f0f0f0;padding-top:16px;">
-                <form method="post" onsubmit="return confirm('Are you sure you want to delete this appointment? This action cannot be undone.');" style="display:inline;">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="appointment_id" value="${apt.id}">
-                    <button type="submit" class="btn-danger" style="background:#f44336;">
-                        <i class="bx bx-trash"></i> Delete Appointment
-                    </button>
-                </form>
+            <div class="flex gap-3 justify-end">
+                <button type="button" onclick="closeModal()" class="rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 text-sm transition">Cancel</button>
+                <button type="submit" class="rounded-lg bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold px-4 py-2 text-sm transition"><i class="bx bx-save"></i> Save & Notify</button>
             </div>
-        </div>`;
+        </form>
+        <form method="post" onsubmit="return confirm('Delete this appointment?');" class="pt-4 border-t border-slate-100">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="appointment_id" value="${apt.id}">
+            <button type="submit" class="rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-semibold px-4 py-2 text-sm transition"><i class="bx bx-trash"></i> Delete</button>
+        </form>
+    </div>`;
     document.getElementById('appointmentDetails').innerHTML = html;
-    document.getElementById('appointmentModal').style.display = 'flex';
+    document.getElementById('appointmentModal').classList.remove('hidden');
+    document.getElementById('appointmentModal').classList.add('flex');
 }
-function closeModal() { document.getElementById('appointmentModal').style.display = 'none'; }
+function closeModal() {
+    document.getElementById('appointmentModal').classList.add('hidden');
+    document.getElementById('appointmentModal').classList.remove('flex');
+}
 document.getElementById('appointmentModal')?.addEventListener('click', function(e){ if (e.target === this) closeModal(); });
 </script>
-
-<style>
-.filters-form input, .filters-form select { font-size: 14px; }
-.stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:16px; }
-.stat-card { background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); display:flex; align-items:center; gap:16px; }
-.stat-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; }
-.stat-info { display:flex; flex-direction:column; }
-.stat-info span { font-size:13px; color:#666; margin-bottom:4px; }
-.stat-info strong { font-size:24px; font-weight:700; color:#333; }
-.badge { padding:4px 10px; border-radius:12px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:4px; }
-.modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:10000; }
-.modal-content { background:#fff; border-radius:16px; max-width:90%; max-height:90vh; overflow-y:auto; box-shadow:0 30px 90px rgba(0,0,0,0.3); }
-.modal-header { padding:24px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; }
-.modal-header h3 { margin:0; display:flex; align-items:center; gap:8px; }
-.modal-close { background:transparent; border:none; font-size:28px; color:#999; cursor:pointer; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:all 0.2s; }
-.modal-close:hover { background:#f5f5f5; color:#333; }
-.modal-body { padding:24px; }
-.btn-sm { padding:6px 12px; font-size:13px; border-radius:6px; }
-.btn-danger { background:#f44336; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:500; display:inline-flex; align-items:center; gap:6px; }
-.btn-danger:hover { background:#d32f2f; }
-</style>
