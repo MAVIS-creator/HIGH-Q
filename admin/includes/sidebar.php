@@ -54,7 +54,9 @@ try {
                 ?>
                 <?php if ($show): ?>
                     <li>
-                        <a href="<?= $item['url']; ?>" class="<?= $current === $slug ? 'active' : ''; ?>">
+                        <a href="<?= $item['url']; ?>" 
+                           class="<?= $current === $slug ? 'active' : ''; ?>"
+                           <?= isset($item['target']) ? 'target="' . htmlspecialchars($item['target']) . '"' : ''; ?>>
                             <i class='<?= $item['icon']; ?>'></i>
                             <span><?= $item['title']; ?></span>
                         </a>
