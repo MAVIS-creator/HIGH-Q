@@ -881,6 +881,8 @@ function rejectRegistration(id) {
     });
 }
 </script>
+</div> <!-- .academic-page -->
+</main> <!-- .main-content -->
 </body>
 </html>
 
