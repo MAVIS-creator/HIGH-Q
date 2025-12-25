@@ -1,5 +1,5 @@
 <?php
-// Admin Security Scan page: Sentinel (Tailwind redesign)
+// Admin Security Scan page: Sentinel - Full-page layout
 $pageTitle = 'Security Scan';
 $pageSubtitle = 'Monitor security threats and run comprehensive scans';
 
@@ -23,33 +23,23 @@ try {
     $latestScans = [];
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body class="bg-slate-50">
-<div class="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 p-8 shadow-xl text-slate-900">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,0,0,0.05),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(0,0,0,0.05),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(0,0,0,0.04),transparent_30%)]"></div>
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <p class="text-xs uppercase tracking-[0.25em] text-amber-900/70">Security Automation</p>
-                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight"><?= htmlspecialchars($pageTitle) ?></h1>
-                <p class="mt-2 text-slate-800/80 max-w-2xl"><?= htmlspecialchars($pageSubtitle) ?></p>
+<div class="sentinel-fullscreen">
+    <!-- Hero Header -->
+    <div class="sentinel-hero">
+        <div class="sentinel-hero-content">
+            <div class="sentinel-hero-text">
+                <span class="sentinel-hero-badge"><i class='bx bx-shield-quarter'></i> Security Automation</span>
+                <h1 class="sentinel-hero-title"><?= htmlspecialchars($pageTitle) ?></h1>
+                <p class="sentinel-hero-subtitle"><?= htmlspecialchars($pageSubtitle) ?></p>
             </div>
-            <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
-                <span class="inline-flex items-center gap-2 bg-slate-900/10 backdrop-blur-md border border-slate-900/20 rounded-full px-4 py-2">
-                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                    <span class="text-slate-900">Engine Ready</span>
+            <div class="sentinel-hero-actions">
+                <span class="hero-status-pill hero-status-pill--success">
+                    <span class="status-dot status-dot--success"></span>
+                    <span>Engine Ready</span>
                 </span>
-                <span class="inline-flex items-center gap-2 bg-slate-900/10 backdrop-blur-md border border-slate-900/20 rounded-full px-4 py-2">
+                <span class="hero-status-pill">
                     <i class='bx bx-shield'></i>
-                    <span class="text-slate-900">Real-time defenses</span>
+                    <span>Real-time defenses</span>
                 </span>
             </div>
         </div>
