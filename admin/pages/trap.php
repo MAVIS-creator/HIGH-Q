@@ -197,7 +197,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 @media (max-width: 768px) {
     .admin-page-fullscreen {
-        margin: -24px -16px -16px -16px;
+        margin: -24px -16px 0 -16px;
     }
     
     .fullscreen-hero {
