@@ -6,17 +6,21 @@
     margin-left: var(--sidebar-width);
 }
 
-/* Make admin footer relative and always at bottom */
+/* Make admin footer stick to bottom and not overlap sidebar */
 .admin-footer {
     position: relative;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    width: calc(100% - var(--sidebar-width));
     margin-left: var(--sidebar-width);
     background: linear-gradient(90deg, #ffd54f, #ffb300);
     color: #111;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
     border-top: none;
+    z-index: 50;
+}
+
+body.sidebar-collapsed .admin-footer {
+    width: 100%;
+    margin-left: 0;
 }
 
 .footer-card {
@@ -34,7 +38,7 @@
     background: linear-gradient(90deg, #ffd54f, #ffb300);
     border-radius: 0;
     padding: 18px 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    box-shadow: none;
 }
 
 .footer-card-left {
@@ -372,17 +376,9 @@
         left: 20px;
         right: 20px;
     }
-}
-
-@media(min-width: 992px) {
-    /* Fix footer alignment with main content when sidebar is present */
-    .admin-footer .footer-card {
-        margin-left: calc(var(--sidebar-width) + 18px); /* match page content left offset */
-        max-width: calc(100% - (var(--sidebar-width) + 36px));
+    
+    .admin-footer {
+        width: 100%;
+        margin-left: 0;
     }
-}
-
-body.sidebar-collapsed .admin-footer .footer-card {
-    margin-left: 18px;
-    max-width: calc(100% - 36px);
 }
