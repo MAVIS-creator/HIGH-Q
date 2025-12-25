@@ -603,9 +603,12 @@ $csrf = generateToken('settings_form');
             </div>
 
             <div class="tab-panel" data-panel="security">
-                <div class="card">
-                    <h3><i class="bx bxs-shield"></i> Security & System Settings</h3>
-                    <p class="muted">Core security features and user-related system options.</p>
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><i class="bx bxs-shield"></i> Security & System Settings</h3>
+                    </div>
+                    <div class="admin-card-body">
+                    <p class="text-muted mb-4">Core security features and user-related system options.</p>
                     <?php
                         $sec = [
                             'maintenance' => ['label'=>'Maintenance Mode','desc'=>'Temporarily disable public access to the site'],
@@ -663,9 +666,12 @@ $csrf = generateToken('settings_form');
             </div>
 
             <div class="tab-panel" data-panel="notifications">
-                <div class="card">
-                    <h3><i class="bx bxs-bell"></i> Notifications</h3>
-                    <p class="muted">Choose which channels the system should use to notify users.</p>
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><i class="bx bxs-bell"></i> Notifications</h3>
+                    </div>
+                    <div class="admin-card-body">
+                    <p class="text-muted mb-4">Choose which channels the system should use to notify users.</p>
                     <?php
                         $notes = [
                             'email' => ['label'=>'Email Notifications','desc'=>'Send email notifications for important events'],
@@ -696,9 +702,12 @@ $csrf = generateToken('settings_form');
             </div>
 
             <div class="tab-panel" data-panel="advanced">
-                <div class="card">
-                    <h3><i class="bx bxs-shield-quarter"></i> Advanced Security</h3>
-                    <p class="muted">Advanced protections and diagnostic options for administrators.</p>
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><i class="bx bxs-shield-quarter"></i> Advanced Security</h3>
+                    </div>
+                    <div class="admin-card-body">
+                    <p class="text-muted mb-4">Advanced protections and diagnostic options for administrators.</p>
                     <?php
                         $adv = [
                           'ip_logging'=>['label'=>'IP Address Logging','desc'=>'Log visitor IP addresses for security monitoring'],
