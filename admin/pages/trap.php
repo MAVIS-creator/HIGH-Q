@@ -48,8 +48,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <style>
 .admin-page-fullscreen {
-    margin: -24px -32px -32px -32px;
-    min-height: calc(100vh - 60px);
+    margin: -24px -32px 0 -32px;
+    min-height: calc(100vh - 180px);
     display: flex;
     flex-direction: column;
 }
