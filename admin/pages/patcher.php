@@ -95,16 +95,16 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
         }
         
         .btn-new-file {
-            background: #0e639c;
-            color: white;
+            background: #fbbf24;
+            color: #1e1e1e;
         }
         
         .btn-new-file:hover {
-            background: #1177bb;
+            background: #f59e0b;
         }
         
         .btn-new-folder {
-            background: #6f42c1;
+            background: #475569;
             color: white;
         }
         
