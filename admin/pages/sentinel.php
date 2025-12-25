@@ -118,26 +118,24 @@ try {
                             <i class='bx bx-play'></i>
                             Start Scan
                         </button>
-                        <button onclick="emailReport()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition">
+                        <button onclick="emailReport()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-slate-700 to-slate-800 px-4 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition">
                             <i class='bx bx-envelope'></i>
                             Email Report
                         </button>
                     </div>
                 </div>
 
-                <div id="scanProgress" class="hidden rounded-xl border border-emerald-100 bg-emerald-50 p-4">
-                    <div class="flex items-center justify-between text-sm text-emerald-700">
+                <div id="scanProgress" class="hidden rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <div class="flex items-center justify-between text-sm text-amber-700">
                         <span id="scanStatus" class="font-semibold">Initializing scan...</span>
                         <span id="progressText" class="font-semibold">0%</span>
                     </div>
-                    <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-emerald-100">
-                        <div id="progressFill" class="h-2 w-0 rounded-full bg-gradient-to-r from-emerald-500 to-indigo-500 transition-all duration-300"></div>
+                    <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-amber-100">
+                        <div id="progressFill" class="h-2 w-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-300"></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Threat Summary -->
         <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
             <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/60">
                 <div>
