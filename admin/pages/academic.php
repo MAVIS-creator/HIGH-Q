@@ -626,36 +626,92 @@ if ($hasRegistrations) {
         .page-hero-academic {
             background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
             border-radius: 1rem;
-            padding: 2rem;
+            padding: 2.5rem;
             color: white;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+        .page-hero-academic h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 0.5rem 0;
+        }
+        .page-hero-academic p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        .filter-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
+        }
+        .filter-card input, .filter-card select {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+        }
+        .filter-card input:focus, .filter-card select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         .student-card {
             background: white;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             border: 1px solid #e2e8f0;
-            padding: 1.25rem;
+            padding: 1.5rem;
             transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .student-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border-color: #fbbf24;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        .student-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        .student-card p {
+            font-size: 0.9rem;
+            color: #64748b;
         }
         .status-badge-pending {
             background: #fef3c7;
             color: #92400e;
-            padding: 0.25rem 0.75rem;
+            padding: 0.35rem 0.85rem;
             border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
         .status-badge-confirmed {
             background: #d1fae5;
             color: #065f46;
-            padding: 0.25rem 0.75rem;
+            padding: 0.35rem 0.85rem;
             border-radius: 9999px;
             font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
         }
     </style>
 </head>

@@ -1,7 +1,10 @@
 <?php
 // admin/includes/footer.php
+// Check if main tag needs closing (some pages handle it themselves)
+if (!isset($skipMainClose) || !$skipMainClose) {
+    echo '</main>';
+}
 ?>
-    </main>
     <footer class="admin-footer">
         <div class="footer-inner">
             <div class="footer-brand">

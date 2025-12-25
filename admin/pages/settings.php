@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 
 require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/scan.php';
+// Note: scan.php include removed - file doesn't exist, security scan functions are in includes/functions.php
 
 // Only users with 'settings' permission may access
 requirePermission('settings');

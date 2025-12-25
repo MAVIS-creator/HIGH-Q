@@ -65,7 +65,7 @@ if (!headers_sent()) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/storage-helper.js"></script>
-    <script src="../assets/js/sweetalert-config.js" defer></script>
+    <script src="../assets/js/sweetalert-config.js"></script>
     <script src="../assets/js/notifications.js" defer></script>
     <script src="../assets/js/header-notifications.js" defer></script>
     <script src="../assets/js/viewport-check.js" defer></script>
