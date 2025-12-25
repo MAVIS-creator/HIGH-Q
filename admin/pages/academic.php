@@ -608,567 +608,237 @@ if ($hasRegistrations) {
   }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Students - HIGH Q SOLID ACADEMY</title>
-  <link rel="stylesheet" href="../assets/css/users.css">
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admissions Management — Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
+<body class="bg-slate-50">
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<div class="users-page">
-
-  <div class="page-header">
-    <div class="page-header-info">
-      <h1>Admissions Management</h1>
-      <p>Manage student registration applications</p>
-      <p class="registration-count"><?= $total ?> registrations</p>
-    </div>
-  </div>
-
-  <div class="summary-cards">
-    <div class="card"><h3><?= $total ?></h3><p>Total</p></div>
-    <div class="card"><h3><?= $active ?></h3><p>Approved</p></div>
-    <div class="card"><h3><?= $pending ?></h3><p>Enrolled</p></div>
-    <div class="card"><h3><?= $banned ?></h3><p>Rejected</p></div>
-  </div>
-
-  <div class="user-filters">
-    <div class="filter-controls">
-      <input type="text" id="searchInput" placeholder="Search by name, email, program, or phone…">
-      <select id="statusFilter">
-        <option value="">All Statuses</option>
-        <option value="active">Approved</option>
-        <option value="pending">Enrolled</option>
-        <option value="banned">Rejected</option>
-      </select>
-    </div>
-    <div class="source-toggle">
-      <a href="index.php?pages=students" class="source-btn <?= ($current_source==='regular' || $current_source==='') ? 'source-btn-active' : '' ?>">All / Regular</a>
-      <?php if ($hasPostUtme): ?>
-        <a href="index.php?pages=students&source=postutme" class="source-btn <?= ($current_source==='postutme') ? 'source-btn-active' : '' ?>">Post‑UTME</a>
-      <?php endif; ?>
-    </div>
-  </div>
-
-  <div class="users-list" id="studentsList">
-    <?php if (!empty($hasRegistrations)): ?>
-    <?php foreach ($students as $s): ?>
-      <div class="user-card" data-status="<?= htmlspecialchars($s['status'] ?? 'pending') ?>" data-id="<?= $s['id'] ?>">
-          <div class="card-left">
-            <?php $passportThumb = $s['passport_path'] ?? null; ?>
-            <img src="<?= htmlspecialchars($passportThumb ?: app_url('public/assets/images/hq-logo.jpeg')) ?>" class="avatar-sm card-avatar" onerror="this.src='<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>'">
-            <div class="card-meta">
-              <div class="card-name"><?= htmlspecialchars($s['first_name'] . ' ' . ($s['last_name'] ?: '')) ?></div>
-              <div class="card-email"><?= htmlspecialchars($s['email'] ?? $s['user_name'] ?? '') ?></div>
-              <div class="card-badges">
-                <span class="role-badge role-student">Student</span>
-                <span class="status-badge <?= ($s['status']==='paid' || $s['status']==='confirmed') ? 'status-active' : 'status-pending' ?>"><?= htmlspecialchars(ucfirst($s['status'])) ?></span>
-              </div>
+<div class="min-h-screen w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 ml-[var(--sidebar-width)] transition-all duration-300">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 p-8 shadow-xl text-white">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.1),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_25%)]"></div>
+        <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <p class="text-xs uppercase tracking-[0.2em] text-blue-100/80">Student Affairs</p>
+                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight">Admissions Management</h1>
+                <p class="mt-2 text-blue-100/90 max-w-2xl">Manage student registrations and applications</p>
             </div>
-          </div>
-          <div class="card-right">
-            <div class="card-actions">
-              <!-- view icon removed as requested -->
-              <?php if (empty($s['__postutme'])): ?>
-                <?php if (!empty($s['status'])): ?>
-                  <button class="btn btn-approve inline-confirm" data-id="<?= $s['id'] ?>">Confirm</button>
-                  <button class="btn btn-banish inline-reject" data-id="<?= $s['id'] ?>">Reject</button>
-                <?php endif; ?>
-
-                <!-- Export registration (zip) - always available for registrations -->
-                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>" onclick="return false;">Export</button>
-                <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
-                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                  <button type="submit" class="btn-banish">Delete</button>
-                </form>
-              <?php else: ?>
-                <!-- post-UTME entries: only allow export and deletion of the post_utme_registrations row -->
-                <button class="btn btn-export" type="button" data-id="<?= $s['id'] ?>">Export</button>
-                <form method="post" action="index.php?pages=students&action=delete_postutme&id=<?= $s['id'] ?>" class="inline-form student-delete-form" style="display:inline-block;">
-                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                  <button type="submit" class="btn-banish">Delete</button>
-                </form>
-              <?php endif; ?>
+            <div class="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                <span class="text-white font-medium"><?= number_format($total) ?> Total Registrations</span>
             </div>
-            <div class="card-details" style="margin-top:10px;padding:12px;border-radius:6px;background:#fff;">
-              <div><strong>DOB:</strong> <?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
-              <div><strong>Address:</strong> <?= htmlspecialchars(strlen($s['home_address']??'')>80 ? substr($s['home_address'],0,80).'...' : ($s['home_address']??'-')) ?></div>
-              <div><strong>Emergency:</strong> <?= htmlspecialchars(($s['emergency_contact_name'] ?? '-') . ' / ' . ($s['emergency_contact_phone'] ?? '-')) ?></div>
-              <div style="margin-top:8px;"><a href="#" class="view-registration" data-id="<?= $s['id'] ?>">View full registration</a></div>
-            </div>
-          </div>
         </div>
-      <?php endforeach; ?>
+    </div>
 
-      <!-- Pagination -->
-      <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); $baseLink = 'index.php?pages=students' . ($current_source==='postutme' ? '&source=postutme' : ''); ?>
-        <div class="pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
-      <?php for ($p=1;$p<=$pages;$p++): ?>
-  <a href="<?= $baseLink . '&page=' . $p ?>" class="btn <?= $p==($page??1)?'btn-active':'' ?>"><?= $p ?></a>
-          <?php endfor; ?>
-        </div>
-      <?php endif; ?>
-
-    <?php else: ?>
-      <?php foreach ($students as $s):
-        $status = $s['is_active']==1 ? 'Active' : ($s['is_active']==0 ? 'Pending' : 'Banned');
-        $roleClass = 'role-student';
-        // Try to find a registration linked to this user so we can show passport and allow export
-        $regStmt = $pdo->prepare('SELECT id, passport_path, status, email FROM student_registrations WHERE user_id = ? LIMIT 1');
-        $regStmt->execute([$s['id']]);
-        $regRow = $regStmt->fetch(PDO::FETCH_ASSOC);
-        // If no registration linked by user_id (older/guest registrations), try matching by email
-        if (!$regRow) {
-          $regStmt2 = $pdo->prepare('SELECT id, passport_path, status FROM student_registrations WHERE email = ? LIMIT 1');
-          $regStmt2->execute([$s['email']]);
-          $regRow = $regStmt2->fetch(PDO::FETCH_ASSOC);
-        }
-        $linkedRegId = $regRow['id'] ?? null;
-        $passportThumb = $regRow['passport_path'] ?? ($s['avatar'] ?? null);
-      ?>
-      <div class="user-card" data-status="<?= $s['is_active']==1?'active':($s['is_active']==0?'pending':'banned') ?>" data-id="<?= $linkedRegId ?? '' ?>">
-        <div class="card-left">
-          <img src="<?= htmlspecialchars($passportThumb ?: app_url('public/assets/images/hq-logo.jpeg')) ?>" class="avatar-sm card-avatar" onerror="this.src='<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>'">
-          <div class="card-meta">
-            <div class="card-name"><?= htmlspecialchars($s['name']) ?></div>
-            <div class="card-email"><?= htmlspecialchars($s['email']) ?></div>
-            <div class="card-badges">
-              <span class="role-badge <?= $roleClass ?>">Student</span>
-              <span class="status-badge <?= $status==='Active' ? 'status-active' : ($status==='Pending' ? 'status-pending' : 'status-banned') ?>"><?= $status ?></span>
+    <!-- Controls & Filters -->
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div class="flex items-center gap-4 w-full md:w-auto">
+            <div class="relative flex-1 md:w-80">
+                <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+                <input type="text" id="searchInput" placeholder="Search by name, email..." 
+                       class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
             </div>
-          </div>
+            <select id="statusFilter" class="rounded-xl border border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-slate-50">
+                <option value="">All Statuses</option>
+                <option value="active">Approved</option>
+                <option value="pending">Pending</option>
+                <option value="banned">Rejected</option>
+            </select>
         </div>
-        <div class="card-right">
-          <div class="card-actions">
-            <!-- view icon removed as requested -->
-              <?php if ($s['id'] != 1 && $s['id'] != $_SESSION['user']['id']): ?>
-              <?php if ($s['is_active'] == 1): ?>
-                <form method="post" action="index.php?pages=students&action=deactivate&id=<?= $s['id'] ?>" class="inline-form">
-                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                  <button type="submit" class="btn-banish">Deactivate</button>
-                </form>
-              <?php elseif ($s['is_active'] == 0): ?>
-                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
-                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                  <button type="submit" class="btn-approve">Activate</button>
-                </form>
-              <?php else: ?>
-                <form method="post" action="index.php?pages=students&action=activate&id=<?= $s['id'] ?>" class="inline-form">
-                  <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                  <button type="submit" class="btn-approve">Reactivate</button>
-                </form>
-              <?php endif; ?>
-              <?php if (!empty($linkedRegId)): ?>
-                <button class="btn btn-export" type="button" data-id="<?= $linkedRegId ?>">Export</button>
-              <?php endif; ?>
-              <form method="post" action="index.php?pages=students&action=delete&id=<?= $s['id'] ?>" class="inline-form student-delete-form">
-                <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
-                <button type="submit" class="btn-banish">Delete</button>
-              </form>
+        
+        <div class="flex bg-slate-100 p-1 rounded-xl">
+            <a href="index.php?pages=students" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='regular' || $current_source==='') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Regular</a>
+            <?php if ($hasPostUtme): ?>
+            <a href="index.php?pages=students&source=postutme" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='postutme') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Post-UTME</a>
             <?php endif; ?>
-          </div>
         </div>
-      </div>
-      <?php endforeach; ?>
-    <?php endif; ?>
-  </div>
+    </div>
 
+    <!-- Students Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="studentsList">
+        <?php if (!empty($students)): ?>
+            <?php foreach ($students as $s): 
+                $status = $s['status'] ?? ($s['is_active']==1 ? 'active' : ($s['is_active']==0 ? 'pending' : 'banned'));
+                $displayName = $s['first_name'] ?? $s['name'] ?? 'Unknown';
+                if (isset($s['last_name'])) $displayName .= ' ' . $s['last_name'];
+                $displayEmail = $s['email'] ?? $s['user_name'] ?? '';
+                $passportThumb = $s['passport_path'] ?? ($s['avatar'] ?? null);
+                $isPostUtme = !empty($s['__postutme']);
+            ?>
+            <div class="user-card group relative bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex flex-col h-full"
+                 data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>">
+                
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="h-14 w-14 rounded-full overflow-hidden bg-slate-100 ring-2 ring-white shadow-sm flex-shrink-0">
+                        <img src="<?= htmlspecialchars($passportThumb ?: app_url('public/assets/images/hq-logo.jpeg')) ?>" 
+                             class="h-full w-full object-cover" 
+                             onerror="this.src='<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>'">
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-slate-900 truncate card-name"><?= htmlspecialchars($displayName) ?></h3>
+                        <p class="text-sm text-slate-500 truncate card-email"><?= htmlspecialchars($displayEmail) ?></p>
+                        <div class="flex gap-2 mt-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">Student</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium 
+                                <?= ($status==='paid' || $status==='confirmed' || $status==='active') ? 'bg-emerald-50 text-emerald-700' : 
+                                   (($status==='rejected' || $status==='banned') ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700') ?>">
+                                <?= htmlspecialchars(ucfirst($status)) ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-slate-100 flex flex-wrap gap-2 justify-end">
+                    <?php if (!$isPostUtme): ?>
+                        <?php if (!empty($s['status'])): ?>
+                            <button onclick="confirmRegistration(<?= $s['id'] ?>)" class="px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
+                                Confirm
+                            </button>
+                            <button onclick="rejectRegistration(<?= $s['id'] ?>)" class="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+                                Reject
+                            </button>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    
+                    <button onclick="viewRegistration(<?= $s['id'] ?>)" class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                        View
+                    </button>
+                    
+                    <form method="post" action="index.php?pages=students&action=<?= $isPostUtme ? 'delete_postutme' : 'delete' ?>&id=<?= $s['id'] ?>" class="inline-block" onsubmit="return confirm('Are you sure?');">
+                        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                        <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
+                            <i class='bx bx-trash text-lg'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="col-span-full text-center py-12 text-slate-500">
+                <i class='bx bx-folder-open text-4xl mb-2'></i>
+                <p>No registrations found.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Pagination -->
+    <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); $baseLink = 'index.php?pages=students' . ($current_source==='postutme' ? '&source=postutme' : ''); ?>
+    <div class="flex justify-center gap-2 mt-8">
+        <?php for ($p=1;$p<=$pages;$p++): ?>
+            <a href="<?= $baseLink . '&page=' . $p ?>" 
+               class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= $p==($page??1) ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200' ?>">
+                <?= $p ?>
+            </a>
+        <?php endfor; ?>
+    </div>
+    <?php endif; ?>
 </div>
 
 <?php include '../includes/footer.php'; ?>
 
 <script>
-// Client-side search/filter
-const searchInput = document.getElementById('searchInput');
-const statusFilter = document.getElementById('statusFilter');
-const studentsList = document.getElementById('studentsList');
-
-function filterStudents(){
-  const q = searchInput.value.toLowerCase();
-  const status = statusFilter.value;
-  document.querySelectorAll('#studentsList .user-card').forEach(card=>{
-    const name = card.querySelector('.card-name').textContent.toLowerCase();
-    const email = card.querySelector('.card-email').textContent.toLowerCase();
-    const cardStatus = card.dataset.status;
-    const matchesQ = q==='' || name.includes(q) || email.includes(q);
-    const matchesStatus = status==='' || cardStatus===status;
-    card.style.display = (matchesQ && matchesStatus) ? '' : 'none';
-  });
-}
-searchInput.addEventListener('input', filterStudents);
-statusFilter.addEventListener('change', filterStudents);
-
-
-searchInput.addEventListener('input', filterStudents);
-statusFilter.addEventListener('change', filterStudents);
-
-// View registration link behavior: fetch registration JSON and show modal with Confirm/Reject
-const __students_csrf = '<?= $csrf ?>';
-document.querySelectorAll('.view-registration').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    const id = this.dataset.id;
-    const body = new URLSearchParams();
-    body.append('action', 'view_registration');
-    body.append('id', id);
-    // include CSRF token if desired by server-side protections
-    body.append('csrf_token', __students_csrf);
-
-  fetch('index.php?pages=students', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
-      body: body.toString()
-    })
-    .then(res => res.json())
-    .then(resp => {
-      if (resp.success) {
-        const d = resp.data;
-        document.getElementById('registrationContent').innerHTML = `
-          <div style="max-height:480px;overflow:auto;">
-            <h4>${d.first_name || ''} ${d.last_name || ''}</h4>
-            <p><strong>Email:</strong> ${d.email || ''}</p>
-            <p><strong>Date of Birth:</strong> ${d.date_of_birth || ''}</p>
-            <p><strong>Home Address:</strong> ${d.home_address || ''}</p>
-            <p><strong>Previous Education:</strong> ${d.previous_education || ''}</p>
-            <p><strong>Academic Goals:</strong> ${d.academic_goals || ''}</p>
-            <p><strong>Emergency Contact:</strong> ${d.emergency_contact_name || ''} (${d.emergency_relationship || ''}) - ${d.emergency_contact_phone || ''}</p>
-            <p><strong>Status:</strong> ${d.status || ''}</p>
-            <p><strong>Registered At:</strong> ${d.created_at || ''}</p>
-          </div>
-        `;
-        const modal = document.getElementById('registrationViewModal');
-        modal.dataset.regId = id;
-        modal.style.display = 'flex';
-      } else {
-        Swal.fire('Error', resp.error || 'Registration not found', 'error');
-      }
-    }).catch(err => { console.error(err); Swal.fire('Error','Failed to load registration','error'); });
-  });
-});
-</script>
-
-<script>
-// Create payment link via AJAX and show result
-async function createPaymentLink(studentId) {
-  try {
-    const body = new URLSearchParams();
-    body.append('action', 'create_payment_link');
-    body.append('id', studentId);
-
-  const res = await fetch('index.php?pages=students', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
-      body: body.toString()
+// Client-side search
+document.getElementById('searchInput').addEventListener('keyup', function(e) {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('.user-card').forEach(card => {
+        const name = card.querySelector('.card-name').textContent.toLowerCase();
+        const email = card.querySelector('.card-email').textContent.toLowerCase();
+        card.style.display = (name.includes(q) || email.includes(q)) ? 'flex' : 'none';
     });
-    const data = await res.json();
-    if (data.success) {
-      Swal.fire({
-        title: '<i class="bx bx-check-circle"></i> Payment Link Created',
-        html: `
-          <p>Reference: <code>${data.reference}</code></p>
-          <p><a href="${data.link}" target="_blank">${data.link}</a></p>
-        `,
-        icon: 'success',
-        timer: 10000,
-        showConfirmButton: true
-      });
-    } else {
-      Swal.fire('Error', data.error || 'Unknown error', 'error');
-    }
-  } catch (err) {
-    Swal.fire('Error', err.message || 'Unexpected error', 'error');
-  }
-}
-
-// Hook up button in registration modal
-const regCreatePaymentBtn = document.getElementById('regCreatePaymentBtn');
-if (regCreatePaymentBtn) {
-  regCreatePaymentBtn.addEventListener('click', () => {
-    const id = regModal.dataset.regId;
-    if (!id) return Swal.fire('Error','No registration selected','error');
-    createPaymentLink(id);
-  });
-}
-</script>
-
-<!-- Approve & Message Modal -->
-<div id="studentModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
-  <div class="modal-content" style="background:#fff;padding:18px;border-radius:8px;max-width:560px;width:94%;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
-    <h3 id="modalTitle">Message Student</h3>
-    <form id="modalForm" method="post">
-      <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-      <div style="margin-bottom:8px;"><label>To: <span id="modalStudentName"></span> (<span id="modalStudentEmail"></span>)</label></div>
-      <div style="margin-bottom:8px;"><label>Message</label><textarea name="message" rows="6" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;"></textarea></div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;"><label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" name="activate" id="modalActivate"> Activate student</label></div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;"><button type="button" id="modalCancel" class="btn">Cancel</button><button type="submit" class="btn btn-approve">Send & Close</button></div>
-    </form>
-  </div>
-</div>
-
-<script>
-// Modal wiring
-const modal = document.getElementById('studentModal');
-const modalTitle = document.getElementById('modalTitle');
-const modalStudentName = document.getElementById('modalStudentName');
-const modalStudentEmail = document.getElementById('modalStudentEmail');
-const modalForm = document.getElementById('modalForm');
-const modalCancel = document.getElementById('modalCancel');
-
-function openStudentModal(id, name, email){
-  modal.style.display = 'flex';
-  modalStudentName.textContent = name;
-  modalStudentEmail.textContent = email;
-  modalForm.action = 'index.php?pages=students&action=send_message&id=' + encodeURIComponent(id);
-}
-
-modalCancel.addEventListener('click', ()=> modal.style.display='none');
-
-// Attach openers to each student card view button (augment existing)
-document.querySelectorAll('.user-card .btn-view').forEach(btn=>{
-  btn.addEventListener('contextmenu', e=>e.preventDefault());
-  btn.addEventListener('dblclick', e=>{
-    // double-click to open approve/message modal
-    const card = btn.closest('.user-card');
-    const id = btn.dataset.userId;
-    const name = card.querySelector('.card-name').textContent.trim();
-    const email = card.querySelector('.card-email').textContent.trim();
-    openStudentModal(id, name, email);
-  });
 });
 
-// Close modal when clicking outside content
-modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
-</script>
-
-<!-- Registration View & Approve/Reject Modal -->
-<div id="registrationViewModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
-  <div class="modal-content" style="background:#fff;padding:18px;border-radius:8px;max-width:780px;width:96%;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
-    <h3 id="regModalTitle">Registration</h3>
-    <div id="registrationContent" style="margin-bottom:12px;"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button id="regClose" type="button" class="btn">Close</button>
-      <form id="regConfirmForm" method="post" style="display:inline;">
-        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-        <button type="submit" class="btn btn-approve">Confirm</button>
-      </form>
-      <button id="regRejectBtn" class="btn btn-banish">Reject</button>
-      <button id="regCreatePaymentBtn" class="btn header-cta" style="margin-left:8px;">Create payment link</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// Registration modal handlers
-const regModal = document.getElementById('registrationViewModal');
-const regClose = document.getElementById('regClose');
-const regConfirmForm = document.getElementById('regConfirmForm');
-const regRejectBtn = document.getElementById('regRejectBtn');
-
-regClose.addEventListener('click', ()=> regModal.style.display='none');
-regModal.addEventListener('click', (e)=>{ if (e.target === regModal) regModal.style.display='none'; });
-
-// When confirm form is submitted, POST to confirm_registration
-// Helper to POST action and reload
-async function postAction(url, formData){
-  const res = await fetch(url, { method: 'POST', body: formData, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} });
-  let payload = null;
-  try { payload = await res.json(); } catch (e) { payload = null; }
-  if (!res.ok || !payload) {
-    const msg = payload && (payload.message || payload.error) ? (payload.message || payload.error) : 'Server error';
-    await Swal.fire('Error', msg, 'error');
-    throw new Error(msg);
-  }
-
-  const ok = (payload.status && payload.status === 'ok') || (payload.success === true);
-  if (!ok) {
-    const msg = payload.message || payload.error || 'Operation failed';
-    await Swal.fire('Error', msg, 'error');
-    throw new Error(msg);
-  }
-
-  // Show success with optional details (reference / email_sent / email)
-  let details = '';
-  if (payload.reference) details += `<div style="margin-top:8px"><strong>Reference:</strong> <code>${payload.reference}</code></div>`;
-  if (typeof payload.email_sent !== 'undefined') details += `<div><strong>Email sent:</strong> ${payload.email_sent ? 'Yes' : 'No'}</div>`;
-  if (payload.email) details += `<div><strong>Email:</strong> ${payload.email}</div>`;
-  const message = payload.message || 'Operation completed';
-  const html = message + (details ? `<hr/>${details}` : '');
-  await Swal.fire({ title: 'Success', html: html, icon: 'success' });
-  return payload;
-}
-
-// Confirm (modal) handler
-regConfirmForm.addEventListener('submit', async function(e){
-  e.preventDefault();
-  const id = regModal.dataset.regId;
-  if (!id) return Swal.fire('Error','No registration selected','error');
-  const choice = await Swal.fire({ title: 'Confirm registration?', text: 'Create payment reference to send to registrant?', icon:'question', showDenyButton:true, showCancelButton:true, confirmButtonText:'Confirm only', denyButtonText:'Create payment & confirm' });
-  try {
-    if (choice.isConfirmed) {
-      const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-  const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
-  // success shown by postAction; reload to reflect changes
-  window.location = 'index.php?pages=students';
-    } else if (choice.isDenied) {
-      const { value: formValues } = await Swal.fire({
-        title: 'Create payment',
-        html: '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
-              '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
-        focusConfirm: false,
-        preConfirm: () => ({ amount: document.getElementById('swal-amount').value, method: document.getElementById('swal-method').value })
-      });
-      if (!formValues) return;
-      const amt = parseFloat(formValues.amount || 0);
-      if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
-      const fd = new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-  const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
-  window.location = 'index.php?pages=students';
-    }
-  } catch (err) {
-    Swal.fire('Error','Failed to confirm','error');
-  }
+document.getElementById('statusFilter').addEventListener('change', function(e) {
+    const status = e.target.value.toLowerCase();
+    document.querySelectorAll('.user-card').forEach(card => {
+        const cardStatus = card.dataset.status;
+        if (!status) card.style.display = 'flex';
+        else card.style.display = (cardStatus.includes(status)) ? 'flex' : 'none';
+    });
 });
 
-// Reject (modal) via SweetAlert2 textarea
-regRejectBtn.addEventListener('click', ()=>{
-  const id = regModal.dataset.regId;
-  if (!id) return Swal.fire('Error','No registration selected','error');
-  Swal.fire({
-    title: 'Reject registration',
-    input: 'textarea',
-    inputLabel: 'Reason (optional)',
-    inputPlaceholder: 'Enter a reason for rejection',
-    showCancelButton: true,
-    confirmButtonText: 'Reject',
-    cancelButtonText: 'Cancel',
-    inputAttributes: { 'aria-label': 'Rejection reason' }
-  }).then(result=>{
-    if (result.isConfirmed) {
-      (async ()=>{
-        try {
-      const fd = new FormData(); fd.append('csrf_token', '<?= $csrf ?>'); fd.append('reason', result.value || '');
-  const payload = await postAction('index.php?pages=students&action=reject_registration&id=' + encodeURIComponent(id), fd);
-          // update UI: remove buttons and mark status
-          const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
-          if (card) {
-            card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
-            const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Rejected'; badge.classList.remove('status-pending'); badge.classList.remove('status-active'); badge.classList.add('status-banned'); }
-          }
-        } catch (e) { Swal.fire('Error','Failed to reject','error'); }
-      })();
-    }
-  });
-});
-
-// Delegated inline Confirm/Reject handlers
-document.addEventListener('click', function(e){
-  const t = e.target.closest('.inline-confirm');
-    if (t) {
-    const id = t.dataset.id;
-    if (!id) return Swal.fire('Error','No registration id','error');
-    // Ask if admin wants to create a payment right away
-    Swal.fire({
-      title: 'Confirm registration?',
-      text: 'Do you want to create a payment reference to send to the registrant now?',
-      icon: 'question',
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: 'Confirm only',
-      denyButtonText: 'Create payment & confirm'
-    }).then(async res=>{
-        if (res.isConfirmed) {
-              const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>');
-              try {
-              const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
-                // postAction already displayed success and details. update UI: hide confirm/reject buttons and set status badge
-                const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
-                if (card) {
-                  card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
-                  const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Confirmed'; badge.classList.remove('status-pending'); badge.classList.add('status-active'); }
-                }
-              } catch(e){ Swal.fire('Error','Failed to confirm','error'); }
-      } else if (res.isDenied) {
-        // Prompt for amount and method
-        const { value: formValues } = await Swal.fire({
-          title: 'Create payment',
-          html:
-            '<input id="swal-amount" class="swal2-input" placeholder="Amount">' +
-            '<select id="swal-method" class="swal2-select"><option value="bank">Bank Transfer</option><option value="online">Online</option></select>',
-          focusConfirm: false,
-          preConfirm: () => {
-            return {
-              amount: document.getElementById('swal-amount').value,
-              method: document.getElementById('swal-method').value
-            }
-          }
+function viewRegistration(id) {
+    // Simple alert for now, or implement a modal like in users.php
+    // Since the PHP logic supports AJAX view, we can fetch it.
+    fetch('index.php?pages=students&action=view&id=' + id)
+        .then(r => r.json())
+        .then(data => {
+            if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
+            // Show details in SweetAlert
+            const d = data.data || data; // handle different structures
+            let html = `<div class="text-left space-y-2 text-sm">
+                <p><strong>Email:</strong> ${d.email || '-'}</p>
+                <p><strong>Phone:</strong> ${d.emergency_contact_phone || '-'}</p>
+                <p><strong>Address:</strong> ${d.home_address || '-'}</p>
+                <p><strong>DOB:</strong> ${d.date_of_birth || '-'}</p>
+                <p><strong>Course:</strong> ${d.academic_goals || '-'}</p>
+                <p><strong>School:</strong> ${d.previous_education || '-'}</p>
+            </div>`;
+            Swal.fire({
+                title: (d.first_name || '') + ' ' + (d.last_name || ''),
+                html: html,
+                width: '600px'
+            });
         });
-        if (!formValues) return;
-        const amt = parseFloat(formValues.amount || 0);
-        if (!amt || amt <= 0) return Swal.fire('Error','Provide a valid amount','error');
-        const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('create_payment','1'); fd.append('amount', amt); fd.append('method', formValues.method || 'bank');
-        try {
-    const payload = await postAction('index.php?pages=students&action=confirm_registration&id=' + encodeURIComponent(id), fd);
-          // update UI similar to above
-          const card = document.querySelector(`.user-card[data-status][data-id='${id}']`) || document.querySelector(`.user-card [data-id='${id}']`)?.closest('.user-card');
-          if (card) {
-            card.querySelectorAll('.inline-confirm, .inline-reject').forEach(b=>b.remove());
-            const badge = card.querySelector('.status-badge'); if (badge) { badge.textContent = 'Confirmed'; badge.classList.remove('status-pending'); badge.classList.add('status-active'); }
-          }
-        } catch(e){ Swal.fire('Error','Failed to create payment','error'); }
-      }
-    });
-    return;
-  }
-  const r = e.target.closest('.inline-reject');
-    if (r) {
-    const id = r.dataset.id;
-    if (!id) return Swal.fire('Error','No registration id','error');
+}
+
+function confirmRegistration(id) {
     Swal.fire({
-      title: 'Reject registration',
-      input: 'textarea',
-      inputLabel: 'Reason (optional)',
-      inputPlaceholder: 'Reason for rejection',
-      showCancelButton: true,
-      confirmButtonText: 'Reject'
-  }).then(result=>{ if (result.isConfirmed) { const fd=new FormData(); fd.append('csrf_token','<?= $csrf ?>'); fd.append('reason', result.value || ''); postAction('index.php?pages=students&action=reject_registration&id=' + encodeURIComponent(id), fd).catch(err=>Swal.fire('Error','Failed to reject','error')); } });
-    return;
-  }
-});
-</script>
+        title: 'Confirm Registration?',
+        text: "This will approve the student.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, confirm'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'index.php?pages=students&action=confirm_registration';
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= $csrf ?>';
+            form.appendChild(idInput); form.appendChild(csrf);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
 
-<script>
-// Export registration button handler
-document.addEventListener('click', function(e){
-  var btn = e.target.closest && e.target.closest('[data-id]') && (e.target.closest('[data-id]').classList.contains('btn') || e.target.classList.contains('btn')) ? e.target.closest('[data-id]') : null;
-  // safer: find elements with explicit btn-export class or data-export attribute
-  if (!btn) btn = e.target.closest('.btn-export');
-  if (!btn) return;
-  if (!btn.classList.contains('btn-export')) return; // only handle export buttons
-  e.preventDefault();
-  var id = btn.getAttribute('data-id');
-  if (!id) return Swal.fire('Error','Registration id missing','error');
-  Swal.fire({
-    title: 'Export registration',
-    text: 'This will download a ZIP containing the registration details and passport (if available). Continue?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Export',
-  }).then(function(res){
-    if (!res.isConfirmed) return;
-    // Open export endpoint in new tab so the file download begins
-  var url = (window.HQ_ADMIN_BASE || '') + '/api/export_registration.php?id=' + encodeURIComponent(id);
-  window.open(url, '_blank');
-  });
-});
+function rejectRegistration(id) {
+    Swal.fire({
+        title: 'Reject Registration',
+        input: 'text',
+        inputLabel: 'Reason for rejection',
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        confirmButtonColor: '#e11d48'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'index.php?pages=students&action=reject_registration';
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
+            const reasonInput = document.createElement('input');
+            reasonInput.type = 'hidden'; reasonInput.name = 'reason'; reasonInput.value = result.value;
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= $csrf ?>';
+            form.appendChild(idInput); form.appendChild(reasonInput); form.appendChild(csrf);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
 </script>
-
 </body>
 </html>
+
