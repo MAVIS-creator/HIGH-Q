@@ -302,6 +302,42 @@ function listBackups($relPath) {
     ];
 }
 
+function runCommand($data) {
+    $command = $data['command'] ?? '';
+    
+    if (empty($command)) {
+        return ['output' => ''];
+    }
+    
+    $baseDir = dirname(__DIR__, 2);
+    chdir($baseDir);
+    
+    // Security: Whitelist allowed commands
+    $allowedPrefixes = ['git', 'ls', 'dir', 'echo', 'composer', 'php', 'whoami', 'ver'];
+    
+    $isAllowed = false;
+    foreach ($allowedPrefixes as $prefix) {
+        if (str_starts_with(strtolower($command), $prefix)) {
+            $isAllowed = true;
+            break;
+        }
+    }
+    
+    if (!$isAllowed) {
+        return ['output' => "Command not allowed. Allowed: " . implode(', ', $allowedPrefixes)];
+    }
+    
+    $output = [];
+    $returnVar = 0;
+    exec($command . ' 2>&1', $output, $returnVar);
+    
+    return [
+        'command' => $command,
+        'output' => implode("\n", $output),
+        'code' => $returnVar
+    ];
+}
+
 function createFile($data) {
     $path = $data['path'] ?? '';
     $content = $data['content'] ?? '';

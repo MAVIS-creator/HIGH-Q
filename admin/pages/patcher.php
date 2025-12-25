@@ -650,6 +650,31 @@ $adminUsername = $_SESSION['admin_username'] ?? 'Admin';
                 </div>
             </div>
 
+            <!-- Terminal Panel -->
+            <div class="terminal-panel" id="terminalPanel">
+                <div class="terminal-header" onclick="toggleTerminal()">
+                    <div class="terminal-tabs">
+                        <div class="terminal-tab active">
+                            <i class='bx bx-terminal'></i> Terminal
+                        </div>
+                    </div>
+                    <div class="terminal-actions">
+                        <button class="terminal-btn" onclick="clearTerminal(event)" title="Clear Terminal"><i class='bx bx-trash'></i></button>
+                        <button class="terminal-btn" onclick="toggleTerminal(event)" title="Toggle Terminal"><i class='bx bx-chevron-down' id="terminalToggleIcon"></i></button>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-output" id="terminalOutput">
+                        <div style="color: #858585; margin-bottom: 8px;">High Q CLI [Version 1.0.0]</div>
+                        <div style="color: #858585; margin-bottom: 8px;">Type 'help' for available commands.</div>
+                    </div>
+                    <div class="terminal-input-row">
+                        <span class="terminal-prompt">admin@highq:~$</span>
+                        <input type="text" class="terminal-input" id="terminalInput" autocomplete="off" spellcheck="false">
+                    </div>
+                </div>
+            </div>
+
             <div class="controls-bar" id="controlsBar" style="display: none;">
                 <button onclick="previewDiff()" id="previewBtn" class="btn-primary btn-preview" disabled>
                     <i class='bx bx-show'></i> Preview Changes
