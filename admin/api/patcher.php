@@ -49,6 +49,10 @@ try {
             $data = json_decode(file_get_contents('php://input'), true);
             $response = createFolder($data);
             break;
+        case 'runCommand':
+            $data = json_decode(file_get_contents('php://input'), true);
+            $response = runCommand($data);
+            break;
     }
 } catch (Exception $e) {
     http_response_code(400);
