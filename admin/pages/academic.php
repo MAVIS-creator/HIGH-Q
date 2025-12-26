@@ -608,16 +608,16 @@ if ($hasRegistrations) {
   }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admissions Management — Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
+
+<?php
+$__hqStandalone = (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'academic.php');
+if ($__hqStandalone) {
+  require_once '../includes/header.php';
+  require_once '../includes/sidebar.php';
+}
+?>
+
+<style>
         :root {
             --hq-yellow: #ffd600;
             --hq-yellow-light: #ffe566;
@@ -756,11 +756,7 @@ if ($hasRegistrations) {
             .page-hero-academic { padding: 1.5rem; margin: -24px -16px 24px -16px; }
             .filter-card { padding: 1rem; }
         }
-    </style>
-</head>
-<body class="bg-slate-50">
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
+      </style>
 
 <div class="admin-page-content">
 <div class="academic-page">
@@ -982,6 +978,10 @@ function rejectRegistration(id) {
 </script>
 </div> <!-- .academic-page -->
 </div> <!-- .admin-page-content -->
-</body>
-</html>
+
+<?php
+if ($__hqStandalone) {
+  require_once '../includes/footer.php';
+}
+?>
 
