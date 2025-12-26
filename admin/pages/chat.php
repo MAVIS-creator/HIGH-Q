@@ -145,6 +145,7 @@ $threads = $pdo->query(
 )->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
+<link rel="stylesheet" href="../assets/css/modern-tables.css">
 <main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
 <div class="chat-page">
   <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
@@ -159,23 +160,37 @@ $threads = $pdo->query(
   </div>
   <div class="card">
     <h3>Open Threads</h3>
-    <ul id="threadList" style="list-style:none;padding:0;margin:0">
+    <div id="threadList" class="chat-threads">
       <?php foreach($threads as $t): ?>
-        <li data-thread="<?= $t['id'] ?>" style="padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <strong>#<?= htmlspecialchars($t['id']) ?></strong> <?= htmlspecialchars($t['visitor_name']?:'Guest') ?>
-            <div style="font-size:0.9rem;color:#666">Last: <?= htmlspecialchars($t['last_activity']) ?> Assigned: <?= htmlspecialchars($t['assigned_admin_name']?:'—') ?></div>
+        <div class="thread-card" data-thread="<?= $t['id'] ?>">
+          <div class="thread-header">
+            <div class="thread-id"><i class='bx bxs-conversation'></i> <?= htmlspecialchars($t['id']) ?></div>
+            <div class="thread-visitor">
+              <strong><?= htmlspecialchars($t['visitor_name']?:'Guest') ?></strong>
+              <div class="visitor-label"><i class='bx bxs-user'></i> Customer</div>
+            </div>
           </div>
-          <div>
+          <div class="thread-status">
             <?php if (empty($t['assigned_admin_id'])): ?>
-              <button class="btn" onclick="claim(<?= $t['id'] ?>)">Claim</button>
+              <span class="badge badge-unassigned"><i class='bx bxs-hourglass'></i> Unassigned</span>
             <?php else: ?>
-              <a class="btn" href="?pages=chat_view&thread_id=<?= $t['id'] ?>">Open</a>
+              <span class="badge badge-assigned"><i class='bx bxs-check-circle'></i> Assigned</span>
             <?php endif; ?>
           </div>
-        </li>
+          <div class="thread-meta">
+            <div><strong>Last Activity:</strong><br><small><?= htmlspecialchars($t['last_activity']) ?></small></div>
+            <div style="margin-top:0.5rem;"><strong>Assigned to:</strong><br><small><?= htmlspecialchars($t['assigned_admin_name']?:'No admin') ?></small></div>
+          </div>
+          <div class="thread-actions">
+            <?php if (empty($t['assigned_admin_id'])): ?>
+              <button class="btn btn-claim" onclick="claim(<?= $t['id'] ?>)"><i class='bx bxs-hand'></i> Claim</button>
+            <?php else: ?>
+              <a class="btn btn-open" href="?pages=chat_view&thread_id=<?= $t['id'] ?>"><i class='bx bxs-message'></i> Open</a>
+            <?php endif; ?>
+          </div>
+        </div>
       <?php endforeach; ?>
-    </ul>
+    </div>
   </div>
 </div>
 <!-- Include SweetAlert2 once -->
@@ -225,19 +240,19 @@ function claim(id){
         if(r.status==='ok'){
         Swal.fire('Claimed!','You are now assigned to this thread.','success');
         // update button to Open without reloading
-        const li = document.querySelector('li[data-thread="'+id+'"]');
-        if(li){
-          const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="' + ADMIN_BASE + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
+        const card = document.querySelector('.thread-card[data-thread="'+id+'"]');
+        if(card){
+          const actions = card.querySelector('.thread-actions');
+          if (actions) actions.innerHTML = '<a class="btn btn-open" href="' + ADMIN_BASE + '/index.php?pages=chat_view&thread_id='+id+'"><i class="bx bxs-message"></i> Open</a>';
         }
       }
         else if(r.status==='taken'){
         Swal.fire('Already Taken','This thread was claimed by ' + (r.assigned_admin_name || 'another admin') + '.','warning');
         // update UI to show Open link
-        const li = document.querySelector('li[data-thread="'+id+'"]');
-        if(li){
-          const right = li.querySelector('div:last-child');
-          right.innerHTML = '<a class="btn" href="' + ADMIN_BASE + '/index.php?pages=chat_view&thread_id='+id+'">Open</a>';
+        const card = document.querySelector('.thread-card[data-thread="'+id+'"]');
+        if(card){
+          const actions = card.querySelector('.thread-actions');
+          if (actions) actions.innerHTML = '<a class="btn btn-open" href="' + ADMIN_BASE + '/index.php?pages=chat_view&thread_id='+id+'"><i class="bx bxs-message"></i> Open</a>';
         }
       }
       else {
@@ -255,40 +270,53 @@ async function pollThreads(){
     if(!res.ok) return;
     const j = await res.json();
     if(!j.threads) return;
-    const ul = document.getElementById('threadList');
-    if(!ul) return;
+    const wrap = document.getElementById('threadList');
+    if(!wrap) return;
 
-    // Rebuild list
-    ul.innerHTML = '';
+    // Rebuild grid
+    wrap.innerHTML = '';
     j.threads.forEach(t=>{
-      const li = document.createElement('li');
-      li.dataset.thread = t.id;
-      li.style.padding='12px';
-      li.style.borderBottom='1px solid #eee';
-      li.style.display='flex';
-      li.style.justifyContent='space-between';
-      li.style.alignItems='center';
+      const card = document.createElement('div');
+      card.className = 'thread-card';
+      card.dataset.thread = t.id;
 
-      const left = document.createElement('div');
-      left.innerHTML = `<strong>#${t.id}</strong> ${t.visitor_name}<div style="font-size:0.9rem;color:#666">Last: ${t.last_activity} Assigned: ${t.assigned_admin_id? t.assigned_admin_id : '—'}</div>`;
+      const assignedName = (t.assigned_admin_name || '').trim();
+      const assigned = t.assigned_admin_id ? true : false;
 
-      const right = document.createElement('div');
-      if(!t.assigned_admin_id){
+      card.innerHTML = `
+        <div class="thread-header">
+          <div class="thread-id"><i class='bx bxs-conversation'></i> ${t.id}</div>
+          <div class="thread-visitor">
+            <strong>${t.visitor_name || 'Guest'}</strong>
+            <div class="visitor-label"><i class='bx bxs-user'></i> Customer</div>
+          </div>
+        </div>
+        <div class="thread-status">
+          ${assigned ? '<span class="badge badge-assigned"><i class="bx bxs-check-circle"></i> Assigned</span>' : '<span class="badge badge-unassigned"><i class="bx bxs-hourglass"></i> Unassigned</span>'}
+        </div>
+        <div class="thread-meta">
+          <div><strong>Last Activity:</strong><br><small>${t.last_activity || ''}</small></div>
+          <div style="margin-top:0.5rem;"><strong>Assigned to:</strong><br><small>${assignedName || (assigned ? ('Admin #' + t.assigned_admin_id) : 'No admin')}</small></div>
+        </div>
+        <div class="thread-actions"></div>
+      `;
+
+      const actions = card.querySelector('.thread-actions');
+      if (!assigned) {
         const btn = document.createElement('button');
-        btn.className='btn';
-        btn.textContent='Claim';
+        btn.className = 'btn btn-claim';
+        btn.innerHTML = "<i class='bx bxs-hand'></i> Claim";
         btn.onclick = ()=>{ claim(t.id); };
-        right.appendChild(btn);
+        actions.appendChild(btn);
       } else {
-      const a = document.createElement('a');
-      a.className='btn';
-      a.href = ADMIN_BASE + '/index.php?pages=chat_view&thread_id=' + t.id;
-        a.textContent='Open';
-        right.appendChild(a);
+        const a = document.createElement('a');
+        a.className = 'btn btn-open';
+        a.href = ADMIN_BASE + '/index.php?pages=chat_view&thread_id=' + t.id;
+        a.innerHTML = "<i class='bx bxs-message'></i> Open";
+        actions.appendChild(a);
       }
-      li.appendChild(left);
-      li.appendChild(right);
-      ul.appendChild(li);
+
+      wrap.appendChild(card);
     });
   }catch(e){ /* ignore */ }
 }

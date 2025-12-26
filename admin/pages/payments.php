@@ -453,6 +453,7 @@ $totalPages = (int)ceil($total / $perPage);
     }
 }
 </style>
+<link rel="stylesheet" href="../assets/css/modern-tables.css">
 <div class="roles-page" style="max-width: 1600px; margin: 0 auto; padding: 2rem;">
     <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
         <div>
@@ -511,7 +512,7 @@ $totalPages = (int)ceil($total / $perPage);
         </form>
     </div>
     
-    <table class="roles-table">
+    <table class="payments-table">
     <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
         <?php foreach($payments as $p): ?>
@@ -541,22 +542,34 @@ $totalPages = (int)ceil($total / $perPage);
                 <td><?= htmlspecialchars($p['id']) ?></td>
                 <td><?= htmlspecialchars($p['reference']) ?></td>
                 <td><?= htmlspecialchars($p['payer_account_name'] ?? ($p['name'] ?? '')) ?></td>
-                <td><?= htmlspecialchars(number_format($p['amount'],2)) ?></td>
+                <td><strong>₦<?= htmlspecialchars(number_format($p['amount'],2)) ?></strong></td>
                 <td><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
-                <td><?= htmlspecialchars(ucfirst($displayStatus)) ?></td>
+                <td>
+                    <?php
+                        $badgeStatus = strtolower((string)$displayStatus);
+                        if (!in_array($badgeStatus, ['pending','sent','confirmed','failed','unknown'], true)) $badgeStatus = 'unknown';
+                    ?>
+                    <span class="status-badge status-<?= htmlspecialchars($badgeStatus) ?>"><?= htmlspecialchars(ucfirst($displayStatus)) ?></span>
+                </td>
                 <td><?= htmlspecialchars($p['payer_account_number'] ?? '') ?></td>
                 <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
-                <td><?= htmlspecialchars($p['created_at']) ?></td>
+                <td><small><?= htmlspecialchars($p['created_at']) ?></small></td>
                 <td>
-                    <?php if (!empty($p['receipt_path'])): ?><a class="btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank">Download</a><?php endif; ?>
-                    <?php if ($displayStatus === 'pending' || $displayStatus === 'sent'): ?>
-                        <div style="margin-top:6px;">
-                            <button class="btn" onclick="doAction('confirm',<?= $p['id'] ?>)">Confirm</button>
-                            <button class="btn" onclick="doAction('reject',<?= $p['id'] ?>)">Reject</button>
-                        </div>
-                    <?php else: ?>
-                        <!-- no actions -->
-                    <?php endif; ?>
+                    <div class="action-group">
+                        <?php if (!empty($p['receipt_path'])): ?>
+                            <a class="payment-btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank" title="Download receipt" style="background:#8b5cf6;">
+                                <i class='bx bxs-download'></i>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($displayStatus === 'pending' || $displayStatus === 'sent'): ?>
+                            <button class="payment-btn payment-btn-confirm" onclick="doAction('confirm',<?= $p['id'] ?>)" title="Confirm">
+                                <i class='bx bxs-check-circle'></i>
+                            </button>
+                            <button class="payment-btn payment-btn-reject" onclick="doAction('reject',<?= $p['id'] ?>)" title="Reject">
+                                <i class='bx bxs-x-circle'></i>
+                            </button>
+                        <?php endif; ?>
+                    </div>
                 </td>
             </tr>
         <?php endforeach; ?>

@@ -157,6 +157,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 <main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
 <div class="comments-page">
+  <link rel="stylesheet" href="../assets/css/modern-tables.css">
   <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
     <div>
       <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bxs-comment-detail' style="font-size: 2.5rem;"></i> Comments</h1>
@@ -179,26 +180,39 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
   <?php else: ?>
   
-  <table class="roles-table">
+  <table class="comments-table">
     <thead><tr><th>ID</th><th>Post</th><th>Name/Email</th><th>Content</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
     <tbody>
     <?php foreach($comments as $c): ?>
         <tr>
-          <td><?= htmlspecialchars($c['id']) ?></td>
+          <td>#<?= htmlspecialchars($c['id']) ?></td>
           <td><?= htmlspecialchars($c['post_id']) ?></td>
-          <td><?= htmlspecialchars(($c['name']?:''). ' / ' . ($c['email']?:'')) ?></td>
+          <td>
+            <strong><?= htmlspecialchars(($c['name']?:'')) ?></strong>
+            <br><small style="color:#666;"><?= htmlspecialchars(($c['email']?:'')) ?></small>
+          </td>
           <td><?= htmlspecialchars(mb_strimwidth($c['content'],0,180,'...')) ?></td>
-          <td><?= htmlspecialchars($c['status']) ?></td>
-          <td><?= htmlspecialchars($c['created_at']) ?></td>
-          <td><?php if ($c['status'] === 'pending'): ?>
-              <button class="btn" data-action="approve" data-id="<?= $c['id'] ?>">Approve</button>
-              <button class="btn" data-action="reject" data-id="<?= $c['id'] ?>">Delete</button>
-              <button class="btn" data-action="destroy" data-id="<?= $c['id'] ?>">Destroy</button>
-              <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>">Reply</button>
+          <td>
+            <?php
+              $st = strtolower((string)($c['status'] ?? 'pending'));
+              if (!in_array($st, ['pending','approved','deleted'], true)) $st = 'pending';
+            ?>
+            <span class="status-badge status-<?= htmlspecialchars($st) ?>"><?= htmlspecialchars(ucfirst($c['status'])) ?></span>
+          </td>
+          <td><small><?= htmlspecialchars($c['created_at']) ?></small></td>
+          <td>
+            <div class="comment-actions">
+            <?php if ($c['status'] === 'pending'): ?>
+              <button class="btn" data-action="approve" data-id="<?= $c['id'] ?>" title="Approve"><i class='bx bxs-check-circle'></i></button>
+              <button class="btn" data-action="reject" data-id="<?= $c['id'] ?>" title="Delete"><i class='bx bxs-trash'></i></button>
+              <button class="btn" data-action="destroy" data-id="<?= $c['id'] ?>" title="Destroy"><i class='bx bxs-bomb'></i></button>
+              <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>" title="Reply"><i class='bx bxs-message-detail'></i></button>
             <?php else: ?>
-              <button class="btn" data-action="destroy" data-id="<?= $c['id'] ?>">Destroy</button>
-              <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>">Reply</button>
-            <?php endif; ?></td>
+              <button class="btn" data-action="destroy" data-id="<?= $c['id'] ?>" title="Destroy"><i class='bx bxs-bomb'></i></button>
+              <button class="btn" data-action="reply" data-id="<?= $c['id'] ?>" data-preview="<?= htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES) ?>" title="Reply"><i class='bx bxs-message-detail'></i></button>
+            <?php endif; ?>
+            </div>
+          </td>
         </tr>
         <?php
           // fetch and display replies inline under parent
@@ -209,12 +223,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
             $displayName = ($rep['user_id'] ? 'Admin - ' . ($rep['name']?:'') : ($rep['name']?:''));
         ?>
         <tr class="reply-row">
-          <td><?= htmlspecialchars($rep['id']) ?></td>
+          <td>#<?= htmlspecialchars($rep['id']) ?></td>
           <td><?= htmlspecialchars($rep['post_id']) ?></td>
-          <td><?= htmlspecialchars($displayName) ?></td>
+          <td>
+            <?php if ($rep['user_id']): ?>
+              <i class='bx bxs-shield-check' style="color:#10b981;"></i>
+            <?php endif; ?>
+            <?= htmlspecialchars($displayName) ?>
+          </td>
           <td><?= htmlspecialchars(mb_strimwidth($rep['content'],0,180,'...')) ?></td>
-          <td><?= htmlspecialchars($rep['status']) ?></td>
-          <td><?= htmlspecialchars($rep['created_at']) ?></td>
+          <td><span class="status-badge status-reply">Reply</span></td>
+          <td><small><?= htmlspecialchars($rep['created_at']) ?></small></td>
           <td>&mdash;</td>
         </tr>
         <?php endforeach; ?>
@@ -252,7 +271,8 @@ function doAction(action,id){
 }
 
 // Delegated click handler for action buttons (approve/reject/reply)
-document.querySelector('table.roles-table').addEventListener('click', function(e){
+var commentsTable = document.querySelector('table.comments-table') || document.querySelector('table.roles-table');
+if (commentsTable) commentsTable.addEventListener('click', function(e){
   var btn = e.target.closest('button[data-action]');
   if (!btn) return;
   var action = btn.getAttribute('data-action');
@@ -319,7 +339,7 @@ setInterval(function(){
     // basic check: if response looks like a table fragment (starts with <tr) then replace tbody
     var txt = xhr.responseText || '';
     if (txt.trim().startsWith('<tr')) {
-      var tbody = document.querySelector('table.roles-table tbody');
+      var tbody = (document.querySelector('table.comments-table tbody') || document.querySelector('table.roles-table tbody'));
       if (tbody) tbody.innerHTML = txt;
     } else {
       // ignore unexpected responses to avoid rendering full page inside the table

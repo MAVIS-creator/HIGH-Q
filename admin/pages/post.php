@@ -3,6 +3,7 @@
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
+<link rel="stylesheet" href="../assets/css/modern-tables.css">
 <main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
 <div class="posts-page">
     <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">

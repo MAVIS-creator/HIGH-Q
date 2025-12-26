@@ -26,14 +26,42 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 ?>
-<div class="roles-page">
-  <div class="page-header"><h1><i class="bx bxs-message-dots"></i> Thread #<?= htmlspecialchars($threadId) ?></h1></div>
-    <div class="card">
-    <div id="messagesBox" style="max-height:420px;overflow:auto;padding:8px;border:1px solid #eee;margin-bottom:12px">
+<link rel="stylesheet" href="../assets/css/modern-tables.css">
+<style>
+.chat-thread-wrap{max-width:1100px;margin:0 auto;padding:2rem;}
+.chat-thread-header{background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);padding:2rem;border-radius:1rem;margin-bottom:1.5rem;color:#1e293b;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 24px rgba(251,191,36,.25)}
+.chat-thread-header h1{margin:0;font-size:2rem;font-weight:800;display:flex;align-items:center;gap:12px}
+.chat-thread-header .meta{font-size:.95rem;opacity:.85;text-align:right}
+.messages-box{max-height:520px;overflow:auto;padding:16px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;margin-bottom:12px}
+.msg-row{display:flex;flex-direction:column;margin-bottom:14px}
+.msg-meta{font-size:.8rem;color:#64748b;margin-bottom:6px}
+.msg-bubble{max-width:80%;padding:12px 14px;border-radius:14px;line-height:1.45;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.from-visitor .msg-bubble{background:#f8fafc;color:#0f172a;border:1px solid #e2e8f0;border-top-left-radius:6px;align-self:flex-start}
+.from-staff .msg-bubble{background:#fff7e6;color:#1e293b;border:1px solid rgba(245,158,11,.35);border-top-right-radius:6px;align-self:flex-end}
+.chat-reply-form textarea{width:100%;min-height:110px;padding:12px;border-radius:10px;border:1px solid #e2e8f0;resize:vertical}
+.chat-reply-actions{display:flex;gap:10px;align-items:center;margin-top:10px}
+.chat-reply-actions .btn{padding:10px 14px;border-radius:10px;font-weight:800}
+.chat-close-wrap{text-align:right;margin-top:10px}
+.chat-close-wrap .btn-close{background:#ef4444;color:#fff;border:none;padding:10px 14px;border-radius:10px;font-weight:800;cursor:pointer}
+</style>
+
+<div class="chat-thread-wrap">
+  <div class="chat-thread-header">
+    <div>
+      <h1><i class="bx bxs-message-dots"></i> Thread #<?= htmlspecialchars($threadId) ?></h1>
+      <div style="margin-top:6px;font-size:1rem;opacity:.85;">Support conversation view</div>
+    </div>
+    <div class="meta">
+      <div><strong>Assigned:</strong> <?= htmlspecialchars($thread['assigned_admin_name'] ?? '—') ?></div>
+      <div><strong>Status:</strong> <?= htmlspecialchars($thread['status'] ?? '') ?></div>
+    </div>
+  </div>
+  <div class="card">
+    <div id="messagesBox" class="messages-box">
       <?php foreach($msgs as $m): ?>
-        <div style="margin-bottom:12px">
-          <div style="font-size:0.85rem;color:#666"><?= htmlspecialchars($m['created_at']) ?> — <?= $m['is_from_staff'] ? htmlspecialchars($m['sender_name']) : htmlspecialchars($m['sender_name']?:'Visitor') ?></div>
-          <div style="background:<?= $m['is_from_staff'] ? '#fff3cf' : '#f6f6f6' ?>;padding:10px;border-radius:8px;margin-top:6px">
+        <div class="msg-row <?= $m['is_from_staff'] ? 'from-staff' : 'from-visitor' ?>">
+          <div class="msg-meta"><?= htmlspecialchars($m['created_at']) ?> — <?= $m['is_from_staff'] ? htmlspecialchars($m['sender_name']) : htmlspecialchars($m['sender_name']?:'Visitor') ?></div>
+          <div class="msg-bubble">
             <?= nl2br(htmlspecialchars($m['message'])) ?>
             <?php
               // If message has inline image tags saved as part of message HTML (older approach), render raw
@@ -93,16 +121,16 @@ error_reporting(E_ALL);
         </div>
       <?php endforeach; ?>
     </div>
-    <form id="replyForm" enctype="multipart/form-data">
-      <textarea name="message" style="width:100%;height:100px;padding:8px" placeholder="Reply..."></textarea>
-      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+    <form id="replyForm" class="chat-reply-form" enctype="multipart/form-data">
+      <textarea name="message" placeholder="Write a reply..."></textarea>
+      <div class="chat-reply-actions">
         <input type="file" name="attachments[]" multiple>
-        <div style="margin-left:auto"><button class="btn" type="submit">Send</button></div>
+        <div style="margin-left:auto"><button class="btn" type="submit"><i class='bx bxs-send'></i> Send</button></div>
       </div>
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars(generateToken('chat_form')) ?>">
     </form>
-    <div style="text-align:right;margin-top:8px">
-      <button id="closeThreadBtn" class="btn" style="background:#f44336;color:#fff;border:none;padding:8px 12px;border-radius:6px;">Close Thread</button>
+    <div class="chat-close-wrap">
+      <button id="closeThreadBtn" class="btn-close" type="button"><i class='bx bxs-lock'></i> Close Thread</button>
     </div>
   </div>
 </div>
@@ -144,10 +172,10 @@ setInterval(function(){
     try{ var html = xhr.responseText; } catch(e){ return; }
     var parser = new DOMParser(); 
     var doc = parser.parseFromString(html, 'text/html');
-    var messagesContainer = doc.querySelector('.card > div');
+    var messagesContainer = doc.querySelector('#messagesBox');
     if (messagesContainer) {
-      var target = document.querySelector('.card > div');
-      target.innerHTML = messagesContainer.innerHTML;
+      var target = document.querySelector('#messagesBox');
+      if (target) target.innerHTML = messagesContainer.innerHTML;
     }
   };
   xhr.send();
