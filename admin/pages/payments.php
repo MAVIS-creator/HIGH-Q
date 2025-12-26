@@ -511,6 +511,7 @@ $totalPages = (int)ceil($total / $perPage);
         </form>
     </div>
     
+    <div class="hq-table-wrap">
     <table class="payments-table">
     <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th>Actions</th></tr></thead>
         <tbody>
@@ -574,6 +575,7 @@ $totalPages = (int)ceil($total / $perPage);
         <?php endforeach; ?>
         </tbody>
     </table>
+    </div>
     <!-- Pagination (numbered) -->
     <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <?php
