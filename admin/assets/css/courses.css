@@ -1,114 +1,149 @@
 /* courses.css - courses page styling */
-.admin-main .container {
+
+/* Use root variables */
+:root {
+  --hq-yellow: #ffd600;
+  --hq-yellow-light: #ffe566;
+  --hq-black: #0a0a0a;
+  --hq-gray: #f3f4f6;
+  --radius: 12px;
+}
+
+.courses-page {
   width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 32px 20px 48px;
-  background: #f8f9fb;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  max-width: 100%;
+  padding: 0;
 }
 
-.courses-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
+/* Page Hero */
+.courses-page .page-hero {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    padding: 2rem 2.5rem;
+    margin: -24px -32px 24px -32px;
 }
 
-.courses-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #111;
+.courses-page .page-hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.courses-header-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+.courses-page .page-hero-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(0,0,0,0.6);
+    margin-bottom: 0.5rem;
 }
 
-.courses-header-info p {
-  margin: 0;
-  color: #666;
-  font-size: 0.95rem;
+.courses-page .page-hero-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
 }
 
-.courses-header-actions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+.courses-page .page-hero-subtitle {
+    font-size: 1rem;
+    color: rgba(0,0,0,0.7);
+    margin: 0.5rem 0 0 0;
 }
 
-.btn-add-course {
-  background: linear-gradient(180deg,#ffd24d,#f6c23a);
-  border: none;
-  color: #111;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(246,194,58,0.25);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+.courses-page .page-hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
-.btn-add-course:hover {
-  filter: brightness(0.98);
+.btn-primary-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.btn-convert {
-  background: #f7c948;
-  border: none;
-  color: #222;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(247,201,72,0.25);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+.btn-primary-hero:hover {
+    background: #0f172a;
+    transform: translateY(-1px);
 }
 
-.btn-convert:hover {
-  filter: brightness(0.95);
+.btn-secondary-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255,255,255,0.9);
+    color: #1e293b;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.courses-search-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+.btn-secondary-hero:hover {
+    background: #fff;
+    transform: translateY(-1px);
 }
 
-.courses-search-section h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111;
+/* Content Card */
+.content-card {
+    background: #fff;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
 }
 
-.courses-search-section .search-form {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
 }
 
-.courses-search-section .search-form input[type="text"] {
-  flex: 1;
-  padding: 0.8rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #eee;
-  background: #fafafa;
-  font-size: 0.95rem;
-  min-width: 300px;
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #f1f5f9;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+}
+
+.search-bar i {
+    color: #64748b;
+    font-size: 1.25rem;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    outline: none;
 }
 
 /* Grid: 3 columns on wide screens, 2 on medium, 1 on small */
