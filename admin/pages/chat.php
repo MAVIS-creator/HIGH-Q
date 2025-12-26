@@ -130,7 +130,9 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 $pageTitle = 'Chat Support';
+$skipMainClose = true;
 require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/sidebar.php';
 
 // Load threads for admin view
 $threads = $pdo->query(
@@ -142,10 +144,19 @@ $threads = $pdo->query(
    LIMIT 100"
 )->fetchAll(PDO::FETCH_ASSOC);
 
-
 ?>
-<div class="roles-page">
-  <div class="page-header"><h1><i class="bx bxs-message-dots"></i> Chat Support</h1></div>
+<main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
+<div class="chat-page">
+  <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
+    <div>
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bxs-message-dots' style="font-size: 2.5rem;"></i> Chat Support</h1>
+      <p style="font-size: 1.1rem; opacity: 0.85; margin: 0;">Manage customer support conversations</p>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 3rem; font-weight: 800; color: #1e293b;"><?= count($threads ?? []) ?></div>
+      <div style="font-size: 0.9rem; color: #1e293b; opacity: 0.85;">Active Threads</div>
+    </div>
+  </div>
   <div class="card">
     <h3>Open Threads</h3>
     <ul id="threadList" style="list-style:none;padding:0;margin:0">
