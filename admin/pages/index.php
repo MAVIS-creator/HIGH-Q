@@ -24,6 +24,7 @@ $pageMeta = [
     ],
     'courses' => [
         'subtitle' => 'Manage courses and programs offered on the site',
+        'css' => '<link rel="stylesheet" href="../assets/css/courses.css">',
     ],
     'tutors' => [
         'subtitle' => 'Manage tutor profiles and listings',
