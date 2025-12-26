@@ -903,7 +903,12 @@ document.getElementById('statusFilter').addEventListener('change', function(e) {
 function viewRegistration(id) {
     // Simple alert for now, or implement a modal like in users.php
     // Since the PHP logic supports AJAX view, we can fetch it.
-    fetch('index.php?pages=academic&action=view&id=' + id)
+  fetch('index.php?pages=academic&action=view&id=' + id, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'application/json'
+    }
+  })
         .then(r => r.json())
         .then(data => {
             if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
