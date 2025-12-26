@@ -219,24 +219,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="main-content">
+<div class="admin-page-content">
 <div class="courses-page">
-    <div class="courses-header">
-      <div class="courses-header-info">
-        <h1>Courses & Programs</h1>
-        <p>Manage all academic courses and programs offered</p>
-      </div>
-      <div class="courses-header-actions">
-        <button id="newCourseBtn" class="btn-add-course">
-          <i class="bx bx-plus"></i> New Course
-        </button>
-        <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
-          <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-          <button type="submit" class="btn-convert" title="Convert legacy icons to Boxicons">
-            <i class="bx bx-sync"></i> Convert Icons
-          </button>
-        </form>
-      </div>
+    <!-- Hero Header -->
+    <div class="page-hero">
+        <div class="page-hero-content">
+            <div class="page-hero-text">
+                <span class="page-hero-badge">Academic Programs</span>
+                <h1 class="page-hero-title">Courses & Programs</h1>
+                <p class="page-hero-subtitle">Manage all academic courses and programs offered</p>
+            </div>
+            <div class="page-hero-actions">
+                <button id="newCourseBtn" class="btn-primary-hero">
+                    <i class="bx bx-plus"></i> New Course
+                </button>
+                <form method="post" action="index.php?pages=courses&action=bulk_convert_icons" style="display:inline">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                    <button type="submit" class="btn-secondary-hero" title="Convert legacy icons to Boxicons">
+                        <i class="bx bx-sync"></i> Convert Icons
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <?php if (!empty($success) || !empty($errors)): ?>

@@ -1,12 +1,13 @@
 <?php
 session_start();
+require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 requirePermission('tutors');
 
 header('Content-Type: application/json');
 
 try {
-    $conn = getConnection();
+    $conn = $pdo; // use PDO from includes/db.php
     $action = $_POST['action'] ?? $_GET['action'] ?? '';
     
     switch($action) {
