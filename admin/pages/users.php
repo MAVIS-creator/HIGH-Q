@@ -424,8 +424,6 @@ if ($__hqStandalone) {
 <div id="modalOverlay"></div>
 </div>
 
-<?php include '../includes/footer.php'; ?>
-
 <!-- Inline JS -->
 <script>
 // Modal control
