@@ -966,7 +966,7 @@ function rejectRegistration(id) {
         if (result.isConfirmed) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = 'index.php?pages=students&action=reject_registration';
+            form.action = 'index.php?pages=stude&action=reject_registration';
             const idInput = document.createElement('input');
             idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
             const reasonInput = document.createElement('input');
