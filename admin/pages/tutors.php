@@ -9,15 +9,25 @@ requirePermission('tutors');
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
+// Pagination setup
+$perPage = 9; // 3 cards x 3 rows per page
+$page = isset($_GET['pg']) ? max(1, (int)$_GET['pg']) : 1;
+$offset = ($page - 1) * $perPage;
 
-// Fetch tutors from database
+// Fetch total count and tutors from database
 $tutors = [];
+$totalTutors = 0;
 try {
-    $stmt = $pdo->query("SELECT * FROM tutors ORDER BY created_at DESC");
+    $totalTutors = (int)$pdo->query("SELECT COUNT(*) FROM tutors")->fetchColumn();
+    $stmt = $pdo->prepare("SELECT * FROM tutors ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+    $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
     $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $tutors = [];
 }
+$totalPages = ceil($totalTutors / $perPage);
 
 // Get subjects for dropdown
 $subjects = [];
