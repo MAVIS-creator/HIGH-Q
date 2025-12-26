@@ -159,6 +159,25 @@ try {
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+    
+    <!-- Pagination -->
+    <?php if ($totalPages > 1): ?>
+    <div class="pagination">
+        <?php if ($page > 1): ?>
+            <a href="?pages=tutors&pg=<?= $page - 1 ?>" class="pagination-btn"><i class='bx bx-chevron-left'></i> Previous</a>
+        <?php endif; ?>
+        
+        <div class="pagination-numbers">
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <a href="?pages=tutors&pg=<?= $i ?>" class="pagination-num <?= $i === $page ? 'active' : '' ?>"><?= $i ?></a>
+            <?php endfor; ?>
+        </div>
+        
+        <?php if ($page < $totalPages): ?>
+            <a href="?pages=tutors&pg=<?= $page + 1 ?>" class="pagination-btn">Next <i class='bx bx-chevron-right'></i></a>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Add/Edit Tutor Modal -->
