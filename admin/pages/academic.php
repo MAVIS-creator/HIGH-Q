@@ -47,15 +47,15 @@ if (!empty($earlyAction)) {
     }
   }
 
-requirePermission('students'); // where 'students' matches the menu slug
+requirePermission('academic'); // where 'academic' matches the menu slug
 // Generate CSRF token
-$csrf = generateToken('students_form');
+$csrf = generateToken('academic_form');
 
 // Support POST-driven AJAX actions (confirm_registration, view_registration)
 // Handle create_payment_link (AJAX) - returns JSON link + reference
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create_payment_link') {
   // Ensure admin permission
-  requirePermission('students');
+  requirePermission('academic');
   $id = intval($_POST['id'] ?? 0);
   if ($id <= 0) { echo json_encode(['success'=>false,'error'=>'Invalid ID']); exit; }
 
@@ -99,14 +99,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   $body .= '</div>';
         $emailSent = (bool) sendEmail($reg['email'], $subject, $body);
         if (!$emailSent) {
-          // log a note to the students_confirm_errors log for admin debugging
+          // log a note to the academic_confirm_errors log for admin debugging
           try {
             $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
-            @file_put_contents($logDir . '/students_confirm_errors.log', "[" . date('Y-m-d H:i:s') . "] create_payment_link email failed to send to: " . ($reg['email'] ?? 'unknown') . "\n", FILE_APPEND | LOCK_EX);
+            @file_put_contents($logDir . '/academic_confirm_errors.log', "[" . date('Y-m-d H:i:s') . "] create_payment_link email failed to send to: " . ($reg['email'] ?? 'unknown') . "\n", FILE_APPEND | LOCK_EX);
           } catch (Throwable $_) { }
         }
       } catch (Throwable $me) {
-        try { $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true); @file_put_contents($logDir . '/students_confirm_errors.log', "[" . date('Y-m-d H:i:s') . "] create_payment_link sendEmail exception: " . $me->getMessage() . "\n" . $me->getTraceAsString() . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
+        try { $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true); @file_put_contents($logDir . '/academic_confirm_errors.log', "[" . date('Y-m-d H:i:s') . "] create_payment_link sendEmail exception: " . $me->getMessage() . "\n" . $me->getTraceAsString() . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
         $emailSent = false;
       }
     }
@@ -114,11 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     echo json_encode(['success'=>true,'link'=>$link,'reference'=>$reference,'email_sent'=>(bool)$emailSent,'email'=>$reg['email'] ?? null,'student'=>['first_name'=>$reg['first_name'] ?? null,'last_name'=>$reg['last_name'] ?? null,'email'=>$reg['email'] ?? null]]);
     exit;
   } catch (Throwable $e) {
-    // Detailed logging to students_confirm_errors.log to help debugging
+    // Detailed logging to academic_confirm_errors.log to help debugging
     try {
       $logDir = __DIR__ . '/../../storage/logs';
       if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
-      $logFile = $logDir . '/students_confirm_errors.log';
+      $logFile = $logDir . '/academic_confirm_errors.log';
       $msg = "[" . date('Y-m-d H:i:s') . "] create_payment_link error: " . $e->getMessage() . " -- in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString() . "\n\n";
       @file_put_contents($logFile, $msg, FILE_APPEND | LOCK_EX);
     } catch (Throwable $ex) { /* ignore logging errors */ }
@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ((isset($_POST['action']) && $_POST
   try {
     $logDir = __DIR__ . '/../../storage/logs';
     if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
-    $logFile = $logDir . '/students_confirm_errors.log';
+    $logFile = $logDir . '/academic_confirm_errors.log';
     $msg = "[" . date('Y-m-d H:i:s') . "] Confirm registration error: " . $e->getMessage() . " -- in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString() . "\n\n";
     @file_put_contents($logFile, $msg, FILE_APPEND | LOCK_EX);
   } catch (Throwable $ex) { /* ignore logging errors */ }
@@ -306,29 +306,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $action = $_GET['action'];
     $id = (int)$_GET['id'];
     $token = $_POST['csrf_token'] ?? '';
-  if (!verifyToken('students_form', $token)) {
-    header('Location: ' . admin_url('index.php?pages=students')); exit;
+  if (!verifyToken('academic_form', $token)) {
+    header('Location: ' . admin_url('index.php?pages=academic')); exit;
   }
 
     $currentUserId = $_SESSION['user']['id'];
 
     // Protect main admin and yourself from destructive actions
     if ($id === 1 || $id === $currentUserId) {
-  header('Location: ' . admin_url('index.php?pages=students')); exit;
+  header('Location: ' . admin_url('index.php?pages=academic')); exit;
   }
 
     if ($action === 'deactivate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
-  header('Location: ' . admin_url('index.php?pages=students')); exit;
+  header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
 
     if ($action === 'activate') {
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
-  header('Location: ' . admin_url('index.php?pages=students')); exit;
+  header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
 
       // Delete a post-UTME registration row (separate action) - handle before generic delete
@@ -340,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         } catch (Throwable $e) {
           // ignore errors
         }
-        header('Location: ' . admin_url('pages/students.php')); exit;
+        header('Location: ' . admin_url('pages/academic.php')); exit;
       }
 
   if ($action === 'delete') {
@@ -352,7 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
-  header('Location: ' . admin_url('index.php?pages=students')); exit;
+  header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
   
     // Delete a post-UTME registration row
@@ -364,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       } catch (Throwable $e) {
         // swallow and continue to redirect
       }
-      header('Location: ' . admin_url('pages/students.php')); exit;
+      header('Location: ' . admin_url('pages/academic.php')); exit;
     }
 
     // Fallback: Soft-delete user record (legacy path)
@@ -378,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
     }
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('pages/academic.php')); exit;
   }
 
   // Custom: send message/approve flow from modal
@@ -404,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('pages/academic.php')); exit;
   }
 
   // Confirm registration (admin) - send notification
@@ -413,13 +413,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
     if (!$reg) {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('pages/academic.php')); exit;
     }
 
     // If already confirmed, return meaningful JSON error for AJAX or redirect with flash
     if (isset($reg['status']) && strtolower($reg['status']) === 'confirmed') {
   if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Registration already confirmed']); exit; }
-  setFlash('error','Registration already confirmed'); header('Location: ' . admin_url('pages/students.php')); exit;
+  setFlash('error','Registration already confirmed'); header('Location: ' . admin_url('pages/academic.php')); exit;
     }
 
     // Transaction: mark confirmed and optionally create payment and send reference
@@ -489,11 +489,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $resp = ['status'=>'ok','message'=>'Confirmed', 'email_sent'=>!empty($emailSent), 'reference'=> $ref ?? null, 'amount'=> isset($amount) ? $amount : null, 'email'=> $reg['email'] ?? null];
         echo json_encode($resp); exit;
       }
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('pages/academic.php')); exit;
     } catch (Exception $e) {
       if ($pdo->inTransaction()) $pdo->rollBack();
       if ($isAjax) { echo json_encode(['status'=>'error','message'=>'Server error']); exit; }
-  setFlash('error','Failed to confirm registration'); header('Location: ' . admin_url('pages/students.php')); exit;
+  setFlash('error','Failed to confirm registration'); header('Location: ' . admin_url('pages/academic.php')); exit;
     }
   }
 
@@ -513,7 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
-  header('Location: ' . admin_url('pages/students.php')); exit;
+  header('Location: ' . admin_url('pages/academic.php')); exit;
   }
 }
 
@@ -575,7 +575,7 @@ if ($hasRegistrations) {
     $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
     $stmt->bindValue(2, $offset, PDO::PARAM_INT);
     $stmt->execute();
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } else {
     // post_utme_registrations listing
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM post_utme_registrations");
@@ -586,22 +586,22 @@ if ($hasRegistrations) {
     $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
     $stmt->bindValue(2, $offset, PDO::PARAM_INT);
     $stmt->execute();
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // mark entries so template can render appropriate actions
-    foreach ($students as &$ss) { $ss['__postutme'] = 1; }
+    foreach ($academic as &$ss) { $ss['__postutme'] = 1; }
     unset($ss);
   }
 
 } else {
-  // Fetch students (users with role slug 'student' or where role is null)
+  // Fetch academic (users with role slug 'student' or where role is null)
   $stmt = $pdo->prepare("SELECT u.*, r.name AS role_name, r.slug AS role_slug FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE r.slug = 'student' OR u.role_id IS NULL ORDER BY u.created_at DESC");
   $stmt->execute();
-  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   // Counts for legacy users list
-  $total = count($students);
+  $total = count($academic);
   $active = 0; $pending = 0; $banned = 0;
-  foreach ($students as $s) {
+  foreach ($academic as $s) {
     if ($s['is_active']==1) $active++;
     elseif ($s['is_active']==0) $pending++;
     elseif ($s['is_active']==2) $banned++;
@@ -689,7 +689,7 @@ if ($hasRegistrations) {
             border-color: var(--hq-yellow);
             box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.2);
         }
-        .students-grid {
+        .academic-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
@@ -749,10 +749,10 @@ if ($hasRegistrations) {
             box-shadow: 0 2px 8px rgba(255, 214, 0, 0.3);
         }
         @media (max-width: 1200px) {
-            .students-grid { grid-template-columns: repeat(2, 1fr); }
+            .academic-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 768px) {
-            .students-grid { grid-template-columns: 1fr; }
+            .academic-grid { grid-template-columns: 1fr; }
             .page-hero-academic { padding: 1.5rem; margin: -24px -16px 24px -16px; }
             .filter-card { padding: 1rem; }
         }
@@ -804,10 +804,10 @@ if ($hasRegistrations) {
         </div>
     </div>
 
-    <!-- Students Grid -->
-    <div class="students-grid" id="studentsList">
-        <?php if (!empty($students)): ?>
-            <?php foreach ($students as $s): 
+    <!-- academic Grid -->
+    <div class="academic-grid" id="academicList">
+        <?php if (!empty($academic)): ?>
+            <?php foreach ($academic as $s): 
                 $status = $s['status'] ?? ($s['is_active']==1 ? 'active' : ($s['is_active']==0 ? 'pending' : 'banned'));
                 $displayName = $s['first_name'] ?? $s['name'] ?? 'Unknown';
                 if (isset($s['last_name'])) $displayName .= ' ' . $s['last_name'];
@@ -854,7 +854,7 @@ if ($hasRegistrations) {
                         View
                     </button>
                     
-                    <form method="post" action="index.php?pages=students&action=<?= $isPostUtme ? 'delete_postutme' : 'delete' ?>&id=<?= $s['id'] ?>" class="inline-block" onsubmit="return confirm('Are you sure?');">
+                    <form method="post" action="index.php?pages=academic&action=<?= $isPostUtme ? 'delete_postutme' : 'delete' ?>&id=<?= $s['id'] ?>" class="inline-block" onsubmit="return confirm('Are you sure?');">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                         <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
                             <i class='bx bx-trash text-lg'></i>
@@ -872,7 +872,7 @@ if ($hasRegistrations) {
     </div>
 
     <!-- Pagination -->
-    <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); $baseLink = 'index.php?pages=students' . ($current_source==='postutme' ? '&source=postutme' : ''); ?>
+    <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); $baseLink = 'index.php?pages=academic' . ($current_source==='postutme' ? '&source=postutme' : ''); ?>
     <div class="flex justify-center gap-2 mt-8">
         <?php for ($p=1;$p<=$pages;$p++): ?>
             <a href="<?= $baseLink . '&page=' . $p ?>" 
@@ -909,7 +909,7 @@ document.getElementById('statusFilter').addEventListener('change', function(e) {
 function viewRegistration(id) {
     // Simple alert for now, or implement a modal like in users.php
     // Since the PHP logic supports AJAX view, we can fetch it.
-    fetch('index.php?pages=students&action=view&id=' + id)
+    fetch('index.php?pages=academic&action=view&id=' + id)
         .then(r => r.json())
         .then(data => {
             if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
