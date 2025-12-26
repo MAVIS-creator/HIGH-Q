@@ -618,28 +618,57 @@ if ($hasRegistrations) {
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        :root {
+            --hq-yellow: #ffd600;
+            --hq-yellow-light: #ffe566;
+            --hq-black: #0a0a0a;
+            --hq-gray: #f3f4f6;
+        }
         .academic-page {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 100%;
             width: 100%;
+            padding: 0;
         }
         .page-hero-academic {
-            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-            border-radius: 1rem;
-            padding: 2.5rem;
-            color: white;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            padding: 2rem 2.5rem;
+            margin: -24px -32px 24px -32px;
+        }
+        .page-hero-academic .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-hero-academic .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: rgba(0,0,0,0.6);
+            margin-bottom: 0.5rem;
         }
         .page-hero-academic h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
             line-height: 1.2;
-            margin: 0.5rem 0;
         }
         .page-hero-academic p {
-            font-size: 1.1rem;
-            opacity: 0.95;
+            font-size: 1rem;
+            color: rgba(0,0,0,0.7);
+            margin: 0.5rem 0 0 0;
+        }
+        .page-hero-academic .stat-badge {
+            background: #1e293b;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
         }
         .filter-card {
             background: white;
@@ -647,6 +676,7 @@ if ($hasRegistrations) {
             padding: 1.75rem;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
         }
         .filter-card input, .filter-card select {
             border: 1px solid #e2e8f0;
@@ -656,8 +686,13 @@ if ($hasRegistrations) {
         }
         .filter-card input:focus, .filter-card select:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: var(--hq-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.2);
+        }
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
         }
         .student-card {
             background: white;
@@ -669,7 +704,7 @@ if ($hasRegistrations) {
         }
         .student-card:hover {
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: #3b82f6;
+            border-color: var(--hq-yellow);
             transform: translateY(-2px);
         }
         .student-card h3 {
