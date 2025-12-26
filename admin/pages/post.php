@@ -353,21 +353,47 @@ $q = trim($_GET['q'] ?? '');
 // Fetch categories (table may not exist on some installs)
 try {
     $categories = $pdo->query("SELECT id,name FROM categories ORDER BY name")->fetchAll();
+    $hasCategoriesTable = true;
 } catch (Exception $e) {
     // Provide an empty array and set a warning so UI can show a helpful message
     $categories = [];
     $catWarning = 'Categories table not found. Create the table or add categories to enable categorization.';
+    $hasCategoriesTable = false;
 }
 
-$sql  = "SELECT p.*, u.name AS author, COALESCE(c.name, p.category) AS category_name
+// Build a posts listing query that works across different DB schemas
+$selectAuthor = "'' AS author";
+$joinAuthor = '';
+if ($hasAuthorId) {
+    $selectAuthor = "u.name AS author";
+    $joinAuthor = "LEFT JOIN users u ON u.id = p.author_id";
+}
+
+$selectCategory = "'Uncategorized' AS category_name";
+$joinCategory = '';
+if ($hasCategoryId && $hasCategoriesTable) {
+    $selectCategory = "COALESCE(c.name, p.category) AS category_name";
+    $joinCategory = "LEFT JOIN categories c ON c.id = p.category_id";
+} elseif ($hasCategory) {
+    $selectCategory = "p.category AS category_name";
+}
+
+$sql  = "SELECT p.*, {$selectAuthor}, {$selectCategory}
          FROM posts p
-         LEFT JOIN users u ON u.id = p.author_id
-         LEFT JOIN categories c ON c.id = p.category_id
+         {$joinAuthor}
+         {$joinCategory}
          WHERE p.title LIKE :q
          ORDER BY p.created_at DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([':q' => "%{$q}%"]);
-$posts = $stmt->fetchAll();
+
+try {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':q' => "%{$q}%"]);
+    $posts = $stmt->fetchAll();
+} catch (Throwable $e) {
+    error_log('Posts listing query failed: ' . $e->getMessage());
+    $posts = [];
+    $errors[] = 'Unable to load posts list. Please check database schema for posts/users/categories.';
+}
 ?>
 <main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
 <div class="posts-page">
