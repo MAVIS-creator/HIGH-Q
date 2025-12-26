@@ -37,21 +37,21 @@ if (isset($pdo) && $pdo instanceof PDO) {
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
       <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
-        <a href="register.php" class="btn btn-primary">Register Now</a>
-        <a href="programs.php" class="btn btn-light text-dark border">See Our Programs</a>
+        <a href="register.php" class="btn btn-primary">Find Your Path</a>
+        <a href="programs.php" class="btn btn-light text-dark border">Explore Success Tracks</a>
       </div>
       <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
         <div class="text-center">
-          <strong>6+</strong>
-          <div>Years Experience</div>
-        </div>
-        <div class="text-center">
-          <strong>1000+</strong>
-          <div>Students Trained</div>
+          <strong>98%</strong>
+          <div>WAEC / NECO Success</div>
         </div>
         <div class="text-center">
           <strong>305</strong>
           <div>Highest JAMB Score</div>
+        </div>
+        <div class="text-center">
+          <strong>75%</strong>
+          <div>Tech/Digital Placement</div>
         </div>
       </div>
     </div>
