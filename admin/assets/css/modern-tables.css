@@ -1,5 +1,13 @@
 /* Modern Table Styling for HIGH-Q Admin Pages */
 
+/* Shared helper: prevent wide tables from overflowing the page */
+.hq-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ============ PAYMENTS TABLE ============ */
 .payments-table {
   width: 100%;
