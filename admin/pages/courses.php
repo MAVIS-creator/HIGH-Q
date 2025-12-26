@@ -216,8 +216,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     }
 ?>
 
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
+<?php
+$__hqStandalone = (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'courses.php');
+if ($__hqStandalone) {
+  require_once '../includes/header.php';
+  require_once '../includes/sidebar.php';
+}
+?>
 
 <div class="admin-page-content">
 <div class="courses-page">
@@ -680,5 +685,9 @@ function escapeHtml(s){
   </script>
 </div> <!-- .courses-page -->
 </div> <!-- .admin-page-content -->
-</body>
-</html>
+
+<?php
+if ($__hqStandalone) {
+  require_once '../includes/footer.php';
+}
+?>
