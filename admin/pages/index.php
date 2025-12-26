@@ -132,8 +132,12 @@ if (!$isAjaxRequest && !empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP
     $isAjaxRequest = true;
 }
 if (!$isAjaxRequest && !empty($_REQUEST['action'])) {
-    // treat POST/GET with an action param as AJAX API-style request
-    $isAjaxRequest = true;
+    // Only treat an action request as AJAX when explicitly requested by the client
+    $explicitAjax = false;
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') $explicitAjax = true;
+    if (!empty($_REQUEST['ajax']) && $_REQUEST['ajax'] == '1') $explicitAjax = true;
+    if (!empty($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) $explicitAjax = true;
+    if ($explicitAjax) $isAjaxRequest = true;
 }
 
 if (!$isAjaxRequest) {
