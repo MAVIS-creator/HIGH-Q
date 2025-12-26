@@ -8,6 +8,9 @@
 
     // Use the admin base provided by the server (derived from actual request URL)
     const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
+    const ADMIN_PATH = window.HQ_ADMIN_PATH || '/admin';
+    const APP_BASE = window.HQ_APP_BASE || window.location.origin;
+    const FALLBACK_AVATAR = APP_BASE + ADMIN_PATH + '/assets/img/hq-logo.jpeg';
     
     console.log('PROFILE_MODAL ADMIN_BASE:', ADMIN_BASE);
     
@@ -51,7 +54,7 @@
                         <div class="profile-tab-content active" id="tab-general">
                             <div class="profile-avatar-section">
                                 <div class="profile-avatar-preview">
-                                    <img src="${window.HQ_USER_AVATAR || '../../public/assets/images/hq-logo.jpeg'}" alt="Avatar" id="profileAvatarPreview">
+                                    <img src="${window.HQ_USER_AVATAR || FALLBACK_AVATAR}" alt="Avatar" id="profileAvatarPreview">
                                 </div>
                                 <div class="profile-avatar-controls">
                                     <h3>Profile Picture</h3>

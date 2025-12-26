@@ -293,7 +293,7 @@ if ($__hqStandalone) {
     ?>
     <div class="user-card" data-status="<?= $u['is_active']==1?'active':($u['is_active']==0?'pending':'banned') ?>" data-role="<?= strtolower($u['role_slug'] ?? 'student') ?>">
       <div class="user-avatar">
-        <img src="<?= htmlspecialchars($u['avatar'] ? app_url($u['avatar']) : app_url('public/assets/images/hq-logo.jpeg')) ?>" alt="Avatar">
+        <img src="<?= htmlspecialchars($u['avatar'] ? app_url($u['avatar']) : 'assets/img/hq-logo.jpeg') ?>" alt="Avatar">
       </div>
       <div class="user-info">
         <div class="user-name"><?= htmlspecialchars($u['name']) ?></div>
@@ -367,7 +367,7 @@ if ($__hqStandalone) {
     <!-- View Tab -->
     <div id="viewTab" class="tab-pane active">
     <div class="profile-header">
-  <img id="mAvatar" src="<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>" alt="Avatar">
+  <img id="mAvatar" src="assets/img/hq-logo.jpeg" alt="Avatar">
         <div>
           <h3 id="mName">Name</h3>
           <p id="mRole" class="role-badge role-student">Role</p>
@@ -488,7 +488,9 @@ async function loadUser(id, mode='view'){
   document.getElementById('mUpdated').textContent = data.updated_at ?? '—';
   document.getElementById('mPosts').textContent = data.posts_count;
   document.getElementById('mComments').textContent = data.comments_count;
-  document.getElementById('mAvatar').src = data.avatar ? ((window.HQ_APP_BASE || '') + '/' + data.avatar.replace(/^\/+/, '')) : ((window.HQ_APP_BASE || '') + '/public/assets/images/hq-logo.jpeg');
+  document.getElementById('mAvatar').src = data.avatar
+    ? ((window.HQ_APP_BASE || '') + '/' + data.avatar.replace(/^\/+/, ''))
+    : ((window.HQ_ADMIN_PATH || '/admin') + '/assets/img/hq-logo.jpeg');
 
   // Fill edit form
   const form = document.getElementById('editForm');
