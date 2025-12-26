@@ -354,6 +354,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 // Search filter
 $q = trim($_GET['q'] ?? '');
 
+// Pagination
+$perPage = 12;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$offset = ($page - 1) * $perPage;
+$totalPosts = 0;
+$totalPages = 1;
+try {
+    $countStmt = $pdo->prepare('SELECT COUNT(*) FROM posts WHERE title LIKE :q');
+    $countStmt->execute([':q' => "%{$q}%"]);
+    $totalPosts = (int)$countStmt->fetchColumn();
+    $totalPages = max(1, (int)ceil($totalPosts / $perPage));
+    if ($page > $totalPages) {
+        $page = $totalPages;
+        $offset = ($page - 1) * $perPage;
+    }
+} catch (Throwable $e) {
+    // If COUNT fails due to schema oddities, keep pagination stable.
+    $totalPosts = 0;
+    $totalPages = 1;
+}
+
 // Fetch categories (table may not exist on some installs)
 try {
     $categories = $pdo->query("SELECT id,name FROM categories ORDER BY name")->fetchAll();
@@ -387,11 +408,15 @@ $sql  = "SELECT p.*, {$selectAuthor}, {$selectCategory}
          {$joinAuthor}
          {$joinCategory}
          WHERE p.title LIKE :q
-         ORDER BY p.created_at DESC";
+         ORDER BY p.created_at DESC
+         LIMIT :limit OFFSET :offset";
 
 try {
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([':q' => "%{$q}%"]);
+    $stmt->bindValue(':q', "%{$q}%", PDO::PARAM_STR);
+    $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    $stmt->execute();
     $posts = $stmt->fetchAll();
 } catch (Throwable $e) {
     error_log('Posts listing query failed: ' . $e->getMessage());
@@ -504,6 +529,47 @@ try {
                     </div>
                 <?php endforeach; ?>
             </div>
+
+            <?php if ($totalPages > 1): ?>
+                <?php
+                    $qp = $_GET;
+                    $qp['pages'] = $qp['pages'] ?? 'posts';
+                    $makeLink = function($pnum) use ($qp) {
+                        $qp['page'] = $pnum;
+                        return 'index.php?' . http_build_query($qp);
+                    };
+                    $window = 2;
+                    $start = max(1, $page - $window);
+                    $end = min($totalPages, $page + $window);
+                ?>
+                <nav aria-label="Posts pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <?php if ($page > 1): ?>
+                        <a class="btn" href="<?= htmlspecialchars($makeLink($page - 1)) ?>">Prev</a>
+                    <?php endif; ?>
+
+                    <?php if ($start > 1): ?>
+                        <a class="btn" href="<?= htmlspecialchars($makeLink(1)) ?>">1</a>
+                        <?php if ($start > 2): ?><span style="padding:6px 8px;color:#666">&hellip;</span><?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php for ($i = $start; $i <= $end; $i++): ?>
+                        <?php if ($i == $page): ?>
+                            <span style="padding:6px 10px;background:#111;color:#fff;border-radius:4px"><?= (int)$i ?></span>
+                        <?php else: ?>
+                            <a class="btn" href="<?= htmlspecialchars($makeLink($i)) ?>"><?= (int)$i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <?php if ($end < $totalPages): ?>
+                        <?php if ($end < $totalPages - 1): ?><span style="padding:6px 8px;color:#666">&hellip;</span><?php endif; ?>
+                        <a class="btn" href="<?= htmlspecialchars($makeLink($totalPages)) ?>"><?= (int)$totalPages ?></a>
+                    <?php endif; ?>
+
+                    <?php if ($page < $totalPages): ?>
+                        <a class="btn" href="<?= htmlspecialchars($makeLink($page + 1)) ?>">Next</a>
+                    <?php endif; ?>
+                </nav>
+            <?php endif; ?>
         <?php else: ?>
             <div class="posts-empty">
                 <p>No articles yet. Click "Add Article" to create the first post.</p>
