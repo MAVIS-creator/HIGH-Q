@@ -517,9 +517,6 @@ if ($__hqStandalone) {
       } catch(e){ console.error(e); }
     })();
   </script>
-
-  <?php include '../includes/footer.php'; ?>
-
 </div>
 
   <style>
