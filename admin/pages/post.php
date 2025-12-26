@@ -460,14 +460,16 @@ $posts = $stmt->fetchAll();
                                     }
                                 ?>
                                 <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb">
+                            <?php else: ?>
+                                <div class="image-placeholder"><i class='bx bxs-image'></i></div>
                             <?php endif; ?>
                         <div class="meta">
                             <strong><?= htmlspecialchars($p['title']) ?></strong>
                             <div class="info"><?= htmlspecialchars($p['category_name'] ?? 'Uncategorized') ?> • <?= htmlspecialchars($p['author'] ?? '') ?></div>
                             <?php if ($p['status'] === 'published'): ?>
-                                <span style="background:#e6ffed;color:#188038;padding:2px 6px;border-radius:4px;font-size:0.8rem;margin-left:8px">Published</span>
+                                <span class="status-badge status-published" style="margin-left:8px">Published</span>
                             <?php else: ?>
-                                <span style="background:#f3f3f3;color:#666;padding:2px 6px;border-radius:4px;font-size:0.8rem;margin-left:8px">Draft</span>
+                                <span class="status-badge status-draft" style="margin-left:8px">Draft</span>
                             <?php endif; ?>
                             <?php if ($p['status'] === 'published' && (empty($p['excerpt']) || empty($p['featured_image']))): ?>
                                 <span title="Missing excerpt or image" style="color:var(--hq-yellow);margin-left:8px"><i class="bx bx-error"></i></span>

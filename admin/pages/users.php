@@ -15,7 +15,7 @@ $csrf = generateToken('users_form');
 $all_roles = $pdo->query("SELECT id, name, slug FROM roles ORDER BY name ASC")->fetchAll();
 
 // Ensure users.css is loaded after admin.css by providing $pageCss for header
-$pageCss = '';
+$pageCss = '<link rel="stylesheet" href="../assets/css/users.css">';
 // Page title and subtitle for header
 $pageTitle = 'User Management';
 $pageSubtitle = 'Manage user accounts, roles, and permissions';
@@ -211,17 +211,13 @@ $users = $pdo->query("
 ")->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>User Management - HIGH Q SOLID ACADEMY</title>
-<link rel="stylesheet" href="../assets/css/users.css">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
-<body>
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
+<?php
+$__hqStandalone = (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'users.php');
+if ($__hqStandalone) {
+  require_once '../includes/header.php';
+  require_once '../includes/sidebar.php';
+}
+?>
 
 <div class="admin-page-content">
 <div class="users-page">
@@ -541,5 +537,9 @@ roleFilter.addEventListener('change', filterTable);
 </script>
 </div> <!-- .users-page -->
 </div> <!-- .admin-page-content -->
-</body>
-</html>
+
+<?php
+if ($__hqStandalone) {
+  require_once '../includes/footer.php';
+}
+?>
