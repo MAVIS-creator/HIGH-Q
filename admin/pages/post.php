@@ -1,5 +1,12 @@
 <?php
-// Moved to top with other includes
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/csrf.php';
+
+// Ensure posts page CSS loads after admin.css (router also sets this via pageMeta)
+$pageCss = '<link rel="stylesheet" href="../assets/css/posts.css">';
+
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
@@ -10,9 +17,6 @@ requirePermission('post'); // where 'roles' matches the menu slug
 $csrf     = generateToken();
 $errors   = [];
 $success  = [];
-
-// Ensure posts page CSS loads after admin.css
-$pageCss = '<link rel="stylesheet" href="../assets/css/posts.css">';
 
 // Make sure uploads folder exists
 $uploadDir = __DIR__ . '/../../public/uploads/posts/';

@@ -31,6 +31,11 @@ $pageMeta = [
     ],
     'posts' => [
         'subtitle' => 'Create and manage news articles and blog posts',
+        'css' => 'assets/css/posts.css',
+    ],
+    'post' => [
+        'subtitle' => 'Create and manage news articles and blog posts',
+        'css' => 'assets/css/posts.css',
     ],
     'sentinel' => [
         'subtitle' => 'Run advanced security checks and view reports.',
