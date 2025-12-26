@@ -744,9 +744,17 @@ if ($hasRegistrations) {
             transition: all 0.2s;
         }
         .tab-button.active {
-            background: #3b82f6;
-            color: white;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            background: var(--hq-yellow);
+            color: var(--hq-black);
+            box-shadow: 0 2px 8px rgba(255, 214, 0, 0.3);
+        }
+        @media (max-width: 1200px) {
+            .students-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .students-grid { grid-template-columns: 1fr; }
+            .page-hero-academic { padding: 1.5rem; margin: -24px -16px 24px -16px; }
+            .filter-card { padding: 1rem; }
         }
     </style>
 </head>
