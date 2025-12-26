@@ -515,6 +515,18 @@
     transition: margin-left var(--transition-slow);
 }
 
+/* Admin Page Content Container - Full width with proper padding */
+.admin-page-content {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 32px 48px;
+    background: transparent;
+}
+
+.admin-page-content .page-hero {
+    margin: -24px -32px 24px -32px;
+}
+
 /* =========================================
    MODERN CARDS & CONTAINERS
    ========================================= */
