@@ -776,28 +776,28 @@ if ($__hqStandalone) {
 
     <!-- Controls & Filters -->
     <div class="filter-card">
-        <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <div class="relative flex-1 md:w-80">
-                    <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
-                    <input type="text" id="searchInput" placeholder="Search by name, email..." 
-                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 outline-none transition-all">
-                </div>
-                <select id="statusFilter" class="rounded-xl border border-slate-200 px-4 py-2.5 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 outline-none transition-all bg-slate-50">
-                    <option value="">All Statuses</option>
-                    <option value="active">Approved</option>
-                    <option value="pending">Pending</option>
-                    <option value="banned">Rejected</option>
-                </select>
-            </div>
-            
-            <div class="flex bg-slate-100 p-1 rounded-xl">
-                <a href="index.php?pages=academic" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='regular' || $current_source==='') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Regular</a>
-                <?php if ($hasPostUtme): ?>
-                <a href="index.php?pages=academic&source=postutme" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='postutme') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Post-UTME</a>
-                <?php endif; ?>
-            </div>
+      <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
+        <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center" style="flex:1;">
+          <div class="position-relative" style="flex:1; max-width: 420px;">
+            <i class='bx bx-search' style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;"></i>
+            <input type="text" id="searchInput" placeholder="Search by name, email..." class="form-control" style="padding-left:40px; border-radius: 0.75rem;">
+          </div>
+
+          <select id="statusFilter" class="form-select" style="border-radius: 0.75rem; max-width: 220px;">
+            <option value="">All Statuses</option>
+            <option value="active">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="banned">Rejected</option>
+          </select>
         </div>
+
+        <div class="btn-group" role="group" aria-label="Registration source">
+          <a href="index.php?pages=academic" class="btn btn-sm <?= ($current_source==='regular' || $current_source==='') ? 'btn-dark' : 'btn-outline-secondary' ?>">Regular</a>
+          <?php if ($hasPostUtme): ?>
+          <a href="index.php?pages=academic&source=postutme" class="btn btn-sm <?= ($current_source==='postutme') ? 'btn-dark' : 'btn-outline-secondary' ?>">Post-UTME</a>
+          <?php endif; ?>
+        </div>
+      </div>
     </div>
 
     <!-- academic Grid -->
@@ -811,92 +811,104 @@ if ($__hqStandalone) {
                 $passportThumb = $s['passport_path'] ?? ($s['avatar'] ?? null);
                 $isPostUtme = !empty($s['__postutme']);
             ?>
-            <div class="user-card group relative bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex flex-col h-full"
+            <div class="student-card academic-card"
                  data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>">
-                
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="h-14 w-14 rounded-full overflow-hidden bg-slate-100 ring-2 ring-white shadow-sm flex-shrink-0">
-                        <img src="<?= htmlspecialchars($passportThumb ?: app_url('public/assets/images/hq-logo.jpeg')) ?>" 
-                             class="h-full w-full object-cover" 
-                             onerror="this.src='<?= htmlspecialchars(app_url('public/assets/images/hq-logo.jpeg')) ?>'">
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="font-bold text-slate-900 truncate card-name"><?= htmlspecialchars($displayName) ?></h3>
-                        <p class="text-sm text-slate-500 truncate card-email"><?= htmlspecialchars($displayEmail) ?></p>
-                        <div class="flex gap-2 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">Student</span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium 
-                                <?= ($status==='paid' || $status==='confirmed' || $status==='active') ? 'bg-emerald-50 text-emerald-700' : 
-                                   (($status==='rejected' || $status==='banned') ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700') ?>">
-                                <?= htmlspecialchars(ucfirst($status)) ?>
-                            </span>
-                        </div>
-                    </div>
+              <div class="d-flex align-items-start gap-3 mb-3">
+                <div class="academic-avatar">
+                  <img src="<?= htmlspecialchars($passportThumb ?: 'assets/img/hq-logo.jpeg') ?>"
+                     alt="Avatar"
+                     onerror="this.src='assets/img/hq-logo.jpeg'">
                 </div>
 
-                <div class="mt-auto pt-4 border-t border-slate-100 flex flex-wrap gap-2 justify-end">
+                <div class="flex-grow-1" style="min-width:0;">
+                  <h3 class="card-name" style="margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayName) ?></h3>
+                  <div class="card-email" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayEmail) ?></div>
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    <span class="badge bg-primary-subtle text-primary">Student</span>
+                    <?php if ($status==='paid' || $status==='confirmed' || $status==='active'): ?>
+                      <span class="badge bg-success-subtle text-success"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                    <?php elseif ($status==='rejected' || $status==='banned'): ?>
+                      <span class="badge bg-danger-subtle text-danger"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                    <?php else: ?>
+                      <span class="badge bg-warning-subtle text-warning"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                    <?php endif; ?>
+                  </div>
+                </div>
+              </div>
+
+                <div class="pt-3 mt-auto" style="border-top:1px solid #eef2f7; display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:flex-end;">
                     <?php if (!$isPostUtme): ?>
                         <?php if (!empty($s['status'])): ?>
-                            <button onclick="confirmRegistration(<?= $s['id'] ?>)" class="px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
+                      <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-success">
                                 Confirm
                             </button>
-                            <button onclick="rejectRegistration(<?= $s['id'] ?>)" class="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+                      <button type="button" onclick="rejectRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-danger">
                                 Reject
                             </button>
                         <?php endif; ?>
                     <?php endif; ?>
                     
-                    <button onclick="viewRegistration(<?= $s['id'] ?>)" class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                  <button type="button" onclick="viewRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-primary">
                         View
                     </button>
                     
                     <form method="post" action="index.php?pages=academic&action=<?= $isPostUtme ? 'delete_postutme' : 'delete' ?>&id=<?= $s['id'] ?>" class="inline-block" onsubmit="return confirm('Are you sure?');">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                        <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
-                            <i class='bx bx-trash text-lg'></i>
+                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Delete">
+                      <i class='bx bx-trash'></i>
                         </button>
                     </form>
                 </div>
             </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <div class="col-span-full text-center py-12 text-slate-500">
-                <i class='bx bx-folder-open text-4xl mb-2'></i>
+            <div class="text-center" style="padding:3rem 1rem;color:#64748b;grid-column:1/-1;">
+              <i class='bx bx-folder-open' style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>
                 <p>No registrations found.</p>
             </div>
         <?php endif; ?>
     </div>
 
     <!-- Pagination -->
-    <?php if (!empty($total) && isset($perPage)): $pages = ceil($total / $perPage); $baseLink = 'index.php?pages=academic' . ($current_source==='postutme' ? '&source=postutme' : ''); ?>
-    <div class="flex justify-center gap-2 mt-8">
+    <?php if (!empty($total) && isset($perPage)): $pages = (int) ceil($total / $perPage); $baseLink = 'index.php?pages=academic' . ($current_source==='postutme' ? '&source=postutme' : ''); $currentPage = (int)($page ?? 1); ?>
+    <?php if ($pages > 1): ?>
+    <nav aria-label="Academic pagination" class="mt-4">
+      <ul class="pagination justify-content-center">
         <?php for ($p=1;$p<=$pages;$p++): ?>
-            <a href="<?= $baseLink . '&page=' . $p ?>" 
-               class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= $p==($page??1) ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200' ?>">
-                <?= $p ?>
-            </a>
+          <li class="page-item <?= $p===$currentPage ? 'active' : '' ?>">
+            <a class="page-link" href="<?= $baseLink . '&page=' . $p ?>"><?= $p ?></a>
+          </li>
         <?php endfor; ?>
-    </div>
+      </ul>
+    </nav>
+    <?php endif; ?>
     <?php endif; ?>
 </div>
+
+  <style>
+  .academic-avatar{width:56px;height:56px;border-radius:999px;overflow:hidden;background:#f1f5f9;flex:0 0 56px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+  .academic-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+  .academic-card .card-email{font-size:0.9rem;color:#64748b}
+  .academic-card .badge{font-weight:600}
+  </style>
 
 <script>
 // Client-side search
 document.getElementById('searchInput').addEventListener('keyup', function(e) {
     const q = e.target.value.toLowerCase();
-    document.querySelectorAll('.user-card').forEach(card => {
+  document.querySelectorAll('.academic-card').forEach(card => {
         const name = card.querySelector('.card-name').textContent.toLowerCase();
         const email = card.querySelector('.card-email').textContent.toLowerCase();
-        card.style.display = (name.includes(q) || email.includes(q)) ? 'flex' : 'none';
+    card.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
     });
 });
 
 document.getElementById('statusFilter').addEventListener('change', function(e) {
     const status = e.target.value.toLowerCase();
-    document.querySelectorAll('.user-card').forEach(card => {
+  document.querySelectorAll('.academic-card').forEach(card => {
         const cardStatus = card.dataset.status;
-        if (!status) card.style.display = 'flex';
-        else card.style.display = (cardStatus.includes(status)) ? 'flex' : 'none';
+    if (!status) card.style.display = '';
+    else card.style.display = (cardStatus.includes(status)) ? '' : 'none';
     });
 });
 
