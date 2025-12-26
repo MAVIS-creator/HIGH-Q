@@ -449,7 +449,16 @@ tabButtons.forEach(btn=>btn.addEventListener('click', ()=>activateTab(btn.datase
 
 // AJAX: Load user data
 async function loadUser(id, mode='view'){
-  const res = await fetch((window.HQ_ADMIN_BASE || '') + '/index.php?pages=users&action=view&id=' + encodeURIComponent(id), { credentials: 'same-origin' });
+  const res = await fetch(
+    (window.HQ_ADMIN_BASE || '') + '/index.php?pages=users&action=view&id=' + encodeURIComponent(id),
+    {
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      }
+    }
+  );
   let data = null;
   try {
     data = await res.json();
