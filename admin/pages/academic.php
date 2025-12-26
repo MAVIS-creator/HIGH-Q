@@ -880,8 +880,6 @@ if ($__hqStandalone) {
     <?php endif; ?>
 </div>
 
-<?php include '../includes/footer.php'; ?>
-
 <script>
 // Client-side search
 document.getElementById('searchInput').addEventListener('keyup', function(e) {
