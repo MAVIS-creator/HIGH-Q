@@ -2,6 +2,17 @@
 // admin/includes/sidebar.php
 require_once __DIR__ . '/db.php';
 
+// Compute admin base path so asset links work when served from /admin/index.php
+$script = $_SERVER['SCRIPT_NAME'] ?? '';
+$parts = explode('/', trim($script, '/'));
+$idx = array_search('admin', $parts, true);
+if ($idx !== false) {
+    $adminBasePath = '/' . implode('/', array_slice($parts, 0, $idx + 1));
+} else {
+    $adminBasePath = rtrim(dirname($script), '/');
+    if ($adminBasePath === '') $adminBasePath = '/admin';
+}
+
 $current = $_GET['pages'] ?? 'dashboard'; // match index.php
 
 // Defensive: if no session user present, show a minimal sidebar
@@ -35,7 +46,7 @@ try {
 
 <aside class="admin-sidebar">
     <a href="index.php?pages=dashboard" class="sidebar-logo">
-        <img src="../assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
+        <img src="<?= htmlspecialchars($adminBasePath) ?>/assets/img/hq-logo.jpeg" alt="Academy Logo" class="brand-logo">
         <h3>HIGH Q SOLID ACADEMY</h3>
         <small><?= htmlspecialchars($_SESSION['user']['role_name'] ?? 'Administrator'); ?></small>
     </a>
@@ -64,7 +75,7 @@ try {
                 <?php endif; ?>
             <?php endforeach; ?>
             <li>
-                <a href="../logout.php" class="logout-link">
+                <a href="<?= htmlspecialchars($adminBasePath) ?>/logout.php" class="logout-link">
                     <i class='bx bx-log-out'></i>
                     <span>Logout</span>
                 </a>

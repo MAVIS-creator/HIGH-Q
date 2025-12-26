@@ -40,6 +40,19 @@ if (!function_exists('admin_url') || !function_exists('app_url')) {
 if (!headers_sent()) {
     ob_start();
 }
+
+// Compute admin base path once so asset URLs work from both:
+//  - /.../admin/index.php?pages=...
+//  - /.../admin/pages/index.php?pages=...
+$script = $_SERVER['SCRIPT_NAME'] ?? '';
+$parts = explode('/', trim($script, '/'));
+$idx = array_search('admin', $parts, true);
+if ($idx !== false) {
+    $adminBasePath = '/' . implode('/', array_slice($parts, 0, $idx + 1));
+} else {
+    $adminBasePath = rtrim(dirname($script), '/');
+    if ($adminBasePath === '') $adminBasePath = '/admin';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,81 +61,43 @@ if (!headers_sent()) {
     <meta charset="UTF-8">
     <title><?= isset($pageTitle) ? $pageTitle : 'Admin Panel'; ?> - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="<?= htmlspecialchars($adminBasePath) ?>/assets/img/favicon.ico" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Modern Admin Theme (must come before legacy admin.css to set variables) -->
-    <link rel="stylesheet" href="../assets/css/admin-modern.css">
-    <link rel="stylesheet" href="../assets/css/admin-style.css">
-    <link rel="stylesheet" href="../assets/css/notifications.css">
-    <link rel="stylesheet" href="../assets/css/responsive.css">
-    <link rel="stylesheet" href="../assets/css/profile-modal.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-modern.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-style.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/notifications.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/profile-modal.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/modern-tables.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../assets/js/storage-helper.js"></script>
-    <script src="../assets/js/sweetalert-config.js"></script>
-    <script src="../assets/js/notifications.js" defer></script>
-    <script src="../assets/js/header-notifications.js" defer></script>
-    <script src="../assets/js/viewport-check.js" defer></script>
-    <script src="../assets/js/admin-forms.js" defer></script>
-    <script src="../assets/js/profile-modal.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/storage-helper.js"></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/sweetalert-config.js"></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/notifications.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/header-notifications.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/viewport-check.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/admin-forms.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/profile-modal.js" defer></script>
     <?php
-    // Build a reliable path to the admin assets directory by locating the 'admin' segment
-    $script = $_SERVER['SCRIPT_NAME'] ?? '';
-    $parts = explode('/', trim($script, '/'));
-    $adminBase = '';
-    $idx = array_search('admin', $parts, true);
-    if ($idx !== false) {
-        $adminBase = '/' . implode('/', array_slice($parts, 0, $idx + 1));
-    } else {
-        // fallback to dirname
-        $adminBase = rtrim(dirname($script), '/');
-        if ($adminBase === '') $adminBase = '/';
-    }
-
-    // Try several candidate hrefs and pick the first that exists on disk (DOCUMENT_ROOT)
-    $candidates = [
-        $adminBase . '/assets/css/admin.css',
-        '/admin/assets/css/admin.css',
-        dirname($script) . '/assets/css/admin.css',
-        $adminBase . '/includes/../assets/css/admin.css',
-        '/assets/css/admin.css'
-    ];
-
-    $chosen = null;
-    $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
-    foreach ($candidates as $cand) {
-        // normalize
-        $candNorm = '/' . ltrim($cand, '/');
-        $fs = $docRoot . $candNorm;
-        if ($docRoot !== '' && is_readable($fs)) {
-            $chosen = $candNorm;
-            break;
-        }
-    }
-
-    if ($chosen === null) {
-        // fallback to adminBase path (best-effort)
-        $chosen = $adminBase . '/assets/css/admin.css';
-    }
-
-    // Output only the correct admin CSS link for the detected admin path
-    echo "<link rel=\"stylesheet\" href=\"" . $chosen . "\">\n";
+    // Output the correct admin.css for the detected admin path
+    echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($adminBasePath) . "/assets/css/admin.css\">\n";
     // If a page-specific CSS was provided, allow two modes:
     //  - raw <link> tag or <style> tag (echo as-is)
     //  - relative path (treat as relative to admin base)
     if (!empty($pageCss)) {
         $trim = trim($pageCss);
         if (strpos($trim, '<link') === 0 || strpos($trim, '<style') === 0) {
-            echo $pageCss . "\n";
+            // Fix older pageCss values that used ../assets/... which breaks when served from /admin/index.php
+            $fixed = str_replace('href="../assets/', 'href="' . htmlspecialchars($adminBasePath) . '/assets/', $pageCss);
+            $fixed = str_replace("href='../assets/", "href='" . htmlspecialchars($adminBasePath) . "/assets/", $fixed);
+            echo $fixed . "\n";
         } else {
-            $adminBaseForHref = $adminBase === '/' ? '' : $adminBase;
-            echo "<link rel=\"stylesheet\" href=\"" . $adminBaseForHref . "/" . ltrim($pageCss, '/') . "\">\n";
+            echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($adminBasePath) . "/" . ltrim($pageCss, '/') . "\">\n";
         }
     }
 
@@ -192,7 +167,7 @@ if (!headers_sent()) {
         </div>
         <div class="header-right">
             <?php if (empty($_SESSION['user'])): ?>
-                <a href="../signup.php" class="header-cta"><i class='bx bx-user-plus'></i> Sign up</a>
+                <a href="<?= htmlspecialchars($adminBasePath) ?>/signup.php" class="header-cta"><i class='bx bx-user-plus'></i> Sign up</a>
             <?php else: ?>
                     <div class="header-notifications">
                         <button id="notifBtn" class="header-cta" title="Notifications">
@@ -233,7 +208,7 @@ if (!headers_sent()) {
                                 <span>Account Settings</span>
                             </a>
                             <div class="profile-dropdown-divider"></div>
-                            <a href="../logout.php" class="profile-dropdown-item profile-dropdown-item--logout">
+                            <a href="<?= htmlspecialchars($adminBasePath) ?>/logout.php" class="profile-dropdown-item profile-dropdown-item--logout">
                                 <i class='bx bx-log-out'></i>
                                 <span>Logout</span>
                             </a>

@@ -26,9 +26,8 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 ?>
-<link rel="stylesheet" href="../assets/css/modern-tables.css">
 <style>
-.chat-thread-wrap{max-width:1100px;margin:0 auto;padding:2rem;}
+.chat-thread-wrap{max-width:none;width:100%;margin:0;padding:2rem;}
 .chat-thread-header{background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);padding:2rem;border-radius:1rem;margin-bottom:1.5rem;color:#1e293b;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 24px rgba(251,191,36,.25)}
 .chat-thread-header h1{margin:0;font-size:2rem;font-weight:800;display:flex;align-items:center;gap:12px}
 .chat-thread-header .meta{font-size:.95rem;opacity:.85;text-align:right}

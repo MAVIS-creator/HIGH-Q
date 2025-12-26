@@ -165,11 +165,11 @@ $response = [
     'count' => count($notifications),
     // Use index.php routing so the admin chrome (header/sidebar) is rendered
     'urls' => [
-        'comment' => 'pages/index.php?pages=comments&id=',
-        'payment' => 'pages/index.php?pages=payments&id=',
-        'student_application' => 'pages/index.php?pages=students&id=',
-        'chat' => 'pages/index.php?pages=chat&thread=',
-        'user' => 'pages/index.php?pages=users&id='
+        'comment' => 'index.php?pages=comments&id=',
+        'payment' => 'index.php?pages=payments&id=',
+        'student_application' => 'index.php?pages=students&id=',
+        'chat' => 'index.php?pages=chat&thread=',
+        'user' => 'index.php?pages=users&id='
     ]
 ];
 

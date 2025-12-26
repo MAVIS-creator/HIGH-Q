@@ -43,6 +43,14 @@ function requirePermission($menuSlug) {
 
     $userId = $_SESSION['user']['id'] ?? null;
     if (!$userId) {
+        // Compute admin base path for safe redirects
+        $script = $_SERVER['SCRIPT_NAME'] ?? '';
+        $parts = explode('/', trim($script, '/'));
+        $idx = array_search('admin', $parts, true);
+        $adminBasePath = ($idx !== false)
+            ? '/' . implode('/', array_slice($parts, 0, $idx + 1))
+            : '/admin';
+
         // If there are no users in the system yet, redirect to signup for initial setup.
         try {
             $stmt = $pdo->query('SELECT COUNT(*) FROM users');
@@ -59,10 +67,10 @@ function requirePermission($menuSlug) {
             exit;
         } else {
             if ($total === 0) {
-                header("Location: ../signup.php");
+                header("Location: " . $adminBasePath . "/signup.php");
                 exit;
             }
-            header("Location: ../login.php");
+            header("Location: " . $adminBasePath . "/login.php");
             exit;
         }
     }
@@ -137,11 +145,18 @@ function ensureAuthenticated(): void {
         echo json_encode(['status' => 'error', 'message' => 'Unauthenticated']);
         exit;
     } else {
+        $script = $_SERVER['SCRIPT_NAME'] ?? '';
+        $parts = explode('/', trim($script, '/'));
+        $idx = array_search('admin', $parts, true);
+        $adminBasePath = ($idx !== false)
+            ? '/' . implode('/', array_slice($parts, 0, $idx + 1))
+            : '/admin';
+
         if ($total === 0) {
-            header('Location: ../signup.php');
+            header('Location: ' . $adminBasePath . '/signup.php');
             exit;
         }
-        header('Location: ../login.php');
+        header('Location: ' . $adminBasePath . '/login.php');
         exit;
     }
 }

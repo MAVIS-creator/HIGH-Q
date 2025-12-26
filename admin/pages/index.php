@@ -17,14 +17,14 @@ $pageMeta = [
     ],
     'users' => [
         'subtitle' => 'Manage user accounts, roles, and permissions',
-        'css' => '<link rel="stylesheet" href="../assets/css/users.css">',
+        'css' => 'assets/css/users.css',
     ],
     'roles' => [
         'subtitle' => 'Manage roles and permissions',
     ],
     'courses' => [
         'subtitle' => 'Manage courses and programs offered on the site',
-        'css' => '<link rel="stylesheet" href="../assets/css/courses.css">',
+        'css' => 'assets/css/courses.css',
     ],
     'tutors' => [
         'subtitle' => 'Manage tutor profiles and listings',

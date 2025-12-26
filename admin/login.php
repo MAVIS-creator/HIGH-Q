@@ -80,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } catch (Throwable $e) { error_log('clear login attempts failed: ' . $e->getMessage()); }
 
                 // Redirect into the admin pages router so the dashboard/header/sidebar are rendered.
-                // The pages router lives at /admin/pages/index.php, so direct the user there.
-                header("Location: pages/index.php?pages=dashboard");
+                // Use the main admin router
+                header("Location: index.php?pages=dashboard");
                 exit;
             }
         } else {
