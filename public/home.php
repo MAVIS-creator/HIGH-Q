@@ -168,23 +168,47 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
 
     <div class="testimonials-grid">
+      <?php
+      // Fetch top 3 testimonials from database
+      $topTestimonials = [];
+      try {
+        $stmt = $pdo->query("SELECT * FROM testimonials WHERE is_active = 1 ORDER BY display_order ASC LIMIT 3");
+        $topTestimonials = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } catch (Exception $e) {
+        // Silently fail
+      }
+      
+      if (empty($topTestimonials)):
+        // Fallback hardcoded testimonials
+      ?>
       <article class="testimonial-mini">
         <div class="badge-outcome">Admitted to Engineering</div>
-        <p class="quote">“Moved from doubts to LAUTECH admission after my prep at HQ.”</p>
+        <p class="quote">"Moved from doubts to LAUTECH admission after my prep at HQ."</p>
         <div class="meta">— Aisha O., WAEC + Post-UTME Track</div>
       </article>
 
       <article class="testimonial-mini">
         <div class="badge-outcome">305 JAMB Score</div>
-        <p class="quote">“Structured mocks and tutor feedback pushed me past 300.”</p>
+        <p class="quote">"Structured mocks and tutor feedback pushed me past 300."</p>
         <div class="meta">— Tunde A., JAMB + CBT Mastery</div>
       </article>
 
       <article class="testimonial-mini">
         <div class="badge-outcome">Cybersecurity Pro</div>
-        <p class="quote">“Tech track plus interview coaching → internship in 10 weeks.”</p>
+        <p class="quote">"Tech track plus interview coaching → internship in 10 weeks."</p>
         <div class="meta">— Chidinma E., Digital Skills Track</div>
       </article>
+      <?php else: ?>
+        <?php foreach ($topTestimonials as $t): ?>
+        <article class="testimonial-mini">
+          <?php if ($t['outcome_badge']): ?>
+            <div class="badge-outcome"><?= htmlspecialchars($t['outcome_badge']) ?></div>
+          <?php endif; ?>
+          <p class="quote">"<?= htmlspecialchars($t['testimonial_text']) ?>"</p>
+          <div class="meta">— <?= htmlspecialchars($t['name']) ?><?php if ($t['role_institution']): ?>, <?= htmlspecialchars($t['role_institution']) ?><?php endif; ?></div>
+        </article>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
 
     <div class="text-center mt-3">
