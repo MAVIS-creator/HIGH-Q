@@ -193,6 +193,44 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </section>
 
+<style>
+.testimonials-strip {
+  padding: 48px 0;
+  background: #0b1a2c;
+  color: #fff;
+}
+.testimonials-strip .highlight { color: var(--hq-yellow, #ffd600); }
+.testimonials-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.testimonial-mini {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+.badge-outcome {
+  display: inline-block;
+  background: var(--hq-yellow, #ffd600);
+  color: #0b1a2c;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+.testimonial-mini .quote { margin: 0 0 10px; line-height: 1.5; font-size: 0.98rem; }
+.testimonial-mini .meta { font-size: 0.85rem; color: rgba(255,255,255,0.8); }
+.link-more { color: #ffd600; font-weight: 700; text-decoration: none; }
+.link-more:hover { text-decoration: underline; }
+@media (max-width: 768px) {
+  .testimonials-strip { padding: 36px 0; }
+}
+</style>
+
 
 <!-- Programs Section -->
 <section class="programs-section">

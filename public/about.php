@@ -29,6 +29,8 @@
   </div>
 </section>
 
+<div id="wall-of-fame"></div>
+
 <!-- Core Values -->
 
 <section class="history-section">
