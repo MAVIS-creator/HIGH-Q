@@ -16,6 +16,7 @@ return [
     'icons'     => ['title' => 'Icons', 'icon' => 'bx bx-image', 'url' => 'index.php?pages=icons'],
     'post'      => ['title' => 'News / Blog', 'icon' => 'bx bxs-news', 'url' => 'index.php?pages=post'],
     'comments'  => ['title' => 'Comments', 'icon' => 'bx bxs-comment-detail', 'url' => 'index.php?pages=comments'],
+    'testimonials' => ['title' => 'Testimonials', 'icon' => 'bx bxs-quote-alt-right', 'url' => 'index.php?pages=testimonials'],
     'chat'      => ['title' => 'Chat Support', 'icon' => 'bx bxs-message-dots', 'url' => 'index.php?pages=chat'],
     'audit_logs' => ['title' => 'Audit Logs', 'icon' => 'bx bxs-report', 'url' => 'index.php?pages=audit_logs'],
     'appointments' => ['title' => 'Appointments', 'icon' => 'bx bx-calendar', 'url' => 'index.php?pages=appointments'],
