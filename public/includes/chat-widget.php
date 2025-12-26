@@ -251,7 +251,7 @@
     const startAgentFormEl = document.getElementById('startAgentForm');
     
     const faqData = {
-        "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Register Now</strong>. Fill out the form and complete payment to secure your spot!",
+        "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Find Your Path</strong>. Fill out the form and complete payment to secure your spot!",
         "What programs are available?": "We offer JAMB, WAEC, POST-UTME, and professional tutoring programs. Visit our <a href='<?= app_url('programs.php') ?>' target='_parent'>Programs page</a> to learn more.",
         "What are your payment options?": "We accept bank transfers, Paystack, and Stripe payments. You'll receive payment instructions after registration.",
         "How do I check my admission status?": "Login to your dashboard and navigate to <strong>My Registrations</strong> to view your admission status and payment history.",
