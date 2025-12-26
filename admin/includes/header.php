@@ -180,8 +180,8 @@ if ($idx !== false) {
                         // Build a resilient avatar fallback using the computed app base so hardcoded /HIGH-Q paths are avoided
                         $avatar = $_SESSION['user']['avatar'] ?? null;
                         if (empty($avatar)) {
-                            // Use app_url() to compute image path reliably (preserves subfolder when APP_URL is not set)
-                            $avatar = app_url('assets/images/hq-logo.jpeg');
+                            // Use the admin logo asset that exists in this project
+                            $avatar = $adminBasePath . '/assets/img/hq-logo.jpeg';
                         }
                         $userName = $_SESSION['user']['name'] ?? 'User';
                         $userRole = $_SESSION['user']['role'] ?? 'Admin';
