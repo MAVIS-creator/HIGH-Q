@@ -223,7 +223,7 @@ $users = $pdo->query("
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="main-content">
+<div class="admin-page-content">
 <div class="users-page">
   <!-- Page Hero -->
   <div class="page-hero">
@@ -309,8 +309,10 @@ $users = $pdo->query("
       </div>
       <div class="user-actions">
         <div class="card-actions">
+          <?php if ($u['id'] !== 1): // Don't show view/edit for main admin ?>
           <button class="btn-secondary btn-view" data-user-id="<?= $u['id'] ?>" title="View"><i class='bx bx-show'></i></button>
           <button class="btn-primary btn-edit" data-user-id="<?= $u['id'] ?>" title="Edit"><i class='bx bx-edit'></i></button>
+          <?php endif; ?>
           <?php if ($_SESSION['user']['role_slug']==='admin'): ?>
               <?php if($u['is_active']===0): ?>
               <form method="post" action="index.php?pages=users&action=approve&id=<?= $u['id'] ?>" class="inline-form">
@@ -517,8 +519,8 @@ function filterTable(){
   const role   = roleFilter.value;
 
   rows.forEach(row=>{
-    const nameEl  = row.querySelector('.card-name');
-    const emailEl = row.querySelector('.card-email');
+    const nameEl  = row.querySelector('.user-name');
+    const emailEl = row.querySelector('.user-email');
     const name  = nameEl ? nameEl.textContent.toLowerCase() : '';
     const email = emailEl ? emailEl.textContent.toLowerCase() : '';
     const rowStatus = row.dataset.status;
@@ -538,6 +540,6 @@ statusFilter.addEventListener('change', filterTable);
 roleFilter.addEventListener('change', filterTable);
 </script>
 </div> <!-- .users-page -->
-</main> <!-- .main-content -->
+</div> <!-- .admin-page-content -->
 </body>
 </html>
