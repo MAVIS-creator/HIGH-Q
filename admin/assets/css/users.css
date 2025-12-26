@@ -160,17 +160,17 @@
     color: var(--hq-black);
 }
 
-/* User List - Modern Grid */
+/* User List - Modern Grid - 3 cards per row */
 .user-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-bottom: 3.5rem;
 }
 
 .users-list { 
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-bottom: 3.5rem;
 }
