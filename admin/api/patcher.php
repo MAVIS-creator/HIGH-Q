@@ -331,7 +331,7 @@ function runCommand($data) {
     chdir($baseDir);
     
     // Security: Whitelist allowed commands
-    $allowedPrefixes = ['git', 'ls', 'dir', 'echo', 'composer', 'php', 'whoami', 'ver'];
+    $allowedPrefixes = ['git', 'ls', 'dir', 'echo', 'composer', 'php', 'whoami', 'ver', 'python', 'python3', 'pip', 'pip3'];
     
     $isAllowed = false;
     foreach ($allowedPrefixes as $prefix) {

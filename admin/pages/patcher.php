@@ -621,7 +621,7 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
     </div>
 
     <script>
-        const API = './api/patcher.php';
+        const API = '../api/patcher.php';
         let currentFile = null;
         let originalContent = '';
         let isEditMode = false;
@@ -894,7 +894,7 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
             const newContent = editor.getValue();
             
             try {
-                const res = await fetch(`${API}?action=diff`, {
+                const res = await fetch(`${API}?action=previewDiff`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({path: currentFile, content: newContent})
@@ -915,7 +915,7 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
             const newContent = editor.getValue();
             
             try {
-                const res = await fetch(`${API}?action=saveFile`, {
+                const res = await fetch(`${API}?action=applyFix`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({path: currentFile, content: newContent})
