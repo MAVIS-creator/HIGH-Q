@@ -1,7 +1,7 @@
 <?php
-require '../includes/auth.php';
-require '../includes/db.php';
-require '../includes/csrf.php';
+require __DIR__ . '/../includes/auth.php';
+require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../includes/csrf.php';
 requirePermission('post');
 
 $csrf = generateToken();

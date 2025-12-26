@@ -1,7 +1,7 @@
 <?php
 // Moved to top with other includes
-require_once '../includes/header.php';
-require_once '../includes/sidebar.php';
+require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/sidebar.php';
 
 
 // Only Admin / Sub-Admin / Moderator

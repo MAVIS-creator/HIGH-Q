@@ -2,10 +2,10 @@
 // admin/pages/academic.php
 // Remove any visible code output from the top of the page
 // Ensure no script or debug code is rendered at the top of the page
-require_once '../includes/auth.php';
-require_once '../includes/db.php';
-require_once '../includes/functions.php';
-require_once '../includes/csrf.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/csrf.php';
 // --- Early AJAX handling: ensure JSON responses are not contaminated by HTML ---
 // Determine requested action (AJAX clients typically send action via POST)
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
@@ -612,8 +612,8 @@ if ($hasRegistrations) {
 <?php
 $__hqStandalone = (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'academic.php');
 if ($__hqStandalone) {
-  require_once '../includes/header.php';
-  require_once '../includes/sidebar.php';
+  require_once __DIR__ . '/../includes/header.php';
+  require_once __DIR__ . '/../includes/sidebar.php';
 }
 ?>
 
@@ -984,7 +984,7 @@ function rejectRegistration(id) {
 
 <?php
 if ($__hqStandalone) {
-  require_once '../includes/footer.php';
+  require_once __DIR__ . '/../includes/footer.php';
 }
 ?>
 

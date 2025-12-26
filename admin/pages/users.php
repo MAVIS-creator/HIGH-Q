@@ -1,9 +1,9 @@
 <?php
 // admin/pages/users.php
-require_once '../includes/auth.php';
-require_once '../includes/db.php';
-require_once '../includes/functions.php';
-require_once '../includes/csrf.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 // Only Admins & Sub-Admins
 requirePermission('users');
@@ -214,8 +214,8 @@ $users = $pdo->query("
 <?php
 $__hqStandalone = (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'users.php');
 if ($__hqStandalone) {
-  require_once '../includes/header.php';
-  require_once '../includes/sidebar.php';
+  require_once __DIR__ . '/../includes/header.php';
+  require_once __DIR__ . '/../includes/sidebar.php';
 }
 ?>
 
@@ -547,6 +547,6 @@ roleFilter.addEventListener('change', filterTable);
 
 <?php
 if ($__hqStandalone) {
-  require_once '../includes/footer.php';
+  require_once __DIR__ . '/../includes/footer.php';
 }
 ?>

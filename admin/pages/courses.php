@@ -1,9 +1,9 @@
 <?php
 // admin/pages/courses.php
-require_once '../includes/auth.php';
-require_once '../includes/db.php';
-require_once '../includes/functions.php';
-require_once '../includes/csrf.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 $pageTitle = 'Courses';
 $pageSubtitle = 'Manage courses and programs offered on the site';
@@ -219,8 +219,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
 <?php
 $__hqStandalone = (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'courses.php');
 if ($__hqStandalone) {
-  require_once '../includes/header.php';
-  require_once '../includes/sidebar.php';
+  require_once __DIR__ . '/../includes/header.php';
+  require_once __DIR__ . '/../includes/sidebar.php';
 }
 ?>
 
@@ -685,6 +685,6 @@ function escapeHtml(s){
 
 <?php
 if ($__hqStandalone) {
-  require_once '../includes/footer.php';
+  require_once __DIR__ . '/../includes/footer.php';
 }
 ?>

@@ -244,7 +244,7 @@ include __DIR__ . '/includes/header.php';
 
 			<div class="faq-card">
 				<h4>How much do your programs cost?</h4>
-				<p>Program fees vary based on duration and type. JAMB preparation ranges from ₦25,000-₦40,000, while other programs are competitively priced. Contact us for detailed pricing.</p>
+				<p>Program and tuition fees vary by track and duration. Academic prep (WAEC/NECO/JAMB) typically ranges ₦25,000-₦40,000 per cycle, while tech/digital skills and professional tracks are priced by module. Contact us for a full fee sheet or payment plans.</p>
 			</div>
 		</div>
 	</div>
@@ -255,7 +255,7 @@ include __DIR__ . '/includes/header.php';
 		<div class="faq-grid" style="margin-top:8px;">
 			<div class="faq-card">
 				<h4>What is your success rate?</h4>
-				<p>We maintain a 99% pass rate in WAEC/NECO examinations and our highest JAMB score in 2024 was 292, with the student now studying Medicine at LAUTECH.</p>
+				<p>We maintain a 99% pass rate in WAEC/NECO, a 95% JAMB/Post-UTME success rate, and a 75% placement rate for tech/digital skills graduates. Our top JAMB score was 305 and alumni study at LAUTECH and other leading universities.</p>
 			</div>
 
 			<div class="faq-card">
