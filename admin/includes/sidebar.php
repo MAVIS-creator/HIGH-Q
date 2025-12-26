@@ -62,6 +62,8 @@ try {
                     if (!$show && $slug === 'create_payment_link' && in_array('payments', $permissions)) $show = true;
                     // Show appointments to users with 'settings' or 'students' permission
                     if (!$show && $slug === 'appointments' && (in_array('settings', $permissions) || in_array('students', $permissions))) $show = true;
+                    // Show testimonials to users with 'settings' permission
+                    if (!$show && $slug === 'testimonials' && in_array('settings', $permissions)) $show = true;
                 ?>
                 <?php if ($show): ?>
                     <li>
