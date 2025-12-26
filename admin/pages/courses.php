@@ -679,6 +679,6 @@ function escapeHtml(s){
   });
   </script>
 </div> <!-- .courses-page -->
-</main> <!-- .main-content -->
+</div> <!-- .admin-page-content -->
 </body>
 </html>
