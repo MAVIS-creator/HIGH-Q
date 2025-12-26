@@ -236,7 +236,7 @@ try {
 <style>
 /* Tutors Page Specific Styles */
 .admin-page-content {
-    padding: 0;
+    padding: 24px 32px 48px;
 }
 
 .page-hero {
