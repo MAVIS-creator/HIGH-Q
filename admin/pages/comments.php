@@ -223,6 +223,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
   </table>
   <?php endif; ?>
 </div>
+</main>
 
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
