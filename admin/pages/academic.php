@@ -973,7 +973,7 @@ function rejectRegistration(id) {
 }
 </script>
 </div> <!-- .academic-page -->
-</main> <!-- .main-content -->
+</div> <!-- .admin-page-content -->
 </body>
 </html>
 
