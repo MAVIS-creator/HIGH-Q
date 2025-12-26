@@ -8,6 +8,7 @@ require_once __DIR__ . '/../includes/db.php';
 requirePermission('tutors');
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
+require_once __DIR__ . ''
 
 // Fetch tutors from database
 $tutors = [];

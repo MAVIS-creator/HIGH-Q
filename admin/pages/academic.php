@@ -754,50 +754,50 @@ if ($hasRegistrations) {
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="main-content">
-<div class="academic-page px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+<div class="admin-page-content">
+<div class="academic-page">
     <!-- Header Section -->
-    <div class="page-hero-academic relative overflow-hidden rounded-2xl p-8 shadow-xl text-white">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.1),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.1),transparent_25%)]"></div>
-        <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="page-hero-academic">
+        <div class="hero-content">
             <div>
-                <p class="text-xs uppercase tracking-[0.2em] opacity-80">Student Affairs</p>
-                <h1 class="mt-2 text-3xl sm:text-4xl font-bold leading-tight">Admissions Management</h1>
-                <p class="mt-2 opacity-90 max-w-2xl">Manage student registrations and applications</p>
+                <span class="badge">Student Affairs</span>
+                <h1>Admissions Management</h1>
+                <p>Manage student registrations and applications</p>
             </div>
-            <div class="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2">
-                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                <span class="text-white font-medium"><?= number_format($total) ?> Total Registrations</span>
+            <div class="stat-badge">
+                <span><?= number_format($total) ?> Total Registrations</span>
             </div>
         </div>
     </div>
 
     <!-- Controls & Filters -->
-    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 flex flex-col md:flex-row gap-4 justify-between items-center">
-        <div class="flex items-center gap-4 w-full md:w-auto">
-            <div class="relative flex-1 md:w-80">
-                <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
-                <input type="text" id="searchInput" placeholder="Search by name, email..." 
-                       class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+    <div class="filter-card">
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="relative flex-1 md:w-80">
+                    <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+                    <input type="text" id="searchInput" placeholder="Search by name, email..." 
+                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 outline-none transition-all">
+                </div>
+                <select id="statusFilter" class="rounded-xl border border-slate-200 px-4 py-2.5 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 outline-none transition-all bg-slate-50">
+                    <option value="">All Statuses</option>
+                    <option value="active">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="banned">Rejected</option>
+                </select>
             </div>
-            <select id="statusFilter" class="rounded-xl border border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-slate-50">
-                <option value="">All Statuses</option>
-                <option value="active">Approved</option>
-                <option value="pending">Pending</option>
-                <option value="banned">Rejected</option>
-            </select>
-        </div>
-        
-        <div class="flex bg-slate-100 p-1 rounded-xl">
-            <a href="index.php?pages=students" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='regular' || $current_source==='') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Regular</a>
-            <?php if ($hasPostUtme): ?>
-            <a href="index.php?pages=students&source=postutme" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='postutme') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Post-UTME</a>
-            <?php endif; ?>
+            
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <a href="index.php?pages=students" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='regular' || $current_source==='') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Regular</a>
+                <?php if ($hasPostUtme): ?>
+                <a href="index.php?pages=students&source=postutme" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='postutme') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Post-UTME</a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
     <!-- Students Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="studentsList">
+    <div class="students-grid" id="studentsList">
         <?php if (!empty($students)): ?>
             <?php foreach ($students as $s): 
                 $status = $s['status'] ?? ($s['is_active']==1 ? 'active' : ($s['is_active']==0 ? 'pending' : 'banned'));
