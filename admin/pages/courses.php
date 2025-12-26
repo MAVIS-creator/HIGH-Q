@@ -266,11 +266,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       </script>
     <?php endif; ?>
 
-    <div class="courses-search-section">
-      <h3>Search Courses</h3>
-      <div class="search-form">
-        <input type="text" id="courseSearch" placeholder="Search by title, description, or duration…">
-      </div>
+    <!-- Search and Filter -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2 class="card-title">Search Courses</h2>
+        </div>
+        <div class="card-body">
+            <div class="search-bar">
+                <i class='bx bx-search'></i>
+                <input type="text" id="courseSearch" placeholder="Search by title, description, or duration...">
+            </div>
+        </div>
     </div>
 
     <div class="page-container">
