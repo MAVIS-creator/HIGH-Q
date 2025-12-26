@@ -798,7 +798,7 @@ if ($hasRegistrations) {
             <div class="flex bg-slate-100 p-1 rounded-xl">
                 <a href="index.php?pages=academic" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='regular' || $current_source==='') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Regular</a>
                 <?php if ($hasPostUtme): ?>
-                <a href="index.php?pages=students&source=postutme" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='postutme') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Post-UTME</a>
+                <a href="index.php?pages=academic&source=postutme" class="px-4 py-2 rounded-lg text-sm font-medium transition-all <?= ($current_source==='postutme') ? 'bg-white text-yellow-600 shadow-sm' : 'text-slate-500 hover:text-slate-700' ?>">Post-UTME</a>
                 <?php endif; ?>
             </div>
         </div>
