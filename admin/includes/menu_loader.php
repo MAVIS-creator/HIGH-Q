@@ -39,4 +39,10 @@ foreach ($required as $slug => $item) {
     if (!isset($menus[$slug])) $menus[$slug] = $item;
 }
 
+// Ensure Smart Patcher always opens in a new tab with correct URL
+if (isset($menus['patcher'])) {
+    $menus['patcher']['url'] = '../pages/patcher.php';
+    $menus['patcher']['target'] = '_blank';
+}
+
 return $menus;
