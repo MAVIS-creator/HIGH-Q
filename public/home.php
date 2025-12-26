@@ -159,6 +159,40 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </section>
 
+<!-- Success Stories Strip (One-Two Punch) -->
+<section class="testimonials-strip">
+  <div class="container">
+    <div class="ceo-heading text-center mb-4">
+      <h3>Proof of Excellence <span class="highlight">Across Paths</span></h3>
+      <p class="lead">Real wins from students who trusted HQ Academy.</p>
+    </div>
+
+    <div class="testimonials-grid">
+      <article class="testimonial-mini">
+        <div class="badge-outcome">Admitted to Engineering</div>
+        <p class="quote">“Moved from doubts to LAUTECH admission after my prep at HQ.”</p>
+        <div class="meta">— Aisha O., WAEC + Post-UTME Track</div>
+      </article>
+
+      <article class="testimonial-mini">
+        <div class="badge-outcome">305 JAMB Score</div>
+        <p class="quote">“Structured mocks and tutor feedback pushed me past 300.”</p>
+        <div class="meta">— Tunde A., JAMB + CBT Mastery</div>
+      </article>
+
+      <article class="testimonial-mini">
+        <div class="badge-outcome">Cybersecurity Pro</div>
+        <p class="quote">“Tech track plus interview coaching → internship in 10 weeks.”</p>
+        <div class="meta">— Chidinma E., Digital Skills Track</div>
+      </article>
+    </div>
+
+    <div class="text-center mt-3">
+      <a class="link-more" href="about.php#wall-of-fame">See all 50+ success stories</a>
+    </div>
+  </div>
+</section>
+
 
 <!-- Programs Section -->
 <section class="programs-section">
