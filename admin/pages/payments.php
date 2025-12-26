@@ -453,69 +453,60 @@ $totalPages = (int)ceil($total / $perPage);
     }
 }
 </style>
-<div class="roles-page">
-    <div class="page-header">
-        <h1><i class="bx bxs-credit-card"></i> Payments</h1>
-        <?php if($search): ?>
-            <div class="page-header-info">Showing results for: <em><?= htmlspecialchars($search) ?></em></div>
-        <?php endif; ?>
+<div class="roles-page" style="max-width: 1600px; margin: 0 auto; padding: 2rem;">
+    <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
+        <div>
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bxs-credit-card' style="font-size: 2.5rem;"></i> Payments Management</h1>
+            <p style="font-size: 1.1rem; opacity: 0.85; margin: 0;">Track and manage all payment transactions</p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 3rem; font-weight: 800; color: #1e293b;"><?= count($payments) ?></div>
+            <div style="font-size: 0.9rem; color: #1e293b; opacity: 0.85;">Payments</div>
+        </div>
     </div>
-    <script>window.__PAYMENTS_CSRF = '<?= generateToken('payments_form') ?>';</script>
     
-    <div class="hq-payments-card">
-        <h3><i class="bx bx-filter"></i> Filter Payments</h3>
-        <form method="get" action="index.php?pages=payments" class="hq-filter-form">
+    <div style="background: white; border-radius: 1rem; border: 2px solid #e2e8f0; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bx-filter' style="font-size: 1.5rem; color: #f59e0b;"></i> Filter Payments</h3>
+        <form method="get" action="index.php?pages=payments" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <input type="hidden" name="pages" value="payments">
             
-            <!-- Row 1 -->
-            <div class="hq-filter-row">
-                <div class="hq-filter-field">
-                    <label for="statusFilter">Status</label>
-                    <select id="statusFilter" name="status">
-                        <option value=""<?= $statusFilter===''? ' selected':'' ?>>All Statuses</option>
-                        <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
-                        <option value="sent"<?= $statusFilter==='sent'? ' selected':'' ?>>Sent</option>
-                        <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
-                        <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
-                    </select>
-                </div>
-                
-                <div class="hq-filter-field">
-                    <label for="from_date">From Date</label>
-                    <input type="date" id="from_date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
-                </div>
-                
-                <div class="hq-filter-field">
-                    <label for="to_date">To Date</label>
-                    <input type="date" id="to_date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
-                </div>
-                
-                <div class="hq-filter-field">
-                    <label for="gateway">Gateway</label>
-                    <input type="text" id="gateway" name="gateway" placeholder="e.g. paystack, stripe" value="<?= htmlspecialchars($_GET['gateway'] ?? '') ?>">
-                </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">Status</label>
+                <select name="status" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; font-weight: 600; transition: all 0.2s;" onchange="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='#e2e8f0'">
+                    <option value=""<?= $statusFilter===''? ' selected':'' ?>>All Statuses</option>
+                    <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
+                    <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
+                    <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
+                </select>
             </div>
             
-            <!-- Row 2 -->
-            <div class="hq-filter-row">
-                <div class="hq-filter-field">
-                    <label for="ref">Reference</label>
-                    <input type="text" id="ref" name="ref" placeholder="Payment reference" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>">
-                </div>
-                
-                <div class="hq-filter-field">
-                    <label for="user_email">Email/User</label>
-                    <input type="text" id="user_email" name="user_email" placeholder="User email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>">
-                </div>
-                
-                <div class="hq-filter-actions">
-                    <button type="submit" class="hq-btn-primary">
-                        <i class="bx bx-search"></i> Apply
-                    </button>
-                    <a href="index.php?pages=payments" class="hq-btn-secondary">
-                        <i class="bx bx-x"></i> Clear
-                    </a>
-                </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">From</label>
+                <input type="date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; transition: all 0.2s;" onfocus="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">To</label>
+                <input type="date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; transition: all 0.2s;" onfocus="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">Reference</label>
+                <input type="text" name="ref" placeholder="Payment ref" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; transition: all 0.2s;" onfocus="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">Email</label>
+                <input type="text" name="user_email" placeholder="User email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; transition: all 0.2s;" onfocus="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+            
+            <div style="display: flex; gap: 0.75rem; align-items: flex-end;">
+                <button type="submit" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(251,191,36,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <i class='bx bx-search'></i> Filter
+                </button>
+                <a href="index.php?pages=payments" style="padding: 0.75rem 1.25rem; background: white; color: #666; border: 2px solid #ddd; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.borderColor='#999'; this.style.color='#333'" onmouseout="this.style.borderColor='#ddd'; this.style.color='#666'">
+                    <i class='bx bx-x'></i> Clear
+                </a>
             </div>
         </form>
     </div>
