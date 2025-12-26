@@ -3,18 +3,6 @@
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
-<link rel="stylesheet" href="../assets/css/modern-tables.css">
-<main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
-<div class="posts-page">
-    <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
-        <div>
-            <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bxs-news' style="font-size: 2.5rem;"></i> News & Blog</h1>
-            <p style="font-size: 1.1rem; opacity: 0.85; margin: 0;">Create and manage articles and blog posts</p>
-        </div>
-        <button onclick="location.href='post_edit.php'" style="padding: 1rem 1.75rem; background: #1e293b; color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(30,41,59,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-            <i class='bx bx-plus' style="font-size: 1.5rem;"></i> New Post
-        </button>
-    </div>
 
 // Only Admin / Sub-Admin / Moderator
 requirePermission('post'); // where 'roles' matches the menu slug
@@ -394,6 +382,18 @@ $posts = $stmt->fetchAll();
 <body>
     <?php include '../includes/header.php'; ?>
     <?php include '../includes/sidebar.php'; ?>
+<link rel="stylesheet" href="../assets/css/modern-tables.css">
+<main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
+<div class="posts-page">
+    <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
+        <div>
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bxs-news' style="font-size: 2.5rem;"></i> News & Blog</h1>
+            <p style="font-size: 1.1rem; opacity: 0.85; margin: 0;">Create and manage articles and blog posts</p>
+        </div>
+        <button onclick="location.href='post_edit.php'" style="padding: 1rem 1.75rem; background: #1e293b; color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(30,41,59,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <i class='bx bx-plus' style="font-size: 1.5rem;"></i> New Post
+        </button>
+    </div>
 
     <div class="container">
         <?php if (!empty($_SESSION['flash_post'])): ?>
