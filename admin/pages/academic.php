@@ -942,7 +942,7 @@ function confirmRegistration(id) {
         if (result.isConfirmed) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = 'index.php?pages=students&action=confirm_registration';
+            form.action = 'index.php?pages=academic&action=confirm_registration';
             const idInput = document.createElement('input');
             idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
             const csrf = document.createElement('input');
