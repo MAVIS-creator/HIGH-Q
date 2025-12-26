@@ -8,8 +8,11 @@ require_once __DIR__ . '/../includes/auth.php';
 
 header('Content-Type: application/json');
 
-// Check admin session - use session check since patcher is standalone
-if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+// Check admin session - allow either legacy admin flag or standard user session
+$loggedIn = (!empty($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true)
+            || (!empty($_SESSION['user']) && !empty($_SESSION['user']['id']));
+
+if (!$loggedIn) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized - Please login']);
     exit;
@@ -22,7 +25,7 @@ try {
     }
 } catch (Exception $e) {
     // If requirePermission fails, allow if session is valid
-    if (empty($_SESSION['admin_logged_in'])) {
+    if (!$loggedIn) {
         http_response_code(401);
         echo json_encode(['error' => 'Unauthorized']);
         exit;
