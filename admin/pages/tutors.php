@@ -85,11 +85,15 @@ try {
                         <?php if (!empty($tutor['photo'])): ?>
                             <?php 
                             $photoPath = $tutor['photo'];
-                            // Fix path if it doesn't start with uploads/ or http
-                            if (!preg_match('#^(https?://|uploads/)#', $photoPath)) {
-                                $photoPath = '../uploads/tutors/' . basename($photoPath);
-                            } elseif (strpos($photoPath, 'uploads/') === 0) {
-                                $photoPath = '../' . $photoPath;
+                            // Construct proper public URL
+                            if (preg_match('#^https?://#', $photoPath)) {
+                                // Already a full URL
+                            } elseif (strpos($photoPath, 'uploads/tutors/') !== false) {
+                                // Already correct format
+                                $photoPath = '../../public/' . $photoPath;
+                            } else {
+                                // Just filename
+                                $photoPath = '../../public/uploads/tutors/' . basename($photoPath);
                             }
                             ?>
                             <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($tutor['name']) ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">

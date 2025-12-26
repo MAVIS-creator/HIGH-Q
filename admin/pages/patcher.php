@@ -627,6 +627,9 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
         let isEditMode = false;
         let allFiles = [];
         let editor = null;
+        let currentDir = '/admin'; // Virtual current directory
+        let commandHistory = [];
+        let historyIndex = -1;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -745,7 +748,20 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
         // Terminal Logic
         document.addEventListener('DOMContentLoaded', () => {
             const termInput = document.getElementById('terminalInput');
-            if(termInput) termInput.addEventListener('keydown', handleTerminalInput);
+            if(termInput) {
+                termInput.addEventListener('keydown', handleTerminalInput);
+                termInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        historyIndex = Math.max(0, historyIndex - 1);
+                        e.target.value = commandHistory[historyIndex] || '';
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        historyIndex = Math.min(commandHistory.length - 1, historyIndex + 1);
+                        e.target.value = historyIndex < commandHistory.length ? commandHistory[historyIndex] : '';
+                    }
+                });
+            }
         });
 
         async function handleTerminalInput(e) {
@@ -754,7 +770,9 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
                 const cmd = input.value.trim();
                 if (!cmd) return;
                 
-                addToTerminal(`admin@highq:~$ ${cmd}`, 'cmd-line');
+                addToTerminal(`admin@highq:${currentDir}$ ${cmd}`, 'cmd-line');
+                commandHistory.push(cmd);
+                historyIndex = commandHistory.length;
                 input.value = '';
                 
                 if (cmd === 'clear') {
@@ -762,8 +780,33 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
                     return;
                 }
                 
+                if (cmd === 'pwd') {
+                    addToTerminal(currentDir);
+                    return;
+                }
+                
+                if (cmd.startsWith('cd ')) {
+                    const target = cmd.substring(3).trim();
+                    if (target === '..' || target === '..') {
+                        currentDir = currentDir === '/' ? '/' : '/admin';
+                        addToTerminal(`Changed directory to: ${currentDir}`);
+                    } else if (target === '.' || target === '.') {
+                        addToTerminal(currentDir);
+                    } else if (target === '~' || target === 'home') {
+                        currentDir = '/admin';
+                        addToTerminal(`Changed directory to: ${currentDir}`);
+                    } else if (target.startsWith('/')) {
+                        currentDir = target;
+                        addToTerminal(`Changed directory to: ${currentDir}`);
+                    } else {
+                        currentDir = currentDir === '/' ? `/${target}` : `${currentDir}/${target}`;
+                        addToTerminal(`Changed directory to: ${currentDir}`);
+                    }
+                    return;
+                }
+                
                 if (cmd === 'help') {
-                    addToTerminal('Available commands: git, ls, dir, echo, composer, php, whoami, ver, clear');
+                    addToTerminal(`High Q Terminal Help\n---\nCommands: git, ls, dir, echo, composer, php, python, python3, pip, pip3, whoami, ver\nNav: cd [path], pwd, clear\nTypes 'help' to see this message`, 'cmd-line');
                     return;
                 }
                 

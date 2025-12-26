@@ -4,6 +4,7 @@
  */
 
 // Set global defaults for SweetAlert2
+if (typeof SwalHighQ === 'undefined') {
 const SwalHighQ = Swal.mixin({
   customClass: {
     popup: 'highq-popup',
@@ -134,3 +135,4 @@ if (!document.getElementById('highq-swal-styles')) {
 if (typeof Swal !== 'undefined') {
   window.Swal = SwalHighQ;
 }
+} // Close the typeof SwalHighQ check
