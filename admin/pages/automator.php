@@ -8,6 +8,13 @@ require_once __DIR__ . '/../includes/db.php';
 requirePermission('automator');
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
+
+// Build a stable /admin base path for URLs (works for /admin/index.php?pages=... and /admin/pages/*.php)
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$adminPos = stripos($scriptName, '/admin/');
+$adminBasePath = $adminPos !== false
+    ? rtrim(substr($scriptName, 0, $adminPos + strlen('/admin')), '/')
+    : rtrim(dirname($scriptName), '/');
 ?>
 <div class="admin-page-fullscreen">
     <!-- Hero Header -->
@@ -41,7 +48,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </span>
         </div>
         <div class="module-frame-container">
-            <iframe src="../modules/automator.php" class="module-frame"></iframe>
+            <iframe src="<?= htmlspecialchars($adminBasePath . '/modules/automator.php') ?>" class="module-frame"></iframe>
         </div>
     </div>
 </div>
