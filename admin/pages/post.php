@@ -2,7 +2,7 @@
 // Moved to top with other includes
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
-?>
+
 
 // Only Admin / Sub-Admin / Moderator
 requirePermission('post'); // where 'roles' matches the menu slug
@@ -377,12 +377,10 @@ $posts = $stmt->fetchAll();
     <title>News & Blog Management — Admin</title>
     <link rel="stylesheet" href="../public/assets/css/admin.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/modern-tables.css">
 </head>
 
 <body>
-    <?php include '../includes/header.php'; ?>
-    <?php include '../includes/sidebar.php'; ?>
-<link rel="stylesheet" href="../assets/css/modern-tables.css">
 <main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
 <div class="posts-page">
     <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2.5rem; border-radius: 1rem; margin-bottom: 2.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">

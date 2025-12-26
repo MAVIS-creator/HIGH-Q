@@ -109,21 +109,32 @@ try {
 if (!empty($_GET['ajax'])) {
   foreach($comments as $c){
     echo "<tr>";
-    echo "<td>".htmlspecialchars($c['id'])."</td>";
+    echo "<td>#".htmlspecialchars($c['id'])."</td>";
     echo "<td>".htmlspecialchars($c['post_id'])."</td>";
-    echo "<td>".htmlspecialchars(($c['name']?:'').' / '.($c['email']?:''))."</td>";
+    echo "<td><strong>".htmlspecialchars(($c['name']?:''))."</strong><br><small style=\"color:#666;\">".htmlspecialchars(($c['email']?:''))."</small></td>";
     echo "<td>".htmlspecialchars(mb_strimwidth($c['content'],0,180,'...'))."</td>";
-    echo "<td>".htmlspecialchars($c['status'])."</td>";
-    echo "<td>".htmlspecialchars($c['created_at'])."</td>";
+
+    $st = strtolower((string)($c['status'] ?? 'pending'));
+    if (!in_array($st, ['pending','approved','deleted'], true)) $st = 'pending';
+    echo "<td><span class=\"status-badge status-".htmlspecialchars($st)."\">".htmlspecialchars(ucfirst((string)$c['status']))."</span></td>";
+    echo "<td><small>".htmlspecialchars($c['created_at'])."</small></td>";
 
     // build action buttons safely using json_encode for the preview string
     $preview = htmlspecialchars(mb_strimwidth($c['content'],0,120,'...'), ENT_QUOTES);
     // use data-action buttons to allow delegated handlers
-    $replyBtn = "<button class='btn' data-action='reply' data-id='{$c['id']}' data-preview='{$preview}'>Reply</button>";
+    $replyBtn = "<button class='btn' data-action='reply' data-id='{$c['id']}' data-preview='{$preview}' title='Reply'><i class='bx bxs-message-detail'></i></button>";
     if ($c['status'] === 'pending') {
-      $actions = "<button class='btn' data-action='approve' data-id='{$c['id']}'>Approve</button> <button class='btn' data-action='reject' data-id='{$c['id']}'>Delete</button> <button class='btn' data-action='destroy' data-id='{$c['id']}'>Destroy</button> " . $replyBtn;
+      $actions = "<div class='comment-actions'>".
+        "<button class='btn' data-action='approve' data-id='{$c['id']}' title='Approve'><i class='bx bxs-check-circle'></i></button> ".
+        "<button class='btn' data-action='reject' data-id='{$c['id']}' title='Delete'><i class='bx bxs-trash'></i></button> ".
+        "<button class='btn' data-action='destroy' data-id='{$c['id']}' title='Destroy'><i class='bx bxs-bomb'></i></button> ".
+        $replyBtn.
+      "</div>";
     } else {
-      $actions = "<button class='btn' data-action='destroy' data-id='{$c['id']}'>Destroy</button> " . $replyBtn;
+      $actions = "<div class='comment-actions'>".
+        "<button class='btn' data-action='destroy' data-id='{$c['id']}' title='Destroy'><i class='bx bxs-bomb'></i></button> ".
+        $replyBtn.
+      "</div>";
     }
 
     echo "<td>" . $actions . "</td>";
@@ -136,12 +147,16 @@ if (!empty($_GET['ajax'])) {
     foreach($replies as $rep) {
       $displayName = ($rep['user_id'] ? 'Admin - ' . ($rep['name']?:'') : ($rep['name']?:''));
       echo "<tr class='reply-row'>";
-      echo "<td>".htmlspecialchars($rep['id'])."</td>";
+      echo "<td>#".htmlspecialchars($rep['id'])."</td>";
       echo "<td>".htmlspecialchars($rep['post_id'])."</td>";
-      echo "<td>".htmlspecialchars($displayName)."</td>";
+      if ($rep['user_id']) {
+        echo "<td><i class='bx bxs-shield-check' style=\"color:#10b981;\"></i> ".htmlspecialchars($displayName)."</td>";
+      } else {
+        echo "<td>".htmlspecialchars($displayName)."</td>";
+      }
       echo "<td>".htmlspecialchars(mb_strimwidth($rep['content'],0,180,'...'))."</td>";
-      echo "<td>".htmlspecialchars($rep['status'])."</td>";
-      echo "<td>".htmlspecialchars($rep['created_at'])."</td>";
+      echo "<td><span class='status-badge status-reply'>Reply</span></td>";
+      echo "<td><small>".htmlspecialchars($rep['created_at'])."</small></td>";
       echo "<td>&mdash;</td>";
       echo "</tr>";
     }
