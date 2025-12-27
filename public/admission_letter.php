@@ -119,12 +119,9 @@ We look forward to your success with us.";
         
     } else {
         // Fallback to Dompdf if template doesn't exist
-        use Dompdf\Dompdf;
-        use Dompdf\Options;
-        
-        $options = new Options();
+        $options = new \Dompdf\Options();
         $options->set('isRemoteEnabled', true);
-        $dompdf = new Dompdf($options);
+        $dompdf = new \Dompdf\Dompdf($options);
         $dompdf->loadHtml(generateFallbackHtml($fullName, $programsText, $siteName, $address, $phone, $email, $today, $rid));
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
