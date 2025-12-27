@@ -28,29 +28,53 @@
       this.canvas = canvas;
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * (config.maxParticleSize - config.minParticleSize) + config.minParticleSize;
       this.vx = (Math.random() - 0.5) * config.particleSpeed;
       this.vy = (Math.random() - 0.5) * config.particleSpeed;
-      this.radius = config.particleSize;
+      this.opacity = Math.random() * 0.4 + 0.2; // 0.2 to 0.6
+      this.wobble = Math.random() * Math.PI * 2;
+      this.wobbleSpeed = Math.random() * 0.02 + 0.01;
     }
     
     update() {
+      // Gentle floating motion
       this.x += this.vx;
-      this.y += this.vy;
+      this.y += this.vy - 0.1; // Slight upward drift
+      this.wobble += this.wobbleSpeed;
       
-      // Bounce off edges
-      if (this.x < 0 || this.x > this.canvas.width) this.vx *= -1;
-      if (this.y < 0 || this.y > this.canvas.height) this.vy *= -1;
+      // Add gentle wobble
+      this.x += Math.sin(this.wobble) * 0.1;
       
-      // Keep within bounds
-      this.x = Math.max(0, Math.min(this.canvas.width, this.x));
-      this.y = Math.max(0, Math.min(this.canvas.height, this.y));
+      // Wrap around screen
+      if (this.x < -this.radius) this.x = this.canvas.width + this.radius;
+      if (this.x > this.canvas.width + this.radius) this.x = -this.radius;
+      if (this.y < -this.radius) this.y = this.canvas.height + this.radius;
+      if (this.y > this.canvas.height + this.radius) this.y = -this.radius;
     }
     
     draw(ctx) {
+      // Draw bubble with gradient
+      const gradient = ctx.createRadialGradient(
+        this.x - this.radius * 0.3,
+        this.y - this.radius * 0.3,
+        0,
+        this.x,
+        this.y,
+        this.radius
+      );
+      
+      gradient.addColorStop(0, config.particleGradient.replace('0.6', '0.8'));
+      gradient.addColorStop(1, config.particleColor);
+      
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = config.particleColor;
+      ctx.fillStyle = gradient;
       ctx.fill();
+      
+      // Optional: subtle border
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
   }
   
