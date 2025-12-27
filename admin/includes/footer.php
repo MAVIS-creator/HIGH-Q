@@ -5,43 +5,152 @@ if (!isset($skipMainClose) || !$skipMainClose) {
     echo '</main>';
 }
 ?>
-    <footer class="admin-footer" style="position:fixed !important;bottom:0 !important;left:260px;right:0;background:linear-gradient(90deg,#ffd54f,#ffb300);z-index:50;box-shadow:0 -2px 12px rgba(0,0,0,0.1);">
-        <div class="footer-inner" style="display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;gap:1.5rem;flex-wrap:wrap;">
-            <div class="footer-brand" style="display:flex;align-items:center;gap:1rem;">
-                <div class="footer-logo" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.1);border-radius:12px;font-size:1.5rem;color:#111;">
+    <footer class="admin-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
                     <i class='bx bx-award'></i>
                 </div>
                 <div class="footer-info">
-                    <div class="footer-title" style="font-weight:800;font-size:0.95rem;">HIGH Q SOLID ACADEMY</div>
-                    <div class="footer-tagline" style="font-size:0.8rem;color:#374151;font-weight:500;">Always Ahead of Others</div>
+                    <div class="footer-title">HIGH Q SOLID ACADEMY</div>
+                    <div class="footer-tagline">Always Ahead of Others</div>
                 </div>
             </div>
-            <div class="footer-meta" style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:#374151;flex-wrap:wrap;">
-                <span class="footer-desc" style="font-weight:500;">Empowering students since 2018</span>
-                <span class="footer-divider" style="opacity:0.5;">•</span>
-                <span class="footer-copyright" style="font-weight:600;">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</span>
-                <span class="footer-divider" style="opacity:0.5;">•</span>
-                <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" style="color:#1e3a8a;font-weight:800;font-size:0.85rem;text-decoration:none;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#1e3a8a'">Made by MAVIS</a>
-                <span class="footer-divider" style="opacity:0.5;">•</span>
-                <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" style="color:#1e293b;font-weight:700;font-size:0.85rem;text-decoration:none;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#1e293b'">Exam portal made by gamerdave</a>
+            <div class="footer-meta">
+                <span class="footer-desc">Empowering students since 2018</span>
+                <span class="footer-divider">•</span>
+                <span class="footer-copyright">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</span>
+                <span class="footer-divider">•</span>
+                <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="credit-mavis">Made by MAVIS</a>
+                <span class="footer-divider">•</span>
+                <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="credit-gamerdave">Exam portal made by gamerdave</a>
             </div>
         </div>
     </footer>
-    <script>
-    // Adjust footer left position based on sidebar state
-    (function(){
-        function adjustFooter(){
-            var footer = document.querySelector('.admin-footer');
-            if(!footer) return;
-            var collapsed = document.body.classList.contains('sidebar-collapsed');
-            footer.style.left = collapsed ? '0' : '260px';
+    
+    <style>
+    /* Sticky Footer Styles - ensures footer stays at bottom but doesn't cover content */
+    html, body {
+        min-height: 100vh;
+    }
+    
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .admin-main {
+        flex: 1 0 auto;
+        padding-bottom: 80px !important; /* Space for footer */
+    }
+    
+    .admin-footer {
+        flex-shrink: 0;
+        position: relative;
+        margin-left: var(--sidebar-width, 260px);
+        background: linear-gradient(90deg, #ffd54f, #ffb300);
+        z-index: 50;
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+        margin-top: auto;
+    }
+    
+    .admin-footer .footer-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .admin-footer .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .admin-footer .footer-logo {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.1);
+        border-radius: 12px;
+        font-size: 1.5rem;
+        color: #111;
+    }
+    
+    .admin-footer .footer-title {
+        font-weight: 800;
+        font-size: 0.95rem;
+    }
+    
+    .admin-footer .footer-tagline {
+        font-size: 0.8rem;
+        color: #374151;
+        font-weight: 500;
+    }
+    
+    .admin-footer .footer-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.8rem;
+        color: #374151;
+        flex-wrap: wrap;
+    }
+    
+    .admin-footer .footer-divider {
+        opacity: 0.5;
+    }
+    
+    .admin-footer .credit-mavis {
+        color: #1e3a8a;
+        font-weight: 800;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .admin-footer .credit-mavis:hover {
+        color: #3b82f6;
+    }
+    
+    .admin-footer .credit-gamerdave {
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .admin-footer .credit-gamerdave:hover {
+        color: #3b82f6;
+    }
+    
+    /* Sidebar collapsed state */
+    body.sidebar-collapsed .admin-footer {
+        margin-left: 0;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .admin-footer {
+            margin-left: 0;
         }
-        adjustFooter();
-        // Watch for sidebar toggle
-        var observer = new MutationObserver(adjustFooter);
-        observer.observe(document.body, {attributes: true, attributeFilter: ['class']});
-    })();
-    </script>
+        
+        .admin-footer .footer-inner {
+            flex-direction: column;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .admin-footer .footer-meta {
+            justify-content: center;
+        }
+    }
+    </style>
 
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
