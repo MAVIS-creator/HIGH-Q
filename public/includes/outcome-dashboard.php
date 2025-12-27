@@ -42,20 +42,20 @@ function renderOutcomeDashboard($programType = '') {
             'icon' => 'bx-code-block',
             'color' => 'green',
             'metrics' => [
-                ['number' => '92%', 'label' => 'Job Placement Rate', 'icon' => 'bx-briefcase'],
-                ['number' => '₦150K', 'label' => 'Avg Starting Salary', 'icon' => 'bx-money'],
-                ['number' => '6', 'label' => 'Months to Employment', 'icon' => 'bx-time-five'],
-                ['number' => '200+', 'label' => 'Students Placed', 'icon' => 'bx-star']
+                ['number' => '85+', 'label' => 'Students Trained', 'icon' => 'bx-user-check'],
+                ['number' => '12', 'label' => 'Weeks Program Duration', 'icon' => 'bx-time-five'],
+                ['number' => '6', 'label' => 'Core Skills Covered', 'icon' => 'bx-book'],
+                ['number' => '100%', 'label' => 'Course Completion Rate', 'icon' => 'bx-star']
             ]
         ],
         'international' => [
             'icon' => 'bx-world',
             'color' => 'cyan',
             'metrics' => [
-                ['number' => '94%', 'label' => 'Visa Success Rate', 'icon' => 'bx-check-circle'],
-                ['number' => '50+', 'label' => 'Partner Universities', 'icon' => 'bx-university'],
-                ['number' => '8.5+', 'label' => 'Average IELTS Score', 'icon' => 'bx-star'],
-                ['number' => '300+', 'label' => 'Students Abroad', 'icon' => 'bx-globe']
+                ['number' => '16', 'label' => 'Weeks Program', 'icon' => 'bx-time'],
+                ['number' => '4', 'label' => 'Main English Tests', 'icon' => 'bx-book-open'],
+                ['number' => '60+', 'label' => 'Students Enrolled', 'icon' => 'bx-group'],
+                ['number' => '100%', 'label' => 'Learning Support Included', 'icon' => 'bx-check-circle']
             ]
         ]
     ];
