@@ -1,0 +1,96 @@
+/**
+ * Grey Particles Animation for Home Page Hero
+ * Adds a secondary layer of light grey particles with slanted movement
+ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grey particles layer - additional to existing particles */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle, rgba(200, 200, 200, 0.3) 1px, transparent 1px),
+    radial-gradient(circle, rgba(180, 180, 180, 0.25) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(160, 160, 160, 0.2) 1px, transparent 1px);
+  background-size: 50px 50px, 80px 80px, 120px 120px;
+  background-position: 0 0, 40px 60px, 80px 120px;
+  animation: particlesDriftSlanted 25s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+/* Slanted drift animation */
+@keyframes particlesDriftSlanted {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(100px, 150px) rotate(15deg);
+  }
+}
+
+/* Secondary slanted motion layer */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background-image:
+    radial-gradient(circle, rgba(220, 220, 220, 0.15) 2px, transparent 2px),
+    radial-gradient(circle, rgba(190, 190, 190, 0.2) 1px, transparent 1px);
+  background-size: 100px 100px, 60px 60px;
+  background-position: 0 0, 50px 50px;
+  animation: particlesFloat 30s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* Floating with slant */
+@keyframes particlesFloat {
+  0% {
+    transform: translate(0, 0) skewX(0deg);
+  }
+  50% {
+    transform: translate(-50px, 80px) skewX(5deg);
+  }
+  100% {
+    transform: translate(0, 0) skewX(0deg);
+  }
+}
+
+/* Ensure hero content stays above particles */
+.hero > .container,
+.hero > .hero-content,
+.hero > * {
+  position: relative;
+  z-index: 5;
+}
+
+/* Disable animations on mobile for performance */
+@media (max-width: 768px) {
+  .hero::before,
+  .hero::after {
+    animation: none;
+    opacity: 0.3;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .hero::before,
+  .hero::after {
+    animation: none;
+  }
+}
