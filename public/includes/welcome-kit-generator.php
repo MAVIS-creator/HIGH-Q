@@ -386,6 +386,13 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
 
     $subject = "🎓 Your Welcome Kit - High-Q Registration #{$registrationId}";
     
+    $contactPhoneRaw = $siteSettings['contact_phone'] ?? '0807 208 8794';
+    $contactEmailRaw = $siteSettings['contact_email'] ?? 'info@highq.com';
+    $contactPhoneEsc = htmlspecialchars($contactPhoneRaw, ENT_QUOTES, 'UTF-8');
+    $contactEmailEsc = htmlspecialchars($contactEmailRaw, ENT_QUOTES, 'UTF-8');
+    $programTypeLabelEsc = htmlspecialchars(ucfirst((string)$programType) . ' Program', ENT_QUOTES, 'UTF-8');
+    $currentYear = date('Y');
+    
     $message = <<<HTML
     <html>
     <head>
@@ -461,7 +468,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                 <p><strong>📝 Your Registration Confirmation:</strong></p>
                 <div style="background: #f3f4f6; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace; font-size: 13px;">
                     <div>Registration ID: <strong>{$registrationId}</strong></div>
-                    <div style="margin-top: 8px;">Program: <strong>" . htmlspecialchars(ucfirst($programType)) . " Program</strong></div>
+                    <div style="margin-top: 8px;">Program: <strong>{$programTypeLabelEsc}</strong></div>
                     <div style="margin-top: 8px;">Email: <strong>{$studentEmail}</strong></div>
                 </div>
                 
@@ -475,7 +482,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                 
                 <p style="margin-top: 25px; padding: 15px; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 5px;">
                     <strong>🤔 Questions?</strong> We're here to help!<br>
-                    Call us at <strong>{$siteSettings['contact_phone']}</strong> or reply to this email anytime.
+                    Call us at <strong>{$contactPhoneEsc}</strong> or reply to this email anytime.
                 </p>
                 
                 <p style="margin-top: 30px; text-align: center; font-size: 16px; color: #4f46e5; font-weight: bold;">
@@ -486,8 +493,8 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
             <div class="footer">
                 <p style="margin-bottom: 15px; font-size: 13px;">
                     <strong>High-Q Learning Center</strong><br>
-                    " . htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794') . " | " . htmlspecialchars($siteSettings['contact_email'] ?? 'info@highq.com') . "<br>
-                    © " . date('Y') . " All rights reserved.
+                    {$contactPhoneEsc} | {$contactEmailEsc}<br>
+                    © {$currentYear} All rights reserved.
                 </p>
                 <p style="font-size: 11px; color: #999;">
                     This is an automated message. Please do not reply with sensitive information.
