@@ -104,19 +104,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $percentMatch = min(100, round(($matchScore / 13) * 100));
         
         // Map path to page
+        // Map path to page and brand colors
         $pathMap = [
-            'jamb' => 'path-jamb.php',
-            'waec' => 'path-waec.php',
-            'postutme' => 'path-postutme.php',
-            'digital' => 'path-digital.php',
-            'international' => 'path-international.php'
+            'jamb' => ['page' => 'path-jamb.php', 'color' => '#4f46e5', 'colorLight' => '#7c3aed'],
+            'waec' => ['page' => 'path-waec.php', 'color' => '#059669', 'colorLight' => '#047857'],
+            'postutme' => ['page' => 'path-postutme.php', 'color' => '#dc2626', 'colorLight' => '#b91c1c'],
+            'digital' => ['page' => 'path-digital.php', 'color' => '#2563eb', 'colorLight' => '#1d4ed8'],
+            'international' => ['page' => 'path-international.php', 'color' => '#9333ea', 'colorLight' => '#7e22ce']
         ];
         
-        $pathPage = $pathMap[$recommendedPath] ?? 'path-jamb.php';
+        $pathInfo = $pathMap[$recommendedPath] ?? $pathMap['jamb'];
+        $pathPage = $pathInfo['page'];
+        
+        // Store colors in session for use in result display
+        $_SESSION['path_colors'] = [
+            'primary' => $pathInfo['color'],
+            'secondary' => $pathInfo['colorLight']
+        ];
         
         // Redirect to personalized path landing page
         header("Location: $pathPage?goal=$goal&qual=$qualification&match=$percentMatch");
         exit;
+    // Get path colors for display (will be set during form processing)
+    $pathColors = $_SESSION['path_colors'] ?? [
+        'primary' => '#4f46e5',
+        'secondary' => '#7c3aed'
+    ];
+    unset($_SESSION['path_colors']); // Clear after using
+
     }
 }
 
@@ -137,8 +152,14 @@ include __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <style>
+        /* Path brand colors (will be dynamically applied when results show) */
+        :root {
+            --path-primary: <?php echo htmlspecialchars($pathColors['primary'], ENT_QUOTES, 'UTF-8'); ?>;
+            --path-secondary: <?php echo htmlspecialchars($pathColors['secondary'], ENT_QUOTES, 'UTF-8'); ?>;
+        }
+
     .quiz-hero {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        background: linear-gradient(135deg, var(--path-primary) 0%, var(--path-secondary) 100%);
         color: white;
         padding: 3rem 1rem;
         text-align: center;
