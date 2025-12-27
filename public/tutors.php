@@ -493,6 +493,6 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="container">
     <h2>Ready to Start Your Journey?</h2>
     <p>Join hundreds of students who have achieved their academic goals with us</p>
-    <a href="register.php" class="btn-dark cta-btn">Find Your Path</a>
+    <a href="register-new.php" class="btn-dark cta-btn">Find Your Path</a>
   </div>
 </section>
