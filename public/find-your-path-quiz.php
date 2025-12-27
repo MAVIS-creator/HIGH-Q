@@ -152,29 +152,51 @@ include __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <style>
-        /* Path brand colors (will be dynamically applied when results show) */
-        :root {
-            --path-primary: <?php echo htmlspecialchars($pathColors['primary'], ENT_QUOTES, 'UTF-8'); ?>;
-            --path-secondary: <?php echo htmlspecialchars($pathColors['secondary'], ENT_QUOTES, 'UTF-8'); ?>;
-        }
+    /* Path brand colors - use HQ colors as defaults */
+    :root {
+        --path-primary: <?php echo htmlspecialchars($pathColors['primary'], ENT_QUOTES, 'UTF-8'); ?>;
+        --path-secondary: <?php echo htmlspecialchars($pathColors['secondary'], ENT_QUOTES, 'UTF-8'); ?>;
+        --hq-yellow: #ffd600;
+        --hq-navy: #0b1a2c;
+    }
 
+    /* Quiz Hero - Use HQ Navy with gradient */
     .quiz-hero {
-        background: linear-gradient(135deg, var(--path-primary) 0%, var(--path-secondary) 100%);
+        background: linear-gradient(180deg, rgba(30, 58, 138, 0.95) 0%, rgba(11, 26, 44, 0.9) 100%);
         color: white;
-        padding: 3rem 1rem;
+        padding: 4rem 1rem;
         text-align: center;
         margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .quiz-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 30%, rgba(255, 214, 0, 0.15) 0%, transparent 60%);
+        pointer-events: none;
     }
 
     .quiz-hero h1 {
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
+        color: var(--hq-yellow);
+        position: relative;
+        z-index: 2;
     }
 
     .quiz-hero p {
         font-size: 1.1rem;
         opacity: 0.95;
+        color: rgba(255, 255, 255, 0.9);
+        position: relative;
+        z-index: 2;
     }
 
     .quiz-container {
@@ -189,6 +211,7 @@ include __DIR__ . '/includes/header.php';
         padding: 2rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
+        border: 1px solid #e2e8f0;
     }
 
     .question-section {
@@ -196,13 +219,12 @@ include __DIR__ . '/includes/header.php';
     }
 
     .question-number {
-        display: inline-block;
+        display: inline-flex;
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        color: white;
+        background: linear-gradient(135deg, var(--hq-navy) 0%, #1e3a8a 100%);
+        color: var(--hq-yellow);
         border-radius: 50%;
-        display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
@@ -212,7 +234,7 @@ include __DIR__ . '/includes/header.php';
     .question-text {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1e293b;
+        color: var(--hq-navy);
         margin-bottom: 1.5rem;
     }
 
@@ -225,11 +247,12 @@ include __DIR__ . '/includes/header.php';
         border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s ease;
+        background: #fafafa;
     }
 
     .option:hover {
-        border-color: var(--path-primary);
-        background-color: #f0f4ff;
+        border-color: var(--hq-yellow);
+        background-color: #fffef5;
     }
 
     .option input[type="radio"] {
@@ -237,12 +260,19 @@ include __DIR__ . '/includes/header.php';
         width: 20px;
         height: 20px;
         cursor: pointer;
+        accent-color: var(--hq-navy);
+    }
+    
+    .option input[type="radio"]:checked + .option-label {
+        color: var(--hq-navy);
+        font-weight: 600;
     }
 
     .option-label {
         flex: 1;
         cursor: pointer;
         font-size: 1rem;
+        color: #1e293b;
     }
 
     .option-description {
@@ -269,8 +299,8 @@ include __DIR__ . '/includes/header.php';
 
     .btn-submit {
         flex: 1;
-        background: linear-gradient(135deg, var(--path-primary) 0%, var(--path-secondary) 100%);
-        color: white;
+        background: linear-gradient(135deg, var(--hq-navy) 0%, #1e3a8a 100%);
+        color: var(--hq-yellow);
         border: none;
         padding: 1rem;
         border-radius: 8px;
@@ -282,13 +312,13 @@ include __DIR__ . '/includes/header.php';
 
     .btn-submit:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 8px 16px rgba(11, 26, 44, 0.3);
     }
 
     .btn-back {
         flex: 0.5;
         background: #f1f5f9;
-        color: #1e293b;
+        color: var(--hq-navy);
         border: 2px solid #e2e8f0;
         padding: 1rem;
         border-radius: 8px;
@@ -299,19 +329,20 @@ include __DIR__ . '/includes/header.php';
     }
 
     .btn-back:hover {
-        background: #e2e8f0;
+        background: var(--hq-yellow);
+        border-color: var(--hq-yellow);
     }
 
     .quiz-info {
-        background: #f0f9ff;
-        border-left: 4px solid #06b6d4;
+        background: linear-gradient(135deg, #fffef5 0%, #fefce8 100%);
+        border-left: 4px solid var(--hq-yellow);
         padding: 1rem;
         border-radius: 8px;
         margin-bottom: 2rem;
     }
 
     .quiz-info i {
-        color: #06b6d4;
+        color: var(--hq-navy);
         margin-right: 0.5rem;
     }
 
