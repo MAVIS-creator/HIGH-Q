@@ -505,41 +505,13 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
 HTML;
 
     try {
-        // Prepare email headers
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: {$senderName} <{$senderEmail}>\r\n";
-        
-        // Send email with PDF attachment
+        // Use sendEmail function which uses PHPMailer with proper SMTP config
+        $attachments = [];
         if (file_exists($pdfPath)) {
-            // Read PDF file
-            $file_content = chunk_split(base64_encode(file_get_contents($pdfPath)));
-            $boundary = md5(time());
-            
-            // Build multipart message
-            $headers = "From: {$senderName} <{$senderEmail}>\r\n";
-            $headers .= "MIME-Version: 1.0\r\n";
-            $headers .= "Content-Type: multipart/mixed; boundary=\"{$boundary}\"\r\n";
-            
-            $body = "--{$boundary}\r\n";
-            $body .= "Content-Type: text/html; charset=\"UTF-8\"\r\n";
-            $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-            $body .= $message . "\r\n";
-            $body .= "--{$boundary}\r\n";
-            $body .= "Content-Type: application/pdf; name=\"" . basename($pdfPath) . "\"\r\n";
-            $body .= "Content-Transfer-Encoding: base64\r\n";
-            $body .= "Content-Disposition: attachment; filename=\"" . basename($pdfPath) . "\"\r\n\r\n";
-            $body .= $file_content . "\r\n";
-            $body .= "--{$boundary}--";
-            
-            return mail($studentEmail, $subject, $body, $headers);
-        } else {
-            // Send without attachment if file doesn't exist
-            $headers = "MIME-Version: 1.0\r\n";
-            $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-            $headers .= "From: {$senderName} <{$senderEmail}>\r\n";
-            return mail($studentEmail, $subject, $message, $headers);
+            $attachments[] = $pdfPath;
         }
+        
+        return sendEmail($studentEmail, $subject, $message, $attachments);
     } catch (Exception $e) {
         error_log("Welcome kit email error: " . $e->getMessage());
         return false;
