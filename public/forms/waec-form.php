@@ -58,11 +58,22 @@
             <label for="home_address">Home Address <span class="text-danger">*</span></label>
             <textarea id="home_address" name="home_address" class="form-control" rows="3" required></textarea>
         </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nationality">Nationality <span class="text-danger">*</span></label>
+                <input type="text" id="nationality" name="nationality" class="form-control" required value="Nigerian">
+            </div>
+            <div class="form-group">
+                <label for="state_of_origin">State of Origin <span class="text-danger">*</span></label>
+                <input type="text" id="state_of_origin" name="state_of_origin" class="form-control" required placeholder="e.g., Lagos, Oyo">
+            </div>
+        </div>
     </div>
 
     <!-- WAEC-Specific Information -->
     <div class="form-section">
-        <h4 class="section-title"><i class='bx bxs-book-open'></i> Exam Details</h4>
+        <h4 class="section-title"><i class='bx bxs-book-open'></i> Exam Details & Subject Selection</h4>
         
         <div class="form-row">
             <div class="form-group">
