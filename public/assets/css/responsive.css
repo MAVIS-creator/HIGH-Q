@@ -308,7 +308,15 @@
     color: var(--hq-yellow);
     font-weight: 700;
     cursor: pointer;
-    padding: 0;
+    padding: 8px 12px;
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 214, 0, 0.2);
+  }
+  
+  .faq-readmore:active {
+    transform: scale(0.98);
   }
 }
 /* FAQ clamp/readmore moved to contact-fixes.css to avoid duplication */

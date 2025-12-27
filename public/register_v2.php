@@ -1591,13 +1591,15 @@ document.addEventListener('DOMContentLoaded', function(){
 	try{
 		Array.from(document.querySelectorAll('.faq-readmore')).forEach(btn => {
 			btn.addEventListener('click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				const target = this.closest('.faq-card') || document.querySelector(this.getAttribute('data-target'));
 				if (!target) return;
 				const clamped = target.querySelector('.faq-clamped');
 				if (!clamped) return;
 				const expanded = clamped.classList.toggle('faq-clamped--expanded');
 				this.textContent = expanded ? 'Show less' : 'Read more';
-			});
+			}, { passive: false });
 		});
 	}catch(e){/* ignore */}
 });
