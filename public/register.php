@@ -1,5 +1,9 @@
 <?php
 // public/register.php
+// Redirect to new universal registration wizard
+header('Location: register-new.php');
+exit;
+
 // Use public-side config/includes (avoid pulling admin internals)
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
