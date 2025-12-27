@@ -51,7 +51,7 @@
 /* ==========================================================================
    Darkened Hero Backgrounds (Blue-White Gradient for non-home pages)
    ========================================================================== */
-/* Blue-white gradient for ALL non-home hero sections */
+/* Deep blue gradient for ALL non-home hero sections */
 /* Apply to .about-hero overlay which is used across about, contact, programs, register, news pages */
 .about-hero .about-hero-overlay,
 .contact-hero .contact-hero-overlay,
@@ -59,10 +59,10 @@
 .register-hero .register-hero-overlay,
 .programs-hero .programs-hero-overlay,
 .news-hero .news-hero-overlay {
-  background: linear-gradient(180deg, rgba(15, 35, 80, 0.95), rgba(30, 58, 100, 0.88), rgba(255, 255, 255, 0.05)) !important;
+  background: linear-gradient(180deg, rgba(11, 26, 44, 0.92) 0%, rgba(15, 35, 70, 0.95) 50%, rgba(20, 45, 90, 0.97) 100%) !important;
 }
 
-/* Add subtle yellow radial glow to hero sections (excluding home.php) */
+/* Add subtle yellow radial glow at top-center of hero sections (excluding home.php) */
 .about-hero .about-hero-overlay::after,
 .contact-hero .contact-hero-overlay::after,
 .courses-hero .courses-hero-overlay::after,
@@ -75,7 +75,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 30%, rgba(255, 214, 0, 0.12) 0%, transparent 60%);
+  background: radial-gradient(ellipse 80% 50% at 50% 15%, rgba(255, 214, 0, 0.15) 0%, transparent 55%);
   pointer-events: none;
   z-index: 1;
 }

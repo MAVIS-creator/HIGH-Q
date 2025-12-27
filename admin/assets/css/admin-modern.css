@@ -839,15 +839,14 @@
    MODERN FOOTER
    ========================================= */
 .admin-footer {
-    position: fixed;
-    bottom: 0;
-    left: var(--sidebar-width);
-    right: 0;
+    position: relative;
     background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%);
     color: var(--hq-black);
-    z-index: 999;
+    z-index: 50;
     transition: all var(--transition-slow);
     box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+    margin-left: var(--sidebar-width);
+    flex-shrink: 0;
 }
 
 .footer-inner {
