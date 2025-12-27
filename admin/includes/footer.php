@@ -49,7 +49,7 @@ if (!isset($skipMainClose) || !$skipMainClose) {
         position: relative;
         margin-left: var(--sidebar-width, 260px);
         background: linear-gradient(90deg, #ffd54f, #ffb300);
-        z-index: 50;
+        z-index: 1;
         box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
         margin-top: auto;
     }
