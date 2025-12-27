@@ -1369,3 +1369,105 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-12-27T20:55:42+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-4324eab257asm53402147f8f.38 - gsmtp
 
+[2025-12-27T21:01:38+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-4324ea227casm52836785f8f.15 - gsmtp
+
+[2025-12-27T21:01:38+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2025-12-27T21:01:38+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.68.134]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-12-27T21:01:38+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-12-27T21:01:39+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-12-27T21:01:40+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2025-12-27T21:01:40+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.68.134]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-12-27T21:01:40+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-12-27T21:01:40+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-12-27T21:01:40+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-12-27T21:01:41+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-12-27T21:01:41+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-12-27T21:01:41+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-12-27T21:01:41+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-12-27T21:01:42+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-4324ea227casm52836785f8f.15 - gsmtp
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2025-12-27T21:01:42+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-4324ea227casm52836785f8f.15 - gsmtp
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-12-27T21:01:42+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-4324ea227casm52836785f8f.15 - gsmtp
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: Date: Sat, 27 Dec 2025 21:01:37 +0100
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: Subject: HIGH Q Test Email - 2025-12-27 21:01:37
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: Message-ID: <bNlvXKtCCqrNXqeOE9GLYes0z0Wxks6ZvdwdqGTjsg@localhost>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:         <html>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:         <body style='font-family: Arial, sans-serif; padding: 20px;'>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:             <h2 style='color: #4f46e5;'>🎓 HIGH Q SOLID ACADEMY - Test Email</h2>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:             <p>This is a test email to verify the email system is working correctly.</p>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:             <p><strong>Timestamp:</strong> 2025-12-27 21:01:37</p>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:             <p><strong>Server:</strong> DESKTOP-OD5BIHH</p>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:             <hr>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:             <p style='color: #666; font-size: 12px;'>This is an automated test. No action required.</p>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:         </body>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER:         </html>
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-27T21:01:42+01:00] [level=1] CLIENT -> SERVER: .
+
+[2025-12-27T21:01:43+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1766865708 ffacd0b85a97d-4324ea227casm52836785f8f.15 - gsmtp
+
+[2025-12-27T21:01:43+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-12-27T21:01:43+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-4324ea227casm52836785f8f.15 - gsmtp
+
