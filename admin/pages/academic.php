@@ -870,7 +870,7 @@ if ($__hqStandalone) {
               </div>
 
                 <div class="pt-3 mt-auto" style="border-top:1px solid #eef2f7; display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:flex-end;">
-                    <?php if (!$isPostUtme): ?>
+                    <?php if (!$isPostUtme && !$isUniversal): ?>
                         <?php if (!empty($s['status'])): ?>
                       <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-success">
                                 Confirm
@@ -885,7 +885,7 @@ if ($__hqStandalone) {
                         View
                     </button>
                     
-                    <form method="post" action="index.php?pages=academic&action=<?= $isPostUtme ? 'delete_postutme' : 'delete' ?>&id=<?= $s['id'] ?>" class="inline-block" onsubmit="return confirm('Are you sure?');">
+                    <form method="post" action="index.php?pages=academic&action=<?= $isPostUtme ? 'delete_postutme' : ($isUniversal ? 'delete_universal' : 'delete') ?>&id=<?= $s['id'] ?>" class="inline-block" onsubmit="return confirm('Are you sure?');">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <button type="submit" class="btn btn-sm btn-outline-secondary" title="Delete">
                       <i class='bx bx-trash'></i>
