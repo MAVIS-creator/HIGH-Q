@@ -573,6 +573,8 @@ $current_source = $requestedSource ?: ($registrations_source === 'universal_regi
 
 // ensure counters exist regardless of which data path is used
 $active = 0; $pending = 0; $banned = 0; $total = 0;
+// KPI counters (awaiting/confirmed/rejected) for summary cards
+$countAwaiting = 0; $countConfirmed = 0; $countRejected = 0;
 
 if ($hasRegistrations) {
   // simple pagination
