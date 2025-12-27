@@ -143,31 +143,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     markAllBtn.disabled = true; 
                     markAllBtn.textContent = 'Marking...';
                     try {
-                        // Send mark_read for each notification
-                        const ops = data.notifications.map(n => {
-                            const fd = new FormData(); 
-                            fd.append('type', n.type); 
-                            fd.append('id', n.id);
-                            return fetch(ADMIN_BASE + '/api/mark_read.php', {
-                                method: 'POST', 
-                                body: fd, 
-                                credentials: 'same-origin'
+                        // Use the bulk mark_all action
+                        const fd = new FormData();
+                        fd.append('action', 'mark_all');
+                        const response = await fetch(ADMIN_BASE + '/api/mark_read.php', {
+                            method: 'POST', 
+                            body: fd, 
+                            credentials: 'same-origin'
+                        });
+                        
+                        const result = await response.json();
+                        if (result.success) {
+                            // Update UI to show all as read
+                            panel.querySelectorAll('.notification-item').forEach(item => {
+                                item.classList.add('read');
                             });
-                        });
-                        await Promise.all(ops);
-                        
-                        // Update UI to show all as read
-                        panel.querySelectorAll('.notification-item').forEach(item => {
-                            item.classList.add('read');
-                        });
-                        badge.style.display = 'none';
-                        badge.textContent = '0';
-                        
-                        markAllBtn.textContent = 'All read';
-                        setTimeout(() => {
-                            markAllBtn.textContent = 'Mark all as read';
-                            markAllBtn.disabled = false;
-                        }, 2000);
+                            badge.style.display = 'none';
+                            badge.textContent = '0';
+                            
+                            markAllBtn.textContent = 'All read!';
+                            setTimeout(() => {
+                                markAllBtn.textContent = 'Mark all as read';
+                                markAllBtn.disabled = false;
+                            }, 2000);
+                        } else {
+                            throw new Error(result.error || 'Failed to mark as read');
+                        }
                     } catch (e) {
                         console.error('Failed to mark all as read', e);
                         markAllBtn.disabled = false; 
