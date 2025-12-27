@@ -144,7 +144,6 @@
       <a href="<?= app_url('privacy.php') ?>">Privacy Policy</a>
       <a href="<?= app_url('terms.php') ?>">Terms of Service</a>
     </div>
-  
   </div>
 </footer>
 <!-- ===== FOOTER END ===== -->
