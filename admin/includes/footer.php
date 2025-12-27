@@ -21,9 +21,9 @@ if (!isset($skipMainClose) || !$skipMainClose) {
                 <span class="footer-divider">•</span>
                 <span class="footer-copyright">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</span>
                 <span class="footer-divider">•</span>
-                <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="footer-credit-mavis" style="color:#1e40af;font-weight:800;text-decoration:none;transition:color 0.2s;">Made by MAVIS</a>
+                <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="footer-credit-mavis" style="color:#1e3a8a;font-weight:800;font-size:0.85rem;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#1e3a8a'">Made by MAVIS</a>
                 <span class="footer-divider">•</span>
-                <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="footer-credit-gamer" style="color:#0a0a0a;font-weight:700;text-decoration:none;transition:color 0.2s;">Exam portal made by gamerdave</a>
+                <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="footer-credit-gamer" style="color:#1e293b;font-weight:700;font-size:0.85rem;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#1e293b'">Exam portal made by gamerdave</a>
             </div>
         </div>
     </footer>
