@@ -487,7 +487,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                 <p style="margin-bottom: 15px; font-size: 13px;">
                     <strong>High-Q Learning Center</strong><br>
                     " . htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794') . " | " . htmlspecialchars($siteSettings['contact_email'] ?? 'info@highq.com') . "<br>
-                    &copy; " . date('Y') . " All rights reserved.
+                    © " . date('Y') . " All rights reserved.
                 </p>
                 <p style="font-size: 11px; color: #999;">
                     This is an automated message. Please do not reply with sensitive information.

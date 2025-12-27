@@ -514,7 +514,7 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
             </h1>
             <div class="patcher-header-right">
                 <span style="font-size: 14px;">👤 <?php echo htmlspecialchars($adminUsername); ?></span>
-                <a href="index.php" style="padding: 8px 16px; background: rgba(0,0,0,0.15); hover: rgba(0,0,0,0.25); border-radius: 6px; text-decoration: none; color: #1f2937; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <a href="index.php" style="padding: 8px 16px; background: rgba(0,0,0,0.15); border-radius: 6px; text-decoration: none; color: #1f2937; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: background 0.3s ease;" onmouseover="this.style.background='rgba(0,0,0,0.25)'" onmouseout="this.style.background='rgba(0,0,0,0.15)'">
                     <i class='bx bx-arrow-back'></i> Back to Dashboard
                 </a>
             </div>

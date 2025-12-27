@@ -31,7 +31,7 @@ $page_description = 'Your personalized JAMB preparation path designed specifical
     <link rel="canonical" href="<?php echo current_url(); ?>">
     
     <!-- Prevent Indexing if Debug Mode -->
-    <?php if (defined('DEBUG_MODE') && DEBUG_MODE): ?>
+    <?php if (defined('DEBUG_MODE') && DEBUG_MODE === true): ?>
     <meta name="robots" content="noindex, nofollow">
     <?php endif; ?>
     
