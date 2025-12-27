@@ -25,7 +25,7 @@ $page_description = 'Hands-on digital skills training. Learn practical tech skil
     <!-- Canonical Tag -->
     <link rel="canonical" href="<?php echo current_url(); ?>">
     
-    <?php if (defined('DEBUG_MODE') && DEBUG_MODE): ?>
+    <?php if (defined('DEBUG_MODE') && DEBUG_MODE === true): ?>
     <meta name="robots" content="noindex, nofollow">
     <?php endif; ?>
     

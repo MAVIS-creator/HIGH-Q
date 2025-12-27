@@ -25,7 +25,7 @@ $page_description = 'Your personalized WAEC/GCE preparation path. Complete exam 
     <!-- Canonical Tag -->
     <link rel="canonical" href="<?php echo current_url(); ?>">
     
-    <?php if (defined('DEBUG_MODE') && DEBUG_MODE): ?>
+    <?php if (defined('DEBUG_MODE') && DEBUG_MODE === true): ?>
     <meta name="robots" content="noindex, nofollow">
     <?php endif; ?>
     
