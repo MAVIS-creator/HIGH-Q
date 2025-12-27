@@ -21,7 +21,7 @@
             </div>
 
             <!-- Title -->
-            <h1 class="auth-title">Account Pending</h1>
+            <h1 class="auth-title">Pending Approval</h1>
             <p class="auth-subtitle">Thank you for registering with HIGH Q SOLID ACADEMY!</p>
 
             <!-- Info Card -->
