@@ -32,6 +32,7 @@ if (!isset($skipMainClose) || !$skipMainClose) {
     /* Sticky Footer Styles - ensures footer stays at bottom but doesn't cover content */
     html, body {
         min-height: 100vh;
+        margin: 0;
     }
     
     body {
@@ -41,12 +42,11 @@ if (!isset($skipMainClose) || !$skipMainClose) {
     
     .admin-main {
         flex: 1 0 auto;
-        padding-bottom: 80px !important; /* Space for footer */
     }
     
     .admin-footer {
         flex-shrink: 0;
-        position: relative;
+        position: relative !important;
         margin-left: var(--sidebar-width, 260px);
         background: linear-gradient(90deg, #ffd54f, #ffb300);
         z-index: 50;
