@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var copyBtn = document.getElementById('copyLinkBtn');
     btn.addEventListener('click', function(){
         var fd = new FormData(form);
-        btn.disabled = true; btn.textContent = 'Sending...';
+        btn.disabled = true; btn.textContent = 'Sending...'; btn.classList.add('is-loading');
     fetch((window.HQ_ADMIN_BASE || '') + '/api/create_payment_link.php', { method: 'POST', body: fd, credentials: 'same-origin', headers: {'X-Requested-With':'XMLHttpRequest'} })
             .then(r => r.text())
             .then(function(t){ try { return JSON.parse(t); } catch(e) { return { status:'error', raw:t }; } })
