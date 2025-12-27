@@ -72,6 +72,10 @@
   max-height: none !important;
 }
 
+.faq-clamped--expanded::after {
+  display: none !important;
+}
+
 /* Small utilities: ensure modal inputs are usable on mobile */
 #modalBackdrop .modal input,
 #modalBackdrop .modal select,
