@@ -1,5 +1,8 @@
 :root {
   --hq-yellow: #ffd600;
+  --hq-blue: #1a73e8;
+  --hq-blue-light: #4285f4;
+  --hq-blue-dark: #0d47a1;
   --swal-bg: #fff7dd;
   --swal-border: #ffda66;
   --swal-button: #ffd600;
@@ -7,6 +10,7 @@
   --hq-red: #ff4b2b;
   --hq-black: #0a0a0a;
   --hq-gray: #f3f4f6;
+  --hq-white: #ffffff;
   --max-width: 1400px;
   --card-width: 760px;
   --radius: 12px;
