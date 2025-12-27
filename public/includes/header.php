@@ -401,11 +401,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                 <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('exams.php') ?>">Exams</a></li>
                 <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('news.php') ?>">News & Blog</a></li>
                 <li class="nav-item"><a class="nav-link px-3 py-2" href="<?= app_url('community.php') ?>">Community</a></li>
-                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register.php' ? 'active' : '' ?>" href="<?= app_url('register.php') ?>">Admission</a></li>
+                <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'register-new.php' ? 'active' : '' ?>" href="<?= app_url('register-new.php') ?>">Admission</a></li>
                 <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="<?= app_url('contact.php') ?>">Contact</a></li>
             </ul>
             <div class="mt-4 px-3">
-              <a href="<?= app_url('register.php') ?>" class="btn btn-primary w-100 py-2">Find Your Path</a>
+              <a href="<?= app_url('register-new.php') ?>" class="btn btn-primary w-100 py-2">Find Your Path</a>
             </div>
         </div>
     </div>
