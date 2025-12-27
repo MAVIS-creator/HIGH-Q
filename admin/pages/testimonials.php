@@ -757,14 +757,15 @@ if ($__hqStandalone) {
 
 <script>
 const modal = document.getElementById('testimonialModal');
-const overlay = document.getElementById('modalOverlay');
 const newBtn = document.getElementById('newTestimonialBtn');
 const closeBtn = document.getElementById('closeModal');
 const form = document.getElementById('testimonialForm');
 const modalTitle = document.getElementById('modalTitle');
 
 function openTestimonialModal(mode = 'create', data = {}) {
-    modalTitle.textContent = mode === 'create' ? 'Add Testimonial' : 'Edit Testimonial';
+    modalTitle.innerHTML = mode === 'create' 
+        ? '<i class="bx bx-star"></i> Add Testimonial' 
+        : '<i class="bx bx-edit"></i> Edit Testimonial';
     
     if (mode === 'create') {
         form.action = 'index.php?pages=testimonials&action=create';
@@ -787,17 +788,28 @@ function openTestimonialModal(mode = 'create', data = {}) {
     }
     
     modal.classList.add('open');
-    overlay.classList.add('open');
 }
 
 function closeTestimonialModal() {
     modal.classList.remove('open');
-    overlay.classList.remove('open');
 }
+
+// Close on outside click
+modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+        closeTestimonialModal();
+    }
+});
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+        closeTestimonialModal();
+    }
+});
 
 newBtn.addEventListener('click', () => openTestimonialModal('create'));
 closeBtn.addEventListener('click', closeTestimonialModal);
-overlay.addEventListener('click', closeTestimonialModal);
 
 document.querySelectorAll('.btn-edit').forEach(btn => {
     btn.addEventListener('click', () => {
