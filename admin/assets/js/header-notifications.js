@@ -57,10 +57,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Update badge
-            const count = data.notifications?.length || 0;
-            badge.style.display = count > 0 ? 'inline-block' : 'none';
-            badge.textContent = count;
+            // Update badge - count only unread notifications
+            const unreadCount = data.notifications?.filter(n => !n.is_read).length || 0;
+            badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+            badge.textContent = unreadCount;
 
             // Update panel content
             panel.innerHTML = '';
