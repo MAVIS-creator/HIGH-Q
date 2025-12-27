@@ -85,15 +85,15 @@ try {
                         <?php if (!empty($tutor['photo'])): ?>
                             <?php 
                             $photoPath = $tutor['photo'];
-                            // Construct proper public URL
+                            // Construct absolute app URL using app_url helper
                             if (preg_match('#^https?://#', $photoPath)) {
                                 // Already a full URL
                             } elseif (strpos($photoPath, 'uploads/tutors/') !== false) {
-                                // Already correct format
-                                $photoPath = '../../public/' . $photoPath;
+                                // Relative path: prepend app_url
+                                $photoPath = app_url($photoPath);
                             } else {
                                 // Just filename
-                                $photoPath = '../../public/uploads/tutors/' . basename($photoPath);
+                                $photoPath = app_url('uploads/tutors/' . basename($photoPath));
                             }
                             ?>
                             <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($tutor['name']) ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
