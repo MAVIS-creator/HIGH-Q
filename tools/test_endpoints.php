@@ -88,7 +88,7 @@ $adminPages = [
     'admin/pages/users.php',
     'admin/pages/settings.php',
     'admin/pages/courses.php',
-    'admin/pages/posts.php',
+    'admin/pages/post.php',
     'admin/pages/patcher.php',
 ];
 
