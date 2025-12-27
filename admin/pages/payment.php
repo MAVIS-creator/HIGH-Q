@@ -75,6 +75,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 
+<div class="admin-payment-card admin-payment-side">
+    <h3>Preview & Tips</h3>
+    <div class="small-muted" style="margin-bottom:8px">Your secure link appears after creating.</div>
+    <ul style="margin:0;padding-left:18px;color:#444;line-height:1.6">
+      <li>Use recipient’s primary email address</li>
+      <li>Amounts are in NGN (₦)</li>
+      <li>Links expire in 48 hours by default</li>
+      <li>Copy and resend if email delivery fails</li>
+    </ul>
+</div>
+
 <?php if (!empty($recentLinks)): ?>
         <div class="admin-payment-card" style="margin-top:18px;">
             <h3>Recent created links</h3>
