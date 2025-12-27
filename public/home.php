@@ -373,6 +373,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 @media (max-width: 768px) {
   .testimonials-strip { padding: 36px 0; }
   
+  .testimonials-scroll-wrapper {
+    padding: 0 40px;
+  }
+  
   .testimonials-scroll-btn {
     width: 34px;
     height: 34px;
