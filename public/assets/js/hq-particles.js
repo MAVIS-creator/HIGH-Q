@@ -4,6 +4,7 @@
  * Home.php uses white/gold bubbles (yellow bg)
  * Other pages use yellow bubbles (blue bg)
  * Respects prefers-reduced-motion
+ * Desktop only - disabled on mobile/tablet for performance
  */
 (function() {
   'use strict';
@@ -13,6 +14,13 @@
   
   if (prefersReducedMotion) {
     return;
+  }
+  
+  // Desktop only - disable on mobile/tablet (screens smaller than 1024px)
+  const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+  
+  if (!isDesktop) {
+    return; // Don't run particles on mobile/tablet
   }
   
   // Configuration - Different colors for different pages
