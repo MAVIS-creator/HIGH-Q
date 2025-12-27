@@ -251,8 +251,10 @@ function generateWelcomeKitPDF($programType, $studentName, $studentEmail, $regis
 
             <!-- Welcome Section -->
             <div class="welcome-section">
-                <h2>Welcome aboard, {$studentName}!</h2>
-                <p>Thank you for enrolling in our <strong>{$content['title']}</strong> program. We're excited to have you join our learning community. This welcome kit contains everything you need to know to get started.</p>
+                <h2>✨ Hey {$studentName}, We're So Excited!</h2>
+                <p>You just took a BIG step toward your goals, and we're honored to be part of your journey! 🚀</p>
+                <p style="margin-top: 12px;">You're now enrolled in our <strong>{$content['title']}</strong> program, and we promise you're in the right place. Our expert team is ready to help you succeed, and this welcome kit has everything you need to hit the ground running.</p>
+                <p style="margin-top: 12px; font-size: 14px; color: #666;"><em>Think of this document as your "get started in 5 minutes" guide. Keep it handy!</em></p>
             </div>
 
             <!-- Student Info -->
