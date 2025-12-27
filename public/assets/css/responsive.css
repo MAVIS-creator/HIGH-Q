@@ -280,13 +280,14 @@
   .terms-row .terms-label span { display: inline; }
 }
 
-/* FAQ clamp styles and read more button */
+/* FAQ clamp styles and read more button - MOBILE ONLY */
 @media (max-width: 768px) {
   .faq-clamped {
     display: block;
-    max-height: 104px; /* roughly 4 lines */
+    max-height: 80px; /* roughly 3-4 lines */
     overflow: hidden;
     position: relative;
+    transition: max-height 0.3s ease-out;
   }
 
   .faq-clamped::after {
@@ -296,9 +297,18 @@
     height: 40px;
     background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));
     pointer-events: none;
+    transition: opacity 0.3s ease;
   }
 
-  .faq-clamped--expanded { max-height: none !important; }
+  .faq-clamped--expanded { 
+    max-height: 1000px !important;
+    overflow: visible !important;
+  }
+  
+  .faq-clamped--expanded::after {
+    opacity: 0 !important;
+    display: none !important;
+  }
 
   .faq-readmore {
     display: inline-block;
@@ -319,7 +329,22 @@
     transform: scale(0.98);
   }
 }
-/* FAQ clamp/readmore moved to contact-fixes.css to avoid duplication */
+
+/* Desktop - hide read more button, show full content */
+@media (min-width: 769px) {
+  .faq-clamped {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  .faq-clamped::after {
+    display: none !important;
+  }
+  
+  .faq-readmore {
+    display: none !important;
+  }
+}
 
 /* Keep brand text visible on very small screens with tighter sizing */
 @media (max-width: 420px) {
