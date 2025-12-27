@@ -138,11 +138,23 @@
     }
   }
   
-  // Initialize particles on hero sections
+  // Initialize particles on hero sections (except home.php main hero)
   function initParticles() {
-    const heroSections = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero');
+    // Get all hero sections
+    const allHeros = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero');
     
-    heroSections.forEach(hero => {
+    allHeros.forEach(hero => {
+      // SKIP home.php main hero (check if body has 'home' class or if hero is first on page)
+      const isHomePage = document.body.classList.contains('page-home') || 
+                         (hero.classList.contains('hero') && 
+                          hero === document.querySelector('.hero'));
+      const isMainHero = isHomePage && hero.classList.contains('hero');
+      
+      if (isMainHero) {
+        console.log('Skipping particles on home.php main hero');
+        return; // Skip home hero
+      }
+      
       // Check if already initialized
       if (hero.querySelector('.particles-container')) {
         return;
@@ -150,6 +162,15 @@
       
       const container = document.createElement('div');
       container.className = 'particles-container';
+      container.style.position = 'absolute';
+      container.style.top = '0';
+      container.style.left = '0';
+      container.style.width = '100%';
+      container.style.height = '100%';
+      container.style.zIndex = '1';
+      container.style.pointerEvents = 'none';
+      
+      hero.style.position = 'relative';
       hero.insertBefore(container, hero.firstChild);
       
       new ParticleSystem(container);
