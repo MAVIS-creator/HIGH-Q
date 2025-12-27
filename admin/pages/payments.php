@@ -547,17 +547,17 @@ $totalPages = (int)ceil($total / $perPage);
                 <td style="padding: 0.6rem 0.5rem;"><?= htmlspecialchars($p['payer_account_name'] ?? ($p['name'] ?? '')) ?></td>
                 <td style="padding: 0.6rem 0.5rem;"><strong>₦<?= htmlspecialchars(number_format($p['amount'],2)) ?></strong></td>
                 <td style="padding: 0.6rem 0.5rem;"><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
-                <td>
+                <td style="padding: 0.6rem 0.5rem;">
                     <?php
                         $badgeStatus = strtolower((string)$displayStatus);
                         if (!in_array($badgeStatus, ['pending','sent','confirmed','failed','unknown'], true)) $badgeStatus = 'unknown';
                     ?>
-                    <span class="status-badge status-<?= htmlspecialchars($badgeStatus) ?>"><?= htmlspecialchars(ucfirst($displayStatus)) ?></span>
+                    <span class="status-badge status-<?= htmlspecialchars($badgeStatus) ?>" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;"><?= htmlspecialchars(ucfirst($displayStatus)) ?></span>
                 </td>
-                <td><?= htmlspecialchars($p['payer_account_number'] ?? '') ?></td>
-                <td><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
-                <td><small><?= htmlspecialchars($p['created_at']) ?></small></td>
-                <td>
+                <td style="padding: 0.6rem 0.5rem; font-size: 0.8rem;"><?= htmlspecialchars($p['payer_account_number'] ?? '') ?></td>
+                <td style="padding: 0.6rem 0.5rem; font-size: 0.8rem;"><?= htmlspecialchars($p['payer_bank_name'] ?? '') ?></td>
+                <td style="padding: 0.6rem 0.5rem;"><small><?= htmlspecialchars($p['created_at']) ?></small></td>
+                <td style="padding: 0.6rem 0.5rem;">
                     <div class="action-group">
                         <?php if (!empty($p['receipt_path'])): ?>
                             <a class="payment-btn" href="<?= htmlspecialchars($p['receipt_path']) ?>" target="_blank" title="Download receipt" style="background:#8b5cf6;">
