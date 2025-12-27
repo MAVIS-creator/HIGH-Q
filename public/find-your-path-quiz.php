@@ -94,9 +94,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Find top recommendation
         $recommendedPath = array_key_first(array_filter($scores, fn($score) => $score === max($scores)));
+        $matchScore = max($scores);
         
-        // Redirect to registration with recommended path
-        header("Location: register-new.php?recommended=$recommendedPath&goal=$goal&qual=$qualification&match=" . max($scores));
+        // Build percentage match (max score is 13, so multiply by ~7.7 to get percentage)
+        $percentMatch = min(100, round(($matchScore / 13) * 100));
+        
+        // Map path to page
+        $pathMap = [
+            'jamb' => 'path-jamb.php',
+            'waec' => 'path-waec.php',
+            'postutme' => 'path-postutme.php',
+            'digital' => 'path-digital.php',
+            'international' => 'path-international.php'
+        ];
+        
+        $pathPage = $pathMap[$recommendedPath] ?? 'path-jamb.php';
+        
+        // Redirect to personalized path landing page
+        header("Location: $pathPage?goal=$goal&qual=$qualification&match=$percentMatch");
         exit;
     }
 }
