@@ -513,9 +513,10 @@ $totalPages = (int)ceil($total / $perPage);
         </form>
     </div>
     
-    <div class="hq-table-wrap" style="overflow-x: auto; margin-right: 0; padding-bottom: 1rem;">
-    <table class="payments-table" style="min-width: 900px; width: 100%;">
-    <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th style="min-width: 100px;">Actions</th></tr></thead>
+    <!-- Table Card -->
+    <div class="content-card" style="background: white; border-radius: 1rem; border: 1px solid #e2e8f0; padding: 1rem; overflow-x: auto;">
+    <table class="payments-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+    <thead><tr style="background: #6366f1; color: white;"><th style="padding: 0.75rem 0.5rem; text-align: left;">ID</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Reference</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Payer</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Amount</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Method</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Status</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Account</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Bank</th><th style="padding: 0.75rem 0.5rem; text-align: left;">Created</th><th style="padding: 0.75rem 0.5rem; text-align: left; min-width: 80px;">Actions</th></tr></thead>
         <tbody>
         <?php foreach($payments as $p): ?>
             <?php
