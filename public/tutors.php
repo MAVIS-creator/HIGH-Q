@@ -306,6 +306,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   padding: 20px 5px;
   scrollbar-width: thin;
   scrollbar-color: #ffd600 #f0f0f0;
+  /* Scroll snap for mobile/tablets */
+  scroll-snap-type: x mandatory;
 }
 
 .wall-scroll-container::-webkit-scrollbar {
@@ -337,6 +339,9 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   gap: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   transition: all 0.3s ease;
+  /* Scroll snap alignment */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .wall-testimony-card:hover {
