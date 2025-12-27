@@ -853,6 +853,26 @@ if ($__hqStandalone) {
       </div>
     </div>
 
+    <!-- KPI Summary -->
+    <div class="kpi-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;">
+      <div class="kpi-card" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+        <div style="font-size:.8rem;color:#64748b">Total</div>
+        <div style="font-size:1.4rem;font-weight:800;color:#1f2937;"><?= number_format($total) ?></div>
+      </div>
+      <div class="kpi-card" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+        <div style="font-size:.8rem;color:#64748b">Awaiting Payment</div>
+        <div style="font-size:1.4rem;font-weight:800;color:#92400e;"><?= number_format($countAwaiting) ?></div>
+      </div>
+      <div class="kpi-card" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+        <div style="font-size:.8rem;color:#64748b">Confirmed</div>
+        <div style="font-size:1.4rem;font-weight:800;color:#065f46;"><?= number_format($countConfirmed) ?></div>
+      </div>
+      <div class="kpi-card" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+        <div style="font-size:.8rem;color:#64748b">Rejected</div>
+        <div style="font-size:1.4rem;font-weight:800;color:#991b1b;"><?= number_format($countRejected) ?></div>
+      </div>
+    </div>
+
     <!-- academic Grid -->
     <div class="academic-grid" id="academicList">
         <?php if (!empty($academic)): ?>
