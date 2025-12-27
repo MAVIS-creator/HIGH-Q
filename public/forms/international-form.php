@@ -17,6 +17,46 @@
     <div class="form-section">
         <h4 class="section-title"><i class='bx bxs-user'></i> Personal Information</h4>
         
+        <!-- Passport Photo Upload -->
+        <div class="form-row">
+            <div class="form-group" style="width: 100%;">
+                <label for="passport_intl">Passport Photo <span class="text-danger">*</span></label>
+                <div class="passport-upload-wrapper" id="intlPassportWrapper" style="border: 2px dashed #d1d5db; border-radius: 12px; padding: 20px; text-align: center; background: #f9fafb; transition: all 0.3s;">
+                    <div id="intlPassportPreviewArea" style="margin-bottom: 15px; display: none;">
+                        <img id="intlPassportPreview" src="" alt="Passport Preview" style="width: 120px; height: 120px; object-fit: cover; border-radius: 12px; border: 3px solid #6f42c1; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    </div>
+                    <label for="passport_intl" style="cursor: pointer; display: block;">
+                        <i class='bx bx-cloud-upload' style="font-size: 2rem; color: #6f42c1; display: block; margin-bottom: 8px;"></i>
+                        <span style="color: #374151; font-weight: 500;">Click to upload passport photo</span>
+                        <span style="display: block; font-size: 0.85rem; color: #9ca3af; margin-top: 4px;">JPG, JPEG, PNG (Max 2MB)</span>
+                    </label>
+                    <input type="file" id="passport_intl" name="passport" class="form-control" accept="image/jpeg,image/jpg,image/png" required style="display: none;">
+                </div>
+                <small class="form-text text-muted">Upload a recent passport photograph with white background</small>
+            </div>
+        </div>
+        
+        <script>
+        document.getElementById('passport_intl').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB');
+                    this.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('intlPassportPreview').src = e.target.result;
+                    document.getElementById('intlPassportPreviewArea').style.display = 'block';
+                    document.getElementById('intlPassportWrapper').style.borderColor = '#6f42c1';
+                    document.getElementById('intlPassportWrapper').style.background = '#f8f5ff';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        </script>
+        
         <div class="form-row">
             <div class="form-group">
                 <label for="first_name">First Name <span class="text-danger">*</span></label>
