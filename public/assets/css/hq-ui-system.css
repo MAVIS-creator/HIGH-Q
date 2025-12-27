@@ -178,6 +178,7 @@
   .path-hero > .container {
     position: relative;
     z-index: 5;
+    /* Preserve centering from public.css */
   }
   
   /* Particles container positioning */
