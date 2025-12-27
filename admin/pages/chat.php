@@ -134,15 +134,37 @@ $skipMainClose = true;
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
+// Pagination
+$perPage = 12;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$offset = ($page - 1) * $perPage;
+$totalThreads = 0;
+$totalPages = 1;
+try {
+  $totalThreads = (int)$pdo->query("SELECT COUNT(*) FROM chat_threads WHERE status != 'closed'")->fetchColumn();
+  $totalPages = max(1, (int)ceil($totalThreads / $perPage));
+  if ($page > $totalPages) {
+    $page = $totalPages;
+    $offset = ($page - 1) * $perPage;
+  }
+} catch (Throwable $e) {
+  $totalThreads = 0;
+  $totalPages = 1;
+}
+
 // Load threads for admin view
-$threads = $pdo->query(
+$stmt = $pdo->prepare(
   "SELECT ct.*, u.name as assigned_admin_name
    FROM chat_threads ct
    LEFT JOIN users u ON ct.assigned_admin_id = u.id
    WHERE ct.status != 'closed'
    ORDER BY ct.last_activity DESC
-   LIMIT 100"
-)->fetchAll(PDO::FETCH_ASSOC);
+   LIMIT ? OFFSET ?"
+);
+$stmt->bindValue(1, (int)$perPage, PDO::PARAM_INT);
+$stmt->bindValue(2, (int)$offset, PDO::PARAM_INT);
+$stmt->execute();
+$threads = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <main class="main-content" style="padding: 2rem; max-width: 1600px; margin: 0 auto;">
@@ -153,7 +175,7 @@ $threads = $pdo->query(
       <p style="font-size: 1.1rem; opacity: 0.85; margin: 0;">Manage customer support conversations</p>
     </div>
     <div style="text-align: right;">
-      <div style="font-size: 3rem; font-weight: 800; color: #1e293b;"><?= count($threads ?? []) ?></div>
+      <div style="font-size: 3rem; font-weight: 800; color: #1e293b;"><?= (int)$totalThreads ?></div>
       <div style="font-size: 0.9rem; color: #1e293b; opacity: 0.85;">Active Threads</div>
     </div>
   </div>
@@ -190,6 +212,47 @@ $threads = $pdo->query(
         </div>
       <?php endforeach; ?>
     </div>
+
+    <?php if ($totalPages > 1): ?>
+      <?php
+        $qp = $_GET;
+        $qp['pages'] = $qp['pages'] ?? 'chat';
+        $makeLink = function($pnum) use ($qp) {
+          $qp['page'] = $pnum;
+          return 'index.php?' . http_build_query($qp);
+        };
+        $window = 2;
+        $start = max(1, $page - $window);
+        $end = min($totalPages, $page + $window);
+      ?>
+      <nav aria-label="Chat pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <?php if ($page > 1): ?>
+          <a class="btn" href="<?= htmlspecialchars($makeLink($page - 1)) ?>">Prev</a>
+        <?php endif; ?>
+
+        <?php if ($start > 1): ?>
+          <a class="btn" href="<?= htmlspecialchars($makeLink(1)) ?>">1</a>
+          <?php if ($start > 2): ?><span style="padding:6px 8px;color:#666">&hellip;</span><?php endif; ?>
+        <?php endif; ?>
+
+        <?php for ($i = $start; $i <= $end; $i++): ?>
+          <?php if ($i == $page): ?>
+            <span style="padding:6px 10px;background:#111;color:#fff;border-radius:4px"><?= (int)$i ?></span>
+          <?php else: ?>
+            <a class="btn" href="<?= htmlspecialchars($makeLink($i)) ?>"><?= (int)$i ?></a>
+          <?php endif; ?>
+        <?php endfor; ?>
+
+        <?php if ($end < $totalPages): ?>
+          <?php if ($end < $totalPages - 1): ?><span style="padding:6px 8px;color:#666">&hellip;</span><?php endif; ?>
+          <a class="btn" href="<?= htmlspecialchars($makeLink($totalPages)) ?>"><?= (int)$totalPages ?></a>
+        <?php endif; ?>
+
+        <?php if ($page < $totalPages): ?>
+          <a class="btn" href="<?= htmlspecialchars($makeLink($page + 1)) ?>">Next</a>
+        <?php endif; ?>
+      </nav>
+    <?php endif; ?>
   </div>
 </div>
 <!-- Include SweetAlert2 once -->
@@ -265,7 +328,9 @@ function claim(id){
 // Polling: use lightweight JSON API every 5 seconds
 async function pollThreads(){
   try{
-  const res = await fetch(ADMIN_BASE + '/api/threads.php');
+    const params = new URLSearchParams(window.location.search || '');
+    const page = params.get('page') || '1';
+    const res = await fetch(ADMIN_BASE + '/api/threads.php?page=' + encodeURIComponent(page));
     if(!res.ok) return;
     const j = await res.json();
     if(!j.threads) return;
