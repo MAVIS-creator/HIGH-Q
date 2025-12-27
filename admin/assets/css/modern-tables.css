@@ -6,6 +6,9 @@
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  padding-right: 1rem;
+  margin-right: -1rem;
+  padding-bottom: 0.5rem;
 }
 
 /* ============ PAYMENTS TABLE ============ */

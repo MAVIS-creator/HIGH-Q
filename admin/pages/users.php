@@ -390,11 +390,13 @@ if ($__hqStandalone) {
         <input type="hidden" name="csrf_token" value="<?= $csrf; ?>">
         <div class="form-row">
           <label>Name</label>
-          <input type="text" name="name" id="fName" required>
+          <input type="text" name="name" id="fName" readonly style="background: #f3f4f6; cursor: not-allowed;" title="Only the user can edit their own name">
+          <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">Only the user can edit their own name</small>
         </div>
         <div class="form-row">
           <label>Email</label>
-          <input type="email" name="email" id="fEmail" required>
+          <input type="email" name="email" id="fEmail" readonly style="background: #f3f4f6; cursor: not-allowed;" title="Only the user can edit their own email">
+          <small style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem; display: block;">Only the user can edit their own email</small>
         </div>
         <div class="form-row">
           <label>Role</label>
