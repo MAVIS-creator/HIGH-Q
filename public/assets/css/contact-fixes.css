@@ -36,44 +36,68 @@
   pointer-events: auto !important;
 }
 
-/* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
-.faq-clamped::after {
-  pointer-events: none !important;
-}
-
-/* FAQ read-more/show-less overrides */
-.faq-readmore {
-  display: inline-block !important;
-  margin-top: 8px !important;
-  background: transparent !important;
-  border: none !important;
-  color: var(--hq-yellow) !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  pointer-events: auto !important;
-  padding: 8px 12px !important;
-  min-height: 44px !important;
-  min-width: 44px !important;
-  touch-action: manipulation !important;
-  -webkit-tap-highlight-color: rgba(255, 214, 0, 0.2) !important;
-}
-
-.faq-readmore:active {
-  transform: scale(0.98) !important;
-}
-
+/* FAQ styles - Desktop: show full content, no buttons */
 .faq-clamped {
-  overflow: hidden !important;
-  max-height: 104px !important; /* approx 4 lines */
-  position: relative !important;
+  max-height: none;
+  overflow: visible;
 }
 
-.faq-clamped--expanded {
-  max-height: none !important;
+.faq-readmore {
+  display: none;
 }
 
-.faq-clamped--expanded::after {
-  display: none !important;
+/* FAQ styles - Mobile only (768px and below) */
+@media (max-width: 768px) {
+  /* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
+  .faq-clamped::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));
+    pointer-events: none;
+  }
+
+  /* FAQ read-more/show-less button - mobile only */
+  .faq-readmore {
+    display: inline-block;
+    margin-top: 8px;
+    background: transparent;
+    border: none;
+    color: var(--hq-yellow);
+    font-weight: 700;
+    cursor: pointer;
+    pointer-events: auto;
+    padding: 8px 12px;
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 214, 0, 0.2);
+    font-size: 14px;
+  }
+
+  .faq-readmore:active {
+    transform: scale(0.98);
+  }
+
+  .faq-clamped {
+    overflow: hidden;
+    max-height: 80px; /* approx 3-4 lines */
+    position: relative;
+    transition: max-height 0.3s ease;
+  }
+
+  .faq-clamped--expanded {
+    max-height: 500px !important; /* Large enough for any content */
+    overflow: visible;
+  }
+
+  .faq-clamped--expanded::after {
+    display: none !important;
+    opacity: 0;
+  }
 }
 
 /* Small utilities: ensure modal inputs are usable on mobile */
