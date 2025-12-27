@@ -59,7 +59,7 @@
 .register-hero .register-hero-overlay,
 .programs-hero .programs-hero-overlay,
 .news-hero .news-hero-overlay {
-  background: linear-gradient(180deg, rgba(30, 58, 138, 0.92), rgba(11, 26, 44, 0.88)) !important;
+  background: linear-gradient(180deg, rgba(15, 35, 80, 0.95), rgba(30, 58, 100, 0.88), rgba(255, 255, 255, 0.05)) !important;
 }
 
 /* Add subtle yellow radial glow to hero sections (excluding home.php) */
