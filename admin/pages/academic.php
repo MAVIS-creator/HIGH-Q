@@ -590,6 +590,19 @@ if ($hasRegistrations) {
     $stmt->bindValue(2, $offset, PDO::PARAM_INT);
     $stmt->execute();
     $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } elseif ($registrations_source === 'universal_registrations') {
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations");
+    $countStmt->execute();
+    $total = (int)$countStmt->fetchColumn();
+
+    $stmt = $pdo->prepare("SELECT * FROM universal_registrations ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // mark entries so template can render appropriate actions
+    foreach ($academic as &$ss) { $ss['__universal'] = 1; }
+    unset($ss);
   } else {
     // post_utme_registrations listing
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM post_utme_registrations");
