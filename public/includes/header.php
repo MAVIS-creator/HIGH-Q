@@ -214,10 +214,30 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <meta charset="UTF-8">
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- SEO Meta Tags -->
-  <?php if (defined('PAGE_DESCRIPTION')): ?>
-  <meta name="description" content="<?php echo htmlspecialchars(PAGE_DESCRIPTION, ENT_QUOTES, 'UTF-8'); ?>">
+  
+  <!-- Comprehensive SEO Meta Tags -->
+  <?php if (isset($pageDescription)): ?>
+  <meta name="description" content="<?= htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8') ?>">
+  <?php elseif (defined('PAGE_DESCRIPTION')): ?>
+  <meta name="description" content="<?= htmlspecialchars(PAGE_DESCRIPTION, ENT_QUOTES, 'UTF-8') ?>">
   <?php endif; ?>
+  
+  <?php if (isset($pageKeywords)): ?>
+  <meta name="keywords" content="<?= htmlspecialchars($pageKeywords, ENT_QUOTES, 'UTF-8') ?>">
+  <?php endif; ?>
+  
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="<?= htmlspecialchars(isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY', ENT_QUOTES, 'UTF-8') ?>">
+  <?php if (isset($pageDescription)): ?>
+  <meta property="og:description" content="<?= htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8') ?>">
+  <?php endif; ?>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= htmlspecialchars(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') ?>://<?= htmlspecialchars($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>">
+  <meta property="og:image" content="<?= app_url('assets/images/hq-logo.jpeg') ?>">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="<?= htmlspecialchars(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') ?>://<?= htmlspecialchars($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>">
+  
   <?php if (function_exists('auto_robots_tag')): ?>
   <?php echo auto_robots_tag(); ?>
   <?php endif; ?>
