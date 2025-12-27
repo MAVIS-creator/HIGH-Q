@@ -587,6 +587,13 @@ if ($hasRegistrations) {
     $countStmt->execute();
     $total = (int)$countStmt->fetchColumn();
 
+    // KPI counts
+    try {
+      $countAwaiting = (int)$pdo->query("SELECT COUNT(*) FROM student_registrations WHERE status = 'awaiting_payment'")->fetchColumn();
+      $countConfirmed = (int)$pdo->query("SELECT COUNT(*) FROM student_registrations WHERE status = 'confirmed'")->fetchColumn();
+      $countRejected = (int)$pdo->query("SELECT COUNT(*) FROM student_registrations WHERE status = 'rejected'")->fetchColumn();
+    } catch (Throwable $_) { /* ignore if columns differ */ }
+
     $stmt = $pdo->prepare("SELECT sr.*, u.email, u.name AS user_name FROM student_registrations sr LEFT JOIN users u ON u.id = sr.user_id ORDER BY sr.created_at DESC LIMIT ? OFFSET ?");
     $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
     $stmt->bindValue(2, $offset, PDO::PARAM_INT);
@@ -596,6 +603,13 @@ if ($hasRegistrations) {
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations");
     $countStmt->execute();
     $total = (int)$countStmt->fetchColumn();
+
+    // KPI counts (best-effort)
+    try {
+      $countAwaiting = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'awaiting_payment'")->fetchColumn();
+      $countConfirmed = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'confirmed'")->fetchColumn();
+      $countRejected = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'rejected'")->fetchColumn();
+    } catch (Throwable $_) { }
 
     $stmt = $pdo->prepare("SELECT * FROM universal_registrations ORDER BY created_at DESC LIMIT ? OFFSET ?");
     $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
@@ -610,6 +624,13 @@ if ($hasRegistrations) {
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM post_utme_registrations");
     $countStmt->execute();
     $total = (int)$countStmt->fetchColumn();
+
+    // KPI counts (best-effort)
+    try {
+      $countAwaiting = (int)$pdo->query("SELECT COUNT(*) FROM post_utme_registrations WHERE status = 'awaiting_payment'")->fetchColumn();
+      $countConfirmed = (int)$pdo->query("SELECT COUNT(*) FROM post_utme_registrations WHERE status = 'confirmed'")->fetchColumn();
+      $countRejected = (int)$pdo->query("SELECT COUNT(*) FROM post_utme_registrations WHERE status = 'rejected'")->fetchColumn();
+    } catch (Throwable $_) { }
 
     $stmt = $pdo->prepare("SELECT pur.* FROM post_utme_registrations pur ORDER BY pur.created_at DESC LIMIT ? OFFSET ?");
     $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
