@@ -34,7 +34,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
     <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
       <div class="hero-badge mb-3">
-        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
+        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy No.1
       </div>
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
