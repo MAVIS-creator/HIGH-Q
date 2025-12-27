@@ -145,11 +145,6 @@ if (!$isAjaxRequest && !empty($_REQUEST['action'])) {
     if ($explicitAjax) $isAjaxRequest = true;
 }
 
-if (!$isAjaxRequest) {
-    require_once __DIR__ . '/../includes/header.php';
-    require_once __DIR__ . '/../includes/sidebar.php';
-}
-
 // Check if the page declares itself as standalone (before including)
 // Pages like patcher.php set $skipAdminChrome = true to skip header/sidebar/footer
 $standaloneCandidates = [
@@ -162,18 +157,18 @@ $isStandalonePage = false;
 foreach ($standaloneCandidates as $sf) {
     if (file_exists($sf)) {
         // Read first few lines to check for $skipAdminChrome flag
-        $content = file_get_contents($sf, false, null, 0, 1000);
-        if (strpos($content, '$skipAdminChrome') !== false) {
+        $content = file_get_contents($sf, false, null, 0, 2000);
+        if (preg_match('/\$skipAdminChrome\s*=\s*true/', $content)) {
             $isStandalonePage = true;
         }
         break;
     }
 }
 
-// If standalone page, skip header/sidebar and include directly
-if ($isStandalonePage && !$isAjaxRequest) {
-    // Clear output buffer from header (if any was started)
-    if (ob_get_level() > 0) {
+// If standalone page, skip header/sidebar and include directly (do this BEFORE any header output)
+if ($isStandalonePage) {
+    // Clear any output buffer
+    while (ob_get_level() > 0) {
         ob_end_clean();
     }
     foreach ($standaloneCandidates as $sf) {
@@ -182,6 +177,11 @@ if ($isStandalonePage && !$isAjaxRequest) {
             exit; // Standalone pages handle their own complete output
         }
     }
+}
+
+if (!$isAjaxRequest) {
+    require_once __DIR__ . '/../includes/header.php';
+    require_once __DIR__ . '/../includes/sidebar.php';
 }
 
 // Try sensible locations for the page file (avoids pages/pages/ double-nesting)
