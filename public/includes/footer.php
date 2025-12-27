@@ -136,9 +136,9 @@
   <div class="footer-bottom">
     <p>© <?= date('Y') ?> High Q Solid Academy Limited. All rights reserved.</p>
       <div class="footer-credits" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:8px;">
-      <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="credit-mavis" style="background:linear-gradient(90deg,#ffd54f,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;letter-spacing:.02em;">Made by MAVIS</a>
+      <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="credit-mavis" style="background:linear-gradient(90deg,#ffd54f,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;letter-spacing:.02em;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">Made by MAVIS</a>
       <span style="color:#94a3b8;">•</span>
-      <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="credit-gamerdave" style="color:#1f2937;font-weight:600;">Exam portal made by gamerdave</a>
+      <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="credit-gamerdave" style="color:#0f172a;font-weight:800;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#ffd54f'" onmouseout="this.style.color='#0f172a'">Exam portal made by gamerdave</a>
     </div>
     <div class="links">
       <a href="<?= app_url('privacy.php') ?>">Privacy Policy</a>

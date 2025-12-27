@@ -21,9 +21,9 @@ if (!isset($skipMainClose) || !$skipMainClose) {
                 <span class="footer-divider">•</span>
                 <span class="footer-copyright">© <?= date('Y') ?> HIGH Q SOLID ACADEMY LIMITED</span>
                 <span class="footer-divider">•</span>
-                <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="footer-credit-mavis" style="background:linear-gradient(90deg,#ffd54f,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;">Made by MAVIS</a>
+                <a href="https://github.com/MAVIS-creator" target="_blank" rel="noopener noreferrer" class="footer-credit-mavis" style="color:#1e40af;font-weight:800;text-decoration:none;transition:color 0.2s;">Made by MAVIS</a>
                 <span class="footer-divider">•</span>
-                <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="footer-credit-gamer" style="color:#0a0a0a;font-weight:700;">Exam portal made by gamerdave</a>
+                <a href="https://github.com/gamerdave-web" target="_blank" rel="noopener noreferrer" class="footer-credit-gamer" style="color:#0a0a0a;font-weight:700;text-decoration:none;transition:color 0.2s;">Exam portal made by gamerdave</a>
             </div>
         </div>
     </footer>

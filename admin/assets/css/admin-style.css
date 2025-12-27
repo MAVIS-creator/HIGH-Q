@@ -1,10 +1,10 @@
 /* Admin layout styles */
 .admin-main {
     min-height: calc(100vh - 180px);
-    padding: 24px 32px 80px 32px;
+    padding: 24px 32px 120px 32px;
     position: relative;
     margin-left: var(--sidebar-width);
-    padding-bottom: 80px;
+    padding-bottom: 120px;
 }
 
 /* Make admin footer stick to bottom and not overlap sidebar */
@@ -17,9 +17,9 @@
     margin-left: var(--sidebar-width);
     background: linear-gradient(90deg, #ffd54f, #ffb300);
     color: #111;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
     border-top: none;
-    z-index: 50;
+    z-index: 999;
     transition: width 0.3s ease, margin-left 0.3s ease;
 }
 

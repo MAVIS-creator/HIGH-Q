@@ -845,9 +845,9 @@
     right: 0;
     background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%);
     color: var(--hq-black);
-    z-index: 100;
+    z-index: 999;
     transition: all var(--transition-slow);
-    box-shadow: 0 -1px 0 rgba(0,0,0,0.06);
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
 }
 
 .footer-inner {
