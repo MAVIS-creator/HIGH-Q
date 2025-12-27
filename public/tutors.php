@@ -451,6 +451,19 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   right: -25px;
 }
 
+@media (max-width: 1024px) {
+  .wall-scroll-container {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    /* Enable momentum scrolling on iOS */
+  }
+  
+  .wall-testimony-card {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
 @media (max-width: 768px) {
   .wall-scroll-btn {
     display: none;
