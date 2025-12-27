@@ -94,6 +94,20 @@ $perPage = 30;
 $page = max(1,(int)($_GET['page']??1)); 
 $offset = ($page-1)*$perPage;
 
+$totalComments = 0;
+$totalPages = 1;
+try {
+  $totalComments = (int)$pdo->query('SELECT COUNT(*) FROM comments')->fetchColumn();
+  $totalPages = max(1, (int)ceil($totalComments / $perPage));
+  if ($page > $totalPages) {
+    $page = $totalPages;
+    $offset = ($page-1)*$perPage;
+  }
+} catch (Throwable $e) {
+  $totalComments = 0;
+  $totalPages = 1;
+}
+
 try {
     $stmt = $pdo->prepare('SELECT * FROM comments ORDER BY created_at DESC LIMIT ? OFFSET ?'); 
     $stmt->bindValue(1, $perPage, PDO::PARAM_INT); 
@@ -178,7 +192,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
       <p style="font-size: 1.1rem; opacity: 0.85; margin: 0;">Moderate and manage user comments</p>
     </div>
     <div style="text-align: right;">
-      <div style="font-size: 3rem; font-weight: 800; color: #1e293b;"><?= count($comments ?? []) ?></div>
+      <div style="font-size: 3rem; font-weight: 800; color: #1e293b;"><?= (int)$totalComments ?></div>
       <div style="font-size: 0.9rem; color: #1e293b; opacity: 0.85;">Comments</div>
     </div>
   </div>
@@ -194,6 +208,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
   <?php else: ?>
   
+  <div class="hq-table-wrap">
   <table class="comments-table">
     <thead><tr><th>ID</th><th>Post</th><th>Name/Email</th><th>Content</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
     <tbody>
@@ -254,6 +269,48 @@ require_once __DIR__ . '/../includes/sidebar.php';
       <?php endforeach; ?>
     </tbody>
   </table>
+  </div>
+
+  <?php if ($totalPages > 1): ?>
+    <?php
+      $qp = $_GET;
+      $qp['pages'] = $qp['pages'] ?? 'comments';
+      $makeLink = function($pnum) use ($qp) {
+        $qp['page'] = $pnum;
+        return 'index.php?' . http_build_query($qp);
+      };
+      $window = 2;
+      $start = max(1, $page - $window);
+      $end = min($totalPages, $page + $window);
+    ?>
+    <nav aria-label="Comments pagination" style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <?php if ($page > 1): ?>
+        <a class="btn" href="<?= htmlspecialchars($makeLink($page - 1)) ?>">Prev</a>
+      <?php endif; ?>
+
+      <?php if ($start > 1): ?>
+        <a class="btn" href="<?= htmlspecialchars($makeLink(1)) ?>">1</a>
+        <?php if ($start > 2): ?><span style="padding:6px 8px;color:#666">&hellip;</span><?php endif; ?>
+      <?php endif; ?>
+
+      <?php for ($i = $start; $i <= $end; $i++): ?>
+        <?php if ($i == $page): ?>
+          <span style="padding:6px 10px;background:#111;color:#fff;border-radius:4px"><?= (int)$i ?></span>
+        <?php else: ?>
+          <a class="btn" href="<?= htmlspecialchars($makeLink($i)) ?>"><?= (int)$i ?></a>
+        <?php endif; ?>
+      <?php endfor; ?>
+
+      <?php if ($end < $totalPages): ?>
+        <?php if ($end < $totalPages - 1): ?><span style="padding:6px 8px;color:#666">&hellip;</span><?php endif; ?>
+        <a class="btn" href="<?= htmlspecialchars($makeLink($totalPages)) ?>"><?= (int)$totalPages ?></a>
+      <?php endif; ?>
+
+      <?php if ($page < $totalPages): ?>
+        <a class="btn" href="<?= htmlspecialchars($makeLink($page + 1)) ?>">Next</a>
+      <?php endif; ?>
+    </nav>
+  <?php endif; ?>
   <?php endif; ?>
 </div>
 </main>
@@ -346,8 +403,10 @@ if (commentsTable) commentsTable.addEventListener('click', function(e){
 });
 // Poll the comments fragment every 5 seconds
 setInterval(function(){
+  var params = new URLSearchParams(window.location.search || '');
+  var p = params.get('page') || '1';
   var xhr = new XMLHttpRequest(); 
-  xhr.open('GET', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments&ajax=1&_=' + Date.now(), true);
+  xhr.open('GET', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=comments&ajax=1&page=' + encodeURIComponent(p) + '&_=' + Date.now(), true);
   xhr.onload = function(){
     if (xhr.status !== 200) return;
     // basic check: if response looks like a table fragment (starts with <tr) then replace tbody
