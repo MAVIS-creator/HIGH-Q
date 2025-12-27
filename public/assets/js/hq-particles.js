@@ -197,10 +197,22 @@
     // Get all hero sections
     const allHeros = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero, .path-hero, .register-hero');
     
+    if (allHeros.length === 0) {
+      // No hero sections found, retry after a short delay
+      setTimeout(initParticles, 100);
+      return;
+    }
+    
     allHeros.forEach(hero => {
       // Check if already initialized
       if (hero.querySelector('.particles-container')) {
         return;
+      }
+      
+      // Ensure the hero has position relative for absolute positioning of particles
+      const computedStyle = window.getComputedStyle(hero);
+      if (computedStyle.position === 'static') {
+        hero.style.position = 'relative';
       }
       
       // Determine which config to use
@@ -209,32 +221,50 @@
       
       const container = document.createElement('div');
       container.className = 'particles-container';
-      container.style.position = 'absolute';
-      container.style.top = '0';
-      container.style.left = '0';
-      container.style.width = '100%';
-      container.style.height = '100%';
-      container.style.zIndex = '1';
-      container.style.pointerEvents = 'none';
-      container.style.overflow = 'hidden';
+      container.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+      `;
       
-      hero.style.position = 'relative';
-      hero.insertBefore(container, hero.firstChild);
+      // Insert at the beginning of the hero
+      if (hero.firstChild) {
+        hero.insertBefore(container, hero.firstChild);
+      } else {
+        hero.appendChild(container);
+      }
       
       new ParticleSystem(container, config);
     });
   }
   
-  // Initialize immediately on DOM ready
+  // Initialize with proper timing
   function init() {
-    initParticles();
+    // Wait a tick to ensure CSS is applied
+    requestAnimationFrame(() => {
+      initParticles();
+    });
   }
   
-  // Init on DOM ready
+  // Init on DOM ready or window load (whichever is appropriate)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
+  } else if (document.readyState === 'interactive') {
+    // DOM is ready but resources may not be loaded
+    init();
   } else {
+    // Document is complete
     init();
   }
+  
+  // Also try on window load as a fallback for late-loading pages
+  window.addEventListener('load', () => {
+    setTimeout(initParticles, 200);
+  });
   
 })();
