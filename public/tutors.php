@@ -494,6 +494,10 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     right: 5px;
   }
   
+  .wall-scroll-wrapper {
+    padding: 0 40px;
+  }
+  
   .wall-testimony-card {
     flex: 0 0 280px;
   }
