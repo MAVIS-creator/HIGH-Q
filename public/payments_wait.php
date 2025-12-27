@@ -356,7 +356,7 @@ $csrf = generateToken('signup_form');
           // close button handler (acts as cancel/back)
           try {
             var closeBtn = document.getElementById('closeBtn');
-            if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register.php'; });
+            if (closeBtn) closeBtn.addEventListener('click', function(){ window.location = 'register-new.php'; });
           } catch(e){}
 
           // When primary button is clicked, submit the payer form (user should have filled details)
