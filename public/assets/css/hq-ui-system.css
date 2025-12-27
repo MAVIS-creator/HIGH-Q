@@ -1,0 +1,455 @@
+/**
+ * HQ UI/UX System
+ * Comprehensive device-responsive design system
+ * Desktop: Particles + Glass + Magnetic
+ * Tablet: Balanced experience
+ * Mobile: Minimal motion + Ripple
+ */
+
+/* ==========================================================================
+   CSS Custom Properties (Variables)
+   ========================================================================== */
+:root {
+  /* Color System */
+  --hq-primary: #dc2626;
+  --hq-primary-dark: #b91c1c;
+  --hq-secondary: #1e3a8a;
+  --hq-secondary-dark: #312e81;
+  --hq-accent: #0ea5e9;
+  
+  /* Gradients */
+  --hq-hero-gradient: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+  --hq-button-gradient: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  
+  /* Glass morphism */
+  --hq-glass-bg: rgba(255, 255, 255, 0.1);
+  --hq-glass-border: rgba(255, 255, 255, 0.2);
+  --hq-glass-blur: 12px;
+  
+  /* Spacing */
+  --hq-spacing-xs: 0.5rem;
+  --hq-spacing-sm: 1rem;
+  --hq-spacing-md: 1.5rem;
+  --hq-spacing-lg: 2rem;
+  --hq-spacing-xl: 3rem;
+  
+  /* Typography */
+  --hq-font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --hq-font-heading: "Poppins", var(--hq-font-base);
+  
+  /* Shadows */
+  --hq-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --hq-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --hq-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+  
+  /* Transitions */
+  --hq-transition-fast: 150ms ease;
+  --hq-transition-base: 300ms ease;
+  --hq-transition-slow: 500ms ease;
+}
+
+/* ==========================================================================
+   Darkened Hero Backgrounds
+   ========================================================================== */
+.hero,
+.about-hero,
+.contact-hero,
+.courses-hero {
+  background: var(--hq-hero-gradient) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before,
+.about-hero::before,
+.contact-hero::before,
+.courses-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Glassmorphism
+   ========================================================================== */
+.hq-glass {
+  backdrop-filter: blur(var(--hq-glass-blur));
+  -webkit-backdrop-filter: blur(var(--hq-glass-blur));
+  background: var(--hq-glass-bg);
+  border: 1px solid var(--hq-glass-border);
+  border-radius: 12px;
+  box-shadow: var(--hq-shadow-md);
+}
+
+.hq-glass-card {
+  backdrop-filter: blur(var(--hq-glass-blur));
+  -webkit-backdrop-filter: blur(var(--hq-glass-blur));
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: var(--hq-spacing-lg);
+  transition: transform var(--hq-transition-base), box-shadow var(--hq-transition-base);
+}
+
+.hq-glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hq-shadow-lg);
+}
+
+/* Glass navigation */
+.hq-glass-nav {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   Desktop: Particles Background (1024px+)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .particles-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+  }
+  
+  /* Hero content should be above particles */
+  .hero > .container,
+  .about-hero > .container,
+  .contact-hero > .container,
+  .courses-hero > .container {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+/* ==========================================================================
+   Desktop: Magnetic Buttons (1024px+ with pointer)
+   ========================================================================== */
+@media (min-width: 1024px) and (hover: hover) {
+  .hq-magnetic {
+    position: relative;
+    transition: transform var(--hq-transition-fast);
+    will-change: transform;
+    cursor: pointer;
+  }
+  
+  .hq-magnetic:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Apply to CTA buttons */
+  .btn-primary.hq-magnetic,
+  .btn-cta.hq-magnetic {
+    background: var(--hq-button-gradient);
+    border: none;
+    font-weight: 700;
+    padding: 14px 32px;
+    border-radius: 8px;
+    box-shadow: var(--hq-shadow-md);
+  }
+  
+  .btn-primary.hq-magnetic:hover,
+  .btn-cta.hq-magnetic:hover {
+    box-shadow: var(--hq-shadow-lg);
+    transform: scale(1.05) translateY(-2px);
+  }
+}
+
+/* ==========================================================================
+   Mobile: Ripple Effect (<768px)
+   ========================================================================== */
+@media (max-width: 767.98px) {
+  .hq-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hq-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s, opacity 0.6s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .hq-ripple:active::after {
+    width: 300px;
+    height: 300px;
+    opacity: 1;
+    transition: width 0s, height 0s, opacity 0.6s;
+  }
+  
+  /* Mobile tap targets: 48px minimum */
+  .btn,
+  .hq-ripple {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* ==========================================================================
+   Testimonials: Swipe Carousel (All devices)
+   ========================================================================== */
+.testimonials-swipe {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: var(--hq-spacing-md);
+  padding: var(--hq-spacing-md);
+  scrollbar-width: thin;
+  scrollbar-color: var(--hq-primary) transparent;
+}
+
+.testimonials-swipe::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonials-swipe::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.testimonials-swipe::-webkit-scrollbar-thumb {
+  background: var(--hq-primary);
+  border-radius: 4px;
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 400px;
+  scroll-snap-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: var(--hq-spacing-lg);
+  box-shadow: var(--hq-shadow-md);
+}
+
+@media (min-width: 768px) {
+  .testimonial-card {
+    max-width: 350px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .testimonial-card {
+    max-width: 320px;
+  }
+}
+
+/* ==========================================================================
+   Staggered Reveals (Desktop only)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .stagger-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  
+  .stagger-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Delay for each item in a staggered group */
+  .stagger-reveal:nth-child(1) { transition-delay: 0.1s; }
+  .stagger-reveal:nth-child(2) { transition-delay: 0.2s; }
+  .stagger-reveal:nth-child(3) { transition-delay: 0.3s; }
+  .stagger-reveal:nth-child(4) { transition-delay: 0.4s; }
+  .stagger-reveal:nth-child(5) { transition-delay: 0.5s; }
+  .stagger-reveal:nth-child(6) { transition-delay: 0.6s; }
+}
+
+/* ==========================================================================
+   Tablet: Reduced Motion (768px - 1023px)
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  /* Reduce animation intensity */
+  * {
+    animation-duration: 0.5s !important;
+    transition-duration: 0.3s !important;
+  }
+  
+  /* No particles or parallax */
+  .particles-container {
+    display: none;
+  }
+  
+  /* Simplify transforms */
+  .hq-glass-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ==========================================================================
+   Accessibility: Respect Reduced Motion Preference
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Disable particles */
+  .particles-container {
+    display: none !important;
+  }
+  
+  /* Disable magnetic effect */
+  .hq-magnetic {
+    transform: none !important;
+  }
+  
+  /* Disable stagger reveals */
+  .stagger-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   Performance Optimizations
+   ========================================================================== */
+.hq-magnetic,
+.hq-glass-card,
+.stagger-reveal {
+  will-change: transform;
+}
+
+/* GPU acceleration for animations */
+.hq-animated {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ==========================================================================
+   Lottie Animation Containers
+   ========================================================================== */
+.lottie-success {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.lottie-loading {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+}
+
+/* Prevent layout shift during Lottie load */
+.lottie-container {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+.hq-text-gradient {
+  background: var(--hq-button-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.hq-shadow-hover {
+  transition: box-shadow var(--hq-transition-base);
+}
+
+.hq-shadow-hover:hover {
+  box-shadow: var(--hq-shadow-lg);
+}
+
+.hq-scale-hover {
+  transition: transform var(--hq-transition-base);
+}
+
+.hq-scale-hover:hover {
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Device-Specific Overrides
+   ========================================================================== */
+/* Desktop: Full experience */
+@media (min-width: 1024px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Tablet: Balanced */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  body {
+    font-size: 15px;
+  }
+  
+  .container {
+    padding-left: var(--hq-spacing-md);
+    padding-right: var(--hq-spacing-md);
+  }
+}
+
+/* Mobile: Optimized for touch */
+@media (max-width: 767.98px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding-left: var(--hq-spacing-sm);
+    padding-right: var(--hq-spacing-sm);
+  }
+  
+  /* Larger touch targets */
+  .btn {
+    padding: 12px 24px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
