@@ -843,15 +843,11 @@
     bottom: 0;
     left: var(--sidebar-width);
     right: 0;
-    height: auto;
     background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%);
     color: var(--hq-black);
-    z-index: 99;
-    transition: left var(--transition-slow);
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-    padding: 1rem 2rem;
-    box-sizing: border-box;
-    overflow: hidden;
+    z-index: 100;
+    transition: all var(--transition-slow);
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.06);
 }
 
 .footer-inner {
@@ -918,35 +914,6 @@
     font-weight: 600;
 }
 
-.footer-credit-mavis {
-    background: none !important;
-    -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: unset !important;
-    color: var(--hq-black) !important;
-    font-weight: 800 !important;
-    text-decoration: none;
-    border-bottom: 2px solid var(--hq-black);
-    transition: all var(--transition);
-}
-
-.footer-credit-mavis:hover {
-    opacity: 0.8;
-    border-bottom-color: var(--hq-gray-600);
-}
-
-.footer-credit-gamer {
-    color: var(--hq-black) !important;
-    font-weight: 700 !important;
-    text-decoration: none;
-    border-bottom: 2px solid var(--hq-black);
-    transition: all var(--transition);
-}
-
-.footer-credit-gamer:hover {
-    opacity: 0.8;
-    border-bottom-color: var(--hq-gray-600);
-}
-
 /* =========================================
    SIDEBAR COLLAPSED STATE
    ========================================= */
@@ -960,7 +927,6 @@ body.sidebar-collapsed .admin-header {
 
 body.sidebar-collapsed .admin-main {
     margin-left: 0;
-    padding: 24px 32px 120px 32px;
 }
 
 body.sidebar-collapsed .admin-footer {
@@ -997,14 +963,12 @@ body.sidebar-collapsed .admin-footer {
     
     .admin-main {
         margin-left: 0;
-        padding: calc(var(--header-height) + 16px) 16px 120px;
+        padding: calc(var(--header-height) + 16px) 16px 100px;
     }
     
     .admin-footer {
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        margin-left: 0 !important;
+        width: 100%;
+        margin-left: 0;
     }
     
     .stat-grid {
