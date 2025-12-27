@@ -323,16 +323,6 @@ require_once 'includes/header.php';
             </div>
         </div>
 
-        <div class="sidebar-card next-steps-box">
-            <h4>What Happens Next?</h4>
-            <ol style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
-                <li>Select your program</li>
-                <li>Fill in your details</li>
-                <li>Complete payment (bank/online)</li>
-                <li>Get confirmation and start classes</li>
-            </ol>
-        </div>
-
         <div class="sidebar-card help-box">
             <h4>Need Help?</h4>
             <p><strong>Call Us</strong><br><?= htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794') ?></p>
@@ -368,5 +358,35 @@ require_once 'includes/header.php';
         </div>
     </aside>
 </div>
+
+<!-- What Happens Next? (from legacy register.php) -->
+<section class="next-section">
+    <div class="container">
+        <div class="ceo-heading ceo-heading--center">
+            <h2>What Happens <span class="highlight">Next?</span></h2>
+            <p class="ceo-subtext">After submitting your registration, here's what you can expect from us.</p>
+        </div>
+
+        <div class="achievements-grid">
+            <div class="next-stat yellow">
+                <div class="next-icon"><i class="bx bx-check-circle"></i></div>
+                <strong>1. Confirmation</strong>
+                <span>You'll receive an email confirmation within 1 hour and a call from our team within 24 hours.</span>
+            </div>
+
+            <div class="next-stat yellow">
+                <div class="next-icon"><i class="bx bx-book-open"></i></div>
+                <strong>2. Assessment</strong>
+                <span>We'll schedule a brief assessment to understand your current level and customize your learning path.</span>
+            </div>
+
+            <div class="next-stat red">
+                <div class="next-icon"><i class="bx bx-rocket"></i></div>
+                <strong>3. Start Learning</strong>
+                <span>Begin your journey with our expert tutors and join the ranks of our successful students.</span>
+            </div>
+        </div>
+    </div>
+</section>
 
 <?php require_once 'includes/footer.php'; ?>
