@@ -148,5 +148,9 @@
 <a href="<?= app_url('contact.php#livechat') ?>" class="floating-chat" aria-label="Live Chat with us">
   <i class="bx bx-chat"></i>
 </a>
+
+<!-- Global Chat Widget -->
+<?php include __DIR__ . '/chat-widget.php'; ?>
+
 <script src="<?= app_url('assets/js/viewport-inview.js') ?>"></script>
 <script src="<?= app_url('assets/js/contact-helpers.js') ?>"></script>

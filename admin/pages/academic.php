@@ -531,11 +531,21 @@ try {
   $hasPostUtme = !empty($check2);
 } catch (Throwable $e) { $hasPostUtme = false; }
 
-// Allow admin to request a source via GET ?source=postutme|regular
+// Also detect universal_registrations table (new wizard)
+$hasUniversal = false;
+try {
+  $check3 = $pdo->query("SHOW TABLES LIKE 'universal_registrations'")->fetch();
+  $hasUniversal = !empty($check3);
+} catch (Throwable $e) { $hasUniversal = false; }
+
+// Allow admin to request a source via GET ?source=postutme|regular|universal
 $requestedSource = strtolower(trim($_GET['source'] ?? ''));
 $registrations_source = 'student_registrations';
 if ($requestedSource === 'postutme' && $hasPostUtme) {
   $registrations_source = 'post_utme_registrations';
+  $hasRegistrations = true;
+} elseif ($requestedSource === 'universal' && $hasUniversal) {
+  $registrations_source = 'universal_registrations';
   $hasRegistrations = true;
 } elseif ($requestedSource === 'regular') {
   // prefer student_registrations if present; otherwise fall back to post_utme
@@ -546,8 +556,12 @@ if ($requestedSource === 'postutme' && $hasPostUtme) {
     $hasRegistrations = true;
   }
 } else {
-  // default behavior: if no student_registrations table but post_utme exists, use post_utme
-  if (!$hasRegistrations && $hasPostUtme) {
+  // default behavior: if universal_registrations exists, use that; else student_registrations; else post_utme
+  if ($hasUniversal) {
+    $hasRegistrations = true;
+    $registrations_source = 'universal_registrations';
+    $requestedSource = 'universal';
+  } elseif (!$hasRegistrations && $hasPostUtme) {
     $hasRegistrations = true;
     $registrations_source = 'post_utme_registrations';
     $requestedSource = 'postutme';
@@ -555,7 +569,7 @@ if ($requestedSource === 'postutme' && $hasPostUtme) {
 }
 
 // expose for template UI
-$current_source = $requestedSource ?: ($registrations_source === 'post_utme_registrations' ? 'postutme' : 'regular');
+$current_source = $requestedSource ?: ($registrations_source === 'universal_registrations' ? 'universal' : ($registrations_source === 'post_utme_registrations' ? 'postutme' : 'regular'));
 
 // ensure counters exist regardless of which data path is used
 $active = 0; $pending = 0; $banned = 0; $total = 0;
