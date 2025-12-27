@@ -112,6 +112,45 @@
                 <input type="text" id="jamb_subject_4" name="jamb_subject_4" class="form-control" required placeholder="e.g., Chemistry">
             </div>
         </div>
+
+        <div class="form-group">
+            <label for="education_level">Current Education Level <span class="text-danger">*</span></label>
+            <select id="education_level" name="education_level" class="form-control" required>
+                <option value="">Select Education Level</option>
+                <option value="SS2">SS2 (Year 12)</option>
+                <option value="SS3">SS3 (Year 13)</option>
+                <option value="Post-Secondary">Post-Secondary Student</option>
+                <option value="Private Candidate">Private Candidate</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="career_goals">Career Goals & Aspirations <span class="text-danger">*</span></label>
+            <textarea id="career_goals" name="career_goals" class="form-control" rows="3" required placeholder="What profession or field are you aiming for? Why did you choose these JAMB subjects?"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="study_goals">Study Goals & Motivations <span class="text-danger">*</span></label>
+            <textarea id="study_goals" name="study_goals" class="form-control" rows="3" required placeholder="What do you want to achieve with JAMB? What are your university expectations? What drives your ambitions?"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="learning_preference">Preferred Learning Style <span class="text-danger">*</span></label>
+            <select id="learning_preference" name="learning_preference" class="form-control" required>
+                <option value="">Select Learning Style</option>
+                <option value="Structured Classes">Structured Classes with Fixed Schedule</option>
+                <option value="Flexible/Self-paced">Flexible/Self-paced Learning</option>
+                <option value="Mixed Approach">Mixed Approach (Classes + Self-study)</option>
+                <option value="One-on-One Tutoring">One-on-One Tutoring</option>
+                <option value="Group Sessions">Group Sessions</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="weak_subjects">Subjects You Find Challenging (Optional)</label>
+            <textarea id="weak_subjects" name="weak_subjects" class="form-control" rows="2" placeholder="Which JAMB subjects do you find most difficult? This helps us provide targeted support"></textarea>
+        </div>
     </div>
 
     <!-- Emergency Contact -->
