@@ -49,29 +49,44 @@
 }
 
 /* ==========================================================================
-   Darkened Hero Backgrounds
+   Darkened Hero Backgrounds (Blue-White Gradient for non-home pages)
    ========================================================================== */
-.hero,
+/* Only apply to non-home hero sections - home.php keeps its yellow gradient */
 .about-hero,
 .contact-hero,
-.courses-hero {
-  background: var(--hq-hero-gradient) !important;
+.courses-hero,
+.register-hero,
+.path-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b5998 50%, #5a7db5 100%) !important;
   position: relative;
   overflow: hidden;
 }
 
-.hero::before,
+/* Blue-white gradient overlay for non-home heroes */
 .about-hero::before,
 .contact-hero::before,
-.courses-hero::before {
+.courses-hero::before,
+.register-hero::before,
+.path-hero::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
   pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure inner content is above overlay */
+.about-hero-inner,
+.contact-hero-inner,
+.courses-hero-inner,
+.register-hero-inner,
+.path-hero-inner {
+  position: relative;
+  z-index: 2;
 }
 
 /* ==========================================================================
@@ -136,10 +151,17 @@
   /* Hero content should be above particles */
   .hero > .container,
   .about-hero > .container,
+  .about-hero-inner,
   .contact-hero > .container,
   .courses-hero > .container {
     position: relative;
     z-index: 2;
+  }
+  
+  /* Ensure about-hero inner text is centered */
+  .about-hero-inner {
+    text-align: center;
+    width: 100%;
   }
 }
 

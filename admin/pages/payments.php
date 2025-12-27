@@ -541,12 +541,12 @@ $totalPages = (int)ceil($total / $perPage);
                     . ' data-amount="' . htmlspecialchars(number_format($p['amount'],2)) . '"'
                     . ' data-display-status="' . htmlspecialchars($displayStatus) . '"';
             ?>
-            <tr <?= $dataAttrs ?> >
-                <td><?= htmlspecialchars($p['id']) ?></td>
-                <td><?= htmlspecialchars($p['reference']) ?></td>
-                <td><?= htmlspecialchars($p['payer_account_name'] ?? ($p['name'] ?? '')) ?></td>
-                <td><strong>₦<?= htmlspecialchars(number_format($p['amount'],2)) ?></strong></td>
-                <td><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
+            <tr <?= $dataAttrs ?> style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.6rem 0.5rem;"><?= htmlspecialchars($p['id']) ?></td>
+                <td style="padding: 0.6rem 0.5rem; font-size: 0.8rem;"><?= htmlspecialchars($p['reference']) ?></td>
+                <td style="padding: 0.6rem 0.5rem;"><?= htmlspecialchars($p['payer_account_name'] ?? ($p['name'] ?? '')) ?></td>
+                <td style="padding: 0.6rem 0.5rem;"><strong>₦<?= htmlspecialchars(number_format($p['amount'],2)) ?></strong></td>
+                <td style="padding: 0.6rem 0.5rem;"><?= htmlspecialchars($p['gateway'] ?? $p['payment_method']) ?></td>
                 <td>
                     <?php
                         $badgeStatus = strtolower((string)$displayStatus);
