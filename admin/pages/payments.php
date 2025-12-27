@@ -579,6 +579,7 @@ $totalPages = (int)ceil($total / $perPage);
         </tbody>
     </table>
     </div>
+</div>
     <!-- Pagination (numbered) -->
     <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <?php
