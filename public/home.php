@@ -354,10 +354,72 @@ if (isset($pdo) && $pdo instanceof PDO) {
   right: -10px;
 }
 
+@media (max-width: 1024px) {
+  .testimonials-scroll-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .testimonials-scroll-btn {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .testimonials-scroll-btn i {
+    font-size: 20px;
+  }
+  
+  .testimonials-scroll-left {
+    left: 5px;
+  }
+  
+  .testimonials-scroll-right {
+    right: 5px;
+  }
+}
+
 @media (max-width: 768px) {
   .testimonials-strip { padding: 36px 0; }
+  
+  .testimonials-scroll-btn {
+    display: none;
+  }
+  
+  .testimonial-mini {
+    flex: 0 0 260px;
+  }
 }
 </style>
+
+<script>
+// Testimonials scroll buttons functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const scrollContainer = document.querySelector('.testimonials-scroll-container');
+  const leftBtn = document.querySelector('.testimonials-scroll-left');
+  const rightBtn = document.querySelector('.testimonials-scroll-right');
+
+  if (scrollContainer && leftBtn && rightBtn) {
+    leftBtn.addEventListener('click', () => {
+      scrollContainer.scrollBy({ left: -320, behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+      scrollContainer.scrollBy({ left: 320, behavior: 'smooth' });
+    });
+
+    // Update button visibility based on scroll position
+    function updateScrollButtons() {
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      leftBtn.style.opacity = scrollContainer.scrollLeft > 0 ? '1' : '0.3';
+      leftBtn.style.pointerEvents = scrollContainer.scrollLeft > 0 ? 'auto' : 'none';
+      rightBtn.style.opacity = scrollContainer.scrollLeft < maxScroll - 5 ? '1' : '0.3';
+      rightBtn.style.pointerEvents = scrollContainer.scrollLeft < maxScroll - 5 ? 'auto' : 'none';
+    }
+
+    scrollContainer.addEventListener('scroll', updateScrollButtons);
+    updateScrollButtons(); // Initial check
+  }
+});
+</script>
 
 
 <!-- Programs Section -->
