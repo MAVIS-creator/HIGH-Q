@@ -19,6 +19,39 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
 }
 
 /**
+ * Get the current full URL of the request
+ * @return string Current URL
+ */
+function current_url(): string {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $path = $_SERVER['REQUEST_URI'] ?? '';
+    return $scheme . '://' . $host . $path;
+}
+
+/**
+ * Generate a meta tag with proper escaping
+ * @param string $name Meta tag name (description, keywords, etc)
+ * @param string $content Meta tag content
+ * @return string HTML meta tag
+ */
+function meta_tag(string $name, string $content): string {
+    if (empty($name) || empty($content)) return '';
+    return '<meta name="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" content="' . htmlspecialchars($content, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+}
+
+/**
+ * Generate OpenGraph meta tag
+ * @param string $property Property name (og:title, og:description, etc)
+ * @param string $content Property content
+ * @return string HTML meta tag
+ */
+function og_tag(string $property, string $content): string {
+    if (empty($property) || empty($content)) return '';
+    return '<meta property="' . htmlspecialchars($property, ENT_QUOTES, 'UTF-8') . '" content="' . htmlspecialchars($content, ENT_QUOTES, 'UTF-8') . '">' . "\n";
+}
+
+/**
  * Return the application base URL
  * Works both in production (at root /) and development (in subfolders like /HIGH-Q)
  * @param string $path Optional path to append
