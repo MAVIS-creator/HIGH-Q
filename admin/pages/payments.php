@@ -453,21 +453,23 @@ $totalPages = (int)ceil($total / $perPage);
     }
 }
 </style>
-<div class="roles-page" style="max-width: 1400px; margin: 0 auto; padding: 2rem; padding-right: 2.5rem;">
-    <div class="page-header" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
+<div class="admin-page-content">
+    <!-- Hero Header -->
+    <div class="page-hero" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 1.5rem 2rem; border-radius: 1rem; margin-bottom: 1.5rem; color: #1e293b; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
         <div>
-            <h1 style="font-size: 2rem; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bxs-credit-card' style="font-size: 2rem;"></i> Payments Management</h1>
-            <p style="font-size: 1rem; opacity: 0.85; margin: 0;">Track and manage all payment transactions</p>
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin: 0 0 0.25rem 0; display: flex; align-items: center; gap: 10px;"><i class='bx bxs-credit-card' style="font-size: 1.75rem;"></i> Payments Management</h1>
+            <p style="font-size: 0.95rem; opacity: 0.85; margin: 0;">Track and manage all payment transactions</p>
         </div>
-        <div style="text-align: right; min-width: 80px;">
-            <div style="font-size: 2.5rem; font-weight: 800; color: #1e293b;"><?= $total ?></div>
-            <div style="font-size: 0.85rem; color: #1e293b; opacity: 0.85;">Payments</div>
+        <div style="text-align: right;">
+            <div style="font-size: 2rem; font-weight: 800; color: #1e293b;"><?= $total ?></div>
+            <div style="font-size: 0.8rem; color: #1e293b; opacity: 0.85;">Total Payments</div>
         </div>
     </div>
     
-    <div style="background: white; border-radius: 1rem; border: 2px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
-        <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 12px;"><i class='bx bx-filter' style="font-size: 1.25rem; color: #f59e0b;"></i> Filter Payments</h3>
-        <form method="get" action="index.php?pages=payments" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+    <!-- Filter Card -->
+    <div class="content-card" style="background: white; border-radius: 1rem; border: 1px solid #e2e8f0; padding: 1.25rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 8px;"><i class='bx bx-filter' style="font-size: 1.1rem; color: #f59e0b;"></i> Filter Payments</h3>
+        <form method="get" action="index.php?pages=payments" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
             <input type="hidden" name="pages" value="payments">
             
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
