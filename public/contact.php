@@ -1,5 +1,10 @@
 <?php
 // public/contact.php - contact form that emails using sendEmail()
+// SEO Meta Tags
+$pageTitle = 'Contact Us | Get in Touch with High Q Tutorial';
+$pageDescription = 'Contact High Q Tutorial for inquiries about JAMB, WAEC, Post-UTME registration and exam preparation. We\'re here to help you succeed.';
+$pageKeywords = 'contact High Q, exam inquiries, tutorial support, registration help Nigeria';
+
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';

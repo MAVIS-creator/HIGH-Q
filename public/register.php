@@ -4,6 +4,11 @@
 header('Location: register-new.php');
 exit;
 
+// SEO Meta Tags
+$pageTitle = 'Student Registration | JAMB, WAEC, Post-UTME Programs';
+$pageDescription = 'Register for JAMB, WAEC, Post-UTME, Digital Skills, and International Exams at High Q Tutorial. Expert coaching and guaranteed success.';
+$pageKeywords = 'JAMB registration, WAEC registration, Post-UTME, digital skills courses, exam registration Nigeria';
+
 // Use public-side config/includes (avoid pulling admin internals)
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';

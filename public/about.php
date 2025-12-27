@@ -1,4 +1,8 @@
 <?php
+// SEO Meta Tags
+$pageTitle = 'About Us | Leading Educational Excellence Since 2018';
+$pageDescription = 'High Q Tutorial - Nigeria\'s premier exam coaching center. Expert tutors, proven results, comprehensive JAMB, WAEC, and Post-UTME preparation.';
+$pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educational excellence';
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
