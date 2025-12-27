@@ -98,13 +98,35 @@
         </div>
 
         <div class="form-group">
-            <label for="career_goals">Career Goals</label>
-            <textarea id="career_goals" name="career_goals" class="form-control" rows="4" placeholder="Tell us about your career aspirations and what you hope to achieve with this program..."></textarea>
+            <label for="career_goals">Career Goals & Aspirations <span class="text-danger">*</span></label>
+            <textarea id="career_goals" name="career_goals" class="form-control" rows="3" required placeholder="Tell us about your career aspirations and what you hope to achieve with this program..."></textarea>
         </div>
 
         <div class="form-group">
-            <label for="previous_experience">Previous Tech Experience (Optional)</label>
-            <textarea id="previous_experience" name="previous_experience" class="form-control" rows="3" placeholder="Any prior courses, self-study, or projects you've worked on..."></textarea>
+            <label for="study_goals">Why This Program? What Are Your Expectations? <span class="text-danger">*</span></label>
+            <textarea id="study_goals" name="study_goals" class="form-control" rows="3" required placeholder="What specific outcomes do you want from this digital skills training? Where do you see yourself after completion?"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="learning_preference">Preferred Learning Style <span class="text-danger">*</span></label>
+            <select id="learning_preference" name="learning_preference" class="form-control" required>
+                <option value="">Select Learning Style</option>
+                <option value="Structured Classes">Structured Classes with Fixed Schedule</option>
+                <option value="Flexible/Self-paced">Flexible/Self-paced Learning</option>
+                <option value="Mixed Approach">Mixed Approach (Classes + Self-study)</option>
+                <option value="One-on-One Mentoring">One-on-One Mentoring</option>
+                <option value="Group Projects">Project-Based Group Learning</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tech_interests">Other Tech Interests (Optional)</label>
+            <textarea id="tech_interests" name="tech_interests" class="form-control" rows="2" placeholder="Any other tech areas you're interested in? (AI, Blockchain, Cloud Computing, etc.)"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="previous_experience">Previous Tech Experience <span class="text-danger">*</span></label>
+            <textarea id="previous_experience" name="previous_experience" class="form-control" rows="3" required placeholder="Any prior courses, self-study, or projects you've worked on..."></textarea>
         </div>
     </div>
 
