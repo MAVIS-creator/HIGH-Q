@@ -1,5 +1,7 @@
 <?php
 // Admin Smart Patcher - Standalone Full-Screen Code Editor
+// This page is STANDALONE - does not use shared header/footer
+$skipAdminChrome = true;  // Signal to router to skip header/sidebar/footer
 $pageTitle = 'Smart Patcher';
 $pageSubtitle = 'Safely edit code with backups and diff preview';
 
