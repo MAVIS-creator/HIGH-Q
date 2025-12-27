@@ -383,6 +383,12 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
     $siteSettings = getSiteSettings();
     $senderEmail = $siteSettings['contact_email'] ?? 'noreply@highq.com';
     $senderName = 'High-Q Learning Center';
+    
+    // Pre-escape values for use in Heredoc
+    $escapedPhone = htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794');
+    $escapedEmail = htmlspecialchars($siteSettings['contact_email'] ?? 'info@highq.com');
+    $escapedProgram = htmlspecialchars(ucfirst($programType));
+    $currentYear = date('Y');
 
     $subject = "🎓 Your Welcome Kit - High-Q Registration #{$registrationId}";
     
@@ -461,7 +467,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                 <p><strong>📝 Your Registration Confirmation:</strong></p>
                 <div style="background: #f3f4f6; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace; font-size: 13px;">
                     <div>Registration ID: <strong>{$registrationId}</strong></div>
-                    <div style="margin-top: 8px;">Program: <strong>" . htmlspecialchars(ucfirst($programType)) . " Program</strong></div>
+                    <div style="margin-top: 8px;">Program: <strong>{$escapedProgram} Program</strong></div>
                     <div style="margin-top: 8px;">Email: <strong>{$studentEmail}</strong></div>
                 </div>
                 
