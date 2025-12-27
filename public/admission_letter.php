@@ -1,10 +1,11 @@
 <?php
 // Generate Admission Letter (HTML or PDF)
-// Uses the company letterhead PDF template from uploads/Admission Letter.pdf
+// Creates styled PDF with company letterhead design
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-use setasign\Fpdi\Fpdi;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
@@ -36,99 +37,234 @@ $email    = $reg['contact_email'] ?? '';
 $today    = date('F j, Y');
 $programsText = !empty($programTitles) ? implode(', ', $programTitles) : 'your chosen programme(s)';
 
-// Path to the PDF template
-$templatePath = __DIR__ . '/uploads/Admission Letter.pdf';
-
-// PDF output when requested - use FPDI to overlay on template
+// PDF output when requested - use Dompdf with styled letterhead
 if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
     
-    if (file_exists($templatePath)) {
-        // Use FPDI to import the template and add text
-        $pdf = new Fpdi();
+    // Create styled HTML that matches the company letterhead
+    $pdfHtml = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            margin: 0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #222;
+            position: relative;
+            min-height: 100vh;
+        }
         
-        // Import the template page
-        $pdf->AddPage();
-        $pdf->setSourceFile($templatePath);
-        $templateId = $pdf->importPage(1);
-        $pdf->useTemplate($templateId, 0, 0, 210); // A4 width in mm
+        /* Header - Yellow banner with company info */
+        .header {
+            background: #FFD600;
+            padding: 15px 30px;
+            border-bottom: 3px solid #000;
+        }
+        .header-content {
+            display: table;
+            width: 100%;
+        }
+        .header-left {
+            display: table-cell;
+            vertical-align: middle;
+            width: 70%;
+        }
+        .header-right {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: right;
+            width: 30%;
+        }
+        .company-name {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 2px;
+        }
+        .company-name .hq-box {
+            background: #000;
+            color: #FFD600;
+            padding: 2px 8px;
+            font-size: 18pt;
+            margin-right: 5px;
+        }
+        .motto {
+            color: #C00;
+            font-style: italic;
+            font-size: 11pt;
+            margin-bottom: 5px;
+        }
+        .address-line {
+            font-size: 10pt;
+            color: #333;
+        }
+        .rc-number {
+            font-weight: bold;
+            font-size: 11pt;
+        }
         
-        // Set font for the content
-        $pdf->SetFont('Helvetica', '', 12);
-        $pdf->SetTextColor(30, 30, 30);
+        /* Watermark */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.08;
+            font-size: 180pt;
+            font-weight: bold;
+            color: #888;
+            z-index: -1;
+            white-space: nowrap;
+        }
         
-        // Position the content - adjust Y position to fit within the letterhead
-        // Start below the header (around 70mm from top)
-        $startY = 75;
-        $leftMargin = 25;
-        $rightMargin = 25;
-        $pageWidth = 210 - $leftMargin - $rightMargin;
+        /* Content area */
+        .content {
+            padding: 40px 50px;
+            min-height: 550px;
+        }
+        .letter-title {
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 25px;
+        }
+        .date-line {
+            margin-bottom: 20px;
+        }
+        .greeting {
+            margin-bottom: 15px;
+        }
+        .body-text {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .signature {
+            margin-top: 40px;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 200px;
+            margin-bottom: 5px;
+        }
+        .reg-id {
+            margin-top: 30px;
+            font-size: 10pt;
+            color: #666;
+        }
         
-        // Title
-        $pdf->SetXY($leftMargin, $startY);
-        $pdf->SetFont('Helvetica', 'B', 18);
-        $pdf->Cell($pageWidth, 10, 'ADMISSION LETTER', 0, 1, 'C');
+        /* Footer - Yellow banner with social info */
+        .footer {
+            background: #FFD600;
+            padding: 12px 30px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 2px solid #000;
+        }
+        .social-item {
+            font-size: 10pt;
+            margin-bottom: 3px;
+            color: #000;
+        }
+        .social-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: #1877F2;
+            color: white;
+            text-align: center;
+            border-radius: 3px;
+            margin-right: 5px;
+            font-size: 10pt;
+            line-height: 18px;
+        }
+        .social-icon.ig { background: #E4405F; }
+        .social-icon.mail { background: #EA4335; }
+    </style>
+</head>
+<body>
+    <!-- Watermark -->
+    <div class="watermark">HQ</div>
+    
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="company-name"><span class="hq-box">HQ</span> HIGH - Q SOLID ACADEMY</div>
+                <div class="motto">Motto: Always Ahead of Others</div>
+                <div class="address-line">Shop 18, World Star Complex Opposite London Street,</div>
+                <div class="address-line">Ayetoro Maya, Ikorodu Lagos State.</div>
+                <div class="address-line">0807 208 8794, 07018412450</div>
+            </div>
+            <div class="header-right">
+                <div class="rc-number">RC: 1910459</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+        <div class="letter-title">ADMISSION LETTER</div>
         
-        // Date
-        $pdf->SetXY($leftMargin, $startY + 20);
-        $pdf->SetFont('Helvetica', '', 11);
-        $pdf->Cell($pageWidth, 6, 'Date: ' . $today, 0, 1, 'L');
+        <div class="date-line"><strong>Date:</strong> ' . htmlspecialchars($today) . '</div>
         
-        // Greeting
-        $pdf->SetXY($leftMargin, $startY + 32);
-        $pdf->SetFont('Helvetica', '', 11);
-        $pdf->Cell(0, 6, 'Dear ' . $fullName . ',', 0, 1, 'L');
+        <div class="greeting">Dear <strong>' . htmlspecialchars($fullName) . '</strong>,</div>
         
-        // Body paragraphs - using MultiCell for word wrap
-        $pdf->SetXY($leftMargin, $startY + 45);
-        $pdf->SetFont('Helvetica', '', 11);
+        <div class="body-text">
+            We are pleased to offer you provisional admission into <strong>' . htmlspecialchars($programsText) . '</strong> at ' . htmlspecialchars($siteName) . '.
+        </div>
         
-        $bodyText = "We are pleased to offer you provisional admission into {$programsText} at {$siteName}.
-
-This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.
-
-Please keep this letter for your records. If you have any questions, contact us via the details in the letterhead above.
-
-We look forward to your success with us.";
+        <div class="body-text">
+            This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.
+        </div>
         
-        $pdf->MultiCell($pageWidth, 7, $bodyText, 0, 'L');
+        <div class="body-text">
+            Please keep this letter for your records. If you have any questions, contact us via the details in the letterhead above.
+        </div>
         
-        // Signature section
-        $currentY = $pdf->GetY() + 15;
-        $pdf->SetXY($leftMargin, $currentY);
-        $pdf->SetFont('Helvetica', '', 11);
-        $pdf->Cell(0, 6, '______________________________', 0, 1, 'L');
+        <div class="body-text">
+            We look forward to your success with us.
+        </div>
         
-        $pdf->SetXY($leftMargin, $currentY + 8);
-        $pdf->SetFont('Helvetica', 'B', 11);
-        $pdf->Cell(0, 6, 'Admissions Office', 0, 1, 'L');
+        <div class="signature">
+            <div class="signature-line"></div>
+            <div><strong>Admissions Office</strong></div>
+            <div>' . htmlspecialchars($siteName) . '</div>
+        </div>
         
-        $pdf->SetXY($leftMargin, $currentY + 14);
-        $pdf->SetFont('Helvetica', '', 10);
-        $pdf->Cell(0, 6, $siteName, 0, 1, 'L');
-        
-        // Registration ID at bottom
-        $pdf->SetXY($leftMargin, $currentY + 28);
-        $pdf->SetFont('Helvetica', '', 9);
-        $pdf->SetTextColor(120, 120, 120);
-        $pdf->Cell(0, 6, 'Registration ID: ' . $rid, 0, 1, 'L');
-        
-        // Output the PDF
-        $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
-        $pdf->Output('D', $filename);
-        exit;
-        
-    } else {
-        // Fallback to Dompdf if template doesn't exist
-        $options = new \Dompdf\Options();
-        $options->set('isRemoteEnabled', true);
-        $dompdf = new \Dompdf\Dompdf($options);
-        $dompdf->loadHtml(generateFallbackHtml($fullName, $programsText, $siteName, $address, $phone, $email, $today, $rid));
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
-        $dompdf->stream($filename, ['Attachment' => true]);
-        exit;
-    }
+        <div class="reg-id">Registration ID: ' . (int)$rid . '</div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <div class="social-item"><span class="social-icon">f</span> Highqsolidacademy</div>
+        <div class="social-item"><span class="social-icon ig">@</span> highqsolidacademy</div>
+        <div class="social-item"><span class="social-icon mail">✉</span> adebulequamokikiola@gmail.com</div>
+    </div>
+</body>
+</html>';
+    
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+    $options->set('isHtml5ParserEnabled', true);
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml($pdfHtml);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
+    $dompdf->stream($filename, ['Attachment' => true]);
+    exit;
 }
 
 // HTML preview (for browser viewing)
