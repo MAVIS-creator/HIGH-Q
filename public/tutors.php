@@ -444,11 +444,11 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 
 .wall-scroll-left {
-  left: -25px;
+  left: 10px;
 }
 
 .wall-scroll-right {
-  right: -25px;
+  right: 10px;
 }
 
 @media (max-width: 1024px) {
@@ -462,11 +462,34 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     scroll-snap-align: start;
     scroll-snap-stop: always;
   }
+  
+  .wall-scroll-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .wall-scroll-btn i {
+    font-size: 22px;
+  }
 }
 
 @media (max-width: 768px) {
   .wall-scroll-btn {
-    display: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+  }
+  
+  .wall-scroll-btn i {
+    font-size: 20px;
+  }
+  
+  .wall-scroll-left {
+    left: 5px;
+  }
+  
+  .wall-scroll-right {
+    right: 5px;
   }
   
   .wall-testimony-card {

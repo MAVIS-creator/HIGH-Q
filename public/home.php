@@ -347,11 +347,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
 }
 
 .testimonials-scroll-left {
-  left: -10px;
+  left: 10px;
 }
 
 .testimonials-scroll-right {
-  right: -10px;
+  right: 10px;
 }
 
 @media (max-width: 1024px) {
@@ -367,6 +367,20 @@ if (isset($pdo) && $pdo instanceof PDO) {
   .testimonials-scroll-btn i {
     font-size: 20px;
   }
+}
+
+@media (max-width: 768px) {
+  .testimonials-strip { padding: 36px 0; }
+  
+  .testimonials-scroll-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+  }
+  
+  .testimonials-scroll-btn i {
+    font-size: 18px;
+  }
   
   .testimonials-scroll-left {
     left: 5px;
@@ -374,14 +388,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   
   .testimonials-scroll-right {
     right: 5px;
-  }
-}
-
-@media (max-width: 768px) {
-  .testimonials-strip { padding: 36px 0; }
-  
-  .testimonials-scroll-btn {
-    display: none;
   }
   
   .testimonial-mini {
