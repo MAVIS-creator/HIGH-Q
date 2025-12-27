@@ -1022,33 +1022,126 @@ document.getElementById('statusFilter').addEventListener('change', function(e) {
 });
 
 function viewRegistration(id) {
-    // Simple alert for now, or implement a modal like in users.php
-    // Since the PHP logic supports AJAX view, we can fetch it.
   fetch('index.php?pages=academic&action=view&id=' + id, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'Accept': 'application/json'
     }
   })
-        .then(r => r.json())
-        .then(data => {
-            if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
-            // Show details in SweetAlert
-            const d = data.data || data; // handle different structures
-            let html = `<div class="text-left space-y-2 text-sm">
-                <p><strong>Email:</strong> ${d.email || '-'}</p>
-                <p><strong>Phone:</strong> ${d.emergency_contact_phone || '-'}</p>
-                <p><strong>Address:</strong> ${d.home_address || '-'}</p>
-                <p><strong>DOB:</strong> ${d.date_of_birth || '-'}</p>
-                <p><strong>Course:</strong> ${d.academic_goals || '-'}</p>
-                <p><strong>School:</strong> ${d.previous_education || '-'}</p>
-            </div>`;
-            Swal.fire({
-                title: (d.first_name || '') + ' ' + (d.last_name || ''),
-                html: html,
-                width: '600px'
-            });
-        });
+  .then(r => r.json())
+  .then(data => {
+    if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
+    const d = data.data || data;
+    
+    // Build passport preview
+    let passportHtml = '';
+    if (d.passport_photo) {
+      passportHtml = `<div class="text-center mb-3">
+        <img src="${d.passport_photo}" alt="Passport Photo" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:3px solid #ffd600;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+      </div>`;
+    }
+    
+    let html = `
+    <div style="max-height:65vh;overflow-y:auto;padding:0 1rem;">
+      ${passportHtml}
+      
+      <!-- Personal Information -->
+      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
+        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
+          <i class='bx bx-user'></i> Personal Information
+        </h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <p style="margin:0;font-size:0.9rem;"><strong>Surname:</strong> ${d.surname || d.last_name || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Other Names:</strong> ${d.other_names || d.first_name || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Email:</strong> ${d.email || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Phone:</strong> ${d.phone || d.emergency_contact_phone || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Gender:</strong> ${d.gender || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>DOB:</strong> ${d.date_of_birth || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Marital Status:</strong> ${d.marital_status || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>NIN:</strong> ${d.nin || '-'}</p>
+        </div>
+      </div>
+      
+      <!-- Location Information -->
+      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
+        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
+          <i class='bx bx-map'></i> Location Details
+        </h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <p style="margin:0;font-size:0.9rem;"><strong>State of Origin:</strong> ${d.state_of_origin || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Local Govt:</strong> ${d.local_government || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Home Address:</strong> ${d.home_address || '-'}</p>
+        </div>
+      </div>
+      
+      <!-- Academic Information -->
+      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
+        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
+          <i class='bx bx-book'></i> Academic Information
+        </h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <p style="margin:0;font-size:0.9rem;"><strong>Profile Code:</strong> ${d.profile_code || d.jamb_profile_code || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Exam Type:</strong> ${d.exam_type || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Exam Year:</strong> ${d.exam_year || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Course:</strong> ${d.academic_goals || d.course_of_study || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Previous Education:</strong> ${d.previous_education || '-'}</p>
+        </div>
+      </div>
+      
+      <!-- Sponsor/Guardian Information -->
+      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
+        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
+          <i class='bx bx-group'></i> Sponsor/Guardian Information
+        </h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <p style="margin:0;font-size:0.9rem;"><strong>Sponsor Name:</strong> ${d.sponsor_name || d.guardian_name || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Sponsor Phone:</strong> ${d.sponsor_phone || d.guardian_phone || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Sponsor Address:</strong> ${d.sponsor_address || d.guardian_address || '-'}</p>
+        </div>
+      </div>
+      
+      <!-- Next of Kin Information -->
+      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
+        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
+          <i class='bx bx-user-plus'></i> Next of Kin
+        </h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <p style="margin:0;font-size:0.9rem;"><strong>Name:</strong> ${d.next_of_kin_name || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Phone:</strong> ${d.next_of_kin_phone || '-'}</p>
+          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Address:</strong> ${d.next_of_kin_address || '-'}</p>
+        </div>
+      </div>
+      
+      <!-- Registration Status -->
+      <div style="background:#f8fafc;border-radius:12px;padding:1rem;">
+        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
+          <i class='bx bx-check-circle'></i> Registration Status
+        </h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <p style="margin:0;font-size:0.9rem;"><strong>Status:</strong> <span style="padding:0.25rem 0.5rem;border-radius:999px;font-size:0.75rem;font-weight:600;background:${d.status === 'confirmed' ? '#d1fae5' : d.status === 'rejected' ? '#fee2e2' : '#fef3c7'};color:${d.status === 'confirmed' ? '#065f46' : d.status === 'rejected' ? '#991b1b' : '#92400e'}">${(d.status || 'Pending').toUpperCase()}</span></p>
+          <p style="margin:0;font-size:0.9rem;"><strong>Created:</strong> ${d.created_at || '-'}</p>
+        </div>
+      </div>
+    </div>`;
+    
+    Swal.fire({
+      title: (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || ''),
+      html: html,
+      width: '700px',
+      showCloseButton: true,
+      showConfirmButton: true,
+      confirmButtonText: '<i class="bx bx-download"></i> Export PDF',
+      confirmButtonColor: '#ffd600',
+      showDenyButton: true,
+      denyButtonText: 'Close',
+      denyButtonColor: '#64748b'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Trigger export for this student
+        window.open('index.php?pages=academic&action=export_single&id=' + id, '_blank');
+      }
+    });
+  });
 }
 
 function confirmRegistration(id) {
