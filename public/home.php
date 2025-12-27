@@ -37,7 +37,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         Join thousands of successful students who have achieved their dreams with our proven teaching methods.
       </p>
       <div class="hero-ctas d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-2 mt-3">
-        <a href="register.php" class="btn btn-primary">Find Your Path</a>
+        <a href="register-new.php" class="btn btn-primary">Find Your Path</a>
         <a href="programs.php" class="btn btn-light text-dark border">Explore Success Tracks</a>
       </div>
       <div class="hero-stats d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mt-4">
@@ -362,7 +362,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </p>
 
         <div class="programs-cta-actions d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3">
-          <a href="register.php" class="btn btn-primary">Register for Programs</a>
+          <a href="register-new.php" class="btn btn-primary">Register for Programs</a>
           <a href="programs.php" class="btn btn-hq-ghost">View All Programs</a>
         </div>
     </div>
