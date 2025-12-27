@@ -174,6 +174,17 @@ if (file_exists($welcomeKitPath)) {
                 echo "   ✓ Welcome kit generated!\n";
                 if (is_array($result) && isset($result['filepath'])) {
                     echo "   ✓ PDF Path: " . $result['filepath'] . "\n";
+                    
+                    // Now test sending the welcome kit email
+                    if (function_exists('sendWelcomeKitEmail')) {
+                        echo "\n   → Sending welcome kit email with PDF attachment...\n";
+                        $emailResult = sendWelcomeKitEmail($testEmail, 'Test Student', 'jamb', 999, $result['filepath']);
+                        if ($emailResult) {
+                            echo "   ✓ Welcome kit email SENT with PDF attachment!\n";
+                        } else {
+                            echo "   ✗ Welcome kit email failed to send\n";
+                        }
+                    }
                 }
             } else {
                 echo "   ✗ generateWelcomeKitPDF returned false/null\n";
