@@ -121,18 +121,18 @@
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  z-index: 1 !important;
+  z-index: 3 !important;
   pointer-events: none !important;
 }
 
-/* Ensure overlay is on top of particles */
+/* Ensure overlay is below particles but above background */
 .about-hero-overlay,
 .contact-hero-overlay,
 .courses-hero-overlay,
 .register-hero-overlay,
 .programs-hero-overlay,
 .news-hero-overlay {
-  z-index: 2 !important;
+  z-index: 1 !important;
   position: absolute !important;
   inset: 0 !important;
 }
