@@ -294,7 +294,7 @@ include __DIR__ . '/includes/header.php';
     <div class="quiz-card">
         <div class="quiz-info">
             <i class="bx bxs-info-circle"></i>
-            <span>This quick quiz takes less than 1 minute and will help us recommend the best program for your goals.</span>
+            <span>This intelligent quiz takes 2-3 minutes and analyzes your goals, schedule, learning style, and more to recommend your perfect program.</span>
         </div>
 
         <?php if (isset($error)): ?>
@@ -305,31 +305,31 @@ include __DIR__ . '/includes/header.php';
         <?php endif; ?>
 
         <form method="POST" action="">
-            <!-- Question 1 -->
+            <!-- Question 1: Main Goal -->
             <div class="question-section">
                 <div class="question-number">1</div>
-                <div class="question-text">What is your main goal?</div>
+                <div class="question-text">What is your primary educational goal?</div>
 
                 <label class="option">
                     <input type="radio" name="goal" value="university" required>
                     <span class="option-label">University Admission</span>
                 </label>
-                <div class="option-description">I want to get admitted to a university in Nigeria</div>
+                <div class="option-description">Get admitted to a Nigerian university</div>
 
                 <label class="option">
                     <input type="radio" name="goal" value="career" required>
                     <span class="option-label">Career & Skill Development</span>
                 </label>
-                <div class="option-description">I want to build practical skills for job opportunities</div>
+                <div class="option-description">Build practical skills for immediate job opportunities</div>
 
                 <label class="option">
                     <input type="radio" name="goal" value="international" required>
                     <span class="option-label">International Education</span>
                 </label>
-                <div class="option-description">I'm preparing for international exams and studies abroad</div>
+                <div class="option-description">Prepare for international exams and studying abroad</div>
             </div>
 
-            <!-- Question 2 -->
+            <!-- Question 2: Current Qualification -->
             <div class="question-section">
                 <div class="question-number">2</div>
                 <div class="question-text">What is your current highest qualification?</div>
@@ -338,37 +338,145 @@ include __DIR__ . '/includes/header.php';
                     <input type="radio" name="qualification" value="inschool" required>
                     <span class="option-label">Currently in Secondary School</span>
                 </label>
-                <div class="option-description">I'm still in JSS 3 or SS classes</div>
+                <div class="option-description">JSS 3 or SS classes</div>
 
                 <label class="option">
                     <input type="radio" name="qualification" value="ssce" required>
                     <span class="option-label">SSCE/O-Levels Graduate</span>
                 </label>
-                <div class="option-description">I've completed senior secondary school</div>
+                <div class="option-description">Completed senior secondary school</div>
 
                 <label class="option">
                     <input type="radio" name="qualification" value="gce" required>
                     <span class="option-label">GCE/WAEC Graduate</span>
                 </label>
-                <div class="option-description">I've completed GCE or WAEC exams</div>
+                <div class="option-description">Completed GCE or WAEC exams</div>
 
                 <label class="option">
                     <input type="radio" name="qualification" value="diploma" required>
                     <span class="option-label">Diploma Graduate</span>
                 </label>
-                <div class="option-description">I've completed a diploma program</div>
+                <div class="option-description">Completed a diploma program</div>
 
                 <label class="option">
                     <input type="radio" name="qualification" value="degree" required>
                     <span class="option-label">University Degree Holder</span>
                 </label>
-                <div class="option-description">I have a bachelor's degree</div>
+                <div class="option-description">Have a bachelor's degree</div>
+            </div>
+
+            <!-- Question 3: Learning Style -->
+            <div class="question-section">
+                <div class="question-number">3</div>
+                <div class="question-text">How do you prefer to learn?</div>
+
+                <label class="option">
+                    <input type="radio" name="learning_style" value="structured" required>
+                    <span class="option-label">Structured & Exam-Focused</span>
+                </label>
+                <div class="option-description">Prefer clear syllabus, practice questions, and mock exams</div>
+
+                <label class="option">
+                    <input type="radio" name="learning_style" value="project" required>
+                    <span class="option-label">Project & Hands-On Learning</span>
+                </label>
+                <div class="option-description">Learn by doing real projects and building things</div>
+
+                <label class="option">
+                    <input type="radio" name="learning_style" value="mixed" required>
+                    <span class="option-label">Mixed/Flexible Approach</span>
+                </label>
+                <div class="option-description">Like a blend of both theory and practical work</div>
+            </div>
+
+            <!-- Question 4: Time Commitment -->
+            <div class="question-section">
+                <div class="question-number">4</div>
+                <div class="question-text">How much time can you commit to learning?</div>
+
+                <label class="option">
+                    <input type="radio" name="commitment" value="intensive" required>
+                    <span class="option-label">Intensive (8+ hours/week)</span>
+                </label>
+                <div class="option-description">I can dedicate significant time to studying</div>
+
+                <label class="option">
+                    <input type="radio" name="commitment" value="parttime" required>
+                    <span class="option-label">Part-Time (4-8 hours/week)</span>
+                </label>
+                <div class="option-description">I balance work/school with studies</div>
+
+                <label class="option">
+                    <input type="radio" name="commitment" value="flexible" required>
+                    <span class="option-label">Very Flexible (Self-Paced)</span>
+                </label>
+                <div class="option-description">I need maximum flexibility with my schedule</div>
+            </div>
+
+            <!-- Question 5: Available Schedule -->
+            <div class="question-section">
+                <div class="question-number">5</div>
+                <div class="question-text">When are you available to attend classes?</div>
+
+                <label class="option">
+                    <input type="radio" name="schedule" value="weekday" required>
+                    <span class="option-label">Weekdays (Mon-Fri afternoons/evenings)</span>
+                </label>
+                <div class="option-description">I can come after school/work on weekdays</div>
+
+                <label class="option">
+                    <input type="radio" name="schedule" value="weekend" required>
+                    <span class="option-label">Weekends (Saturdays & Sundays)</span>
+                </label>
+                <div class="option-description">I prefer to study on weekends only</div>
+
+                <label class="option">
+                    <input type="radio" name="schedule" value="mixed" required>
+                    <span class="option-label">Both Weekdays & Weekends</span>
+                </label>
+                <div class="option-description">I can attend classes any day/time</div>
+            </div>
+
+            <!-- Question 6: Prior Experience -->
+            <div class="question-section">
+                <div class="question-number">6</div>
+                <div class="question-text">Do you have experience/background in the subject area?</div>
+
+                <label class="option">
+                    <input type="radio" name="experience" value="beginner" required>
+                    <span class="option-label">Beginner - No Prior Experience</span>
+                </label>
+                <div class="option-description">I'm starting from scratch</div>
+
+                <label class="option">
+                    <input type="radio" name="experience" value="experienced" required>
+                    <span class="option-label">Experienced - Some Background</span>
+                </label>
+                <div class="option-description">I have some knowledge or experience</div>
+            </div>
+
+            <!-- Question 7: Budget -->
+            <div class="question-section">
+                <div class="question-number">7</div>
+                <div class="question-text">What's your budget flexibility?</div>
+
+                <label class="option">
+                    <input type="radio" name="budget" value="budget" required>
+                    <span class="option-label">Budget-Conscious</span>
+                </label>
+                <div class="option-description">I need the most affordable option</div>
+
+                <label class="option">
+                    <input type="radio" name="budget" value="flexible" required>
+                    <span class="option-label">Flexible Budget</span>
+                </label>
+                <div class="option-description">Price is secondary to quality and fit</div>
             </div>
 
             <!-- Actions -->
             <div class="quiz-actions">
                 <button type="button" class="btn-back" onclick="window.history.back();">← Back</button>
-                <button type="submit" class="btn-submit">Find My Path →</button>
+                <button type="submit" class="btn-submit">Get My Recommendation →</button>
             </div>
         </form>
     </div>
