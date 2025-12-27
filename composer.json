@@ -12,7 +12,7 @@
     "dompdf/dompdf": "^2.0",
     "phpstan/phpdoc-parser": "^2.3",
     "sonata-project/google-authenticator": "^2.3",
-    "setasign/fpdi": "*"
+    "setasign/fpdi": "^2.6"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.10"
