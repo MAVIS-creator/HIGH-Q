@@ -99,27 +99,53 @@
       this.config = config;
       this.canvas = document.createElement('canvas');
       this.canvas.className = 'particles-canvas';
-      this.canvas.style.position = 'absolute';
-      this.canvas.style.top = '0';
-      this.canvas.style.left = '0';
-      this.canvas.style.pointerEvents = 'none';
-      this.canvas.style.zIndex = '1';
+      this.canvas.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      `;
       this.ctx = this.canvas.getContext('2d');
       this.particles = [];
       this.animationId = null;
       
       this.container.style.position = 'relative';
       this.container.appendChild(this.canvas);
-      this.resize();
-      this.init();
       
-      // Handle resize
-      window.addEventListener('resize', () => this.resize());
+      // Initial resize after a brief delay to ensure layout is complete
+      requestAnimationFrame(() => {
+        this.resize();
+        this.init();
+      });
+      
+      // Handle resize with debounce
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => this.resize(), 100);
+      });
     }
     
     resize() {
-      this.canvas.width = this.container.offsetWidth;
-      this.canvas.height = this.container.offsetHeight;
+      // Use getBoundingClientRect for more accurate sizing
+      const rect = this.container.getBoundingClientRect();
+      const width = rect.width || this.container.offsetWidth || 800;
+      const height = rect.height || this.container.offsetHeight || 400;
+      
+      this.canvas.width = width;
+      this.canvas.height = height;
+      
+      // Re-initialize particles if they exist with new bounds
+      if (this.particles.length > 0) {
+        this.particles.forEach(p => {
+          if (p.x > width) p.x = Math.random() * width;
+          if (p.y > height) p.y = Math.random() * height;
+          p.canvas = this.canvas;
+        });
+      }
     }
     
     init() {
