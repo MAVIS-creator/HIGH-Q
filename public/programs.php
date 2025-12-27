@@ -211,7 +211,7 @@ $programs = [
 	<div class="container">
 		<h2>Ready to Excel?</h2>
 		<p>Choose your program and start your journey to academic success</p>
-		<a href="register.php" class="btn-enroll">Enroll Now</a>
+		<a href="register-new.php" class="btn-enroll">Enroll Now</a>
 	</div>
 </section>
 
