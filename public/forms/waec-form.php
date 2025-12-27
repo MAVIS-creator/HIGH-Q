@@ -96,20 +96,85 @@
         </div>
 
         <div class="form-group">
-            <label for="subjects">Subjects (separate with commas) <span class="text-danger">*</span></label>
-            <textarea id="subjects" name="subjects" class="form-control" rows="3" required placeholder="e.g., Mathematics, English, Physics, Chemistry, Biology, Economics"></textarea>
-            <small class="form-text">Enter all subjects you want to register for, separated by commas.</small>
+            <label>Select Your Subjects (Up to 8 subjects) <span class="text-danger">*</span></label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_english" value="English Language">
+                    <label class="form-check-label" for="subj_english">English Language</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_math" value="Mathematics">
+                    <label class="form-check-label" for="subj_math">Mathematics</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_physics" value="Physics">
+                    <label class="form-check-label" for="subj_physics">Physics</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_chemistry" value="Chemistry">
+                    <label class="form-check-label" for="subj_chemistry">Chemistry</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_biology" value="Biology">
+                    <label class="form-check-label" for="subj_biology">Biology</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_economics" value="Economics">
+                    <label class="form-check-label" for="subj_economics">Economics</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_gov" value="Government">
+                    <label class="form-check-label" for="subj_gov">Government/Civic Education</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="subjects" id="subj_lit" value="Literature">
+                    <label class="form-check-label" for="subj_lit">Literature in English</label>
+                </div>
+            </div>
+            <small class="form-text" style="display: block; margin-top: 8px;">Select all subjects you're registering for</small>
         </div>
 
         <div class="form-group">
-            <label for="current_class">Current Class</label>
-            <select id="current_class" name="current_class" class="form-control">
+            <label for="current_class">Current Class <span class="text-danger">*</span></label>
+            <select id="current_class" name="current_class" class="form-control" required>
                 <option value="">Select Class</option>
                 <option value="SS1">SS1</option>
                 <option value="SS2">SS2</option>
                 <option value="SS3">SS3</option>
-                <option value="Graduate">Graduate</option>
+                <option value="Graduate">Private Candidate / Graduate</option>
             </select>
+        </div>
+
+        <div class="form-group">
+            <label for="current_school">Current School/Institution</label>
+            <input type="text" id="current_school" name="current_school" class="form-control" placeholder="Name of your school (if still in school)">
+        </div>
+
+        <div class="form-group">
+            <label for="career_goals">Career Goals & Aspirations <span class="text-danger">*</span></label>
+            <textarea id="career_goals" name="career_goals" class="form-control" rows="3" required placeholder="What profession or field are you aiming for? e.g., Medicine, Law, Engineering, Education"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="study_goals">Study Goals & Objectives <span class="text-danger">*</span></label>
+            <textarea id="study_goals" name="study_goals" class="form-control" rows="3" required placeholder="What do you want to achieve with these exams? What are your expectations from this program?"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="learning_preference">Preferred Learning Style <span class="text-danger">*</span></label>
+            <select id="learning_preference" name="learning_preference" class="form-control" required>
+                <option value="">Select Learning Style</option>
+                <option value="Structured Classes">Structured Classes with Fixed Schedule</option>
+                <option value="Flexible/Self-paced">Flexible/Self-paced Learning</option>
+                <option value="Mixed Approach">Mixed Approach (Classes + Self-study)</option>
+                <option value="One-on-One Tutoring">One-on-One Tutoring</option>
+                <option value="Group Sessions">Group Sessions</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="weak_subjects">Subjects You Find Challenging (Optional)</label>
+            <textarea id="weak_subjects" name="weak_subjects" class="form-control" rows="2" placeholder="Which subjects do you struggle with the most? This helps us provide better support"></textarea>
         </div>
     </div>
 
