@@ -1,4 +1,3 @@
-<!-- Test Profile Modal Integration -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -222,14 +221,24 @@
         });
 
         // Monitor modal opening
-        const originalOpen = window.openProfileModal;
-        if (originalOpen) {
-            window.openProfileModal = function() {
-                document.getElementById('check1').textContent = 'Pass';
-                document.getElementById('check1').className = 'status-badge status-success';
-                return originalOpen.apply(this, arguments);
-            };
+        function wrapOpenProfileModal() {
+            const originalOpen = window.openProfileModal;
+            if (typeof originalOpen === 'function') {
+                window.openProfileModal = function() {
+                    document.getElementById('check1').textContent = 'Pass';
+                    document.getElementById('check1').className = 'status-badge status-success';
+                    return originalOpen.apply(this, arguments);
+                };
+            } else {
+                // Retry after a short delay if the function isn't loaded yet
+                setTimeout(wrapOpenProfileModal, 100);
+            }
         }
+        
+        // Wait for DOM and scripts to load before wrapping
+        window.addEventListener('load', () => {
+            wrapOpenProfileModal();
+        });
     </script>
 </body>
 </html>
