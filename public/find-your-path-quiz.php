@@ -2,6 +2,10 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
+// SEO Variables
+$page_title = 'Find Your Path Quiz - Personalized Educational Program Recommendation | High Q Tutorial';
+$page_description = 'Take our intelligent quiz to discover your perfect educational program. Get personalized recommendations based on your goals, learning style, and schedule.';
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $goal = trim($_POST['goal'] ?? '');
@@ -118,6 +122,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include __DIR__ . '/includes/header.php';
 ?>
+
+<!-- Add SEO Meta Tags Before HTML Output -->
+<?php if (!isset($seo_tags_added)): 
+    $seo_tags_added = true;
+?>
+<meta name="description" content="<?php echo htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="keywords" content="education quiz, program recommendation, learning style assessment, career path guidance, JAMB, WAEC, digital skills">
+<meta name="og:title" content="Find Your Path Quiz | High Q Tutorial">
+<meta property="og:description" content="<?php echo htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:type" content="website">
+<meta property="og:url" content="<?php echo htmlspecialchars(current_url(), ENT_QUOTES, 'UTF-8'); ?>">
+<link rel="canonical" href="<?php echo htmlspecialchars(app_url('find-your-path-quiz.php'), ENT_QUOTES, 'UTF-8'); ?>">
+<?php endif; ?>
 
 <style>
     .quiz-hero {
