@@ -481,7 +481,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                 
                 <p style="margin-top: 25px; padding: 15px; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 5px;">
                     <strong>🤔 Questions?</strong> We're here to help!<br>
-                    Call us at <strong>{$siteSettings['contact_phone']}</strong> or reply to this email anytime.
+                    Call us at <strong>{$escapedPhone}</strong> or reply to this email anytime.
                 </p>
                 
                 <p style="margin-top: 30px; text-align: center; font-size: 16px; color: #4f46e5; font-weight: bold;">
