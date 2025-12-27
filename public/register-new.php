@@ -17,6 +17,13 @@ if ($step > 1 && !in_array($programType, $validTypes)) {
     $step = 1; // Reset to step 1 if invalid type
 }
 
+// Load site settings for sidebar details (bank/contact)
+$siteSettings = [];
+try {
+    $stmtS = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
+    $siteSettings = $stmtS->fetch(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) { $siteSettings = []; }
+
 require_once 'includes/header.php';
 ?>
 
@@ -185,7 +192,17 @@ require_once 'includes/header.php';
 }
 </style>
 
-<main class="register-main">
+<!-- Hero (consistent with legacy register.php) -->
+<section class="about-hero">
+    <div class="about-hero-overlay"></div>
+    <div class="container about-hero-inner">
+        <h1>Register with HIGH Q Academy</h1>
+        <p class="lead">Start your journey towards academic excellence. Choose a program and complete your registration.</p>
+    </div>
+</section>
+
+<div class="container register-layout">
+    <main class="register-main">
     <div class="wizard-container">
         <!-- Progress Bar -->
         <div class="wizard-progress">
@@ -272,6 +289,84 @@ require_once 'includes/header.php';
             <?php endif; ?>
         </div>
     </div>
-</main>
+    </main>
+
+    <!-- Right Sidebar (mirrors legacy register.php) -->
+    <aside class="register-sidebar hq-aside-target">
+        <div class="sidebar-card admission-box">
+            <h4>Admission Requirements</h4>
+            <hr>
+            <ul style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
+                <li>Completed O'Level certificate (for JAMB/Post‑UTME)</li>
+                <li>Valid identification document</li>
+                <li>Passport photograph (2 copies)</li>
+                <li>Registration fee payment</li>
+                <li>Commitment to academic excellence</li>
+            </ul>
+        </div>
+
+        <div class="sidebar-card payment-box">
+            <h4>Payment Options</h4>
+            <div class="payment-method" data-method="bank">
+                <strong>Bank Transfer</strong>
+                <p>Account Name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>
+                Bank: <?= htmlspecialchars($siteSettings['bank_name'] ?? '[Bank Name]') ?><br>
+                Account Number: <?= htmlspecialchars($siteSettings['bank_account_number'] ?? '[Account Number]') ?></p>
+            </div>
+            <div class="payment-method" data-method="cash">
+                <strong>Cash Payment</strong>
+                <p>Visit our office locations<br>8 Pineapple Avenue, Aiyetoro, Maya<br>Shop 18, World Star Complex, Aiyetoro</p>
+            </div>
+            <div class="payment-method" data-method="online" id="payment-method-online">
+                <strong>Online Payment</strong>
+                <p>Secure online payment portal. Credit/Debit card accepted.</p>
+            </div>
+        </div>
+
+        <div class="sidebar-card next-steps-box">
+            <h4>What Happens Next?</h4>
+            <ol style="margin:8px 0;padding-left:18px;color:#666;font-size:13px">
+                <li>Select your program</li>
+                <li>Fill in your details</li>
+                <li>Complete payment (bank/online)</li>
+                <li>Get confirmation and start classes</li>
+            </ol>
+        </div>
+
+        <div class="sidebar-card help-box">
+            <h4>Need Help?</h4>
+            <p><strong>Call Us</strong><br><?= htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794') ?></p>
+            <p><strong>Email Us</strong><br><?= htmlspecialchars($siteSettings['contact_email'] ?? 'info@hqacademy.com') ?></p>
+            <p><strong>Visit Us</strong><br><?= nl2br(htmlspecialchars($siteSettings['contact_address'] ?? "8 Pineapple Avenue, Aiyetoro\nMaya, Ikorodu")) ?></p>
+        </div>
+
+        <div class="sidebar-card why-box" id="whyChooseUs">
+            <h4>Why Choose Us?</h4>
+            <div class="why-stats">
+                <div class="stat">
+                    <div class="icon"><i class="bx bx-trophy"></i></div>
+                    <div class="stat-body">
+                        <strong>305</strong>
+                        <span>Highest JAMB Score 2025</span>
+                    </div>
+                </div>
+                <div class="stat">
+                    <div class="icon"><i class="bx bx-group"></i></div>
+                    <div class="stat-body">
+                        <strong>1000+</strong>
+                        <span>Students Trained</span>
+                    </div>
+                </div>
+                <div class="stat">
+                    <div class="icon"><i class="bx bx-bar-chart"></i></div>
+                    <div class="stat-body">
+                        <strong>99%</strong>
+                        <span>Success Rate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
 
 <?php require_once 'includes/footer.php'; ?>
