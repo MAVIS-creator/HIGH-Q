@@ -51,6 +51,15 @@
   font-weight: 700 !important;
   cursor: pointer !important;
   pointer-events: auto !important;
+  padding: 8px 12px !important;
+  min-height: 44px !important;
+  min-width: 44px !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: rgba(255, 214, 0, 0.2) !important;
+}
+
+.faq-readmore:active {
+  transform: scale(0.98) !important;
 }
 
 .faq-clamped {
