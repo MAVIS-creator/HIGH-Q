@@ -228,7 +228,7 @@ include __DIR__ . '/includes/header.php';
     }
 
     .option:hover {
-        border-color: #4f46e5;
+        border-color: var(--path-primary);
         background-color: #f0f4ff;
     }
 
@@ -269,7 +269,7 @@ include __DIR__ . '/includes/header.php';
 
     .btn-submit {
         flex: 1;
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        background: linear-gradient(135deg, var(--path-primary) 0%, var(--path-secondary) 100%);
         color: white;
         border: none;
         padding: 1rem;

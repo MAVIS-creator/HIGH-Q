@@ -6,7 +6,8 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 requirePermission('payments');
-$pageTitle = 'Create Payment Link';
+$pageTitle = 'Payment';
+// Load page-specific styles (kept minimal, uses admin-modern.css primitives)
 $pageCss = '../assets/css/payment.css';
 require_once __DIR__ . '/../includes/header.php';
 
@@ -56,24 +57,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
-<div class="page-container">
-<div class="admin-payment-card">
-    <h3>Create Payment Link</h3>
-    <div id="adminMsg" style="display:none;" class="alert"></div>
-    <form id="adminPaymentForm" class="admin-payment-form">
-        <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
-        <div class="form-row"><label>Amount (NGN)</label><input type="text" name="amount" placeholder="e.g. 1080" required></div>
-        <div class="form-row"><label>Recipient email</label><input type="email" name="email" placeholder="payer@example.com" required></div>
-        <div class="form-row"><label>Message (optional)</label><textarea name="message" rows="4" placeholder="Message to include with the payment link"></textarea></div>
-        <div class="admin-payment-actions">
-            <button class="btn" id="createSendBtn" type="button">Create & Send Link</button>
-            <div id="createdLinkWrap" style="display:none;flex:1;">
-                <div class="admin-payment-link" id="createdLink"></div>
-                <button class="admin-payment-copy" id="copyLinkBtn" style="margin-left:8px;" type="button">Copy link</button>
+<div class="admin-page-content">
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <div>
+                <div class="page-hero-badge"><i class='bx bx-wallet'></i> Payments</div>
+                <h2 class="page-hero-title">Create Payment Link</h2>
+                <p class="page-hero-subtitle">Generate and share secure payment links</p>
             </div>
         </div>
-    </form>
-</div>
+    </section>
+
+    <div class="payment-grid">
+        <!-- Primary Card -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class='bx bx-link'></i> New Link</h3>
+            </div>
+            <div class="admin-card-body">
+                <div id="adminMsg" class="alert" style="display:none;"></div>
+                <form id="adminPaymentForm" class="admin-payment-form">
+                    <input type="hidden" name="_csrf" value="<?= generateToken('payments_form') ?>">
+                    <div class="form-row form-group">
+                        <label class="form-label">Amount (NGN)</label>
+                        <input class="form-input" type="text" name="amount" placeholder="e.g. 1080" required>
+                    </div>
+                    <div class="form-row form-group">
+                        <label class="form-label">Recipient email</label>
+                        <input class="form-input" type="email" name="email" placeholder="payer@example.com" required>
+                    </div>
+                    <div class="form-row form-group">
+                        <label class="form-label">Message (optional)</label>
+                        <textarea class="form-textarea" name="message" rows="4" placeholder="Message to include with the payment link"></textarea>
+                    </div>
+                    <div class="admin-payment-actions">
+                        <button class="btn btn-primary" id="createSendBtn" type="button">Create & Send Link</button>
+                        <div id="createdLinkWrap" class="created-link-wrap" style="display:none;">
+                            <div class="admin-payment-link" id="createdLink"></div>
+                            <button class="admin-payment-copy btn btn-secondary" id="copyLinkBtn" type="button">Copy link</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Aside: Preview & Tips -->
+        <aside class="admin-card payment-aside">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class='bx bx-info-circle'></i> Preview & Tips</h3>
+            </div>
+            <div class="admin-card-body">
+                <p class="small-muted" style="margin-bottom:8px">Your secure link appears after creating.</p>
+                <ul class="payment-tips">
+                    <li>Use recipient’s primary email address</li>
+                    <li>Amounts are in NGN (₦)</li>
+                    <li>Links expire in 48 hours by default</li>
+                    <li>Copy and resend if email delivery fails</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
 
 <div class="admin-payment-card admin-payment-side">
     <h3>Preview & Tips</h3>
@@ -87,9 +130,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php if (!empty($recentLinks)): ?>
-        <div class="admin-payment-card" style="margin-top:18px;">
-            <h3>Recent created links</h3>
-            <table class="table" style="width:100%"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Emailed</th><th>Actions</th><th>Created</th></tr></thead><tbody>
+        <div class="admin-card" style="margin-top:18px;">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title"><i class='bx bx-history'></i> Recent created links</h3>
+            </div>
+            <div class="admin-card-body">
+                <table class="admin-table"><thead><tr><th>ID</th><th>Amount</th><th>Email</th><th>Message</th><th>Link</th><th>Emailed</th><th>Actions</th><th>Created</th></tr></thead><tbody>
         <?php
             // compute app base for recent links using helper
             $appBase = rtrim(app_url(''), '/');
@@ -101,26 +147,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Use friendly pay route for consistency
     $link = app_url('pay/' . urlencode($r['reference']));
         ?>
-            <tr>
-                <td><?= htmlspecialchars($r['id']) ?></td>
-                <td>₦<?= number_format($r['amount'],2) ?></td>
-                <td><?= htmlspecialchars($emailTo) ?></td>
-                <td><?= htmlspecialchars(strlen($msgText) > 60 ? substr($msgText,0,57).'...' : $msgText) ?></td>
-                    <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div></div></td>
-                    <td class="small-muted"><?= (!empty($meta['emailed']) ? '<strong style="color:var(--hq-dark)">Yes</strong>' : '<span class="small-muted">No</span>') ?></td>
-                    <td>
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                    <button class="admin-payment-copy action-btn" data-link="<?= htmlspecialchars($link) ?>">Copy</button>
-                                    <button class="admin-payment-resend action-btn" data-id="<?= htmlspecialchars($r['id']) ?>">Resend</button>
-                            </div>
-                    </td>
-                    <td><?= htmlspecialchars($r['created_at']) ?></td>
-            </tr>
+                        <tr>
+                            <td><?= htmlspecialchars($r['id']) ?></td>
+                            <td>₦<?= number_format($r['amount'],2) ?></td>
+                            <td><?= htmlspecialchars($emailTo) ?></td>
+                            <td><?= htmlspecialchars(strlen($msgText) > 60 ? substr($msgText,0,57).'...' : $msgText) ?></td>
+                            <td><div style="display:flex;gap:8px;align-items:center;"><div style="max-width:420px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($link) ?></div></div></td>
+                            <td class="small-muted"><?= (!empty($meta['emailed']) ? '<strong style="color:var(--hq-dark)">Yes</strong>' : '<span class="small-muted">No</span>') ?></td>
+                            <td>
+                                <div style="display:flex;gap:8px;align-items:center;">
+                                    <button class="admin-payment-copy action-btn btn btn-secondary btn-sm" data-link="<?= htmlspecialchars($link) ?>">Copy</button>
+                                    <button class="admin-payment-resend action-btn btn btn-secondary btn-sm" data-id="<?= htmlspecialchars($r['id']) ?>">Resend</button>
+                                </div>
+                            </td>
+                            <td><?= htmlspecialchars($r['created_at']) ?></td>
+                        </tr>
         <?php endforeach; ?>
         </tbody></table>
+      </tbody></table>
+      </div>
     </div>
 <?php endif; ?>
-</div>
 </div>
 <?php require_once __DIR__ . '/../includes/footer.php';
 ?>
