@@ -439,7 +439,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
                 <li class="nav-item"><a class="nav-link px-3 py-2 <?= $cur === 'contact.php' ? 'active' : '' ?>" href="<?= app_url('contact.php') ?>">Contact</a></li>
             </ul>
             <div class="mt-4 px-3">
-              <a href="<?= app_url('register-new.php') ?>" class="btn btn-primary w-100 py-2">Find Your Path</a>
+              <a href="<?= app_url('find-your-path-quiz.php') ?>" class="btn btn-primary w-100 py-2"><i class='bx bx-compass me-1'></i>Find Your Path</a>
             </div>
         </div>
     </div>
