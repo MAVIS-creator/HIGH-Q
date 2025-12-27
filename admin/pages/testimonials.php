@@ -235,62 +235,68 @@ if ($__hqStandalone) {
 <!-- Modal for Create/Edit -->
 <div id="testimonialModal" class="modal">
     <div class="modal-content">
-        <span class="modal-close" id="closeModal">&times;</span>
-        <h3 id="modalTitle">Add Testimonial</h3>
+        <div class="modal-header-custom">
+            <h3 id="modalTitle"><i class='bx bx-star'></i> Add Testimonial</h3>
+            <button class="modal-close" id="closeModal" aria-label="Close">×</button>
+        </div>
         
-        <form id="testimonialForm" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-            
-            <div class="form-group">
-                <label>Student Name *</label>
-                <input type="text" name="name" id="testimonialName" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Role / Institution</label>
-                <input type="text" name="role_institution" id="testimonialRole" placeholder="e.g., LAUTECH Engineering Student">
-            </div>
-            
-            <div class="form-group">
-                <label>Testimonial Text *</label>
-                <textarea name="testimonial_text" id="testimonialText" rows="5" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Outcome Badge</label>
-                <input type="text" name="outcome_badge" id="testimonialBadge" placeholder="e.g., 305 JAMB Score, Tech Job Placement">
-            </div>
-            
-            <div class="form-group">
-                <label>Student Photo (Optional)</label>
-                <input type="file" name="image" id="testimonialImage" accept="image/*">
-                <small style="color: #666; display: block; margin-top: 4px;">Recommended: Square image, max 2MB</small>
-                <div id="currentImage" style="margin-top: 8px;"></div>
-            </div>
-            
-            <div class="form-row">
+        <div class="modal-body-custom">
+            <form id="testimonialForm" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                
                 <div class="form-group">
-                    <label>Display Order</label>
-                    <input type="number" name="display_order" id="testimonialOrder" value="0" min="0">
+                    <label>Student Name *</label>
+                    <input type="text" name="name" id="testimonialName" required placeholder="Enter student full name">
                 </div>
                 
                 <div class="form-group">
-                    <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" name="is_active" id="testimonialActive" checked>
-                        Active
-                    </label>
+                    <label>Role / Institution</label>
+                    <input type="text" name="role_institution" id="testimonialRole" placeholder="e.g., LAUTECH Engineering Student">
                 </div>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Save Testimonial</button>
-                <button type="button" class="btn-secondary" onclick="closeTestimonialModal()">Cancel</button>
-            </div>
-        </form>
+                
+                <div class="form-group">
+                    <label>Testimonial Text *</label>
+                    <textarea name="testimonial_text" id="testimonialText" rows="5" required placeholder="Share their success story..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Outcome Badge</label>
+                    <input type="text" name="outcome_badge" id="testimonialBadge" placeholder="e.g., 305 JAMB Score, Admitted to Engineering">
+                </div>
+                
+                <div class="form-group">
+                    <label>Student Photo (Optional)</label>
+                    <input type="file" name="image" id="testimonialImage" accept="image/*">
+                    <small>Recommended: Square image, max 2MB</small>
+                    <div id="currentImage" style="margin-top: 12px;"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Display Order</label>
+                        <input type="number" name="display_order" id="testimonialOrder" value="0" min="0" placeholder="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" name="is_active" id="testimonialActive" checked>
+                            Active (visible on website)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class='bx bx-check-circle'></i> Save Testimonial
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeTestimonialModal()">
+                        <i class='bx bx-x'></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
-<div id="modalOverlay"></div>
 </div>
 
 <style>
