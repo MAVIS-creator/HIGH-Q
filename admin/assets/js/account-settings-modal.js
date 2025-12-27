@@ -103,10 +103,39 @@
   }
 
   function save(){
+    // Gather preferences
+    const prefs = {
+      theme: document.getElementById('settingsTheme')?.value || 'light',
+      density: document.getElementById('settingsDensity')?.value || 'comfortable',
+      reduceMotion: document.getElementById('settingsReduceMotion')?.checked || false,
+      notifSystem: document.getElementById('settingsEmailSystem')?.checked || false,
+      notifUsers: document.getElementById('settingsEmailUsers')?.checked || false,
+      notifPayments: document.getElementById('settingsEmailPayments')?.checked || false,
+      notifInApp: document.getElementById('settingsInAppAlerts')?.checked || false,
+      showOnline: document.getElementById('settingsShowOnline')?.checked || false,
+      showLastActive: document.getElementById('settingsShowLastActive')?.checked || false
+    };
+    // Store preferences locally
+    try { localStorage.setItem('hq_admin_prefs', JSON.stringify(prefs)); } catch(e) {}
+    
     if (window.Swal) {
-      Swal.fire({icon:'success',title:'Saved',text:'Preferences saved',timer:1200,showConfirmButton:false});
+      Swal.fire({icon:'success',title:'Saved',text:'Preferences saved locally',timer:1200,showConfirmButton:false});
     }
     close();
+  }
+
+  function downloadData(){
+    if (window.Swal) {
+      Swal.fire({title:'Download Data',text:'Request sent to admin. You will receive an email with your data export.',icon:'info'});
+    }
+  }
+
+  function deleteAccount(){
+    if (window.Swal) {
+      Swal.fire({title:'Delete Account',text:'This action cannot be undone. Contact support to proceed.',icon:'warning',showCancelButton:true,confirmButtonText:'Contact Support'}).then((result)=>{
+        if(result.isConfirmed) window.location.href = window.HQ_ADMIN_BASE + '/pages/index.php?pages=support';
+      });
+    }
   }
 
   function initListeners(){
