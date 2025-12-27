@@ -3,8 +3,12 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
+require_once __DIR__ . '/includes/seo-helpers.php';
 
-$pageTitle = 'Student Registration - HQ Academy';
+// SEO Configuration
+set_page_title('Admission & Registration', true);
+define('PAGE_DESCRIPTION', 'Start your educational journey at High Q Tutorial. Quick, secure enrollment for all programs.');
+
 $csrf = generateToken('registration_wizard');
 
 // Determine current step
