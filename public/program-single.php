@@ -439,7 +439,7 @@ endif; ?>
         <div class="program-cta">
           <h4>Ready to Enroll?</h4>
           <p>Take the next step toward your academic and career goals today.</p>
-          <a href="register.php?ref=<?php echo htmlspecialchars(rawurlencode($program['slug'] ?? $program['path'] ?? 'program')); ?>" class="program-enroll-btn">Enroll Now</a>
+          <a href="register-new.php?ref=<?php echo htmlspecialchars(rawurlencode($program['slug'] ?? $program['path'] ?? 'program')); ?>" class="program-enroll-btn">Enroll Now</a>
         </div>
 
         <div class="info-note">
