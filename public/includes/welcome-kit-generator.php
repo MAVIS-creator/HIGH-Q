@@ -431,38 +431,67 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
     <body>
         <div class="container">
             <div class="header">
-                <h2>Welcome to High-Q! 🎓</h2>
+                <h2>✨ Welcome to High-Q! 🎓</h2>
+                <p style="margin: 10px 0 0; font-size: 14px;">Your journey to success starts NOW</p>
             </div>
             
             <div class="content">
-                <p>Hi <strong>{$studentName}</strong>,</p>
+                <p>Hey <strong>{$studentName}</strong>! 👋</p>
                 
-                <p>Thank you for registering with High-Q! We're excited to have you join our learning community.</p>
+                <p>Congratulations on taking this amazing step! You've just joined High-Q, and we're absolutely thrilled to have you as part of our learning family. 🚀</p>
                 
-                <p>Attached to this email is your <strong>Welcome Kit PDF</strong> containing:</p>
-                <ul>
-                    <li>✓ Program syllabus and learning topics</li>
-                    <li>✓ Dress code and center rules</li>
-                    <li>✓ Center location and operating hours</li>
-                    <li>✓ Getting started guide</li>
-                </ul>
-                
-                <p><strong>Your Registration Details:</strong><br>
-                Registration ID: {$registrationId}<br>
-                Program: " . ucfirst($programType) . " Program<br>
-                Confirmation Email: {$studentEmail}
+                <p style="background: #f0f9ff; border-left: 4px solid #06b6d4; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <strong>📎 Attached: Your Personalized Welcome Kit</strong><br>
+                    Everything you need to succeed in one beautiful PDF!
                 </p>
                 
-                <p>Please review the welcome kit carefully and familiarize yourself with the center rules and dress code before your first class.</p>
+                <p><strong>Your Welcome Kit Includes:</strong></p>
+                <ul style="margin: 15px 0;">
+                    <li>📚 <strong>Syllabus:</strong> Exactly what you'll learn and master</li>
+                    <li>👔 <strong>Dress Code:</strong> How to dress for success</li>
+                    <li>📍 <strong>Center Details:</strong> Location, hours, and getting there</li>
+                    <li>⚡ <strong>Center Rules:</strong> The simple guidelines for awesomeness</li>
+                    <li>🎯 <strong>Getting Started:</strong> 4 easy steps to rock your first day</li>
+                </ul>
                 
-                <p style="margin-top: 20px; color: #64748b; font-size: 14px;">
-                    If you have any questions, please don't hesitate to contact us at {$siteSettings['contact_phone']} or reply to this email.
+                <p style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <strong>💡 Pro Tip:</strong> Download and save this PDF. You'll want to reference it before your first class!
+                </p>
+                
+                <p><strong>📝 Your Registration Confirmation:</strong></p>
+                <div style="background: #f3f4f6; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace; font-size: 13px;">
+                    <div>Registration ID: <strong>{$registrationId}</strong></div>
+                    <div style="margin-top: 8px;">Program: <strong>" . htmlspecialchars(ucfirst($programType)) . " Program</strong></div>
+                    <div style="margin-top: 8px;">Email: <strong>{$studentEmail}</strong></div>
+                </div>
+                
+                <p style="margin-top: 25px;">
+                    <strong>What's Next?</strong><br>
+                    1. ✅ Download and review your Welcome Kit (attached)<br>
+                    2. 👕 Prepare the right clothes<br>
+                    3. 📍 Mark our center location on your map<br>
+                    4. 🎓 Show up ready to learn and grow!
+                </p>
+                
+                <p style="margin-top: 25px; padding: 15px; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 5px;">
+                    <strong>🤔 Questions?</strong> We're here to help!<br>
+                    Call us at <strong>{$siteSettings['contact_phone']}</strong> or reply to this email anytime.
+                </p>
+                
+                <p style="margin-top: 30px; text-align: center; font-size: 16px; color: #4f46e5; font-weight: bold;">
+                    You've got this! Let's make magic happen together. ✨
                 </p>
             </div>
             
             <div class="footer">
-                <p>&copy; " . date('Y') . " High-Q Learning Center. All rights reserved.</p>
-                <p>{$senderName}<br>{$siteSettings['contact_phone']}</p>
+                <p style="margin-bottom: 15px; font-size: 13px;">
+                    <strong>High-Q Learning Center</strong><br>
+                    " . htmlspecialchars($siteSettings['contact_phone'] ?? '0807 208 8794') . " | " . htmlspecialchars($siteSettings['contact_email'] ?? 'info@highq.com') . "<br>
+                    &copy; " . date('Y') . " All rights reserved.
+                </p>
+                <p style="font-size: 11px; color: #999;">
+                    This is an automated message. Please do not reply with sensitive information.
+                </p>
             </div>
         </div>
     </body>
