@@ -839,14 +839,15 @@
    MODERN FOOTER
    ========================================= */
 .admin-footer {
-    position: relative;
-    width: calc(100% - var(--sidebar-width));
-    margin-left: var(--sidebar-width);
+    position: fixed;
+    bottom: 0;
+    left: var(--sidebar-width);
+    right: 0;
     background: linear-gradient(135deg, var(--hq-yellow) 0%, var(--hq-yellow-light) 100%);
     color: var(--hq-black);
     z-index: 100;
     transition: all var(--transition-slow);
-    margin-top: auto;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.06);
 }
 
 .footer-inner {
@@ -929,8 +930,7 @@ body.sidebar-collapsed .admin-main {
 }
 
 body.sidebar-collapsed .admin-footer {
-    width: 100%;
-    margin-left: 0;
+    left: 0;
 }
 
 /* =========================================
