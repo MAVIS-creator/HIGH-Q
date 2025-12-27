@@ -1,10 +1,10 @@
 <?php
 // Generate Admission Letter (HTML or PDF)
+// Uses the company letterhead PDF template from uploads/Admission Letter.pdf
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use setasign\Fpdi\Fpdi;
 
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
@@ -36,16 +36,107 @@ $email    = $reg['contact_email'] ?? '';
 $today    = date('F j, Y');
 $programsText = !empty($programTitles) ? implode(', ', $programTitles) : 'your chosen programme(s)';
 
-// Asset URLs
+// Path to the PDF template
+$templatePath = __DIR__ . '/uploads/Admission Letter.pdf';
+
+// PDF output when requested - use FPDI to overlay on template
+if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
+    
+    if (file_exists($templatePath)) {
+        // Use FPDI to import the template and add text
+        $pdf = new Fpdi();
+        
+        // Import the template page
+        $pdf->AddPage();
+        $pdf->setSourceFile($templatePath);
+        $templateId = $pdf->importPage(1);
+        $pdf->useTemplate($templateId, 0, 0, 210); // A4 width in mm
+        
+        // Set font for the content
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->SetTextColor(30, 30, 30);
+        
+        // Position the content - adjust Y position to fit within the letterhead
+        // Start below the header (around 70mm from top)
+        $startY = 75;
+        $leftMargin = 25;
+        $rightMargin = 25;
+        $pageWidth = 210 - $leftMargin - $rightMargin;
+        
+        // Title
+        $pdf->SetXY($leftMargin, $startY);
+        $pdf->SetFont('Helvetica', 'B', 18);
+        $pdf->Cell($pageWidth, 10, 'ADMISSION LETTER', 0, 1, 'C');
+        
+        // Date
+        $pdf->SetXY($leftMargin, $startY + 20);
+        $pdf->SetFont('Helvetica', '', 11);
+        $pdf->Cell($pageWidth, 6, 'Date: ' . $today, 0, 1, 'L');
+        
+        // Greeting
+        $pdf->SetXY($leftMargin, $startY + 32);
+        $pdf->SetFont('Helvetica', '', 11);
+        $pdf->Cell(0, 6, 'Dear ' . $fullName . ',', 0, 1, 'L');
+        
+        // Body paragraphs - using MultiCell for word wrap
+        $pdf->SetXY($leftMargin, $startY + 45);
+        $pdf->SetFont('Helvetica', '', 11);
+        
+        $bodyText = "We are pleased to offer you provisional admission into {$programsText} at {$siteName}.
+
+This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.
+
+Please keep this letter for your records. If you have any questions, contact us via the details in the letterhead above.
+
+We look forward to your success with us.";
+        
+        $pdf->MultiCell($pageWidth, 7, $bodyText, 0, 'L');
+        
+        // Signature section
+        $currentY = $pdf->GetY() + 15;
+        $pdf->SetXY($leftMargin, $currentY);
+        $pdf->SetFont('Helvetica', '', 11);
+        $pdf->Cell(0, 6, '______________________________', 0, 1, 'L');
+        
+        $pdf->SetXY($leftMargin, $currentY + 8);
+        $pdf->SetFont('Helvetica', 'B', 11);
+        $pdf->Cell(0, 6, 'Admissions Office', 0, 1, 'L');
+        
+        $pdf->SetXY($leftMargin, $currentY + 14);
+        $pdf->SetFont('Helvetica', '', 10);
+        $pdf->Cell(0, 6, $siteName, 0, 1, 'L');
+        
+        // Registration ID at bottom
+        $pdf->SetXY($leftMargin, $currentY + 28);
+        $pdf->SetFont('Helvetica', '', 9);
+        $pdf->SetTextColor(120, 120, 120);
+        $pdf->Cell(0, 6, 'Registration ID: ' . $rid, 0, 1, 'L');
+        
+        // Output the PDF
+        $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
+        $pdf->Output('D', $filename);
+        exit;
+        
+    } else {
+        // Fallback to Dompdf if template doesn't exist
+        use Dompdf\Dompdf;
+        use Dompdf\Options;
+        
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml(generateFallbackHtml($fullName, $programsText, $siteName, $address, $phone, $email, $today, $rid));
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
+        $dompdf->stream($filename, ['Attachment' => true]);
+        exit;
+    }
+}
+
+// HTML preview (for browser viewing)
 $logoUrl = app_url('assets/images/hq-logo.jpeg');
 $cssUrl  = app_url('assets/css/public.css');
-// Best-effort letterhead image: if an image variant exists, prefer it; else we render a clean HTML header.
-$letterheadImage = null;
-foreach (['uploads/Admission%20Letter.png', 'uploads/Admission%20Letter.jpg', 'uploads/Admission%20Letter.jpeg', 'uploads/letterhead.png', 'uploads/letterhead.jpg'] as $candidate) {
-    $url = app_url($candidate);
-    // Do not remote-fetch; let Dompdf attempt if PDF is requested.
-    $letterheadImage = $url; break;
-}
 
 $html = '<!doctype html>
 <html>
@@ -63,57 +154,87 @@ $html = '<!doctype html>
     .content{font-size:16px;line-height:1.7;color:#222}
     .sig{margin-top:40px}
     .muted{color:#777}
-    .watermark{position:absolute;inset:0;opacity:0.06;background-size:contain;background-repeat:no-repeat;background-position:center;pointer-events:none}
-    .rel{position:relative}
+    .notice{background:#fff3cd;border:1px solid #ffc107;padding:12px 16px;border-radius:6px;margin-bottom:20px;font-size:14px}
+    .notice strong{color:#856404}
   </style>
-  </head>
-  <body>
-    <div class="letter rel">';
-if ($letterheadImage) {
-  $html .= '<div class="watermark" style="background-image:url(' . htmlspecialchars($letterheadImage) . ');"></div>';
-}
-$html .= '  <div class="lh-header">
-        <img src="' . htmlspecialchars($logoUrl) . '" alt="logo" style="height:64px;">
-        <div>
-          <h2 style="margin:0">' . htmlspecialchars($siteName) . '</h2>
-          <div class="lh-meta">' . htmlspecialchars($address ?: '') . ($phone ? "\n$phone" : '') . ($email ? "\n$email" : '') . '</div>
-        </div>
-      </div>
-      <hr>
-      <div class="title"><strong>Admission Letter</strong></div>
-      <div class="content">
-        <p>Date: ' . htmlspecialchars($today) . '</p>
-        <p>Dear <strong>' . htmlspecialchars($fullName) . '</strong>,</p>
-        <p>We are pleased to offer you provisional admission into <strong>' . htmlspecialchars($programsText) . '</strong> at ' . htmlspecialchars($siteName) . '.</p>
-        <p>This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.</p>
-        <p>Please keep this letter for your records. If you have any questions, contact us via the details above.</p>
-        <p>We look forward to your success with us.</p>
-        <div class="sig">
-          <div class="muted">______________________________</div>
-          <div><strong>Admissions Office</strong><br>' . htmlspecialchars($siteName) . '</div>
-        </div>
-      </div>
-      <div class="muted" style="margin-top:22px">Registration ID: ' . (int)$rid . '</div>
-      <div style="margin-top:18px">
-        <a class="btn-primary" href="?rid=' . (int)$rid . '&format=pdf">Download PDF</a>
-        <button class="btn" style="margin-left:8px" onclick="window.print()">Print</button>
-        <a class="btn" style="margin-left:8px" href="' . htmlspecialchars(app_url('index.php')) . '">Return to site</a>
+</head>
+<body>
+  <div class="letter">
+    <div class="notice">
+      <strong>📄 Note:</strong> The PDF version uses your official company letterhead template. Click "Download PDF" to get the formatted version with the header and footer.
+    </div>
+    <div class="lh-header">
+      <img src="' . htmlspecialchars($logoUrl) . '" alt="logo" style="height:64px;">
+      <div>
+        <h2 style="margin:0">' . htmlspecialchars($siteName) . '</h2>
+        <div class="lh-meta">' . htmlspecialchars($address ?: '') . ($phone ? "\n$phone" : '') . ($email ? "\n$email" : '') . '</div>
       </div>
     </div>
-  </body>
+    <hr>
+    <div class="title"><strong>Admission Letter</strong></div>
+    <div class="content">
+      <p>Date: ' . htmlspecialchars($today) . '</p>
+      <p>Dear <strong>' . htmlspecialchars($fullName) . '</strong>,</p>
+      <p>We are pleased to offer you provisional admission into <strong>' . htmlspecialchars($programsText) . '</strong> at ' . htmlspecialchars($siteName) . '.</p>
+      <p>This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.</p>
+      <p>Please keep this letter for your records. If you have any questions, contact us via the details above.</p>
+      <p>We look forward to your success with us.</p>
+      <div class="sig">
+        <div class="muted">______________________________</div>
+        <div><strong>Admissions Office</strong><br>' . htmlspecialchars($siteName) . '</div>
+      </div>
+    </div>
+    <div class="muted" style="margin-top:22px">Registration ID: ' . (int)$rid . '</div>
+    <div style="margin-top:18px">
+      <a class="btn-primary" href="?rid=' . (int)$rid . '&format=pdf">Download PDF</a>
+      <button class="btn" style="margin-left:8px" onclick="window.print()">Print</button>
+      <a class="btn" style="margin-left:8px" href="' . htmlspecialchars(app_url('index.php')) . '">Return to site</a>
+    </div>
+  </div>
+</body>
 </html>';
 
-// PDF output when requested
-if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
-    $options = new Options();
-    $options->set('isRemoteEnabled', true);
-    $dompdf = new Dompdf($options);
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
-    $dompdf->render();
-    $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
-    $dompdf->stream($filename, ['Attachment' => true]);
-    exit;
-}
-
 echo $html;
+
+// Fallback HTML generator function
+function generateFallbackHtml($fullName, $programsText, $siteName, $address, $phone, $email, $today, $rid) {
+    $logoUrl = app_url('assets/images/hq-logo.jpeg');
+    return '<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admission Letter</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:40px}
+    .letter{max-width:700px;margin:0 auto;padding:30px}
+    .header{text-align:center;margin-bottom:30px}
+    .title{font-size:24px;font-weight:bold;text-align:center;margin:20px 0}
+    .content{font-size:14px;line-height:1.8}
+    .sig{margin-top:40px}
+  </style>
+</head>
+<body>
+  <div class="letter">
+    <div class="header">
+      <h2>' . htmlspecialchars($siteName) . '</h2>
+      <div>' . htmlspecialchars($address) . '</div>
+      <div>' . htmlspecialchars($phone) . ' | ' . htmlspecialchars($email) . '</div>
+    </div>
+    <div class="title">ADMISSION LETTER</div>
+    <div class="content">
+      <p>Date: ' . htmlspecialchars($today) . '</p>
+      <p>Dear <strong>' . htmlspecialchars($fullName) . '</strong>,</p>
+      <p>We are pleased to offer you provisional admission into <strong>' . htmlspecialchars($programsText) . '</strong> at ' . htmlspecialchars($siteName) . '.</p>
+      <p>This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.</p>
+      <p>Please keep this letter for your records.</p>
+      <p>We look forward to your success with us.</p>
+      <div class="sig">
+        <div>______________________________</div>
+        <div><strong>Admissions Office</strong><br>' . htmlspecialchars($siteName) . '</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;color:#777;font-size:12px">Registration ID: ' . (int)$rid . '</div>
+  </div>
+</body>
+</html>';
+}
