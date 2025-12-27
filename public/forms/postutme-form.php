@@ -29,10 +29,43 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="passport">Passport Photo <span class="text-danger">*</span></label>
-                <input type="file" id="passport" name="passport" class="form-control" accept="image/jpeg,image/jpg,image/png" required>
-                <small class="form-text">Upload a recent passport photograph (JPG/PNG, max 2MB)</small>
+                <div class="passport-upload-wrapper" style="border: 2px dashed #d1d5db; border-radius: 12px; padding: 20px; text-align: center; background: #f9fafb; transition: all 0.3s;">
+                    <div id="passportPreviewArea" style="margin-bottom: 15px; display: none;">
+                        <img id="passportPreview" src="" alt="Passport Preview" style="width: 120px; height: 120px; object-fit: cover; border-radius: 12px; border: 3px solid #ffd600; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    </div>
+                    <label for="passport" style="cursor: pointer; display: block;">
+                        <i class='bx bx-cloud-upload' style="font-size: 2rem; color: #6b7280; display: block; margin-bottom: 8px;"></i>
+                        <span style="color: #374151; font-weight: 500;">Click to upload passport photo</span>
+                        <span style="display: block; font-size: 0.85rem; color: #9ca3af; margin-top: 4px;">JPG, JPEG, PNG (Max 2MB)</span>
+                    </label>
+                    <input type="file" id="passport" name="passport" class="form-control" accept="image/jpeg,image/jpg,image/png" required style="display: none;">
+                </div>
+                <small class="form-text text-muted">Upload a recent passport photograph with white background</small>
             </div>
         </div>
+        
+        <script>
+        document.getElementById('passport').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file size (2MB max)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB');
+                    this.value = '';
+                    return;
+                }
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('passportPreview').src = e.target.result;
+                    document.getElementById('passportPreviewArea').style.display = 'block';
+                    document.querySelector('.passport-upload-wrapper').style.borderColor = '#ffd600';
+                    document.querySelector('.passport-upload-wrapper').style.background = '#fffef5';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        </script>
         
         <div class="form-row">
             <div class="form-group">
