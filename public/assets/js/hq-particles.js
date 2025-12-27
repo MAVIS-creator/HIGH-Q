@@ -1,6 +1,8 @@
 /**
  * HQ Particles - Floating Bubble Animation
- * All pages except home.php hero (min-width: 768px)
+ * Works on ALL pages including home.php
+ * Home.php uses white/gold bubbles (yellow bg)
+ * Other pages use yellow bubbles (blue bg)
  * Respects prefers-reduced-motion
  */
 (function() {
@@ -13,19 +15,32 @@
     return;
   }
   
-  // Configuration - Bubble effects
-  const config = {
-    particleCount: 40,
-    particleSpeed: 0.2,
-    minParticleSize: 8,
-    maxParticleSize: 25,
-    particleColor: 'rgba(255, 215, 0, 0.4)', // Yellow with transparency
-    particleGradient: 'rgba(255, 215, 0, 0.6)' // Brighter yellow for gradient
+  // Configuration - Different colors for different pages
+  const configYellow = {
+    particleCount: 35,
+    particleSpeed: 0.15,
+    minParticleSize: 6,
+    maxParticleSize: 20,
+    particleColor: 'rgba(255, 215, 0, 0.35)', // Yellow with transparency
+    particleGradient: 'rgba(255, 215, 0, 0.55)', // Brighter yellow for gradient
+    borderColor: 'rgba(255, 215, 0, 0.25)'
+  };
+  
+  // For home.php (yellow background) - use white/light gold bubbles
+  const configHome = {
+    particleCount: 30,
+    particleSpeed: 0.12,
+    minParticleSize: 5,
+    maxParticleSize: 18,
+    particleColor: 'rgba(255, 255, 255, 0.25)', // White with transparency
+    particleGradient: 'rgba(255, 255, 255, 0.4)', // Brighter white
+    borderColor: 'rgba(255, 255, 255, 0.2)'
   };
   
   class Particle {
-    constructor(canvas) {
+    constructor(canvas, config) {
       this.canvas = canvas;
+      this.config = config;
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
       this.radius = Math.random() * (config.maxParticleSize - config.minParticleSize) + config.minParticleSize;
@@ -39,11 +54,11 @@
     update() {
       // Gentle floating motion
       this.x += this.vx;
-      this.y += this.vy - 0.1; // Slight upward drift
+      this.y += this.vy - 0.08; // Slight upward drift
       this.wobble += this.wobbleSpeed;
       
       // Add gentle wobble
-      this.x += Math.sin(this.wobble) * 0.1;
+      this.x += Math.sin(this.wobble) * 0.08;
       
       // Wrap around screen
       if (this.x < -this.radius) this.x = this.canvas.width + this.radius;
@@ -63,24 +78,25 @@
         this.radius
       );
       
-      gradient.addColorStop(0, config.particleGradient.replace('0.6', '0.8'));
-      gradient.addColorStop(1, config.particleColor);
+      gradient.addColorStop(0, this.config.particleGradient);
+      gradient.addColorStop(1, this.config.particleColor);
       
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       ctx.fillStyle = gradient;
       ctx.fill();
       
-      // Optional: subtle border
-      ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+      // Subtle border
+      ctx.strokeStyle = this.config.borderColor;
       ctx.lineWidth = 1;
       ctx.stroke();
     }
   }
   
   class ParticleSystem {
-    constructor(container) {
+    constructor(container, config) {
       this.container = container;
+      this.config = config;
       this.canvas = document.createElement('canvas');
       this.canvas.className = 'particles-canvas';
       this.canvas.style.position = 'absolute';
@@ -110,8 +126,8 @@
       // Clear existing particles
       this.particles = [];
       
-      for (let i = 0; i < config.particleCount; i++) {
-        this.particles.push(new Particle(this.canvas));
+      for (let i = 0; i < this.config.particleCount; i++) {
+        this.particles.push(new Particle(this.canvas, this.config));
       }
       this.animate();
     }
@@ -138,27 +154,32 @@
     }
   }
   
-  // Initialize particles on hero sections (except home.php main hero)
+  // Check if this is the home page
+  function isHomePage() {
+    const path = window.location.pathname.toLowerCase();
+    return path.endsWith('home.php') || 
+           path.endsWith('/high-q/') || 
+           path.endsWith('/high-q') ||
+           path === '/' ||
+           document.body.classList.contains('page-home');
+  }
+  
+  // Initialize particles on hero sections
   function initParticles() {
+    const isHome = isHomePage();
+    
     // Get all hero sections
-    const allHeros = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero');
+    const allHeros = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero, .path-hero, .register-hero');
     
     allHeros.forEach(hero => {
-      // SKIP home.php main hero (check if body has 'home' class or if hero is first on page)
-      const isHomePage = document.body.classList.contains('page-home') || 
-                         (hero.classList.contains('hero') && 
-                          hero === document.querySelector('.hero'));
-      const isMainHero = isHomePage && hero.classList.contains('hero');
-      
-      if (isMainHero) {
-        console.log('Skipping particles on home.php main hero');
-        return; // Skip home hero
-      }
-      
       // Check if already initialized
       if (hero.querySelector('.particles-container')) {
         return;
       }
+      
+      // Determine which config to use
+      const isMainHomeHero = isHome && hero.classList.contains('hero');
+      const config = isMainHomeHero ? configHome : configYellow;
       
       const container = document.createElement('div');
       container.className = 'particles-container';
@@ -169,49 +190,25 @@
       container.style.height = '100%';
       container.style.zIndex = '1';
       container.style.pointerEvents = 'none';
+      container.style.overflow = 'hidden';
       
       hero.style.position = 'relative';
       hero.insertBefore(container, hero.firstChild);
       
-      new ParticleSystem(container);
+      new ParticleSystem(container, config);
     });
   }
   
-  // Lazy init on scroll or immediate if hero is in viewport
-  let initialized = false;
-  
-  function checkAndInit() {
-    if (initialized) return;
-    
-    const heroSections = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero');
-    const hasHeroInViewport = Array.from(heroSections).some(hero => {
-      // Skip home main hero
-      const isHomePage = document.body.classList.contains('page-home') || 
-                         (hero.classList.contains('hero') && 
-                          hero === document.querySelector('.hero'));
-      const isMainHero = isHomePage && hero.classList.contains('hero');
-      
-      if (isMainHero) return false;
-      
-      const rect = hero.getBoundingClientRect();
-      return rect.top < window.innerHeight && rect.bottom > 0;
-    });
-    
-    if (hasHeroInViewport) {
-      initialized = true;
-      initParticles();
-      window.removeEventListener('scroll', checkAndInit);
-    }
+  // Initialize immediately on DOM ready
+  function init() {
+    initParticles();
   }
   
   // Init on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkAndInit);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    checkAndInit();
+    init();
   }
-  
-  // Also check on scroll
-  window.addEventListener('scroll', checkAndInit, { passive: true });
   
 })();
