@@ -511,7 +511,7 @@ $totalPages = (int)ceil($total / $perPage);
         </form>
     </div>
     
-    <div class="hq-table-wrap" style="overflow-x: auto; margin-right: 20%; padding: ;">
+    <div class="hq-table-wrap" style="overflow-x: auto; margin-right: 20%; padding: 24px 30px 30px;">
     <table class="payments-table" style="min-width: 900px; width: 100%;">
     <thead><tr><th>ID</th><th>Reference</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Status</th><th>Payer Account</th><th>Payer Bank</th><th>Created</th><th style="min-width: 100px;">Actions</th></tr></thead>
         <tbody>
