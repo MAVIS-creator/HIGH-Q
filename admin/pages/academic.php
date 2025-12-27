@@ -857,7 +857,7 @@ if ($__hqStandalone) {
                   <h3 class="card-name" style="margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayName) ?></h3>
                   <div class="card-email" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayEmail) ?></div>
                   <div class="d-flex flex-wrap gap-2 mt-2">
-                    <span class="badge bg-primary-subtle text-primary">Student</span>
+                    <span class="badge bg-primary-subtle text-primary"><?= $programTypeBadge ?: 'Student' ?></span>
                     <?php if ($status==='paid' || $status==='confirmed' || $status==='active'): ?>
                       <span class="badge bg-success-subtle text-success"><?= htmlspecialchars(ucfirst($status)) ?></span>
                     <?php elseif ($status==='rejected' || $status==='banned'): ?>
