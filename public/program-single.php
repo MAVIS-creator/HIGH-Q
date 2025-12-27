@@ -414,6 +414,25 @@ endif; ?>
           <h3>Why This Program?</h3>
           <p>This program is designed with your specific learning goals in mind. Our experienced instructors combine proven teaching methods with personalized attention to ensure you achieve the best possible results. Whether you're preparing for exams, building career skills, or pursuing higher education, we have the expertise and resources to support your success.</p>
         </div>
+
+        <!-- Phase 3: Learning Roadmap -->
+        <?php 
+        // Map static program titles to program types for roadmap
+        $programTypeMap = [
+            'jamb-university-admission' => 'jamb',
+            'ssce-gce-exams' => 'waec',
+            'advanced-international-studies' => 'international',
+            'digital-skills-tech' => 'digital'
+        ];
+        $programType = $programTypeMap[$slug] ?? str_replace('-', '', strtolower(substr($program['title'], 0, 4)));
+        echo renderLearningRoadmap($programType);
+        ?>
+
+        <!-- Phase 3: Outcome Dashboard -->
+        <?php echo renderOutcomeDashboard($programType); ?>
+
+        <!-- Phase 3: Program-Specific Tutors -->
+        <?php echo renderProgramTutors($programType, 4); ?>
       </div>
 
       <aside class="program-sidebar">
