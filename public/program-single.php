@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
+require_once __DIR__ . '/includes/learning-roadmap.php';
+require_once __DIR__ . '/includes/outcome-dashboard.php';
+require_once __DIR__ . '/includes/program-tutors.php';
 
 $slug = trim($_GET['slug'] ?? '');
 $program = null;
