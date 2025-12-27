@@ -274,6 +274,10 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="<?= app_url('assets/css/contact-fixes.css') ?>">
   <!-- HQ UI/UX System (device-responsive design) -->
   <link rel="stylesheet" href="<?= app_url('assets/css/hq-ui-system.css') ?>">
+  <!-- Home page particles animation -->
+  <?php if (strpos($_SERVER['REQUEST_URI'] ?? '', 'index.php') !== false || rtrim($_SERVER['REQUEST_URI'] ?? '', '/') === '' || $_SERVER['SCRIPT_NAME'] === '/index.php' || basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'index.php'): ?>
+  <link rel="stylesheet" href="<?= app_url('assets/css/home-particles.css') ?>">
+  <?php endif; ?>
   <link rel="shortcut icon" href="<?= app_url('assets/images/favicon.ico') ?>" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
