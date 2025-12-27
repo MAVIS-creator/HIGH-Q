@@ -336,7 +336,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </li>
 
               <li class="nav-item">
-                <a class="nav-link <?= $cur === 'register.php' ? 'active' : '' ?>" href="<?= app_url('register.php') ?>">Admission</a>
+                <a class="nav-link <?= $cur === 'register-new.php' ? 'active' : '' ?>" href="<?= app_url('register-new.php') ?>">Admission</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link <?= $cur === 'contact.php' ? 'active' : '' ?>" href="<?= app_url('contact.php') ?>">Contact</a>
@@ -345,7 +345,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
             <!-- Register Button -->
             <div class="d-none d-lg-block">
-              <a href="<?= app_url('register.php') ?>" class="btn btn-primary">Find Your Path</a>
+              <a href="<?= app_url('register-new.php') ?>" class="btn btn-primary">Find Your Path</a>
             </div>
           </div>
 
