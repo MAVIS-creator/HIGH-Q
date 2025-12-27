@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function(){
             .then(r => r.text())
             .then(function(t){ try { return JSON.parse(t); } catch(e) { return { status:'error', raw:t }; } })
             .then(function(j){
-                btn.disabled = false; btn.textContent = 'Create & Send Link';
+                btn.disabled = false; btn.textContent = 'Create & Send Link'; btn.classList.remove('is-loading');
                 if (j.status === 'ok') {
                     msg.style.display = 'block'; msg.textContent = 'Link created' + (j.emailed ? ' and emailed.' : ' (email failed - copy below)');
                     linkWrap.style.display = 'flex'; createdLink.textContent = j.link;
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     msg.style.display = 'block'; msg.textContent = j.message || 'Error creating link';
                     Swal.fire({ icon:'error', title:'Error', text: j.message || 'Server error' });
                 }
-            }).catch(function(err){ btn.disabled = false; btn.textContent = 'Create & Send Link'; Swal.fire({ icon:'error', title:'Network error' }); });
+            }).catch(function(err){ btn.disabled = false; btn.textContent = 'Create & Send Link'; btn.classList.remove('is-loading'); Swal.fire({ icon:'error', title:'Network error' }); });
     });
     copyBtn.addEventListener('click', function(){ var txt = createdLink.textContent || ''; navigator.clipboard.writeText(txt).then(function(){ Swal.fire({toast:true,position:'top-end',icon:'success',title:'Link copied',showConfirmButton:false,timer:1500}); }); });
 });
