@@ -335,6 +335,333 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
   echo json_encode($s); exit;
 }
 
+// Export all registrations to CSV
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'export_csv') {
+  requirePermission('academic');
+  
+  // Determine source table
+  $source = $_GET['source'] ?? '';
+  $table = 'student_registrations';
+  
+  if ($source === 'postutme') {
+    $table = 'post_utme_registrations';
+  } elseif ($source === 'universal') {
+    $table = 'universal_registrations';
+  }
+  
+  try {
+    // Check if table exists
+    $check = $pdo->query("SHOW TABLES LIKE '$table'")->fetch();
+    if (!$check) {
+      header('Content-Type: application/json');
+      echo json_encode(['error' => 'Table not found']); 
+      exit;
+    }
+    
+    // Fetch all registrations
+    $stmt = $pdo->query("SELECT * FROM $table ORDER BY created_at DESC");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    if (empty($rows)) {
+      header('Content-Type: application/json');
+      echo json_encode(['error' => 'No registrations found']); 
+      exit;
+    }
+    
+    // Set CSV headers
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="registrations_' . $source . '_' . date('Y-m-d_His') . '.csv"');
+    
+    $output = fopen('php://output', 'w');
+    
+    // Define comprehensive columns
+    $columns = [
+      'ID', 'Surname', 'Other Names', 'Email', 'Phone', 'Gender', 'Date of Birth',
+      'Marital Status', 'NIN', 'State of Origin', 'Local Government', 'Home Address',
+      'Profile Code', 'Exam Type', 'Exam Year', 'Course/Academic Goals', 'Previous Education',
+      'Sponsor Name', 'Sponsor Phone', 'Sponsor Address',
+      'Next of Kin Name', 'Next of Kin Phone', 'Next of Kin Address',
+      'Passport Photo Path', 'Status', 'Created At'
+    ];
+    
+    // Write CSV header
+    fputcsv($output, $columns);
+    
+    // Write data rows
+    foreach ($rows as $row) {
+      $csvRow = [
+        $row['id'] ?? '',
+        $row['surname'] ?? $row['last_name'] ?? '',
+        $row['other_names'] ?? $row['first_name'] ?? '',
+        $row['email'] ?? '',
+        $row['phone'] ?? $row['phone_number'] ?? '',
+        $row['gender'] ?? '',
+        $row['date_of_birth'] ?? '',
+        $row['marital_status'] ?? '',
+        $row['nin'] ?? '',
+        $row['state_of_origin'] ?? '',
+        $row['local_government'] ?? $row['lga'] ?? '',
+        $row['home_address'] ?? $row['address'] ?? '',
+        $row['profile_code'] ?? $row['jamb_profile_code'] ?? '',
+        $row['exam_type'] ?? '',
+        $row['exam_year'] ?? '',
+        $row['academic_goals'] ?? $row['course_of_study'] ?? $row['course_first_choice'] ?? '',
+        $row['previous_education'] ?? $row['secondary_school'] ?? '',
+        $row['sponsor_name'] ?? '',
+        $row['sponsor_phone'] ?? '',
+        $row['sponsor_address'] ?? '',
+        $row['next_of_kin_name'] ?? $row['emergency_contact_name'] ?? '',
+        $row['next_of_kin_phone'] ?? $row['emergency_contact_phone'] ?? '',
+        $row['next_of_kin_address'] ?? '',
+        $row['passport_photo'] ?? $row['passport_path'] ?? '',
+        $row['status'] ?? '',
+        $row['created_at'] ?? ''
+      ];
+      fputcsv($output, $csvRow);
+    }
+    
+    fclose($output);
+    exit;
+    
+  } catch (Throwable $e) {
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Export failed: ' . $e->getMessage()]);
+    exit;
+  }
+}
+
+// Export single registration to PDF-like format (HTML for print)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'export_single' && isset($_GET['id'])) {
+  requirePermission('academic');
+  $id = (int)$_GET['id'];
+  
+  // Try student_registrations first
+  $stmt = $pdo->prepare("SELECT * FROM student_registrations WHERE id = ? LIMIT 1");
+  $stmt->execute([$id]);
+  $s = $stmt->fetch(PDO::FETCH_ASSOC);
+  
+  if (!$s) {
+    // Try post_utme_registrations
+    $stmt2 = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
+    $stmt2->execute([$id]);
+    $s = $stmt2->fetch(PDO::FETCH_ASSOC);
+  }
+  
+  if (!$s) {
+    // Try universal_registrations
+    $stmt3 = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+    $stmt3->execute([$id]);
+    $s = $stmt3->fetch(PDO::FETCH_ASSOC);
+  }
+  
+  if (!$s) {
+    echo '<h1>Registration not found</h1>';
+    exit;
+  }
+  
+  // Get passport path
+  $passportPath = $s['passport_photo'] ?? $s['passport_path'] ?? '';
+  $fullName = trim(($s['surname'] ?? $s['first_name'] ?? '') . ' ' . ($s['other_names'] ?? $s['last_name'] ?? ''));
+  
+  ?>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Details - <?= htmlspecialchars($fullName) ?></title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; padding: 20px; }
+      .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+      .header { background: linear-gradient(135deg, #0b1a2c 0%, #1e3a5f 100%); color: white; padding: 30px; text-align: center; }
+      .header h1 { font-size: 1.75rem; margin-bottom: 5px; }
+      .header p { opacity: 0.8; }
+      .passport-section { text-align: center; padding: 20px; border-bottom: 1px solid #e2e8f0; }
+      .passport-section img { width: 150px; height: 150px; object-fit: cover; border-radius: 12px; border: 4px solid #ffd600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+      .section { padding: 20px 30px; border-bottom: 1px solid #e2e8f0; }
+      .section:last-child { border-bottom: none; }
+      .section-title { font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+      .section-title::before { content: ''; width: 4px; height: 20px; background: #ffd600; border-radius: 2px; }
+      .field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+      .field { }
+      .field-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+      .field-value { font-size: 0.95rem; color: #1e293b; font-weight: 500; }
+      .field-full { grid-column: 1 / -1; }
+      .status-badge { display: inline-block; padding: 6px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+      .status-confirmed { background: #d1fae5; color: #065f46; }
+      .status-pending { background: #fef3c7; color: #92400e; }
+      .status-rejected { background: #fee2e2; color: #991b1b; }
+      .print-btn { position: fixed; bottom: 20px; right: 20px; background: #0b1a2c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+      .print-btn:hover { background: #1e3a5f; }
+      @media print {
+        body { background: white; padding: 0; }
+        .container { box-shadow: none; }
+        .print-btn { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>HIGH Q SOLID ACADEMY</h1>
+        <p>Student Registration Details</p>
+      </div>
+      
+      <?php if ($passportPath): ?>
+      <div class="passport-section">
+        <img src="<?= htmlspecialchars($passportPath) ?>" alt="Passport Photo" onerror="this.style.display='none'">
+      </div>
+      <?php endif; ?>
+      
+      <div class="section">
+        <div class="section-title">Personal Information</div>
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">Surname</div>
+            <div class="field-value"><?= htmlspecialchars($s['surname'] ?? $s['last_name'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Other Names</div>
+            <div class="field-value"><?= htmlspecialchars($s['other_names'] ?? $s['first_name'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Email</div>
+            <div class="field-value"><?= htmlspecialchars($s['email'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Phone</div>
+            <div class="field-value"><?= htmlspecialchars($s['phone'] ?? $s['phone_number'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Gender</div>
+            <div class="field-value"><?= htmlspecialchars($s['gender'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Date of Birth</div>
+            <div class="field-value"><?= htmlspecialchars($s['date_of_birth'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Marital Status</div>
+            <div class="field-value"><?= htmlspecialchars($s['marital_status'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">NIN</div>
+            <div class="field-value"><?= htmlspecialchars($s['nin'] ?? '-') ?></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-title">Location Details</div>
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">State of Origin</div>
+            <div class="field-value"><?= htmlspecialchars($s['state_of_origin'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Local Government</div>
+            <div class="field-value"><?= htmlspecialchars($s['local_government'] ?? $s['lga'] ?? '-') ?></div>
+          </div>
+          <div class="field field-full">
+            <div class="field-label">Home Address</div>
+            <div class="field-value"><?= htmlspecialchars($s['home_address'] ?? $s['address'] ?? '-') ?></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-title">Academic Information</div>
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">Profile Code</div>
+            <div class="field-value"><?= htmlspecialchars($s['profile_code'] ?? $s['jamb_profile_code'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Exam Type</div>
+            <div class="field-value"><?= htmlspecialchars($s['exam_type'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Exam Year</div>
+            <div class="field-value"><?= htmlspecialchars($s['exam_year'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Course / Academic Goals</div>
+            <div class="field-value"><?= htmlspecialchars($s['academic_goals'] ?? $s['course_of_study'] ?? $s['course_first_choice'] ?? '-') ?></div>
+          </div>
+          <div class="field field-full">
+            <div class="field-label">Previous Education</div>
+            <div class="field-value"><?= htmlspecialchars($s['previous_education'] ?? $s['secondary_school'] ?? '-') ?></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-title">Sponsor / Guardian</div>
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">Name</div>
+            <div class="field-value"><?= htmlspecialchars($s['sponsor_name'] ?? $s['guardian_name'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Phone</div>
+            <div class="field-value"><?= htmlspecialchars($s['sponsor_phone'] ?? $s['guardian_phone'] ?? '-') ?></div>
+          </div>
+          <div class="field field-full">
+            <div class="field-label">Address</div>
+            <div class="field-value"><?= htmlspecialchars($s['sponsor_address'] ?? $s['guardian_address'] ?? '-') ?></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-title">Next of Kin</div>
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">Name</div>
+            <div class="field-value"><?= htmlspecialchars($s['next_of_kin_name'] ?? $s['emergency_contact_name'] ?? '-') ?></div>
+          </div>
+          <div class="field">
+            <div class="field-label">Phone</div>
+            <div class="field-value"><?= htmlspecialchars($s['next_of_kin_phone'] ?? $s['emergency_contact_phone'] ?? '-') ?></div>
+          </div>
+          <div class="field field-full">
+            <div class="field-label">Address</div>
+            <div class="field-value"><?= htmlspecialchars($s['next_of_kin_address'] ?? '-') ?></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-title">Registration Status</div>
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">Status</div>
+            <div class="field-value">
+              <?php 
+                $status = strtolower($s['status'] ?? 'pending');
+                $statusClass = $status === 'confirmed' ? 'status-confirmed' : ($status === 'rejected' ? 'status-rejected' : 'status-pending');
+              ?>
+              <span class="status-badge <?= $statusClass ?>"><?= htmlspecialchars(ucfirst($status)) ?></span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Registration Date</div>
+            <div class="field-value"><?= htmlspecialchars($s['created_at'] ?? '-') ?></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="print-btn" onclick="window.print()">
+      <span>🖨️ Print</span>
+    </button>
+  </body>
+  </html>
+  <?php
+  exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'];
     $id = (int)$_GET['id'];
