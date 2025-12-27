@@ -1,4 +1,9 @@
 <?php
+// SEO Configuration
+require_once __DIR__ . '/includes/seo-helpers.php';
+set_page_title('Excellence in Education', true);
+define('PAGE_DESCRIPTION', SEO_DESC_HOME);
+
 // Ensure we have a PDO connection available. Header may already include DB; try loading it if not.
 $programs = [];
 if (!isset($pdo) || !$pdo) {
