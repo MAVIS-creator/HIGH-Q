@@ -68,6 +68,7 @@ if ($idx !== false) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Modern Admin Theme (must come before legacy admin.css to set variables) -->
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-modern.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/account-settings-modal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-style.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/notifications.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
@@ -83,6 +84,7 @@ if ($idx !== false) {
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/viewport-check.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/admin-forms.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/profile-modal.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/account-settings-modal.js" defer></script>
     <?php
     // Output the correct admin.css for the detected admin path
     echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($adminBasePath) . "/assets/css/admin.css\">\n";
@@ -203,7 +205,7 @@ if ($idx !== false) {
                                 <i class='bx bx-user'></i>
                                 <span>Profile Settings</span>
                             </a>
-                            <a href="index.php?pages=settings" class="profile-dropdown-item">
+                            <a href="javascript:void(0)" onclick="openAccountSettings()" class="profile-dropdown-item">
                                 <i class='bx bx-cog'></i>
                                 <span>Account Settings</span>
                             </a>
