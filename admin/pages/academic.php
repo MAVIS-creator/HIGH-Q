@@ -1211,8 +1211,8 @@ if ($__hqStandalone) {
           <?php endif; ?>
         </div>
         
-        <!-- Export Button -->
-        <a href="index.php?pages=academic&action=export_csv&source=<?= htmlspecialchars($current_source) ?>" 
+        <!-- Export Button - Uses API endpoint -->
+        <a href="api/export_registration.php?action=export_csv&source=<?= htmlspecialchars($current_source) ?>" 
            class="btn btn-sm btn-warning ms-2" 
            style="background: #ffd600; border-color: #ffd600; color: #0b1a2c; font-weight: 600;">
           <i class='bx bx-download'></i> Export CSV
