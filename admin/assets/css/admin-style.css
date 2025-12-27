@@ -9,23 +9,22 @@
 
 /* Make admin footer stick to bottom and not overlap sidebar */
 .admin-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: calc(100% - var(--sidebar-width));
-    margin-left: var(--sidebar-width);
-    background: linear-gradient(90deg, #ffd54f, #ffb300);
+    position: fixed !important;
+    bottom: 0 !important;
+    left: var(--sidebar-width) !important;
+    right: 0 !important;
+    width: auto !important;
+    margin-left: 0 !important;
+    background: linear-gradient(90deg, #ffd54f, #ffb300) !important;
     color: #111;
     box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
     border-top: none;
-    z-index: 999;
-    transition: width 0.3s ease, margin-left 0.3s ease;
+    z-index: 999 !important;
+    transition: left 0.3s ease;
 }
 
 body.sidebar-collapsed .admin-footer {
-    width: 100%;
-    margin-left: 0;
+    left: 0 !important;
 }
 
 .footer-card {
