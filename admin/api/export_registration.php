@@ -117,6 +117,110 @@ if ($action === 'export_csv') {
     }
 }
 
+// PDF Export for bulk registrations
+if ($action === 'export_pdf') {
+    requirePermission('academic');
+    
+    // Require Dompdf
+    require_once __DIR__ . '/../../vendor/autoload.php';
+    
+    if (!class_exists('\Dompdf\Dompdf')) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'PDF library not installed']);
+        exit;
+    }
+    
+    $source = $_GET['source'] ?? 'regular';
+    $table = 'student_registrations';
+    
+    if ($source === 'postutme') {
+        $table = 'post_utme_registrations';
+    } elseif ($source === 'universal') {
+        $table = 'universal_registrations';
+    }
+    
+    try {
+        $check = $pdo->query("SHOW TABLES LIKE '$table'")->fetch();
+        if (!$check) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Table not found']); 
+            exit;
+        }
+        
+        $stmt = $pdo->query("SELECT * FROM $table ORDER BY created_at DESC");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($rows)) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'No registrations found']); 
+            exit;
+        }
+        
+        // Build HTML for PDF
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8">
+        <style>
+            body { font-family: Arial, sans-serif; font-size: 10px; }
+            h1 { color: #0b1a2c; font-size: 18px; border-bottom: 2px solid #ffd600; padding-bottom: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th { background: #0b1a2c; color: #ffd600; padding: 8px 5px; text-align: left; font-size: 9px; }
+            td { padding: 6px 5px; border-bottom: 1px solid #ddd; font-size: 9px; }
+            tr:nth-child(even) { background: #f9f9f9; }
+            .header-logo { text-align: center; margin-bottom: 20px; }
+            .header-logo h2 { color: #0b1a2c; margin: 0; }
+            .header-logo p { color: #666; margin: 5px 0; }
+            .footer { text-align: center; margin-top: 20px; font-size: 8px; color: #666; }
+        </style></head><body>';
+        
+        $html .= '<div class="header-logo">';
+        $html .= '<h2>HIGH Q SOLID ACADEMY</h2>';
+        $html .= '<p>Registration Export - ' . ucfirst($source) . ' | Generated: ' . date('F j, Y g:i A') . '</p>';
+        $html .= '</div>';
+        
+        $html .= '<h1>All Registrations (' . count($rows) . ' total)</h1>';
+        $html .= '<table><thead><tr>';
+        $html .= '<th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Program</th><th>Status</th><th>Date</th>';
+        $html .= '</tr></thead><tbody>';
+        
+        foreach ($rows as $row) {
+            $name = trim(($row['surname'] ?? $row['last_name'] ?? '') . ' ' . ($row['other_names'] ?? $row['first_name'] ?? ''));
+            $program = $row['program_type'] ?? $row['exam_type'] ?? $row['course_first_choice'] ?? '-';
+            $html .= '<tr>';
+            $html .= '<td>' . htmlspecialchars($row['id']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($name) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['email'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['phone'] ?? $row['phone_number'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars($program) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['status'] ?? $row['payment_status'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars(date('M j, Y', strtotime($row['created_at']))) . '</td>';
+            $html .= '</tr>';
+        }
+        
+        $html .= '</tbody></table>';
+        $html .= '<div class="footer">HIGH Q SOLID ACADEMY - Always Ahead of Others | © ' . date('Y') . '</div>';
+        $html .= '</body></html>';
+        
+        // Generate PDF
+        $options = new \Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        
+        $dompdf = new \Dompdf\Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="registrations_' . $source . '_' . date('Y-m-d_His') . '.pdf"');
+        echo $dompdf->output();
+        exit;
+        
+    } catch (Throwable $e) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'PDF Export failed: ' . $e->getMessage()]);
+        exit;
+    }
+}
+
 header('Content-Type: application/json');
 
 // Quick runtime checks
