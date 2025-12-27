@@ -379,7 +379,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
             <!-- Register Button -->
             <div class="d-none d-lg-block">
-              <a href="<?= app_url('register-new.php') ?>" class="btn btn-primary">Find Your Path</a>
+              <a href="<?= app_url('find-your-path-quiz.php') ?>" class="btn btn-primary"><i class='bx bx-compass me-1'></i>Find Your Path</a>
             </div>
           </div>
 
