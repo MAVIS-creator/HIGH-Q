@@ -214,6 +214,14 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <meta charset="UTF-8">
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SEO Meta Tags -->
+  <?php if (defined('PAGE_DESCRIPTION')): ?>
+  <meta name="description" content="<?php echo htmlspecialchars(PAGE_DESCRIPTION, ENT_QUOTES, 'UTF-8'); ?>">
+  <?php endif; ?>
+  <?php if (function_exists('auto_robots_tag')): ?>
+  <?php echo auto_robots_tag(); ?>
+  <?php endif; ?>
+  
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="<?= app_url('assets/images/favicon.ico') ?>">
   <link rel="apple-touch-icon" sizes="180x180" href="<?= app_url('assets/images/apple-touch-icon.png') ?>">
