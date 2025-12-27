@@ -140,16 +140,3 @@ try {
         'message' => $e->getMessage()
     ]);
 }
-
-
-    echo json_encode([
-        'success' => true,
-        'message' => 'Profile updated successfully'
-    ]);
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ]);
-}
