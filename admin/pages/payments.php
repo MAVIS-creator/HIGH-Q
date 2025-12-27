@@ -472,38 +472,38 @@ $totalPages = (int)ceil($total / $perPage);
         <form method="get" action="index.php?pages=payments" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
             <input type="hidden" name="pages" value="payments">
             
-            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 120px;\">
-                <label style=\"font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;\">Status</label>
-                <select name=\"status\" style=\"padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-weight: 600; font-size: 0.85rem;\">
-                    <option value=\"\"<?= $statusFilter===''? ' selected':'' ?>>All</option>
-                    <option value=\"pending\"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
-                    <option value=\"confirmed\"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
-                    <option value=\"failed\"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 120px;">
+                <label style="font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;">Status</label>
+                <select name="status" style="padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-weight: 600; font-size: 0.85rem;">
+                    <option value=""<?= $statusFilter===''? ' selected':'' ?>>All</option>
+                    <option value="pending"<?= $statusFilter==='pending'? ' selected':'' ?>>Pending</option>
+                    <option value="confirmed"<?= $statusFilter==='confirmed'? ' selected':'' ?>>Confirmed</option>
+                    <option value="failed"<?= $statusFilter==='failed'? ' selected':'' ?>>Failed</option>
                 </select>
             </div>
             
-            <div style=\"display: flex; flex-direction: column; gap: 0.25rem;\">
-                <label style=\"font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;\">From</label>
-                <input type=\"date\" name=\"from_date\" value=\"<?= htmlspecialchars($_GET['from_date'] ?? '') ?>\" style=\"padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem;\">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label style="font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;">From</label>
+                <input type="date" name="from_date" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>" style="padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem;">
             </div>
             
-            <div style=\"display: flex; flex-direction: column; gap: 0.25rem;\">
-                <label style=\"font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;\">To</label>
-                <input type=\"date\" name=\"to_date\" value=\"<?= htmlspecialchars($_GET['to_date'] ?? '') ?>\" style=\"padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem;\">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label style="font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;">To</label>
+                <input type="date" name="to_date" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>" style="padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem;">
             </div>
             
-            <div style=\"display: flex; flex-direction: column; gap: 0.25rem;\">
-                <label style=\"font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;\">Reference</label>
-                <input type=\"text\" name=\"ref\" placeholder=\"Ref\" value=\"<?= htmlspecialchars($_GET['ref'] ?? '') ?>\" style=\"padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem; width: 100px;\">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label style="font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;">Reference</label>
+                <input type="text" name="ref" placeholder="Ref" value="<?= htmlspecialchars($_GET['ref'] ?? '') ?>" style="padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem; width: 100px;">
             </div>
             
-            <div style=\"display: flex; flex-direction: column; gap: 0.25rem;\">
-                <label style=\"font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;\">Email</label>
-                <input type=\"text\" name=\"user_email\" placeholder=\"Email\" value=\"<?= htmlspecialchars($_GET['user_email'] ?? '') ?>\" style=\"padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem; width: 120px;\">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label style="font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase;">Email</label>
+                <input type="text" name="user_email" placeholder="Email" value="<?= htmlspecialchars($_GET['user_email'] ?? '') ?>" style="padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; font-size: 0.85rem; width: 120px;">
             </div>
             
-            <div style=\"display: flex; gap: 0.5rem; align-items: flex-end;\">
-                <button type=\"submit\" style=\"padding: 0.5rem 1rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;\">
+            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                <button type="submit" style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;">
                     <i class='bx bx-search'></i> Filter
                 </button>
                 <a href="index.php?pages=payments" style="padding: 0.5rem 0.75rem; background: white; color: #666; border: 1px solid #ddd; border-radius: 0.5rem; font-weight: 600; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;">
