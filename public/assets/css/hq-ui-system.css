@@ -184,7 +184,7 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: 3;
   }
   
   .particles-canvas {
@@ -193,7 +193,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.3;
+    opacity: 0.5;
   }
   
   /* Hero content should be above particles */
@@ -209,12 +209,12 @@
     /* Preserve centering from public.css */
   }
   
-  /* Particles container positioning */
+  /* Particles container - above overlay, below content */
   .particles-container {
-    z-index: 1 !important;
+    z-index: 3 !important;
   }
   
-  /* Overlay should be between particles and content */
+  /* Overlay should be between background and particles */
   .about-hero-overlay,
   .contact-hero-overlay,
   .courses-hero-overlay {
