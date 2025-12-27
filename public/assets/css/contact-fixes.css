@@ -48,6 +48,13 @@
 
 /* FAQ styles - Mobile only (768px and below) */
 @media (max-width: 768px) {
+  /* FAQ card container should expand with content */
+  .faq-card {
+    overflow: visible;
+    height: auto;
+    transition: all 0.3s ease;
+  }
+
   /* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
   .faq-clamped::after {
     content: '';
@@ -58,6 +65,7 @@
     height: 50px;
     background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1));
     pointer-events: none;
+    transition: opacity 0.3s ease;
   }
 
   /* FAQ read-more/show-less button - mobile only */
@@ -86,17 +94,19 @@
     overflow: hidden;
     max-height: 80px; /* approx 3-4 lines */
     position: relative;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.4s ease-out;
   }
 
+  /* When expanded - content AND card grow together */
   .faq-clamped--expanded {
-    max-height: 500px !important; /* Large enough for any content */
-    overflow: visible;
+    max-height: 800px !important; /* Large enough for any content */
+    overflow: visible !important;
   }
 
   .faq-clamped--expanded::after {
     display: none !important;
-    opacity: 0;
+    opacity: 0 !important;
+    height: 0 !important;
   }
 }
 
