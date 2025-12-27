@@ -1,9 +1,9 @@
 <?php
 // admin/pages/testimonials.php
-require_once '../includes/auth.php';
-require_once '../includes/db.php';
-require_once '../includes/functions.php';
-require_once '../includes/csrf.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 $pageTitle = 'Testimonials';
 $pageSubtitle = 'Manage student success stories and testimonials';
