@@ -6,27 +6,97 @@ require_once __DIR__ . '/config/functions.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $goal = trim($_POST['goal'] ?? '');
     $qualification = trim($_POST['qualification'] ?? '');
+    $learningStyle = trim($_POST['learning_style'] ?? '');
+    $commitment = trim($_POST['commitment'] ?? '');
+    $schedule = trim($_POST['schedule'] ?? '');
+    $experience = trim($_POST['experience'] ?? '');
+    $budget = trim($_POST['budget'] ?? '');
     
-    // Validate inputs
-    if (empty($goal) || empty($qualification)) {
-        $error = 'Please answer all questions to continue.';
+    // Validate all inputs
+    if (empty($goal) || empty($qualification) || empty($learningStyle) || empty($commitment) 
+        || empty($schedule) || empty($experience) || empty($budget)) {
+        $error = 'Please answer all questions to get your personalized recommendation.';
     } else {
-        // Determine recommended path based on answers
-        $recommendedPath = 'jamb'; // default
+        // Intelligent scoring system
+        $scores = [
+            'jamb' => 0,
+            'waec' => 0,
+            'postutme' => 0,
+            'digital' => 0,
+            'international' => 0
+        ];
         
-        if ($goal === 'career') {
-            $recommendedPath = 'digital';
-        } elseif ($goal === 'university') {
-            // Check qualification to determine which university path
-            if (in_array($qualification, ['ssce', 'gce'])) {
-                $recommendedPath = 'jamb';
-            } elseif ($qualification === 'diploma' || $qualification === 'degree') {
-                $recommendedPath = 'postutme';
+        // Score based on goal (40% weight)
+        if ($goal === 'university') {
+            $scores['jamb'] += 3;
+            $scores['waec'] += 2;
+            $scores['postutme'] += 3;
+        } elseif ($goal === 'career') {
+            $scores['digital'] += 4;
+            $scores['international'] += 1;
+        } elseif ($goal === 'international') {
+            $scores['international'] += 5;
+            $scores['postutme'] += 1;
+        }
+        
+        // Score based on qualification (20% weight)
+        if (in_array($qualification, ['inschool', 'ssce', 'gce'])) {
+            $scores['jamb'] += 2;
+            $scores['waec'] += 2;
+        } elseif ($qualification === 'diploma' || $qualification === 'degree') {
+            $scores['postutme'] += 3;
+            $scores['international'] += 1;
+        }
+        
+        // Score based on learning style (15% weight)
+        if ($learningStyle === 'structured') {
+            $scores['jamb'] += 2;
+            $scores['waec'] += 2;
+            $scores['postutme'] += 1;
+        } elseif ($learningStyle === 'project') {
+            $scores['digital'] += 3;
+            $scores['international'] += 1;
+        } elseif ($learningStyle === 'mixed') {
+            foreach ($scores as $key => $val) {
+                $scores[$key] += 1;
             }
         }
         
+        // Score based on commitment (10% weight)
+        if ($commitment === 'flexible') {
+            $scores['digital'] += 2;
+        } elseif ($commitment === 'parttime') {
+            foreach ($scores as $key => $val) {
+                $scores[$key] += 1;
+            }
+        } elseif ($commitment === 'intensive') {
+            $scores['jamb'] += 2;
+            $scores['waec'] += 2;
+        }
+        
+        // Score based on schedule (8% weight)
+        if ($schedule === 'weekday') {
+            $scores['postutme'] += 1;
+        } elseif ($schedule === 'weekend') {
+            $scores['digital'] += 1;
+        }
+        
+        // Score based on experience (5% weight)
+        if ($experience === 'experienced') {
+            $scores['international'] += 1;
+            $scores['postutme'] += 1;
+        }
+        
+        // Score based on budget (2% weight)
+        if ($budget === 'flexible') {
+            $scores['international'] += 1;
+        }
+        
+        // Find top recommendation
+        $recommendedPath = array_key_first(array_filter($scores, fn($score) => $score === max($scores)));
+        
         // Redirect to registration with recommended path
-        header("Location: register-new.php?recommended=$recommendedPath&goal=$goal&qual=$qualification");
+        header("Location: register-new.php?recommended=$recommendedPath&goal=$goal&qual=$qualification&match=" . max($scores));
         exit;
     }
 }
