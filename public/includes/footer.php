@@ -83,7 +83,7 @@
         <li><a href="<?= app_url('index.php') ?>">Home</a></li>
         <li><a href="<?= app_url('about.php') ?>">About Us</a></li>
         <li><a href="<?= app_url('programs.php') ?>">Programs</a></li>
-        <li><a href="<?= app_url('register.php') ?>">Admission</a></li>
+        <li><a href="<?= app_url('register-new.php') ?>">Admission</a></li>
         <li><a href="<?= app_url('contact.php') ?>">Contact</a></li>
       </ul>
     </div>
