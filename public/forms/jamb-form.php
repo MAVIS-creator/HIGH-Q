@@ -138,6 +138,41 @@
                 <input type="text" id="local_government" name="local_government" class="form-control" required placeholder="Enter your LGA">
             </div>
         </div>
+        
+        <!-- Passport Photo Upload -->
+        <div class="form-group">
+            <label for="passport_photo">Passport Photograph <span class="text-danger">*</span></label>
+            <div class="passport-upload-area" style="border: 2px dashed #d1d5db; border-radius: 12px; padding: 20px; text-align: center; background: #fafafa;">
+                <input type="file" id="passport_photo" name="passport_photo" class="form-control" accept="image/jpeg,image/png,image/jpg" required style="display: none;">
+                <div class="upload-preview" id="passport-preview" style="margin-bottom: 10px;">
+                    <i class='bx bxs-camera' style="font-size: 48px; color: #9ca3af;"></i>
+                </div>
+                <label for="passport_photo" style="cursor: pointer; display: inline-block; background: linear-gradient(135deg, var(--hq-navy, #0b1a2c), #1e3a8a); color: #ffd600; padding: 10px 20px; border-radius: 8px; font-weight: 600;">
+                    <i class='bx bx-upload'></i> Upload Passport Photo
+                </label>
+                <p style="font-size: 12px; color: #6b7280; margin-top: 10px;">
+                    <strong>Requirements:</strong> Recent passport photograph, white background, JPEG/PNG format, max 2MB
+                </p>
+            </div>
+        </div>
+        
+        <script>
+        document.getElementById('passport_photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB');
+                    e.target.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('passport-preview').innerHTML = '<img src="' + e.target.result + '" style="max-width: 150px; max-height: 180px; border-radius: 8px; border: 3px solid #ffd600;">';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        </script>
     </div>
 
     <!-- JAMB-Specific Information -->
