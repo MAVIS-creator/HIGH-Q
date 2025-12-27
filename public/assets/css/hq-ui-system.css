@@ -51,42 +51,38 @@
 /* ==========================================================================
    Darkened Hero Backgrounds (Blue-White Gradient for non-home pages)
    ========================================================================== */
-/* Only apply to non-home hero sections - home.php keeps its yellow gradient */
-.about-hero,
-.contact-hero,
-.courses-hero,
-.register-hero,
-.path-hero {
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b5998 50%, #5a7db5 100%) !important;
-  position: relative;
-  overflow: hidden;
+/* Blue-white gradient for non-home hero sections */
+/* NOTE: Only adds gradient overlay - does NOT override existing hero backgrounds */
+.about-hero .about-hero-overlay,
+.contact-hero .contact-hero-overlay,
+.courses-hero .courses-hero-overlay,
+.register-hero .register-hero-overlay {
+  background: linear-gradient(180deg, rgba(30, 58, 138, 0.85), rgba(59, 89, 152, 0.75)) !important;
 }
 
-/* Blue-white gradient overlay for non-home heroes */
-.about-hero::before,
-.contact-hero::before,
-.courses-hero::before,
-.register-hero::before,
-.path-hero::before {
+/* Add subtle white radial glow to hero sections (excluding home.php) */
+.about-hero .about-hero-overlay::after,
+.contact-hero .contact-hero-overlay::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
   pointer-events: none;
-  z-index: 0;
 }
 
-/* Ensure inner content is above overlay */
+/* Ensure hero inner content stays centered and above particles */
 .about-hero-inner,
 .contact-hero-inner,
 .courses-hero-inner,
 .register-hero-inner,
 .path-hero-inner {
   position: relative;
-  z-index: 2;
+  z-index: 5;
+  text-align: center;
+  width: 100%;
 }
 
 /* ==========================================================================
@@ -153,15 +149,23 @@
   .about-hero > .container,
   .about-hero-inner,
   .contact-hero > .container,
-  .courses-hero > .container {
+  .courses-hero > .container,
+  .register-hero > .container,
+  .path-hero > .container {
     position: relative;
-    z-index: 2;
+    z-index: 5;
   }
   
-  /* Ensure about-hero inner text is centered */
-  .about-hero-inner {
-    text-align: center;
-    width: 100%;
+  /* Particles container positioning */
+  .particles-container {
+    z-index: 1 !important;
+  }
+  
+  /* Overlay should be between particles and content */
+  .about-hero-overlay,
+  .contact-hero-overlay,
+  .courses-hero-overlay {
+    z-index: 2 !important;
   }
 }
 
