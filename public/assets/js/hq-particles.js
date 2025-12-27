@@ -194,8 +194,8 @@
   function initParticles() {
     const isHome = isHomePage();
     
-    // Get all hero sections
-    const allHeros = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero, .path-hero, .register-hero');
+    // Get all hero sections - include all hero variants
+    const allHeros = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero, .path-hero, .register-hero, .programs-hero, .news-hero, .quiz-hero');
     
     if (allHeros.length === 0) {
       // No hero sections found, retry after a short delay

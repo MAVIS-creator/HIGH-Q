@@ -51,23 +51,43 @@
 /* ==========================================================================
    Darkened Hero Backgrounds (Blue-White Gradient for non-home pages)
    ========================================================================== */
-/* Blue-white gradient for non-home hero sections */
-/* Most pages use .about-hero class so we target that specifically */
-.about-hero .about-hero-overlay {
-  background: linear-gradient(180deg, rgba(30, 58, 138, 0.9), rgba(59, 89, 152, 0.8)) !important;
+/* Blue-white gradient for ALL non-home hero sections */
+/* Apply to .about-hero overlay which is used across about, contact, programs, register, news pages */
+.about-hero .about-hero-overlay,
+.contact-hero .contact-hero-overlay,
+.courses-hero .courses-hero-overlay,
+.register-hero .register-hero-overlay,
+.programs-hero .programs-hero-overlay,
+.news-hero .news-hero-overlay {
+  background: linear-gradient(180deg, rgba(30, 58, 138, 0.92), rgba(11, 26, 44, 0.88)) !important;
 }
 
-/* Add subtle white radial glow to hero sections (excluding home.php) */
-.about-hero .about-hero-overlay::after {
+/* Add subtle yellow radial glow to hero sections (excluding home.php) */
+.about-hero .about-hero-overlay::after,
+.contact-hero .contact-hero-overlay::after,
+.courses-hero .courses-hero-overlay::after,
+.register-hero .register-hero-overlay::after,
+.programs-hero .programs-hero-overlay::after,
+.news-hero .news-hero-overlay::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 30%, rgba(255, 214, 0, 0.12) 0%, transparent 60%);
   pointer-events: none;
   z-index: 1;
+}
+
+/* Ensure hero titles use HQ yellow on blue backgrounds */
+.about-hero h1,
+.contact-hero h1,
+.courses-hero h1,
+.register-hero h1,
+.programs-hero h1,
+.news-hero h1 {
+  color: var(--hq-yellow, #ffd600) !important;
 }
 
 /* Path hero pages have their own gradient colors defined inline */
@@ -78,6 +98,8 @@
 .contact-hero-inner,
 .courses-hero-inner,
 .register-hero-inner,
+.programs-hero-inner,
+.news-hero-inner,
 .path-hero-inner {
   position: relative;
   z-index: 5;
@@ -90,6 +112,8 @@
 .contact-hero > .particles-container,
 .courses-hero > .particles-container,
 .register-hero > .particles-container,
+.programs-hero > .particles-container,
+.news-hero > .particles-container,
 .path-hero > .particles-container,
 .hero > .particles-container {
   position: absolute !important;
@@ -105,8 +129,12 @@
 .about-hero-overlay,
 .contact-hero-overlay,
 .courses-hero-overlay,
-.register-hero-overlay {
+.register-hero-overlay,
+.programs-hero-overlay,
+.news-hero-overlay {
   z-index: 2 !important;
+  position: absolute !important;
+  inset: 0 !important;
 }
 
 /* ==========================================================================
