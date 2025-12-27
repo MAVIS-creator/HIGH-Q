@@ -1,28 +1,26 @@
 /**
- * HQ Particles - Neural Network Animation
- * Desktop only (min-width: 1024px)
+ * HQ Particles - Floating Bubble Animation
+ * All pages except home.php hero (min-width: 768px)
  * Respects prefers-reduced-motion
  */
 (function() {
   'use strict';
   
-  // Only run on desktop with no reduced motion preference
-  const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+  // Reduced motion check
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
-  if (!isDesktop || prefersReducedMotion) {
+  if (prefersReducedMotion) {
     return;
   }
   
-  // Configuration
+  // Configuration - Bubble effects
   const config = {
-    particleCount: 50,
-    maxDistance: 150,
-    particleSpeed: 0.5,
-    particleSize: 2,
-    lineWidth: 1,
-    particleColor: 'rgba(255, 255, 255, 0.6)',
-    lineColor: 'rgba(255, 255, 255, 0.2)'
+    particleCount: 40,
+    particleSpeed: 0.2,
+    minParticleSize: 8,
+    maxParticleSize: 25,
+    particleColor: 'rgba(255, 215, 0, 0.4)', // Yellow with transparency
+    particleGradient: 'rgba(255, 215, 0, 0.6)' // Brighter yellow for gradient
   };
   
   class Particle {
