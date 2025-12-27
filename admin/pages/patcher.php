@@ -623,7 +623,10 @@ $adminUsername = $_SESSION['user']['full_name'] ?? $_SESSION['user']['username']
     </div>
 
     <script>
-        const API = '../api/patcher.php';
+        // Determine API base path dynamically
+        const currentPath = window.location.pathname;
+        const adminBase = currentPath.substring(0, currentPath.indexOf('/admin') + 6);
+        const API = adminBase + '/api/patcher.php';
         let currentFile = null;
         let originalContent = '';
         let isEditMode = false;

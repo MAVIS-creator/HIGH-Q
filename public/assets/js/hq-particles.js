@@ -17,24 +17,24 @@
   
   // Configuration - Different colors for different pages
   const configYellow = {
-    particleCount: 35,
-    particleSpeed: 0.15,
-    minParticleSize: 6,
-    maxParticleSize: 20,
-    particleColor: 'rgba(255, 215, 0, 0.35)', // Yellow with transparency
-    particleGradient: 'rgba(255, 215, 0, 0.55)', // Brighter yellow for gradient
-    borderColor: 'rgba(255, 215, 0, 0.25)'
+    particleCount: 40,
+    particleSpeed: 0.18,
+    minParticleSize: 10,
+    maxParticleSize: 28,
+    particleColor: 'rgba(255, 215, 0, 0.5)', // Yellow with more visibility
+    particleGradient: 'rgba(255, 215, 0, 0.7)', // Brighter yellow for gradient
+    borderColor: 'rgba(255, 215, 0, 0.35)'
   };
   
-  // For home.php (yellow background) - use soft golden/amber bubbles for professional look
+  // For home.php (yellow background) - use visible golden/amber bubbles
   const configHome = {
-    particleCount: 40,
-    particleSpeed: 0.10,
-    minParticleSize: 8,
-    maxParticleSize: 25,
-    particleColor: 'rgba(200, 160, 50, 0.25)', // Soft amber/gold with transparency
-    particleGradient: 'rgba(220, 180, 80, 0.4)', // Warm golden gradient
-    borderColor: 'rgba(180, 140, 40, 0.15)'
+    particleCount: 45,
+    particleSpeed: 0.12,
+    minParticleSize: 12,
+    maxParticleSize: 35,
+    particleColor: 'rgba(180, 140, 50, 0.45)', // Visible amber/gold
+    particleGradient: 'rgba(200, 160, 80, 0.6)', // Warm golden gradient
+    borderColor: 'rgba(160, 120, 30, 0.25)'
   };
   
   class Particle {
