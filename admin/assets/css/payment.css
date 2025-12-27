@@ -8,16 +8,13 @@
 }
 
 /* layout */
-.page-container { max-width: 1100px; margin: 0 auto; padding: 18px 12px; }
-
-.admin-payment-card {
-    margin: 18px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 8px 24px rgba(11, 37, 64, 0.04);
+.payment-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1.25rem;
 }
+
+.created-link-wrap { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
 
 .admin-payment-card h1,
 .admin-payment-card h3 {
@@ -52,7 +49,7 @@
 
 .admin-payment-actions {
     display: flex;
-    gap: 12px;
+    gap: 14px;
     align-items: center;
     margin-top: 12px;
 }
@@ -99,8 +96,9 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* side tips */
-.admin-payment-side { max-width: 860px; }
+/* aside sticky */
+.payment-aside { position: sticky; top: 96px; }
+.payment-tips { margin:0; padding-left: 18px; color:#444; line-height:1.6; }
 
 /* History table */
 .admin-payment-card table.table {
@@ -135,6 +133,6 @@
 
 /* responsive tweaks */
 @media (max-width: 900px) {
-    .admin-payment-card { padding: 14px; }
+    .payment-grid { grid-template-columns: 1fr; }
     .admin-payment-actions { flex-direction: column; align-items: stretch; }
 }
