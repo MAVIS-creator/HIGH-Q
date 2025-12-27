@@ -145,10 +145,29 @@
     saveBtn?.addEventListener('click', save);
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
 
-    const log = msg=>console.log('[account-settings]', msg);
-    const bindClick = (id, msg)=>{ const el=document.getElementById(id); if(el) el.addEventListener('click', ()=>log(msg)); };
-    bindClick('settingsDownloadData','download data');
-    bindClick('settingsDeleteAccount','delete account');
+    const downloadBtn = document.getElementById('settingsDownloadData');
+    if(downloadBtn) downloadBtn.addEventListener('click', downloadData);
+    const deleteBtn = document.getElementById('settingsDeleteAccount');
+    if(deleteBtn) deleteBtn.addEventListener('click', deleteAccount);
+    
+    // Load saved preferences on open
+    try {
+      const saved = localStorage.getItem('hq_admin_prefs');
+      if(saved){
+        const prefs = JSON.parse(saved);
+        const setVal = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val; };
+        const setCheck = (id,val)=>{ const el=document.getElementById(id); if(el) el.checked=!!val; };
+        setVal('settingsTheme', prefs.theme||'light');
+        setVal('settingsDensity', prefs.density||'comfortable');
+        setCheck('settingsReduceMotion', prefs.reduceMotion);
+        setCheck('settingsEmailSystem', prefs.notifSystem);
+        setCheck('settingsEmailUsers', prefs.notifUsers);
+        setCheck('settingsEmailPayments', prefs.notifPayments);
+        setCheck('settingsInAppAlerts', prefs.notifInApp);
+        setCheck('settingsShowOnline', prefs.showOnline);
+        setCheck('settingsShowLastActive', prefs.showLastActive);
+      }
+    } catch(e){}
   }
 
   window.openAccountSettings = open;
