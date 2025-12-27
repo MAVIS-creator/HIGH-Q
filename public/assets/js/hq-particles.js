@@ -83,10 +83,16 @@
       this.container = container;
       this.canvas = document.createElement('canvas');
       this.canvas.className = 'particles-canvas';
+      this.canvas.style.position = 'absolute';
+      this.canvas.style.top = '0';
+      this.canvas.style.left = '0';
+      this.canvas.style.pointerEvents = 'none';
+      this.canvas.style.zIndex = '1';
       this.ctx = this.canvas.getContext('2d');
       this.particles = [];
       this.animationId = null;
       
+      this.container.style.position = 'relative';
       this.container.appendChild(this.canvas);
       this.resize();
       this.init();
@@ -101,30 +107,13 @@
     }
     
     init() {
+      // Clear existing particles
+      this.particles = [];
+      
       for (let i = 0; i < config.particleCount; i++) {
         this.particles.push(new Particle(this.canvas));
       }
       this.animate();
-    }
-    
-    connectParticles() {
-      for (let i = 0; i < this.particles.length; i++) {
-        for (let j = i + 1; j < this.particles.length; j++) {
-          const dx = this.particles[i].x - this.particles[j].x;
-          const dy = this.particles[i].y - this.particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < config.maxDistance) {
-            const opacity = 1 - (distance / config.maxDistance);
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = config.lineColor.replace('0.2', (opacity * 0.2).toString());
-            this.ctx.lineWidth = config.lineWidth;
-            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
-            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
-            this.ctx.stroke();
-          }
-        }
-      }
     }
     
     animate() {
@@ -135,9 +124,6 @@
         particle.update();
         particle.draw(this.ctx);
       });
-      
-      // Connect nearby particles
-      this.connectParticles();
       
       this.animationId = requestAnimationFrame(() => this.animate());
     }
