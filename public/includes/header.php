@@ -272,11 +272,17 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="<?= app_url('assets/css/hero-fixed.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/offcanvas.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/contact-fixes.css') ?>">
+  <!-- HQ UI/UX System (device-responsive design) -->
+  <link rel="stylesheet" href="<?= app_url('assets/css/hq-ui-system.css') ?>">
   <link rel="shortcut icon" href="<?= app_url('assets/images/favicon.ico') ?>" type="image/x-icon">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- HQ Animations helper -->
   <script defer src="<?= app_url('assets/js/hq-animations.js') ?>"></script>
+  <!-- HQ UI/UX System Scripts -->
+  <script defer src="<?= app_url('assets/js/hq-particles.js') ?>"></script>
+  <script defer src="<?= app_url('assets/js/hq-magnetic.js') ?>"></script>
+  <script defer src="<?= app_url('assets/js/hq-ripple.js') ?>"></script>
   </head>
 
   <body class="hq-public">
