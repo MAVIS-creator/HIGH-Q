@@ -146,6 +146,42 @@ $csrf = generateToken('signup_form');
     window.HQ_APP_BASE = <?= json_encode(rtrim($HQ_EFFECTIVE_BASE, '/')) ?>;
     if (!window.HQ_BASE) window.HQ_BASE = window.HQ_APP_BASE;
   </script>
+  
+  <!-- Progress Steps Indicator -->
+  <div style="max-width: 800px; margin: 30px auto 0; padding: 0 20px;">
+    <div style="display: flex; align-items: center; justify-content: center; position: relative;">
+      <!-- Step 1: Choose Program -->
+      <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #9ca3af; font-size: 14px;">
+          <i class='bx bx-check' style="font-size: 20px;"></i>
+        </div>
+        <span style="margin-top: 8px; font-size: 12px; color: #9ca3af; text-align: center;">Choose Program</span>
+      </div>
+      
+      <!-- Line 1-2 -->
+      <div style="flex: 1; height: 3px; background: #e5e7eb; margin: 0 -20px; margin-bottom: 28px;"></div>
+      
+      <!-- Step 2: Your Information -->
+      <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #9ca3af; font-size: 14px;">
+          <i class='bx bx-check' style="font-size: 20px;"></i>
+        </div>
+        <span style="margin-top: 8px; font-size: 12px; color: #9ca3af; text-align: center;">Your Information</span>
+      </div>
+      
+      <!-- Line 2-3 -->
+      <div style="flex: 1; height: 3px; background: #ffd600; margin: 0 -20px; margin-bottom: 28px;"></div>
+      
+      <!-- Step 3: Payment (Active) -->
+      <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ffd600; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0b1a2c; font-size: 14px; box-shadow: 0 4px 12px rgba(255, 214, 0, 0.4);">
+          3
+        </div>
+        <span style="margin-top: 8px; font-size: 12px; color: #0b1a2c; font-weight: 600; text-align: center;">Payment</span>
+      </div>
+    </div>
+  </div>
+  
   <main class="public-main" style="padding:28px 0;">
 <?php
 ?>
