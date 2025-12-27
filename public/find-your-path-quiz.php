@@ -1,0 +1,315 @@
+<?php
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/functions.php';
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $goal = trim($_POST['goal'] ?? '');
+    $qualification = trim($_POST['qualification'] ?? '');
+    
+    // Validate inputs
+    if (empty($goal) || empty($qualification)) {
+        $error = 'Please answer all questions to continue.';
+    } else {
+        // Determine recommended path based on answers
+        $recommendedPath = 'jamb'; // default
+        
+        if ($goal === 'career') {
+            $recommendedPath = 'digital';
+        } elseif ($goal === 'university') {
+            // Check qualification to determine which university path
+            if (in_array($qualification, ['ssce', 'gce'])) {
+                $recommendedPath = 'jamb';
+            } elseif ($qualification === 'diploma' || $qualification === 'degree') {
+                $recommendedPath = 'postutme';
+            }
+        }
+        
+        // Redirect to registration with recommended path
+        header("Location: register-new.php?recommended=$recommendedPath&goal=$goal&qual=$qualification");
+        exit;
+    }
+}
+
+include __DIR__ . '/includes/header.php';
+?>
+
+<style>
+    .quiz-hero {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        padding: 3rem 1rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .quiz-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .quiz-hero p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .quiz-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .quiz-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .question-section {
+        margin-bottom: 2rem;
+    }
+
+    .question-number {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .question-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+    }
+
+    .option {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .option:hover {
+        border-color: #4f46e5;
+        background-color: #f0f4ff;
+    }
+
+    .option input[type="radio"] {
+        margin-right: 1rem;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .option-label {
+        flex: 1;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .option-description {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-left: 2.5rem;
+        margin-top: -0.5rem;
+    }
+
+    .error-message {
+        background-color: #fee2e2;
+        color: #991b1b;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #dc2626;
+    }
+
+    .quiz-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-submit {
+        flex: 1;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-back {
+        flex: 0.5;
+        background: #f1f5f9;
+        color: #1e293b;
+        border: 2px solid #e2e8f0;
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: #e2e8f0;
+    }
+
+    .quiz-info {
+        background: #f0f9ff;
+        border-left: 4px solid #06b6d4;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .quiz-info i {
+        color: #06b6d4;
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .quiz-hero h1 {
+            font-size: 1.75rem;
+        }
+
+        .quiz-container {
+            padding: 1rem;
+        }
+
+        .quiz-card {
+            padding: 1.5rem;
+        }
+
+        .quiz-actions {
+            flex-direction: column;
+        }
+
+        .btn-back {
+            flex: 1;
+        }
+    }
+</style>
+
+<div class="quiz-hero">
+    <h1>🎯 Find Your Path</h1>
+    <p>Answer a few quick questions to discover the perfect program for you</p>
+</div>
+
+<div class="quiz-container">
+    <div class="quiz-card">
+        <div class="quiz-info">
+            <i class="bx bxs-info-circle"></i>
+            <span>This quick quiz takes less than 1 minute and will help us recommend the best program for your goals.</span>
+        </div>
+
+        <?php if (isset($error)): ?>
+            <div class="error-message">
+                <i class="bx bxs-error-circle" style="margin-right: 0.5rem;"></i>
+                <?php echo htmlspecialchars($error); ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="">
+            <!-- Question 1 -->
+            <div class="question-section">
+                <div class="question-number">1</div>
+                <div class="question-text">What is your main goal?</div>
+
+                <label class="option">
+                    <input type="radio" name="goal" value="university" required>
+                    <span class="option-label">University Admission</span>
+                </label>
+                <div class="option-description">I want to get admitted to a university in Nigeria</div>
+
+                <label class="option">
+                    <input type="radio" name="goal" value="career" required>
+                    <span class="option-label">Career & Skill Development</span>
+                </label>
+                <div class="option-description">I want to build practical skills for job opportunities</div>
+
+                <label class="option">
+                    <input type="radio" name="goal" value="international" required>
+                    <span class="option-label">International Education</span>
+                </label>
+                <div class="option-description">I'm preparing for international exams and studies abroad</div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-section">
+                <div class="question-number">2</div>
+                <div class="question-text">What is your current highest qualification?</div>
+
+                <label class="option">
+                    <input type="radio" name="qualification" value="inschool" required>
+                    <span class="option-label">Currently in Secondary School</span>
+                </label>
+                <div class="option-description">I'm still in JSS 3 or SS classes</div>
+
+                <label class="option">
+                    <input type="radio" name="qualification" value="ssce" required>
+                    <span class="option-label">SSCE/O-Levels Graduate</span>
+                </label>
+                <div class="option-description">I've completed senior secondary school</div>
+
+                <label class="option">
+                    <input type="radio" name="qualification" value="gce" required>
+                    <span class="option-label">GCE/WAEC Graduate</span>
+                </label>
+                <div class="option-description">I've completed GCE or WAEC exams</div>
+
+                <label class="option">
+                    <input type="radio" name="qualification" value="diploma" required>
+                    <span class="option-label">Diploma Graduate</span>
+                </label>
+                <div class="option-description">I've completed a diploma program</div>
+
+                <label class="option">
+                    <input type="radio" name="qualification" value="degree" required>
+                    <span class="option-label">University Degree Holder</span>
+                </label>
+                <div class="option-description">I have a bachelor's degree</div>
+            </div>
+
+            <!-- Actions -->
+            <div class="quiz-actions">
+                <button type="button" class="btn-back" onclick="window.history.back();">← Back</button>
+                <button type="submit" class="btn-submit">Find My Path →</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Alternative CTA -->
+    <div style="text-align: center; margin-top: 2rem;">
+        <p style="color: #64748b; margin-bottom: 1rem;">
+            Already know what you want? 
+            <a href="register-new.php" style="color: #4f46e5; font-weight: 600; text-decoration: none;">Go directly to registration →</a>
+        </p>
+    </div>
+</div>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
