@@ -216,40 +216,277 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   }
 </style>
 
-<!-- Testimonials / What Our Students Say -->
-<section class="testimonials-section py-5">
-  <div class="container px-3 px-md-0">
+<!-- Wall of Fame - Horizontal Scrolling Testimonials -->
+<section class="wall-of-fame-section py-5">
+  <div class="container-fluid px-3 px-md-4">
     <div class="ceo-heading text-center mb-4">
-      <h2>What Our <span class="highlight">Students Say</span></h2>
+      <h2>Wall of <span class="highlight">Fame</span></h2>
+      <p>Real success stories from students who trusted HQ Academy</p>
     </div>
 
-    <div class="row testimonials-grid gy-4 justify-content-center">
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"Master Quam helped me realize my potential in the digital world. His guidance and mentorship opened my eyes to the vast opportunities in tech, leading me to pursue my passion in cybersecurity."</p>
-          <p class="attribution mb-0"><strong>Akintunde Dolapo</strong><br><small>Studying Cybersecurity at LAUTECH</small></p>
-        </div>
-      </article>
+    <?php
+    // Fetch testimonials from database
+    require_once __DIR__ . '/config/db.php';
+    $wallTestimonials = [];
+    try {
+      $stmt = $pdo->query("SELECT * FROM testimonials WHERE is_active = 1 ORDER BY display_order ASC LIMIT 12");
+      $wallTestimonials = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      // Silently fail
+    }
+    ?>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"Through HQ Academy's exceptional tutoring and guidance, I achieved an outstanding score in JAMB. Their teaching methodology and dedication to student success is unmatched."</p>
-          <p class="attribution mb-0"><strong>Sanni Micheal</strong><br><small>JAMB Score: 305</small></p>
+    <?php if (empty($wallTestimonials)): ?>
+      <p class="text-center text-muted">Our success stories are being updated. Check back soon!</p>
+    <?php else: ?>
+      <div class="wall-scroll-wrapper">
+        <button class="wall-scroll-btn wall-scroll-left" aria-label="Scroll left">
+          <i class='bx bx-chevron-left'></i>
+        </button>
+        
+        <div class="wall-scroll-container">
+          <?php foreach ($wallTestimonials as $t): ?>
+          <article class="wall-testimony-card">
+            <?php if ($t['image_path']): ?>
+              <div class="wall-testimony-image">
+                <img src="<?= htmlspecialchars($t['image_path']) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
+              </div>
+            <?php else: ?>
+              <div class="wall-testimony-image wall-testimony-placeholder">
+                <i class='bx bxs-user-circle'></i>
+              </div>
+            <?php endif; ?>
+            
+            <div class="wall-testimony-content">
+              <?php if ($t['outcome_badge']): ?>
+                <span class="wall-testimony-badge"><?= htmlspecialchars($t['outcome_badge']) ?></span>
+              <?php endif; ?>
+              
+              <p class="wall-testimony-text">"<?= htmlspecialchars($t['testimonial_text']) ?>"</p>
+              
+              <div class="wall-testimony-author">
+                <strong><?= htmlspecialchars($t['name']) ?></strong>
+                <?php if ($t['role_institution']): ?>
+                  <small><?= htmlspecialchars($t['role_institution']) ?></small>
+                <?php endif; ?>
+              </div>
+            </div>
+          </article>
+          <?php endforeach; ?>
         </div>
-      </article>
 
-      <article class="testimonial-card col-12 col-md-6 col-lg-4">
-        <div class="p-3 h-100 border rounded shadow-sm">
-          <div class="rating mb-2">★★★★★</div>
-          <p class="quote">"The comprehensive preparation and mentorship at HQ Academy were instrumental in my academic journey. Their guidance helped me secure my place in Chemical Engineering."</p>
-          <p class="attribution mb-0"><strong>Adebayo Samod</strong><br><small>Chemical Engineering, LAUTECH | JAMB Score: 257</small></p>
-        </div>
-      </article>
-    </div>
+        <button class="wall-scroll-btn wall-scroll-right" aria-label="Scroll right">
+          <i class='bx bx-chevron-right'></i>
+        </button>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="about.php#wall-of-fame" class="btn btn-outline-primary">View All Success Stories</a>
+      </div>
+    <?php endif; ?>
   </div>
 </section>
+
+<style>
+.wall-of-fame-section {
+  background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+}
+
+.wall-scroll-wrapper {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.wall-scroll-container {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 20px 5px;
+  scrollbar-width: thin;
+  scrollbar-color: #ffd600 #f0f0f0;
+}
+
+.wall-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.wall-scroll-container::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.wall-scroll-container::-webkit-scrollbar-thumb {
+  background: #ffd600;
+  border-radius: 10px;
+}
+
+.wall-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #e6c200;
+}
+
+.wall-testimony-card {
+  flex: 0 0 320px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+}
+
+.wall-testimony-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  border-color: #ffd600;
+}
+
+.wall-testimony-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 3px solid #ffd600;
+  flex-shrink: 0;
+}
+
+.wall-testimony-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wall-testimony-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  font-size: 48px;
+  color: #9ca3af;
+}
+
+.wall-testimony-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wall-testimony-badge {
+  display: inline-block;
+  background: #ffd600;
+  color: #0b1a2c;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  align-self: center;
+}
+
+.wall-testimony-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+  font-style: italic;
+}
+
+.wall-testimony-author strong {
+  display: block;
+  font-size: 1rem;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.wall-testimony-author small {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.wall-scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 2px solid #ffd600;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.wall-scroll-btn:hover {
+  background: #ffd600;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.wall-scroll-btn i {
+  font-size: 28px;
+  color: #0b1a2c;
+}
+
+.wall-scroll-left {
+  left: -25px;
+}
+
+.wall-scroll-right {
+  right: -25px;
+}
+
+@media (max-width: 768px) {
+  .wall-scroll-btn {
+    display: none;
+  }
+  
+  .wall-testimony-card {
+    flex: 0 0 280px;
+  }
+}
+</style>
+
+<script>
+// Horizontal scroll buttons for Wall of Fame
+document.addEventListener('DOMContentLoaded', function() {
+  const scrollContainer = document.querySelector('.wall-scroll-container');
+  const leftBtn = document.querySelector('.wall-scroll-left');
+  const rightBtn = document.querySelector('.wall-scroll-right');
+
+  if (scrollContainer && leftBtn && rightBtn) {
+    leftBtn.addEventListener('click', () => {
+      scrollContainer.scrollBy({ left: -350, behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+      scrollContainer.scrollBy({ left: 350, behavior: 'smooth' });
+    });
+
+    // Hide/show buttons based on scroll position
+    function updateScrollButtons() {
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      leftBtn.style.opacity = scrollContainer.scrollLeft > 0 ? '1' : '0.3';
+      leftBtn.style.pointerEvents = scrollContainer.scrollLeft > 0 ? 'auto' : 'none';
+      rightBtn.style.opacity = scrollContainer.scrollLeft < maxScroll - 5 ? '1' : '0.3';
+      rightBtn.style.pointerEvents = scrollContainer.scrollLeft < maxScroll - 5 ? 'auto' : 'none';
+    }
+
+    scrollContainer.addEventListener('scroll', updateScrollButtons);
+    updateScrollButtons();
+  }
+});
+</script>
 
 <!-- CTA Banner -->
 <section class="cta-join">
