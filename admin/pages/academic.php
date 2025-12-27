@@ -823,6 +823,9 @@ if ($__hqStandalone) {
           <?php if ($hasPostUtme): ?>
           <a href="index.php?pages=academic&source=postutme" class="btn btn-sm <?= ($current_source==='postutme') ? 'btn-dark' : 'btn-outline-secondary' ?>">Post-UTME</a>
           <?php endif; ?>
+          <?php if ($hasUniversal): ?>
+          <a href="index.php?pages=academic&source=universal" class="btn btn-sm <?= ($current_source==='universal') ? 'btn-dark' : 'btn-outline-secondary' ?>">New Wizard</a>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -837,6 +840,9 @@ if ($__hqStandalone) {
                 $displayEmail = $s['email'] ?? $s['user_name'] ?? '';
                 $passportThumb = $s['passport_path'] ?? ($s['avatar'] ?? null);
                 $isPostUtme = !empty($s['__postutme']);
+                $isUniversal = !empty($s['__universal']);
+                // Universal registrations display program type badge
+                $programTypeBadge = $isUniversal && !empty($s['program_type']) ? ucfirst($s['program_type']) : null;
             ?>
             <div class="student-card academic-card"
                  data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>">
