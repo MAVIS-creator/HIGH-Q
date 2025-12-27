@@ -172,48 +172,70 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <p class="lead">Real wins from students who trusted HQ Academy.</p>
     </div>
 
-    <div class="testimonials-grid">
-      <?php
-      // Fetch top 3 testimonials from database
-      $topTestimonials = [];
-      try {
-        $stmt = $pdo->query("SELECT * FROM testimonials WHERE is_active = 1 ORDER BY display_order ASC LIMIT 3");
-        $topTestimonials = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      } catch (Exception $e) {
-        // Silently fail
-      }
+    <div class="testimonials-scroll-wrapper">
+      <button class="testimonials-scroll-btn testimonials-scroll-left" aria-label="Scroll left">
+        <i class='bx bx-chevron-left'></i>
+      </button>
       
-      if (empty($topTestimonials)):
-        // Fallback hardcoded testimonials
-      ?>
-      <article class="testimonial-mini">
-        <div class="badge-outcome">Admitted to Engineering</div>
-        <p class="quote">"Moved from doubts to LAUTECH admission after my prep at HQ."</p>
-        <div class="meta">— Aisha O., WAEC + Post-UTME Track</div>
-      </article>
-
-      <article class="testimonial-mini">
-        <div class="badge-outcome">305 JAMB Score</div>
-        <p class="quote">"Structured mocks and tutor feedback pushed me past 300."</p>
-        <div class="meta">— Tunde A., JAMB + CBT Mastery</div>
-      </article>
-
-      <article class="testimonial-mini">
-        <div class="badge-outcome">Cybersecurity Pro</div>
-        <p class="quote">"Tech track plus interview coaching → internship in 10 weeks."</p>
-        <div class="meta">— Chidinma E., Digital Skills Track</div>
-      </article>
-      <?php else: ?>
-        <?php foreach ($topTestimonials as $t): ?>
+      <div class="testimonials-scroll-container">
+        <?php
+        // Fetch testimonials from database (more for scrollable view)
+        $topTestimonials = [];
+        try {
+          $stmt = $pdo->query("SELECT * FROM testimonials WHERE is_active = 1 ORDER BY display_order ASC LIMIT 8");
+          $topTestimonials = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+          // Silently fail
+        }
+        
+        if (empty($topTestimonials)):
+          // Fallback hardcoded testimonials
+        ?>
         <article class="testimonial-mini">
-          <?php if ($t['outcome_badge']): ?>
-            <div class="badge-outcome"><?= htmlspecialchars($t['outcome_badge']) ?></div>
-          <?php endif; ?>
-          <p class="quote">"<?= htmlspecialchars($t['testimonial_text']) ?>"</p>
-          <div class="meta">— <?= htmlspecialchars($t['name']) ?><?php if ($t['role_institution']): ?>, <?= htmlspecialchars($t['role_institution']) ?><?php endif; ?></div>
+          <div class="badge-outcome">Admitted to Engineering</div>
+          <p class="quote">"Moved from doubts to LAUTECH admission after my prep at HQ."</p>
+          <div class="meta">— Aisha O., WAEC + Post-UTME Track</div>
         </article>
-        <?php endforeach; ?>
-      <?php endif; ?>
+
+        <article class="testimonial-mini">
+          <div class="badge-outcome">305 JAMB Score</div>
+          <p class="quote">"Structured mocks and tutor feedback pushed me past 300."</p>
+          <div class="meta">— Tunde A., JAMB + CBT Mastery</div>
+        </article>
+
+        <article class="testimonial-mini">
+          <div class="badge-outcome">Cybersecurity Pro</div>
+          <p class="quote">"Tech track plus interview coaching → internship in 10 weeks."</p>
+          <div class="meta">— Chidinma E., Digital Skills Track</div>
+        </article>
+        
+        <article class="testimonial-mini">
+          <div class="badge-outcome">Medical Student</div>
+          <p class="quote">"From 180 to 285 JAMB score in just 3 months of intensive prep."</p>
+          <div class="meta">— Favour A., JAMB Track</div>
+        </article>
+        
+        <article class="testimonial-mini">
+          <div class="badge-outcome">UI/UX Designer</div>
+          <p class="quote">"The digital skills track opened doors I never knew existed."</p>
+          <div class="meta">— Samuel K., Digital Skills Track</div>
+        </article>
+        <?php else: ?>
+          <?php foreach ($topTestimonials as $t): ?>
+          <article class="testimonial-mini">
+            <?php if ($t['outcome_badge']): ?>
+              <div class="badge-outcome"><?= htmlspecialchars($t['outcome_badge']) ?></div>
+            <?php endif; ?>
+            <p class="quote">"<?= htmlspecialchars($t['testimonial_text']) ?>"</p>
+            <div class="meta">— <?= htmlspecialchars($t['name']) ?><?php if ($t['role_institution']): ?>, <?= htmlspecialchars($t['role_institution']) ?><?php endif; ?></div>
+          </article>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+      
+      <button class="testimonials-scroll-btn testimonials-scroll-right" aria-label="Scroll right">
+        <i class='bx bx-chevron-right'></i>
+      </button>
     </div>
 
     <div class="text-center mt-3">
