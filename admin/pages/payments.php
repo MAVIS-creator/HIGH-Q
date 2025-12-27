@@ -506,7 +506,7 @@ $totalPages = (int)ceil($total / $perPage);
                 <button type=\"submit\" style=\"padding: 0.5rem 1rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;\">
                     <i class='bx bx-search'></i> Filter
                 </button>
-                <a href="index.php?pages=payments" style="padding: 0.5rem 0.75rem; background: white; color: #666; border: 1px solid #ddd; border-radius: 0.5rem; font-weight: 600; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;\">
+                <a href="index.php?pages=payments" style="padding: 0.5rem 0.75rem; background: white; color: #666; border: 1px solid #ddd; border-radius: 0.5rem; font-weight: 600; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem;">
                     <i class='bx bx-x'></i> Clear
                 </a>
             </div>
