@@ -185,6 +185,14 @@
     
     const heroSections = document.querySelectorAll('.hero, .about-hero, .contact-hero, .courses-hero');
     const hasHeroInViewport = Array.from(heroSections).some(hero => {
+      // Skip home main hero
+      const isHomePage = document.body.classList.contains('page-home') || 
+                         (hero.classList.contains('hero') && 
+                          hero === document.querySelector('.hero'));
+      const isMainHero = isHomePage && hero.classList.contains('hero');
+      
+      if (isMainHero) return false;
+      
       const rect = hero.getBoundingClientRect();
       return rect.top < window.innerHeight && rect.bottom > 0;
     });
