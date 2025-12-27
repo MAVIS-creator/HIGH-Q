@@ -290,12 +290,14 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 <style>
 .wall-of-fame-section {
   background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+  overflow: visible;
 }
 
 .wall-scroll-wrapper {
   position: relative;
   max-width: 100%;
   margin: 0 auto;
+  padding: 0 50px;
 }
 
 .wall-scroll-container {

@@ -257,6 +257,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   position: relative;
   max-width: 100%;
   margin: 0 auto;
+  padding: 0 50px;
 }
 
 .testimonials-scroll-container {
