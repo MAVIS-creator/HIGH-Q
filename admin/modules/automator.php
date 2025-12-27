@@ -43,6 +43,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'generate_sitemap') {
         }
         
         $xml .= '</urlset>';
+
+                // Add Find Your Path pages (high priority educational content)
+                $pathPages = [
+                    ['slug' => 'find-your-path-quiz.php', 'priority' => 0.95, 'freq' => 'weekly'],
+                    ['slug' => 'path-jamb.php', 'priority' => 0.9, 'freq' => 'monthly'],
+                    ['slug' => 'path-waec.php', 'priority' => 0.9, 'freq' => 'monthly'],
+                    ['slug' => 'path-postutme.php', 'priority' => 0.9, 'freq' => 'monthly'],
+                    ['slug' => 'path-digital.php', 'priority' => 0.9, 'freq' => 'monthly'],
+                    ['slug' => 'path-international.php', 'priority' => 0.9, 'freq' => 'monthly'],
+                ];
+        
+                foreach ($pathPages as $page) {
+                    $xml = str_replace('</urlset>', 
+                        "  <url>\n" .
+                        "    <loc>" . ($_ENV['APP_URL'] ?? 'http://localhost/HIGH-Q') . "/" . htmlspecialchars($page['slug']) . "</loc>\n" .
+                        "    <changefreq>" . htmlspecialchars($page['freq']) . "</changefreq>\n" .
+                        "    <priority>" . htmlspecialchars($page['priority']) . "</priority>\n" .
+                        "  </url>\n" .
+                        '</urlset>',
+                        $xml
+                    );
+                }
+        
+                // Add registration form pages
+                $formPages = [
+                    ['slug' => 'register.php', 'priority' => 0.85, 'freq' => 'weekly'],
+                    ['slug' => 'register-new.php', 'priority' => 0.85, 'freq' => 'weekly'],
+                ];
+        
+                foreach ($formPages as $page) {
+                    $xml = str_replace('</urlset>', 
+                        "  <url>\n" .
+                        "    <loc>" . ($_ENV['APP_URL'] ?? 'http://localhost/HIGH-Q') . "/" . htmlspecialchars($page['slug']) . "</loc>\n" .
+                        "    <changefreq>" . htmlspecialchars($page['freq']) . "</changefreq>\n" .
+                        "    <priority>" . htmlspecialchars($page['priority']) . "</priority>\n" .
+                        "  </url>\n" .
+                        '</urlset>',
+                        $xml
+                    );
+                }
+        
+                // Add Courses page
+                $xml = str_replace('</urlset>', 
+                    "  <url>\n" .
+                    "    <loc>" . ($_ENV['APP_URL'] ?? 'http://localhost/HIGH-Q') . "/courses.php</loc>\n" .
+                    "    <changefreq>weekly</changefreq>\n" .
+                    "    <priority>0.8</priority>\n" .
+                    "  </url>\n" .
+                    '</urlset>',
+                    $xml
+                );
         
         // Write sitemap
         if (file_put_contents($sitemapPath, $xml)) {
