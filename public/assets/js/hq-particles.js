@@ -26,15 +26,15 @@
     borderColor: 'rgba(255, 215, 0, 0.25)'
   };
   
-  // For home.php (yellow background) - use white/light gold bubbles
+  // For home.php (yellow background) - use soft golden/amber bubbles for professional look
   const configHome = {
-    particleCount: 30,
-    particleSpeed: 0.12,
-    minParticleSize: 5,
-    maxParticleSize: 18,
-    particleColor: 'rgba(255, 255, 255, 0.25)', // White with transparency
-    particleGradient: 'rgba(255, 255, 255, 0.4)', // Brighter white
-    borderColor: 'rgba(255, 255, 255, 0.2)'
+    particleCount: 40,
+    particleSpeed: 0.10,
+    minParticleSize: 8,
+    maxParticleSize: 25,
+    particleColor: 'rgba(200, 160, 50, 0.25)', // Soft amber/gold with transparency
+    particleGradient: 'rgba(220, 180, 80, 0.4)', // Warm golden gradient
+    borderColor: 'rgba(180, 140, 40, 0.15)'
   };
   
   class Particle {
