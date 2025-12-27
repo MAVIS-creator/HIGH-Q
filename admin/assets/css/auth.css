@@ -44,13 +44,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 80px 20px;
+    padding-bottom: 120px;
     font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: linear-gradient(-45deg, var(--hq-yellow), var(--hq-red), var(--hq-blue), var(--hq-yellow-light));
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 @keyframes gradientShift {
