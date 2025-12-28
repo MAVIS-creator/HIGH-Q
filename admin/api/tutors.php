@@ -2,11 +2,18 @@
 session_start();
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
-requirePermission('tutors');
 
+// Set JSON header first to ensure it's always JSON output
 header('Content-Type: application/json');
 
 try {
+    // Check permission but catch any exceptions
+    try {
+        requirePermission('tutors');
+    } catch (Exception $permError) {
+        throw new Exception('Permission denied: ' . $permError->getMessage());
+    }
+    
     $conn = $pdo; // use PDO from includes/db.php
     $action = $_POST['action'] ?? $_GET['action'] ?? '';
     
