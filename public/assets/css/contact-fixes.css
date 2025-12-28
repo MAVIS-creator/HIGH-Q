@@ -46,6 +46,12 @@
   display: none;
 }
 
+/* Hide/show text spans based on state */
+.faq-readmore .read-text { display: inline; }
+.faq-readmore .less-text { display: none; }
+.faq-readmore.expanded .read-text { display: none; }
+.faq-readmore.expanded .less-text { display: inline; }
+
 /* FAQ styles - Mobile only (768px and below) */
 @media (max-width: 768px) {
   /* FAQ card container should expand with content */
