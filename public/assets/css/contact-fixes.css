@@ -46,12 +46,6 @@
   display: none;
 }
 
-/* Hide/show text spans based on state */
-.faq-readmore .read-text { display: inline; }
-.faq-readmore .less-text { display: none; }
-.faq-readmore.expanded .read-text { display: none; }
-.faq-readmore.expanded .less-text { display: inline; }
-
 /* FAQ styles - Mobile only (768px and below) */
 @media (max-width: 768px) {
   /* FAQ card container should expand with content */
@@ -76,7 +70,7 @@
 
   /* FAQ read-more/show-less button - mobile only */
   .faq-readmore {
-    display: inline-block;
+    display: inline-block !important;
     margin-top: 8px;
     background: transparent;
     border: none;
@@ -94,6 +88,22 @@
 
   .faq-readmore:active {
     transform: scale(0.98);
+  }
+
+  /* Toggle button text - by default show "Read more", hide "Show less" */
+  .faq-readmore .read-text {
+    display: inline !important;
+  }
+  .faq-readmore .less-text {
+    display: none !important;
+  }
+  
+  /* When expanded - show "Show less", hide "Read more" */
+  .faq-readmore.expanded .read-text {
+    display: none !important;
+  }
+  .faq-readmore.expanded .less-text {
+    display: inline !important;
   }
 
   .faq-clamped {
