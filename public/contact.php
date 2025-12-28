@@ -247,7 +247,7 @@ include __DIR__ . '/includes/header.php';
 				<div class="faq-clamped">
 					<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
 				</div>
-				<button class="faq-readmore">Read more</button>
+				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
 			<div class="faq-card">
@@ -255,7 +255,7 @@ include __DIR__ . '/includes/header.php';
 				<div class="faq-clamped">
 					<p>Program and tuition fees vary by track and duration. Academic prep (WAEC/NECO/JAMB) typically ranges ₦25,000-₦40,000 per cycle, while tech/digital skills and professional tracks are priced by module. Contact us for a full fee sheet or payment plans.</p>
 				</div>
-				<button class="faq-readmore">Read more</button>
+				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 		</div>
 	</div>
@@ -269,7 +269,7 @@ include __DIR__ . '/includes/header.php';
 				<div class="faq-clamped">
 					<p>We maintain a 99% pass rate in WAEC/NECO, a 95% JAMB/Post-UTME success rate, and a 75% placement rate for tech/digital skills graduates. Our top JAMB score was 305 and alumni study at LAUTECH and other leading universities.</p>
 				</div>
-				<button class="faq-readmore">Read more</button>
+				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
 			<div class="faq-card">
@@ -277,7 +277,7 @@ include __DIR__ . '/includes/header.php';
 				<div class="faq-clamped">
 					<p>Yes, we offer both in-person and online classes to accommodate different learning preferences and schedules. Our CBT training is particularly effective online.</p>
 				</div>
-				<button class="faq-readmore">Read more</button>
+				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
 			<div class="faq-card">
@@ -285,7 +285,7 @@ include __DIR__ . '/includes/header.php';
 				<div class="faq-clamped">
 					<p>You can register by visiting our offices, calling 0807 208 8794, or filling out our online registration form. We also offer consultation to help you choose the right program.</p>
 				</div>
-				<button class="faq-readmore">Read more</button>
+				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
 			<div class="faq-card">
@@ -293,7 +293,7 @@ include __DIR__ . '/includes/header.php';
 				<div class="faq-clamped">
 					<p>Our experienced tutors, proven track record, personalized attention, and comprehensive approach to both academic and digital skills development set us apart.</p>
 				</div>
-				<button class="faq-readmore">Read more</button>
+				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 		</div>
 	</div>
@@ -662,8 +662,9 @@ document.addEventListener('DOMContentLoaded', function(){
 				if (!card) return;
 				var clamped = card.querySelector('.faq-clamped');
 				if (!clamped) return;
-				var expanded = clamped.classList.toggle('faq-clamped--expanded');
-				this.textContent = expanded ? 'Show less' : 'Read more';
+				// Toggle expanded class on both clamped content and button
+				clamped.classList.toggle('faq-clamped--expanded');
+				this.classList.toggle('expanded');
 			}, { passive: false });
 			
 			// Also handle touch events for better mobile support
