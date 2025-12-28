@@ -656,7 +656,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                 <tr>
                                     <td width="70" valign="middle">
-                                        <img src="{$logoBase64}" alt="HQ Logo" width="60" height="60" style="display:block;border-radius:8px;border:2px solid #000;">
+                                        <img src="{$logoSrc}" alt="HQ Logo" width="60" height="60" style="display:block;border-radius:8px;border:2px solid #000;">
                                     </td>
                                     <td valign="middle" style="padding-left:15px;">
                                         <div style="font-size:22px;font-weight:bold;color:#000;"><span style="background:#000;color:#FFD600;padding:2px 8px;margin-right:5px;">HQ</span> HIGH-Q SOLID ACADEMY</div>
