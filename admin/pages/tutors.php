@@ -196,12 +196,12 @@ try {
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="name">Full Name *</label>
+                    <label for="name"><span class="required">*</span> Full Name</label>
                     <input type="text" id="name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="title">Title/Position</label>
-                    <input type="text" id="title" name="title" placeholder="e.g., Senior Mathematics Instructor">
+                    <label for="title"><span class="required">*</span> Title/Position</label>
+                    <input type="text" id="title" name="title" placeholder="e.g., Senior Mathematics Instructor" required>
                 </div>
             </div>
             
@@ -234,12 +234,19 @@ try {
             
             <div class="form-group">
                 <label>Photo</label>
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
                     <button type="button" onclick="document.getElementById('photoFile').click()" class="btn-secondary" style="flex: 1; min-width: 200px;">
                         <i class='bx bx-upload'></i> Upload Photo
                     </button>
-                    <input type="file" id="photoFile" accept="image/*" style="display: none;">
+                    <input type="file" id="photoFile" accept="image/*" onchange="handlePhotoSelect(this)" style="display: none;">
                     <input type="url" id="photo" name="photo" placeholder="Or enter URL..." style="flex: 2; min-width: 300px;">
+                </div>
+                <!-- Photo Preview -->
+                <div id="photoPreview" style="display: none; margin-top: 12px;">
+                    <img id="photoPreviewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid #FFD600;">
+                    <button type="button" onclick="clearPhotoPreview()" class="btn-secondary" style="margin-top: 8px; padding: 6px 12px; font-size: 13px;">
+                        <i class='bx bx-x'></i> Remove
+                    </button>
                 </div>
             </div>
             
@@ -267,6 +274,13 @@ try {
 </div>
 
 <style>
+/* Required field indicator */
+.required {
+    color: #dc2626;
+    font-weight: bold;
+    margin-right: 4px;
+}
+
 /* Tutors Page Specific Styles */
 .admin-page-content {
     padding: 24px 32px 48px;
@@ -946,16 +960,42 @@ async function uploadPhotoFile(file) {
         
         if (data.success && data.path) {
             document.getElementById('photo').value = data.path;
-            Swal.fire('Success', 'Photo uploaded successfully', 'success');
+            Swal.close();
         } else {
             throw new Error(data.message || 'Upload failed');
         }
     } catch (e) {
         Swal.fire('Error', e.message || 'Failed to upload photo', 'error');
+        clearPhotoPreview();
     }
 }
 
+function clearPhotoPreview() {
+    const preview = document.getElementById('photoPreview');
+    const previewImg = document.getElementById('photoPreviewImg');
+    const photoInput = document.getElementById('photoFile');
+    const photoUrl = document.getElementById('photo');
+    
+    if (preview) preview.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    if (photoInput) photoInput.value = '';
+    if (photoUrl) photoUrl.value = '';
+}
+
 async function saveTutor() {
+    // Validate required fields
+    const name = document.getElementById('name').value.trim();
+    const title = document.getElementById('title').value.trim();
+    
+    if (!name) {
+        Swal.fire('Error', 'Full Name is required', 'error');
+        return;
+    }
+    if (!title) {
+        Swal.fire('Error', 'Title/Position is required', 'error');
+        return;
+    }
+    
     const form = document.getElementById('tutorForm');
     const formData = new FormData(form);
     formData.append('action', document.getElementById('tutorId').value ? 'update' : 'create');
@@ -963,10 +1003,21 @@ async function saveTutor() {
     formData.append('is_featured', document.getElementById('is_featured').checked ? 1 : 0);
     
     try {
+        Swal.fire({
+            title: 'Saving...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+        
         const res = await fetch('../api/tutors.php', {
             method: 'POST',
             body: formData
         });
+        
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
         const data = await res.json();
         if (data.success) {
             Swal.fire('Success', data.message, 'success').then(() => location.reload());
@@ -974,7 +1025,8 @@ async function saveTutor() {
             Swal.fire('Error', data.message || 'Failed to save', 'error');
         }
     } catch (e) {
-        Swal.fire('Error', 'Failed to save tutor', 'error');
+        console.error('Save error:', e);
+        Swal.fire('Error', 'Failed to save tutor: ' + e.message, 'error');
     }
 }
 
