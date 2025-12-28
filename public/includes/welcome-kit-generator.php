@@ -609,12 +609,16 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
     $contactPhone = $siteSettings['contact_phone'] ?? '0807 208 8794';
     $contactEmail = $siteSettings['contact_email'] ?? 'highqsolidacademy@gmail.com';
     
-    // Get HQ Logo as base64 for email
+    // Get HQ Logo - try base64 first, fallback to URL
     $logoPath = __DIR__ . '/../assets/images/hq-logo.jpeg';
-    $logoBase64 = '';
+    $logoSrc = '';
+    
     if (file_exists($logoPath)) {
         $logoData = file_get_contents($logoPath);
-        $logoBase64 = 'data:image/jpeg;base64,' . base64_encode($logoData);
+        $logoSrc = 'data:image/jpeg;base64,' . base64_encode($logoData);
+    } else {
+        // Fallback to web URL (will work if site is online)
+        $logoSrc = 'http://localhost/HIGH-Q/public/assets/images/hq-logo.jpeg';
     }
     
     // Escape values
