@@ -113,6 +113,17 @@ function createTutor($conn) {
         throw new Exception('Name and title are required');
     }
     
+    // Convert subjects to JSON array or NULL
+    if (empty($subjects)) {
+        $subjects = null;
+    } else {
+        // If it's a comma-separated list, convert to JSON array
+        if (!str_starts_with($subjects, '[')) {
+            $subjectArray = array_map('trim', explode(',', $subjects));
+            $subjects = json_encode($subjectArray);
+        }
+    }
+    
     // Generate slug from name
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name), '-'));
     
@@ -162,6 +173,17 @@ function updateTutor($conn) {
     
     if (empty($id) || empty($name) || empty($title)) {
         throw new Exception('ID, name, and title are required');
+    }
+    
+    // Convert subjects to JSON array or NULL
+    if (empty($subjects)) {
+        $subjects = null;
+    } else {
+        // If it's a comma-separated list, convert to JSON array
+        if (!str_starts_with($subjects, '[')) {
+            $subjectArray = array_map('trim', explode(',', $subjects));
+            $subjects = json_encode($subjectArray);
+        }
     }
     
     // Generate slug from name
