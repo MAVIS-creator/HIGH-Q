@@ -143,7 +143,7 @@ function updateTutor($conn) {
     $name = $_POST['name'] ?? '';
     $title = $_POST['title'] ?? '';
     $subjects = $_POST['subjects'] ?? '';
-    $experience = $_POST['experience'] ?? '';
+    $experience = $_POST['experience'] ?? 0;
     $email = $_POST['email'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $qualifications = $_POST['qualifications'] ?? '';
@@ -156,18 +156,37 @@ function updateTutor($conn) {
         throw new Exception('ID, name, and title are required');
     }
     
-    $stmt = $conn->prepare("
-        UPDATE tutors 
-        SET name=?, title=?, subjects=?, experience=?, email=?, phone=?, qualifications=?, bio=?, photo=?, is_active=?, is_featured=?
-        WHERE id=?
-    ");
+    // Generate slug from name
+    $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name), '-'));
     
-    $stmt->execute([$name, $title, $subjects, $experience, $email, $phone, $qualifications, $bio, $photo, $is_active, $is_featured, $id]);
-    
-    echo json_encode([
-        'success' => true,
-        'message' => 'Tutor updated successfully'
-    ]);
+    try {
+        $stmt = $conn->prepare("
+            UPDATE tutors 
+            SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, is_featured=?, updated_at=NOW()
+            WHERE id=?
+        ");
+        
+        $stmt->execute([
+            $name,
+            $slug,
+            $photo,
+            $title, // Use title as short_bio
+            $bio,
+            $qualifications,
+            $subjects,
+            $email,
+            $phone,
+            $is_featured,
+            $id
+        ]);
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Tutor updated successfully'
+        ]);
+    } catch (PDOException $e) {
+        throw new Exception('Database error: ' . $e->getMessage());
+    }
 }
 
 function deleteTutor($conn) {
