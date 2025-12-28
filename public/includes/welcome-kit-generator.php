@@ -634,6 +634,8 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Boxicons for social media icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f4f4f4;">
@@ -648,7 +650,7 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                 <tr>
                                     <td width="70" valign="middle">
-                                        <img src="{$logoBase64}" alt="HQ Logo" width="60" height="60" style="border-radius:8px;border:2px solid #000;">
+                                        <img src="{$logoBase64}" alt="HQ Logo" width="60" height="60" style="display:block;border-radius:8px;border:2px solid #000;">
                                     </td>
                                     <td valign="middle" style="padding-left:15px;">
                                         <div style="font-size:22px;font-weight:bold;color:#000;"><span style="background:#000;color:#FFD600;padding:2px 8px;margin-right:5px;">HQ</span> HIGH-Q SOLID ACADEMY</div>
@@ -734,16 +736,32 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                                 </tr>
                                 <tr>
                                     <td align="center" style="padding-bottom:12px;">
-                                        <!-- Social Links with Icons -->
-                                        <a href="https://facebook.com/Highqsolidacademy" style="text-decoration:none;margin:0 8px;">
-                                            <span style="display:inline-block;background:#1877F2;color:#fff;width:28px;height:28px;line-height:28px;text-align:center;border-radius:4px;font-weight:bold;font-size:14px;">f</span>
-                                        </a>
-                                        <a href="https://instagram.com/highqsolidacademy" style="text-decoration:none;margin:0 8px;">
-                                            <span style="display:inline-block;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;width:28px;height:28px;line-height:28px;text-align:center;border-radius:4px;font-weight:bold;font-size:12px;">@</span>
-                                        </a>
-                                        <a href="mailto:{$escapedEmail}" style="text-decoration:none;margin:0 8px;">
-                                            <span style="display:inline-block;background:#EA4335;color:#fff;width:28px;height:28px;line-height:28px;text-align:center;border-radius:4px;font-size:14px;">✉</span>
-                                        </a>
+                                        <!-- Social Links with Boxicons -->
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto;">
+                                            <tr>
+                                                <td style="padding:0 8px;">
+                                                    <a href="https://facebook.com/Highqsolidacademy" style="text-decoration:none;display:inline-block;">
+                                                        <div style="background:#1877F2;color:#fff;width:32px;height:32px;line-height:32px;text-align:center;border-radius:6px;font-size:18px;">
+                                                            <i class='bx bxl-facebook' style="color:#fff;"></i>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                <td style="padding:0 8px;">
+                                                    <a href="https://instagram.com/highqsolidacademy" style="text-decoration:none;display:inline-block;">
+                                                        <div style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;width:32px;height:32px;line-height:32px;text-align:center;border-radius:6px;font-size:18px;">
+                                                            <i class='bx bxl-instagram' style="color:#fff;"></i>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                <td style="padding:0 8px;">
+                                                    <a href="mailto:{$escapedEmail}" style="text-decoration:none;display:inline-block;">
+                                                        <div style="background:#EA4335;color:#fff;width:32px;height:32px;line-height:32px;text-align:center;border-radius:6px;font-size:18px;">
+                                                            <i class='bx bx-envelope' style="color:#fff;"></i>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>
