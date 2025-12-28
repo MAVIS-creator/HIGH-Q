@@ -988,7 +988,10 @@ async function uploadPhotoFile(file) {
         
         const res = await fetch('../api/tutors.php', {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         });
         
         if (!res.ok) {
