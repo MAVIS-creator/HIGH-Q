@@ -884,18 +884,24 @@ function closeModal() {
 
 async function editTutor(id) {
     try {
-        const res = await fetch(`../api/tutors.php?action=get&id=${id}`);
+        const apiUrl = (window.HQ_ADMIN_BASE || '') + `/api/tutors.php?action=get&id=${id}`;
+        const res = await fetch(apiUrl, {
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
         const data = await res.json();
         if (data.success) {
             const t = data.tutor;
             document.getElementById('modalTitle').textContent = 'Edit Tutor';
             document.getElementById('tutorId').value = t.id;
             document.getElementById('name').value = t.name || '';
-            document.getElementById('title').value = t.title || '';
+            document.getElementById('title').value = t.short_bio || '';
             document.getElementById('subjects').value = t.subjects || '';
             document.getElementById('experience').value = t.experience || '';
             document.getElementById('photo').value = t.photo || '';
-            document.getElementById('bio').value = t.bio || '';
+            document.getElementById('bio').value = t.long_bio || '';
             document.getElementById('is_active').checked = t.is_active == 1;
             document.getElementById('is_featured').checked = t.is_featured == 1;
             document.getElementById('tutorModal').style.display = 'flex';
