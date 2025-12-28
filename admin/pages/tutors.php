@@ -1056,9 +1056,14 @@ async function saveTutor() {
             didOpen: () => Swal.showLoading()
         });
         
-        const res = await fetch('../api/tutors.php', {
+        const apiUrl = (window.HQ_ADMIN_BASE || '') + '/api/tutors.php';
+        const res = await fetch(apiUrl, {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         });
         
         const contentType = res.headers.get('content-type');
