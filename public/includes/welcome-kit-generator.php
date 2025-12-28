@@ -609,17 +609,8 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
     $contactPhone = $siteSettings['contact_phone'] ?? '0807 208 8794';
     $contactEmail = $siteSettings['contact_email'] ?? 'highqsolidacademy@gmail.com';
     
-    // Get HQ Logo - try base64 first, fallback to URL
-    $logoPath = __DIR__ . '/../assets/images/hq-logo.jpeg';
-    $logoSrc = '';
-    
-    if (file_exists($logoPath)) {
-        $logoData = file_get_contents($logoPath);
-        $logoSrc = 'data:image/jpeg;base64,' . base64_encode($logoData);
-    } else {
-        // Fallback to web URL (will work if site is online)
-        $logoSrc = 'http://localhost/HIGH-Q/public/assets/images/hq-logo.jpeg';
-    }
+    // Create styled HQ logo HTML - no external images needed
+    $logoHtml = '<div style="display:inline-block;background:#FFD600;padding:8px 12px;border-radius:8px;border:2px solid #000;font-weight:bold;font-size:18px;color:#000;text-align:center;min-width:50px;line-height:1.2;"><div style="font-size:16px;font-weight:900;">HQ</div></div>';
     
     // Escape values
     $escapedName = htmlspecialchars($studentName);
@@ -655,8 +646,8 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                         <td style="background:#FFD600;padding:25px;border-bottom:4px solid #000000;">
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                 <tr>
-                                    <td width="70" valign="middle">
-                                        <img src="{$logoSrc}" alt="HQ Logo" width="60" height="60" style="display:block;border-radius:8px;border:2px solid #000;">
+                                    <td width="70" valign="middle" style="text-align:center;">
+                                        {$logoHtml}
                                     </td>
                                     <td valign="middle" style="padding-left:15px;">
                                         <div style="font-size:22px;font-weight:bold;color:#000;"><span style="background:#000;color:#FFD600;padding:2px 8px;margin-right:5px;">HQ</span> HIGH-Q SOLID ACADEMY</div>
@@ -742,17 +733,17 @@ function sendWelcomeKitEmail($studentEmail, $studentName, $programType, $registr
                                 </tr>
                                 <tr>
                                     <td align="center" style="padding-bottom:12px;">
-                                        <!-- Social Links with proper icons using icon fonts or images -->
+                                        <!-- Social Links with styled letter icons -->
                                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
                                             <tr>
                                                 <td style="padding:0 10px;">
-                                                    <a href="https://facebook.com/Highqsolidacademy" style="display:inline-block;text-decoration:none;background:#1877F2;color:#fff;width:36px;height:36px;line-height:36px;text-align:center;border-radius:6px;font-weight:bold;font-size:20px;">f</a>
+                                                    <a href="https://facebook.com/Highqsolidacademy" style="display:inline-block;text-decoration:none;background:#1877F2;color:#fff;width:40px;height:40px;line-height:40px;text-align:center;border-radius:6px;font-weight:bold;font-size:22px;font-family:Arial,sans-serif;">f</a>
                                                 </td>
                                                 <td style="padding:0 10px;">
-                                                    <a href="https://instagram.com/highqsolidacademy" style="display:inline-block;text-decoration:none;background:#E4405F;color:#fff;width:36px;height:36px;line-height:36px;text-align:center;border-radius:6px;font-weight:bold;font-size:18px;">📷</a>
+                                                    <a href="https://instagram.com/highqsolidacademy" style="display:inline-block;text-decoration:none;background:#E4405F;color:#fff;width:40px;height:40px;line-height:40px;text-align:center;border-radius:6px;font-weight:bold;font-size:22px;font-family:Arial,sans-serif;">I</a>
                                                 </td>
                                                 <td style="padding:0 10px;">
-                                                    <a href="mailto:{$escapedEmail}" style="display:inline-block;text-decoration:none;background:#EA4335;color:#fff;width:36px;height:36px;line-height:36px;text-align:center;border-radius:6px;font-weight:bold;font-size:18px;">✉</a>
+                                                    <a href="mailto:{$escapedEmail}" style="display:inline-block;text-decoration:none;background:#EA4335;color:#fff;width:40px;height:40px;line-height:40px;text-align:center;border-radius:6px;font-weight:bold;font-size:22px;font-family:Arial,sans-serif;">M</a>
                                                 </td>
                                             </tr>
                                         </table>

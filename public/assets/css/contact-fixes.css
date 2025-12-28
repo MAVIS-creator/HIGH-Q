@@ -91,18 +91,18 @@
   }
 
   /* Toggle button text - by default show "Read more", hide "Show less" */
-  .faq-readmore .read-text {
+  .faq-readmore.faq-readmore .read-text {
     display: inline !important;
   }
-  .faq-readmore .less-text {
+  .faq-readmore.faq-readmore .less-text {
     display: none !important;
   }
   
   /* When expanded - show "Show less", hide "Read more" */
-  .faq-readmore.expanded .read-text {
+  .faq-readmore.expanded.expanded .read-text {
     display: none !important;
   }
-  .faq-readmore.expanded .less-text {
+  .faq-readmore.expanded.expanded .less-text {
     display: inline !important;
   }
 
