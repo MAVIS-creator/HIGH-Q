@@ -283,3 +283,20 @@ function getTutor($conn) {
         'tutor' => $tutor
     ]);
 }
+
+function toggleFeatured($conn) {
+    $id = $_POST['id'] ?? 0;
+    $is_featured = isset($_POST['is_featured']) ? (int)$_POST['is_featured'] : 0;
+    
+    if (empty($id)) {
+        throw new Exception('ID is required');
+    }
+    
+    $stmt = $conn->prepare("UPDATE tutors SET is_featured=?, updated_at=NOW() WHERE id=?");
+    $stmt->execute([$is_featured, $id]);
+    
+    echo json_encode([
+        'success' => true,
+        'message' => 'Featured status updated successfully'
+    ]);
+}
