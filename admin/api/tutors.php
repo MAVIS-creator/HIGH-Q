@@ -92,7 +92,7 @@ function createTutor($conn) {
     $name = $_POST['name'] ?? '';
     $title = $_POST['title'] ?? '';
     $subjects = $_POST['subjects'] ?? '';
-    $experience = $_POST['experience'] ?? '';
+    $experience = $_POST['experience'] ?? 0;
     $email = $_POST['email'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $qualifications = $_POST['qualifications'] ?? '';
@@ -105,18 +105,37 @@ function createTutor($conn) {
         throw new Exception('Name and title are required');
     }
     
-    $stmt = $conn->prepare("
-        INSERT INTO tutors (name, title, subjects, experience, email, phone, qualifications, bio, photo, is_active, is_featured)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
+    // Generate slug from name
+    $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name), '-'));
     
-    $stmt->execute([$name, $title, $subjects, $experience, $email, $phone, $qualifications, $bio, $photo, $is_active, $is_featured]);
-    
-    echo json_encode([
-        'success' => true,
-        'message' => 'Tutor created successfully',
-        'id' => $conn->lastInsertId()
-    ]);
+    // Check if tutors table has the right columns
+    try {
+        $stmt = $conn->prepare("
+            INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, is_featured, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ");
+        
+        $stmt->execute([
+            $name,
+            $slug,
+            $photo,
+            $title, // Use title as short_bio
+            $bio,
+            $qualifications,
+            $subjects,
+            $email,
+            $phone,
+            $is_featured
+        ]);
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Tutor created successfully',
+            'id' => $conn->lastInsertId()
+        ]);
+    } catch (PDOException $e) {
+        throw new Exception('Database error: ' . $e->getMessage());
+    }
 }
 
 function updateTutor($conn) {
