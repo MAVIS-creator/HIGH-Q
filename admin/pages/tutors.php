@@ -940,6 +940,40 @@ function handlePhotoUpload(input) {
     uploadPhotoFile(file);
 }
 
+function handlePhotoSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        Swal.fire('Error', 'Please select an image file', 'error');
+        input.value = '';
+        return;
+    }
+    
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        Swal.fire('Error', 'Image must be less than 2MB', 'error');
+        input.value = '';
+        return;
+    }
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('photoPreviewImg');
+        const previewContainer = document.getElementById('photoPreview');
+        if (preview && previewContainer) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+    
+    // Upload file
+    uploadPhotoFile(file);
+}
+
 async function uploadPhotoFile(file) {
     const formData = new FormData();
     formData.append('photo', file);
@@ -956,6 +990,13 @@ async function uploadPhotoFile(file) {
             method: 'POST',
             body: formData
         });
+        
+        if (!res.ok) {
+            const text = await res.text();
+            console.error('Upload response:', text);
+            throw new Error('Server error: ' + res.status);
+        }
+        
         const data = await res.json();
         
         if (data.success && data.path) {
@@ -965,6 +1006,7 @@ async function uploadPhotoFile(file) {
             throw new Error(data.message || 'Upload failed');
         }
     } catch (e) {
+        console.error('Upload error:', e);
         Swal.fire('Error', e.message || 'Failed to upload photo', 'error');
         clearPhotoPreview();
     }
@@ -1014,8 +1056,11 @@ async function saveTutor() {
             body: formData
         });
         
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await res.text();
+            console.error('API returned non-JSON:', text);
+            throw new Error('Server error - check console for details');
         }
         
         const data = await res.json();
@@ -1026,7 +1071,7 @@ async function saveTutor() {
         }
     } catch (e) {
         console.error('Save error:', e);
-        Swal.fire('Error', 'Failed to save tutor: ' + e.message, 'error');
+        Swal.fire('Error', 'Failed to save tutor. Check browser console for details.', 'error');
     }
 }
 
