@@ -35,6 +35,10 @@ try {
             deleteTutor($conn);
             break;
             
+        case 'toggle_featured':
+            toggleFeatured($conn);
+            break;
+            
         case 'list':
             listTutors($conn);
             break;
@@ -85,8 +89,8 @@ function handlePhotoUpload($conn) {
         throw new Exception('Failed to save uploaded file');
     }
     
-    // Return relative path
-    $relativePath = '../uploads/tutors/' . $filename;
+    // Return relative path (from project root)
+    $relativePath = 'uploads/tutors/' . $filename;
     
     echo json_encode([
         'success' => true,
