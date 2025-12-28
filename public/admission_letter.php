@@ -73,24 +73,30 @@ if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
         $pdf->useTemplate($tplId, 0, 0, 210, 297);
         
         // Now write the dynamic content on top of template
-        $pdf->SetFont('Arial', 'B', 16);
+        // Position carefully to not overlap with header/footer
         
         // Title - ADMISSION LETTER (centered, positioned after header)
-        $pdf->SetXY(0, 70);
+        $pdf->SetFont('Arial', 'B', 18);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(0, 75);
         $pdf->Cell(210, 10, 'ADMISSION LETTER', 0, 1, 'C');
+        
+        // Draw underline for title
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Line(70, 86, 140, 86);
         
         // Set font for body text
         $pdf->SetFont('Arial', '', 12);
         
         // Date line
-        $pdf->SetXY(25, 90);
+        $pdf->SetXY(25, 100);
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Write(6, 'Date: ');
         $pdf->SetFont('Arial', '', 12);
         $pdf->Write(6, $today);
         
         // Greeting
-        $pdf->SetXY(25, 105);
+        $pdf->SetXY(25, 115);
         $pdf->Write(6, 'Dear ');
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Write(6, $fullName);
@@ -98,38 +104,38 @@ if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
         $pdf->Write(6, ',');
         
         // Body paragraph 1
-        $pdf->SetXY(25, 120);
-        $pdf->MultiCell(160, 6, "We are pleased to offer you provisional admission into " . $programsText . " at " . $siteName . ".", 0, 'J');
+        $pdf->SetXY(25, 130);
+        $pdf->MultiCell(160, 7, "We are pleased to offer you provisional admission into " . $programsText . " at " . $siteName . ".", 0, 'J');
         
         // Body paragraph 2
-        $pdf->SetXY(25, 140);
-        $pdf->MultiCell(160, 6, "This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.", 0, 'J');
+        $pdf->SetXY(25, 155);
+        $pdf->MultiCell(160, 7, "This admission is granted based on your expressed interest and initial screening. Further enrolment steps will be communicated to you, including documentation and class schedule.", 0, 'J');
         
         // Body paragraph 3
-        $pdf->SetXY(25, 165);
-        $pdf->MultiCell(160, 6, "Please keep this letter for your records. If you have any questions, contact us via the details in the letterhead above.", 0, 'J');
+        $pdf->SetXY(25, 185);
+        $pdf->MultiCell(160, 7, "Please keep this letter for your records. If you have any questions, contact us via the details in the letterhead above.", 0, 'J');
         
         // Body paragraph 4
-        $pdf->SetXY(25, 185);
+        $pdf->SetXY(25, 210);
         $pdf->Write(6, "We look forward to your success with us.");
         
         // Signature section
-        $pdf->SetXY(25, 210);
-        $pdf->Cell(50, 0.5, '', 'T', 1, 'L'); // Signature line
+        $pdf->SetXY(25, 235);
+        $pdf->Cell(60, 0.5, '', 'T', 1, 'L'); // Signature line
         
-        $pdf->SetXY(25, 215);
+        $pdf->SetXY(25, 240);
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Write(6, 'Admissions Office');
         
-        $pdf->SetXY(25, 223);
+        $pdf->SetXY(25, 248);
         $pdf->SetFont('Arial', '', 11);
         $pdf->Write(6, $siteName);
         
-        // Registration ID (small, gray)
-        $pdf->SetXY(25, 245);
-        $pdf->SetTextColor(128, 128, 128);
-        $pdf->SetFont('Arial', '', 9);
-        $pdf->Write(5, 'Registration ID: ' . $rid);
+        // Registration ID (small, positioned above footer)
+        $pdf->SetXY(140, 255);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->SetFont('Arial', 'I', 9);
+        $pdf->Write(5, 'Reg ID: ' . $rid);
         
         // Output the PDF
         $filename = 'admission-letter-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $fullName) . '.pdf';
