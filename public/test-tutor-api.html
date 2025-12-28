@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor API Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .test-section { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        button { background: #FFD600; color: #000; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #e6c200; }
+        .result { background: #fff; padding: 15px; margin-top: 15px; border-left: 4px solid #FFD600; }
+        pre { background: #222; color: #0f0; padding: 15px; overflow: auto; border-radius: 4px; }
+        .error { border-left-color: #dc2626; }
+        .success { border-left-color: #16a34a; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Tutor API Diagnostic Tool</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Check API Connection</h2>
+        <p>This will test if the API is accessible and returns JSON</p>
+        <button onclick="testAPIConnection()">Test Connection</button>
+        <div id="connection-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Test Photo Upload</h2>
+        <p>Select a small image to test upload functionality</p>
+        <input type="file" id="testPhoto" accept="image/*">
+        <button onclick="testPhotoUpload()">Upload Test Photo</button>
+        <div id="upload-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Create Test Tutor</h2>
+        <p>This will attempt to create a test tutor with minimal data</p>
+        <button onclick="testCreateTutor()">Create Test Tutor</button>
+        <div id="create-result"></div>
+    </div>
+
+    <script>
+        async function testAPIConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                const response = await fetch('../admin/api/tutors.php?action=list');
+                const contentType = response.headers.get('content-type');
+                
+                resultDiv.innerHTML = `
+                    <div class="result ${response.ok ? 'success' : 'error'}">
+                        <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Content-Type:</strong> ${contentType}<br>
+                    </div>
+                `;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `
+                        <div class="result success">
+                            ✓ API returned JSON!<br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML += `
+                        <div class="result error">
+                            ✗ API returned HTML/Text instead of JSON:<br>
+                            <pre>${text.substring(0, 500)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ Connection Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testPhotoUpload() {
+            const fileInput = document.getElementById('testPhoto');
+            const resultDiv = document.getElementById('upload-result');
+            
+            if (!fileInput.files[0]) {
+                Swal.fire('Error', 'Please select an image first', 'error');
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>Uploading...</p>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('photo', fileInput.files[0]);
+                formData.append('action', 'upload_photo');
+                
+                const response = await fetch('../admin/api/tutors.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="result ${data.success ? 'success' : 'error'}">
+                            <strong>Success:</strong> ${data.success}<br>
+                            <strong>Message:</strong> ${data.message || 'N/A'}<br>
+                            ${data.path ? '<strong>Path:</strong> ' + data.path : ''}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ✗ API returned HTML instead of JSON:<br>
+                            <pre>${text.substring(0, 500)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ Upload Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testCreateTutor() {
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.innerHTML = '<p>Creating test tutor...</p>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'create');
+                formData.append('name', 'Test Tutor ' + Date.now());
+                formData.append('title', 'Mathematics Teacher');
+                formData.append('subjects', 'Mathematics, Physics');
+                formData.append('is_active', '1');
+                formData.append('is_featured', '0');
+                
+                const response = await fetch('../admin/api/tutors.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const contentType = response.headers.get('content-type');
+                
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <strong>Status:</strong> ${response.status}<br>
+                        <strong>Content-Type:</strong> ${contentType}<br>
+                    </div>
+                `;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `
+                        <div class="result ${data.success ? 'success' : 'error'}">
+                            <strong>Success:</strong> ${data.success}<br>
+                            <strong>Message:</strong> ${data.message}<br>
+                            ${data.id ? '<strong>New Tutor ID:</strong> ' + data.id : ''}
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    const text = await response.text();
+                    resultDiv.innerHTML += `
+                        <div class="result error">
+                            ✗ API returned HTML instead of JSON:<br>
+                            <pre>${text.substring(0, 1000)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ Create Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
