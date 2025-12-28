@@ -22317,3 +22317,187 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-12-28T06:09:27+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-4324eaa0908sm54450938f8f.31 - gsmtp
 
+[2025-12-28T06:16:07+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-47be396c909sm204358715e9.0 - gsmtp
+
+[2025-12-28T06:16:07+01:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-12-28T06:16:08+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.117.164]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-12-28T06:16:08+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-12-28T06:16:08+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-12-28T06:16:09+01:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-12-28T06:16:09+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.117.164]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-12-28T06:16:09+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-12-28T06:16:09+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-12-28T06:16:09+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-12-28T06:16:09+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-12-28T06:16:09+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-12-28T06:16:10+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-12-28T06:16:10+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-47be396c909sm204358715e9.0 - gsmtp
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2025-12-28T06:16:10+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-47be396c909sm204358715e9.0 - gsmtp
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-12-28T06:16:10+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-47be396c909sm204358715e9.0 - gsmtp
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: Date: Sun, 28 Dec 2025 06:16:07 +0100
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: Subject: HIGH Q Test - 2025-12-28 06:16:07
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: Message-ID: <9Wx8wFMkBKYYwhBkb6eS4sEhZQFTJtBuR28dPsT7sM@DESKTOP-OD5BIHH>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:     <html>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:     <body style="font-family: Arial, sans-serif; padding: 20px;">
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:         <div style="background: #FFD600; padding: 15px; margin-bottom: 20px;">
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:             <h2 style="margin: 0;">HIGH Q SOLID ACADEMY - Test Email</h2>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:         <p>This is a test email sent at: <strong>2025-12-28 06:16:07</strong></p>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:         <p>If you receive this, the email system is working correctly!</p>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:         <hr>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:         <p style="color: #666; font-size: 12px;">Automated test from test_pdf_email.php</p>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:     </body>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER:     </html>
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-28T06:16:10+01:00] [level=1] CLIENT -> SERVER: .
+
+[2025-12-28T06:16:11+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1766898977 5b1f17b1804b1-47be396c909sm204358715e9.0 - gsmtp
+
+[2025-12-28T06:16:11+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2025-12-28T06:16:11+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-47be396c909sm204358715e9.0 - gsmtp
+
+[2025-12-28T06:16:12+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-47d28a33adcsm145729485e9.18 - gsmtp
+
+[2025-12-28T06:16:12+01:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-12-28T06:16:12+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.117.164]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-12-28T06:16:12+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2025-12-28T06:16:12+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2025-12-28T06:16:13+01:00] [level=1] CLIENT -> SERVER: EHLO DESKTOP-OD5BIHH
+
+[2025-12-28T06:16:14+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [105.113.117.164]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2025-12-28T06:16:14+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2025-12-28T06:16:14+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2025-12-28T06:16:14+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-12-28T06:16:15+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2025-12-28T06:16:15+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2025-12-28T06:16:15+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2025-12-28T06:16:15+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2025-12-28T06:16:15+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-47d28a33adcsm145729485e9.18 - gsmtp
+
+[2025-12-28T06:16:15+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2025-12-28T06:16:15+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-47d28a33adcsm145729485e9.18 - gsmtp
+
+[2025-12-28T06:16:15+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2025-12-28T06:16:16+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-47d28a33adcsm145729485e9.18 - gsmtp
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Date: Sun, 28 Dec 2025 06:16:12 +0100
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Subject: Your Welcome Kit - High-Q Registration #999
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Message-ID: <aD4k7spbgw0WgTH6dDpOzUqpXzQoQ1rnDTTJDi70@DESKTOP-OD5BIHH>
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Content-Type: multipart/mixed;
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER:  boundary="b1=_aD4k7spbgw0WgTH6dDpOzUqpXzQoQ1rnDTTJDi70"
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: --b1=_aD4k7spbgw0WgTH6dDpOzUqpXzQoQ1rnDTTJDi70
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: 
+
+[2025-12-28T06:16:16+01:00] [level=1] CLIENT -> SERVER: <!DOCTYPE html>
+
