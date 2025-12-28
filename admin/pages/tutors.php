@@ -1101,9 +1101,14 @@ async function deleteTutor(id) {
             formData.append('action', 'delete');
             formData.append('id', id);
             
-            const res = await fetch('../api/tutors.php', {
+            const apiUrl = (window.HQ_ADMIN_BASE || '') + '/api/tutors.php';
+            const res = await fetch(apiUrl, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             });
             const data = await res.json();
             if (data.success) {
@@ -1124,9 +1129,14 @@ async function toggleFeatured(id, current) {
         formData.append('id', id);
         formData.append('is_featured', current ? 0 : 1);
         
-        const res = await fetch('../api/tutors.php', {
+        const apiUrl = (window.HQ_ADMIN_BASE || '') + '/api/tutors.php';
+        const res = await fetch(apiUrl, {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         });
         const data = await res.json();
         if (data.success) {
