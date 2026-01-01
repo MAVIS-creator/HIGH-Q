@@ -189,4 +189,4 @@ echo "║                    ✅ ALL CHECKS PASSED                        ║\n"
 echo "║                                                                ║\n";
 echo "║  Dotenv is properly configured and ready to use.              ║\n";
 echo "║  Environment variables are accessible and valid.              ║\n";
-╚════════════════════════════════════════════════════════════════════╝\n";
+echo "╚════════════════════════════════════════════════════════════════╝\n";
