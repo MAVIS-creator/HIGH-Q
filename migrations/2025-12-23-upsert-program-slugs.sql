@@ -1,10 +1,14 @@
 -- Upsert core program slugs and features
--- Run with: mysql -u root -p highq < migrations/2025-12-23-upsert-program-slugs.sql
+-- Idempotent; ensures courses table has required columns
+
+-- Ensure courses table has all required columns
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS `name` VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS `slug` VARCHAR(255) UNIQUE,
+  ADD COLUMN IF NOT EXISTS `highlight_badge` VARCHAR(255);
 
 -- JAMB Preparation
-UPDATE courses
-SET title='JAMB Preparation', slug='jamb-preparation', description='Comprehensive preparation for JAMB with targeted tutoring and CBT mock tests.', duration='4-6 months', price=NULL, is_active=1, icon='bx bx-target-lock', highlight_badge='Top JAMB Scores'
-WHERE slug='jamb-preparation';
+INSERT IGNORE INTO courses (title, slug, description, duration, price, is_active, icon, highlight_badge)
+VALUES ('JAMB Preparation', 'jamb-preparation', 'Comprehensive preparation for JAMB with targeted tutoring and CBT mock tests.', '4-6 months', NULL, 1, 'bx bx-target-lock', 'Top JAMB Scores');
 INSERT INTO courses (title, slug, description, duration, price, tutor_id, created_by, is_active, icon, highlight_badge)
 SELECT 'JAMB Preparation', 'jamb-preparation', 'Comprehensive preparation for JAMB with targeted tutoring and CBT mock tests.', '4-6 months', NULL, NULL, 1, 1, 'bx bx-target-lock', 'Top JAMB Scores'
 WHERE NOT EXISTS (SELECT 1 FROM courses WHERE slug='jamb-preparation');
