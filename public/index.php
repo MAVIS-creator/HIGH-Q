@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../bootstrap.php';
 // Normalize accidental duplicate /public/public in the URL early
 if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/public/public/') !== false) {
 	$normalized = preg_replace('#/public/public/#', '/public/', $_SERVER['REQUEST_URI'], 1);
