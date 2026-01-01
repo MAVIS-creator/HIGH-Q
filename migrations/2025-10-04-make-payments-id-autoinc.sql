@@ -1,20 +1,7 @@
--- Migration: make payments.id AUTO_INCREMENT primary key (safe, idempotent)
--- Location: migrations/2025-10-04-make-payments-id-autoinc.sql
---
--- This script does the following:
--- 1) Creates a backup table `payments_backup` (if it doesn't already exist) and copies current data into it
--- 2) Ensures id is set as AUTO_INCREMENT PRIMARY KEY
---
--- IMPORTANT: Back up your database before running. This script is idempotent.
+-- Migration: ensure payments.id is AUTO_INCREMENT PRIMARY KEY (idempotent)
+-- Safe to run multiple times
 
--- Create backup table if it doesn't exist
-CREATE TABLE IF NOT EXISTS payments_backup LIKE payments;
-
--- Copy data only if backup is empty (idempotent)
-INSERT IGNORE INTO payments_backup SELECT * FROM payments WHERE NOT EXISTS (SELECT 1 FROM payments_backup LIMIT 1);
-
--- Make id NOT NULL and AUTO_INCREMENT if not already
-ALTER TABLE payments MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (id) IF NOT EXISTS;
+ALTER TABLE payments MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT;
   EXECUTE stmt;
   DEALLOCATE PREPARE stmt;
 
