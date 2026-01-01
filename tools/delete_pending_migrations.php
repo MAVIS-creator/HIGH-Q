@@ -13,7 +13,8 @@ $migrations = [
 ];
 
 foreach ($migrations as $m) {
-  $pdo->execute($pdo->prepare("DELETE FROM migrations WHERE filename = ?"), [$m]);
+  $stmt = $pdo->prepare("DELETE FROM migrations WHERE filename = ?");
+  $stmt->execute([$m]);
 }
 
 echo "Deleted " . count($migrations) . " pending migrations. Ready to re-run.\n";
