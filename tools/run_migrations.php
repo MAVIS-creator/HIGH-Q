@@ -45,11 +45,17 @@ foreach ($files as $f) {
         continue;
     }
     try {
-        $pdo->beginTransaction();
-        $pdo->exec($sql);
+        // Execute statements one by one without transaction (ALTER TABLE can't be transactional in MySQL)
+        $statements = array_filter(array_map('trim', explode(';', $sql)));
+        foreach ($statements as $stmt_sql) {
+            if (!empty($stmt_sql) && !preg_match('/^--/', $stmt_sql)) {
+                $pdo->exec($stmt_sql);
+            }
+        }
+        
+        // Record migration as applied
         $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
         $ins->execute([$base]);
-        $pdo->commit();
         echo "Applied: $base\n";
     } catch (PDOException $e) {
         if ($pdo->inTransaction()) {
@@ -70,7 +76,7 @@ foreach ($files as $f) {
                 exit(1);
             }
         }
-        echo "Failed to apply $base: " . $msg . "\n" . "Transaction rolled back. Check SQL and re-run.\n";
+        echo "Failed to apply $base: " . $msg . "\n" . "Check SQL and re-run.\n";
         exit(1);
     }
 }
