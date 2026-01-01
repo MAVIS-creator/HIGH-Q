@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../bootstrap.php';
 // Admin routing - forward ?pages parameter requests to pages/index.php
 if (isset($_GET['pages'])) {
     include __DIR__ . '/pages/index.php';
