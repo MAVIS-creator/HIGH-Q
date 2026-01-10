@@ -102,3 +102,4 @@ PARAMS: ["Introducing the HIGH Q SOLID ACADEMY Website!","introducing-the-high-q
 2026-01-10T21:03:50+01:00 HOME POSTS QUERY ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'highq.post_likes' doesn't exist
 2026-01-10T21:03:59+01:00 HOME POSTS QUERY ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'highq.post_likes' doesn't exist
 2026-01-10T21:16:03+01:00 HOME POSTS QUERY ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'highq.post_likes' doesn't exist
+2026-01-10T21:19:12+01:00 HOME POSTS QUERY ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'highq.post_likes' doesn't exist
