@@ -146,6 +146,38 @@ body {
   font-size: 12px;
 }
 
+/* NYSC Header Badge - Minimal */
+.nysc-header-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  margin-left: 12px;
+}
+
+.nysc-header-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.nysc-header-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2e7d32;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+@media (max-width: 991px) {
+  .nysc-header-badge {
+    display: none !important;
+  }
+}
+
 /* Nav */
 nav {
   display: flex;
@@ -484,6 +516,29 @@ nav a.active::after {
 .footer-about .motto span {
   color: var(--hq-yellow);
   font-style: italic;
+}
+
+/* NYSC Accreditation Badge in Footer - Minimal */
+.footer-nysc-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 6px 0;
+}
+
+.footer-nysc-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+.footer-nysc-text {
+  font-size: 0.8rem;
+  color: #a5d6a7;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .socials {

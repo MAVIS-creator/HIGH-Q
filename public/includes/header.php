@@ -334,6 +334,12 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </div>
             </div>
           </a>
+          
+          <!-- NYSC Accreditation Badge - Minimal -->
+          <div class="nysc-header-badge d-none d-md-flex">
+            <img src="https://vectorseek.com/wp-content/uploads/2023/09/Nysc-Logo-Vector.svg-.png" alt="NYSC Logo" class="nysc-header-logo">
+            <span class="nysc-header-text">NYSC Accredited</span>
+          </div>
 
           <!-- Toggle for mobile - opens offcanvas -->
           <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">

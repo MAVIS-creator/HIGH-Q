@@ -504,6 +504,258 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 }
 </style>
 
+<!-- Video Testimonials Section -->
+<section class="video-testimonials-section py-5">
+  <div class="container">
+    <div class="ceo-heading text-center mb-4">
+      <h2>Student <span class="highlight">Video Stories</span></h2>
+      <p>Watch real testimonials from our successful students</p>
+    </div>
+    
+    <div class="video-grid">
+      <?php
+      $videoDir = 'uploads/others-multi (1)/';
+      $videos = [
+        'VID-20260112-WA0040.mp4',
+        'VID-20260112-WA0041.mp4',
+        'VID-20260112-WA0043.mp4',
+        'VID-20260112-WA0044.mp4',
+        'VID-20260112-WA0046.mp4'
+      ];
+      foreach ($videos as $index => $video):
+      ?>
+      <div class="video-card" data-video-index="<?= $index ?>">
+        <video 
+          class="video-player"
+          src="<?= htmlspecialchars($videoDir . $video) ?>"
+          muted
+          playsinline
+          preload="metadata"
+          poster=""
+        ></video>
+        <div class="video-overlay">
+          <div class="video-play-btn">
+            <i class='bx bx-play'></i>
+          </div>
+          <p class="video-hint">Click to unmute & play</p>
+        </div>
+        <div class="video-unmute-indicator" style="display:none;">
+          <i class='bx bx-volume-full'></i> Sound On
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<style>
+.video-testimonials-section {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.video-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0b1a2c;
+  aspect-ratio: 9/16;
+  max-height: 400px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.video-card.playing .video-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-play-btn {
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 214, 0, 0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.video-play-btn i {
+  font-size: 36px;
+  color: #0b1a2c;
+  margin-left: 4px;
+}
+
+.video-card:hover .video-play-btn {
+  transform: scale(1.1);
+  background: #ffd600;
+}
+
+.video-hint {
+  color: white;
+  font-size: 0.85rem;
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+.video-unmute-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 214, 0, 0.95);
+  color: #0b1a2c;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.video-unmute-indicator i {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .video-card {
+    max-height: 300px;
+  }
+  
+  .video-play-btn {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .video-play-btn i {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .video-card {
+    max-height: 450px;
+  }
+}
+</style>
+
+<script>
+// Video testimonials interaction
+document.addEventListener('DOMContentLoaded', function() {
+  const videoCards = document.querySelectorAll('.video-card');
+  
+  videoCards.forEach(card => {
+    const video = card.querySelector('.video-player');
+    const overlay = card.querySelector('.video-overlay');
+    const unmuteIndicator = card.querySelector('.video-unmute-indicator');
+    let isUnmuted = false;
+    
+    // Hover: Play muted (desktop only)
+    card.addEventListener('mouseenter', () => {
+      if (window.innerWidth > 768 && !isUnmuted) {
+        video.muted = true;
+        video.play().catch(() => {});
+        card.classList.add('playing');
+      }
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      if (!isUnmuted) {
+        video.pause();
+        video.currentTime = 0;
+        card.classList.remove('playing');
+      }
+    });
+    
+    // Click: Toggle unmute and play with controls
+    card.addEventListener('click', () => {
+      // Pause all other videos
+      videoCards.forEach(otherCard => {
+        if (otherCard !== card) {
+          const otherVideo = otherCard.querySelector('.video-player');
+          const otherIndicator = otherCard.querySelector('.video-unmute-indicator');
+          otherVideo.pause();
+          otherVideo.muted = true;
+          otherCard.classList.remove('playing');
+          otherIndicator.style.display = 'none';
+        }
+      });
+      
+      if (isUnmuted) {
+        // Already unmuted, pause
+        video.pause();
+        video.muted = true;
+        isUnmuted = false;
+        card.classList.remove('playing');
+        unmuteIndicator.style.display = 'none';
+      } else {
+        // Unmute and play
+        video.muted = false;
+        video.controls = true;
+        video.play().catch(() => {});
+        isUnmuted = true;
+        card.classList.add('playing');
+        unmuteIndicator.style.display = 'flex';
+        
+        // Hide indicator after 2 seconds
+        setTimeout(() => {
+          unmuteIndicator.style.display = 'none';
+        }, 2000);
+      }
+    });
+    
+    // When video ends, reset state
+    video.addEventListener('ended', () => {
+      isUnmuted = false;
+      video.muted = true;
+      video.controls = false;
+      card.classList.remove('playing');
+      unmuteIndicator.style.display = 'none';
+    });
+  });
+});
+</script>
+
 <script>
 // Horizontal scroll buttons for Wall of Fame
 document.addEventListener('DOMContentLoaded', function() {
