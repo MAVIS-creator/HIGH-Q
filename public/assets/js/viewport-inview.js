@@ -1,7 +1,13 @@
 // viewport-inview.js
 // Marks card-like elements with .in-view when they enter the viewport.
 (function(){
-  var selectors = ['.program-card', '.tutor-card', '.value-card', '.post-card', '.card', '.stat', '.achievement', '.sidebar-card', '.register-sidebar .card'];
+  var selectors = [
+    '.program-card', '.tutor-card', '.value-card', '.post-card', '.card', 
+    '.stat', '.achievement', '.sidebar-card', '.register-sidebar .card',
+    '.testimonial-mini', '.wall-testimony-card', '.video-card', '.feature-card',
+    '.ceo-card', '.ceo-quote', '.ceo-heading', '.hero-left', '.hero-right',
+    '.news-card', '.footer-about', '.footer-links', '.footer-contact'
+  ];
   var nodes = [];
   selectors.forEach(function(sel){ document.querySelectorAll(sel).forEach(function(n){ nodes.push(n); }); });
   if (!nodes.length) return;
