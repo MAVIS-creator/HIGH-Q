@@ -1,0 +1,471 @@
+/* 
+   MOBILE & TABLET OPTIMIZED ANIMATIONS
+   Performance-focused: Using GPU-accelerated transforms only
+   Minimal processor load, no jank on phones
+*/
+
+/* Respect user accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   SCROLL OPTIMIZATION
+   Pause animations during fast scrolling
+   ============================================ */
+
+html.is-scrolling [data-animate],
+html.is-scrolling .animated,
+html.is-scrolling [class*="animated"] {
+  animation-play-state: paused !important;
+}
+
+/* ============================================
+   GPU-OPTIMIZED KEYFRAMES (transforms only)
+   ============================================ */
+
+@keyframes slideInMobile {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInMobileLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInMobileRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scalePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes fadeInGently {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes floatUp {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shimmerMobile {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes wiggleDown {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+}
+
+/* ============================================
+   MOBILE ANIMATIONS (max-width: 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  
+  /* Page transition in */
+  html.page-loading body {
+    animation: fadeInGently 0.5s ease-out;
+  }
+
+  /* Header badge animations */
+  .nysc-header-badge,
+  .footer-nysc-badge {
+    animation: slideInMobileRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* Button animations */
+  .btn, 
+  [class*="btn-"] {
+    will-change: transform;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+
+  .btn:active,
+  [class*="btn-"]:active {
+    transform: scale(0.97);
+  }
+
+  .btn:focus,
+  [class*="btn-"]:focus {
+    transform: scale(1.02);
+  }
+
+  /* Card entry animations */
+  .card,
+  [class*="card-"],
+  .feature-card,
+  .course-card,
+  .testimonial-card {
+    will-change: transform, opacity;
+    animation: slideInMobile 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* Stagger cards if they're sequential */
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Navbar collapse animation */
+  .navbar-collapse {
+    animation: slideInMobileRight 0.4s ease-out;
+  }
+
+  /* Nav items stagger */
+  .nav-item {
+    animation: slideInMobileLeft 0.4s ease-out forwards;
+    opacity: 0;
+  }
+
+  .nav-item:nth-child(1) { animation-delay: 0.05s; }
+  .nav-item:nth-child(2) { animation-delay: 0.1s; }
+  .nav-item:nth-child(3) { animation-delay: 0.15s; }
+  .nav-item:nth-child(4) { animation-delay: 0.2s; }
+  .nav-item:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Mobile-friendly hover effects */
+  .nav-link {
+    transition: color 0.2s ease-out;
+  }
+
+  .nav-link:active {
+    transform: scale(0.95);
+  }
+
+  /* List animations */
+  ul li,
+  ol li {
+    animation: slideInMobile 0.4s ease-out forwards;
+    opacity: 0;
+  }
+
+  ul li:nth-child(1),
+  ol li:nth-child(1) { animation-delay: 0.05s; }
+
+  ul li:nth-child(2),
+  ol li:nth-child(2) { animation-delay: 0.1s; }
+
+  ul li:nth-child(3),
+  ol li:nth-child(3) { animation-delay: 0.15s; }
+
+  /* Form elements */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  select,
+  textarea {
+    will-change: border-color, box-shadow;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Modal animations */
+  .modal {
+    animation: fadeInGently 0.3s ease-out;
+  }
+
+  .modal-content {
+    animation: slideInMobile 0.4s ease-out;
+  }
+
+  /* Badge/tag animations */
+  .badge,
+  .tag,
+  [class*="badge-"],
+  [class*="tag-"] {
+    animation: scalePulse 2s ease-in-out infinite;
+  }
+
+  /* Hero section subtle float */
+  .hero-title,
+  .hero-subtitle,
+  [class*="hero-"] h1,
+  [class*="hero-"] h2 {
+    animation: floatUp 3s ease-in-out infinite;
+  }
+
+  /* Alert animations */
+  .alert {
+    animation: slideInMobileRight 0.4s ease-out;
+  }
+
+  .alert-dismissible .btn-close:active {
+    transform: scale(0.9);
+  }
+
+  /* Loading spinner */
+  .spinner,
+  .spinner-border,
+  [class*="spinner"] {
+    will-change: transform;
+  }
+
+  /* Smooth transitions for visibility changes */
+  [class*="visible"],
+  [class*="show"],
+  [class*="active"] {
+    animation: fadeInGently 0.3s ease-out;
+  }
+
+}
+
+/* ============================================
+   TABLET ANIMATIONS (769px - 1024px)
+   ============================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  /* Slightly more generous on tablets */
+  .card,
+  [class*="card-"],
+  .feature-card,
+  .course-card {
+    animation: slideInMobile 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+  .card:nth-child(4) { animation-delay: 0.26s; }
+
+  /* Hover effects are more pronounced on tablet */
+  .btn,
+  [class*="btn-"] {
+    will-change: transform;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn:hover,
+  [class*="btn-"]:hover {
+    transform: translateY(-3px);
+  }
+
+  .btn:active,
+  [class*="btn-"]:active {
+    transform: scale(0.95);
+  }
+
+  /* Card hover lift */
+  .card:hover,
+  [class*="card-"]:hover {
+    transform: translateY(-4px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Navigation smoother on tablet */
+  .nav-link {
+    transition: color 0.25s ease-out;
+  }
+
+  .nav-link:hover {
+    transform: translateY(-2px);
+    transition: all 0.25s ease-out;
+  }
+
+  /* Tablet-friendly hero animations */
+  .hero-title,
+  .hero-subtitle {
+    animation: slideInMobileLeft 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* More visible float animation on tablet */
+  [class*="float"],
+  [class*="floating"] {
+    animation: floatUp 4s ease-in-out infinite;
+  }
+
+}
+
+/* ============================================
+   WILL-CHANGE OPTIMIZATION HINTS
+   ============================================ */
+
+/* Prepare animated elements for GPU rendering */
+.navbar,
+.navbar-brand,
+.nav-item,
+[class*="hero-"],
+.btn,
+[class*="btn-"],
+.card,
+[class*="card-"],
+.modal,
+.alert,
+.badge,
+[class*="badge-"] {
+  will-change: auto; /* Reset to default, let animations trigger it */
+}
+
+/* Enable 3D acceleration for smooth scrolling */
+main,
+section,
+article {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   MICRO-INTERACTIONS (Touches/Taps)
+   ============================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile touch devices - remove hover delays */
+  
+  a,
+  button,
+  .btn,
+  [class*="btn-"] {
+    transition: transform 0.15s ease-out;
+  }
+
+  a:active,
+  button:active,
+  .btn:active,
+  [class*="btn-"]:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+
+  /* Subtle active state for clickable items */
+  [role="button"],
+  [class*="clickable"],
+  .interactive {
+    position: relative;
+  }
+
+  [role="button"]:active::after,
+  [class*="clickable"]:active::after,
+  .interactive:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    animation: rippleOut 0.6s ease-out;
+    pointer-events: none;
+  }
+}
+
+@keyframes rippleOut {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   LANDSCAPE MODE ADJUSTMENTS
+   ============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  
+  /* Reduce animation duration in landscape mobile */
+  .card,
+  [class*="card-"],
+  .nav-item,
+  ul li,
+  ol li {
+    animation-duration: 0.3s !important;
+  }
+
+  /* Shorter stagger delays */
+  .card:nth-child(1),
+  .nav-item:nth-child(1),
+  ul li:nth-child(1),
+  ol li:nth-child(1) { animation-delay: 0s !important; }
+
+  .card:nth-child(2),
+  .nav-item:nth-child(2),
+  ul li:nth-child(2),
+  ol li:nth-child(2) { animation-delay: 0.05s !important; }
+
+  .card:nth-child(3),
+  .nav-item:nth-child(3),
+  ul li:nth-child(3),
+  ol li:nth-child(3) { animation-delay: 0.1s !important; }
+
+}
+
+/* ============================================
+   SLOW MOTION MODE (for debugging/testing)
+   ============================================ */
+
+/* Uncomment to test animations in slow motion:
+
+html {
+  --animation-scale: 2; 
+}
+
+@media (max-width: 768px) {
+  * {
+    animation-duration: calc(var(--animation-scale) * 1s) !important;
+  }
+}
+
+*/

@@ -265,6 +265,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="<?= app_url('assets/css/responsive.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/ceo-responsive.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/animations.css') ?>">
+  <link rel="stylesheet" href="<?= app_url('assets/css/mobile-animations.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/social-icons.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/post-toc.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/hero.css') ?>">
@@ -316,11 +317,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <div class="container">
   <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
   <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
-        <!-- NYSC Accreditation Badge - Top Bar -->
-        <div class="nysc-topbar-badge">
+        <!-- NYSC Badge in Top Bar -->
+        <span class="nysc-topbar-badge">
           <img src="<?= app_url('assets/images/nysc-logo.png') ?>" alt="NYSC" class="nysc-topbar-logo">
           <span class="nysc-topbar-text">NYSC Accredited</span>
-        </div>
+        </span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>

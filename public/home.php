@@ -37,17 +37,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy 
       </div>
       
-      <!-- NYSC Accreditation Badge -->
-      <div class="nysc-accreditation-badge mb-3">
-        <div class="nysc-badge-content">
-          <div class=\"nysc-logo\">\n            <!-- NYSC Logo SVG - replace with actual logo if available -->\n            <svg viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" style=\"width:100%;height:100%;\">\n              <circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#2e7d32\" stroke=\"#4caf50\" stroke-width=\"2\"/>\n              <circle cx=\"50\" cy=\"50\" r=\"42\" fill=\"#ffffff\"/>\n              <text x=\"50\" y=\"45\" font-family=\"Arial, sans-serif\" font-size=\"18\" font-weight=\"bold\" fill=\"#2e7d32\" text-anchor=\"middle\">NYSC</text>\n              <text x=\"50\" y=\"65\" font-family=\"Arial, sans-serif\" font-size=\"10\" fill=\"#558b2f\" text-anchor=\"middle\">ACCREDITED</text>\n            </svg>\n          </div>
-          <div class="nysc-text">
-            <span class="nysc-certified">NYSC Accredited Centre</span>
-            <span class="nysc-subtitle">Official Skills Acquisition Partner</span>
-          </div>
-        </div>
-      </div>
-      
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.

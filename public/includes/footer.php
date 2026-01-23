@@ -16,14 +16,11 @@
         student success since 2018.
       </p>      
       <!-- NYSC Accreditation -->
-      <div class="footer-nysc-badge animate-fade-in">
+      <div class="footer-nysc-badge animate-glow">
         <img src="<?= app_url('assets/images/nysc-logo.png') ?>" alt="NYSC Logo" class="footer-nysc-logo">
-        <div class="footer-nysc-text-wrap">
-          <span class="footer-nysc-text">NYSC Accredited Centre</span>
-          <span class="footer-nysc-subtext">Official Skills Partner</span>
-        </div>
+        <span class="footer-nysc-text">NYSC Accredited Centre</span>
       </div>
-            <p class="motto">"<span>Always Ahead of Others</span>"</p>
+      <p class="motto">"<span>Always Ahead of Others</span>"</p>
       <div class="socials">
         <?php
           $socials = [];
@@ -167,3 +164,4 @@
 
 <script src="<?= app_url('assets/js/viewport-inview.js') ?>"></script>
 <script src="<?= app_url('assets/js/contact-helpers.js') ?>"></script>
+<script src="<?= app_url('assets/js/mobile-animations.js') ?>"></script>
