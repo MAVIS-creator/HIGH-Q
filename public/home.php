@@ -36,6 +36,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <div class="hero-badge mb-3">
         <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy 
       </div>
+      
+      <!-- NYSC Accreditation Badge -->
+      <div class="nysc-accreditation-badge mb-3">
+        <div class="nysc-badge-content">
+          <img src="<?= app_url('assets/images/nysc-logo.png') ?>" alt="NYSC Logo" class="nysc-logo" onerror="this.style.display='none'">
+          <div class="nysc-text">
+            <span class="nysc-certified">NYSC Accredited Centre</span>
+            <span class="nysc-subtitle">Official Skills Acquisition Partner</span>
+          </div>
+        </div>
+      </div>
+      
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
@@ -251,6 +263,72 @@ if (isset($pdo) && $pdo instanceof PDO) {
   color: #fff;
 }
 .testimonials-strip .highlight { color: var(--hq-yellow, #ffd600); }
+
+/* NYSC Accreditation Badge Styles */
+.nysc-accreditation-badge {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.nysc-badge-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nysc-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.nysc-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nysc-certified {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #2e7d32;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+
+.nysc-subtitle {
+  font-size: 0.75rem;
+  color: #558b2f;
+  font-weight: 500;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2); }
+  50% { box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4), 0 0 30px rgba(76, 175, 80, 0.2); }
+}
+
+@media (max-width: 576px) {
+  .nysc-accreditation-badge {
+    padding: 10px 16px;
+  }
+  .nysc-logo {
+    width: 40px;
+    height: 40px;
+  }
+  .nysc-certified {
+    font-size: 0.9rem;
+  }
+  .nysc-subtitle {
+    font-size: 0.7rem;
+  }
+}
 
 /* Scrollable testimonials container */
 .testimonials-scroll-wrapper {

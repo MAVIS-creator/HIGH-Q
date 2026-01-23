@@ -14,9 +14,18 @@ CREATE TABLE IF NOT EXISTS post_utme_waec_serial_no_backup (
   INDEX (registration_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Copy non-empty values
-INSERT INTO post_utme_waec_serial_no_backup (registration_id, waec_serial_no, backed_up_at)
-SELECT id, waec_serial_no, NOW() FROM post_utme_registrations WHERE waec_serial_no IS NOT NULL AND waec_serial_no <> '';
+-- Copy non-empty values only when the legacy column exists
+SET @has_waec_serial_no := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = @table
+    AND COLUMN_NAME = @col
+);
+SET @backup_sql := IF(@has_waec_serial_no = 1,
+  'INSERT INTO post_utme_waec_serial_no_backup (registration_id, waec_serial_no, backed_up_at) SELECT id, waec_serial_no, NOW() FROM post_utme_registrations WHERE waec_serial_no IS NOT NULL AND waec_serial_no <> '''';',
+  'SELECT "waec_serial_no not present; skipping backup copy"'
+);
+PREPARE stmt FROM @backup_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 -- Finally, drop column (uncomment to execute)
 -- ALTER TABLE post_utme_registrations DROP COLUMN waec_serial_no;

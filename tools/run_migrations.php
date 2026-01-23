@@ -38,10 +38,33 @@ foreach ($files as $f) {
         echo "Skipping already applied: $base\n";
         continue;
     }
+    // Skip diagnostics-style scripts that are not actual schema changes
+    if (stripos($base, 'diagnostic') !== false) {
+        echo "Skipping diagnostics file: $base\n";
+        try {
+            $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
+            $ins->execute([$base]);
+        } catch (Throwable $e) {
+            echo "Failed to record skipped diagnostics $base: " . $e->getMessage() . "\n";
+            exit(1);
+        }
+        continue;
+    }
     echo "Applying: $base\n";
     $sql = file_get_contents($f);
     if ($sql === false) {
         echo "Failed to read $f\n";
+        continue;
+    }
+    if (trim($sql) === '') {
+        echo "Empty migration, marking as applied: $base\n";
+        try {
+            $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
+            $ins->execute([$base]);
+        } catch (Throwable $e) {
+            echo "Failed to record empty migration $base: " . $e->getMessage() . "\n";
+            exit(1);
+        }
         continue;
     }
     try {
@@ -49,7 +72,10 @@ foreach ($files as $f) {
         $pdo->exec($sql);
         $ins = $pdo->prepare('INSERT INTO migrations (filename) VALUES (?)');
         $ins->execute([$base]);
-        $pdo->commit();
+        // MySQL auto-commits many DDL statements; only commit when the transaction is still active
+        if ($pdo->inTransaction()) {
+            $pdo->commit();
+        }
         echo "Applied: $base\n";
     } catch (PDOException $e) {
         if ($pdo->inTransaction()) {
