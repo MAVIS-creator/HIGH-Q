@@ -316,6 +316,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <div class="container">
   <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
   <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        <!-- NYSC Accreditation Badge - Top Bar -->
+        <div class="nysc-topbar-badge">
+          <img src="<?= app_url('assets/images/nysc-logo.png') ?>" alt="NYSC" class="nysc-topbar-logo">
+          <span class="nysc-topbar-text">NYSC Accredited</span>
+        </div>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>
@@ -334,12 +339,6 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
               </div>
             </div>
           </a>
-          
-          <!-- NYSC Accreditation Badge - Minimal -->
-          <div class="nysc-header-badge d-none d-md-flex">
-            <img src="https://vectorseek.com/wp-content/uploads/2023/09/Nysc-Logo-Vector.svg-.png" alt="NYSC Logo" class="nysc-header-logo">
-            <span class="nysc-header-text">NYSC Accredited</span>
-          </div>
 
           <!-- Toggle for mobile - opens offcanvas -->
           <button class="navbar-toggler border-0 ms-auto mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav">

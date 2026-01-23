@@ -15,7 +15,14 @@
         Nigeria’s premier tutorial academy committed to academic excellence and 
         student success since 2018.
       </p>      
-      <!-- NYSC Accreditation -->\n      <div class=\"footer-nysc-badge\">\n        <img src=\"https://vectorseek.com/wp-content/uploads/2023/09/Nysc-Logo-Vector.svg-.png\" alt=\"NYSC Logo\" class=\"footer-nysc-logo\">\n        <span class=\"footer-nysc-text\">NYSC Accredited Centre</span>\n      </div>
+      <!-- NYSC Accreditation -->
+      <div class="footer-nysc-badge animate-fade-in">
+        <img src="<?= app_url('assets/images/nysc-logo.png') ?>" alt="NYSC Logo" class="footer-nysc-logo">
+        <div class="footer-nysc-text-wrap">
+          <span class="footer-nysc-text">NYSC Accredited Centre</span>
+          <span class="footer-nysc-subtext">Official Skills Partner</span>
+        </div>
+      </div>
             <p class="motto">"<span>Always Ahead of Others</span>"</p>
       <div class="socials">
         <?php
