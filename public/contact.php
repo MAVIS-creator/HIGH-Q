@@ -572,54 +572,25 @@ document.addEventListener('DOMContentLoaded', function(){
 		document.body.removeChild(link);
 	}
 
-	// Live Chat: open iframe modal only. Keep cookie helpers and badge update.
+	// Live Chat: trigger the global chat widget instead of iframe modal
 	var openLive = document.getElementById('openLiveChat');
 
-	function updateFloatingBadge(){ try{ var badge = document.querySelector('.floating-chat .badge'); var thread = getCookie('hq_thread_id'); if(thread){ if(!badge){ var n=document.createElement('span'); n.className='badge'; n.textContent='1'; var fc = document.querySelector('.floating-chat'); if(fc) fc.appendChild(n); } } else { if(badge) badge.remove(); } }catch(e){}
+	function openGlobalChatWidget() {
+		var toggle = document.getElementById('chatToggle');
+		if (toggle) toggle.click();
+		// Go straight to agent form for contact page intent
+		setTimeout(function(){ if (window.hqChatShowAgentForm) window.hqChatShowAgentForm(); }, 200);
 	}
 
-	// call once on load to sync badge state
-	updateFloatingBadge();
-
-	// if there's an existing thread for this visitor, keep polling in background (uses iframe API when modal open)
-	try{ var existingThread = getCookie('hq_thread_id'); if(existingThread){ /* polling may be handled by iframe/chatbox */ } }catch(e){}
-
-	function openChatModal() {
-		var chatModal = document.getElementById('chatIframeModal');
-		if(chatModal){
-			chatModal.style.display = 'block';
-			chatModal.setAttribute('aria-hidden','false');
-			var iframe = document.getElementById('chatIframe'); 
-			if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
-		}
+	if (openLive) {
+		openLive.addEventListener('click', function(e){ e.preventDefault(); openGlobalChatWidget(); });
+		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openGlobalChatWidget(); });
 	}
 
-	if(openLive){
-		openLive.addEventListener('click', openChatModal);
-		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
+	// Auto-open widget if page loaded with #livechat hash
+	if (window.location.hash === '#livechat') {
+		openGlobalChatWidget();
 	}
-
-	// Auto-open chat modal if page loaded with #livechat hash
-	if(window.location.hash === '#livechat') {
-		openChatModal();
-	}
-
-	// chat iframe modal close button
-	var closeChatModal = document.getElementById('closeChatModal');
-	if(closeChatModal){ 
-		closeChatModal.addEventListener('click', function(){ 
-			var chatModal = document.getElementById('chatIframeModal'); 
-			if(chatModal){ 
-				chatModal.style.display='none'; 
-				chatModal.setAttribute('aria-hidden','true'); 
-				var iframe = document.getElementById('chatIframe'); 
-				if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); 
-			} 
-		}); 
-	}
-
-	// listen for messages from iframe (chatbox) to allow it to request close
-	window.addEventListener('message', function(ev){ try{ if(ev.data && ev.data.hq_chat_action === 'close'){ var m = document.getElementById('chatIframeModal'); if(m) m.style.display='none'; } }catch(e){} });
 
 	// clear chat form placeholder removed with mini chat; no-op kept to avoid errors
 
