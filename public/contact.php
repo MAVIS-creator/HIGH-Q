@@ -418,8 +418,10 @@ document.addEventListener('DOMContentLoaded', function(){
 		if (modal) {
 			modal.classList.remove('open'); 
 			modal.setAttribute('aria-hidden','true');
-			// Restore body scroll
+			// Restore body scroll - use multiple methods to ensure it works
 			document.body.style.overflow = '';
+			document.body.style.overflow = 'auto';
+			document.documentElement.style.overflow = 'auto';
 			// Reset form
 			if (scheduleForm) scheduleForm.reset();
 		}
