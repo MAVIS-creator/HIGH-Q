@@ -10,3 +10,6 @@
 2025-12-19T18:30:59+01:00 incoming $_FILES: {"name":["localhost__desktop.png"],"full_path":["localhost__desktop.png"],"type":["image\/png"],"tmp_name":["C:\\xampp\\tmp\\php7E98.tmp"],"error":[0],"size":[63751]}
 2025-12-19T18:30:59+01:00 loop idx=0 name=localhost__desktop.png type_raw=image/png size=63751
 2025-12-19T18:30:59+01:00 saved localhost__desktop.png -> C:\xampp\htdocs\HIGH-Q\public/uploads/chat/e1c7762f00573aed.png
+2026-01-24T20:52:55+01:00 incoming $_FILES: {"name":["c.jpg"],"full_path":["c.jpg"],"type":["image\/jpeg"],"tmp_name":["C:\\xampp\\tmp\\phpBF69.tmp"],"error":[0],"size":[158667]}
+2026-01-24T20:52:55+01:00 loop idx=0 name=c.jpg type_raw=image/jpeg size=158667
+2026-01-24T20:52:55+01:00 saved c.jpg -> C:\xampp\htdocs\HIGH-Q\public/uploads/chat/58edc19e7895a0f8.jpg
