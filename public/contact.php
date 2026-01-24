@@ -572,24 +572,23 @@ document.addEventListener('DOMContentLoaded', function(){
 		document.body.removeChild(link);
 	}
 
-	// Live Chat: trigger the global chat widget instead of iframe modal
+	// Live Chat: open the chatbot widget (from chat-widget.php in footer)
 	var openLive = document.getElementById('openLiveChat');
 
-	function openGlobalChatWidget() {
+	function openChatbot() {
 		var toggle = document.getElementById('chatToggle');
 		if (toggle) toggle.click();
-		// Go straight to agent form for contact page intent
-		setTimeout(function(){ if (window.hqChatShowAgentForm) window.hqChatShowAgentForm(); }, 200);
+		// Opens the bot landing with FAQ options first
 	}
 
 	if (openLive) {
-		openLive.addEventListener('click', function(e){ e.preventDefault(); openGlobalChatWidget(); });
-		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openGlobalChatWidget(); });
+		openLive.addEventListener('click', function(e){ e.preventDefault(); openChatbot(); });
+		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openChatbot(); });
 	}
 
-	// Auto-open widget if page loaded with #livechat hash
+	// Auto-open chatbot if page loaded with #livechat hash
 	if (window.location.hash === '#livechat') {
-		openGlobalChatWidget();
+		openChatbot();
 	}
 
 	// clear chat form placeholder removed with mini chat; no-op kept to avoid errors
