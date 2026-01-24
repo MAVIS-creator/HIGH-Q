@@ -378,7 +378,7 @@ include __DIR__ . '/includes/header.php';
 <div id="chatIframeModal" style="display:none;position:fixed;bottom:90px;right:20px;z-index:9998;width:400px;max-width:calc(100vw - 40px);height:600px;max-height:calc(100vh - 110px);box-shadow:0 12px 48px rgba(0,0,0,0.25);border-radius:16px;overflow:hidden;background:#fff;">
 	<div style="width:100%;height:100%;position:relative;">
 		<button id="closeChatModal" aria-label="Close chat" style="position:absolute;right:8px;top:8px;border:none;background:rgba(255,255,255,0.95);padding:8px 10px;border-radius:50%;cursor:pointer;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:18px;line-height:1;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#333;"><i class="bx bx-x"></i></button>
-		<iframe id="chatIframe" src="/includes/chat-widget.php" style="width:100%;height:100%;border:0;display:block;" title="Live Chat"></iframe>
+		<iframe id="chatIframe" src="<?= app_url('chatbox.php') ?>" style="width:100%;height:100%;border:0;display:block;" title="Live Chat"></iframe>
 	</div>
 </div>
 

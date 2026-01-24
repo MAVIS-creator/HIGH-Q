@@ -377,6 +377,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             border-top: 2px solid #e8e8e8;
             background: #fafafa;
             animation: fadeIn 0.3s ease-in;
+            position: relative;
+            flex-wrap: wrap;
         }
 
         .chat-footer input[type=text],
@@ -429,7 +431,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             bottom: 100%;
             left: 12px;
             right: 12px;
-            display: flex;
+            display: none;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 8px;
@@ -437,6 +439,11 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             padding: 8px;
             border-radius: 8px;
             box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .attachment-preview:not(:empty) {
+            display: flex;
         }
 
         .attachment-preview img {
@@ -444,6 +451,36 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             height: 60px;
             object-fit: cover;
             border-radius: 6px;
+        }
+
+        .attachment-preview .file-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .attachment-preview .file-item i {
+            font-size: 16px;
+            color: var(--hq-yellow-dark);
+        }
+
+        .attachment-preview .remove-file {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 14px;
+            padding: 2px;
+            margin-left: 4px;
+        }
+
+        .attachment-preview .remove-file:hover {
+            color: #d63031;
         }
 
         .chat-alert {
