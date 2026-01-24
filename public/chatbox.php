@@ -737,19 +737,58 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
                         reader.onload = e => {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'file-item';
+                            wrapper.dataset.filename = file.name;
+                            
                             const img = document.createElement('img');
                             img.src = e.target.result;
-                            attachmentPreview.appendChild(img);
+                            img.style.width = '50px';
+                            img.style.height = '50px';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '4px';
+                            wrapper.appendChild(img);
+                            
+                            const nameSpan = document.createElement('span');
+                            nameSpan.textContent = file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name;
+                            wrapper.appendChild(nameSpan);
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-file';
+                            removeBtn.innerHTML = '<i class="bx bx-x"></i>';
+                            removeBtn.title = 'Remove';
+                            removeBtn.onclick = function() {
+                                wrapper.remove();
+                            };
+                            wrapper.appendChild(removeBtn);
+                            
+                            attachmentPreview.appendChild(wrapper);
                         };
                         reader.readAsDataURL(file);
                     } else {
-                        const div = document.createElement('div');
-                        div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
-                        div.style.padding = '6px 8px';
-                        div.style.borderRadius = '6px';
-                        div.style.background = '#fff';
-                        div.style.fontSize = '12px';
-                        attachmentPreview.appendChild(div);
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'file-item';
+                        wrapper.dataset.filename = file.name;
+                        
+                        const icon = document.createElement('i');
+                        icon.className = file.type.includes('pdf') ? 'bx bxs-file-pdf' : 'bx bxs-file-doc';
+                        wrapper.appendChild(icon);
+                        
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+                        nameSpan.title = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                        wrapper.appendChild(nameSpan);
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-file';
+                        removeBtn.innerHTML = '<i class="bx bx-x"></i>';
+                        removeBtn.title = 'Remove';
+                        removeBtn.onclick = function() {
+                            wrapper.remove();
+                        };
+                        wrapper.appendChild(removeBtn);
+                        
+                        attachmentPreview.appendChild(wrapper);
                     }
                 }
             });
