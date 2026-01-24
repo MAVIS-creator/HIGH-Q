@@ -154,8 +154,8 @@
 <!-- ===== FOOTER END ===== -->
 </main>
 
-<!-- Floating Live Chat Button (opens global chat widget) -->
-<a href="#" class="floating-chat" aria-label="Live Chat with us">
+<!-- Floating Live Chat Button -->
+<a href="<?= app_url('contact.php#livechat') ?>" class="floating-chat" aria-label="Live Chat with us">
   <i class="bx bx-chat"></i>
 </a>
 
@@ -165,25 +165,3 @@
 <script src="<?= app_url('assets/js/viewport-inview.js') ?>"></script>
 <script src="<?= app_url('assets/js/contact-helpers.js') ?>"></script>
 <script src="<?= app_url('assets/js/mobile-animations.js') ?>"></script>
-<script>
-// Floating chat button: open global chat widget and show agent form
-document.addEventListener('DOMContentLoaded', function(){
-  try {
-    var floatBtn = document.querySelector('.floating-chat');
-    if (floatBtn) {
-      floatBtn.addEventListener('click', function(e){
-        e.preventDefault();
-        var toggle = document.getElementById('chatToggle');
-        if (toggle) toggle.click();
-        setTimeout(function(){ if (window.hqChatShowAgentForm) window.hqChatShowAgentForm(); }, 200);
-      });
-    }
-    // Support deep-link #livechat on any page
-    if (window.location.hash === '#livechat') {
-      var toggle2 = document.getElementById('chatToggle');
-      if (toggle2) toggle2.click();
-      setTimeout(function(){ if (window.hqChatShowAgentForm) window.hqChatShowAgentForm(); }, 200);
-    }
-  } catch(e) { /* ignore */ }
-});
-</script>
