@@ -377,13 +377,12 @@ include __DIR__ . '/includes/header.php';
 <!-- Using global chat widget included via footer; removed legacy iframe modal to avoid path issues -->
 
 <script>
-// If contact.php#livechat, open the global chat widget and show agent form
+// If contact.php#livechat, open the chatbot (bot landing with FAQ)
 document.addEventListener('DOMContentLoaded', function(){
 	try {
 		if (window.location.hash === '#livechat') {
 			var toggle = document.getElementById('chatToggle');
 			if (toggle) toggle.click();
-			setTimeout(function(){ if (window.hqChatShowAgentForm) window.hqChatShowAgentForm(); }, 200);
 		}
 	} catch(e) { /* ignore */ }
 });
