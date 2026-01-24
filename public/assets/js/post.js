@@ -63,15 +63,36 @@
     const likeBtnC = wrapper.querySelector('.like-btn');
     likeBtnC.addEventListener('click', function () {
       const cid = this.getAttribute('data-id');
-      if (getCookie('liked_comment_' + cid) === '1') return;
+      const isCurrentlyLiked = getCookie('liked_comment_' + cid) === '1';
+      // Optimistically toggle UI
+      if (isCurrentlyLiked) {
+        this.classList.remove('liked');
+      } else {
+        this.classList.add('liked');
+      }
   fetch('api/comment_like.php', { method: 'POST', body: new URLSearchParams({ comment_id: cid }) })
         .then(r => r.json())
         .then(j => {
           if (j && typeof j.likes !== 'undefined') {
             this.querySelector('.like-count').textContent = j.likes;
           }
-          if (j && j.liked) setCookie('liked_comment_' + cid, '1', 30);
-        }).catch(()=>{});
+          if (j && typeof j.liked !== 'undefined') {
+            if (j.liked) {
+              this.classList.add('liked');
+              setCookie('liked_comment_' + cid, '1', 30);
+            } else {
+              this.classList.remove('liked');
+              deleteCookie('liked_comment_' + cid);
+            }
+          }
+        }).catch(() => {
+          // Revert UI on error
+          if (isCurrentlyLiked) {
+            this.classList.add('liked');
+          } else {
+            this.classList.remove('liked');
+          }
+        });
     });
 
     // render replies if provided
