@@ -5078,34 +5078,36 @@ input.form-input {
 }
 
 /* ========================================
-   NYSC TOP BAR BADGE - Compact for Black Bar
+   NYSC TOP BAR BADGE - Compact & Visible
    Shows on ALL devices including mobile
    ======================================== */
 .nysc-topbar-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px 8px;
-  background: rgba(76, 175, 80, 0.2);
-  border: 1px solid rgba(76, 175, 80, 0.5);
-  border-radius: 12px;
-  margin: 0 6px;
+  gap: 4px;
+  padding: 1px 6px;
+  background: linear-gradient(135deg, #2e7d32, #4caf50);
+  border: none;
+  border-radius: 10px;
+  margin: 0 8px;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
 }
 
 .nysc-topbar-logo {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   object-fit: contain;
-  filter: brightness(1.2);
+  filter: brightness(1.3) drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
 }
 
 .nysc-topbar-text {
-  font-size: 9px;
-  font-weight: 700;
-  color: #81c784;
+  font-size: 8px;
+  font-weight: 800;
+  color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Tablet */
