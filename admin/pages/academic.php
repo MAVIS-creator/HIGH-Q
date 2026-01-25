@@ -835,6 +835,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     }
   header('Location: ' . admin_url('pages/academic.php')); exit;
   }
+
+  // Confirm universal registration
+  if ($action === 'confirm_universal') {
+    $stmt = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+    
+    if (!$reg) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Registration not found']); exit; }
+      header('Location: ' . admin_url('pages/academic.php')); exit;
+    }
+    
+    if (strtolower($reg['status'] ?? '') === 'confirmed') {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Already confirmed']); exit; }
+      header('Location: ' . admin_url('pages/academic.php')); exit;
+    }
+    
+    try {
+      $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, updated_at = NOW() WHERE id = ?');
+      $upd->execute(['confirmed', $id]);
+      logAction($pdo, $currentUserId, 'confirm_universal', ['registration_id' => $id]);
+      
+      if ($isAjax) {
+        echo json_encode(['success' => true, 'message' => 'Registration confirmed']);
+        exit;
+      }
+    } catch (Throwable $e) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Server error']); exit; }
+    }
+    header('Location: ' . admin_url('pages/academic.php')); exit;
+  }
+
+  // Reject universal registration
+  if ($action === 'reject_universal') {
+    $reason = trim($_POST['reason'] ?? '');
+    $stmt = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+    
+    if (!$reg) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Registration not found']); exit; }
+      header('Location: ' . admin_url('pages/academic.php')); exit;
+    }
+    
+    try {
+      $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, updated_at = NOW() WHERE id = ?');
+      $upd->execute(['rejected', $id]);
+      logAction($pdo, $currentUserId, 'reject_universal', ['registration_id' => $id, 'reason' => $reason]);
+      
+      // Send rejection email
+      $email = $reg['email'] ?? null;
+      if (empty($email) && !empty($reg['payload'])) {
+        $payload = json_decode($reg['payload'], true);
+        $email = $payload['email'] ?? null;
+      }
+      
+      $emailSent = false;
+      if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $studentName = trim(($reg['first_name'] ?? '') . ' ' . ($reg['last_name'] ?? '')) ?: 'Student';
+        $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
+        $body = '<p>Hi ' . htmlspecialchars($studentName) . ',</p>';
+        $body .= '<p>We regret to inform you that your registration has been <strong style="color:#dc2626;">rejected</strong>.</p>';
+        if ($reason) {
+          $body .= '<p><strong>Reason:</strong> ' . htmlspecialchars($reason) . '</p>';
+        }
+        $body .= '<p>If you have questions, please contact our support team.</p>';
+        $body .= '<p>Best regards,<br>HIGH Q SOLID ACADEMY</p>';
+        try { $emailSent = (bool) sendEmail($email, $subject, $body); } catch (Throwable $e) { $emailSent = false; }
+      }
+      
+      if ($isAjax) {
+        echo json_encode(['success' => true, 'message' => 'Registration rejected', 'email_sent' => $emailSent]);
+        exit;
+      }
+    } catch (Throwable $e) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Server error']); exit; }
+    }
+    header('Location: ' . admin_url('pages/academic.php')); exit;
+  }
 }
 
 // Prefer to show structured student registrations if the table exists
