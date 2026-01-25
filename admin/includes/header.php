@@ -70,6 +70,7 @@ if ($idx !== false) {
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-modern.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/account-settings-modal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-style.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-minimal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/notifications.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/profile-modal.css">
@@ -78,6 +79,7 @@ if ($idx !== false) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/storage-helper.js"></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/device-capability.js"></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/sweetalert-config.js"></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/notifications.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/header-notifications.js" defer></script>
