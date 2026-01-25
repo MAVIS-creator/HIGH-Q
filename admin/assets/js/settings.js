@@ -5,17 +5,31 @@
         var form = document.getElementById('settingsForm');
         if (!form) return;
 
-        // Tabs initialization (if present)
-        document.querySelectorAll('.tab-btn').forEach(function(b){
-            b.addEventListener('click', function(){
-                document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(x=>x.style.display='none');
-                b.classList.add('active');
-                var t = b.getAttribute('data-tab');
-                var panel = document.querySelector('.tab-panel[data-panel="'+t+'"]');
-                if (panel) panel.style.display='block';
+        // Tabs initialization (robust, works even if DOM loads late)
+        (function initTabs(){
+            var tabs = Array.from(document.querySelectorAll('.tab-btn'));
+            var panels = Array.from(document.querySelectorAll('.tab-panel'));
+            if (!tabs.length || !panels.length) return;
+
+            function activate(tabName){
+                tabs.forEach(function(tb){ tb.classList.toggle('active', tb.getAttribute('data-tab') === tabName); });
+                panels.forEach(function(pn){
+                    var match = pn.getAttribute('data-panel') === tabName;
+                    pn.style.display = match ? 'block' : 'none';
+                });
+            }
+
+            tabs.forEach(function(tb){
+                tb.addEventListener('click', function(ev){
+                    ev.preventDefault();
+                    activate(tb.getAttribute('data-tab'));
+                });
             });
-        });
+
+            // Ensure first tab is visible on load
+            var initial = tabs.find(function(t){ return t.classList.contains('active'); }) || tabs[0];
+            if (initial) activate(initial.getAttribute('data-tab'));
+        })();
 
         // Helper to parse JSON but handle HTML error pages gracefully
         function tryParseJSONOrShowHtml(text) {
