@@ -177,12 +177,8 @@ require_once __DIR__ . '/../includes/header.php';
     display: flex;
     gap: 12px;
     max-width: 85%;
-    animation: messageSlideIn 0.3s ease-out;
-}
-
-@keyframes messageSlideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    /* Removed slide/fade animation to avoid flicker on refresh */
+    animation: none;
 }
 
 .message-wrapper.visitor {
