@@ -66,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!$reg) { echo json_encode(['success'=>false,'error'=>'Registration not found']); exit; }
 
     // Generate unique payment reference
-    $reference = 'PAY-' . strtoupper(bin2hex(random_bytes(5)));
+    require_once __DIR__ . '/../../public/config/payment_references.php';
+    $reference = generatePaymentReference('course');
     $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0.0;
   $method = $_POST['method'] ?? 'bank_transfer';
   // normalize common values

@@ -31,7 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = 'Please provide a valid amount and email.';
         } else {
             // create payment record
-            $ref = 'ADMIN-' . date('YmdHis') . '-' . bin2hex(random_bytes(4));
+            require_once __DIR__ . '/../../public/config/payment_references.php';
+            $ref = generatePaymentReference('admin');
             $metadata = ['email_to' => $email, 'message' => $msg];
             $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata) VALUES (NULL, ?, ?, ?, ?, NOW(), ?)');
             $ok = $ins->execute([$amount, 'bank', $ref, 'pending', json_encode($metadata, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)]);

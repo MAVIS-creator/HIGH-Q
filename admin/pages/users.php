@@ -186,7 +186,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'upload_receipt' && isset($_GE
     $upd = $pdo->prepare('UPDATE payments SET receipt_path = ?, updated_at = NOW() WHERE id = ?');
     $upd->execute(["uploads/receipts/{$fileName}", $pid]);
   } else {
-    $ref = 'RCPT-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
+    require_once __DIR__ . '/../../public/config/payment_references.php';
+    $ref = generatePaymentReference('receipt');
     $ins = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, receipt_path, created_at) VALUES (?, 0, "bank_transfer", ?, "uploaded", ?, NOW())');
     $ins->execute([$id, $ref, "uploads/receipts/{$fileName}"]); $pid = $pdo->lastInsertId();
   }
