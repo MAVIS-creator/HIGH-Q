@@ -1420,115 +1420,283 @@ function viewRegistration(id) {
     if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
     const d = data.data || data;
     
-    // Build passport preview
+    // Store passport URL for download
+    const passportUrl = d.passport_photo || '';
+    const studentName = (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || '');
+    
+    // Build premium passport section
     let passportHtml = '';
-    if (d.passport_photo) {
-      passportHtml = `<div class="text-center mb-3">
-        <img src="${d.passport_photo}" alt="Passport Photo" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:3px solid #ffd600;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-      </div>`;
+    if (passportUrl) {
+      passportHtml = `
+        <div style="text-align:center;margin-bottom:1.5rem;position:relative;">
+          <div style="position:relative;display:inline-block;">
+            <img src="${passportUrl}" alt="Passport Photo" 
+                 style="width:140px;height:140px;object-fit:cover;border-radius:16px;border:4px solid #ffd600;box-shadow:0 8px 24px rgba(0,0,0,0.15);">
+            <button onclick="downloadPassport('${passportUrl}', '${studentName.replace(/'/g, "\\'")} - Passport')" 
+                    style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0b1a2c 0%,#1e3a5f 100%);color:#ffd600;border:none;padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+              <i class='bx bx-download'></i> Download Photo
+            </button>
+          </div>
+        </div>`;
+    } else {
+      passportHtml = `
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <div style="width:140px;height:140px;border-radius:16px;border:4px dashed #e2e8f0;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#f8fafc;">
+            <i class='bx bx-user' style="font-size:4rem;color:#cbd5e1;"></i>
+          </div>
+          <p style="margin-top:0.5rem;color:#94a3b8;font-size:0.8rem;">No passport photo</p>
+        </div>`;
     }
     
+    // Status badge styling
+    const statusColors = {
+      'confirmed': { bg: '#dcfce7', text: '#166534', icon: 'bx-check-circle' },
+      'paid': { bg: '#dcfce7', text: '#166534', icon: 'bx-check-circle' },
+      'rejected': { bg: '#fee2e2', text: '#991b1b', icon: 'bx-x-circle' },
+      'pending': { bg: '#fef3c7', text: '#92400e', icon: 'bx-time-five' },
+      'awaiting_payment': { bg: '#dbeafe', text: '#1e40af', icon: 'bx-credit-card' }
+    };
+    const statusStyle = statusColors[(d.status || 'pending').toLowerCase()] || statusColors.pending;
+    
     let html = `
-    <div style="max-height:65vh;overflow-y:auto;padding:0 1rem;">
+    <style>
+      .view-modal-section { background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border-radius:16px;padding:1.25rem;margin-bottom:1rem;border:1px solid #e2e8f0; }
+      .view-modal-section:hover { border-color:#ffd600;box-shadow:0 4px 12px rgba(255,214,0,0.1); }
+      .view-modal-title { font-size:0.8rem;font-weight:700;color:#0b1a2c;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;gap:8px;padding-bottom:0.75rem;border-bottom:2px solid #ffd600; }
+      .view-modal-title i { color:#ffd600;font-size:1.2rem; }
+      .view-modal-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem; }
+      .view-modal-item { }
+      .view-modal-item.full { grid-column:1/-1; }
+      .view-modal-label { font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px; }
+      .view-modal-value { font-size:0.95rem;color:#1e293b;font-weight:500; }
+    </style>
+    
+    <div style="max-height:65vh;overflow-y:auto;padding:0 0.5rem;">
       ${passportHtml}
       
-      <!-- Personal Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-user'></i> Personal Information
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Surname:</strong> ${d.surname || d.last_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Other Names:</strong> ${d.other_names || d.first_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Email:</strong> ${d.email || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Phone:</strong> ${d.phone || d.emergency_contact_phone || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Gender:</strong> ${d.gender || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>DOB:</strong> ${d.date_of_birth || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Marital Status:</strong> ${d.marital_status || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>NIN:</strong> ${d.nin || '-'}</p>
+      <!-- Status Banner -->
+      <div style="background:${statusStyle.bg};border-radius:12px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;">
+        <i class='bx ${statusStyle.icon}' style="font-size:1.5rem;color:${statusStyle.text};"></i>
+        <div>
+          <div style="font-size:0.75rem;color:${statusStyle.text};opacity:0.8;">Status</div>
+          <div style="font-size:1rem;font-weight:700;color:${statusStyle.text};text-transform:uppercase;">${(d.status || 'Pending')}</div>
+        </div>
+        <div style="margin-left:auto;font-size:0.8rem;color:${statusStyle.text};opacity:0.8;">
+          <i class='bx bx-calendar'></i> ${d.created_at || 'N/A'}
         </div>
       </div>
       
-      <!-- Location Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-map'></i> Location Details
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>State of Origin:</strong> ${d.state_of_origin || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Local Govt:</strong> ${d.local_government || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Home Address:</strong> ${d.home_address || '-'}</p>
+      <!-- Personal Information -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-user'></i> Personal Information</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Surname</div>
+            <div class="view-modal-value">${d.surname || d.last_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Other Names</div>
+            <div class="view-modal-value">${d.other_names || d.first_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Email</div>
+            <div class="view-modal-value">${d.email || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Phone</div>
+            <div class="view-modal-value">${d.phone || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Gender</div>
+            <div class="view-modal-value">${d.gender || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Date of Birth</div>
+            <div class="view-modal-value">${d.date_of_birth || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Marital Status</div>
+            <div class="view-modal-value">${d.marital_status || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">NIN</div>
+            <div class="view-modal-value">${d.nin || '-'}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Location Details -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-map'></i> Location Details</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">State of Origin</div>
+            <div class="view-modal-value">${d.state_of_origin || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Local Government</div>
+            <div class="view-modal-value">${d.local_government || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Home Address</div>
+            <div class="view-modal-value">${d.home_address || '-'}</div>
+          </div>
         </div>
       </div>
       
       <!-- Academic Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-book'></i> Academic Information
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Profile Code:</strong> ${d.profile_code || d.jamb_profile_code || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Exam Type:</strong> ${d.exam_type || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Exam Year:</strong> ${d.exam_year || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Course:</strong> ${d.academic_goals || d.course_of_study || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Previous Education:</strong> ${d.previous_education || '-'}</p>
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-book-open'></i> Academic Information</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Profile Code</div>
+            <div class="view-modal-value">${d.profile_code || d.jamb_profile_code || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Exam Type</div>
+            <div class="view-modal-value">${d.exam_type || d.program_type || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Exam Year</div>
+            <div class="view-modal-value">${d.exam_year || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Course</div>
+            <div class="view-modal-value">${d.academic_goals || d.course_of_study || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Previous Education</div>
+            <div class="view-modal-value">${d.previous_education || '-'}</div>
+          </div>
         </div>
       </div>
       
-      <!-- Sponsor/Guardian Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-group'></i> Sponsor/Guardian Information
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Sponsor Name:</strong> ${d.sponsor_name || d.guardian_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Sponsor Phone:</strong> ${d.sponsor_phone || d.guardian_phone || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Sponsor Address:</strong> ${d.sponsor_address || d.guardian_address || '-'}</p>
+      <!-- Sponsor/Guardian -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-group'></i> Sponsor / Guardian</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Name</div>
+            <div class="view-modal-value">${d.sponsor_name || d.guardian_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Phone</div>
+            <div class="view-modal-value">${d.sponsor_phone || d.guardian_phone || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Address</div>
+            <div class="view-modal-value">${d.sponsor_address || d.guardian_address || '-'}</div>
+          </div>
         </div>
       </div>
       
-      <!-- Next of Kin Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-user-plus'></i> Next of Kin
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Name:</strong> ${d.next_of_kin_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Phone:</strong> ${d.next_of_kin_phone || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Address:</strong> ${d.next_of_kin_address || '-'}</p>
-        </div>
-      </div>
-      
-      <!-- Registration Status -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-check-circle'></i> Registration Status
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Status:</strong> <span style="padding:0.25rem 0.5rem;border-radius:999px;font-size:0.75rem;font-weight:600;background:${d.status === 'confirmed' ? '#d1fae5' : d.status === 'rejected' ? '#fee2e2' : '#fef3c7'};color:${d.status === 'confirmed' ? '#065f46' : d.status === 'rejected' ? '#991b1b' : '#92400e'}">${(d.status || 'Pending').toUpperCase()}</span></p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Created:</strong> ${d.created_at || '-'}</p>
+      <!-- Next of Kin -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-user-plus'></i> Next of Kin</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Name</div>
+            <div class="view-modal-value">${d.emergency_contact_name || d.next_of_kin_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Phone</div>
+            <div class="view-modal-value">${d.emergency_contact_phone || d.next_of_kin_phone || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Relationship</div>
+            <div class="view-modal-value">${d.emergency_relationship || d.next_of_kin_relationship || '-'}</div>
+          </div>
         </div>
       </div>
     </div>`;
     
     Swal.fire({
-      title: (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || ''),
-      html: html,
-      width: '700px',
+      title: '',
+      html: `
+        <div style="margin:-20px -20px 0;background:linear-gradient(135deg,#0b1a2c 0%,#1e3a5f 100%);padding:24px 20px;border-radius:12px 12px 0 0;">
+          <h2 style="margin:0;color:#ffd600;font-size:1.5rem;font-weight:700;">${studentName}</h2>
+          <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:0.9rem;">${d.program_type ? d.program_type.toUpperCase() + ' Registration' : 'Student Registration'}</p>
+        </div>
+        <div style="padding-top:1rem;">${html}</div>
+      `,
+      width: '750px',
       showCloseButton: true,
       showConfirmButton: true,
-      confirmButtonText: '<i class="bx bx-download"></i> Export PDF',
-      confirmButtonColor: '#ffd600',
       showDenyButton: true,
-      denyButtonText: 'Close',
-      denyButtonColor: '#64748b'
+      showCancelButton: ${passportUrl ? 'true' : 'false'},
+      confirmButtonText: '<i class="bx bx-file"></i> Export PDF',
+      denyButtonText: '<i class="bx bx-x"></i> Close',
+      cancelButtonText: '<i class="bx bx-image"></i> Download Photo',
+      customClass: {
+        confirmButton: 'swal-btn-primary',
+        denyButton: 'swal-btn-secondary',
+        cancelButton: 'swal-btn-photo'
+      },
+      didOpen: () => {
+        // Style buttons
+        const popup = Swal.getPopup();
+        const confirmBtn = popup.querySelector('.swal2-confirm');
+        const denyBtn = popup.querySelector('.swal2-deny');
+        const cancelBtn = popup.querySelector('.swal2-cancel');
+        
+        if (confirmBtn) {
+          confirmBtn.style.cssText = 'background:linear-gradient(135deg,#ffd600 0%,#e6c200 100%);color:#0b1a2c;font-weight:700;padding:12px 24px;border-radius:10px;border:none;box-shadow:0 4px 12px rgba(255,214,0,0.3);';
+        }
+        if (denyBtn) {
+          denyBtn.style.cssText = 'background:#f1f5f9;color:#475569;font-weight:600;padding:12px 24px;border-radius:10px;border:none;';
+        }
+        if (cancelBtn) {
+          cancelBtn.style.cssText = 'background:linear-gradient(135deg,#0b1a2c 0%,#1e3a5f 100%);color:#ffd600;font-weight:600;padding:12px 24px;border-radius:10px;border:none;';
+        }
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Trigger export for this student
+        // Export PDF
         window.open('index.php?pages=academic&action=export_single&id=' + id, '_blank');
+      } else if (result.dismiss === Swal.DismissReason.cancel && '${passportUrl}') {
+        // Download passport photo
+        downloadPassport('${passportUrl}', '${studentName.replace(/'/g, "\\'")} - Passport');
       }
     });
-  });
+  })
+  .catch(err => Swal.fire('Error', 'Failed to load registration: ' + err.message, 'error'));
+}
+
+// Function to download passport photo
+function downloadPassport(url, filename) {
+  if (!url) {
+    Swal.fire('No Photo', 'This registration has no passport photo.', 'warning');
+    return;
+  }
+  
+  // Create a temporary link to trigger download
+  fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = (filename || 'passport') + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+      
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Photo downloaded!',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#ffd600',
+        color: '#0b1a2c'
+      });
+    })
+    .catch(() => {
+      // Fallback: open in new tab
+      window.open(url, '_blank');
+    });
 }
 
 function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
