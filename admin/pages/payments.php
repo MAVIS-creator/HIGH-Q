@@ -295,7 +295,14 @@ $stmt->execute($params);
 $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $totalPages = (int)ceil($total / $perPage);
 
+// Generate CSRF token for AJAX actions
+$csrfToken = getToken('payments_form');
+
 ?>
+<script>
+// Make CSRF token available to JavaScript for AJAX actions
+window.__PAYMENTS_CSRF = <?= json_encode($csrfToken) ?>;
+</script>
 <style>
 /* HQ Payments Filter Card - Clean Modern Design */
 .hq-payments-card {
