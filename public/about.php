@@ -136,7 +136,7 @@ $pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educ
       <!-- Kingsley Oluwapelumi - JAMB 242 -->
       <article class="fame-card" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.2);transition:transform 0.3s ease,box-shadow 0.3s ease;">
         <div style="position:relative;">
-          <img src="<?= app_url('uploads/HQ Student Feature Submission.csv (1)/IMG_5396 - Kingsley Pelumi.jpeg') ?>" 
+          <img src="<?= app_url('uploads/IMG_5396 - Kingsley Pelumi.jpeg') ?>" 
                alt="Adedunye Kingsley Oluwapelumi" 
                style="width:100%;height:220px;object-fit:cover;">
           <div style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#ffd600 0%,#e6c200 100%);color:#0b1a2c;padding:6px 14px;border-radius:999px;font-weight:700;font-size:0.8rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
