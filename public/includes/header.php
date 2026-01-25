@@ -212,6 +212,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
