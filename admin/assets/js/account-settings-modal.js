@@ -111,12 +111,21 @@
     document.body.style.overflow='';
   }
 
+  function applyAnimationMode(mode){
+    if (window.HQDeviceCapability && typeof window.HQDeviceCapability.setPreference === 'function') {
+      window.HQDeviceCapability.setPreference(mode);
+    } else {
+      try { localStorage.setItem('hq_admin_animation_preference', mode); } catch(e) {}
+    }
+  }
+
   function save(){
     // Gather preferences
     const prefs = {
       theme: document.getElementById('settingsTheme')?.value || 'light',
       density: document.getElementById('settingsDensity')?.value || 'comfortable',
       reduceMotion: document.getElementById('settingsReduceMotion')?.checked || false,
+      animationMode: document.getElementById('settingsAnimationMode')?.value || 'auto',
       notifSystem: document.getElementById('settingsEmailSystem')?.checked || false,
       notifUsers: document.getElementById('settingsEmailUsers')?.checked || false,
       notifPayments: document.getElementById('settingsEmailPayments')?.checked || false,
@@ -126,6 +135,8 @@
     };
     // Store preferences locally
     try { localStorage.setItem('hq_admin_prefs', JSON.stringify(prefs)); } catch(e) {}
+    // Apply animation preference immediately
+    applyAnimationMode(prefs.animationMode);
     
     if (window.Swal) {
       Swal.fire({icon:'success',title:'Saved',text:'Preferences saved locally',timer:1200,showConfirmButton:false});
