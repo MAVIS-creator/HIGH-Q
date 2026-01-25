@@ -1450,51 +1450,149 @@ function viewRegistration(id) {
   });
 }
 
-function confirmRegistration(id) {
+function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
     Swal.fire({
         title: 'Confirm Registration?',
-        text: "This will approve the student.",
+        text: "This will approve the student's registration.",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Yes, confirm'
+        confirmButtonText: 'Yes, confirm',
+        confirmButtonColor: '#22c55e'
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'index.php?pages=academic&action=confirm_registration';
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= $csrf ?>';
-            form.appendChild(idInput); form.appendChild(csrf);
-            document.body.appendChild(form);
-            form.submit();
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('csrf_token', '<?= $csrf ?>');
+            fd.append('action', isUniversal ? 'confirm_universal' : (isPostUtme ? 'confirm_postutme' : 'confirm_registration'));
+            
+            fetch('index.php?pages=academic&action=' + (isUniversal ? 'confirm_universal' : (isPostUtme ? 'confirm_postutme' : 'confirm_registration')), {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success || data.status === 'ok') {
+                    Swal.fire('Confirmed!', 'Registration has been approved.', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.error || data.message || 'Failed to confirm', 'error');
+                }
+            })
+            .catch(() => Swal.fire('Error', 'Network error', 'error'));
         }
     });
 }
 
-function rejectRegistration(id) {
+function confirmWithPrice(id, isUniversal = false, isPostUtme = false) {
+    Swal.fire({
+        title: 'Confirm & Send Payment',
+        html: `
+            <div style="text-align:left;">
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Amount to Pay (₦)</label>
+                    <input type="number" id="swal-amount" class="swal2-input" placeholder="e.g. 15000" style="width:100%;margin:0;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Custom Message (Optional)</label>
+                    <textarea id="swal-message" class="swal2-textarea" placeholder="Add a personal message to include in the email..." style="width:100%;margin:0;height:80px;"></textarea>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '<i class="bx bx-send"></i> Confirm & Send Email',
+        confirmButtonColor: '#22c55e',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const amount = document.getElementById('swal-amount').value;
+            const message = document.getElementById('swal-message').value;
+            if (!amount || parseFloat(amount) <= 0) {
+                Swal.showValidationMessage('Please enter a valid amount');
+                return false;
+            }
+            return { amount: parseFloat(amount), message: message };
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            Swal.fire({
+                title: 'Sending...',
+                text: 'Confirming registration and sending payment link...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('amount', result.value.amount);
+            fd.append('custom_message', result.value.message || '');
+            fd.append('csrf_token', '<?= $csrf ?>');
+            fd.append('action', 'confirm_and_send_price');
+            fd.append('source', isUniversal ? 'universal' : (isPostUtme ? 'postutme' : 'regular'));
+            
+            fetch('api/confirm_with_price.php', {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Payment Link Sent!',
+                        html: `
+                            <p>Registration confirmed and payment link sent to:</p>
+                            <p><strong>${data.email || 'the student'}</strong></p>
+                            <p>Amount: <strong>₦${parseFloat(data.amount || result.value.amount).toLocaleString()}</strong></p>
+                            ${data.reference ? '<p>Reference: <code>' + data.reference + '</code></p>' : ''}
+                        `,
+                        confirmButtonColor: '#22c55e'
+                    }).then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.error || data.message || 'Failed to send payment link', 'error');
+                }
+            })
+            .catch(err => Swal.fire('Error', 'Network error: ' + err.message, 'error'));
+        }
+    });
+}
+
+function rejectRegistration(id, isUniversal = false, isPostUtme = false) {
     Swal.fire({
         title: 'Reject Registration',
-        input: 'text',
-        inputLabel: 'Reason for rejection',
+        html: `
+            <div style="text-align:left;">
+                <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Reason for rejection</label>
+                <textarea id="swal-reason" class="swal2-textarea" placeholder="Enter reason for rejection..." style="width:100%;margin:0;height:80px;"></textarea>
+            </div>
+        `,
         showCancelButton: true,
         confirmButtonText: 'Reject',
-        confirmButtonColor: '#e11d48'
+        confirmButtonColor: '#e11d48',
+        preConfirm: () => {
+            return document.getElementById('swal-reason').value || '';
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'index.php?pages=academic&action=reject_registration';
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
-            const reasonInput = document.createElement('input');
-            reasonInput.type = 'hidden'; reasonInput.name = 'reason'; reasonInput.value = result.value;
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= $csrf ?>';
-            form.appendChild(idInput); form.appendChild(reasonInput); form.appendChild(csrf);
-            document.body.appendChild(form);
-            form.submit();
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('reason', result.value);
+            fd.append('csrf_token', '<?= $csrf ?>');
+            fd.append('action', isUniversal ? 'reject_universal' : (isPostUtme ? 'reject_postutme' : 'reject_registration'));
+            
+            fetch('index.php?pages=academic&action=' + (isUniversal ? 'reject_universal' : (isPostUtme ? 'reject_postutme' : 'reject_registration')), {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success || data.status === 'ok') {
+                    Swal.fire('Rejected', 'Registration has been rejected.', 'info').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.error || data.message || 'Failed to reject', 'error');
+                }
+            })
+            .catch(() => Swal.fire('Error', 'Network error', 'error'));
         }
     });
 }
