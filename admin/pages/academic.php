@@ -329,9 +329,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     $stmt2 = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
     $stmt2->execute([$id]);
     $s2 = $stmt2->fetch(PDO::FETCH_ASSOC);
-    if (!$s2) { echo json_encode(['error'=>'Not found']); exit; }
-    // return post-UTME record
-    echo json_encode($s2); exit;
+    if ($s2) {
+      // return post-UTME record
+      echo json_encode($s2); exit;
+    }
+    
+    // Try universal_registrations as another fallback (new wizard registrations)
+    try {
+      $stmt3 = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+      $stmt3->execute([$id]);
+      $s3 = $stmt3->fetch(PDO::FETCH_ASSOC);
+      if ($s3) {
+        // Parse payload JSON for additional fields
+        $payload = [];
+        if (!empty($s3['payload'])) {
+          $payload = json_decode($s3['payload'], true) ?: [];
+        }
+        // Map universal_registrations fields to expected view format
+        echo json_encode([
+          'id' => $s3['id'],
+          'surname' => $payload['surname'] ?? $s3['last_name'] ?? null,
+          'first_name' => $s3['first_name'] ?? $payload['first_name'] ?? null,
+          'last_name' => $s3['last_name'] ?? $payload['last_name'] ?? null,
+          'other_names' => $payload['other_name'] ?? $payload['last_name'] ?? null,
+          'email' => $s3['email'] ?? $payload['email'] ?? null,
+          'phone' => $s3['phone'] ?? $payload['phone'] ?? null,
+          'date_of_birth' => $payload['date_of_birth'] ?? null,
+          'gender' => $payload['gender'] ?? null,
+          'marital_status' => $payload['marital_status'] ?? null,
+          'home_address' => $payload['home_address'] ?? $payload['address'] ?? null,
+          'state_of_origin' => $payload['state_of_origin'] ?? null,
+          'local_government' => $payload['local_government'] ?? null,
+          'nin' => $payload['nin'] ?? null,
+          'profile_code' => $payload['profile_code'] ?? null,
+          'registration_type' => $s3['program_type'] ?? null,
+          'exam_type' => $payload['exam_type'] ?? null,
+          'exam_year' => $payload['exam_year'] ?? null,
+          'previous_education' => $payload['previous_education'] ?? $payload['education_level'] ?? null,
+          'academic_goals' => $payload['intended_course'] ?? $payload['academic_goals'] ?? null,
+          'sponsor_name' => $payload['sponsor_name'] ?? null,
+          'sponsor_phone' => $payload['sponsor_phone'] ?? null,
+          'sponsor_address' => $payload['sponsor_address'] ?? null,
+          'emergency_contact_name' => $payload['next_of_kin_name'] ?? null,
+          'emergency_contact_phone' => $payload['next_of_kin_phone'] ?? null,
+          'emergency_relationship' => $payload['next_of_kin_relationship'] ?? null,
+          'passport_photo' => $payload['passport_photo'] ?? null,
+          'status' => $s3['status'] ?? null,
+          'payment_status' => $s3['payment_status'] ?? null,
+          'program_type' => $s3['program_type'] ?? null,
+          'created_at' => $s3['created_at'] ?? null,
+        ]); 
+        exit;
+      }
+    } catch (Throwable $e) {
+      // Table may not exist, ignore
+    }
+    
+    echo json_encode(['error'=>'Not found']); exit;
   }
   echo json_encode($s); exit;
 }
