@@ -23,7 +23,13 @@ function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): vo
  * @return string Current URL
  */
 function current_url(): string {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    // Check for X-Forwarded-Proto header first (set by reverse proxies/load balancers)
+    $scheme = 'http';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        $scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+    } elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        $scheme = 'https';
+    }
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $path = $_SERVER['REQUEST_URI'] ?? '';
     return $scheme . '://' . $host . $path;
