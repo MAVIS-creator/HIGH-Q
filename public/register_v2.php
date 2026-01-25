@@ -55,7 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registrationEnabled) {
 	$errors[] = 'Registrations are temporarily closed by the site administrator.';
 }
 
-function generatePaymentReference($prefix='PAY') {
+function generatePaymentReference($type='regular') {
+	// Generate different prefixes based on registration type
+	$prefixes = [
+		'regular' => 'REG',
+		'postutme' => 'POST',
+		'jamb' => 'JAMB',
+		'waec' => 'WAEC',
+		'neco' => 'NECO',
+		'default' => 'PAY'
+	];
+	$prefix = $prefixes[$type] ?? $prefixes['default'];
 	return $prefix . '-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
 }
 
