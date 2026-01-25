@@ -67,7 +67,13 @@ function app_url(string $path = ''): string {
     }
 
     // Determine scheme and host
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    // Check for X-Forwarded-Proto header first (set by reverse proxies/load balancers)
+    $scheme = 'http';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        $scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+    } elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        $scheme = 'https';
+    }
     $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
     
     // Get the project base path from filesystem
