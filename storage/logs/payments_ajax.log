@@ -1,1 +1,2 @@
 [2026-01-25 19:30:07] Invalid CSRF on payments.ajax - IP=::1 Session=qtgpsr1v7eh99531dsrhchcnc5 POST=["action","id"]
+[2026-01-25 19:31:35] Invalid CSRF on payments.ajax - IP=::1 Session=qtgpsr1v7eh99531dsrhchcnc5 POST=["action","id"]
