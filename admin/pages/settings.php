@@ -755,8 +755,20 @@ $csrf = generateToken('settings_form');
         </div>
     </form>
 
-    <script src="../assets/js/settings.js"></script>
-    <script src="../assets/js/admin-security.js"></script>
+    <?php
+    // Compute admin base path for script includes (matches header.php logic)
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    $parts = explode('/', trim($script, '/'));
+    $idx = array_search('admin', $parts, true);
+    if ($idx !== false) {
+        $adminBaseForScripts = '/' . implode('/', array_slice($parts, 0, $idx + 1));
+    } else {
+        $adminBaseForScripts = rtrim(dirname($script), '/');
+        if ($adminBaseForScripts === '') $adminBaseForScripts = '/admin';
+    }
+    ?>
+    <script src="<?= htmlspecialchars($adminBaseForScripts) ?>/assets/js/settings.js"></script>
+    <script src="<?= htmlspecialchars($adminBaseForScripts) ?>/assets/js/admin-security.js"></script>
 
 <?php
 require_once __DIR__ . '/../includes/footer.php';
