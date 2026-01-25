@@ -36,6 +36,15 @@
                 <div class="toggle-info"><strong>Reduce Motion</strong><small>Minimize transitions and animations</small></div>
                 <label class="settings-toggle"><input type="checkbox" id="settingsReduceMotion"><span class="toggle-slider"></span></label>
               </div>
+              <div class="settings-item">
+                <label for="settingsAnimationMode">Animation Mode</label>
+                <select id="settingsAnimationMode">
+                  <option value="auto">Auto (detect device)</option>
+                  <option value="minimal">Minimal</option>
+                  <option value="full">Full</option>
+                </select>
+                <button class="settings-btn-secondary" id="settingsAnimationApply" style="margin-top:8px;"><i class='bx bx-magic-wand'></i> Apply Now</button>
+              </div>
             </div>
           </div>
           <div class="settings-pane" data-pane="notifications">

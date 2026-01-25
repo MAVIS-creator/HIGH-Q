@@ -118,14 +118,6 @@
             xhr.send(data);
         });
 
-        // Animation preference: sync server value to local preference when saved
-        var animationSelect = document.getElementById('animationModeSelect');
-        if (animationSelect && window.HQDeviceCapability && typeof window.HQDeviceCapability.setPreference === 'function') {
-            form.addEventListener('submit', function() {
-                var mode = animationSelect.value || 'auto';
-                window.HQDeviceCapability.setPreference(mode);
-            });
-        }
 
         // Action handlers
         function doAction(action) {
