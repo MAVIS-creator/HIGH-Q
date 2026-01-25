@@ -90,7 +90,16 @@ $payload = $_POST;
 unset($payload['_csrf_token']);
 
 require_once __DIR__ . '/config/payment_references.php';
-$reference = generatePaymentReference('regular');
+// Use program-type-specific reference prefixes
+$prefixMap = [
+    'jamb' => 'JAMB',
+    'waec' => 'WAEC',
+    'postutme' => 'PUTM',
+    'digital' => 'DIGI',
+    'international' => 'INTL',
+];
+$prefix = $prefixMap[$programType] ?? 'REG';
+$reference = generatePaymentReference($prefix);
 
 try {
     $stmt = $pdo->prepare('INSERT INTO universal_registrations (program_type, first_name, last_name, email, phone, status, payment_reference, payment_status, amount, payment_method, payload, created_at) VALUES (?, ?, ?, ?, ?, "pending", ?, "pending", ?, "online", ?, NOW())');
