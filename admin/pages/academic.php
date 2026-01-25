@@ -1623,7 +1623,7 @@ function viewRegistration(id) {
       showCloseButton: true,
       showConfirmButton: true,
       showDenyButton: true,
-      showCancelButton: ${passportUrl ? 'true' : 'false'},
+      showCancelButton: !!passportUrl,
       confirmButtonText: '<i class="bx bx-file"></i> Export PDF',
       denyButtonText: '<i class="bx bx-x"></i> Close',
       cancelButtonText: '<i class="bx bx-image"></i> Download Photo',
@@ -1653,9 +1653,9 @@ function viewRegistration(id) {
       if (result.isConfirmed) {
         // Export PDF
         window.open('index.php?pages=academic&action=export_single&id=' + id, '_blank');
-      } else if (result.dismiss === Swal.DismissReason.cancel && '${passportUrl}') {
+      } else if (result.dismiss === Swal.DismissReason.cancel && passportUrl) {
         // Download passport photo
-        downloadPassport('${passportUrl}', '${studentName.replace(/'/g, "\\'")} - Passport');
+        downloadPassport(passportUrl, studentName + ' - Passport');
       }
     });
   })
