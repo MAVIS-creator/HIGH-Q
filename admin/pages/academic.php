@@ -1546,7 +1546,7 @@ function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
             fd.append('csrf_token', '<?= $csrf ?>');
             fd.append('action', isUniversal ? 'confirm_universal' : (isPostUtme ? 'confirm_postutme' : 'confirm_registration'));
             
-            fetch('index.php?pages=academic&action=' + (isUniversal ? 'confirm_universal' : (isPostUtme ? 'confirm_postutme' : 'confirm_registration')), {
+            fetch('api/confirm_registration.php', {
                 method: 'POST',
                 body: fd,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -1559,7 +1559,7 @@ function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
                     Swal.fire('Error', data.error || data.message || 'Failed to confirm', 'error');
                 }
             })
-            .catch(() => Swal.fire('Error', 'Network error', 'error'));
+            .catch(err => Swal.fire('Error', 'Network error: ' + err.message, 'error'));
         }
     });
 }
@@ -1660,7 +1660,7 @@ function rejectRegistration(id, isUniversal = false, isPostUtme = false) {
             fd.append('csrf_token', '<?= $csrf ?>');
             fd.append('action', isUniversal ? 'reject_universal' : (isPostUtme ? 'reject_postutme' : 'reject_registration'));
             
-            fetch('index.php?pages=academic&action=' + (isUniversal ? 'reject_universal' : (isPostUtme ? 'reject_postutme' : 'reject_registration')), {
+            fetch('api/reject_registration.php', {
                 method: 'POST',
                 body: fd,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -1673,7 +1673,7 @@ function rejectRegistration(id, isUniversal = false, isPostUtme = false) {
                     Swal.fire('Error', data.error || data.message || 'Failed to reject', 'error');
                 }
             })
-            .catch(() => Swal.fire('Error', 'Network error', 'error'));
+            .catch(err => Swal.fire('Error', 'Network error: ' + err.message, 'error'));
         }
     });
 }
