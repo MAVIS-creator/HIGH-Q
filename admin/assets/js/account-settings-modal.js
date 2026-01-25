@@ -169,6 +169,27 @@
     if(downloadBtn) downloadBtn.addEventListener('click', downloadData);
     const deleteBtn = document.getElementById('settingsDeleteAccount');
     if(deleteBtn) deleteBtn.addEventListener('click', deleteAccount);
+
+    const animSelect = document.getElementById('settingsAnimationMode');
+    const animApply = document.getElementById('settingsAnimationApply');
+    if (animApply) {
+      animApply.addEventListener('click', function(e){
+        e.preventDefault();
+        const mode = animSelect?.value || 'auto';
+        applyAnimationMode(mode);
+        if (window.Swal) Swal.fire({icon:'success',title:'Applied',text:'Animation preference updated',timer:1000,showConfirmButton:false});
+      });
+    }
+    // Also toggle reduce motion checkbox to minimal mode when checked
+    const reduceMotion = document.getElementById('settingsReduceMotion');
+    if (reduceMotion) {
+      reduceMotion.addEventListener('change', function(){
+        if (reduceMotion.checked) {
+          if (animSelect) animSelect.value = 'minimal';
+          applyAnimationMode('minimal');
+        }
+      });
+    }
     
     // Load saved preferences on open
     try {
@@ -180,6 +201,7 @@
         setVal('settingsTheme', prefs.theme||'light');
         setVal('settingsDensity', prefs.density||'comfortable');
         setCheck('settingsReduceMotion', prefs.reduceMotion);
+        setVal('settingsAnimationMode', prefs.animationMode || 'auto');
         setCheck('settingsEmailSystem', prefs.notifSystem);
         setCheck('settingsEmailUsers', prefs.notifUsers);
         setCheck('settingsEmailPayments', prefs.notifPayments);
@@ -188,6 +210,12 @@
         setCheck('settingsShowLastActive', prefs.showLastActive);
       }
     } catch(e){}
+
+    // If no saved pref, sync from device capability current mode
+    if (!localStorage.getItem('hq_admin_prefs') && animSelect && window.HQDeviceCapability && typeof window.HQDeviceCapability.getPreference === 'function') {
+      const current = window.HQDeviceCapability.getPreference();
+      if (current) animSelect.value = current;
+    }
   }
 
   window.openAccountSettings = open;
