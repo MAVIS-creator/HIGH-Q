@@ -296,7 +296,7 @@ $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $totalPages = (int)ceil($total / $perPage);
 
 // Generate CSRF token for AJAX actions
-$csrfToken = getToken('payments_form');
+$csrfToken = generateToken('payments_form');
 
 ?>
 <script>
