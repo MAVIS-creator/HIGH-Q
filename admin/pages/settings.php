@@ -665,42 +665,6 @@ $csrf = generateToken('settings_form');
                 </div>
             </div>
 
-            <div class="tab-panel" data-panel="animations">
-                <div class="admin-card">
-                    <div class="admin-card-header">
-                        <h3 class="admin-card-title"><i class="bx bxs-magic-wand"></i> Animations & Performance</h3>
-                    </div>
-                    <div class="admin-card-body">
-                        <p class="text-muted mb-4">Choose how animations behave on your device. Low-capacity or mobile devices can automatically switch to minimal animations.</p>
-
-                        <?php $pref = $current['ui']['animation_mode'] ?? 'auto'; ?>
-                        <div class="form-group">
-                            <label class="form-label">Animation Mode</label>
-                            <select id="animationModeSelect" name="settings[ui][animation_mode]" class="form-input">
-                                <option value="auto" <?= $pref === 'auto' ? 'selected' : '' ?>>Auto (detect device)</option>
-                                <option value="minimal" <?= $pref === 'minimal' ? 'selected' : '' ?>>Minimal (reduced motion)</option>
-                                <option value="full" <?= $pref === 'full' ? 'selected' : '' ?>>Full (all animations)</option>
-                            </select>
-                            <div class="muted" style="margin-top:6px;">Auto chooses minimal on low-capacity/mobile devices. You can override here.</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Preview</label>
-                            <div class="muted" style="margin-bottom:8px;">Apply the selection locally without saving to server.</div>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-                                <button type="button" id="previewMinimal" class="btn">Apply Minimal Locally</button>
-                                <button type="button" id="previewFull" class="btn">Apply Full Locally</button>
-                                <button type="button" id="previewAuto" class="btn">Use Auto Detection</button>
-                            </div>
-                        </div>
-
-                        <div class="form-actions" style="margin-top: 24px;">
-                            <button type="submit" class="btn-primary"><i class='bx bx-save'></i> Save Changes</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="tab-panel" data-panel="notifications">
                 <div class="admin-card">
                     <div class="admin-card-header">
