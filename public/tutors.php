@@ -7,12 +7,13 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     require_once __DIR__ . '/config/db.php';
     if (isset($pdo)) {
       // Try featured tutors first (preserve featured if any), but when falling back or listing ensure tutors are ordered by id ascending per UX request
-      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at DESC LIMIT 6");
+      // Show all featured tutors, oldest first (no limit)
+      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at ASC");
       $stmt->execute();
       $tutors = $stmt->fetchAll();
       // If none are featured, fall back to any tutors so the section is visible for testing
       if (empty($tutors)) {
-        // order by id ascending as requested
+        // order by id ascending as requested (oldest first)
         $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC");
         $stmt2->execute();
         $tutors = $stmt2->fetchAll();
