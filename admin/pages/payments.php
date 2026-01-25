@@ -103,61 +103,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     $payerAddress = $reg['home_address'] ?? '';
 
                     $html = '<!doctype html><html><head><meta charset="utf-8"><title>Receipt ' . htmlspecialchars($p['reference']) . '</title>';
-                    $html .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#222;background:#f5f5f5} .container{max-width:800px;margin:20px auto;background:#fff;padding:40px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1)} .header{text-align:center;border-bottom:3px solid #ffd600;padding-bottom:20px;margin-bottom:30px} .header h1{color:#0b1a2c;margin:0 0 10px 0;font-size:32px} .header .subtitle{color:#666;font-size:14px} .receipt-info{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:30px} .info-block{background:#f9f9f9;padding:15px;border-radius:6px} .info-block h3{margin:0 0 15px 0;color:#0b1a2c;font-size:16px;border-bottom:2px solid #ffd600;padding-bottom:8px} .meta{margin:8px 0;color:#444;line-height:1.6} .meta strong{color:#222;display:inline-block;min-width:120px} .programs-section{background:#fffbf0;padding:20px;border-radius:6px;margin:20px 0;border-left:4px solid #ffd600} .programs-section h3{margin:0 0 15px 0;color:#0b1a2c} .programs-section ul{margin:10px 0;padding-left:20px} .programs-section li{margin:8px 0;color:#444} .amount-box{background:#0b1a2c;color:#fff;padding:20px;border-radius:6px;text-align:center;margin:30px 0} .amount-box .label{font-size:14px;color:#ffd600;margin-bottom:8px} .amount-box .amount{font-size:36px;font-weight:bold} .footer{margin-top:40px;padding-top:20px;border-top:2px solid #eee;text-align:center;color:#666;font-size:13px} .footer .contact{margin:15px 0;line-height:1.8} .stamp{background:#28a745;color:#fff;padding:10px 20px;border-radius:6px;display:inline-block;margin:20px 0;font-weight:bold} .qr-note{background:#e3f2fd;padding:15px;border-radius:6px;margin:20px 0;border-left:4px solid #2196f3;color:#0d47a1;font-size:13px}</style>';
+                    $html .= '<style>body{font-family:Arial,Helvetica,sans-serif;color:#222} .container{max-width:700px;margin:0 auto;padding:24px} h2{color:#111} .meta{margin:12px 0;color:#444}</style>';
                     $html .= '</head><body><div class="container">';
-                    $html .= '<div class="header"><h1>PAYMENT RECEIPT</h1><div class="subtitle">HIGH Q SOLID ACADEMY</div><div class="subtitle">Official Payment Confirmation</div></div>';
-                    
-                    // Registration type badge
-                    $regType = $p['registration_type'] ?? 'regular';
-                    $regTypeLabels = ['regular'=>'Regular Registration', 'postutme'=>'POST-UTME Registration', 'jamb'=>'JAMB Registration', 'waec'=>'WAEC Registration', 'neco'=>'NECO Registration'];
-                    $regTypeLabel = $regTypeLabels[$regType] ?? 'Registration';
-                    
-                    $html .= '<div class="receipt-info">';
-                    $html .= '<div class="info-block"><h3>Payment Information</h3>';
-                    $html .= '<div class="meta"><strong>Receipt No:</strong> ' . htmlspecialchars($p['reference']) . '</div>';
-                    $html .= '<div class="meta"><strong>Type:</strong> ' . htmlspecialchars($regTypeLabel) . '</div>';
-                    $html .= '<div class="meta"><strong>Payment Method:</strong> ' . htmlspecialchars(ucfirst($p['payment_method'] ?? 'Bank Transfer')) . '</div>';
-                    $html .= '<div class="meta"><strong>Status:</strong> <span style="color:#28a745;font-weight:bold">CONFIRMED</span></div>';
-                    $html .= '<div class="meta"><strong>Date Paid:</strong> ' . htmlspecialchars(date('F j, Y', strtotime($p['created_at']))) . '</div>';
-                    $html .= '<div class="meta"><strong>Confirmed:</strong> ' . htmlspecialchars(date('F j, Y g:i A', strtotime($p['confirmed_at'] ?? $p['updated_at']))) . '</div>';
-                    $html .= '</div>';
-                    
-                    $html .= '<div class="info-block"><h3>Student Information</h3>';
+                    $html .= '<h2>Payment Receipt</h2>';
+                    $html .= '<div class="meta"><strong>Reference:</strong> ' . htmlspecialchars($p['reference']) . '</div>';
                     $html .= '<div class="meta"><strong>Name:</strong> ' . htmlspecialchars(trim($payerName)) . '</div>';
                     $html .= '<div class="meta"><strong>Email:</strong> ' . htmlspecialchars($payerEmail) . '</div>';
-                    if (!empty($reg['phone'])) $html .= '<div class="meta"><strong>Phone:</strong> ' . htmlspecialchars($reg['phone']) . '</div>';
                     if ($payerAddress) $html .= '<div class="meta"><strong>Address:</strong> ' . nl2br(htmlspecialchars($payerAddress)) . '</div>';
-                    $html .= '</div></div>';
-                    
-                    // Amount box
-                    $html .= '<div class="amount-box"><div class="label">Amount Paid</div><div class="amount">₦' . number_format($p['amount'],2) . '</div></div>';
-                    
-                    // Programs section
-                    if ($progHtml) {
-                        $html .= '<div class="programs-section"><h3>Enrolled Programs</h3><ul>' . $progHtml . '</ul></div>';
-                    }
-                    
-                    // Payment details if available
-                    if (!empty($p['payer_name']) || !empty($p['payer_bank'])) {
-                        $html .= '<div class="info-block" style="margin:20px 0"><h3>Transfer Details</h3>';
-                        if (!empty($p['payer_name'])) $html .= '<div class="meta"><strong>Account Name:</strong> ' . htmlspecialchars($p['payer_name']) . '</div>';
-                        if (!empty($p['payer_number'])) $html .= '<div class="meta"><strong>Account Number:</strong> ' . htmlspecialchars($p['payer_number']) . '</div>';
-                        if (!empty($p['payer_bank'])) $html .= '<div class="meta"><strong>Bank:</strong> ' . htmlspecialchars($p['payer_bank']) . '</div>';
-                        $html .= '</div>';
-                    }
-                    
-                    $html .= '<div style="text-align:center;margin:30px 0"><div class="stamp">✓ PAYMENT VERIFIED</div></div>';
-                    
-                    $html .= '<div class="qr-note"><strong>Note:</strong> This is an official receipt confirming your payment. Keep this for your records. For any inquiries, contact us using the information below.</div>';
-                    
-                    $html .= '<div class="footer">';
-                    $html .= '<strong>HIGH Q SOLID ACADEMY</strong><div class="contact">';
-                    $html .= '📍 8 Pineapple Avenue, Aiyetoro, Maya, Ikorodu<br>';
-                    $html .= '📞 +234 807 208 8794<br>';
-                    $html .= '✉️ info@hqacademy.com<br>';
-                    $html .= '🌐 www.hqacademy.com</div>';
-                    $html .= '<p style="margin-top:20px;font-size:12px">This receipt was automatically generated on ' . date('F j, Y \a\t g:i A') . '</p>';
-                    $html .= '</div></div></body></html>';
+                    $html .= '<div class="meta"><strong>Amount:</strong> ₦' . number_format($p['amount'],2) . '</div>';
+                    if ($progHtml) $html .= '<div class="meta"><strong>Programs:</strong><ul>' . $progHtml . '</ul></div>';
+                    $html .= '<p>Thank you for registering with HIGH Q Solid Academy.</p>';
+                    $html .= '</div></body></html>';
 
                     // prefer PDF if library available
                     $fn = 'receipt-' . preg_replace('/[^A-Za-z0-9\-]/','', $p['reference']);
