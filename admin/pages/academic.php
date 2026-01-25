@@ -1247,15 +1247,20 @@ if ($__hqStandalone) {
               </div>
 
                 <div class="pt-3 mt-auto" style="border-top:1px solid #eef2f7; display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:flex-end;">
-                    <?php if (!$isPostUtme && !$isUniversal): ?>
-                        <?php if (!empty($s['status'])): ?>
-                      <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-success">
-                                Confirm
-                            </button>
-                      <button type="button" onclick="rejectRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-danger">
-                                Reject
-                            </button>
-                        <?php endif; ?>
+                    <?php 
+                    // Show Confirm/Reject for all registration types (student_registrations, post_utme, and universal)
+                    $showConfirmReject = !empty($s['status']) && strtolower($s['status']) !== 'confirmed' && strtolower($s['status']) !== 'paid';
+                    if ($showConfirmReject): 
+                    ?>
+                      <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-outline-success" title="Confirm registration">
+                        <i class='bx bx-check'></i> Confirm
+                      </button>
+                      <button type="button" onclick="confirmWithPrice(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-success" title="Confirm and send payment link">
+                        <i class='bx bx-send'></i> Confirm & Send Price
+                      </button>
+                      <button type="button" onclick="rejectRegistration(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-outline-danger" title="Reject registration">
+                        <i class='bx bx-x'></i> Reject
+                      </button>
                     <?php endif; ?>
                     
                   <button type="button" onclick="viewRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-primary">
