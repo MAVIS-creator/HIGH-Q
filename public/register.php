@@ -68,9 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registrationEnabled) {
 	$errors[] = 'Registrations are temporarily closed by the site administrator.';
 }
 
-function generatePaymentReference($prefix='PAY') {
-	return $prefix . '-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-}
+// Payment reference generation moved to config/payment_references.php
+require_once __DIR__ . '/config/payment_references.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$token = $_POST['_csrf_token'] ?? '';

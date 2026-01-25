@@ -89,7 +89,8 @@ if (!empty($errors)) {
 $payload = $_POST;
 unset($payload['_csrf_token']);
 
-$reference = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
+require_once __DIR__ . '/config/payment_references.php';
+$reference = generatePaymentReference('regular');
 
 try {
     $stmt = $pdo->prepare('INSERT INTO universal_registrations (program_type, first_name, last_name, email, phone, status, payment_reference, payment_status, amount, payment_method, payload, created_at) VALUES (?, ?, ?, ?, ?, "pending", ?, "pending", ?, "online", ?, NOW())');
