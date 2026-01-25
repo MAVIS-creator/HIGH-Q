@@ -120,7 +120,13 @@ if ($idx !== false) {
 
     // Expose admin base dynamically from current request URL (just like public site)
     // Extract scheme and host from the actual request
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    // Check for X-Forwarded-Proto header (set by reverse proxies/load balancers like CloudFlare, nginx, etc.)
+    $scheme = 'http';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        $scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
+    } elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        $scheme = 'https';
+    }
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     
     // Extract the admin base path from the current request URI
