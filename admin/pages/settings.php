@@ -793,6 +793,38 @@ $csrf = generateToken('settings_form');
 
     <script src="../assets/js/settings.js"></script>
     <script src="../assets/js/admin-security.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Apply initial preference from localStorage/device
+        if (window.HQDeviceCapability && typeof window.HQDeviceCapability.applyAnimationPreference === 'function') {
+            window.HQDeviceCapability.applyAnimationPreference();
+        }
+
+        const modeSelect = document.getElementById('animationModeSelect');
+        const btnMinimal = document.getElementById('previewMinimal');
+        const btnFull = document.getElementById('previewFull');
+        const btnAuto = document.getElementById('previewAuto');
+
+        function setLocalMode(mode) {
+            if (window.HQDeviceCapability && typeof window.HQDeviceCapability.setPreference === 'function') {
+                window.HQDeviceCapability.setPreference(mode);
+            }
+        }
+
+        if (btnMinimal) btnMinimal.addEventListener('click', function(){ setLocalMode('minimal'); });
+        if (btnFull) btnFull.addEventListener('click', function(){ setLocalMode('full'); });
+        if (btnAuto) btnAuto.addEventListener('click', function(){ setLocalMode('auto'); });
+
+        // When saving, also persist to local preference for immediate effect
+        const form = document.getElementById('settingsForm');
+        if (form && modeSelect) {
+            form.addEventListener('submit', function(){
+                const val = modeSelect.value || 'auto';
+                setLocalMode(val);
+            });
+        }
+    });
+    </script>
 
 <?php
 require_once __DIR__ . '/../includes/footer.php';
