@@ -978,10 +978,22 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                         appendMessage(m.sender_name, m.message, isStaff, false, (m.attachments || []));
                     });
                     
-                    // If thread is closed, disable inputs
+                    // If thread is closed, disable inputs and show option to start new
                     if (j.thread_status && j.thread_status === 'closed') {
                         chatFooterEl.style.display = 'none';
-                        appendMessage('', '<i class="bx bx-check-circle"></i> This conversation has been closed. Thank you for contacting us!', false, true);
+                        appendMessage('', '<i class="bx bx-check-circle" style="color:#22c55e"></i> This conversation has been closed by our support team. Thank you for contacting us!', false, true);
+                        
+                        // Clear thread so next refresh shows landing
+                        clearThreadId();
+                        
+                        // Show the NEW CHAT button prominently
+                        newChatBtn.style.display = 'inline-block';
+                        newChatBtn.textContent = '+ Start New Chat';
+                        newChatBtn.style.textDecoration = 'none';
+                        newChatBtn.style.background = 'var(--hq-dark)';
+                        newChatBtn.style.color = 'var(--hq-yellow)';
+                        newChatBtn.style.padding = '6px 12px';
+                        newChatBtn.style.borderRadius = '6px';
                     }
                 } catch (e) {
                     console.error('getMessages error:', e);
