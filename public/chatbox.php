@@ -915,11 +915,16 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
                     const j = await res.json();
                     
+                    console.log('getMessages response:', j); // Debug
+                    
                     if (j.status !== 'ok') return;
                     
                     chatDiv.innerHTML = '';
                     j.messages.forEach(m => {
-                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1, false, (m.attachments || []));
+                        // Handle is_from_staff as string "1" or integer 1
+                        const isStaff = m.is_from_staff === 1 || m.is_from_staff === '1' || m.is_from_staff === true;
+                        console.log('Message:', m.sender_name, 'isStaff:', isStaff, 'raw is_from_staff:', m.is_from_staff); // Debug
+                        appendMessage(m.sender_name, m.message, isStaff, false, (m.attachments || []));
                     });
                     
                     // If thread is closed, disable inputs
@@ -928,6 +933,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                         appendMessage('', '<i class="bx bx-check-circle"></i> This conversation has been closed. Thank you for contacting us!', false, true);
                     }
                 } catch (e) {
+                    console.error('getMessages error:', e);
                     console.error(e);
                 }
             }
