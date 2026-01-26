@@ -955,8 +955,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 }
             });
 
-            // Show landing first; user can resume or start new
-            showLanding();
+            // Initialize chat - auto-resume active threads, show landing for new/closed
+            initChat();
 
             async function getMessages() {
                 const tid = getThreadId();
