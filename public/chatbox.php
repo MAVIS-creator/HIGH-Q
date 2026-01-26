@@ -606,8 +606,53 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 } catch(e) {}
             });
 
-            // Landing logic: show choices first
-            function showLanding() {
+            // Initialize chat - auto-resume if there's an active thread
+            async function initChat() {
+                const tid = getThreadId();
+                
+                if (!tid) {
+                    // No previous thread, show landing
+                    showLanding(false);
+                    return;
+                }
+                
+                // Check if thread is still active
+                try {
+                    const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
+                    const j = await res.json();
+                    
+                    if (j.status === 'ok') {
+                        // Check if thread is closed
+                        if (j.thread_status === 'closed') {
+                            // Thread is closed, show landing with option to start new
+                            showLanding(true, true); // hasHistory=true, isClosed=true
+                        } else {
+                            // Thread is open, auto-resume!
+                            autoResumeChat();
+                        }
+                    } else {
+                        // Thread not found, clear and show landing
+                        clearThreadId();
+                        showLanding(false);
+                    }
+                } catch (e) {
+                    console.error('initChat error:', e);
+                    showLanding(!!tid);
+                }
+            }
+            
+            // Auto-resume an existing active chat
+            function autoResumeChat() {
+                landingEl.style.display = 'none';
+                chatStartEl.style.display = 'none';
+                chatDiv.style.display = 'flex';
+                chatFooterEl.style.display = 'flex';
+                newChatBtn.style.display = 'inline-block';
+                getMessages();
+            }
+
+            // Landing logic: show choices
+            function showLanding(hasHistory = false, isClosed = false) {
                 if (!landingEl) return;
                 landingEl.style.display = 'flex';
                 chatStartEl.style.display = 'none';
@@ -615,15 +660,21 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 chatFooterEl.style.display = 'none';
                 newChatBtn.style.display = 'none';
 
-                const tid = getThreadId();
-                if (tid) {
+                if (hasHistory && !isClosed) {
                     resumeChatBtn.disabled = false;
-                    resumeChatBtn.title = 'Resume chat #' + tid;
-                    landingHint.textContent = 'You have an existing chat. Resume or start a new one.';
+                    resumeChatBtn.style.display = 'inline-block';
+                    resumeChatBtn.title = 'Resume your conversation';
+                    landingHint.textContent = 'You have an ongoing chat. Resume or start a new one.';
+                } else if (hasHistory && isClosed) {
+                    resumeChatBtn.disabled = true;
+                    resumeChatBtn.style.display = 'none';
+                    landingHint.innerHTML = '<i class="bx bx-check-circle" style="color:#22c55e"></i> Your previous chat was closed. Start a new conversation below.';
+                    // Clear the closed thread so next time they start fresh
+                    clearThreadId();
                 } else {
                     resumeChatBtn.disabled = true;
-                    resumeChatBtn.title = 'No previous chat';
-                    landingHint.textContent = 'Start a new chat to begin.';
+                    resumeChatBtn.style.display = 'none';
+                    landingHint.textContent = 'Start a new chat to get support.';
                 }
             }
 
