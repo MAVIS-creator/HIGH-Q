@@ -1,0 +1,1 @@
+2026-01-26 01:02:21 | Payment: DIGI-20260126-04566b | Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'program_type' in 'field list'
