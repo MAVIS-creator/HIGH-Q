@@ -360,7 +360,7 @@
                     <div class="message-avatar"><i class="bx bx-bot"></i></div>
                     <div class="message-content">
                         <p style="margin:0 0 12px 0;">Need more help?</p>
-                        <button class="btn-submit" onclick="window.hqChatShowAgentForm()" style="font-size:13px; padding:8px 16px;">Talk to Agent</button>
+                        <button class="btn-submit btn-compact" onclick="window.hqChatShowAgentForm()">Talk to Agent</button>
                     </div>
                 `;
                 chatMessages.appendChild(agentBtn);
@@ -368,7 +368,16 @@
             }, 800);
         }, 600);
     }
-    
+
+    function showBotLanding() {
+        chatBotLanding.style.display = 'flex';
+        chatMessages.style.display = 'none';
+        agentForm.style.display = 'none';
+        chatFooter.style.display = 'none';
+        chatMessages.innerHTML = '';
+        saveChatMode('bot');
+    }
+
     function showAgentForm() {
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'none';
@@ -398,6 +407,22 @@
             <div class="message-content">${message}</div>
         `;
         
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addBackToMainButton() {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message bot';
+        msgDiv.innerHTML = `
+            <div class="message-avatar"><i class="bx bx-bot"></i></div>
+            <div class="message-content">
+                <p style="margin:0 0 12px 0;">Back to main?</p>
+                <button type="button" class="btn-submit btn-compact">Back to Main</button>
+            </div>
+        `;
+        const btn = msgDiv.querySelector('button');
+        btn.addEventListener('click', showBotLanding);
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -558,6 +583,7 @@
                     chatMessages.style.display = 'flex';
                     chatMessages.innerHTML = '';
                     addMessage('bot', 'Bot', 'This conversation has been closed by our support team. You can start a new chat anytime.');
+                    addBackToMainButton();
                     return;
                 }
 
