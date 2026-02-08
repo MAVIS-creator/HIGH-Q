@@ -13,3 +13,6 @@
 2026-01-24T20:52:55+01:00 incoming $_FILES: {"name":["c.jpg"],"full_path":["c.jpg"],"type":["image\/jpeg"],"tmp_name":["C:\\xampp\\tmp\\phpBF69.tmp"],"error":[0],"size":[158667]}
 2026-01-24T20:52:55+01:00 loop idx=0 name=c.jpg type_raw=image/jpeg size=158667
 2026-01-24T20:52:55+01:00 saved c.jpg -> C:\xampp\htdocs\HIGH-Q\public/uploads/chat/58edc19e7895a0f8.jpg
+2026-02-08T21:16:17+01:00 incoming $_FILES: {"name":["ggg.pdf"],"full_path":["ggg.pdf"],"type":["application\/pdf"],"tmp_name":["C:\\xampp\\tmp\\php7BDA.tmp"],"error":[0],"size":[15230219]}
+2026-02-08T21:16:17+01:00 loop idx=0 name=ggg.pdf type_raw=application/pdf size=15230219
+2026-02-08T21:16:17+01:00 saved ggg.pdf -> C:\xampp\htdocs\HIGH-Q\public/uploads/chat/795da8dfc894779b.pdf
