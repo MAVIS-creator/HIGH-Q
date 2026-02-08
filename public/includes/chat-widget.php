@@ -307,7 +307,8 @@
         if (isOpen) {
             const tid = loadThreadId();
             loadChatMode();
-            if (tid && chatMode === 'agent') {
+            if (tid) {
+                if (chatMode !== 'agent') saveChatMode('agent');
                 showAgentChat();
                 loadMessages();
                 startPolling();
@@ -373,6 +374,7 @@
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'none';
         agentForm.style.display = 'flex';
+        chatFooter.style.display = 'none';
         saveChatMode('agent');
     }
     
@@ -526,7 +528,8 @@
     // Restore previous state on load
     loadThreadId();
     loadChatMode();
-    if (threadId && chatMode === 'agent') {
+    if (threadId) {
+        if (chatMode !== 'agent') saveChatMode('agent');
         showAgentChat();
         loadMessages();
         startPolling();
