@@ -204,6 +204,7 @@
     box-shadow:0 4px 12px rgba(255,191,0,0.3);
 }
 .btn-submit:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(255,191,0,0.4); }
+.btn-submit.btn-compact { font-size:13px; padding:8px 14px; }
 
 /* Chat Footer */
 .chat-widget-footer {
