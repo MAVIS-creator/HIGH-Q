@@ -251,6 +251,7 @@
 (function() {
     const chatToggle = document.getElementById('chatToggle');
     const chatClose = document.getElementById('chatClose');
+    const chatBackToMain = document.getElementById('chatBackToMain');
     const chatPanel = document.getElementById('chatPanel');
     const chatBotLanding = document.getElementById('chatBotLanding');
     const chatMessages = document.getElementById('chatMessages');
@@ -336,6 +337,12 @@
         setChatOpen(false);
         stopPolling();
     });
+
+    if (chatBackToMain) {
+        chatBackToMain.addEventListener('click', () => {
+            showBotLanding();
+        });
+    }
     
     // FAQ option click
     document.querySelectorAll('.faq-option').forEach(btn => {
