@@ -403,13 +403,28 @@
 
     const allowedMime = [
         'image/jpeg',
+        'image/jpg',
+        'image/pjpeg',
         'image/png',
         'image/gif',
         'image/webp',
         'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        'application/x-pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/msword'
     ];
-    const allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'docx'];
+    const allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'docx', 'doc'];
+
+    function isSupportedFile(file) {
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (allowedExt.includes(ext)) return true;
+        if (!file.type) return false;
+        if (file.type.startsWith('image/')) return true;
+        if (allowedMime.includes(file.type)) return true;
+        if (file.type.includes('pdf')) return true;
+        if (file.type.includes('word')) return true;
+        return false;
+    }
 
     function updateAttachmentPreview() {
         if (!chatAttachment || !chatAttachPreview) return;
@@ -423,10 +438,7 @@
         const valid = [];
         const invalid = [];
         allFiles.forEach(file => {
-            const ext = (file.name.split('.').pop() || '').toLowerCase();
-            const mimeOk = allowedMime.includes(file.type);
-            const extOk = allowedExt.includes(ext);
-            if (mimeOk || extOk) valid.push(file); else invalid.push(file.name);
+            if (isSupportedFile(file)) valid.push(file); else invalid.push(file.name);
         });
 
         if (invalid.length > 0) {
