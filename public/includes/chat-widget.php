@@ -28,10 +28,6 @@
                 </div>
                 
                 <div class="faq-options">
-                    <button class="faq-option" id="chatBackToMain" type="button" style="border-style:dashed;">
-                        <i class="bx bx-arrow-back"></i>
-                        <span>Back to Main</span>
-                    </button>
                     <button class="faq-option" data-question="How do I register for a program?">
                         <i class="bx bx-user-plus"></i>
                         <span>How to Register</span>
@@ -250,7 +246,6 @@
     const chatAttachBtn = document.getElementById('chatAttachBtn');
     const chatAttachment = document.getElementById('chatAttachment');
     const chatAttachPreview = document.getElementById('chatAttachPreview');
-    const chatBackToMain = document.getElementById('chatBackToMain');
     const startAgentFormEl = document.getElementById('startAgentForm');
     
     const faqData = {
@@ -388,14 +383,6 @@
         chatFooter.style.display = 'flex';
         saveChatMode('agent');
     }
-
-    function showLanding() {
-        chatBotLanding.style.display = 'flex';
-        chatMessages.style.display = 'none';
-        agentForm.style.display = 'none';
-        chatFooter.style.display = 'none';
-        saveChatMode('bot');
-    }
     
     function addMessage(type, sender, message) {
         const msgDiv = document.createElement('div');
@@ -474,10 +461,6 @@
             chatAttachment.click();
         });
         chatAttachment.addEventListener('change', updateAttachmentPreview);
-    }
-
-    if (chatBackToMain) {
-        chatBackToMain.addEventListener('click', showLanding);
     }
     
     // Agent form submit
