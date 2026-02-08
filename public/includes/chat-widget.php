@@ -136,9 +136,8 @@
 /* Bot Landing */
 .chat-bot-landing {
     padding:24px; display:flex; flex-direction:column; gap:20px; align-items:center; justify-content:center;
-    height:100%; animation:fadeIn 0.3s ease;
+    height:100%;
 }
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 .bot-welcome { text-align:center; }
 .bot-avatar {
     width:80px; height:80px; background:linear-gradient(135deg, #ffbf00, #d99a00); border-radius:50%;
@@ -189,7 +188,6 @@
 /* Agent Form */
 .agent-form {
     padding:24px; display:flex; flex-direction:column; gap:16px; height:100%; justify-content:center;
-    animation:fadeIn 0.3s ease;
 }
 .form-header { text-align:center; margin-bottom:8px; }
 .form-header i { font-size:48px; color:#ffbf00; margin-bottom:8px; }
