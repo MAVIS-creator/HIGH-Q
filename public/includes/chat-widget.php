@@ -224,7 +224,15 @@
     font-size:14px; font-family:inherit; resize:none; max-height:100px; transition:border-color 0.2s ease;
 }
 .chat-input-wrapper textarea:focus { outline:none; border-color:#ffbf00; }
-.attachment-preview { display:none; /* implement later */ }
+.attachment-preview { display:none; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.attachment-preview.show { display:flex; }
+.attachment-chip {
+    background:#f3f4f6; border:1px solid #e5e7eb; color:#111; font-size:12px; padding:4px 8px;
+    border-radius:999px; display:flex; align-items:center; gap:6px;
+}
+.attachment-chip button {
+    border:none; background:transparent; cursor:pointer; font-size:12px; color:#6b7280;
+}
 
 @media (max-width:480px) {
     .chat-panel { width:calc(100vw - 20px); bottom:70px; right:10px; }
@@ -244,6 +252,9 @@
     const chatInput = document.getElementById('chatInput');
     const chatSendBtn = document.getElementById('chatSendBtn');
     const startAgentFormEl = document.getElementById('startAgentForm');
+    const chatAttachBtn = document.getElementById('chatAttachBtn');
+    const chatAttachment = document.getElementById('chatAttachment');
+    const chatAttachPreview = document.getElementById('chatAttachPreview');
     
     const faqData = {
         "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Find Your Path</strong>. Fill out the form and complete payment to secure your spot!",
