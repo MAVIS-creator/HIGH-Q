@@ -11,9 +11,15 @@
                 <i class="bx bx-chat"></i>
                 <span>Live Support</span>
             </div>
-            <button id="chatClose" class="chat-close-btn" aria-label="Close chat">
-                <i class="bx bx-x"></i>
-            </button>
+            <div class="chat-header-actions">
+                <button id="chatBackToMain" class="chat-back-btn" type="button" aria-label="Back to main">
+                    <i class="bx bx-left-arrow-alt"></i>
+                    <span>Back</span>
+                </button>
+                <button id="chatClose" class="chat-close-btn" aria-label="Close chat">
+                    <i class="bx bx-x"></i>
+                </button>
+            </div>
         </div>
         
         <div class="chat-widget-body" id="chatWidgetBody">
@@ -120,6 +126,14 @@
 }
 .chat-header-left { display:flex; align-items:center; gap:10px; font-weight:600; font-size:16px; }
 .chat-header-left i { font-size:22px; }
+.chat-header-actions { display:flex; align-items:center; gap:8px; }
+.chat-back-btn {
+    background:rgba(0,0,0,0.12); border:none; height:32px; border-radius:999px; padding:0 10px;
+    cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s ease;
+    color:#111; font-size:12px; font-weight:600;
+}
+.chat-back-btn i { font-size:18px; }
+.chat-back-btn:hover { background:rgba(0,0,0,0.2); transform:translateY(-1px); }
 .chat-close-btn {
     background:rgba(0,0,0,0.1); border:none; width:32px; height:32px; border-radius:50%;
     cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s ease;
