@@ -16,3 +16,6 @@
 2026-02-08T21:16:17+01:00 incoming $_FILES: {"name":["ggg.pdf"],"full_path":["ggg.pdf"],"type":["application\/pdf"],"tmp_name":["C:\\xampp\\tmp\\php7BDA.tmp"],"error":[0],"size":[15230219]}
 2026-02-08T21:16:17+01:00 loop idx=0 name=ggg.pdf type_raw=application/pdf size=15230219
 2026-02-08T21:16:17+01:00 saved ggg.pdf -> C:\xampp\htdocs\HIGH-Q\public/uploads/chat/795da8dfc894779b.pdf
+2026-02-08T21:18:24+01:00 incoming $_FILES: {"name":["main.py"],"full_path":["main.py"],"type":["text\/x-python"],"tmp_name":["C:\\xampp\\tmp\\php6C50.tmp"],"error":[0],"size":[0]}
+2026-02-08T21:18:24+01:00 loop idx=0 name=main.py type_raw=text/x-python size=0
+2026-02-08T21:18:24+01:00 skip disallowed type text/x-python for main.py
