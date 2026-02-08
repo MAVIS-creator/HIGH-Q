@@ -111,9 +111,7 @@
     position:absolute; bottom:80px; right:0; width:380px; max-width:calc(100vw - 40px);
     height:600px; max-height:calc(100vh - 120px); background:#fff; border-radius:16px;
     box-shadow:0 12px 48px rgba(0,0,0,0.18); display:none; flex-direction:column; overflow:hidden;
-    animation:slideUp 0.3s ease-out;
 }
-@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 .chat-panel.show { display:flex; }
 
 .chat-widget-header {
@@ -164,9 +162,8 @@
     padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; height:100%;
 }
 .chat-message {
-    display:flex; gap:10px; animation:messageSlide 0.3s ease;
+    display:flex; gap:10px;
 }
-@keyframes messageSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .chat-message.bot { align-self:flex-start; }
 .chat-message.user { align-self:flex-end; flex-direction:row-reverse; }
 .chat-message.agent { align-self:flex-start; }
