@@ -401,16 +401,47 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    const allowedMime = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    const allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'docx'];
+
     function updateAttachmentPreview() {
         if (!chatAttachment || !chatAttachPreview) return;
-        const files = Array.from(chatAttachment.files || []);
-        if (files.length === 0) {
+        const allFiles = Array.from(chatAttachment.files || []);
+        if (allFiles.length === 0) {
             chatAttachPreview.style.display = 'none';
             chatAttachPreview.innerHTML = '';
             return;
         }
-        chatAttachPreview.style.display = 'block';
-        chatAttachPreview.innerHTML = files.map(f => `<span style="display:inline-block;margin-right:6px;font-size:12px;color:#6b7280;">${f.name}</span>`).join('');
+
+        const valid = [];
+        const invalid = [];
+        allFiles.forEach(file => {
+            const ext = (file.name.split('.').pop() || '').toLowerCase();
+            const mimeOk = allowedMime.includes(file.type);
+            const extOk = allowedExt.includes(ext);
+            if (mimeOk || extOk) valid.push(file); else invalid.push(file.name);
+        });
+
+        if (invalid.length > 0) {
+            chatAttachPreview.style.display = 'block';
+            chatAttachPreview.innerHTML = `<span style="display:inline-block;margin-right:6px;font-size:12px;color:#ef4444;">Unsupported file(s): ${invalid.join(', ')}</span>`;
+        } else {
+            chatAttachPreview.style.display = 'block';
+            chatAttachPreview.innerHTML = valid.map(f => `<span style="display:inline-block;margin-right:6px;font-size:12px;color:#6b7280;">${f.name}</span>`).join('');
+        }
+
+        if (invalid.length > 0) {
+            const dt = new DataTransfer();
+            valid.forEach(f => dt.items.add(f));
+            chatAttachment.files = dt.files;
+        }
     }
 
     if (chatAttachBtn && chatAttachment) {
