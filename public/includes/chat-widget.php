@@ -341,6 +341,7 @@
     function showBotResponse(question) {
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'flex';
+        chatFooter.style.display = 'none';
         saveChatMode('bot');
         
         // Add user question
