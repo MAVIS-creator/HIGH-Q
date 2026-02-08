@@ -243,6 +243,9 @@
     const chatFooter = document.getElementById('chatFooter');
     const chatInput = document.getElementById('chatInput');
     const chatSendBtn = document.getElementById('chatSendBtn');
+    const chatAttachBtn = document.getElementById('chatAttachBtn');
+    const chatAttachment = document.getElementById('chatAttachment');
+    const chatAttachPreview = document.getElementById('chatAttachPreview');
     const startAgentFormEl = document.getElementById('startAgentForm');
     
     const faqData = {
@@ -397,6 +400,25 @@
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
+    function updateAttachmentPreview() {
+        if (!chatAttachment || !chatAttachPreview) return;
+        const files = Array.from(chatAttachment.files || []);
+        if (files.length === 0) {
+            chatAttachPreview.style.display = 'none';
+            chatAttachPreview.innerHTML = '';
+            return;
+        }
+        chatAttachPreview.style.display = 'block';
+        chatAttachPreview.innerHTML = files.map(f => `<span style="display:inline-block;margin-right:6px;font-size:12px;color:#6b7280;">${f.name}</span>`).join('');
+    }
+
+    if (chatAttachBtn && chatAttachment) {
+        chatAttachBtn.addEventListener('click', () => {
+            chatAttachment.click();
+        });
+        chatAttachment.addEventListener('change', updateAttachmentPreview);
+    }
     
     // Agent form submit
     startAgentFormEl.addEventListener('submit', async (e) => {
@@ -445,7 +467,8 @@
     
     async function sendAgentMessage() {
         const message = chatInput.value.trim();
-        if (!message || !threadId) return;
+        const files = Array.from(chatAttachment?.files || []);
+        if ((!message && files.length === 0) || !threadId) return;
         
         try {
             const formData = new FormData();
@@ -453,6 +476,10 @@
             formData.append('thread_id', threadId);
             formData.append('message', message);
             
+            if (files.length > 0) {
+                files.forEach(file => formData.append('attachments[]', file));
+            }
+
             const resp = await fetch('<?= app_url('chatbox.php') ?>', {
                 method: 'POST',
                 body: formData
@@ -463,6 +490,8 @@
                 addMessage('user', 'You', message);
                 chatInput.value = '';
                 chatInput.style.height = 'auto';
+                if (chatAttachment) chatAttachment.value = '';
+                updateAttachmentPreview();
             }
         } catch (err) {
             console.error('Send error:', err);
