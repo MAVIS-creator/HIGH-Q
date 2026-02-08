@@ -260,31 +260,67 @@
     
     let threadId = null;
     let chatMode = 'bot'; // 'bot' or 'agent'
-    
+    let pollTimer = null;
+
+    const STORAGE_THREAD = 'hq_chat_thread_id';
+    const STORAGE_MODE = 'hq_chat_mode';
+    const STORAGE_OPEN = 'hq_chat_open';
+
     function loadThreadId() {
-        threadId = localStorage.getItem('hq_chat_thread_id');
+        threadId = localStorage.getItem(STORAGE_THREAD);
         return threadId;
     }
-    
+
     function saveThreadId(id) {
         threadId = id;
-        localStorage.setItem('hq_chat_thread_id', id);
+        localStorage.setItem(STORAGE_THREAD, id);
+    }
+
+    function clearThreadId() {
+        threadId = null;
+        localStorage.removeItem(STORAGE_THREAD);
+    }
+
+    function loadChatMode() {
+        const saved = localStorage.getItem(STORAGE_MODE);
+        if (saved === 'agent' || saved === 'bot') chatMode = saved;
+        return chatMode;
+    }
+
+    function saveChatMode(mode) {
+        chatMode = mode;
+        localStorage.setItem(STORAGE_MODE, mode);
+    }
+
+    function setChatOpen(isOpen) {
+        localStorage.setItem(STORAGE_OPEN, isOpen ? '1' : '0');
+    }
+
+    function wasChatOpen() {
+        return localStorage.getItem(STORAGE_OPEN) === '1';
     }
     
     chatToggle.addEventListener('click', () => {
         chatPanel.classList.toggle('show');
-        if (chatPanel.classList.contains('show')) {
-            // Check if we have an existing agent thread
+        const isOpen = chatPanel.classList.contains('show');
+        setChatOpen(isOpen);
+        if (isOpen) {
             const tid = loadThreadId();
+            loadChatMode();
             if (tid && chatMode === 'agent') {
                 showAgentChat();
                 loadMessages();
+                startPolling();
             }
+        } else {
+            stopPolling();
         }
     });
     
     chatClose.addEventListener('click', () => {
         chatPanel.classList.remove('show');
+        setChatOpen(false);
+        stopPolling();
     });
     
     // FAQ option click
@@ -305,7 +341,7 @@
     function showBotResponse(question) {
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'flex';
-        chatMode = 'bot';
+        saveChatMode('bot');
         
         // Add user question
         addMessage('user', 'You', question);
@@ -336,7 +372,7 @@
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'none';
         agentForm.style.display = 'flex';
-        chatMode = 'agent';
+        saveChatMode('agent');
     }
     
     function showAgentChat() {
@@ -344,7 +380,7 @@
         chatMessages.style.display = 'flex';
         agentForm.style.display = 'none';
         chatFooter.style.display = 'flex';
-        chatMode = 'agent';
+        saveChatMode('agent');
     }
     
     function addMessage(type, sender, message) {
@@ -393,6 +429,7 @@
                 addMessage('user', name, message);
                 addMessage('agent', 'Agent', 'Thanks for contacting us! An agent will respond shortly.');
                 startAgentFormEl.reset();
+                startPolling();
             }
         } catch (err) {
             console.error('Chat error:', err);
@@ -442,14 +479,40 @@
             const data = await resp.json();
             
             if (data.status === 'ok' && data.messages) {
+                if (data.thread_status && data.thread_status === 'closed') {
+                    clearThreadId();
+                    saveChatMode('bot');
+                    stopPolling();
+                    chatFooter.style.display = 'none';
+                    chatMessages.style.display = 'flex';
+                    chatMessages.innerHTML = '';
+                    addMessage('bot', 'Bot', 'This conversation has been closed by our support team. You can start a new chat anytime.');
+                    return;
+                }
+
                 chatMessages.innerHTML = '';
                 data.messages.forEach(msg => {
-                    const type = msg.is_from_staff ? 'agent' : 'user';
+                    const isStaff = msg.is_from_staff === 1 || msg.is_from_staff === '1' || msg.is_from_staff === true;
+                    const type = isStaff ? 'agent' : 'user';
                     addMessage(type, msg.sender_name, msg.message);
                 });
             }
         } catch (err) {
             console.error('Load messages error:', err);
+        }
+    }
+
+    function startPolling() {
+        if (pollTimer) return;
+        pollTimer = setInterval(() => {
+            if (threadId) loadMessages();
+        }, 4000);
+    }
+
+    function stopPolling() {
+        if (pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
         }
     }
     
@@ -459,6 +522,18 @@
         chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
     });
     
+    // Restore previous state on load
+    loadThreadId();
+    loadChatMode();
+    if (threadId && chatMode === 'agent') {
+        showAgentChat();
+        loadMessages();
+        startPolling();
+    }
+    if (wasChatOpen()) {
+        chatPanel.classList.add('show');
+    }
+
     // Global function for bot button
     window.hqChatShowAgentForm = showAgentForm;
 })();
