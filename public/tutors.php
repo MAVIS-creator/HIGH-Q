@@ -238,7 +238,9 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
     // Fallback: load student feature CSV + images if DB is empty
     if (empty($wallTestimonials)) {
-      $csvFile = __DIR__ . '/uploads/HQ Student Feature Submission.csv (1)/HQ Student Feature Submission.csv';
+      $csvDir = __DIR__ . '/uploads/HQ Student Feature Submission.csv (1)';
+      $csvWebDir = 'uploads/HQ Student Feature Submission.csv (1)';
+      $csvFile = $csvDir . '/HQ Student Feature Submission.csv';
       if (file_exists($csvFile)) {
         $fh = fopen($csvFile, 'r');
         if ($fh) {
@@ -260,8 +262,29 @@ if (file_exists(__DIR__ . '/config/db.php')) {
 
               $imagePath = '';
               if ($pic !== '') {
-                $relPath = 'uploads/HQ Student Feature Submission.csv (1)/' . $pic;
-                if (file_exists(__DIR__ . '/' . $relPath)) {
+                $safePic = trim($pic);
+                $resolved = '';
+                $directPath = $csvDir . '/' . $safePic;
+                if (file_exists($directPath)) {
+                  $resolved = $safePic;
+                } else {
+                  $targetBase = strtolower(pathinfo($safePic, PATHINFO_FILENAME));
+                  $entries = is_dir($csvDir) ? scandir($csvDir) : [];
+                  foreach ($entries as $entry) {
+                    if ($entry === '.' || $entry === '..') continue;
+                    $entryBase = strtolower(pathinfo($entry, PATHINFO_FILENAME));
+                    if ($entryBase === $targetBase) { $resolved = $entry; break; }
+                  }
+                  if ($resolved === '') {
+                    foreach ($entries as $entry) {
+                      if ($entry === '.' || $entry === '..') continue;
+                      if (stripos($entry, $safePic) === 0) { $resolved = $entry; break; }
+                    }
+                  }
+                }
+
+                if ($resolved !== '') {
+                  $relPath = $csvWebDir . '/' . $resolved;
                   $encodedRel = implode('/', array_map('rawurlencode', explode('/', $relPath)));
                   $imagePath = app_url($encodedRel);
                 }
