@@ -5,11 +5,23 @@ require_once __DIR__ . '/config/functions.php';
 $postId = (int)($_GET['id'] ?? 0);
 if (!$postId) { header('Location: index.php'); exit; }
 
-// fetch post
-$stmt = $pdo->prepare('SELECT * FROM posts WHERE id = ? LIMIT 1');
+// fetch post with author info
+$stmt = $pdo->prepare('
+  SELECT p.*, 
+         u.name as author_name, 
+         u.email as author_email
+  FROM posts p 
+  LEFT JOIN users u ON p.created_by = u.id 
+  WHERE p.id = ? 
+  LIMIT 1
+');
 $stmt->execute([$postId]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$post) { echo "<p>Post not found.</p>"; exit; }
+
+// Author display name (fallback to 'Admin' if not set)
+$authorName = $post['author_name'] ?? 'Admin';
+$authorInitial = strtoupper(substr($authorName, 0, 1));
 
 // fetch approved comments (top-level)
 $cstmt = $pdo->prepare('SELECT * FROM comments WHERE post_id = ? AND parent_id IS NULL AND status = "approved" ORDER BY created_at DESC');
@@ -21,25 +33,27 @@ $ccstmt = $pdo->prepare('SELECT COUNT(1) FROM comments WHERE post_id = ? AND sta
 $ccstmt->execute([$postId]);
 $comments_count = (int)$ccstmt->fetchColumn();
 
+// Calculate reading time (average 200 words per minute)
+$wordCount = str_word_count(strip_tags($post['content'] ?? ''));
+$readingTime = max(1, ceil($wordCount / 200));
+
 // Build a server-side Table of Contents by scanning headings in the post content (if present)
 $tocHtml = '';
+$tocItems = [];
 $renderedContent = '';
 $contentRaw = $post['content'] ?? '';
-// If the content is plain text (no HTML tags), convert simple Markdown-style headings (#, ##, ###)
-// into <h2>/<h3>/<h4> and wrap paragraphs in <p> blocks so the TOC and spacing work.
+
+// If the content is plain text (no HTML tags), convert simple Markdown-style headings
 if ($contentRaw !== '' && strpos($contentRaw, '<') === false) {
-  // Convert heading markers
   $contentProcessed = preg_replace('/^###\s*(.+)$/m', '<h4>$1</h4>', $contentRaw);
   $contentProcessed = preg_replace('/^##\s*(.+)$/m', '<h3>$1</h3>', $contentProcessed);
   $contentProcessed = preg_replace('/^#\s*(.+)$/m', '<h2>$1</h2>', $contentProcessed);
 
-  // Split into paragraphs on blank lines
   $paras = preg_split('/\n\s*\n/', $contentProcessed);
   $out = '';
   foreach ($paras as $p) {
     $p = trim($p);
     if ($p === '') continue;
-    // if paragraph already contains a heading tag, keep as-is; otherwise wrap in <p>
     if (preg_match('/^\s*<h[2-4]>/i', $p)) {
       $out .= $p;
     } else {
@@ -48,69 +62,34 @@ if ($contentRaw !== '' && strpos($contentRaw, '<') === false) {
   }
   $contentForDoc = $out;
 } else {
-  // contains HTML already or is empty; use as-is
   $contentForDoc = $contentRaw;
 }
 
 if ($contentForDoc !== '') {
   libxml_use_internal_errors(true);
   $doc = new DOMDocument();
-  // Wrap in a div to get fragment handling and set UTF-8
   $wrapped = '<div>' . $contentForDoc . '</div>';
   $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped);
   $xpath = new DOMXPath($doc);
   $nodes = $xpath->query('//h2|//h3|//h4');
   if ($nodes->length > 0) {
     $ids = [];
-    $tocItems = [];
     foreach ($nodes as $n) {
       $text = trim($n->textContent);
       if ($text === '') continue;
       $base = preg_replace('/[^a-z0-9\-]+/','-',strtolower(trim($text)));
       $id = 'toc-' . $postId . '-' . trim($base, '-');
-      // ensure unique
       $suffix = 1;
       $orig = $id;
       while (in_array($id, $ids)) { $id = $orig . '-' . $suffix; $suffix++; }
       $ids[] = $id;
-      // set id attribute
       if ($n instanceof DOMElement) {
         $n->setAttribute('id', $id);
       }
       $tocItems[] = ['id' => $id, 'text' => $text, 'tag' => $n->nodeName];
     }
-    // build TOC HTML
-    $tocHtml .= '<button class="toc-toggle d-md-none"><i class="bx bx-list-ul"></i> Contents</button>';
-    $tocHtml .= '<aside class="post-toc" aria-label="Table of Contents">';
-    $tocHtml .= '<h4>Table of Contents</h4><ul>';
-    foreach ($tocItems as $it) {
-      $indent = $it['tag'] === 'h3' ? ' style="margin-left:8px;"' : ($it['tag'] === 'h4' ? ' style="margin-left:14px;"' : '');
-      $tocHtml .= '<li' . $indent . '><a href="#' . htmlspecialchars($it['id']) . '">' . htmlspecialchars($it['text']) . '</a></li>';
-    }
-    $tocHtml .= '</ul></aside>';
-    
-    // Add TOC toggle script
-    $tocHtml .= '
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const tocToggle = document.querySelector(".toc-toggle");
-        const tocAside = document.querySelector(".post-toc");
-        
-        if (tocToggle && tocAside) {
-            tocToggle.addEventListener("click", function() {
-                tocAside.classList.toggle("active");
-                if (tocAside.classList.contains("active")) {
-                    tocToggle.innerHTML = \'<i class="bx bx-x"></i> Close\';
-                } else {
-                    tocToggle.innerHTML = \'<i class="bx bx-list-ul"></i> Contents\';
-                }
-            });
-        }
-    });
-    </script>';
   }
 
-  // extract inner HTML of wrapped div as rendered content
   $div = $doc->getElementsByTagName('div')->item(0);
   if ($div) {
     $html = '';
@@ -122,20 +101,17 @@ if ($contentForDoc !== '') {
   libxml_clear_errors();
 }
 
-// Helper: if DOM processing did not produce rendered HTML, format plain text reliably
+// Helper: format plain text to HTML
 function format_plain_text_to_html($txt) {
   $txt = (string)$txt;
   if ($txt === '') return '';
-  // Convert simple Markdown headings
   $txt = preg_replace(['/^###\s*(.+)$/m','/^##\s*(.+)$/m','/^#\s*(.+)$/m'], ['<h4>$1</h4>','<h3>$1</h3>','<h2>$1</h2>'], $txt);
-  // Split by blank lines into blocks
   $blocks = preg_split('/\n\s*\n/', $txt);
   $out = '';
   foreach ($blocks as $b) {
     $b = trim($b);
     if ($b === '') continue;
     if (preg_match('/<[^>]+>/', $b)) {
-      // includes HTML tag — trust it
       $out .= $b;
     } else {
       $out .= '<p>' . nl2br(htmlspecialchars($b)) . '</p>';
@@ -144,101 +120,329 @@ function format_plain_text_to_html($txt) {
   return $out;
 }
 
+// Format the publish date nicely
+$publishDate = $post['published_at'] ?? $post['created_at'];
+$formattedDate = date('F j, Y', strtotime($publishDate));
+
 $pageTitle = $post['title'];
 require_once __DIR__ . '/includes/header.php';
 ?>
-<div class="container" style="max-width:1150px;margin:24px auto;padding:0 12px;">
-  <article class="post-article">
-    <h1><?= htmlspecialchars($post['title']) ?></h1>
-    <div class="meta muted">Published: <?= htmlspecialchars($post['published_at'] ?? $post['created_at']) ?></div>
 
-    <div class="post-top" style="display:flex;gap:20px;align-items:flex-start;margin-top:12px;">
-      <div class="post-main" style="flex:1;">
-        <div class="post-content">
-      <?php if (!empty($post['featured_image'])): ?>
-        <?php
-          $fi = $post['featured_image'];
-          if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
-            $imgSrc = $fi;
-          } else {
-            // Use a document-relative path so assets resolve correctly when site is in a subfolder
-            $imgSrc = './' . ltrim($fi, '/');
-          }
-        ?>
-        <div class="post-thumb" style="margin-bottom:12px;">
-          <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" style="width:100%;height:auto;display:block;border-radius:6px;object-fit:cover">
-        </div>
-      <?php endif; ?>
+<!-- Reading Progress Bar -->
+<div class="reading-progress" id="readingProgress"></div>
 
-  <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
-        </div>
-      </div>
-
-      <aside class="post-toc" style="width:260px;">
-        <?php if ($tocHtml !== ''): ?>
-          <?= $tocHtml ?>
-        <?php else: ?>
-          <div class="post-toc">
-            <h4>Table of Contents</h4>
-            <p class="muted">No sections found for this article.</p>
+<div class="post-page-container">
+  
+  <!-- Hero Section -->
+  <?php if (!empty($post['featured_image'])): ?>
+    <?php
+      $fi = $post['featured_image'];
+      if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
+        $imgSrc = $fi;
+      } else {
+        $imgSrc = './' . ltrim($fi, '/');
+      }
+    ?>
+    <div class="post-hero">
+      <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="post-hero-image">
+      <div class="post-hero-overlay"></div>
+      <div class="post-hero-content">
+        <h1 class="post-hero-title"><?= htmlspecialchars($post['title']) ?></h1>
+        <div class="post-hero-meta">
+          <div class="post-author-badge">
+            <div class="post-author-avatar"><?= $authorInitial ?></div>
+            <span class="post-author-name">By <?= htmlspecialchars($authorName) ?></span>
           </div>
-        <?php endif; ?>
-      </aside>
-    </div>
-      <div class="post-actions" style="display:flex;gap:12px;align-items:center;margin-top:12px;">
-        <button id="likeBtn" class="btn btn-like" aria-pressed="false"><i class="fa-regular fa-heart"></i> <span class="btn-label">Like</span></button>
-        <div class="meta small muted"><i class="fa-regular fa-heart"></i> <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span></div>
-        <button id="commentToggle" class="btn btn-comment"><i class="fa-regular fa-comment-dots"></i> Comment</button>
-        <div class="meta small muted" style="margin-left:8px;"><i class="fa-regular fa-comment-dots"></i> <strong id="commentsCount"><?= intval($comments_count ?? 0) ?></strong></div>
+          <span><i class="bx bx-calendar"></i> <?= $formattedDate ?></span>
+          <span><i class="bx bx-time-five"></i> <?= $readingTime ?> min read</span>
+        </div>
       </div>
-  </article>
+    </div>
+  <?php else: ?>
+    <div class="post-hero post-hero-fallback">
+      <div class="post-hero-overlay"></div>
+      <div class="post-hero-content">
+        <h1 class="post-hero-title"><?= htmlspecialchars($post['title']) ?></h1>
+        <div class="post-hero-meta">
+          <div class="post-author-badge">
+            <div class="post-author-avatar"><?= $authorInitial ?></div>
+            <span class="post-author-name">By <?= htmlspecialchars($authorName) ?></span>
+          </div>
+          <span><i class="bx bx-calendar"></i> <?= $formattedDate ?></span>
+          <span><i class="bx bx-time-five"></i> <?= $readingTime ?> min read</span>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
 
-  <section id="commentsSection" style="margin-top:28px;">
-    <h2>Comments</h2>
+  <!-- Main Article -->
+  <div class="post-article-wrap">
+    <article class="post-article">
+      <div class="post-layout">
+        
+        <!-- Main Content -->
+        <div class="post-main">
+          <div class="post-content">
+            <?= $renderedContent ?: format_plain_text_to_html($post['content']) ?: nl2br(htmlspecialchars($post['content'])) ?>
+          </div>
+        </div>
+
+        <!-- Table of Contents Sidebar -->
+        <aside class="post-toc-sidebar" id="tocSidebar">
+          <h4>Contents</h4>
+          <?php if (!empty($tocItems)): ?>
+            <ul>
+              <?php foreach ($tocItems as $it): ?>
+                <li class="toc-<?= $it['tag'] ?>">
+                  <a href="#<?= htmlspecialchars($it['id']) ?>"><?= htmlspecialchars($it['text']) ?></a>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?>
+            <p class="post-toc-empty">No sections in this article.</p>
+          <?php endif; ?>
+        </aside>
+
+      </div>
+
+      <!-- Action Bar -->
+      <div class="post-actions-bar">
+        <button id="likeBtn" class="post-action-btn" aria-pressed="false">
+          <i class="bx bx-heart"></i>
+          <span>Like</span>
+        </button>
+        <div class="post-action-count">
+          <i class="bx bxs-heart"></i>
+          <span id="likesCount"><?= htmlspecialchars($post['likes'] ?? 0) ?></span>
+        </div>
+        
+        <button id="commentToggle" class="post-action-btn">
+          <i class="bx bx-comment-dots"></i>
+          <span>Comment</span>
+        </button>
+        <div class="post-action-count">
+          <i class="bx bxs-comment-dots"></i>
+          <span id="commentsCount"><?= intval($comments_count ?? 0) ?></span>
+        </div>
+
+        <div class="post-actions-spacer"></div>
+
+        <button class="post-action-btn post-share-btn" onclick="sharePost()">
+          <i class="bx bx-share-alt"></i>
+          <span>Share</span>
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <!-- Comments Section -->
+  <section class="post-comments-section" id="commentsSection">
+    <div class="post-comments-header">
+      <h2>Comments</h2>
+      <span class="post-comments-count" id="commentsCountBadge"><?= intval($comments_count ?? 0) ?></span>
+    </div>
 
     <div id="commentsList">
       <?php foreach($comments as $c): ?>
-        <div class="comment" data-id="<?= $c['id'] ?>" style="border-bottom:1px solid #eee;padding:12px 0;">
+        <div class="comment-card" data-id="<?= $c['id'] ?>">
           <div class="comment-header">
-            <div><strong><?= htmlspecialchars($c['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($c['created_at']) ?></span></div>
-            <div>
-              <button class="reply-btn small" data-id="<?= $c['id'] ?>">Reply</button>
+            <div class="comment-avatar"><?= strtoupper(substr($c['name'] ?: 'A', 0, 1)) ?></div>
+            <div class="comment-meta">
+              <div class="comment-author">
+                <?= htmlspecialchars($c['name'] ?: 'Anonymous') ?>
+              </div>
+              <div class="comment-date"><?= date('M j, Y \a\t g:i A', strtotime($c['created_at'])) ?></div>
             </div>
           </div>
           <div class="comment-body"><?= nl2br(htmlspecialchars($c['content'])) ?></div>
+          <div class="comment-actions">
+            <button class="comment-action-btn like-btn" data-id="<?= $c['id'] ?>">
+              <i class="bx bx-heart"></i> <span class="like-count"><?= $c['likes'] ?? 0 ?></span>
+            </button>
+            <button class="comment-action-btn reply-btn" data-id="<?= $c['id'] ?>">
+              <i class="bx bx-reply"></i> Reply
+            </button>
+          </div>
 
           <?php
             // fetch replies for this comment
             $rstmt = $pdo->prepare('SELECT * FROM comments WHERE parent_id = ? AND status = "approved" ORDER BY created_at ASC');
             $rstmt->execute([$c['id']]);
             $replies = $rstmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach($replies as $rep):
+            if ($replies):
           ?>
-            <div class="comment reply">
-              <div><strong><?= $rep['user_id'] ? 'Admin - ' . htmlspecialchars($rep['name']) : htmlspecialchars($rep['name'] ?: 'Anonymous') ?></strong> <span class="muted">at <?= htmlspecialchars($rep['created_at']) ?></span></div>
-              <div class="comment-body" style="margin-top:6px;"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+            <div class="comment-replies">
+              <?php foreach($replies as $rep): ?>
+                <div class="comment-card">
+                  <div class="comment-header">
+                    <div class="comment-avatar <?= $rep['user_id'] ? 'admin' : '' ?>"><?= strtoupper(substr($rep['name'] ?: 'A', 0, 1)) ?></div>
+                    <div class="comment-meta">
+                      <div class="comment-author">
+                        <?= htmlspecialchars($rep['name'] ?: 'Anonymous') ?>
+                        <?php if ($rep['user_id']): ?>
+                          <span class="admin-badge">Admin</span>
+                        <?php endif; ?>
+                      </div>
+                      <div class="comment-date"><?= date('M j, Y \a\t g:i A', strtotime($rep['created_at'])) ?></div>
+                    </div>
+                  </div>
+                  <div class="comment-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
+                </div>
+              <?php endforeach; ?>
             </div>
-          <?php endforeach; ?>
-
+          <?php endif; ?>
         </div>
       <?php endforeach; ?>
     </div>
 
-    <div style="margin-top:18px;">
-      <h3>Leave a comment</h3>
-      <form id="commentForm" class="comment-form-wrap">
-        <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
-        <input type="hidden" name="parent_id" id="parent_id" value="">
-        <div class="form-row"><label class="form-label">Name</label><input class="form-input" type="text" name="name"></div>
-        <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
-        <div class="form-row"><label class="form-label">Comment</label><textarea class="form-textarea" name="content" rows="5" required></textarea></div>
-  <div class="form-actions"><button type="submit" class="btn-approve">Submit Comment</button> <button type="button" id="cancelReply" style="display:none;margin-left:8px;" class="btn-ghost">Cancel Reply</button></div>
-      </form>
-    </div>
+    <!-- Comment Form -->
+    <form id="commentForm" class="post-comment-form">
+      <h3>Leave a Comment</h3>
+      <input type="hidden" name="post_id" value="<?= $post['id'] ?>">
+      <input type="hidden" name="parent_id" id="parent_id" value="">
+      
+      <div class="form-row">
+        <label class="form-label">Name</label>
+        <input class="form-input" type="text" name="name" placeholder="Your name">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" name="email" placeholder="your@email.com">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Comment</label>
+        <textarea class="form-textarea" name="content" rows="5" placeholder="Write your thoughts..." required></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-submit-comment">
+          <i class="bx bx-send"></i> Submit Comment
+        </button>
+        <button type="button" id="cancelReply" class="btn-cancel-reply" style="display:none;">Cancel Reply</button>
+      </div>
+    </form>
   </section>
 </div>
 
-<!-- comment and like handling moved to external script to reduce inline JS -->
+<!-- Mobile TOC Toggle -->
+<button class="toc-mobile-toggle" id="tocMobileToggle" aria-label="Table of Contents">
+  <i class="bx bx-list-ul"></i>
+</button>
+
+<!-- Mobile TOC Panel -->
+<div class="toc-mobile-overlay" id="tocMobileOverlay"></div>
+<div class="toc-mobile-panel" id="tocMobilePanel">
+  <button class="toc-mobile-close" id="tocMobileClose"><i class="bx bx-x"></i></button>
+  <h4>Contents</h4>
+  <?php if (!empty($tocItems)): ?>
+    <ul class="post-toc-sidebar">
+      <?php foreach ($tocItems as $it): ?>
+        <li class="toc-<?= $it['tag'] ?>">
+          <a href="#<?= htmlspecialchars($it['id']) ?>" class="mobile-toc-link"><?= htmlspecialchars($it['text']) ?></a>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php else: ?>
+    <p class="post-toc-empty">No sections in this article.</p>
+  <?php endif; ?>
+</div>
+
+<script>
+// Share functionality
+function sharePost() {
+  if (navigator.share) {
+    navigator.share({
+      title: <?= json_encode($post['title']) ?>,
+      url: window.location.href
+    });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({title: 'Link Copied!', text: 'Share this post with others', icon: 'success', timer: 2000, showConfirmButton: false});
+      } else {
+        alert('Link copied to clipboard!');
+      }
+    });
+  }
+}
+
+// Reading progress bar
+document.addEventListener('scroll', function() {
+  const article = document.querySelector('.post-article');
+  if (!article) return;
+  const rect = article.getBoundingClientRect();
+  const scrolled = Math.max(0, -rect.top);
+  const total = article.offsetHeight - window.innerHeight;
+  const progress = Math.min(100, (scrolled / total) * 100);
+  document.getElementById('readingProgress').style.width = progress + '%';
+});
+
+// TOC active state highlighting
+document.addEventListener('DOMContentLoaded', function() {
+  const tocLinks = document.querySelectorAll('.post-toc-sidebar a');
+  const headings = [];
+  tocLinks.forEach(link => {
+    const id = link.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) headings.push({id, el, link});
+  });
+
+  function updateActiveLink() {
+    let current = null;
+    headings.forEach(h => {
+      if (h.el.getBoundingClientRect().top <= 120) current = h;
+    });
+    tocLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActiveLink);
+  updateActiveLink();
+
+  // Smooth scroll for TOC links
+  tocLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const id = this.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+        // Close mobile TOC if open
+        document.getElementById('tocMobileOverlay').classList.remove('active');
+        document.getElementById('tocMobilePanel').classList.remove('active');
+      }
+    });
+  });
+
+  // Mobile TOC toggle
+  const tocToggle = document.getElementById('tocMobileToggle');
+  const tocOverlay = document.getElementById('tocMobileOverlay');
+  const tocPanel = document.getElementById('tocMobilePanel');
+  const tocClose = document.getElementById('tocMobileClose');
+
+  tocToggle.addEventListener('click', function() {
+    tocOverlay.classList.add('active');
+    tocPanel.classList.add('active');
+  });
+
+  tocOverlay.addEventListener('click', function() {
+    tocOverlay.classList.remove('active');
+    tocPanel.classList.remove('active');
+  });
+
+  tocClose.addEventListener('click', function() {
+    tocOverlay.classList.remove('active');
+    tocPanel.classList.remove('active');
+  });
+
+  // Scroll to comments when comment button clicked
+  document.getElementById('commentToggle').addEventListener('click', function() {
+    document.getElementById('commentsSection').scrollIntoView({behavior: 'smooth'});
+  });
+});
+</script>
+
+<!-- Comment and like handling -->
 <script>window.POST_ID = <?= (int)$postId ?>;</script>
 <script src="<?= app_url('assets/js/post.js') ?>"></script>
 
