@@ -33,6 +33,9 @@ $pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educ
   </div>
 </section>
 
+<?php include __DIR__ . '/tutors.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
+
 <!-- Core Values -->
 
 <section class="history-section">
