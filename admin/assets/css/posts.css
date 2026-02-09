@@ -20,6 +20,10 @@
 .module-header .search-form input[type=text]{ width:640px; padding:0.8rem 1rem; border-radius:10px; border:1px solid #eee; background:#fafafa }
 
 /* Post modal form styling tweaks */
+.modal .modal-content {
+  max-height: 85vh;
+  overflow-y: auto;
+}
 .modal .form-row { margin-bottom:12px; }
 .modal .form-row label { display:block; margin-bottom:6px; font-weight:600; }
 .modal input[type="text"], .modal textarea, .modal select { width:100%; padding:10px 12px; border:1px solid #e6e6e6; border-radius:8px; background:#fff }

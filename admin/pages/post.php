@@ -736,7 +736,9 @@ document.querySelectorAll('.edit-link').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const id = link.dataset.id;
-    fetch(`index.php?pages=post_edit&id=${id}`)
+        fetch(`index.php?pages=post_edit&id=${id}&ajax=1`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
       .then(res => res.text())
       .then(html => {
         editContent.innerHTML = html;
