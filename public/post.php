@@ -37,6 +37,21 @@ $comments_count = (int)$ccstmt->fetchColumn();
 $wordCount = str_word_count(strip_tags($post['content'] ?? ''));
 $readingTime = max(1, ceil($wordCount / 200));
 
+function convert_plain_images($text) {
+  $text = preg_replace_callback('/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/i', function($m) {
+    $alt = htmlspecialchars($m[1]);
+    $url = htmlspecialchars($m[2]);
+    return '<img src="' . $url . '" alt="' . $alt . '" style="max-width:100%;height:auto;border-radius:8px;">';
+  }, $text);
+
+  $text = preg_replace_callback('/^\s*(https?:\/\/\S+\.(?:png|jpe?g|gif|webp))\s*$/im', function($m) {
+    $url = htmlspecialchars($m[1]);
+    return '<img src="' . $url . '" alt="Embedded image" style="max-width:100%;height:auto;border-radius:8px;">';
+  }, $text);
+
+  return $text;
+}
+
 // Build a server-side Table of Contents by scanning headings in the post content (if present)
 $tocHtml = '';
 $tocItems = [];
@@ -48,6 +63,7 @@ if ($contentRaw !== '' && strpos($contentRaw, '<') === false) {
   $contentProcessed = preg_replace('/^###\s*(.+)$/m', '<h4>$1</h4>', $contentRaw);
   $contentProcessed = preg_replace('/^##\s*(.+)$/m', '<h3>$1</h3>', $contentProcessed);
   $contentProcessed = preg_replace('/^#\s*(.+)$/m', '<h2>$1</h2>', $contentProcessed);
+  $contentProcessed = convert_plain_images($contentProcessed);
 
   $paras = preg_split('/\n\s*\n/', $contentProcessed);
   $out = '';
@@ -106,6 +122,7 @@ function format_plain_text_to_html($txt) {
   $txt = (string)$txt;
   if ($txt === '') return '';
   $txt = preg_replace(['/^###\s*(.+)$/m','/^##\s*(.+)$/m','/^#\s*(.+)$/m'], ['<h4>$1</h4>','<h3>$1</h3>','<h2>$1</h2>'], $txt);
+  $txt = convert_plain_images($txt);
   $blocks = preg_split('/\n\s*\n/', $txt);
   $out = '';
   foreach ($blocks as $b) {
