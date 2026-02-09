@@ -24,6 +24,7 @@ try {
 }
 ?>
 <div class="modal-content-inner">
+  <span class="modal-close" onclick="closeEditModal()"><i class='bx bx-x'></i></span>
   <h3>Edit Post: <?= htmlspecialchars($post['title']) ?></h3>
   <form id="ajaxEditPostForm" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
