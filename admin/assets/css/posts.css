@@ -24,6 +24,17 @@
   max-height: 85vh;
   overflow-y: auto;
 }
+
+#postModal,
+#editPostModal {
+  align-items: flex-start;
+  padding: 32px 12px 40px;
+}
+
+#postModal .modal-content,
+#editPostModal .modal-content {
+  margin-top: 12px;
+}
 .modal .form-row { margin-bottom:12px; }
 .modal .form-row label { display:block; margin-bottom:6px; font-weight:600; }
 .modal input[type="text"], .modal textarea, .modal select { width:100%; padding:10px 12px; border:1px solid #e6e6e6; border-radius:8px; background:#fff }
