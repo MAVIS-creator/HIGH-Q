@@ -235,6 +235,52 @@ if (file_exists(__DIR__ . '/config/db.php')) {
     } catch (Exception $e) {
       // Silently fail
     }
+
+    // Fallback: load student feature CSV + images if DB is empty
+    if (empty($wallTestimonials)) {
+      $csvFile = __DIR__ . '/uploads/HQ Student Feature Submission.csv (1)/HQ Student Feature Submission.csv';
+      if (file_exists($csvFile)) {
+        $fh = fopen($csvFile, 'r');
+        if ($fh) {
+          $header = fgetcsv($fh);
+          if (is_array($header)) {
+            $header = array_map('trim', $header);
+            while (($row = fgetcsv($fh)) !== false) {
+              if (count($row) < count($header)) {
+                $row = array_pad($row, count($header), '');
+              }
+              $data = array_combine($header, array_slice($row, 0, count($header)));
+              if (!$data) continue;
+
+              $name = trim($data['Full Name'] ?? '');
+              $school = trim($data['Institution/School Attended or Current'] ?? '');
+              $reason = trim($data['Why did you choose HQ?'] ?? '');
+              $result = trim($data['Please share any examination result associated with HQ (e.g., JAMB, WAEC, NECO, HQ Internal Exam, etc.) - Optional'] ?? '');
+              $pic = trim($data['Upload your picture (PIC)'] ?? '');
+
+              $imagePath = '';
+              if ($pic !== '') {
+                $relPath = 'uploads/HQ Student Feature Submission.csv (1)/' . $pic;
+                if (file_exists(__DIR__ . '/' . $relPath)) {
+                  $imagePath = app_url($relPath);
+                }
+              }
+
+              if ($name === '' && $reason === '') continue;
+
+              $wallTestimonials[] = [
+                'name' => $name ?: 'HQ Student',
+                'role_institution' => $school,
+                'testimonial_text' => $reason,
+                'outcome_badge' => $result,
+                'image_path' => $imagePath
+              ];
+            }
+          }
+          fclose($fh);
+        }
+      }
+    }
     ?>
 
     <?php if (empty($wallTestimonials)): ?>
