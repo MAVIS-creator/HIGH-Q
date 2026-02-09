@@ -217,6 +217,92 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   }
 </style>
 
+<?php
+if (!function_exists('hq_normalize_student_name')) {
+  function hq_normalize_student_name($name) {
+    $name = strtolower(trim($name ?? ''));
+    $name = preg_replace('/\s+/', ' ', $name);
+    return $name;
+  }
+}
+
+if (!function_exists('hq_build_student_feature_image_map')) {
+  function hq_build_student_feature_image_map($csvPath, $csvDir) {
+    if (!is_file($csvPath) || !is_dir($csvDir)) {
+      return [];
+    }
+
+    $files = array_diff(scandir($csvDir), ['.', '..']);
+    $filesByBase = [];
+    foreach ($files as $file) {
+      if (is_dir($csvDir . DIRECTORY_SEPARATOR . $file)) {
+        continue;
+      }
+      $base = pathinfo($file, PATHINFO_FILENAME);
+      $base = strtolower(preg_replace('/\s+/', ' ', $base));
+      $filesByBase[$base] = $file;
+    }
+
+    $handle = fopen($csvPath, 'r');
+    if ($handle === false) {
+      return [];
+    }
+
+    $header = fgetcsv($handle);
+    if (empty($header)) {
+      fclose($handle);
+      return [];
+    }
+    $header = array_map('trim', $header);
+
+    $nameIndex = array_search('Full Name', $header, true);
+    if ($nameIndex === false) {
+      foreach ($header as $i => $h) {
+        if (stripos($h, 'Full Name') !== false) {
+          $nameIndex = $i;
+          break;
+        }
+      }
+    }
+
+    $picIndex = array_search('Upload your picture (PIC)', $header, true);
+    if ($picIndex === false) {
+      foreach ($header as $i => $h) {
+        if (stripos($h, 'Upload your picture') !== false) {
+          $picIndex = $i;
+          break;
+        }
+      }
+    }
+
+    if ($nameIndex === false || $picIndex === false) {
+      fclose($handle);
+      return [];
+    }
+
+    $map = [];
+    while (($row = fgetcsv($handle)) !== false) {
+      $nameRaw = trim($row[$nameIndex] ?? '');
+      $picRaw = trim($row[$picIndex] ?? '');
+      if ($nameRaw === '' || $picRaw === '') {
+        continue;
+      }
+
+      $picKey = strtolower(preg_replace('/\s+/', ' ', $picRaw));
+      $matchedFile = $filesByBase[$picKey] ?? null;
+      if (!$matchedFile) {
+        continue;
+      }
+
+      $map[hq_normalize_student_name($nameRaw)] = 'uploads/HQ Student Feature Submission.csv (1)/' . $matchedFile;
+    }
+
+    fclose($handle);
+    return $map;
+  }
+}
+?>
+
 <!-- Wall of Fame - Horizontal Scrolling Testimonials -->
 <section class="wall-of-fame-section py-5">
   <div class="container-fluid px-3 px-md-4">
@@ -234,6 +320,32 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       $wallTestimonials = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
       // Silently fail
+    }
+
+    $needsImageMap = false;
+    foreach ($wallTestimonials as $t) {
+      if (empty($t['image_path'])) {
+        $needsImageMap = true;
+        break;
+      }
+    }
+
+    if ($needsImageMap) {
+      $csvDir = __DIR__ . '/uploads/HQ Student Feature Submission.csv (1)';
+      $csvPath = $csvDir . '/HQ Student Feature Submission.csv';
+      $imageMap = hq_build_student_feature_image_map($csvPath, $csvDir);
+      if (!empty($imageMap)) {
+        foreach ($wallTestimonials as &$t) {
+          if (!empty($t['image_path'])) {
+            continue;
+          }
+          $key = hq_normalize_student_name($t['name'] ?? '');
+          if (isset($imageMap[$key])) {
+            $t['image_path'] = $imageMap[$key];
+          }
+        }
+        unset($t);
+      }
     }
     ?>
 
