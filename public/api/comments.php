@@ -88,7 +88,7 @@ $email = trim($_POST['email'] ?? '');
 $content = trim($_POST['content'] ?? '');
 
 if (!$postId || $content === '') {
-    echo json_encode(['status'=>'error','message'=>'Missing required fields']);
+    echo json_encode(['status'=>'error','success'=>false,'message'=>'Missing required fields']);
     exit;
 }
 
