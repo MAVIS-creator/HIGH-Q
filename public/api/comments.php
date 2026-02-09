@@ -121,13 +121,14 @@ try {
     try { @file_put_contents(__DIR__ . '/../storage/comments-debug.log', date('c') . " INSERT post={$postId} parent={$parentId} status={$status}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $e) {}
     if ($status === 'pending') {
         // Friendly message for pending comments
-        echo json_encode(['status'=>'ok','message'=>'Comment submitted — awaiting moderation. It will appear once approved.']);
+        echo json_encode(['status'=>'ok','success'=>true,'message'=>'Comment submitted - awaiting moderation. It will appear once approved.']);
     } else {
-        echo json_encode(['status'=>'ok','message'=>'Comment submitted']);
+        echo json_encode(['status'=>'ok','success'=>true,'message'=>'Comment submitted']);
     }
+    exit;
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['status'=>'error','message'=>'DB error']);
+    echo json_encode(['status'=>'error','success'=>false,'message'=>'DB error']);
 }
 
 // Support DELETE via POST when a guest/user wants to delete their own comment
