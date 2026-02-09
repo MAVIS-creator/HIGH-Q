@@ -46,9 +46,9 @@
                         <i class="bx bx-credit-card"></i>
                         <span>Payment Options</span>
                     </button>
-                    <button class="faq-option" data-question="Where can I see the latest news and updates?">
-                        <i class="bx bx-news"></i>
-                        <span>Latest News</span>
+                    <button class="faq-option" data-question="How do I check my admission status?">
+                        <i class="bx bx-file-find"></i>
+                        <span>Check Admission</span>
                     </button>
                     <button class="faq-option" data-question="What are your contact details?">
                         <i class="bx bx-phone"></i>
@@ -131,7 +131,6 @@
     background:rgba(0,0,0,0.12); border:none; height:32px; border-radius:999px; padding:0 10px;
     cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s ease;
     color:#111; font-size:12px; font-weight:600;
-    display:none;
 }
 .chat-back-btn i { font-size:18px; }
 .chat-back-btn:hover { background:rgba(0,0,0,0.2); transform:translateY(-1px); }
@@ -269,7 +268,7 @@
         "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Find Your Path</strong>. Fill out the form and complete payment to secure your spot!",
         "What programs are available?": "We offer JAMB, WAEC, POST-UTME, and professional tutoring programs. Visit our <a href='<?= app_url('programs.php') ?>' target='_parent'>Programs page</a> to learn more.",
         "What are your payment options?": "We accept bank transfers, Paystack, and Stripe payments. You'll receive payment instructions after registration.",
-        "Where can I see the latest news and updates?": "Visit our <a href='<?= app_url('news.php') ?>' target='_parent'>News page</a> for announcements, events, and updates.",
+        "How do I check my admission status?": "Login to your dashboard and navigate to <strong>My Registrations</strong> to view your admission status and payment history.",
         "What are your contact details?": "Email: <strong>highqsolidacademy@gmail.com</strong><br>Phone: <strong>+234 XXX XXX XXXX</strong><br>Or chat with us right here!"
     };
     
@@ -364,7 +363,6 @@
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'flex';
         chatFooter.style.display = 'none';
-        setBackButtonVisible(true);
         saveChatMode('bot');
         
         // Add user question
@@ -398,7 +396,6 @@
         agentForm.style.display = 'none';
         chatFooter.style.display = 'none';
         chatMessages.innerHTML = '';
-        setBackButtonVisible(false);
         saveChatMode('bot');
     }
 
@@ -407,7 +404,6 @@
         chatMessages.style.display = 'none';
         agentForm.style.display = 'flex';
         chatFooter.style.display = 'none';
-        setBackButtonVisible(true);
         saveChatMode('agent');
     }
     
@@ -416,13 +412,7 @@
         chatMessages.style.display = 'flex';
         agentForm.style.display = 'none';
         chatFooter.style.display = 'flex';
-        setBackButtonVisible(true);
         saveChatMode('agent');
-    }
-
-    function setBackButtonVisible(isVisible) {
-        if (!chatBackToMain) return;
-        chatBackToMain.style.display = isVisible ? 'flex' : 'none';
     }
     
     function addMessage(type, sender, message) {
@@ -653,7 +643,6 @@
     // Restore previous state on load
     loadThreadId();
     loadChatMode();
-    setBackButtonVisible(false);
     if (threadId) {
         if (chatMode !== 'agent') saveChatMode('agent');
         showAgentChat();
