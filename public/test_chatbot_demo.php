@@ -199,7 +199,7 @@
                             <li>How to Register</li>
                             <li>Available Programs</li>
                             <li>Payment Options</li>
-                            <li>Check Admission</li>
+                            <li>Community Q&amp;A</li>
                             <li>Contact Us</li>
                             <li>Talk to Agent</li>
                         </ul>
@@ -265,9 +265,9 @@
                             <i class="bx bx-credit-card"></i>
                             <span>Payment Options</span>
                         </button>
-                        <button class="faq-option" data-question="How do I check my admission status?">
-                            <i class="bx bx-file-find"></i>
-                            <span>Check Admission</span>
+                        <button class="faq-option" data-question="Do you have a community forum?">
+                            <i class="bx bx-group"></i>
+                            <span>Community Q&amp;A</span>
                         </button>
                         <button class="faq-option" data-question="What are your contact details?">
                             <i class="bx bx-phone"></i>
@@ -479,7 +479,7 @@
                 "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Find Your Path</strong>. Fill out the form and complete payment to secure your spot!",
                 "What programs are available?": "We offer JAMB, WAEC, POST-UTME, and professional tutoring programs. Check out our Programs page to learn more.",
                 "What are your payment options?": "We accept bank transfers, Paystack, and Stripe payments. You'll receive payment instructions after registration.",
-                "How do I check my admission status?": "Login to your dashboard and navigate to <strong>My Registrations</strong> to view your admission status and payment history.",
+                "Do you have a community forum?": "Yes! Join our Community Q&amp;A to ask questions, share tips, and get support from other students and tutors.",
                 "What are your contact details?": "Email: <strong>highqsolidacademy@gmail.com</strong><br>Phone: <strong>+234 807 208 8794</strong><br>Or chat with us right here!"
             };
             

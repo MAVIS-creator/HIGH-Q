@@ -39,6 +39,25 @@ if (-not $dbUser) {
 
 $outPath = Join-Path $repoRoot $OutputFile
 
+function Resolve-MySqlDump {
+    $cmd = Get-Command mysqldump -ErrorAction SilentlyContinue
+    if ($cmd) { return $cmd.Path }
+
+    $candidates = @()
+    if ($env:XAMPP_HOME) { $candidates += (Join-Path $env:XAMPP_HOME "mysql\bin\mysqldump.exe") }
+    $candidates += "C:\xampp\mysql\bin\mysqldump.exe"
+    $candidates += "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe"
+    $candidates += "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe"
+
+    foreach ($c in $candidates) {
+        if (Test-Path $c) { return $c }
+    }
+
+    throw "mysqldump not found. Add it to PATH or set XAMPP_HOME to your XAMPP folder."
+}
+
+$mysqldumpExe = Resolve-MySqlDump
+
 $dumpArgs = @(
     "--host=$dbHost",
     "--user=$dbUser",
@@ -60,6 +79,6 @@ if ($dbPass) {
 
 Write-Host "Exporting database '$dbName' to $outPath ..."
 
-& mysqldump @dumpArgs | Out-File -FilePath $outPath -Encoding utf8
+& $mysqldumpExe @dumpArgs | Out-File -FilePath $outPath -Encoding utf8
 
 Write-Host "Done."
