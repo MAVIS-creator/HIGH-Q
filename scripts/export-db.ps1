@@ -68,10 +68,14 @@ $dumpArgs = @(
     "--default-character-set=utf8mb4",
     "--skip-comments",
     "--skip-add-locks",
-    "--set-gtid-purged=OFF",
     "--databases",
     $dbName
 )
+
+$versionOut = & $mysqldumpExe --version 2>$null
+if ($versionOut -notmatch "MariaDB") {
+    $dumpArgs = @("--set-gtid-purged=OFF") + $dumpArgs
+}
 
 if ($dbPass) {
     $dumpArgs = @("--password=$dbPass") + $dumpArgs
