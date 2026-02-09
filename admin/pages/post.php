@@ -601,6 +601,11 @@ try {
                           <li><code>## Subsection</code> &rarr; <em>&lt;h3&gt;Subsection&lt;/h3&gt;</em></li>
                           <li><code>### Sub-sub</code> &rarr; <em>&lt;h4&gt;Sub-sub&lt;/h4&gt;</em></li>
                         </ul>
+                                                <div style="margin-top:10px"><strong>Embed images in the content</strong></div>
+                                                <ul style="margin:6px 0 0 18px;padding:0;">
+                                                    <li><code>![Alt text](https://example.com/image.jpg)</code> &rarr; embedded image</li>
+                                                    <li>Paste an image URL on its own line (ending in .jpg/.png/.gif/.webp) to embed.</li>
+                                                </ul>
                         <div style="margin-top:8px;color:var(--hq-gray);">Leave a blank line between headings and paragraphs for best results.</div>
                     </div>
                 </div>
