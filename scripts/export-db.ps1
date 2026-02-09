@@ -1,5 +1,5 @@
 param(
-    [string]$OutputFile = "highq.sql"
+    [string]$OutputFile = "highq.sql",
     [int]$IntervalMinutes = 5,
     [switch]$Once = $false
 )
@@ -59,6 +59,25 @@ function Resolve-MySqlDump {
 }
 
 $mysqldumpExe = Resolve-MySqlDump
+
+function Resolve-MySqlCli {
+    $cmd = Get-Command mysql -ErrorAction SilentlyContinue
+    if ($cmd) { return $cmd.Path }
+
+    $candidates = @()
+    if ($env:XAMPP_HOME) { $candidates += (Join-Path $env:XAMPP_HOME "mysql\bin\mysql.exe") }
+    $candidates += "C:\xampp\mysql\bin\mysql.exe"
+    $candidates += "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
+    $candidates += "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe"
+
+    foreach ($c in $candidates) {
+        if (Test-Path $c) { return $c }
+    }
+
+    throw "mysql client not found. Add it to PATH or set XAMPP_HOME to your XAMPP folder."
+}
+
+$mysqlExe = Resolve-MySqlCli
 
 $dumpArgs = @(
     "--host=$dbHost",
