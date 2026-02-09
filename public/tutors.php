@@ -262,7 +262,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
               if ($pic !== '') {
                 $relPath = 'uploads/HQ Student Feature Submission.csv (1)/' . $pic;
                 if (file_exists(__DIR__ . '/' . $relPath)) {
-                  $imagePath = app_url($relPath);
+                  $encodedRel = implode('/', array_map('rawurlencode', explode('/', $relPath)));
+                  $imagePath = app_url($encodedRel);
                 }
               }
 
