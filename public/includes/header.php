@@ -269,6 +269,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="<?= app_url('assets/css/mobile-animations.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/social-icons.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/post-toc.css') ?>">
+  <link rel="stylesheet" href="<?= app_url('assets/css/post-page.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/hero.css') ?>">
   <!-- Small site-specific hero overrides (loaded after hero.css) -->
   <link rel="stylesheet" href="<?= app_url('assets/css/hero-fixed.css') ?>">
