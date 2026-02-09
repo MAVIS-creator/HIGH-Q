@@ -653,6 +653,7 @@
     // Restore previous state on load
     loadThreadId();
     loadChatMode();
+    setBackButtonVisible(false);
     if (threadId) {
         if (chatMode !== 'agent') saveChatMode('agent');
         showAgentChat();
