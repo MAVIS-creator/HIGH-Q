@@ -736,12 +736,14 @@ document.querySelectorAll('.edit-link').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const id = link.dataset.id;
-        fetch(`index.php?pages=post_edit&id=${id}&ajax=1`, {
+        const adminBase = (window.HQ_ADMIN_BASE || '').replace(/\/$/, '');
+        const editUrl = (adminBase ? adminBase + '/pages/post_edit.php' : 'pages/post_edit.php') + `?id=${id}&ajax=1`;
+        fetch(editUrl, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
       .then(res => res.text())
       .then(html => {
-        editContent.innerHTML = html;
+                editContent.innerHTML = html && html.trim() ? html : '<div style="padding:16px;color:#b91c1c;">Could not load post editor. Please refresh and try again.</div>';
         overlay.classList.add('open');
         editModal.classList.add('open');
         bindAjaxForm(id);

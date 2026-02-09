@@ -5,13 +5,14 @@ require_once __DIR__ . '/config/functions.php';
 $postId = (int)($_GET['id'] ?? 0);
 if (!$postId) { header('Location: index.php'); exit; }
 
-// fetch post with author info
+// fetch post with author info - try both author_id and created_by as schema varies
 $stmt = $pdo->prepare('
   SELECT p.*, 
-         u.name as author_name, 
-         u.email as author_email
+         COALESCE(u1.name, u2.name) as author_name, 
+         COALESCE(u1.email, u2.email) as author_email
   FROM posts p 
-  LEFT JOIN users u ON p.created_by = u.id 
+  LEFT JOIN users u1 ON p.author_id = u1.id 
+  LEFT JOIN users u2 ON p.created_by = u2.id 
   WHERE p.id = ? 
   LIMIT 1
 ');
@@ -20,7 +21,7 @@ $post = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$post) { echo "<p>Post not found.</p>"; exit; }
 
 // Author display name (fallback to 'Admin' if not set)
-$authorName = $post['author_name'] ?? 'Admin';
+$authorName = !empty($post['author_name']) ? $post['author_name'] : 'Admin';
 $authorInitial = strtoupper(substr($authorName, 0, 1));
 
 // fetch approved comments (top-level)
