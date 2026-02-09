@@ -46,9 +46,9 @@
                         <i class="bx bx-credit-card"></i>
                         <span>Payment Options</span>
                     </button>
-                    <button class="faq-option" data-question="How do I check my admission status?">
-                        <i class="bx bx-file-find"></i>
-                        <span>Check Admission</span>
+                    <button class="faq-option" data-question="Do you have a community forum?">
+                        <i class="bx bx-group"></i>
+                        <span>Community Q&amp;A</span>
                     </button>
                     <button class="faq-option" data-question="What are your contact details?">
                         <i class="bx bx-phone"></i>
@@ -128,8 +128,9 @@
 .chat-header-left i { font-size:22px; }
 .chat-header-actions { display:flex; align-items:center; gap:8px; }
 .chat-back-btn {
+    display:none;
     background:rgba(0,0,0,0.12); border:none; height:32px; border-radius:999px; padding:0 10px;
-    cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s ease;
+    cursor:pointer; align-items:center; gap:6px; transition:all 0.2s ease;
     color:#111; font-size:12px; font-weight:600;
 }
 .chat-back-btn i { font-size:18px; }
@@ -268,7 +269,7 @@
         "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Find Your Path</strong>. Fill out the form and complete payment to secure your spot!",
         "What programs are available?": "We offer JAMB, WAEC, POST-UTME, and professional tutoring programs. Visit our <a href='<?= app_url('programs.php') ?>' target='_parent'>Programs page</a> to learn more.",
         "What are your payment options?": "We accept bank transfers, Paystack, and Stripe payments. You'll receive payment instructions after registration.",
-        "How do I check my admission status?": "Login to your dashboard and navigate to <strong>My Registrations</strong> to view your admission status and payment history.",
+        "Do you have a community forum?": "Yes! Join our <a href='<?= app_url('community.php') ?>' target='_parent'>Community Q&amp;A</a> to ask questions, share tips, and get support from other students and tutors.",
         "What are your contact details?": "Email: <strong>highqsolidacademy@gmail.com</strong><br>Phone: <strong>+234 XXX XXX XXXX</strong><br>Or chat with us right here!"
     };
     
@@ -279,6 +280,11 @@
     const STORAGE_THREAD = 'hq_chat_thread_id';
     const STORAGE_MODE = 'hq_chat_mode';
     const STORAGE_OPEN = 'hq_chat_open';
+    
+    function setBackButtonVisible(show) {
+        if (!chatBackToMain) return;
+        chatBackToMain.style.display = show ? 'inline-flex' : 'none';
+    }
 
     function loadThreadId() {
         threadId = localStorage.getItem(STORAGE_THREAD);
@@ -363,6 +369,7 @@
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'flex';
         chatFooter.style.display = 'none';
+        setBackButtonVisible(true);
         saveChatMode('bot');
         
         // Add user question
@@ -396,6 +403,7 @@
         agentForm.style.display = 'none';
         chatFooter.style.display = 'none';
         chatMessages.innerHTML = '';
+        setBackButtonVisible(false);
         saveChatMode('bot');
     }
 
@@ -404,6 +412,7 @@
         chatMessages.style.display = 'none';
         agentForm.style.display = 'flex';
         chatFooter.style.display = 'none';
+        setBackButtonVisible(true);
         saveChatMode('agent');
     }
     
@@ -412,6 +421,7 @@
         chatMessages.style.display = 'flex';
         agentForm.style.display = 'none';
         chatFooter.style.display = 'flex';
+        setBackButtonVisible(true);
         saveChatMode('agent');
     }
     
