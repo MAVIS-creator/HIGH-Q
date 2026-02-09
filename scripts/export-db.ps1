@@ -1,5 +1,7 @@
 param(
     [string]$OutputFile = "highq.sql"
+    [int]$IntervalMinutes = 5,
+    [switch]$Once = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -81,8 +83,44 @@ if ($dbPass) {
     $dumpArgs = @("--password=$dbPass") + $dumpArgs
 }
 
-Write-Host "Exporting database '$dbName' to $outPath ..."
+function Get-DbSignature {
+    $sigQuery = "SELECT IFNULL(SUM(CRC32(CONCAT(TABLE_NAME,IFNULL(UPDATE_TIME,''),TABLE_ROWS))),0) AS sig FROM information_schema.tables WHERE table_schema = '$dbName';"
+    $args = @(
+        "--host=$dbHost",
+        "--user=$dbUser",
+        "--database=$dbName",
+        "--batch",
+        "--skip-column-names",
+        "-e",
+        $sigQuery
+    )
+    if ($dbPass) { $args = @("--password=$dbPass") + $args }
+    $raw = & $mysqlExe @args 2>$null
+    return ($raw | Select-Object -First 1).Trim()
+}
 
-& $mysqldumpExe @dumpArgs | Out-File -FilePath $outPath -Encoding utf8
+function Export-Db {
+    Write-Host "Exporting database '$dbName' to $outPath ..."
+    & $mysqldumpExe @dumpArgs | Out-File -FilePath $outPath -Encoding utf8
+    Write-Host "Done."
+}
 
-Write-Host "Done."
+if ($Once) {
+    Export-Db
+    exit 0
+}
+
+Write-Host "Watching for changes every $IntervalMinutes minute(s). Press Ctrl+C to stop."
+$lastSig = Get-DbSignature
+if (-not $lastSig) { $lastSig = "0" }
+Export-Db
+
+while ($true) {
+    Start-Sleep -Seconds ($IntervalMinutes * 60)
+    $currentSig = Get-DbSignature
+    if (-not $currentSig) { $currentSig = "0" }
+    if ($currentSig -ne $lastSig) {
+        $lastSig = $currentSig
+        Export-Db
+    }
+}
