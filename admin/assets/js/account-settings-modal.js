@@ -198,23 +198,20 @@
       notifPayments: document.getElementById('settingsEmailPayments')?.checked || false,
       notifInApp: document.getElementById('settingsInAppAlerts')?.checked || false,
       showOnline: document.getElementById('settingsShowOnline')?.checked || false,
-      showLastActive: document.getElementById('settingsShowLastActive')?.checked || false
+      showLastActive: document.getElementById('settingsShowLastActive')?.checked || false,
+      session_timeout: document.getElementById('settingsSessionTimeout')?.checked || false,
+      login_notifications: document.getElementById('settingsLoginNotifications')?.checked || false
     };
     // Store preferences locally
     try { localStorage.setItem('hq_admin_prefs', JSON.stringify(prefs)); } catch(e) {}
     // Apply animation preference immediately
     applyAnimationMode(prefs.animationMode);
     
-    const securityPayload = {
-      session_timeout: document.getElementById('settingsSessionTimeout')?.checked || false,
-      login_notifications: document.getElementById('settingsLoginNotifications')?.checked || false
-    };
-
     try {
-      await fetch(ADMIN_BASE + '/api/update_security.php', {
+      await fetch(ADMIN_BASE + '/api/update_account_preferences.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(securityPayload),
+        body: JSON.stringify(prefs),
         credentials: 'same-origin'
       });
     } catch (e) {}
@@ -251,9 +248,24 @@
       if (phoneEl) phoneEl.value = data.phone || '';
 
       const prefs = data.preferences || {};
+      const setVal = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val; };
       const setCheck = (id,val)=>{ const el=document.getElementById(id); if(el) el.checked=!!val; };
-      setCheck('settingsSessionTimeout', prefs.session_timeout);
-      setCheck('settingsLoginNotifications', prefs.login_notifications);
+
+      if (Object.keys(prefs).length > 0) {
+        setVal('settingsTheme', prefs.theme || 'light');
+        setVal('settingsDensity', prefs.density || 'comfortable');
+        setCheck('settingsReduceMotion', prefs.reduceMotion);
+        setVal('settingsAnimationMode', prefs.animationMode || 'auto');
+        setCheck('settingsEmailSystem', prefs.notifSystem);
+        setCheck('settingsEmailUsers', prefs.notifUsers);
+        setCheck('settingsEmailPayments', prefs.notifPayments);
+        setCheck('settingsInAppAlerts', prefs.notifInApp);
+        setCheck('settingsShowOnline', prefs.showOnline);
+        setCheck('settingsShowLastActive', prefs.showLastActive);
+        setCheck('settingsSessionTimeout', prefs.session_timeout);
+        setCheck('settingsLoginNotifications', prefs.login_notifications);
+        try { localStorage.setItem('hq_admin_prefs', JSON.stringify(prefs)); } catch(e) {}
+      }
     } catch (e) {}
   }
 
