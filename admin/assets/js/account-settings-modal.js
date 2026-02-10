@@ -234,7 +234,7 @@
   function deleteAccount(){
     if (window.Swal) {
       Swal.fire({title:'Delete Account',text:'This action cannot be undone. Contact support to proceed.',icon:'warning',showCancelButton:true,confirmButtonText:'Contact Support'}).then((result)=>{
-        if(result.isConfirmed) window.location.href = window.HQ_ADMIN_BASE + '/pages/index.php?pages=support';
+        if(result.isConfirmed) window.location.href = ADMIN_BASE + '/pages/index.php?pages=support';
       });
     }
   }
