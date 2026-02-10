@@ -19,25 +19,32 @@ try {
     $sessionTimeout = !empty($data['session_timeout']);
     $loginNotifications = !empty($data['login_notifications']);
 
-    // Store preferences in user metadata or separate table
-    // For now, we'll use a simple JSON column or create user_preferences table
+    // Store preferences in user metadata or fallback table
     $preferences = json_encode([
         'session_timeout' => $sessionTimeout,
         'login_notifications' => $loginNotifications
-    ]);
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-    // Try to update or insert preferences
-    $stmt = $pdo->prepare("
-        UPDATE users 
-        SET preferences = ? 
-        WHERE id = ?
-    ");
-    
-    // If preferences column doesn't exist, this will fail gracefully
+    $updated = false;
     try {
+        $stmt = $pdo->prepare("UPDATE users SET preferences = ? WHERE id = ?");
         $stmt->execute([$preferences, $userId]);
+        $updated = true;
     } catch (PDOException $e) {
-        // Column might not exist yet, just return success for now
+        $updated = false;
+    }
+
+    if (!$updated) {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS user_preferences (
+            user_id INT PRIMARY KEY,
+            preferences TEXT NULL,
+            updated_at DATETIME NULL
+        )");
+        $stmt = $pdo->prepare("INSERT INTO user_preferences (user_id, preferences, updated_at)
+            VALUES (?, ?, NOW())
+            ON DUPLICATE KEY UPDATE preferences = VALUES(preferences), updated_at = NOW()"
+        );
+        $stmt->execute([$userId, $preferences]);
     }
 
     echo json_encode([

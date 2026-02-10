@@ -12,6 +12,12 @@ if (empty($_SESSION['user'])) {
 }
 
 $userId = $_SESSION['user']['id'];
+$currentEmail = $_SESSION['user']['email'] ?? '';
+
+$accountVerified = !empty($_SESSION['account_verified_until'])
+    && time() <= (int)$_SESSION['account_verified_until']
+    && !empty($_SESSION['account_verified_email'])
+    && $_SESSION['account_verified_email'] === $currentEmail;
 
 try {
     $currentPassword = $_POST['current_password'] ?? '';
@@ -30,6 +36,12 @@ try {
         throw new Exception('Password must be at least 8 characters long');
     }
 
+    if (!$accountVerified) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Password change requires email verification.']);
+        exit;
+    }
+
     // Verify current password
     $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
     $stmt->execute([$userId]);
@@ -43,6 +55,8 @@ try {
     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
     $stmt->execute([$hashedPassword, $userId]);
+
+    unset($_SESSION['account_verified_until'], $_SESSION['account_verified_email']);
 
     echo json_encode([
         'success' => true,
