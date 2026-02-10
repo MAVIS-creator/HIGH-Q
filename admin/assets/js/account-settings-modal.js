@@ -1,5 +1,6 @@
 // Account Settings Modal - Unique, focused, no scrolling
 (function(){
+  const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
   const tpl = `
   <div class="settings-modal" id="accountSettingsModal">
     <div class="settings-modal-content">
@@ -210,7 +211,7 @@
     };
 
     try {
-      await fetch(window.HQ_ADMIN_BASE + '/api/update_security.php', {
+      await fetch(ADMIN_BASE + '/api/update_security.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(securityPayload),
@@ -240,7 +241,7 @@
 
   async function loadProfile(){
     try {
-      const resp = await fetch(window.HQ_ADMIN_BASE + '/api/user_profile.php', { credentials: 'same-origin' });
+      const resp = await fetch(ADMIN_BASE + '/api/user_profile.php', { credentials: 'same-origin' });
       const data = await resp.json();
       const nameEl = document.getElementById('settingsName');
       const emailEl = document.getElementById('settingsEmail');
@@ -319,7 +320,7 @@
       const currentEmail = document.getElementById('settingsEmail')?.value || '';
       if (!currentEmail) return;
       try {
-        const res = await fetch(window.HQ_ADMIN_BASE + '/api/send_verification_code.php', {
+        const res = await fetch(ADMIN_BASE + '/api/send_verification_code.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'email', value: currentEmail, purpose: 'account' }),
@@ -337,7 +338,7 @@
       const code = document.getElementById('settingsVerifyCode')?.value || '';
       if (!code) return;
       try {
-        const res = await fetch(window.HQ_ADMIN_BASE + '/api/verify_code.php', {
+        const res = await fetch(ADMIN_BASE + '/api/verify_code.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
@@ -362,7 +363,7 @@
       if (phone) formData.append('phone', phone);
 
       try {
-        const res = await fetch(window.HQ_ADMIN_BASE + '/api/update_profile.php', {
+        const res = await fetch(ADMIN_BASE + '/api/update_profile.php', {
           method: 'POST',
           body: formData,
           credentials: 'same-origin'
@@ -386,7 +387,7 @@
       formData.append('new_password', newPassword);
       formData.append('confirm_password', confirmPassword);
       try {
-        const res = await fetch(window.HQ_ADMIN_BASE + '/api/update_password.php', {
+        const res = await fetch(ADMIN_BASE + '/api/update_password.php', {
           method: 'POST',
           body: formData,
           credentials: 'same-origin'
