@@ -16,11 +16,17 @@ $userId = (int)($_SESSION['user']['id'] ?? 0);
 $body = json_decode(file_get_contents('php://input'), true);
 $type = $body['type'] ?? ''; // 'email' or 'phone'
 $value = trim($body['value'] ?? '');
+$purpose = $body['purpose'] ?? '';
 
 if (!in_array($type, ['email', 'phone'])) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid verification type']);
     exit;
+}
+
+if ($purpose === 'account') {
+    $type = 'email';
+    $value = trim($_SESSION['user']['email'] ?? '');
 }
 
 if ($type === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
@@ -44,6 +50,7 @@ try {
         'code' => $code,
         'type' => $type,
         'value' => $value,
+        'purpose' => $purpose,
         'expires' => time() + 600
     ];
 
