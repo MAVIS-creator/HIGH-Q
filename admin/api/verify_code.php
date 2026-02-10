@@ -46,11 +46,16 @@ if ($code !== $verif['code']) {
 
 // Code is valid - store verified value in session for next step
 $_SESSION['verified_' . $verif['type']] = $verif['value'];
+if (!empty($verif['purpose']) && $verif['purpose'] === 'account') {
+    $_SESSION['account_verified_until'] = time() + 600;
+    $_SESSION['account_verified_email'] = $verif['value'];
+}
 unset($_SESSION['verification_code']);
 
 echo json_encode([
     'success' => true,
     'message' => 'Code verified successfully',
     'type' => $verif['type'],
-    'value' => $verif['value']
+    'value' => $verif['value'],
+    'purpose' => $verif['purpose'] ?? null
 ]);

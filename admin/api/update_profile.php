@@ -19,6 +19,10 @@ try {
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $currentEmail = $_SESSION['user']['email'] ?? '';
+    $accountVerified = !empty($_SESSION['account_verified_until'])
+        && time() <= (int)$_SESSION['account_verified_until']
+        && !empty($_SESSION['account_verified_email'])
+        && $_SESSION['account_verified_email'] === $currentEmail;
 
     if (empty($name)) {
         throw new Exception('Name is required');
@@ -39,7 +43,7 @@ try {
 
         // Require email verification
         $verifiedEmail = $_SESSION['verified_email'] ?? null;
-        if ($verifiedEmail !== $email) {
+        if ($verifiedEmail !== $email && !$accountVerified) {
             http_response_code(403);
             echo json_encode(['success' => false, 'message' => 'Email change requires verification. Send verification code first.']);
             exit;
@@ -56,7 +60,7 @@ try {
         }
 
         $verifiedPhone = $_SESSION['verified_phone'] ?? null;
-        if ($verifiedPhone !== $phone) {
+        if ($verifiedPhone !== $phone && !$accountVerified) {
             http_response_code(403);
             echo json_encode(['success' => false, 'message' => 'Phone change requires verification. Send verification code first.']);
             exit;
@@ -128,6 +132,8 @@ try {
     if ($avatarPath) {
         $_SESSION['user']['avatar'] = $avatarPath;
     }
+
+    unset($_SESSION['account_verified_until'], $_SESSION['account_verified_email'], $_SESSION['verified_email'], $_SESSION['verified_phone']);
 
     echo json_encode([
         'success' => true,
