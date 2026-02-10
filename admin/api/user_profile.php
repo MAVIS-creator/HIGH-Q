@@ -41,6 +41,26 @@ try {
         // Column doesn't exist, default to false
     }
 
+    // Load preferences if available
+    $prefs = null;
+    try {
+        $prefStmt = $pdo->prepare("SELECT preferences FROM users WHERE id = ? LIMIT 1");
+        $prefStmt->execute([$userId]);
+        $prefs = $prefStmt->fetchColumn();
+    } catch (PDOException $e) {
+        $prefs = null;
+    }
+    if (empty($prefs)) {
+        try {
+            $prefStmt = $pdo->prepare("SELECT preferences FROM user_preferences WHERE user_id = ? LIMIT 1");
+            $prefStmt->execute([$userId]);
+            $prefs = $prefStmt->fetchColumn();
+        } catch (PDOException $e) {
+            $prefs = null;
+        }
+    }
+    $user['preferences'] = $prefs ? json_decode($prefs, true) : new stdClass();
+
     echo json_encode($user);
 } catch (Exception $e) {
     http_response_code(500);
