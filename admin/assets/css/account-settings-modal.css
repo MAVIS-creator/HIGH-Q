@@ -8,6 +8,7 @@
   transform: translate(-50%, -50%) scale(0.98);
   width: 760px;
   max-width: 92vw;
+  max-height: 92vh;
   background: var(--hq-white);
   z-index: 10000;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
@@ -15,6 +16,12 @@
   transition: transform 0.25s ease, opacity 0.25s ease;
   overflow: hidden;
   opacity: 0;
+}
+
+.settings-modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
 }
 
 .settings-modal.open {
@@ -90,7 +97,7 @@
 /* Modal Body */
 .settings-modal-body {
   display: block;
-  overflow: hidden; /* no internal scrolling */
+  overflow-y: auto;
 }
 
 /* Tabs */
