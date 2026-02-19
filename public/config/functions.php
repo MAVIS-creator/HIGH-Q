@@ -92,9 +92,9 @@ function app_url(string $path = ''): string {
     
     // If both paths are available, compute relative path from document root
     if (!empty($documentRoot) && !empty($projectRoot) && strpos($projectRoot, $documentRoot) === 0) {
-        $relPath = substr($projectRoot, strlen($documentRoot));
-        $baseUri = str_replace('\\', '/', $relPath);  // Normalize Windows backslashes
-        
+        $relativeProjectPath = substr($projectRoot, strlen($documentRoot));
+        $baseUri = str_replace('\\', '/', $relativeProjectPath);
+
         // If project IS at document root, baseUri will be empty - that's correct for production
         // If project is in a subfolder (like /HIGH-Q for dev), baseUri will be /HIGH-Q - also correct
     } else {

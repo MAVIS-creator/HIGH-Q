@@ -142,12 +142,11 @@ class SecurityScanEngine {
             // Skip very large files
             if ($file->getSize() > 5 * 1024 * 1024) continue;
             
+            $rel = str_replace($this->root . DIRECTORY_SEPARATOR, '', $path);
             $this->report['totals']['files_scanned']++;
-            $this->report['scanned_files'][] = $rel; // Track scanned file
+            $this->report['scanned_files'][] = $rel;
             $content = @file_get_contents($path);
             if ($content === false) continue;
-            
-            $rel = str_replace($this->root . DIRECTORY_SEPARATOR, '', $path);
             
             // Check critical patterns with line numbers
             $lines = explode("\n", $content);
@@ -558,6 +557,32 @@ if (!in_array($scanType, ['quick', 'full', 'malware'])) {
 try {
     $engine = new SecurityScanEngine($pdo, $scanType);
     $report = $engine->run();
+
+    // Persist scan history for Sentinel dashboard
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS security_scans (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            scan_type VARCHAR(20) NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT 'completed',
+            threat_count INT NOT NULL DEFAULT 0,
+            scan_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            duration INT NOT NULL DEFAULT 0,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_scan_date (scan_date),
+            INDEX idx_scan_type (scan_type)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+        $startedAt = !empty($report['started_at']) ? strtotime($report['started_at']) : time();
+        $finishedAt = !empty($report['finished_at']) ? strtotime($report['finished_at']) : time();
+        $duration = max(0, (int)($finishedAt - $startedAt));
+        $threatCount = (int)count($report['critical'] ?? []) + (int)count($report['warnings'] ?? []);
+        $status = ($report['status'] ?? 'completed') === 'completed' ? 'completed' : 'error';
+
+        $ins = $pdo->prepare('INSERT INTO security_scans (scan_type, status, threat_count, scan_date, duration) VALUES (?, ?, ?, NOW(), ?)');
+        $ins->execute([$scanType, $status, $threatCount, $duration]);
+    } catch (Throwable $e) {
+        error_log('Failed to persist security scan history: ' . $e->getMessage());
+    }
     
     // Log the scan
     try {

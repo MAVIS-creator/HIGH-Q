@@ -481,6 +481,16 @@
     border: 1px solid var(--post-border);
 }
 
+.post-share-btn::after {
+    display: none;
+}
+
+.post-share-btn:active,
+.post-share-btn:focus,
+.post-share-btn:focus-visible {
+    transform: none;
+}
+
 /* ===================================================
    Comments Section
    =================================================== */

@@ -92,11 +92,7 @@ try {
         // Prepare attachment
         $attachments = [];
         if ($pdfPath && file_exists($pdfPath)) {
-            $attachments[] = [
-                'path' => $pdfPath,
-                'name' => $pdfFilename,
-                'type' => 'application/pdf'
-            ];
+            $attachments[] = $pdfPath;
         }
         
         $sent = sendEmail(
@@ -143,8 +139,8 @@ try {
     
     echo json_encode($response);
     
-} catch (Exception $e) {
-    http_response_code(400);
+} catch (Throwable $e) {
+    http_response_code(500);
     echo json_encode([
         'status' => 'error',
         'message' => $e->getMessage()
