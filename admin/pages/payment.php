@@ -180,6 +180,8 @@ document.addEventListener('DOMContentLoaded', function(){
     var linkWrap = document.getElementById('createdLinkWrap');
     var createdLink = document.getElementById('createdLink');
     var copyBtn = document.getElementById('copyLinkBtn');
+    var csrfInput = form ? form.querySelector('input[name="_csrf"]') : null;
+    var csrfToken = csrfInput ? csrfInput.value : '';
     btn.addEventListener('click', function(){
         var fd = new FormData(form);
         btn.disabled = true; btn.textContent = 'Sending...'; btn.classList.add('is-loading');
@@ -200,5 +202,41 @@ document.addEventListener('DOMContentLoaded', function(){
             }).catch(function(err){ btn.disabled = false; btn.textContent = 'Create & Send Link'; btn.classList.remove('is-loading'); Swal.fire({ icon:'error', title:'Network error' }); });
     });
     copyBtn.addEventListener('click', function(){ var txt = createdLink.textContent || ''; navigator.clipboard.writeText(txt).then(function(){ Swal.fire({toast:true,position:'top-end',icon:'success',title:'Link copied',showConfirmButton:false,timer:1500}); }); });
+
+    document.querySelectorAll('.admin-payment-resend').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            var paymentId = this.getAttribute('data-id');
+            if (!paymentId) return;
+            var fd = new FormData();
+            fd.append('_csrf', csrfToken);
+            fd.append('payment_id', paymentId);
+            this.disabled = true;
+            var original = this.textContent;
+            this.textContent = 'Sending...';
+
+            fetch((window.HQ_ADMIN_BASE || '') + '/api/resend_payment_link.php', {
+                method: 'POST',
+                body: fd,
+                credentials: 'same-origin',
+                headers: {'X-Requested-With':'XMLHttpRequest'}
+            })
+                .then(function(r){ return r.text(); })
+                .then(function(t){ try { return JSON.parse(t); } catch(e){ return { status:'error', message:'Invalid server response' }; } })
+                .then(function(j){
+                    if (j.status === 'ok') {
+                        Swal.fire({ toast:true, position:'top-end', icon:'success', title:'Payment link resent', showConfirmButton:false, timer:2000 });
+                    } else {
+                        Swal.fire({ icon:'error', title:'Resend failed', text: j.message || 'Server error' });
+                    }
+                })
+                .catch(function(){
+                    Swal.fire({ icon:'error', title:'Network error', text:'Unable to resend payment link.' });
+                })
+                .finally(function(){
+                    btn.disabled = false;
+                    btn.textContent = original;
+                });
+        });
+    });
 });
 </script>

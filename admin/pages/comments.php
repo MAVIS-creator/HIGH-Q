@@ -34,13 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     $upd = $pdo->prepare('UPDATE comments SET status = "approved" WHERE id = ?'); $ok = $upd->execute([$id]);
     // debug log
     try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " APPROVE id={$id} ok=" . ($ok?1:0) . "\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
-    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_approved', ['comment_id'=>$id]);
+    if ($ok) {
+      logAction($pdo, $_SESSION['user']['id'], 'comment_approved', ['comment_id'=>$id]);
+      notifyAdminChange($pdo, 'Comment Approved', ['Comment ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
+    }
     echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
     if ($action === 'reject') {
   $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?'); $ok = $upd->execute([$id]);
     try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " REJECT id={$id} ok=" . ($ok?1:0) . "\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
-    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_deleted', ['comment_id'=>$id]);
+    if ($ok) {
+      logAction($pdo, $_SESSION['user']['id'], 'comment_deleted', ['comment_id'=>$id]);
+      notifyAdminChange($pdo, 'Comment Rejected', ['Comment ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
+    }
     echo json_encode(['status'=>$ok ? 'ok':'error']); exit;
     }
 
@@ -48,7 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
   if ($action === 'destroy') {
     $del = $pdo->prepare('DELETE FROM comments WHERE id = ?');
     $ok = $del->execute([$id]);
-    if ($ok) logAction($pdo, $_SESSION['user']['id'], 'comment_destroyed', ['comment_id'=>$id]);
+    if ($ok) {
+        logAction($pdo, $_SESSION['user']['id'], 'comment_destroyed', ['comment_id'=>$id]);
+        notifyAdminChange($pdo, 'Comment Permanently Deleted', ['Comment ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
+    }
     echo json_encode(['status'=>'ok']); exit;
   }
 
@@ -73,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             // mark that parent received an admin reply (optional meta column)
             try { $upd = $pdo->prepare('UPDATE comments SET admin_reply_by = ? WHERE id = ?'); $upd->execute([$adminId, $id]); } catch (Exception $e) {}
             logAction($pdo, $adminId, 'comment_replied', ['parent_id'=>$id]);
+            notifyAdminChange($pdo, 'Comment Replied By Admin', ['Parent Comment ID' => $id], (int)$adminId);
       try { @file_put_contents(__DIR__ . '/../../storage/comments-debug.log', date('c') . " REPLY parent={$id} new_ok=1 admin={$adminId}\n", FILE_APPEND | LOCK_EX); } catch(Throwable $e) {}
         }
         echo json_encode(['status'=>$ok ? 'ok':'error']); exit;

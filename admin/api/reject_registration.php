@@ -102,6 +102,23 @@ try {
             $emailSent = false;
         }
     }
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $pdo,
+                'Registration Rejected',
+                [
+                    'Registration ID' => $id,
+                    'Action' => $action,
+                    'Student Email' => $email ?: 'N/A',
+                    'Reason' => $reason ?: 'Not provided',
+                    'Applicant Email Sent' => $emailSent ? 'Yes' : 'No'
+                ],
+                (int)($currentUserId ?? 0)
+            );
+        } catch (Throwable $_) {}
+    }
     
     echo json_encode(['success' => true, 'message' => 'Registration rejected', 'status' => 'ok', 'email_sent' => $emailSent]);
     

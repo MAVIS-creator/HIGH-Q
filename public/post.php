@@ -245,7 +245,7 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="post-actions-spacer"></div>
 
-        <button class="post-action-btn post-share-btn" onclick="sharePost()">
+        <button id="shareBtn" type="button" class="post-action-btn post-share-btn" onclick="return sharePost(event)">
           <i class="bx bx-share-alt"></i>
           <span>Share</span>
         </button>
@@ -366,22 +366,43 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
 // Share functionality
-function sharePost() {
-  if (navigator.share) {
-    navigator.share({
-      title: <?= json_encode($post['title']) ?>,
-      url: window.location.href
-    });
-  } else {
-    // Fallback: copy to clipboard
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({title: 'Link Copied!', text: 'Share this post with others', icon: 'success', timer: 2000, showConfirmButton: false});
-      } else {
-        alert('Link copied to clipboard!');
-      }
-    });
+function sharePost(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
   }
+
+  const trigger = (event && event.currentTarget) ? event.currentTarget : document.getElementById('shareBtn');
+  const shareData = {
+    title: <?= json_encode($post['title']) ?>,
+    url: window.location.href
+  };
+
+  const onCopied = () => {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({title: 'Link Copied!', text: 'Share this post with others', icon: 'success', timer: 2000, showConfirmButton: false});
+    } else {
+      alert('Link copied to clipboard!');
+    }
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData)
+      .catch(() => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(window.location.href).then(onCopied).catch(() => {});
+        }
+      })
+      .finally(() => { if (trigger) trigger.blur(); });
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(window.location.href)
+      .then(onCopied)
+      .finally(() => { if (trigger) trigger.blur(); });
+  } else {
+    if (trigger) trigger.blur();
+  }
+
+  return false;
 }
 
 // Reading progress bar

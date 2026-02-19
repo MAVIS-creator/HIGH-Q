@@ -109,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     }
                 }
                 logAction($pdo, $_SESSION['user']['id'], 'course_created', ['slug'=>$slug]);
+                notifyAdminChange($pdo, 'Course Created', ['Title' => $title, 'Slug' => $slug, 'Active' => $active ? 'Yes' : 'No'], (int)($_SESSION['user']['id'] ?? 0));
                 $success[] = "Course '{$title}' created.";
             }
         }
@@ -151,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     }
                 }
                 logAction($pdo, $_SESSION['user']['id'], 'course_updated', ['course_id'=>$id]);
+                notifyAdminChange($pdo, 'Course Updated', ['Course ID' => $id, 'Title' => $title, 'Slug' => $slug], (int)($_SESSION['user']['id'] ?? 0));
                 $success[] = "Course '{$title}' updated.";
             }
         }
@@ -161,6 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         $pdo->prepare('DELETE FROM course_features WHERE course_id = ?')->execute([$id]);
         $pdo->prepare('DELETE FROM courses WHERE id = ?')->execute([$id]);
         logAction($pdo, $_SESSION['user']['id'], 'course_deleted', ['course_id'=>$id]);
+        notifyAdminChange($pdo, 'Course Deleted', ['Course ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
         $success[] = "Course deleted.";
       } catch (\Exception $e) {
         $errors[] = "Failed to delete course: " . $e->getMessage();
@@ -183,6 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
         if ($updated > 0) {
           $success[] = "Bulk converted {$updated} icon(s) to Boxicons classes.";
           logAction($pdo, $_SESSION['user']['id'], 'bulk_convert_icons', ['changed'=>$updated]);
+          notifyAdminChange($pdo, 'Bulk Icon Conversion Completed', ['Changed Icons' => $updated], (int)($_SESSION['user']['id'] ?? 0));
         } else {
           $success[] = "No icons required conversion.";
         }

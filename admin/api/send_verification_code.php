@@ -27,6 +27,11 @@ if (!in_array($type, ['email', 'phone'])) {
 if ($purpose === 'account') {
     $type = 'email';
     $value = trim($_SESSION['user']['email'] ?? '');
+    if ($value === '') {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'No registered account email found for verification']);
+        exit;
+    }
 }
 
 if ($type === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {

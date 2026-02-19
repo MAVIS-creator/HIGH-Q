@@ -46,3 +46,4 @@ error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT c
 error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
 [2025-10-30T22:23:20+01:00] Mailer Exception: SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL operation failed with code 1. OpenSSL Error messages:
 error:0A000086:SSL routines::certificate verify failed SMTP server error: QUIT command failed
+[2026-02-19T14:34:13+01:00] Mailer Exception: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 

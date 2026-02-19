@@ -11,18 +11,73 @@ CREATE TABLE IF NOT EXISTS icons (
   UNIQUE KEY uniq_filename (filename)
 );
 
--- Seed/update icons with boxicons class names (adjust as needed)
-INSERT INTO icons (name, filename, `class`) VALUES
-  ('Target', 'target.svg', 'bx bxs-bullseye'),
-  ('Book Stack', 'book-stack.svg', 'bx bxs-book-bookmark'),
-  ('Book Open', 'book-open.svg', 'bx bxs-book-open'),
-  ('Trophy', 'trophy.svg', 'bx bxs-trophy'),
-  ('Star', 'star.svg', 'bx bxs-star'),
-  ('Laptop', 'laptop.svg', 'bx bxs-laptop'),
-  ('Teacher', 'teacher.svg', 'bx bxs-user'),
-  ('Results', 'results.svg', 'bx bxs-bar-chart-alt-2'),
-  ('Graduation', 'graduation.svg', 'bx bxs-graduation')
-ON DUPLICATE KEY UPDATE `class` = VALUES(`class`), name = VALUES(name);
+-- Ensure compatibility with legacy icons schema that may not contain filename
+SET @has_filename := (
+  SELECT COUNT(*)
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'icons'
+    AND COLUMN_NAME = 'filename'
+);
+SET @sql_add_filename := IF(@has_filename = 0,
+  'ALTER TABLE icons ADD COLUMN filename VARCHAR(255) NULL AFTER name',
+  'SELECT 1'
+);
+PREPARE stmt_add_filename FROM @sql_add_filename;
+EXECUTE stmt_add_filename;
+DEALLOCATE PREPARE stmt_add_filename;
+
+-- Backfill filename where missing so future lookups are stable
+UPDATE icons
+SET filename = CONCAT(REPLACE(LOWER(name), ' ', '-'), '.svg')
+WHERE (filename IS NULL OR filename = '')
+  AND (name IS NOT NULL AND name <> '');
+
+-- Idempotent seed/update for icon classes
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Target', 'target.svg', 'bx bxs-bullseye'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Target' OR filename = 'target.svg');
+UPDATE icons SET `class` = 'bx bxs-bullseye', filename = 'target.svg' WHERE name = 'Target' OR filename = 'target.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Book Stack', 'book-stack.svg', 'bx bxs-book-bookmark'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Book Stack' OR filename = 'book-stack.svg');
+UPDATE icons SET `class` = 'bx bxs-book-bookmark', filename = 'book-stack.svg' WHERE name = 'Book Stack' OR filename = 'book-stack.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Book Open', 'book-open.svg', 'bx bxs-book-open'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Book Open' OR filename = 'book-open.svg');
+UPDATE icons SET `class` = 'bx bxs-book-open', filename = 'book-open.svg' WHERE name = 'Book Open' OR filename = 'book-open.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Trophy', 'trophy.svg', 'bx bxs-trophy'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Trophy' OR filename = 'trophy.svg');
+UPDATE icons SET `class` = 'bx bxs-trophy', filename = 'trophy.svg' WHERE name = 'Trophy' OR filename = 'trophy.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Star', 'star.svg', 'bx bxs-star'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Star' OR filename = 'star.svg');
+UPDATE icons SET `class` = 'bx bxs-star', filename = 'star.svg' WHERE name = 'Star' OR filename = 'star.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Laptop', 'laptop.svg', 'bx bxs-laptop'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Laptop' OR filename = 'laptop.svg');
+UPDATE icons SET `class` = 'bx bxs-laptop', filename = 'laptop.svg' WHERE name = 'Laptop' OR filename = 'laptop.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Teacher', 'teacher.svg', 'bx bxs-user'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Teacher' OR filename = 'teacher.svg');
+UPDATE icons SET `class` = 'bx bxs-user', filename = 'teacher.svg' WHERE name = 'Teacher' OR filename = 'teacher.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Results', 'results.svg', 'bx bxs-bar-chart-alt-2'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Results' OR filename = 'results.svg');
+UPDATE icons SET `class` = 'bx bxs-bar-chart-alt-2', filename = 'results.svg' WHERE name = 'Results' OR filename = 'results.svg';
+
+INSERT INTO icons (name, filename, `class`)
+SELECT 'Graduation', 'graduation.svg', 'bx bxs-graduation'
+WHERE NOT EXISTS (SELECT 1 FROM icons WHERE name = 'Graduation' OR filename = 'graduation.svg');
+UPDATE icons SET `class` = 'bx bxs-graduation', filename = 'graduation.svg' WHERE name = 'Graduation' OR filename = 'graduation.svg';
 
 -- Create normalized features table
 CREATE TABLE IF NOT EXISTS course_features (

@@ -1,6 +1,22 @@
 -- Upsert core program slugs and features
 -- Run with: mysql -u root -p highq < migrations/2025-12-23-upsert-program-slugs.sql
 
+-- Backward compatibility: older installs use sort_order instead of position
+SET @has_position := (
+  SELECT COUNT(*)
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'course_features'
+    AND COLUMN_NAME = 'position'
+);
+SET @sql_add_position := IF(@has_position = 0,
+  'ALTER TABLE course_features ADD COLUMN `position` INT NOT NULL DEFAULT 0 AFTER feature_text',
+  'SELECT 1'
+);
+PREPARE stmt_add_position FROM @sql_add_position;
+EXECUTE stmt_add_position;
+DEALLOCATE PREPARE stmt_add_position;
+
 -- JAMB Preparation
 UPDATE courses
 SET title='JAMB Preparation', slug='jamb-preparation', description='Comprehensive preparation for JAMB with targeted tutoring and CBT mock tests.', duration='4-6 months', price=NULL, is_active=1, icon='bx bx-target-lock', highlight_badge='Top JAMB Scores'

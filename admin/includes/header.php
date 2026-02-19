@@ -74,7 +74,6 @@ if ($idx !== false) {
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-minimal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/notifications.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/profile-modal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/modern-tables.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -86,7 +85,6 @@ if ($idx !== false) {
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/header-notifications.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/viewport-check.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/admin-forms.js" defer></script>
-    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/profile-modal.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/account-settings-modal.js" defer></script>
     <?php
     // Output the correct admin.css for the detected admin path
@@ -210,13 +208,9 @@ if ($idx !== false) {
                                 </div>
                             </div>
                             <div class="profile-dropdown-divider"></div>
-                            <a href="javascript:void(0)" onclick="openProfileModal()" class="profile-dropdown-item">
-                                <i class='bx bx-user'></i>
-                                <span>Profile Settings</span>
-                            </a>
                             <a href="javascript:void(0)" onclick="openAccountSettings()" class="profile-dropdown-item">
                                 <i class='bx bx-cog'></i>
-                                <span>Account Settings</span>
+                                <span>Profile &amp; Account Settings</span>
                             </a>
                             <div class="profile-dropdown-divider"></div>
                             <a href="<?= htmlspecialchars($adminBasePath) ?>/logout.php" class="profile-dropdown-item profile-dropdown-item--logout">

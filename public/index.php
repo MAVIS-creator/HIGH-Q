@@ -5,6 +5,20 @@ if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/public/p
 	header('Location: ' . $normalized, true, 301);
 	exit;
 }
+
+// Friendly payment links: /pay/{reference} -> /public/payments_wait.php?ref={reference}
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
+if (preg_match('#/pay/([^/]+)$#', $requestPath, $m)) {
+	$reference = urldecode($m[1]);
+	$scriptName = $_SERVER['SCRIPT_NAME'] ?? '/public/index.php';
+	$basePath = '';
+	if (preg_match('#^(.*)/public/index\.php$#', $scriptName, $sm)) {
+		$basePath = $sm[1];
+	}
+	$target = rtrim($basePath, '/') . '/public/payments_wait.php?ref=' . urlencode($reference);
+	header('Location: ' . $target, true, 302);
+	exit;
+}
 // public/index.php - canonical homepage loader
 // We'll include the home content here. This file is the webserver's default index.
 $pageTitle = 'High Q Solid Academy - Home';

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 requirePermission('chat');
 
 $id = intval($_POST['id'] ?? 0);
@@ -22,6 +23,7 @@ try {
     $fs = realpath($path);
     $base = realpath(__DIR__ . '/../../public/uploads/chat/');
     if ($fs && strpos($fs, $base) === 0 && is_file($fs)) @unlink($fs);
+    notifyAdminChange($pdo, 'Chat Attachment Deleted', ['Attachment ID' => $id, 'File' => $file], (int)($_SESSION['user']['id'] ?? 0));
     echo json_encode(['status'=>'ok']);
 } catch (Throwable $e) {
     echo json_encode(['status'=>'error','message'=>$e->getMessage()]);

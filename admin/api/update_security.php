@@ -2,6 +2,7 @@
 // admin/api/update_security.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -45,6 +46,20 @@ try {
             ON DUPLICATE KEY UPDATE preferences = VALUES(preferences), updated_at = NOW()"
         );
         $stmt->execute([$userId, $preferences]);
+    }
+
+    try {
+        sendAdminChangeNotification(
+            $pdo,
+            'Security Preferences Updated',
+            [
+                'User ID' => $userId,
+                'Session Timeout' => $sessionTimeout ? 'Enabled' : 'Disabled',
+                'Login Notifications' => $loginNotifications ? 'Enabled' : 'Disabled'
+            ],
+            (int)$userId
+        );
+    } catch (Throwable $e) {
     }
 
     echo json_encode([

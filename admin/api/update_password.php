@@ -2,6 +2,7 @@
 // admin/api/update_password.php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -17,7 +18,7 @@ $currentEmail = $_SESSION['user']['email'] ?? '';
 $accountVerified = !empty($_SESSION['account_verified_until'])
     && time() <= (int)$_SESSION['account_verified_until']
     && !empty($_SESSION['account_verified_email'])
-    && $_SESSION['account_verified_email'] === $currentEmail;
+    && strcasecmp((string)$_SESSION['account_verified_email'], (string)$currentEmail) === 0;
 
 try {
     $currentPassword = $_POST['current_password'] ?? '';
@@ -55,6 +56,20 @@ try {
     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
     $stmt->execute([$hashedPassword, $userId]);
+
+    try {
+        sendAdminChangeNotification(
+            $pdo,
+            'Password Changed',
+            [
+                'User ID' => $userId,
+                'Account Email' => $currentEmail,
+                'Action' => 'Password update completed'
+            ],
+            (int)$userId
+        );
+    } catch (Throwable $e) {
+    }
 
     unset($_SESSION['account_verified_until'], $_SESSION['account_verified_email']);
 

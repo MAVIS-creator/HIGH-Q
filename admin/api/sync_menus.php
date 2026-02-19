@@ -2,6 +2,7 @@
 // Quick menu sync endpoint - run this to ensure all menus are synced with correct icons
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 // Only allow admins
 session_start();
@@ -24,6 +25,20 @@ try {
         if (!empty($item['icon'])) {
             $stmt->execute([$item['icon'], $slug]);
         }
+    }
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $pdo,
+                'Menus Synchronized',
+                [
+                    'Synced Menu Count' => count($configMenus),
+                    'Action' => 'sync_menus'
+                ],
+                (int)($_SESSION['user']['id'] ?? 0)
+            );
+        } catch (Throwable $_) {}
     }
     
     echo json_encode(['success' => true, 'message' => 'Menus synced successfully']);

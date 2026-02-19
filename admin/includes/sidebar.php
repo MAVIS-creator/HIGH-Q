@@ -66,11 +66,17 @@ try {
                     if (!$show && $slug === 'testimonials' && in_array('settings', $permissions)) $show = true;
                 ?>
                 <?php if ($show): ?>
+                    <?php
+                        $iconClass = trim((string)($item['icon'] ?? ''));
+                        if ($iconClass === '') {
+                            $iconClass = ($slug === 'sentinel') ? 'bx bxs-shield-alt' : 'bx bx-circle';
+                        }
+                    ?>
                     <li>
                         <a href="<?= $item['url']; ?>" 
                            class="<?= $current === $slug ? 'active' : ''; ?>"
                            <?= isset($item['target']) ? 'target="' . htmlspecialchars($item['target']) . '"' : ''; ?>>
-                            <i class='<?= $item['icon']; ?>'></i>
+                            <i class='<?= htmlspecialchars($iconClass); ?>'></i>
                             <span><?= $item['title']; ?></span>
                         </a>
                     </li>

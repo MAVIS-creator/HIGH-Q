@@ -81,6 +81,22 @@ try {
     if (function_exists('logAction') && $currentUserId) {
         logAction($pdo, $currentUserId, $action, ['registration_id' => $id]);
     }
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $pdo,
+                'Registration Confirmed',
+                [
+                    'Registration ID' => $id,
+                    'Action' => $action,
+                    'Table Source' => ($action === 'confirm_universal' ? 'universal_registrations' : ($action === 'confirm_postutme' ? 'post_utme_registrations' : 'student_registrations')),
+                    'Status' => 'confirmed'
+                ],
+                (int)($currentUserId ?? 0)
+            );
+        } catch (Throwable $_) {}
+    }
     
     echo json_encode(['success' => true, 'message' => 'Registration confirmed', 'status' => 'ok']);
     

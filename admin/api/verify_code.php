@@ -47,8 +47,15 @@ if ($code !== $verif['code']) {
 // Code is valid - store verified value in session for next step
 $_SESSION['verified_' . $verif['type']] = $verif['value'];
 if (!empty($verif['purpose']) && $verif['purpose'] === 'account') {
+    $currentEmail = trim($_SESSION['user']['email'] ?? '');
+    if ($currentEmail === '' || strcasecmp($currentEmail, (string)$verif['value']) !== 0) {
+        unset($_SESSION['verification_code']);
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Verification email mismatch. Request a new code.']);
+        exit;
+    }
     $_SESSION['account_verified_until'] = time() + 600;
-    $_SESSION['account_verified_email'] = $verif['value'];
+    $_SESSION['account_verified_email'] = $currentEmail;
 }
 unset($_SESSION['verification_code']);
 

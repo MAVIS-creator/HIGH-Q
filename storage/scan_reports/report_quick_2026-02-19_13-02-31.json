@@ -1,0 +1,25 @@
+{
+    "timestamp": "2026-02-19_13-02-31",
+    "scan_data": {
+        "report": {
+            "scan_type": "quick",
+            "critical": [],
+            "warnings": [
+                {
+                    "type": "scan_limit",
+                    "message": "Quick scan limited to 1000 files"
+                }
+            ],
+            "info": [],
+            "totals": {
+                "files_scanned": 1000,
+                "critical_issues": 0,
+                "warnings": 1,
+                "info_messages": 0
+            }
+        }
+    },
+    "recipient": "akintunde.dolapo1@gmail.com",
+    "sent": false,
+    "pdf_path": null
+}
