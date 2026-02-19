@@ -38427,3 +38427,1143 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2025-12-28T06:21:19+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-4324ea1af2bsm55006459f8f.1 - gsmtp
 
+[2026-02-19T13:03:37+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-4839f978328sm18788295e9.14 - gsmtp
+
+[2026-02-19T13:03:37+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-02-19T13:03:38+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.252]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-02-19T13:03:38+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-02-19T13:03:38+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-02-19T13:03:38+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-02-19T13:03:38+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.252]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-02-19T13:03:38+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-02-19T13:03:39+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-02-19T13:03:39+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-02-19T13:03:39+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-02-19T13:03:39+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-4839f978328sm18788295e9.14 - gsmtp
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-02-19T13:03:39+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-4839f978328sm18788295e9.14 - gsmtp
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-02-19T13:03:39+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-4839f978328sm18788295e9.14 - gsmtp
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Date: Thu, 19 Feb 2026 13:03:37 +0100
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Subject: [HIGH Q] Security Scan Report - Quick Scan
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Message-ID: <4fVxQ6PDdVJAED72n1sjTuXawkYzzts2uyvmdDe2nE@localhost>
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Content-Type: multipart/mixed;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:  boundary="b1=_4fVxQ6PDdVJAED72n1sjTuXawkYzzts2uyvmdDe2nE"
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: --b1=_4fVxQ6PDdVJAED72n1sjTuXawkYzzts2uyvmdDe2nE
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: <h2>Security Scan Summary</h2><pre style='font-family: monospace; background: #f4f4f4; padding: 15px; border-radius: 8px;'>=== HIGH Q SECURITY SCAN SUMMARY ===
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Scan Type: Quick
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Date: 2026-02-19 13:03:37
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Files Scanned: 0
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Risk Level: MEDIUM
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: FINDINGS:
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: • Critical Issues: 0
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: • Warnings: 1
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: • Info Messages: 0
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: Full detailed report is attached as PDF.
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: </pre><hr><p>📎 Full detailed report is attached as PDF.</p><!DOCTYPE html>
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: <html lang="en">
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER: <head>
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:     <meta charset="UTF-8">
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:     <title>Security Scan Report</title>
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:     <style>
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         * {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin: 0;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             padding: 0;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             box-sizing: border-box;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         body {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             line-height: 1.6;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             color: #333;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             background-color: #f8f9fa;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .container {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             max-width: 700px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin: 0 auto;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             background-color: #ffffff;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         /* Header */
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .header {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             color: white;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             padding: 40px 20px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             text-align: center;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .header h1 {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-size: 28px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 10px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .header p {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-size: 14px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             opacity: 0.9;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         /* Risk Badge */
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .risk-badge {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             display: inline-block;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             padding: 8px 16px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             border-radius: 20px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-weight: bold;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin: 20px 0;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-size: 14px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .risk-critical { background-color: #fee; color: #c33; }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .risk-warning { background-color: #ffeaa7; color: #d63031; }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .risk-safe { background-color: #d4edda; color: #155724; }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         /* Content */
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .content {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             padding: 30px 20px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .section {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 30px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .section-title {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-size: 18px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             font-weight: 600;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             color: #333;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             border-bottom: 3px solid #667eea;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             padding-bottom: 10px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 15px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         /* Summary Grid */
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .summary-grid {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             display: grid;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             grid-template-columns: 1fr 1fr;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             gap: 15px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 20px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .summary-card {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             background: #f8f9fa;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             padding: 15px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             border-radius: 8px;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             border-left: 4px solid #667eea;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .summary-card.critical {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             border-left-color: #dc3545;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .summary-card.warning {
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:             border-left-color: #ffc107;
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:39+01:00] [level=1] CLIENT -> SERVER:         .summary-card.info {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-left-color: #17a2b8;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .summary-label {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 12px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #666;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             text-transform: uppercase;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 5px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .summary-value {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 24px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-weight: bold;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #333;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .summary-card.critical .summary-value {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #dc3545;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .summary-card.warning .summary-value {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #ff9800;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         /* Findings */
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background: #f9f9f9;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             padding: 12px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 10px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-radius: 6px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-left: 4px solid #667eea;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding.critical {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background: #ffebee;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-left-color: #dc3545;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding.warning {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background: #fff3e0;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-left-color: #ff9800;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding.info {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background: #e0f7ff;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-left-color: #17a2b8;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding-message {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-weight: 600;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 4px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding-file {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 12px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #666;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-family: 'Courier New', monospace;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .finding-type {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             display: inline-block;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 11px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             padding: 2px 8px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background: rgba(0,0,0,0.1);
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-radius: 3px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-right: 8px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-top: 4px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         /* Recommendations */
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .recommendation {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background: #e3f2fd;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             padding: 15px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-radius: 6px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-left: 4px solid #2196f3;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 10px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .recommendation-title {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-weight: 600;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #1565c0;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-bottom: 5px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .recommendation-text {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 14px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #333;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         /* Footer */
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .footer {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             background-color: #f8f9fa;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             padding: 20px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             text-align: center;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             border-top: 1px solid #e9ecef;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 12px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #666;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .footer a {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #667eea;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             text-decoration: none;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         .timestamp {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             font-size: 12px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             color: #999;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             margin-top: 5px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         /* Responsive */
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         @media (max-width: 600px) {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             .summary-grid {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 grid-template-columns: 1fr;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             .header {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 padding: 20px 15px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             .header h1 {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 font-size: 20px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             .content {
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 padding: 15px 15px;
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         }
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:     </style>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </head>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <body>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:     <div class="container">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         <div class="header">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <h1>🔒 Security Scan Report</h1>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <p>HIGH Q SOLID ACADEMY</p>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         <div class="content">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <!-- Risk Summary -->
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <div class="section">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 <div style="text-align: center;">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     <div class="risk-badge risk-warning">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         Risk Level: Warning
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <!-- Summary Stats -->
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <div class="section">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 <div class="section-title">📊 Scan Summary</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 <div class="summary-grid">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     <div class="summary-card critical">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-label">Critical Issues</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-value">0</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     <div class="summary-card warning">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-label">Warnings</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-value">1</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     <div class="summary-card info">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-label">Files Scanned</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-value">0</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     <div class="summary-card info">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-label">Scan Type</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                         <div class="summary-value" style="text-transform: capitalize; font-size: 16px;">quick</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                     </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:                 </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <div class='section'>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='section-title'>💡 Recommendations</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation'>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation-title'>Review and Patch</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation-text'>Install security patches for any known vulnerabilities, update dependencies, and review code for vulnerabilities.</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation'>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation-title'>Regular Monitoring</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation-text'>Schedule regular security scans to continuously monitor your system for threats and vulnerabilities.</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation'>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation-title'>Backup &amp; Recovery</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: <div class='recommendation-text'>Maintain regular backups of your system and ensure you have a disaster recovery plan in place.</div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         <div class="footer">
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <p>This security scan was performed on <strong>2026-02-19 13:03:37</strong></p>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <p>For questions or concerns, contact: <a href="mailto:highqsolidacademy@gmail.com">highqsolidacademy@gmail.com</a></p>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:             <p class="timestamp">Report generated by Security Scan Engine v1.0</p>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </body>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: </html>
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: --b1=_4fVxQ6PDdVJAED72n1sjTuXawkYzzts2uyvmdDe2nE
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: Content-Type: application/pdf; name=security_report_2026-02-19_13-03-37.pdf
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: base64
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: Content-Disposition: attachment; filename=security_report_2026-02-19_13-03-37.pdf
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: JVBERi0xLjcKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZwovT3V0bGluZXMgMiAwIFIKL1BhZ2Vz
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: IDMgMCBSID4+CmVuZG9iagoyIDAgb2JqCjw8IC9UeXBlIC9PdXRsaW5lcyAvQ291bnQgMCA+Pgpl
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: bmRvYmoKMyAwIG9iago8PCAvVHlwZSAvUGFnZXMKL0tpZHMgWzYgMCBSCl0KL0NvdW50IDEKL1Jl
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: c291cmNlcyA8PAovUHJvY1NldCA0IDAgUgovRm9udCA8PCAKL0YxIDggMCBSCi9GMiA5IDAgUgo+
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: PgovRXh0R1N0YXRlIDw8IAovR1MxIDEwIDAgUgovR1MyIDExIDAgUgovR1MzIDEyIDAgUgovR1M0
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: IDEzIDAgUgo+Pgo+PgovTWVkaWFCb3ggWzAuMDAwIDAuMDAwIDU5NS4yODAgODQxLjg5MF0KID4+
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: CmVuZG9iago0IDAgb2JqClsvUERGIC9UZXh0IF0KZW5kb2JqCjUgMCBvYmoKPDwKL1Byb2R1Y2Vy
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ICj+/wBkAG8AbQBwAGQAZgAgADIALgAwAC4AOAAgACsAIABDAFAARABGKQovQ3JlYXRpb25EYXRl
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: IChEOjIwMjYwMjE5MTMwMzM3KzAxJzAwJykKL01vZERhdGUgKEQ6MjAyNjAyMTkxMzAzMzcrMDEn
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: MDAnKQovVGl0bGUgKP7/AFMAZQBjAHUAcgBpAHQAeQAgAFMAYwBhAG4AIABSAGUAcABvAHIAdAAg
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: AC0AIABIAEkARwBIACAAUQAgAFMATwBMAEkARAAgAEEAQwBBAEQARQBNAFkpCj4+CmVuZG9iago2
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: IDAgb2JqCjw8IC9UeXBlIC9QYWdlCi9NZWRpYUJveCBbMC4wMDAgMC4wMDAgNTk1LjI4MCA4NDEu
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ODkwXQovUGFyZW50IDMgMCBSCi9Db250ZW50cyA3IDAgUgo+PgplbmRvYmoKNyAwIG9iago8PCAv
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: RmlsdGVyIC9GbGF0ZURlY29kZQovTGVuZ3RoIDQ1NzAgPj4Kc3RyZWFtCnicpVtdj1y3kX3Xr7iP
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: yUM6/P7wi6H4Q5nAdiCPAmORBAtbGhlCZuSspGRhYH/81ilWFdm3uzWjyctIdS55Waw6VSzysp/4
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: g3NuW/+++/nJH15svseD92mrvR6SD9uLV9vvvw6bbwe3vXi9bX/9zeefb9c3L//17s2HX7frlz++
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 3b6/+ecv7z789u/biz9tX7148vtn1377+T3+DfiXXhpSPMTat1rrwdc2Xuq3bu/849WzP27Pt+s/
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: f3P15fb0i6dffvXtf60vjPLChH/dofW2uUN3BX9D2L5/RmDN2/9ubvvT9tdt+zv959WTgInVrcZy
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: yLlsd9uTQH2pvSIkltiGmBrElNMQo9teonmobgBkCxJdG+9LLZOpWAUWU6fmBNSQB+Ajnuc0nsfS
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: IMbSh+jzaO77UCYUj+fOD2V877B4S2MwHxqat0OpA3C54nn20C0fOpmUxMjNM1nHj+a+pQG4xA4M
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: hcXq6O310GpgsdAcqHk9VN8ZyGheD7mOt8ceIabQWAxVmoeWGfCZX+fTeO5ihjimkshCaXu5XV/2
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: j1v8k2ui107k9kLHXBuZLNgA5FlAPgZTIRPVep8aQm45LFMAUv2cI+RMflATQE6uLTYCEnIyI0J2
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: vZiNcy2HHuPiBCC1Ti9BLi6aEyGnGBcvAxlTGzSA7FozluRKb/J+oREQMoTxDHLOk4aQY00LT4FQ
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: nBuRITs/eQ43tFCWQABSUrBIgZxyM0ex42o0+ZLHhRjFx0On15DfhDlAmq+b8ApimbyDSEoO3oGX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ADC+sBZiTE1ZDTGkPIIArAfgU9wkJiC6VDVmig+HXtxojpgC0Co3R8RBrD1pRLIY4gjgMZtwKJnj
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: HfEMMXev8c5irKM58gGA1Lg5sgWLsWs2YdHFkXyQbQDEUjfJRSwmp7mKRcpo3By5jAHiomQ6iIHC
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: QFKhivdEpDabEanI5YgcBJg9nyhHFFIOqYbKsjkF5aHOUXmqJlAmTxsp19WIGgtqY42W6QSNJ/WS
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: xps6USNyelljVmmgMa0s0aifNNK8oDzTvKE01Mwyeaq5R4msuUl5rtlrBoLmN40UzX8aSJoiNdQu
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: eTxX8A7ZAkuppFKF/MFzmuuUzgrLgQ1Acm0spzqMSkhxjBROUiRzSvIUMqNH7egRKB6z9Kic5ogc
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: rowWvrIc25BLiSznEqRH4SRFbohDq5xGj85prrM2NZLRKchHj8QLdGTzQ45htEghsBySYzlbD58j
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: I5UdRxHOaS5ycMKonVNrInyk0ibLCvHfDzfUNOTIlqAcEkYPLCqjR3ZjcSxpvDO2yHJt4w0hD7n7
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: y4vnkeOi51gdSKE02IP7+OqZ46BGbLp6QoniaWK8hgwlIQeXbRqQwc8xjcrRTFHe3aaGgFzYPcNU
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: kGtXB7o83tnTcLFnNSjKXTJ3QA5FaQWHAUnRbepQyLlXcznkWpr0yGkgmJqSpnhaTX0wWkEOrSsR
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: fWUkFSEixw1FfcpGXcjIVkJ2zjGVc6qSH7LvzsIDMrKV9OB8QFGe25Gjaoo7x9WPrp7M38EMrJ6k
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: VK/GHY/MFIxamEJeueexnjcjJ6YcmnGXxBhWcsNIXC0P9sOGEj4IDhLdUfTA5hI8CC8SG5cdI/og
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: uriEJ5wWo8UviaXO8IYo+WDEP3wuCQEJAqJvlj/AkBaWBAMgFctAEMNMUBBdWDIYAbElS3EQ68yA
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: Jo4cedE/SzOOSAHuC8ijZpX9OhEQRLRT/oj2k2AyO2WgzF0JKraZDBbbKcXFshoBYvkZIuIZjSHx
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: m4aY+HXGoPhdg1RYoTEsrJlBLqzSLCCc0yQhnJxZRDiraUYYrVlIGD/TlESE5jGJF01zElCaCOHX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: /2FeZrd4UZHpxhWhhZhNIv4Jkd3Vsh8G72LwLgbPmZV2IobAos/DJKhVRtw1LxZkk6Q0DAqHYI4x
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: s+g0qkcdRTbyY1Jp2CCRFlxRayZvUkLHUWr0wnu1kd8Q1YX3iW2sDSisuCYeZSxVJiWNmng8D85D
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 7H28zFU3itzoRnnF7OjsJq6VhtjrKPlq9aNqjV5qq1G1ljyeg3JLOVqq7kO0HAVyO8rMEpJBkHup
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 9kouGl1axgRSkjeluEiswXTmkrD1ZVKjBKw2ay75vDejoBjzvS5W4xKvBTMrF3Spm9VH+RYWt/Cq
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: HKffII8Kf7iVl+C0+p2X3FiMGLzk9m684QU2rsTiJVYWNzCPF1iRcx5yCn1hLiOydIHavMDGyfxV
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: RmzIEhxn/NxuC0TZtY41NUlBWXyzYSH3rOVh1PKwS6kmcgnRpsaLR3JiDEx+LDfDXDAOL08lmPkg
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: N6tgxnFPonelTR0AObGTh4vGapr0xCB1Rlobdf1YdZC7itGAzxjEfEV268jBdVMi8ZlCdkY1PlFo
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ugfqcjLTZfcOsvKJge7m3djNu6YxAcLziQEXrSMgWG7+6FAF8sv13AXALZ+LIe4UkajUN0rUziEl
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: qlUniXlVWXLCnJPkDJ20ZBS1iWScaTTJSGpVyVdqdMln0yuS79Rtkg3Vq5Itp9slmyovJNcqbSQX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: T15JrlbiSSZXXkqmn8SVlUCZbWvJIP5uaXn5ZJfgbrfth+0t1QidzOXY6PS38dms9nW0EyTNPM65
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: qGvAGUbY3t1sr5e1Sxrd2YiuMHBLgLuI1BOEdgF9IDtgqPnAc9ild/CZtXJHCAqj59Q10ITWv+NI
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: OtRBV9DINT2Rpp5yeMyH0C9+/eeNnRjDEO7EEvuJW1o6g9QTZJpib5xPtIXbGWMd4n5j+BJOreEX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: azz/15uX/zBLfIxKhdNw+ziVtJFRqSBtEjAtcQ7pe6TRJFKbVJrAY6hUeI8VF7cq8iAqlU4glbon
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: VHp28/bm3Y8fbl6dodJqif3EbRk8g/Q9sphib5xHUWkaYx30fmMolY6ssVIpuFB+58LvPBWd8TMX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: P4v1YcTKtG3CJ4qPEksaTWLRdAAsdjmD+DNId3UhlgGPIhb1zjGsThbkYcQqNDjtV06I9fWb25v3
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: /Lns7XlyLdbYT968egbxZxA1x95AjyOXGWQd4n6DGLlWi6zkcg+jkqyMSqVI8UW7/x2VpNGkkvey
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: nto0ziDhBIm8jZ5UMuBRVOLT33W5U+RhVOJzlXhKpe/fvP/H9s3Nv29uz/FoMcV+5rNWP0XCCTJt
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: sbfO43hk1liHmNagKShjIk73xzHIAvmx3ZuQPySu70jGhpRqqoLFjOTgacMSRtH6kntEnM8RgmNP
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: yDhDL5SWMo4/SG7YdJLhW+EirkSqHRsjHh96SUalWkJh5kPm87yQZdPjS6ISODOCUhhyxSFIoH8j
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: jjEyfwOBHMbHX0Ia64nze4xRDhH7dJJDgCw0CIHboUelmjIwAvv4ghP+zLLj0pXqbmwQqais41Cr
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 9HFqS0jCGJXqehzdkIwdga9Ufubx3MdReo++hXYAnb+/ka18GnJAD5TJzmRUsJ6/YSiCzQRBHecX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: AgXsvHHeIS8NYBLOgGzYQHtcj32oKAa5VWeKB+xos1umFlC3R2eTh9xwbiHGCfhy2PNivoCPf9jD
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: i4ED70q6OSDQLiawwdVFgb/QeXNiIP1xvKZOhpyx3zYaBK7nmxEFcszViASZj0OMakDQV8kYSF+P
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: UwAhK+TAWiqdgeB4VQnPMmYqATHlETPSQ5DEK8ECjS9S86XEbBrOhsUuy3l5CSuGr+UhbqY49oC0
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: l7GpkVx9kKnx5GM9xD6MwcahHO54qmI+kktmp6qBI3b7fTMHkNxoD2wuSo5PB4ZT2YmENNprmpMT
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: xg6TBiTX4oU4TJQ0zGNESoEPRY1qJDfnhJxMxoST67AZWUkOvU46p/Evegjh0zgat4AgGTO1mBEZ
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: cSdxJQgSnYaeQBaa8lILXhvWwlsUs/AXxS1B2NQshcjkLcWIcSwJmfksTYmBLY2JAyzRmYssFYoT
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: LVWKky2ZGg0s3QpRLB0LkSxhG9UspQsZLeULWW1RMDrPZWMQfi4rclNgtxgtLrJEp3t1MgyFYsAq
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 7qgrihftLW2LG2kscB7h4uX5k4s3sGqSzsTlYvvdeVnq26++vPrLt7b4Px+FELrkXng8LoQGoEfW
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: wWH5rmeRYkjgCw+5R0GklJmArP0F9ZpPXf7S2h/PVEFDg/Ft4m4ZL0shcX2kO3JkDYvulEQBLJqe
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: QaohonuoXI5M3Q341CJOtcIHxbujIYGo+nszomU6MWw6Uff+CZy645NmgCEcheiqmCA26PUF9qQj
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 4NYA67hz2hlrX6LOg82PD2BHhGbgSPVTJkoIuThaZ3zg6RpCWIDO7D4SF+Dz73hHpWRDqSRToksl
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 6P6FfC9v+OL7qxdXXzz9Zru6vv7LV9dLLX6OEfvgi91TDotnkbIgNJPFhOCRP8OIfQo6F4/78Ltb
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: RjwOyD03784EoPU9g9QFYf0XRov+j4vJfQjeHQ26BuXemGgZTswbzih83xROnfJJU0D3hIuAi2KC
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 7ILyHIvCmYR9f17Z2/wSiz7BC83t8woju+A8szJifwsro/XF4PT3BmfADSsq0i9G5w9Pv//u6rtn
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: a1ie48Q+CDNO4po7i6jRdf86zQcmlTOcCBHzx41Cxx/9zoXlPgjvlhGPw3LPzrszQWh9zyDqG9N/
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 4bTo/7iw3Afh3dGga1jujYmWfm9eRabCD5jCqVM+aQp6A2dRTJFdWJ5jkTvJLO4BmWVv80sserAX
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: qMYNbZfyGNmF5Z6WI6QSrIxvwv/BmpkyLnDWy2F59d3Xf96+/er6+umzoyVTyonUEt/PsBowtcjA
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: JME5JJ0gtEnpdZYpE7i4XvrDpRIwNXyBXWmtiBrUk1foL78U2wwpQqR7x/Xx+UMKZ8b4/PPthx/f
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: vX3z9uf3299+4//2WzPI2A7gLDSJ08eJKL8vwPtEE+y0OCpo9mk5EeVGtFkZOhuQRGWbxBkkKiLR
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: lGoQ0+IjrVuBxxTTGCBw5lqHDKeVqM5xqo+TgBxXZU8R6bSoT+TNLi7qG/Ao9XFeFdqqviD7/DbN
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: r9lssa0iU90HTODUI4/Kb4tiitigxx6YBEpHgO0FZsed085Y+wJ7HlK24mbKsT4C7PSWU/NE2Svw
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: MfMeuV2QcmiU/SDSqBCxWUCWJF8ih/GFaTTHtUgAOXg8x6V0iJ7iGUsbmT3ldKjjnKjyLQcAAedy
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: lQ8WUqZsjt8O0WaeXgIRx0vUHLcgIgO+NTwv/HYUpfzJDEpAzIlPunAeWBjAJRUSccUn4eMOTpTI
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: mfzUHyqfXUbc4GgMkOk2EnEXCiJu3fG1xtHc83FI9HzdN2VcTEh4jouIEJuj5uEQc2Kx8kV93NEE
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: YTN+c0DPI6c9iFAq4sDKm/jyCdyeugHkCYR9S4aQWMN8H2Umn8oyHgGZTTv0wYWXHkxb3IgRW4zZ
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 4EcAvdhsKy61BLNFxU9Y0mIr3NERa8CWuKzPz4elcTM/h8UTuIpfpqf43n01P+Iitbh9+JlvTnvj
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: Aa4lsWkHS/jWUlpYhItNZbIM955aNQ7iWlQNC0fxdTlX4zCyxMJwE6v8zmAHwBMTKY0HGO+jWZFL
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: bTycTsfxgqEP6V15gKEttcM1Jp0N7kz7MXmebXHjB0diCxJz7WYrEnuS5mzL4g8Rd4XF0iTyFSjx
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: BL4o8u+Y1FM43cPtJfEjDgNBC/Fzwb2/MvzMPCiRixRlScH3gMkiEql+G6RjlhV4kknHHCSx4IaP
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: cJTEWlgZ4TCOM/lW2WB4GeWKhoCIFEISJEXLmScaRYJojMn7NAZtPI1R0UcjWLTVCLfZaAaQ2Wp+
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: EFto/jBbaX4RW2r2EUtrdjJPaPYST2luEz9q7jM/a24UHmjmFJZYZlUWWeYdLLO8PDhoeVs5anl9
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: cHhZB8Dw3bIwPWHZ6fK5rvUdTZEScHhLNnbhvmNd3HvnvkScbDcEKE71FtMXT7/772+uvr16sZTZ
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: H/1CnHDaTXY9+ULMV4C297gWdfvm7s2Hm1fbh1+o8qQ+r3EP4bTwjn38JMQKrtjH96dZnZxD2glS
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: jmuCCVwsVy4X3lSxc/1wt7y/SkUxCu/zuxBPmrpCHKeAjymf7kLsls/206/buZ8eH//AmRqbxWB9
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: XAWsfosl8XxOXj9+D71dffnZ5n4q7fWrmOtPP8bt/7Yvfnn7+s2rm7cf3vxoH+//H9qPPuYKZW5k
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: c3RyZWFtCmVuZG9iago4IDAgb2JqCjw8IC9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovTmFt
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ZSAvRjEKL0Jhc2VGb250IC9IZWx2ZXRpY2EKL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcKPj4K
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ZW5kb2JqCjkgMCBvYmoKPDwgL1R5cGUgL0ZvbnQKL1N1YnR5cGUgL1R5cGUxCi9OYW1lIC9GMgov
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: QmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkCi9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nCj4+CmVu
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ZG9iagoxMCAwIG9iago8PCAvVHlwZSAvRXh0R1N0YXRlCi9CTSAvTm9ybWFsCi9DQSAwLjkKPj4K
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: ZW5kb2JqCjExIDAgb2JqCjw8IC9UeXBlIC9FeHRHU3RhdGUKL0JNIC9Ob3JtYWwKL2NhIDAuOQo+
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: PgplbmRvYmoKMTIgMCBvYmoKPDwgL1R5cGUgL0V4dEdTdGF0ZQovQk0gL05vcm1hbAovQ0EgMQo+
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: PgplbmRvYmoKMTMgMCBvYmoKPDwgL1R5cGUgL0V4dEdTdGF0ZQovQk0gL05vcm1hbAovY2EgMQo+
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: PgplbmRvYmoKeHJlZgowIDE0CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBu
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: IAowMDAwMDAwMDc0IDAwMDAwIG4gCjAwMDAwMDAxMjAgMDAwMDAgbiAKMDAwMDAwMDM1MCAwMDAw
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: MCBuIAowMDAwMDAwMzc5IDAwMDAwIG4gCjAwMDAwMDA2MjYgMDAwMDAgbiAKMDAwMDAwMDcyOSAw
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: MDAwMCBuIAowMDAwMDA1MzcyIDAwMDAwIG4gCjAwMDAwMDU0NzkgMDAwMDAgbiAKMDAwMDAwNTU5
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: MSAwMDAwMCBuIAowMDAwMDA1NjUwIDAwMDAwIG4gCjAwMDAwMDU3MDkgMDAwMDAgbiAKMDAwMDAw
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: NTc2NiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDE0Ci9Sb290IDEgMCBSCi9JbmZvIDUgMCBS
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: Ci9JRFs8MGYwNzQ0MmM1NmU0YmY1YzliNmYxNzk3ODZiYzM3NDQ+PDBmMDc0NDJjNTZlNGJmNWM5
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: YjZmMTc5Nzg2YmMzNzQ0Pl0KPj4Kc3RhcnR4cmVmCjU4MjMKJSVFT0YK
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: --b1=_4fVxQ6PDdVJAED72n1sjTuXawkYzzts2uyvmdDe2nE--
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T13:03:40+01:00] [level=1] CLIENT -> SERVER: .
+
+[2026-02-19T13:03:41+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1771502621 5b1f17b1804b1-4839f978328sm18788295e9.14 - gsmtp
+
+[2026-02-19T13:03:41+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-02-19T13:03:41+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-4839f978328sm18788295e9.14 - gsmtp
+
+[2026-02-19T14:34:13+01:00] [level=1] SMTP ERROR: Failed to connect to server: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known.  (0)
+[2026-02-19T14:34:13+01:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2026-02-19T14:42:13+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-43796a5ac7csm46915009f8f.7 - gsmtp
+
+[2026-02-19T14:42:13+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-02-19T14:42:13+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.68.125]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-02-19T14:42:13+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-02-19T14:42:13+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-02-19T14:42:15+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-02-19T14:42:15+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.68.125]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-02-19T14:42:15+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-02-19T14:42:15+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-02-19T14:42:15+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-02-19T14:42:15+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-02-19T14:42:15+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-02-19T14:42:16+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-02-19T14:42:16+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-43796a5ac7csm46915009f8f.7 - gsmtp
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-02-19T14:42:16+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-43796a5ac7csm46915009f8f.7 - gsmtp
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-02-19T14:42:16+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-43796a5ac7csm46915009f8f.7 - gsmtp
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: Date: Thu, 19 Feb 2026 14:42:13 +0100
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: Subject: =?iso-8859-1?Q?Payment_link_=E2=80=94_HIGH_Q_SOLID_ACADEMY?=
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: Message-ID: <fkDOgcoQeutgn5nqqQfw9RtyRMBzlNW8Yuj1rEe7yf0@localhost>
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: <p>Hi,</p><p>Please use the following secure link to complete your payment.</p><p>Amount: ₦20,000.00</p><p><strong>Total payable: ₦20,000.00</strong></p><p>Use this secure link to pay: </p><p><a href="http://localhost/HIGH-Q/pay/ADMIN-20260219144213-6b845a2d">http://localhost/HIGH-Q/pay/ADMIN-20260219144213-6b845a2d</a></p><p>Message: Please make payment into this account please so that we can start with your registration</p><p>Link expires in 2 days.</p><p>Thanks,<br>HIGH Q Solid Academy</p>
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T14:42:16+01:00] [level=1] CLIENT -> SERVER: .
+
+[2026-02-19T14:42:17+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1771508537 ffacd0b85a97d-43796a5ac7csm46915009f8f.7 - gsmtp
+
+[2026-02-19T14:42:17+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-02-19T14:42:17+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-43796a5ac7csm46915009f8f.7 - gsmtp
+
+[2026-02-19T15:38:38+01:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
+
+[2026-02-19T15:38:38+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-02-19T15:38:39+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.68.125]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-02-19T15:38:39+01:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-02-19T15:38:39+01:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-02-19T15:38:39+01:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-02-19T15:38:40+01:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.68.125]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-02-19T15:38:40+01:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-02-19T15:38:40+01:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-02-19T15:38:40+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-02-19T15:38:40+01:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-02-19T15:38:40+01:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-02-19T15:38:40+01:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-02-19T15:38:40+01:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-02-19T15:38:40+01:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
+
+[2026-02-19T15:38:40+01:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-02-19T15:38:40+01:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
+
+[2026-02-19T15:38:40+01:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-02-19T15:38:41+01:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: Date: Thu, 19 Feb 2026 15:38:37 +0100
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: Subject: =?iso-8859-1?Q?Payment_link_=E2=80=94_HIGH_Q_SOLID_ACADEMY?=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: Message-ID: <GhQfthjsLjPRcx5BO7Ns1NAjXiSZLOZdrvUJwvgYcd4@localhost>
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: 
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: <div style=3D"font-family:Segoe UI,Arial,sans-serif;max-width:640px;margin:=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: 0 auto;color:#111827"><div style=3D"background:#f59e0b;padding:14px 18px;bo=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: rder-radius:10px 10px 0 0;color:#111827;font-weight:700">HIGH Q SOLID ACADE=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: MY</div><div style=3D"border:1px solid #e5e7eb;border-top:none;padding:18px=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: ;border-radius:0 0 10px 10px"><p style=3D"margin:0 0 10px">Hello,</p><p sty=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: le=3D"margin:0 0 12px">Your payment link has been resent. Amount due:</p><p=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER:  style=3D"margin:0 0 14px;font-weight:700">=E2=82=A620,000.00</p><p style=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: =3D"margin:0 0 14px"><a href=3D"http://localhost/HIGH-Q/pay/ADMIN-202602191=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: 44213-6b845a2d" style=3D"display:inline-block;background:#dc2626;color:#fff=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: ;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:600">=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: Open Payment Link</a></p><p style=3D"margin:0 0 10px;font-size:13px;color:#=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: 4b5563">If the button does not work, copy this link:</p><p style=3D"margin:=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: 0 0 14px"><a href=3D"http://localhost/HIGH-Q/pay/ADMIN-20260219144213-6b845=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: a2d">http://localhost/HIGH-Q/pay/ADMIN-20260219144213-6b845a2d</a></p><div =
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: style=3D"background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padd=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: ing:12px 14px;margin:0 0 14px"><p style=3D"margin:0 0 6px;font-weight:600;c=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: olor:#92400e">Message from admin</p><p style=3D"margin:0;color:#111827">Ple=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: ase make payment into this account please so that we can start with your re=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: gistration</p></div><p style=3D"margin:0 0 10px">This link expires in <stro=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: ng>2 days</strong>.</p><p style=3D"margin:0">Thanks,<br><strong>HIGH Q Soli=
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: d Academy</strong></p></div></div>
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: .
+
+[2026-02-19T15:38:41+01:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1771511922 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
+
+[2026-02-19T15:38:41+01:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-02-19T15:38:41+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
+

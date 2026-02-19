@@ -83,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                       '<p>Please verify your email by clicking <a href="' . htmlspecialchars($verifyUrl) . '">this link</a>.</p>';
               @sendEmail($usr['email'], $subject, $html);
               logAction($pdo, $_SESSION['user']['id'], 'resend_verification', ['user_id'=>$id]);
+              notifyAdminChange($pdo, 'Verification Email Resent', ['User ID' => $id, 'Recipient' => $usr['email'] ?? 'N/A'], (int)($_SESSION['user']['id'] ?? 0));
             }
           }
 
@@ -93,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $stmt = $pdo->prepare('UPDATE users SET role_id = ?, is_active = 1, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$role_id, $id]);
     logAction($pdo, $currentUserId, 'approve_user', ['user_id' => $id, 'role_id' => $role_id]);
+    notifyAdminChange($pdo, 'User Approved', ['User ID' => $id, 'Role ID' => $role_id], (int)$currentUserId);
     // Send approval email to the user if email present
     try {
       $u = $pdo->prepare('SELECT email, name FROM users WHERE id = ? LIMIT 1'); $u->execute([$id]); $usr = $u->fetch(PDO::FETCH_ASSOC);
@@ -111,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$id]);
     logAction($pdo, $currentUserId, 'banish_user', ['user_id' => $id]);
+    notifyAdminChange($pdo, 'User Banished', ['User ID' => $id], (int)$currentUserId);
     header('Location: index.php?pages=users'); exit;
   }
 
@@ -119,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$id]);
     logAction($pdo, $currentUserId, 'reactivate_user', ['user_id' => $id]);
+    notifyAdminChange($pdo, 'User Reactivated', ['User ID' => $id], (int)$currentUserId);
     header('Location: index.php?pages=users'); exit;
   }
 
@@ -135,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
     $stmt = $pdo->prepare('UPDATE users SET name = ?, email = ?, role_id = ?, is_active = ?, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$name, $email, $role_id, $is_active, $id]);
     logAction($pdo, $currentUserId, 'edit_user', ['user_id' => $id]);
+    notifyAdminChange($pdo, 'User Updated', ['User ID' => $id, 'Email' => $email, 'Role ID' => $role_id], (int)$currentUserId);
     header('Location: index.php?pages=users'); exit;
   }
 }
@@ -194,6 +199,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'upload_receipt' && isset($_GE
 
   // Notify admins via log
   logAction($pdo, $_SESSION['user']['id'], 'upload_receipt', ['user_id'=>$id, 'payment_id'=>$pid, 'path'=>"uploads/receipts/{$fileName}"]);
+  notifyAdminChange($pdo, 'Receipt Uploaded', ['User ID' => $id, 'Payment ID' => $pid, 'Path' => "uploads/receipts/{$fileName}"], (int)($_SESSION['user']['id'] ?? 0));
   header('Content-Type: application/json'); echo json_encode(['ok'=>true,'payment_id'=>$pid,'path'=>"uploads/receipts/{$fileName}"]); exit;
 }
 

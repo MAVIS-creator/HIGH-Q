@@ -1,0 +1,24 @@
+{
+    "report": {
+        "scan_type": "quick",
+        "started_at": "2026-02-19T14:52:26+01:00",
+        "finished_at": "2026-02-19T14:52:26+01:00",
+        "root": "C:\\xampp\\htdocs\\HIGH-Q",
+        "status": "completed",
+        "totals": {
+            "files_scanned": 0,
+            "critical_issues": 0,
+            "warnings": 0,
+            "info_messages": 0
+        },
+        "critical": [],
+        "warnings": [
+            {
+                "type": "scan_limit",
+                "message": "Quick scan limited to 1000 files"
+            }
+        ],
+        "info": [],
+        "scanned_files": []
+    }
+}

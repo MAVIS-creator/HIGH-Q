@@ -1,0 +1,63 @@
+{
+    "timestamp": "2026-02-19_14-34-13",
+    "scan_data": {
+        "status": "completed",
+        "report": {
+            "scan_type": "full",
+            "started_at": "2026-02-19T14:32:32+01:00",
+            "finished_at": "2026-02-19T14:32:49+01:00",
+            "root": "C:\\xampp\\htdocs\\HIGH-Q",
+            "status": "completed",
+            "totals": {
+                "files_scanned": 0,
+                "critical_issues": 0,
+                "warnings": 6,
+                "info_messages": 0
+            },
+            "critical": [],
+            "warnings": [
+                {
+                    "type": "scan_limit",
+                    "message": "Quick scan limited to 1000 files"
+                },
+                {
+                    "type": "integrity_change",
+                    "file": "admin\\api\\scan-engine.php",
+                    "message": "File integrity changed"
+                },
+                {
+                    "type": "integrity_change",
+                    "file": "admin\\api\\send-report.php",
+                    "message": "File integrity changed"
+                },
+                {
+                    "type": "integrity_change",
+                    "file": "admin\\includes\\functions.php",
+                    "message": "File integrity changed"
+                },
+                {
+                    "type": "integrity_change",
+                    "file": "admin\\pages\\sentinel.php",
+                    "message": "File integrity changed"
+                },
+                {
+                    "type": "file_permission",
+                    "file": ".env",
+                    "permissions": "0666",
+                    "message": "Sensitive file is world-readable"
+                },
+                {
+                    "type": "file_permission",
+                    "file": "admin\\includes\\db.php",
+                    "permissions": "0666",
+                    "message": "Sensitive file is world-readable"
+                }
+            ],
+            "info": [],
+            "scanned_files": []
+        }
+    },
+    "recipient": "akintunde.dolapo1@gmail.com",
+    "sent": false,
+    "pdf_path": "C:\\xampp\\htdocs\\HIGH-Q\\admin\\includes\/..\/..\/storage\/reports\/security_report_2026-02-19_14-34-12.pdf"
+}

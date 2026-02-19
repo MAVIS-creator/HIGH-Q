@@ -565,6 +565,7 @@ try {
             scan_type VARCHAR(20) NOT NULL,
             status VARCHAR(20) NOT NULL DEFAULT 'completed',
             threat_count INT NOT NULL DEFAULT 0,
+            report_file VARCHAR(255) NULL,
             scan_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             duration INT NOT NULL DEFAULT 0,
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -572,14 +573,28 @@ try {
             INDEX idx_scan_type (scan_type)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+        try {
+            $pdo->exec("ALTER TABLE security_scans ADD COLUMN report_file VARCHAR(255) NULL AFTER threat_count");
+        } catch (Throwable $e) {
+            // already exists
+        }
+
         $startedAt = !empty($report['started_at']) ? strtotime($report['started_at']) : time();
         $finishedAt = !empty($report['finished_at']) ? strtotime($report['finished_at']) : time();
         $duration = max(0, (int)($finishedAt - $startedAt));
         $threatCount = (int)count($report['critical'] ?? []) + (int)count($report['warnings'] ?? []);
         $status = ($report['status'] ?? 'completed') === 'completed' ? 'completed' : 'error';
 
-        $ins = $pdo->prepare('INSERT INTO security_scans (scan_type, status, threat_count, scan_date, duration) VALUES (?, ?, ?, NOW(), ?)');
-        $ins->execute([$scanType, $status, $threatCount, $duration]);
+        $reportDir = __DIR__ . '/../../storage/scan_reports';
+        if (!is_dir($reportDir)) {
+            @mkdir($reportDir, 0755, true);
+        }
+        $reportFilename = 'scan_' . date('Ymd_His') . '_' . $scanType . '.json';
+        $reportPath = $reportDir . DIRECTORY_SEPARATOR . $reportFilename;
+        @file_put_contents($reportPath, json_encode(['report' => $report], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        $ins = $pdo->prepare('INSERT INTO security_scans (scan_type, status, threat_count, report_file, scan_date, duration) VALUES (?, ?, ?, ?, NOW(), ?)');
+        $ins->execute([$scanType, $status, $threatCount, $reportFilename, $duration]);
     } catch (Throwable $e) {
         error_log('Failed to persist security scan history: ' . $e->getMessage());
     }

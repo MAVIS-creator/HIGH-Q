@@ -641,6 +641,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
+  notifyAdminChange($pdo, 'Student Deactivated', ['Student ID' => $id], (int)$currentUserId);
   header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
 
@@ -648,6 +649,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
+  notifyAdminChange($pdo, 'Student Activated', ['Student ID' => $id], (int)$currentUserId);
   header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
 
@@ -657,6 +659,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
           $del = $pdo->prepare('DELETE FROM post_utme_registrations WHERE id = ?');
           $del->execute([$id]);
           logAction($pdo, $currentUserId, 'postutme_delete', ['postutme_id'=>$id]);
+          notifyAdminChange($pdo, 'Post-UTME Registration Deleted', ['Registration ID' => $id], (int)$currentUserId);
         } catch (Throwable $e) {
           // ignore errors
         }
@@ -672,6 +675,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
+        notifyAdminChange($pdo, 'Student Registration Deleted', ['Registration ID' => $id], (int)$currentUserId);
   header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
   
@@ -681,6 +685,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $del = $pdo->prepare('DELETE FROM post_utme_registrations WHERE id = ?');
         $del->execute([$id]);
         logAction($pdo, $currentUserId, 'postutme_delete', ['postutme_id'=>$id]);
+        notifyAdminChange($pdo, 'Post-UTME Registration Deleted', ['Registration ID' => $id], (int)$currentUserId);
       } catch (Throwable $e) {
         // swallow and continue to redirect
       }
@@ -692,11 +697,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt = $pdo->prepare('UPDATE users SET is_active = 3, updated_at = NOW() WHERE id = ?');
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete', ['student_id'=>$id]);
+      notifyAdminChange($pdo, 'Student Soft Deleted', ['Student ID' => $id], (int)$currentUserId);
     } catch (Exception $e) {
       // Fallback to hard delete
       $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
+      notifyAdminChange($pdo, 'Student Hard Deleted', ['Student ID' => $id], (int)$currentUserId);
     }
   header('Location: ' . admin_url('pages/academic.php')); exit;
   }
@@ -715,13 +722,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $ust = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $ust->execute([$id]);
         logAction($pdo, $currentUserId, 'student_activate_via_modal', ['student_id'=>$id]);
+        notifyAdminChange($pdo, 'Student Activated Via Modal', ['Student ID' => $id], (int)$currentUserId);
       }
 
       // send email using existing helper if available
       if (function_exists('sendEmail') && filter_var($student['email'], FILTER_VALIDATE_EMAIL)) {
         $subject = 'Message from HIGH Q admin';
         $body = "Hello " . htmlspecialchars($student['name']) . ",\n\n" . $message . "\n\nRegards,\nHIGH Q Team";
-        try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
+        try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); notifyAdminChange($pdo, 'Student Message Sent', ['Student ID' => $id, 'Recipient' => $student['email']], (int)$currentUserId); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
   header('Location: ' . admin_url('pages/academic.php')); exit;
@@ -747,6 +755,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $pdo->beginTransaction();
       $upd = $pdo->prepare('UPDATE student_registrations SET status = ?, updated_at = NOW() WHERE id = ?'); $upd->execute(['confirmed', $id]);
       logAction($pdo, $currentUserId, 'confirm_registration', ['registration_id'=>$id]);
+      notifyAdminChange($pdo, 'Student Registration Confirmed', ['Registration ID' => $id], (int)$currentUserId);
 
       // Optional payment creation: admin may include create_payment=1 and amount in POST (AJAX)
       if (!empty($_POST['create_payment']) && !empty($_POST['amount'])) {
@@ -758,6 +767,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $ins->execute([$amount, $method, $ref]);
         $paymentId = $pdo->lastInsertId();
         logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
+        notifyAdminChange($pdo, 'Payment Created For Registration', ['Registration ID' => $id, 'Payment ID' => $paymentId, 'Reference' => $ref, 'Amount' => $amount], (int)$currentUserId);
 
           // send email to registrant with link to payments_wait (if email present)
           $emailSent = false;
@@ -824,6 +834,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     if ($reg) {
       $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['rejected', $id]);
       logAction($pdo, $currentUserId, 'reject_registration', ['registration_id'=>$id, 'reason'=>$reason]);
+      notifyAdminChange($pdo, 'Student Registration Rejected', ['Registration ID' => $id, 'Reason' => $reason ?: 'Not provided'], (int)$currentUserId);
       $emailSent = false;
       if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
         $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
@@ -857,6 +868,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, updated_at = NOW() WHERE id = ?');
       $upd->execute(['confirmed', $id]);
       logAction($pdo, $currentUserId, 'confirm_universal', ['registration_id' => $id]);
+      notifyAdminChange($pdo, 'Universal Registration Confirmed', ['Registration ID' => $id], (int)$currentUserId);
       
       if ($isAjax) {
         echo json_encode(['success' => true, 'message' => 'Registration confirmed']);
@@ -885,6 +897,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, updated_at = NOW() WHERE id = ?');
       $upd->execute(['rejected', $id]);
       logAction($pdo, $currentUserId, 'reject_universal', ['registration_id' => $id, 'reason' => $reason]);
+      notifyAdminChange($pdo, 'Universal Registration Rejected', ['Registration ID' => $id, 'Reason' => $reason ?: 'Not provided'], (int)$currentUserId);
       
       // Send rejection email
       $email = $reg['email'] ?? null;

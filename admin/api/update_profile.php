@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -19,10 +20,12 @@ try {
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $currentEmail = $_SESSION['user']['email'] ?? '';
+    $originalPhone = $_SESSION['user']['phone'] ?? '';
+    $verifiedSessionEmail = trim((string)($_SESSION['account_verified_email'] ?? ''));
     $accountVerified = !empty($_SESSION['account_verified_until'])
         && time() <= (int)$_SESSION['account_verified_until']
-        && !empty($_SESSION['account_verified_email'])
-        && $_SESSION['account_verified_email'] === $currentEmail;
+        && $verifiedSessionEmail !== ''
+        && strcasecmp($verifiedSessionEmail, (string)$currentEmail) === 0;
 
     if (empty($name)) {
         throw new Exception('Name is required');
@@ -131,6 +134,31 @@ try {
     }
     if ($avatarPath) {
         $_SESSION['user']['avatar'] = $avatarPath;
+    }
+
+    $changedFields = ['name'];
+    if (!empty($email) && strcasecmp((string)$email, (string)$currentEmail) !== 0) {
+        $changedFields[] = 'email';
+    }
+    if (!empty($phone) && $phone !== $originalPhone) {
+        $changedFields[] = 'phone';
+    }
+    if ($avatarPath) {
+        $changedFields[] = 'avatar';
+    }
+
+    try {
+        sendAdminChangeNotification(
+            $pdo,
+            'Profile Updated',
+            [
+                'User ID' => $userId,
+                'Account Email' => $_SESSION['user']['email'] ?? $currentEmail,
+                'Changed Fields' => implode(', ', array_unique($changedFields))
+            ],
+            (int)$userId
+        );
+    } catch (Throwable $e) {
     }
 
     unset($_SESSION['account_verified_until'], $_SESSION['account_verified_email'], $_SESSION['verified_email'], $_SESSION['verified_phone']);

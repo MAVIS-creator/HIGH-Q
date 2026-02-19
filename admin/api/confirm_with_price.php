@@ -197,6 +197,24 @@ try {
             'email_sent' => $emailSent,
         ]);
     }
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $pdo,
+                'Registration Confirmed With Price',
+                [
+                    'Registration ID' => $id,
+                    'Source' => $source,
+                    'Student Email' => $email,
+                    'Amount' => number_format($amount, 2),
+                    'Reference' => $reference,
+                    'Applicant Email Sent' => $emailSent ? 'Yes' : 'No'
+                ],
+                (int)($currentUserId ?? 0)
+            );
+        } catch (Throwable $_) {}
+    }
     
     $pdo->commit();
     

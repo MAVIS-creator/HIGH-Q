@@ -17,6 +17,7 @@ try {
         scan_type VARCHAR(20) NOT NULL,
         status VARCHAR(20) NOT NULL DEFAULT 'completed',
         threat_count INT NOT NULL DEFAULT 0,
+        report_file VARCHAR(255) NULL,
         scan_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         duration INT NOT NULL DEFAULT 0,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -24,8 +25,14 @@ try {
         INDEX idx_scan_type (scan_type)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+    try {
+        $pdo->exec("ALTER TABLE security_scans ADD COLUMN report_file VARCHAR(255) NULL AFTER threat_count");
+    } catch (Throwable $e) {
+        // already exists
+    }
+
     $stmt = $pdo->query("
-        SELECT id, scan_type, status, threat_count, scan_date, duration
+        SELECT id, scan_type, status, threat_count, report_file, scan_date, duration
         FROM security_scans 
         ORDER BY scan_date DESC 
         LIMIT 5
@@ -58,6 +65,7 @@ if (count($latestScans) === 0) {
                     'scan_type' => $scan['scan_type'] ?? 'quick',
                     'status' => ($scan['status'] ?? 'completed') === 'completed' ? 'completed' : 'error',
                     'threat_count' => $critical + $warnings,
+                    'report_file' => basename($file),
                     'scan_date' => date('Y-m-d H:i:s', $finished),
                     'duration' => max(0, (int)($finished - $started)),
                 ];
@@ -262,7 +270,7 @@ if (count($latestScans) === 0) {
                             <td><?= (int)$scan['threat_count'] ?> threat<?= $scan['threat_count'] != 1 ? 's' : '' ?></td>
                             <td><?= htmlspecialchars($scan['duration']) ?>s</td>
                             <td>
-                                <a href="#" onclick="viewReport(<?= $scan['id'] ?>); return false;" class="view-report-link">View</a>
+                                <a href="#" onclick="viewReport(<?= (int)$scan['id'] ?>, <?= json_encode($scan['report_file'] ?? '') ?>); return false;" class="view-report-link">View</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -1135,17 +1143,53 @@ function notifyIfIssuesDetected(critical, warnings) {
     });
 }
 
-function viewReport(id) {
-    if (!window.lastScanReport) {
-        Swal.fire({
-            icon: 'info',
-            title: 'No Scan Data',
-            text: 'Run a scan first to view reports.',
-            confirmButtonColor: '#f59e0b'
-        });
+async function viewReport(id, reportFile = '') {
+    if (reportFile || (id && id > 0)) {
+        try {
+            const url = new URL(ADMIN_BASE + '/api/scan-report.php', window.location.origin);
+            if (reportFile) {
+                url.searchParams.set('file', reportFile);
+            } else {
+                url.searchParams.set('id', String(id));
+            }
+
+            const res = await fetch(url.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+            const raw = await res.text();
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (e) {
+                throw new Error('Invalid JSON while loading scan report.');
+            }
+
+            if (!res.ok || data.status !== 'ok' || !data.report) {
+                throw new Error(data.message || 'Report data unavailable for this scan.');
+            }
+
+            window.lastScanReport = data.report;
+            showReportModal();
+            return;
+        } catch (error) {
+            console.warn('Failed to load historical scan report:', error);
+        }
+    }
+
+    if (window.lastScanReport) {
+        showReportModal();
         return;
     }
-    showReportModal();
+
+    Swal.fire({
+        icon: 'info',
+        title: 'No Scan Data',
+        text: 'Report file for this scan was not found. Run a new scan to generate one.',
+        confirmButtonColor: '#f59e0b'
+    });
 }
 
 function showReportModal() {

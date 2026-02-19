@@ -156,6 +156,21 @@ function createTutor($conn) {
             'message' => 'Tutor created successfully',
             'id' => $conn->lastInsertId()
         ]);
+
+        if (function_exists('sendAdminChangeNotification')) {
+            try {
+                sendAdminChangeNotification(
+                    $conn,
+                    'Tutor Created',
+                    [
+                        'Tutor Name' => $name,
+                        'Tutor Email' => $email ?: 'N/A',
+                        'Featured' => $is_featured ? 'Yes' : 'No'
+                    ],
+                    (int)($_SESSION['user']['id'] ?? 0)
+                );
+            } catch (Throwable $_) {}
+        }
     } catch (PDOException $e) {
         throw new Exception('Database error: ' . $e->getMessage());
     }
@@ -218,6 +233,22 @@ function updateTutor($conn) {
             'success' => true,
             'message' => 'Tutor updated successfully'
         ]);
+
+        if (function_exists('sendAdminChangeNotification')) {
+            try {
+                sendAdminChangeNotification(
+                    $conn,
+                    'Tutor Updated',
+                    [
+                        'Tutor ID' => $id,
+                        'Tutor Name' => $name,
+                        'Tutor Email' => $email ?: 'N/A',
+                        'Featured' => $is_featured ? 'Yes' : 'No'
+                    ],
+                    (int)($_SESSION['user']['id'] ?? 0)
+                );
+            } catch (Throwable $_) {}
+        }
     } catch (PDOException $e) {
         throw new Exception('Database error: ' . $e->getMessage());
     }
@@ -251,6 +282,19 @@ function deleteTutor($conn) {
         'success' => true,
         'message' => 'Tutor deleted successfully'
     ]);
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $conn,
+                'Tutor Deleted',
+                [
+                    'Tutor ID' => $id
+                ],
+                (int)($_SESSION['user']['id'] ?? 0)
+            );
+        } catch (Throwable $_) {}
+    }
 }
 
 function listTutors($conn) {
@@ -299,4 +343,18 @@ function toggleFeatured($conn) {
         'success' => true,
         'message' => 'Featured status updated successfully'
     ]);
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $conn,
+                'Tutor Featured Status Updated',
+                [
+                    'Tutor ID' => $id,
+                    'Featured' => $is_featured ? 'Yes' : 'No'
+                ],
+                (int)($_SESSION['user']['id'] ?? 0)
+            );
+        } catch (Throwable $_) {}
+    }
 }

@@ -1,11 +1,27 @@
 // Account Settings Modal - Unique, focused, no scrolling
 (function(){
   const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
+  let accountVerified = false;
+  let originalPhone = '';
+
+  async function parseJsonSafe(response) {
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      throw new Error('Unexpected server response. Please refresh and try again.');
+    }
+  }
+
+  function requireVerificationMessage() {
+    return 'Verify with your registered Gmail/email before updating password, email, or phone.';
+  }
+
   const tpl = `
   <div class="settings-modal" id="accountSettingsModal">
     <div class="settings-modal-content">
       <div class="settings-modal-header">
-        <h2><i class='bx bx-cog'></i> Account Settings</h2>
+        <h2><i class='bx bx-cog'></i> Profile & Account Settings</h2>
         <button class="settings-modal-close" id="accountSettingsClose"><i class='bx bx-x'></i></button>
       </div>
       <div class="settings-modal-body">
@@ -43,7 +59,7 @@
                   <input type="text" id="settingsVerifyCode" placeholder="Enter code">
                   <button class="settings-btn-primary" id="settingsVerifyBtn" type="button"><i class='bx bx-check'></i> Verify</button>
                 </div>
-                <small class="field-hint">We send the code to your current email to confirm changes.</small>
+                <small class="field-hint">Important changes require verification from your registered Gmail/email first.</small>
               </div>
               <div class="settings-item">
                 <button class="settings-btn-primary" id="settingsSaveProfile" type="button"><i class='bx bx-save'></i> Save Profile</button>
@@ -239,13 +255,14 @@
   async function loadProfile(){
     try {
       const resp = await fetch(ADMIN_BASE + '/api/user_profile.php', { credentials: 'same-origin' });
-      const data = await resp.json();
+      const data = await parseJsonSafe(resp);
       const nameEl = document.getElementById('settingsName');
       const emailEl = document.getElementById('settingsEmail');
       const phoneEl = document.getElementById('settingsPhone');
       if (nameEl) nameEl.value = data.name || '';
       if (emailEl) emailEl.value = data.email || '';
       if (phoneEl) phoneEl.value = data.phone || '';
+      originalPhone = data.phone || '';
 
       const prefs = data.preferences || {};
       const setVal = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val; };
@@ -338,8 +355,9 @@
           body: JSON.stringify({ type: 'email', value: currentEmail, purpose: 'account' }),
           credentials: 'same-origin'
         });
-        const data = await res.json();
+        const data = await parseJsonSafe(res);
         if (!data.success) throw new Error(data.message || 'Failed to send code');
+        accountVerified = false;
         if (window.Swal) Swal.fire({icon:'success',title:'Code Sent',text:'Check your email for the verification code.'});
       } catch (e) {
         if (window.Swal) Swal.fire({icon:'error',title:'Failed',text:e.message});
@@ -356,8 +374,9 @@
           body: JSON.stringify({ code }),
           credentials: 'same-origin'
         });
-        const data = await res.json();
+        const data = await parseJsonSafe(res);
         if (!data.success) throw new Error(data.message || 'Verification failed');
+        accountVerified = true;
         if (window.Swal) Swal.fire({icon:'success',title:'Verified',text:'You can now update your profile or password.'});
       } catch (e) {
         if (window.Swal) Swal.fire({icon:'error',title:'Failed',text:e.message});
@@ -368,6 +387,13 @@
       const name = document.getElementById('settingsName')?.value || '';
       const newEmail = document.getElementById('settingsNewEmail')?.value || '';
       const phone = document.getElementById('settingsPhone')?.value || '';
+      const currentEmail = document.getElementById('settingsEmail')?.value || '';
+
+      const changingSensitive = (newEmail && newEmail !== currentEmail) || (phone && phone !== originalPhone);
+      if (changingSensitive && !accountVerified) {
+        if (window.Swal) Swal.fire({icon:'warning',title:'Verification Required',text:requireVerificationMessage()});
+        return;
+      }
 
       const formData = new FormData();
       formData.append('name', name);
@@ -380,10 +406,11 @@
           body: formData,
           credentials: 'same-origin'
         });
-        const data = await res.json();
+        const data = await parseJsonSafe(res);
         if (!data.success) throw new Error(data.message || 'Update failed');
         if (window.Swal) Swal.fire({icon:'success',title:'Saved',text:data.message});
         document.getElementById('settingsNewEmail').value = '';
+        accountVerified = false;
         await loadProfile();
       } catch (e) {
         if (window.Swal) Swal.fire({icon:'error',title:'Failed',text:e.message});
@@ -391,6 +418,11 @@
     });
 
     changePassBtn?.addEventListener('click', async () => {
+      if (!accountVerified) {
+        if (window.Swal) Swal.fire({icon:'warning',title:'Verification Required',text:requireVerificationMessage()});
+        return;
+      }
+
       const currentPassword = document.getElementById('settingsCurrentPassword')?.value || '';
       const newPassword = document.getElementById('settingsNewPassword')?.value || '';
       const confirmPassword = document.getElementById('settingsConfirmPassword')?.value || '';
@@ -404,12 +436,13 @@
           body: formData,
           credentials: 'same-origin'
         });
-        const data = await res.json();
+        const data = await parseJsonSafe(res);
         if (!data.success) throw new Error(data.message || 'Password update failed');
         if (window.Swal) Swal.fire({icon:'success',title:'Updated',text:data.message});
         document.getElementById('settingsCurrentPassword').value = '';
         document.getElementById('settingsNewPassword').value = '';
         document.getElementById('settingsConfirmPassword').value = '';
+        accountVerified = false;
       } catch (e) {
         if (window.Swal) Swal.fire({icon:'error',title:'Failed',text:e.message});
       }
@@ -424,8 +457,10 @@
 
   window.openAccountSettings = function(){
     open();
+    accountVerified = false;
     loadProfile();
   };
+  window.openProfileModal = window.openAccountSettings;
   window.accountSettingsModal = { open, close };
   initListeners();
 })();

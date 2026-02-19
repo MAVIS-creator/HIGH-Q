@@ -211,6 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     @sendEmail($p['email'], $subject, $html, $attachments);
                 }
             }
+            notifyAdminChange($pdo, 'Payment Confirmed', ['Payment ID' => $id, 'Reference' => $p['reference'] ?? 'N/A'], (int)($_SESSION['user']['id'] ?? 0));
             echo json_encode(['status'=>'ok','message'=>'Payment confirmed']);
         } else echo json_encode(['status'=>'error','message'=>'DB error']);
         exit;
@@ -242,6 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     @sendEmail($user['email'], $subject, $html);
                 }
             }
+            notifyAdminChange($pdo, 'Payment Rejected', ['Payment ID' => $id, 'Reason' => $reason ?: 'Not provided'], (int)($_SESSION['user']['id'] ?? 0));
             echo json_encode(['status'=>'ok','message'=>'Payment rejected']);
         } else echo json_encode(['status'=>'error','message'=>'DB error']);
         exit;

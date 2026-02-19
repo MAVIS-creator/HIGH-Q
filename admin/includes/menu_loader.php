@@ -39,6 +39,11 @@ foreach ($required as $slug => $item) {
     if (!isset($menus[$slug])) $menus[$slug] = $item;
 }
 
+// Ensure sentinel always has a visible shield icon even if stale DB data has empty icon
+if (isset($menus['sentinel']) && empty($menus['sentinel']['icon'])) {
+    $menus['sentinel']['icon'] = 'bx bxs-shield-alt';
+}
+
 // Ensure Smart Patcher always opens in a new tab with correct URL via router
 if (isset($menus['patcher'])) {
     $menus['patcher']['url'] = 'index.php?pages=patcher';

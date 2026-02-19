@@ -14,6 +14,7 @@ $claim = $pdo->prepare('UPDATE chat_threads SET assigned_admin_id = ? WHERE id =
 $claim->execute([$_SESSION['user']['id'], $threadId]);
 if ($claim->rowCount() > 0) {
   logAction($pdo, $_SESSION['user']['id'], 'chat_claimed', ['thread_id'=>$threadId]);
+    notifyAdminChange($pdo, 'Chat Thread Claimed', ['Thread ID' => $threadId], (int)($_SESSION['user']['id'] ?? 0));
 }
 
 $thread = $pdo->prepare('SELECT ct.*, u.name as assigned_admin_name FROM chat_threads ct LEFT JOIN users u ON ct.assigned_admin_id = u.id WHERE ct.id = ? LIMIT 1');

@@ -3,6 +3,9 @@
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/csrf.php';
 require_once __DIR__ . '/../../includes/db.php';
+if (file_exists(__DIR__ . '/../includes/functions.php')) {
+    require_once __DIR__ . '/../includes/functions.php';
+}
 
 requirePermission('settings');
 
@@ -28,6 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$mac) throw new Exception('MAC required');
             $ins = $pdo->prepare('INSERT INTO mac_blocklist (mac, reason, enabled) VALUES (?, ?, 1)');
             $ins->execute([$mac, $reason]);
+            if (function_exists('sendAdminChangeNotification')) {
+                try {
+                    sendAdminChangeNotification($pdo, 'MAC Added To Blocklist', ['MAC' => $mac, 'Reason' => $reason ?: 'N/A'], (int)($_SESSION['user']['id'] ?? 0));
+                } catch (Throwable $_) {}
+            }
             echo json_encode(['status'=>'ok','message'=>'Added']); exit;
         }
         if ($action === 'toggle') {
@@ -35,11 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare('SELECT enabled FROM mac_blocklist WHERE id = ?'); $stmt->execute([$id]); $cur = $stmt->fetchColumn();
             $new = $cur ? 0 : 1;
             $upd = $pdo->prepare('UPDATE mac_blocklist SET enabled = ? WHERE id = ?'); $upd->execute([$new, $id]);
+            if (function_exists('sendAdminChangeNotification')) {
+                try {
+                    sendAdminChangeNotification($pdo, 'MAC Blocklist Toggled', ['Record ID' => $id, 'New State' => $new ? 'Enabled' : 'Disabled'], (int)($_SESSION['user']['id'] ?? 0));
+                } catch (Throwable $_) {}
+            }
             echo json_encode(['status'=>'ok','message'=>'Toggled']); exit;
         }
         if ($action === 'delete') {
             $id = intval($_POST['id'] ?? 0);
             $del = $pdo->prepare('DELETE FROM mac_blocklist WHERE id = ?'); $del->execute([$id]);
+            if (function_exists('sendAdminChangeNotification')) {
+                try {
+                    sendAdminChangeNotification($pdo, 'MAC Removed From Blocklist', ['Record ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
+                } catch (Throwable $_) {}
+            }
             echo json_encode(['status'=>'ok','message'=>'Deleted']); exit;
         }
     } catch (Exception $e) {

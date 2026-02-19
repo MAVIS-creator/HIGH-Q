@@ -147,6 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                 if ($ok) {
                                     $newId = $pdo->lastInsertId();
                                     logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                    notifyAdminChange($pdo, 'Post Created', ['Post ID' => $newId, 'Slug' => $slug, 'Status' => $status], (int)($_SESSION['user']['id'] ?? 0));
                                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
                                     // Set a session flash so admin UI can show a notification after redirect
                                     $_SESSION['flash_post'] = [
@@ -271,6 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                 }
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
+                    notifyAdminChange($pdo, 'Post Updated', ['Post ID' => $id, 'Slug' => $slug, 'Status' => $status], (int)($_SESSION['user']['id'] ?? 0));
                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATED ID: " . $id . "\n", FILE_APPEND | LOCK_EX);
                     // If this is an AJAX edit, return JSON including published state
                     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -331,6 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             if ($act === 'delete' && $id) {
                 $pdo->prepare("DELETE FROM posts WHERE id=?")->execute([$id]);
                 logAction($pdo, $_SESSION['user']['id'], 'post_deleted', ['post_id' => $id]);
+                notifyAdminChange($pdo, 'Post Deleted', ['Post ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
                 $success[] = "Article deleted.";
             }
 
@@ -339,6 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $stmt = $pdo->prepare("UPDATE posts SET status = IF(status='draft','published','draft') WHERE id=?");
                 $stmt->execute([$id]);
                 logAction($pdo, $_SESSION['user']['id'], 'post_toggled', ['post_id' => $id]);
+                notifyAdminChange($pdo, 'Post Status Toggled', ['Post ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
                 $success[] = "Article status toggled.";
             }
         }
