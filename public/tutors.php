@@ -73,6 +73,28 @@ if (file_exists(__DIR__ . '/config/db.php')) {
           </div>
           <div class="staff-grid admin-grid">
             <?php foreach ($adminStaff as $staff): ?>
+              <?php
+              $staffQualifications = array_values(array_filter(array_map('trim', explode(',', $staff['qualifications'] ?? ''))));
+              $staffRole = 'Administrative Staff';
+              $staffShortBio = trim((string)($staff['short_bio'] ?? ''));
+
+              if (!empty($staffQualifications)) {
+                $staffRole = $staffQualifications[0];
+              } elseif ($staffShortBio !== '' && strlen($staffShortBio) <= 40) {
+                $staffRole = $staffShortBio;
+              }
+
+              $staffDescription = trim((string)($staff['long_bio'] ?? ''));
+              if ($staffDescription === '') {
+                if ($staffShortBio !== '' && strlen($staffShortBio) > 40) {
+                  $staffDescription = $staffShortBio;
+                } else {
+                  $staffDescription = 'Dedicated team member supporting smooth academic and administrative operations.';
+                }
+              }
+
+              $staffTags = !empty($staffQualifications) ? array_slice($staffQualifications, 0, 3) : ['Administration'];
+              ?>
               <article class="staff-card admin-card">
                 <div class="staff-thumb">
                   <?php
@@ -86,20 +108,13 @@ if (file_exists(__DIR__ . '/config/db.php')) {
                         break;
                       }
                     }
-                  }
-                  // Construct absolute app URL
-                  if (!empty($photoPath)) {
-                    if (preg_match('#^https?://#', $photoPath)) {
-                      // Already a full URL
-                    } elseif (strpos($photoPath, 'uploads/tutors/') !== false) {
-                      // Relative path: prepend app_url
-                      $photoPath = app_url($photoPath);
-                    } else {
-                      // Just filename
-                      $photoPath = app_url('uploads/tutors/' . basename($photoPath));
-                    }
-                  } else {
-                    $photoPath = app_url('assets/images/hq-logo.jpeg');
+                          <p class="staff-position\"><?= htmlspecialchars($staffRole) ?></p>
+                          <p class="staff-bio\"><?= htmlspecialchars(substr($staffDescription, 0, 180)) ?></p>
+                          <div class="subjects-list">
+                            <?php foreach ($staffTags as $tag): ?>
+                              <span class="tag\"><?= htmlspecialchars($tag) ?></span>
+                            <?php endforeach; ?>
+                          </div>
                   }
                   ?>
                   <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($staff['name']) ?>" onerror="this.src='<?= app_url('assets/images/hq-logo.jpeg') ?>'">
@@ -136,6 +151,23 @@ if (file_exists(__DIR__ . '/config/db.php')) {
           </div>
           <div class="tutors-grid">
             <?php foreach ($teachingStaff as $t): ?>
+              <?php
+              $quals = array_values(array_filter(array_map('trim', explode(',', $t['qualifications'] ?? ''))));
+              $primaryRole = !empty($quals) ? $quals[0] : 'Teacher';
+              $tutorDescription = trim((string)($t['short_bio'] ?? ''));
+
+              if ($tutorDescription === '') {
+                $longBioText = trim(strip_tags((string)($t['long_bio'] ?? '')));
+                $tutorDescription = $longBioText !== ''
+                  ? substr($longBioText, 0, 180)
+                  : 'Focused on helping students build confidence, mastery, and excellent exam performance.';
+              }
+
+              $subs = json_decode($t['subjects'] ?? '[]', true);
+              if (!is_array($subs)) {
+                $subs = [];
+              }
+              ?>
               <article class="tutor-card">
                 <div class="tutor-thumb">
                   <?php
@@ -158,36 +190,15 @@ if (file_exists(__DIR__ . '/config/db.php')) {
                 </div>
                 <div class="tutor-body">
                   <h3><?= htmlspecialchars($t['name']) ?></h3>
-
-                  <?php
-                  $quals = array_filter(array_map('trim', explode(',', $t['qualifications'] ?? '')));
-                  if (!empty($quals)):
-                  ?>
-                    <p class="qualification-line"><?= htmlspecialchars(implode(', ', $quals)) ?></p>
-                  <?php else: ?>
-                    <p class="qualification-line">Not specified</p>
-                  <?php endif; ?>
-
-                  <!-- Long bio (full description) next -->
-                  <?php if (!empty($t['long_bio'])): ?>
-                    <div class="tutor-long-bio"><?= nl2br(htmlspecialchars($t['long_bio'])) ?></div>
-                  <?php endif; ?>
-
-                  <!-- Subjects with label as requested -->
-                  <?php $subs = json_decode($t['subjects'] ?? '[]', true);
-                  if (!empty($subs)): ?>
-                    <div class="subjects">
-                      <div class="subjects-label"><strong>Subjects:</strong></div>
-                      <div class="subjects-list">
-                        <?php foreach ($subs as $s): ?>
-                          <span class="tag"><?= htmlspecialchars($s) ?></span>
-                        <?php endforeach; ?>
-                      </div>
+                  <p class="qualification-line\"><?= htmlspecialchars($primaryRole) ?></p>
+                  <p class="tutor-short\"><?= htmlspecialchars($tutorDescription) ?></p>
+                  <?php if (!empty($subs)): ?>
+                    <div class="subjects-list">
+                      <?php foreach (array_slice($subs, 0, 3) as $s): ?>
+                        <span class="tag\"><?= htmlspecialchars($s) ?></span>
+                      <?php endforeach; ?>
                     </div>
                   <?php endif; ?>
-
-                  <!-- Short bio (years of experience) at the bottom -->
-                  <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
                 </div>
               </article>
             <?php endforeach; ?>
