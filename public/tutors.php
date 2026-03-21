@@ -52,7 +52,7 @@ if (file_exists(__DIR__ . '/config/db.php')) {
       // Static lead card for Adebule Quam (CEO) — manually inserted so it always appears first
       ?>
       <div class="tutor-lead-wrap">
-        <article class="tutor-card tutor-lead">
+        <article class="tutor-card">
           <div class="tutor-thumb">
             <img src="<?= app_url('assets/images/quam.jpg') ?>" alt="Adebule Quam">
           </div>
@@ -60,6 +60,11 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             <h3>Adebule Quam</h3>
             <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
             <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
+            <div class="subjects-list">
+              <span class="tag">Leadership</span>
+              <span class="tag">Exam Strategy</span>
+              <span class="tag">Mentorship</span>
+            </div>
           </div>
         </article>
       </div>
@@ -149,19 +154,37 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             <?php foreach ($teachingStaff as $t): ?>
               <?php
               $quals = array_values(array_filter(array_map('trim', explode(',', $t['qualifications'] ?? ''))));
-              $primaryRole = !empty($quals) ? $quals[0] : 'Teacher';
-              $tutorDescription = trim((string)($t['short_bio'] ?? ''));
+              $shortBio = trim((string)($t['short_bio'] ?? ''));
+              $longBioText = trim(strip_tags((string)($t['long_bio'] ?? '')));
+
+              $primaryRole = !empty($quals) ? $quals[0] : '';
+              if ($primaryRole === '' && $shortBio !== '' && strlen($shortBio) <= 55) {
+                $primaryRole = $shortBio;
+              }
+              if ($primaryRole === '') {
+                $primaryRole = 'Qualification Not Provided';
+              }
+
+              $tutorDescription = $shortBio;
+              if ($tutorDescription === '' || strlen($tutorDescription) <= 55) {
+                $tutorDescription = $longBioText;
+              }
 
               if ($tutorDescription === '') {
-                $longBioText = trim(strip_tags((string)($t['long_bio'] ?? '')));
-                $tutorDescription = $longBioText !== ''
-                  ? substr($longBioText, 0, 180)
-                  : 'Focused on helping students build confidence, mastery, and excellent exam performance.';
+                $tutorDescription = 'Focused on helping students build confidence, mastery, and excellent exam performance.';
               }
+              $tutorDescription = substr($tutorDescription, 0, 180);
 
               $subs = json_decode($t['subjects'] ?? '[]', true);
               if (!is_array($subs)) {
                 $subs = [];
+              }
+
+              $displayTags = [];
+              if (!empty($subs)) {
+                $displayTags = array_slice($subs, 0, 3);
+              } elseif (count($quals) > 1) {
+                $displayTags = array_slice($quals, 1, 3);
               }
               ?>
               <article class="tutor-card">
@@ -188,9 +211,9 @@ if (file_exists(__DIR__ . '/config/db.php')) {
                   <h3><?= htmlspecialchars($t['name']) ?></h3>
                   <p class="qualification-line"><?= htmlspecialchars($primaryRole) ?></p>
                   <p class="tutor-short"><?= htmlspecialchars($tutorDescription) ?></p>
-                  <?php if (!empty($subs)): ?>
+                  <?php if (!empty($displayTags)): ?>
                     <div class="subjects-list">
-                      <?php foreach (array_slice($subs, 0, 3) as $s): ?>
+                      <?php foreach ($displayTags as $s): ?>
                         <span class="tag"><?= htmlspecialchars($s) ?></span>
                       <?php endforeach; ?>
                     </div>

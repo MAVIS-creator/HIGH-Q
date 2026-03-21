@@ -15,7 +15,7 @@ if (!verifyToken('registration_wizard', $csrf)) {
     $errors[] = 'Invalid session token. Please refresh and try again.';
 }
 
-$validTypes = ['jamb','waec','postutme','digital','international'];
+$validTypes = ['jamb', 'waec', 'postutme', 'digital', 'international'];
 if (!in_array($programType, $validTypes, true)) {
     $errors[] = 'Invalid program type.';
 }
@@ -25,7 +25,9 @@ $siteSettings = [];
 try {
     $stmt = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
     $siteSettings = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-} catch (Throwable $e) { $siteSettings = []; }
+} catch (Throwable $e) {
+    $siteSettings = [];
+}
 $registrationEnabled = true;
 if (!empty($siteSettings)) {
     if (isset($siteSettings['registration'])) $registrationEnabled = (bool)$siteSettings['registration'];
@@ -108,7 +110,8 @@ try {
             $basePrices[$programType] = (float)$p['price'];
         }
     }
-} catch (Throwable $e) { /* ignore price lookup */ }
+} catch (Throwable $e) { /* ignore price lookup */
+}
 
 $amount = $basePrices[$programType] + $formFee + $cardFee;
 

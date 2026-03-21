@@ -13,11 +13,11 @@
     <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrf) ?>">
     <input type="hidden" name="program_type" value="waec">
     <input type="hidden" name="registration_type" value="regular">
-    
+
     <!-- Personal Information -->
     <div class="form-section">
         <h4 class="section-title"><i class='bx bxs-user'></i> Personal Information</h4>
-        
+
         <div class="form-row">
             <div class="form-group">
                 <label for="surname">Surname <span class="text-danger">*</span></label>
@@ -121,7 +121,7 @@
                 <input type="text" id="local_government" name="local_government" class="form-control" required placeholder="Enter your LGA">
             </div>
         </div>
-        
+
         <!-- Passport Photo Upload -->
         <div class="form-group">
             <label for="passport_photo">Passport Photograph <span class="text-danger">*</span></label>
@@ -138,30 +138,30 @@
                 </p>
             </div>
         </div>
-        
+
         <script>
-        document.getElementById('passport_photo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('File size must be less than 2MB');
-                    e.target.value = '';
-                    return;
+            document.getElementById('passport_photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File size must be less than 2MB');
+                        e.target.value = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('passport-preview').innerHTML = '<img src="' + e.target.result + '" style="max-width: 150px; max-height: 180px; border-radius: 8px; border: 3px solid #10b981;">';
+                    };
+                    reader.readAsDataURL(file);
                 }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('passport-preview').innerHTML = '<img src="' + e.target.result + '" style="max-width: 150px; max-height: 180px; border-radius: 8px; border: 3px solid #10b981;">';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+            });
         </script>
     </div>
 
     <!-- WAEC-Specific Information -->
     <div class="form-section">
         <h4 class="section-title"><i class='bx bxs-book-open'></i> Exam Details & Subject Selection</h4>
-        
+
         <div class="form-row">
             <div class="form-group">
                 <label for="exam_type">Exam Type <span class="text-danger">*</span></label>
@@ -210,7 +210,7 @@
     <!-- Emergency Contact -->
     <div class="form-section">
         <h4 class="section-title"><i class='bx bxs-phone'></i> Parent/Guardian Information</h4>
-        
+
         <div class="form-row">
             <div class="form-group">
                 <label for="parent_name">Parent/Guardian Name <span class="text-danger">*</span></label>
@@ -241,310 +241,310 @@
 </form>
 
 <style>
-.form-section {
-    margin-bottom: 40px;
-}
-
-.section-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #0b1a2c;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ffd600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.section-title i {
-    font-size: 1.5rem;
-    color: #ffd600;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #374151;
-}
-
-.form-control {
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #ffd600;
-    box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.1);
-}
-
-.form-check {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.form-check-input {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.text-danger {
-    color: #dc2626;
-}
-
-.form-text {
-    font-size: 0.85rem;
-    color: #6b7280;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
+    .form-section {
+        margin-bottom: 40px;
     }
-}
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0b1a2c;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ffd600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        font-size: 1.5rem;
+        color: #ffd600;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #374151;
+    }
+
+    .form-control {
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #ffd600;
+        box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.1);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .text-danger {
+        color: #dc2626;
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <script>
-(function () {
-    const examTypeSelect = document.getElementById('exam_type');
-    const subjectsGrid = document.getElementById('subjects-grid');
-    const subjectsLabel = document.getElementById('subjects-label');
-    const subjectsHint = document.getElementById('subjects-hint');
-    const form = examTypeSelect.closest('form');
+    (function() {
+        const examTypeSelect = document.getElementById('exam_type');
+        const subjectsGrid = document.getElementById('subjects-grid');
+        const subjectsLabel = document.getElementById('subjects-label');
+        const subjectsHint = document.getElementById('subjects-hint');
+        const form = examTypeSelect.closest('form');
 
-    const waecSubjects = [
-        'Commerce',
-        'Financial Accounting',
-        'Christian Religious Studies',
-        'Economics',
-        'Geography',
-        'Government',
-        'History',
-        'Islamic Studies',
-        'Literature in English',
-        'Civic Education',
-        'Arabic',
-        'English Language',
-        'French',
-        'Hausa',
-        'Igbo',
-        'Yoruba',
-        'Further Mathematics',
-        'General Mathematics',
-        'Agricultural Science',
-        'Biology',
-        'Chemistry',
-        'Health Education/Health Science',
-        'Physical Education',
-        'Physics',
-        'Auto Mechanics',
-        'Building Construction',
-        'Metal Work',
-        'Technical Drawing',
-        'Woodwork',
-        'Basic Electricity',
-        'Basic Electronics',
-        'Clothing and Textiles',
-        'Foods and Nutrition',
-        'Home Management',
-        'Music',
-        'Visual Art'
-    ];
+        const waecSubjects = [
+            'Commerce',
+            'Financial Accounting',
+            'Christian Religious Studies',
+            'Economics',
+            'Geography',
+            'Government',
+            'History',
+            'Islamic Studies',
+            'Literature in English',
+            'Civic Education',
+            'Arabic',
+            'English Language',
+            'French',
+            'Hausa',
+            'Igbo',
+            'Yoruba',
+            'Further Mathematics',
+            'General Mathematics',
+            'Agricultural Science',
+            'Biology',
+            'Chemistry',
+            'Health Education/Health Science',
+            'Physical Education',
+            'Physics',
+            'Auto Mechanics',
+            'Building Construction',
+            'Metal Work',
+            'Technical Drawing',
+            'Woodwork',
+            'Basic Electricity',
+            'Basic Electronics',
+            'Clothing and Textiles',
+            'Foods and Nutrition',
+            'Home Management',
+            'Music',
+            'Visual Art'
+        ];
 
-    const necoSubjects = [
-        'Physical Education',
-        'Auto Mechanics',
-        'Woodwork',
-        'Home Management',
-        'Foods and Nutrition',
-        'Music',
-        'French',
-        'Arabic',
-        'Auto Body Repair and Spray Painting',
-        'Auto Electrical Work',
-        'Auto Mechanical Work',
-        'Air Conditioning and Refrigeration',
-        'Welding and Fabrication',
-        'Engineering Craft Practice',
-        'Electrical Installation & Maintenance Work',
-        'Radio, Television and Electronics Work',
-        'Blocklaying, Bricklaying and Concrete Work',
-        'Painting and Decoration',
-        'Plumbing and Pipe Fitting',
-        'Machine Woodworking',
-        'Carpentry and Joinery',
-        'Furniture Making',
-        'Upholstery',
-        'Catering Craft Practice',
-        'Garment Making',
-        'Clothing and Textiles',
-        'Dyeing and Bleaching',
-        'Printing Craft Practice',
-        'Cosmetology',
-        'Photography',
-        'Leather Goods, Manufacturing and Repair',
-        'GSM Maintenance and Repairs',
-        'Animal Husbandry',
-        'Mathematics',
-        'English',
-        'Physics',
-        'Chemistry',
-        'Biology',
-        'Agricultural Science',
-        'Economics',
-        'Accounting',
-        'Further Mathematics',
-        'Commerce',
-        'Literature in English',
-        'Yoruba',
-        'Hausa',
-        'Igbo',
-        'Civic Education',
-        'Government',
-        'CRS',
-        'IRS',
-        'Computer studies',
-        'Data Science',
-        'Insurance',
-        'Electronics'
-    ];
+        const necoSubjects = [
+            'Physical Education',
+            'Auto Mechanics',
+            'Woodwork',
+            'Home Management',
+            'Foods and Nutrition',
+            'Music',
+            'French',
+            'Arabic',
+            'Auto Body Repair and Spray Painting',
+            'Auto Electrical Work',
+            'Auto Mechanical Work',
+            'Air Conditioning and Refrigeration',
+            'Welding and Fabrication',
+            'Engineering Craft Practice',
+            'Electrical Installation & Maintenance Work',
+            'Radio, Television and Electronics Work',
+            'Blocklaying, Bricklaying and Concrete Work',
+            'Painting and Decoration',
+            'Plumbing and Pipe Fitting',
+            'Machine Woodworking',
+            'Carpentry and Joinery',
+            'Furniture Making',
+            'Upholstery',
+            'Catering Craft Practice',
+            'Garment Making',
+            'Clothing and Textiles',
+            'Dyeing and Bleaching',
+            'Printing Craft Practice',
+            'Cosmetology',
+            'Photography',
+            'Leather Goods, Manufacturing and Repair',
+            'GSM Maintenance and Repairs',
+            'Animal Husbandry',
+            'Mathematics',
+            'English',
+            'Physics',
+            'Chemistry',
+            'Biology',
+            'Agricultural Science',
+            'Economics',
+            'Accounting',
+            'Further Mathematics',
+            'Commerce',
+            'Literature in English',
+            'Yoruba',
+            'Hausa',
+            'Igbo',
+            'Civic Education',
+            'Government',
+            'CRS',
+            'IRS',
+            'Computer studies',
+            'Data Science',
+            'Insurance',
+            'Electronics'
+        ];
 
-    const examConfig = {
-        'WAEC': {
-            subjects: waecSubjects,
-            min: 7,
-            max: 9,
-            requireCore: true,
-            coreEnglish: ['English Language'],
-            coreMath: ['General Mathematics']
-        },
-        'WAEC GCE': {
-            subjects: waecSubjects,
-            min: 7,
-            max: 9,
-            requireCore: true,
-            coreEnglish: ['English Language'],
-            coreMath: ['General Mathematics']
-        },
-        'NECO': {
-            subjects: necoSubjects,
-            min: 6,
-            max: 9,
-            requireCore: false,
-            coreEnglish: ['English'],
-            coreMath: ['Mathematics']
-        },
-        'NECO GCE': {
-            subjects: necoSubjects,
-            min: 6,
-            max: 9,
-            requireCore: false,
-            coreEnglish: ['English'],
-            coreMath: ['Mathematics']
-        }
-    };
+        const examConfig = {
+            'WAEC': {
+                subjects: waecSubjects,
+                min: 7,
+                max: 9,
+                requireCore: true,
+                coreEnglish: ['English Language'],
+                coreMath: ['General Mathematics']
+            },
+            'WAEC GCE': {
+                subjects: waecSubjects,
+                min: 7,
+                max: 9,
+                requireCore: true,
+                coreEnglish: ['English Language'],
+                coreMath: ['General Mathematics']
+            },
+            'NECO': {
+                subjects: necoSubjects,
+                min: 6,
+                max: 9,
+                requireCore: false,
+                coreEnglish: ['English'],
+                coreMath: ['Mathematics']
+            },
+            'NECO GCE': {
+                subjects: necoSubjects,
+                min: 6,
+                max: 9,
+                requireCore: false,
+                coreEnglish: ['English'],
+                coreMath: ['Mathematics']
+            }
+        };
 
-    function toSafeId(subject, index) {
-        return 'subj_' + subject.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') + '_' + index;
-    }
-
-    function renderSubjects() {
-        const examType = examTypeSelect.value;
-        subjectsGrid.innerHTML = '';
-
-        if (!examType || !examConfig[examType]) {
-            subjectsLabel.innerHTML = 'Select Your Subjects <span class="text-danger">*</span>';
-            subjectsHint.textContent = 'Select exam type first to load subjects';
-            return;
+        function toSafeId(subject, index) {
+            return 'subj_' + subject.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') + '_' + index;
         }
 
-        const cfg = examConfig[examType];
-        subjectsLabel.innerHTML = 'Select Your Subjects (' + cfg.min + ' to ' + cfg.max + ' subjects) <span class="text-danger">*</span>';
+        function renderSubjects() {
+            const examType = examTypeSelect.value;
+            subjectsGrid.innerHTML = '';
 
-        if (cfg.requireCore) {
-            subjectsHint.textContent = 'Choose between ' + cfg.min + ' and ' + cfg.max + ' subjects. English Language and General Mathematics are compulsory.';
-        } else {
-            subjectsHint.textContent = 'Choose between ' + cfg.min + ' and ' + cfg.max + ' subjects.';
-        }
-
-        cfg.subjects.forEach(function (subject, index) {
-            const wrap = document.createElement('div');
-            wrap.className = 'form-check';
-
-            const checkbox = document.createElement('input');
-            checkbox.className = 'form-check-input';
-            checkbox.type = 'checkbox';
-            checkbox.name = 'subjects[]';
-            checkbox.id = toSafeId(subject, index);
-            checkbox.value = subject;
-
-            const label = document.createElement('label');
-            label.className = 'form-check-label';
-            label.setAttribute('for', checkbox.id);
-            label.textContent = subject;
-
-            wrap.appendChild(checkbox);
-            wrap.appendChild(label);
-            subjectsGrid.appendChild(wrap);
-        });
-    }
-
-    examTypeSelect.addEventListener('change', renderSubjects);
-
-    form.addEventListener('submit', function (e) {
-        const examType = examTypeSelect.value;
-        const cfg = examConfig[examType];
-
-        if (!cfg) {
-            e.preventDefault();
-            alert('Please select a valid exam type.');
-            return;
-        }
-
-        const selectedSubjects = Array.from(form.querySelectorAll('input[name="subjects[]"]:checked')).map(function (el) {
-            return el.value;
-        });
-
-        if (selectedSubjects.length < cfg.min || selectedSubjects.length > cfg.max) {
-            e.preventDefault();
-            alert('For ' + examType + ', select a minimum of ' + cfg.min + ' subjects and a maximum of ' + cfg.max + ' subjects.');
-            return;
-        }
-
-        if (cfg.requireCore) {
-            const hasEnglish = cfg.coreEnglish.some(function (subject) {
-                return selectedSubjects.includes(subject);
-            });
-            const hasMath = cfg.coreMath.some(function (subject) {
-                return selectedSubjects.includes(subject);
-            });
-
-            if (!hasEnglish || !hasMath) {
-                e.preventDefault();
-                alert(examType + ' requires English Language and General Mathematics.');
+            if (!examType || !examConfig[examType]) {
+                subjectsLabel.innerHTML = 'Select Your Subjects <span class="text-danger">*</span>';
+                subjectsHint.textContent = 'Select exam type first to load subjects';
                 return;
             }
-        }
-    });
 
-    renderSubjects();
-})();
+            const cfg = examConfig[examType];
+            subjectsLabel.innerHTML = 'Select Your Subjects (' + cfg.min + ' to ' + cfg.max + ' subjects) <span class="text-danger">*</span>';
+
+            if (cfg.requireCore) {
+                subjectsHint.textContent = 'Choose between ' + cfg.min + ' and ' + cfg.max + ' subjects. English Language and General Mathematics are compulsory.';
+            } else {
+                subjectsHint.textContent = 'Choose between ' + cfg.min + ' and ' + cfg.max + ' subjects.';
+            }
+
+            cfg.subjects.forEach(function(subject, index) {
+                const wrap = document.createElement('div');
+                wrap.className = 'form-check';
+
+                const checkbox = document.createElement('input');
+                checkbox.className = 'form-check-input';
+                checkbox.type = 'checkbox';
+                checkbox.name = 'subjects[]';
+                checkbox.id = toSafeId(subject, index);
+                checkbox.value = subject;
+
+                const label = document.createElement('label');
+                label.className = 'form-check-label';
+                label.setAttribute('for', checkbox.id);
+                label.textContent = subject;
+
+                wrap.appendChild(checkbox);
+                wrap.appendChild(label);
+                subjectsGrid.appendChild(wrap);
+            });
+        }
+
+        examTypeSelect.addEventListener('change', renderSubjects);
+
+        form.addEventListener('submit', function(e) {
+            const examType = examTypeSelect.value;
+            const cfg = examConfig[examType];
+
+            if (!cfg) {
+                e.preventDefault();
+                alert('Please select a valid exam type.');
+                return;
+            }
+
+            const selectedSubjects = Array.from(form.querySelectorAll('input[name="subjects[]"]:checked')).map(function(el) {
+                return el.value;
+            });
+
+            if (selectedSubjects.length < cfg.min || selectedSubjects.length > cfg.max) {
+                e.preventDefault();
+                alert('For ' + examType + ', select a minimum of ' + cfg.min + ' subjects and a maximum of ' + cfg.max + ' subjects.');
+                return;
+            }
+
+            if (cfg.requireCore) {
+                const hasEnglish = cfg.coreEnglish.some(function(subject) {
+                    return selectedSubjects.includes(subject);
+                });
+                const hasMath = cfg.coreMath.some(function(subject) {
+                    return selectedSubjects.includes(subject);
+                });
+
+                if (!hasEnglish || !hasMath) {
+                    e.preventDefault();
+                    alert(examType + ' requires English Language and General Mathematics.');
+                    return;
+                }
+            }
+        });
+
+        renderSubjects();
+    })();
 </script>
