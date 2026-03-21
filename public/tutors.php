@@ -94,47 +94,43 @@ if (file_exists(__DIR__ . '/config/db.php')) {
               }
 
               $staffTags = !empty($staffQualifications) ? array_slice($staffQualifications, 0, 3) : ['Administration'];
+
+              $photoPath = $staff['photo'] ?? '';
+              if (empty($photoPath)) {
+                $commonFilenames = ['secretary.jpeg', 'secretary.jpg', 'secretary.png'];
+                foreach ($commonFilenames as $fn) {
+                  if (file_exists(__DIR__ . '/uploads/tutors/' . $fn)) {
+                    $photoPath = 'uploads/tutors/' . $fn;
+                    break;
+                  }
+                }
+              }
+
+              if (!empty($photoPath)) {
+                if (preg_match('#^https?://#', $photoPath)) {
+                  // Already full URL
+                } elseif (strpos($photoPath, 'uploads/tutors/') !== false) {
+                  $photoPath = app_url($photoPath);
+                } else {
+                  $photoPath = app_url('uploads/tutors/' . basename($photoPath));
+                }
+              } else {
+                $photoPath = app_url('assets/images/hq-logo.jpeg');
+              }
               ?>
               <article class="staff-card admin-card">
                 <div class="staff-thumb">
-                  <?php
-                  $photoPath = $staff['photo'] ?? '';
-                  // If empty, try common filenames
-                  if (empty($photoPath)) {
-                    $commonFilenames = ['secretary.jpeg', 'secretary.jpg', 'secretary.png'];
-                    foreach ($commonFilenames as $fn) {
-                      if (file_exists(__DIR__ . '/uploads/tutors/' . $fn)) {
-                        $photoPath = 'uploads/tutors/' . $fn;
-                        break;
-                      }
-                    }
-                          <p class="staff-position\"><?= htmlspecialchars($staffRole) ?></p>
-                          <p class="staff-bio\"><?= htmlspecialchars(substr($staffDescription, 0, 180)) ?></p>
-                          <div class="subjects-list">
-                            <?php foreach ($staffTags as $tag): ?>
-                              <span class="tag\"><?= htmlspecialchars($tag) ?></span>
-                            <?php endforeach; ?>
-                          </div>
-                  }
-                  ?>
                   <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($staff['name']) ?>" onerror="this.src='<?= app_url('assets/images/hq-logo.jpeg') ?>'">
                 </div>
                 <div class="staff-body">
                   <h4><?= htmlspecialchars($staff['name']) ?></h4>
-                  <p class="staff-position"><?= htmlspecialchars($staff['short_bio'] ?? 'Administrative Staff') ?></p>
-
-                  <?php
-                  $quals = array_filter(array_map('trim', explode(',', $staff['qualifications'] ?? '')));
-                  if (!empty($quals)):
-                  ?>
-                    <p class="staff-qualification">
-                      <i class='bx bx-medal'></i> <?= htmlspecialchars(implode(', ', $quals)) ?>
-                    </p>
-                  <?php endif; ?>
-
-                  <?php if (!empty($staff['long_bio'])): ?>
-                    <p class="staff-bio"><?= htmlspecialchars(substr($staff['long_bio'], 0, 150)) ?></p>
-                  <?php endif; ?>
+                  <p class="staff-position"><?= htmlspecialchars($staffRole) ?></p>
+                  <p class="staff-bio"><?= htmlspecialchars(substr($staffDescription, 0, 180)) ?></p>
+                  <div class="subjects-list">
+                    <?php foreach ($staffTags as $tag): ?>
+                      <span class="tag"><?= htmlspecialchars($tag) ?></span>
+                    <?php endforeach; ?>
+                  </div>
                 </div>
               </article>
             <?php endforeach; ?>
@@ -190,12 +186,12 @@ if (file_exists(__DIR__ . '/config/db.php')) {
                 </div>
                 <div class="tutor-body">
                   <h3><?= htmlspecialchars($t['name']) ?></h3>
-                  <p class="qualification-line\"><?= htmlspecialchars($primaryRole) ?></p>
-                  <p class="tutor-short\"><?= htmlspecialchars($tutorDescription) ?></p>
+                  <p class="qualification-line"><?= htmlspecialchars($primaryRole) ?></p>
+                  <p class="tutor-short"><?= htmlspecialchars($tutorDescription) ?></p>
                   <?php if (!empty($subs)): ?>
                     <div class="subjects-list">
                       <?php foreach (array_slice($subs, 0, 3) as $s): ?>
-                        <span class="tag\"><?= htmlspecialchars($s) ?></span>
+                        <span class="tag"><?= htmlspecialchars($s) ?></span>
                       <?php endforeach; ?>
                     </div>
                   <?php endif; ?>
