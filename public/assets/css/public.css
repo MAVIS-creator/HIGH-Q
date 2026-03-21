@@ -5482,3 +5482,147 @@ input.form-input {
     font-size: 1.1rem;
   }
 }
+
+/* =====================================================
+   FACULTY DIRECTORY CARD LAYOUT (Tutor + Admin Unified)
+   ===================================================== */
+.tutors-section .tutors-grid,
+.tutors-section .staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 360px));
+  justify-content: center;
+  gap: 22px;
+}
+
+.tutors-section .tutor-card:not(.tutor-lead),
+.tutors-section .staff-card {
+  border-radius: 14px;
+  border: 1px solid #e8eaee;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  padding: 14px 14px 16px;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.tutors-section .tutor-card:not(.tutor-lead):hover,
+.tutors-section .staff-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(217, 154, 0, 0.45);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+}
+
+.tutors-section .tutor-card:not(.tutor-lead) .tutor-thumb,
+.tutors-section .staff-card .staff-thumb {
+  background: transparent;
+  width: 100%;
+  height: auto;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tutors-section .tutor-card:not(.tutor-lead) .tutor-thumb img,
+.tutors-section .staff-card .staff-thumb img {
+  width: min(100%, 220px);
+  height: min(100%, 220px);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 999px;
+  border: 2px solid #f3e3b6;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  position: static !important;
+  transform: none !important;
+  margin: 0;
+}
+
+.tutors-section .staff-card:hover .staff-thumb img {
+  transform: none !important;
+}
+
+.tutors-section .tutor-card:not(.tutor-lead) .tutor-body,
+.tutors-section .staff-card .staff-body {
+  padding: 0 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  text-align: left;
+}
+
+.tutors-section .tutor-card:not(.tutor-lead) .tutor-body h3,
+.tutors-section .staff-card .staff-body h4 {
+  margin: 0;
+  text-align: center;
+  color: #0f172a;
+  font-size: 2rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.tutors-section .qualification-line,
+.tutors-section .staff-position {
+  margin: 0;
+  text-align: center;
+  color: #b88900;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.tutors-section .tutor-short,
+.tutors-section .staff-bio {
+  margin: 4px 0 0;
+  color: #1f2937;
+  font-size: 1.45rem;
+  line-height: 1.45;
+  min-height: 68px;
+  border: 0;
+  padding: 0;
+}
+
+.tutors-section .subjects-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tutors-section .subjects-list .tag,
+.tutors-section .tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #d9e3e9;
+  background: #eaf4fa;
+  color: #0f172a;
+  font-size: 1.25rem;
+  line-height: 1;
+  font-weight: 500;
+  margin: 0;
+}
+
+.tutors-section .subjects-list .tag:nth-child(even) {
+  background: #e7f5e9;
+  border-color: #cfe6d3;
+}
+
+@media (max-width: 900px) {
+  .tutors-section .tutors-grid,
+  .tutors-section .staff-grid {
+    grid-template-columns: minmax(280px, 360px);
+    gap: 18px;
+  }
+
+  .tutors-section .tutor-card:not(.tutor-lead) .tutor-thumb img,
+  .tutors-section .staff-card .staff-thumb img {
+    width: min(100%, 188px);
+    height: min(100%, 188px);
+  }
+}
