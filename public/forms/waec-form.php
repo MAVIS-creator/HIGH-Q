@@ -168,8 +168,9 @@
                 <select id="exam_type" name="exam_type" class="form-control" required>
                     <option value="">Select Exam</option>
                     <option value="WAEC">WAEC</option>
+                    <option value="WAEC GCE">WAEC GCE (Private Candidate)</option>
                     <option value="NECO">NECO</option>
-                    <option value="GCE">GCE</option>
+                    <option value="NECO GCE">NECO GCE (Private Candidate)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -183,58 +184,9 @@
         </div>
 
         <div class="form-group">
-            <label>Select Your Subjects (Up to 9 subjects) <span class="text-danger">*</span></label>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_english" value="English Language">
-                    <label class="form-check-label" for="subj_english">English Language</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_math" value="Mathematics">
-                    <label class="form-check-label" for="subj_math">Mathematics</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_physics" value="Physics">
-                    <label class="form-check-label" for="subj_physics">Physics</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_chemistry" value="Chemistry">
-                    <label class="form-check-label" for="subj_chemistry">Chemistry</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_biology" value="Biology">
-                    <label class="form-check-label" for="subj_biology">Biology</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_economics" value="Economics">
-                    <label class="form-check-label" for="subj_economics">Economics</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_gov" value="Government">
-                    <label class="form-check-label" for="subj_gov">Government/Civic Education</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_lit" value="Literature">
-                    <label class="form-check-label" for="subj_lit">Literature in English</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_agric" value="Agricultural Science">
-                    <label class="form-check-label" for="subj_agric">Agricultural Science</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_further_math" value="Further Mathematics">
-                    <label class="form-check-label" for="subj_further_math">Further Mathematics</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_commerce" value="Commerce">
-                    <label class="form-check-label" for="subj_commerce">Commerce</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="subjects[]" id="subj_accounting" value="Financial Accounting">
-                    <label class="form-check-label" for="subj_accounting">Financial Accounting</label>
-                </div>
-            </div>
-            <small class="form-text" style="display: block; margin-top: 8px;">Select all subjects you're registering for</small>
+            <label id="subjects-label">Select Your Subjects <span class="text-danger">*</span></label>
+            <div id="subjects-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;"></div>
+            <small id="subjects-hint" class="form-text" style="display: block; margin-top: 8px;">Select exam type first to load subjects</small>
         </div>
 
         <div class="form-row">
@@ -369,3 +321,230 @@
     }
 }
 </style>
+
+<script>
+(function () {
+    const examTypeSelect = document.getElementById('exam_type');
+    const subjectsGrid = document.getElementById('subjects-grid');
+    const subjectsLabel = document.getElementById('subjects-label');
+    const subjectsHint = document.getElementById('subjects-hint');
+    const form = examTypeSelect.closest('form');
+
+    const waecSubjects = [
+        'Commerce',
+        'Financial Accounting',
+        'Christian Religious Studies',
+        'Economics',
+        'Geography',
+        'Government',
+        'History',
+        'Islamic Studies',
+        'Literature in English',
+        'Civic Education',
+        'Arabic',
+        'English Language',
+        'French',
+        'Hausa',
+        'Igbo',
+        'Yoruba',
+        'Further Mathematics',
+        'General Mathematics',
+        'Agricultural Science',
+        'Biology',
+        'Chemistry',
+        'Health Education/Health Science',
+        'Physical Education',
+        'Physics',
+        'Auto Mechanics',
+        'Building Construction',
+        'Metal Work',
+        'Technical Drawing',
+        'Woodwork',
+        'Basic Electricity',
+        'Basic Electronics',
+        'Clothing and Textiles',
+        'Foods and Nutrition',
+        'Home Management',
+        'Music',
+        'Visual Art'
+    ];
+
+    const necoSubjects = [
+        'Physical Education',
+        'Auto Mechanics',
+        'Woodwork',
+        'Home Management',
+        'Foods and Nutrition',
+        'Music',
+        'French',
+        'Arabic',
+        'Auto Body Repair and Spray Painting',
+        'Auto Electrical Work',
+        'Auto Mechanical Work',
+        'Air Conditioning and Refrigeration',
+        'Welding and Fabrication',
+        'Engineering Craft Practice',
+        'Electrical Installation & Maintenance Work',
+        'Radio, Television and Electronics Work',
+        'Blocklaying, Bricklaying and Concrete Work',
+        'Painting and Decoration',
+        'Plumbing and Pipe Fitting',
+        'Machine Woodworking',
+        'Carpentry and Joinery',
+        'Furniture Making',
+        'Upholstery',
+        'Catering Craft Practice',
+        'Garment Making',
+        'Clothing and Textiles',
+        'Dyeing and Bleaching',
+        'Printing Craft Practice',
+        'Cosmetology',
+        'Photography',
+        'Leather Goods, Manufacturing and Repair',
+        'GSM Maintenance and Repairs',
+        'Animal Husbandry',
+        'Mathematics',
+        'English',
+        'Physics',
+        'Chemistry',
+        'Biology',
+        'Agricultural Science',
+        'Economics',
+        'Accounting',
+        'Further Mathematics',
+        'Commerce',
+        'Literature in English',
+        'Yoruba',
+        'Hausa',
+        'Igbo',
+        'Civic Education',
+        'Government',
+        'CRS',
+        'IRS',
+        'Computer studies',
+        'Data Science',
+        'Insurance',
+        'Electronics'
+    ];
+
+    const examConfig = {
+        'WAEC': {
+            subjects: waecSubjects,
+            min: 7,
+            max: 9,
+            requireCore: true,
+            coreEnglish: ['English Language'],
+            coreMath: ['General Mathematics']
+        },
+        'WAEC GCE': {
+            subjects: waecSubjects,
+            min: 7,
+            max: 9,
+            requireCore: true,
+            coreEnglish: ['English Language'],
+            coreMath: ['General Mathematics']
+        },
+        'NECO': {
+            subjects: necoSubjects,
+            min: 6,
+            max: 9,
+            requireCore: false,
+            coreEnglish: ['English'],
+            coreMath: ['Mathematics']
+        },
+        'NECO GCE': {
+            subjects: necoSubjects,
+            min: 6,
+            max: 9,
+            requireCore: false,
+            coreEnglish: ['English'],
+            coreMath: ['Mathematics']
+        }
+    };
+
+    function toSafeId(subject, index) {
+        return 'subj_' + subject.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') + '_' + index;
+    }
+
+    function renderSubjects() {
+        const examType = examTypeSelect.value;
+        subjectsGrid.innerHTML = '';
+
+        if (!examType || !examConfig[examType]) {
+            subjectsLabel.innerHTML = 'Select Your Subjects <span class="text-danger">*</span>';
+            subjectsHint.textContent = 'Select exam type first to load subjects';
+            return;
+        }
+
+        const cfg = examConfig[examType];
+        subjectsLabel.innerHTML = 'Select Your Subjects (' + cfg.min + ' to ' + cfg.max + ' subjects) <span class="text-danger">*</span>';
+
+        if (cfg.requireCore) {
+            subjectsHint.textContent = 'Choose between ' + cfg.min + ' and ' + cfg.max + ' subjects. English Language and General Mathematics are compulsory.';
+        } else {
+            subjectsHint.textContent = 'Choose between ' + cfg.min + ' and ' + cfg.max + ' subjects.';
+        }
+
+        cfg.subjects.forEach(function (subject, index) {
+            const wrap = document.createElement('div');
+            wrap.className = 'form-check';
+
+            const checkbox = document.createElement('input');
+            checkbox.className = 'form-check-input';
+            checkbox.type = 'checkbox';
+            checkbox.name = 'subjects[]';
+            checkbox.id = toSafeId(subject, index);
+            checkbox.value = subject;
+
+            const label = document.createElement('label');
+            label.className = 'form-check-label';
+            label.setAttribute('for', checkbox.id);
+            label.textContent = subject;
+
+            wrap.appendChild(checkbox);
+            wrap.appendChild(label);
+            subjectsGrid.appendChild(wrap);
+        });
+    }
+
+    examTypeSelect.addEventListener('change', renderSubjects);
+
+    form.addEventListener('submit', function (e) {
+        const examType = examTypeSelect.value;
+        const cfg = examConfig[examType];
+
+        if (!cfg) {
+            e.preventDefault();
+            alert('Please select a valid exam type.');
+            return;
+        }
+
+        const selectedSubjects = Array.from(form.querySelectorAll('input[name="subjects[]"]:checked')).map(function (el) {
+            return el.value;
+        });
+
+        if (selectedSubjects.length < cfg.min || selectedSubjects.length > cfg.max) {
+            e.preventDefault();
+            alert('For ' + examType + ', select a minimum of ' + cfg.min + ' subjects and a maximum of ' + cfg.max + ' subjects.');
+            return;
+        }
+
+        if (cfg.requireCore) {
+            const hasEnglish = cfg.coreEnglish.some(function (subject) {
+                return selectedSubjects.includes(subject);
+            });
+            const hasMath = cfg.coreMath.some(function (subject) {
+                return selectedSubjects.includes(subject);
+            });
+
+            if (!hasEnglish || !hasMath) {
+                e.preventDefault();
+                alert(examType + ' requires English Language and General Mathematics.');
+                return;
+            }
+        }
+    });
+
+    renderSubjects();
+})();
+</script>
