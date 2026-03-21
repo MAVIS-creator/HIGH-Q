@@ -46,6 +46,39 @@ if ($first === '') $errors[] = 'First name is required.';
 if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required.';
 if ($phone === '') $errors[] = 'Phone number is required.';
 
+if ($programType === 'waec') {
+    $examType = trim((string)($_POST['exam_type'] ?? ''));
+    $validExamTypes = ['WAEC', 'WAEC GCE', 'NECO', 'NECO GCE'];
+    if (!in_array($examType, $validExamTypes, true)) {
+        $errors[] = 'Please select a valid exam type for WAEC/NECO/GCE registration.';
+    }
+
+    $subjects = $_POST['subjects'] ?? [];
+    if (!is_array($subjects)) {
+        $subjects = [];
+    }
+
+    $subjects = array_values(array_unique(array_filter(array_map('trim', $subjects), static function ($s) {
+        return $s !== '';
+    })));
+
+    if ($examType === 'WAEC' || $examType === 'WAEC GCE') {
+        if (count($subjects) < 7 || count($subjects) > 9) {
+            $errors[] = $examType . ' requires a minimum of 7 subjects and a maximum of 9 subjects.';
+        }
+
+        if (!in_array('English Language', $subjects, true) || !in_array('General Mathematics', $subjects, true)) {
+            $errors[] = $examType . ' requires English Language and General Mathematics.';
+        }
+    }
+
+    if ($examType === 'NECO' || $examType === 'NECO GCE') {
+        if (count($subjects) < 6 || count($subjects) > 9) {
+            $errors[] = $examType . ' requires a minimum of 6 subjects and a maximum of 9 subjects.';
+        }
+    }
+}
+
 // Amount map (fallback if no course price pulled)
 $basePrices = [
     'jamb' => 10000,
