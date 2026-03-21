@@ -112,6 +112,7 @@ function createTutor($conn) {
     $photo = $_POST['photo'] ?? '';
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+    $type = $_POST['type'] ?? 'tutor'; // 'tutor' or 'admin_staff'
     
     if (empty($name) || empty($title)) {
         throw new Exception('Name and title are required');
@@ -134,13 +135,14 @@ function createTutor($conn) {
     // Check if tutors table has the right columns
     try {
         $stmt = $conn->prepare("
-            INSERT INTO tutors (name, slug, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, is_featured, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            INSERT INTO tutors (name, slug, type, photo, short_bio, long_bio, qualifications, subjects, contact_email, phone, is_featured, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
         
         $stmt->execute([
             $name,
             $slug,
+            $type,
             $photo,
             $title, // Use title as short_bio
             $bio,
@@ -189,6 +191,7 @@ function updateTutor($conn) {
     $photo = $_POST['photo'] ?? '';
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+    $type = $_POST['type'] ?? 'tutor'; // 'tutor' or 'admin_staff'
     
     if (empty($id) || empty($name) || empty($title)) {
         throw new Exception('ID, name, and title are required');
@@ -211,13 +214,14 @@ function updateTutor($conn) {
     try {
         $stmt = $conn->prepare("
             UPDATE tutors 
-            SET name=?, slug=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, is_featured=?, updated_at=NOW()
+            SET name=?, slug=?, type=?, photo=?, short_bio=?, long_bio=?, qualifications=?, subjects=?, contact_email=?, phone=?, is_featured=?, updated_at=NOW()
             WHERE id=?
         ");
         
         $stmt->execute([
             $name,
             $slug,
+            $type,
             $photo,
             $title, // Use title as short_bio
             $bio,

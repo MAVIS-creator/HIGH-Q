@@ -1,7 +1,7 @@
 <?php
 // Admin Tutors Management Page - Modern UI
-$pageTitle = 'Tutors Management';
-$pageSubtitle = 'Manage teaching staff and their information';
+$pageTitle = 'Staff Management';
+$pageSubtitle = 'Manage teaching staff, tutors, and administrative staff members';
 
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -43,21 +43,32 @@ try {
     <div class="page-hero">
         <div class="page-hero-content">
             <div class="page-hero-text">
-                <span class="page-hero-badge">Teaching Staff</span>
+                <span class="page-hero-badge">Staff Management</span>
                 <h1 class="page-hero-title"><?= htmlspecialchars($pageTitle) ?></h1>
                 <p class="page-hero-subtitle"><?= htmlspecialchars($pageSubtitle) ?></p>
             </div>
             <button onclick="openAddModal()" class="btn-primary-hero">
                 <i class='bx bx-plus'></i>
-                Add Tutor
+                Add Staff Member
             </button>
+        </div>
+    </div>
+
+    <!-- Staff Type Filter -->
+    <div class="content-card">
+        <div class="card-body">
+            <div class="staff-filter">
+                <button class="filter-btn active" onclick="filterByType('all')">All Staff</button>
+                <button class="filter-btn" onclick="filterByType('tutor')">Teaching Staff</button>
+                <button class="filter-btn" onclick="filterByType('admin_staff')">Administrative Staff</button>
+            </div>
         </div>
     </div>
 
     <!-- Search and Filter -->
     <div class="content-card">
         <div class="card-header">
-            <h2 class="card-title">Search Tutors</h2>
+            <h2 class="card-title">Search Staff Members</h2>
         </div>
         <div class="card-body">
             <div class="search-bar">
@@ -72,15 +83,15 @@ try {
         <?php if (empty($tutors)): ?>
             <div class="empty-state">
                 <i class='bx bx-user-voice'></i>
-                <h3>No tutors found</h3>
-                <p>Add your first tutor to get started</p>
+                <h3>No staff members found</h3>
+                <p>Add your first staff member to get started</p>
                 <button onclick="openAddModal()" class="btn-primary">
-                    <i class='bx bx-plus'></i> Add Tutor
+                    <i class='bx bx-plus'></i> Add Staff Member
                 </button>
             </div>
         <?php else: ?>
             <?php foreach ($tutors as $tutor): ?>
-                <div class="tutor-card" data-name="<?= strtolower(htmlspecialchars($tutor['name'] ?? '')) ?>" data-subject="<?= strtolower(htmlspecialchars($tutor['subject'] ?? '')) ?>">
+                <div class="tutor-card" data-name="<?= strtolower(htmlspecialchars($tutor['name'] ?? '')) ?>" data-subject="<?= strtolower(htmlspecialchars($tutor['subject'] ?? '')) ?>" data-type="<?= htmlspecialchars($tutor['type'] ?? 'tutor') ?>">
                     <div class="tutor-avatar">
                         <?php if (!empty($tutor['photo'])): ?>
                             <?php 
@@ -200,12 +211,26 @@ try {
                     <input type="text" id="name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="title"><span class="required">*</span> Title/Position</label>
-                    <input type="text" id="title" name="title" placeholder="e.g., Senior Mathematics Instructor" required>
+                    <label for="type"><span class="required">*</span> Staff Type</label>
+                    <select id="type" name="type" required onchange="updateFormForType()">
+                        <option value="tutor">Teaching Staff (Tutor)</option>
+                        <option value="admin_staff">Administrative Staff</option>
+                    </select>
                 </div>
             </div>
             
-            <div class="form-group">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="title"><span class="required">*</span> Title/Position</label>
+                    <input type="text" id="title" name="title" placeholder="e.g., Senior Mathematics Instructor" required>
+                </div>
+                <div class="form-group">
+                    <label for="qualifications">Qualifications</label>
+                    <input type="text" id="qualifications" name="qualifications" placeholder="B.Sc Mathematics, M.Ed, ND">
+                </div>
+            </div>
+            
+            <div class="form-group" id="subjectsGroup">
                 <label for="subjects">Subjects (comma-separated)</label>
                 <input type="text" id="subjects" name="subjects" placeholder="Mathematics, Physics, Chemistry">
             </div>
@@ -217,7 +242,7 @@ try {
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="tutor@example.com">
+                    <input type="email" id="email" name="email" placeholder="staff@example.com">
                 </div>
             </div>
             
@@ -225,10 +250,6 @@ try {
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input type="tel" id="phone" name="phone" placeholder="+234 xxx xxx xxxx">
-                </div>
-                <div class="form-group">
-                    <label for="qualifications">Qualifications</label>
-                    <input type="text" id="qualifications" name="qualifications" placeholder="B.Sc Mathematics, M.Ed">
                 </div>
             </div>
             
@@ -250,9 +271,9 @@ try {
                 </div>
             </div>
             
-            <div class="form-group">
+            <div class="form-group" id="bioGroup">
                 <label for="bio">Bio/Description</label>
-                <textarea id="bio" name="bio" rows="4" placeholder="Brief description about the tutor..."></textarea>
+                <textarea id="bio" name="bio" rows="4" placeholder="Brief description about the staff..."></textarea>
             </div>
             
             <div class="form-group checkbox-group">
@@ -388,6 +409,35 @@ try {
     background: transparent;
     font-size: 0.95rem;
     outline: none;
+}
+
+.staff-filter {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    border-color: #fbbf24;
+    background: #fffbeb;
+}
+
+.filter-btn.active {
+    background: #fbbf24;
+    border-color: #fbbf24;
+    color: #1e293b;
+    font-weight: 600;
 }
 
 .tutors-grid {
@@ -702,7 +752,8 @@ try {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #d1d5db;
@@ -712,7 +763,8 @@ try {
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     outline: none;
     border-color: #fbbf24;
     box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
@@ -859,6 +911,8 @@ try {
 </style>
 
 <script>
+let currentTypeFilter = 'all';
+
 function filterTutors() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const cards = document.querySelectorAll('.tutor-card');
@@ -866,16 +920,56 @@ function filterTutors() {
     cards.forEach(card => {
         const name = card.dataset.name || '';
         const subject = card.dataset.subject || '';
-        const visible = name.includes(query) || subject.includes(query);
-        card.style.display = visible ? '' : 'none';
+        const type = card.dataset.type || 'tutor';
+        const matchType = currentTypeFilter === 'all' || type === currentTypeFilter;
+        const matchSearch = name.includes(query) || subject.includes(query);
+        card.style.display = (matchType && matchSearch) ? '' : 'none';
     });
+}
+
+function filterByType(type) {
+    currentTypeFilter = type;
+    
+    // Update button states
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Filter cards
+    filterTutors();
 }
 
 function openAddModal() {
     document.getElementById('modalTitle').textContent = 'Add Tutor';
     document.getElementById('tutorForm').reset();
     document.getElementById('tutorId').value = '';
+    document.getElementById('type').value = 'tutor';
+    updateFormForType();
     document.getElementById('tutorModal').style.display = 'flex';
+}
+
+function updateFormForType() {
+    const type = document.getElementById('type').value;
+    const subjectsGroup = document.getElementById('subjectsGroup');
+    const bioGroup = document.getElementById('bioGroup');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    if (type === 'admin_staff') {
+        // Administrative staff - hide subjects field
+        if (subjectsGroup) subjectsGroup.style.display = 'none';
+        if (bioGroup) bioGroup.style.display = 'none';
+        if (modalTitle && !modalTitle.textContent.includes('Edit')) {
+            modalTitle.textContent = 'Add Administrative Staff';
+        }
+    } else {
+        // Teaching staff - show subjects field
+        if (subjectsGroup) subjectsGroup.style.display = 'block';
+        if (bioGroup) bioGroup.style.display = 'block';
+        if (modalTitle && !modalTitle.textContent.includes('Edit')) {
+            modalTitle.textContent = 'Add Tutor';
+        }
+    }
 }
 
 function closeModal() {
@@ -894,20 +988,25 @@ async function editTutor(id) {
         const data = await res.json();
         if (data.success) {
             const t = data.tutor;
-            document.getElementById('modalTitle').textContent = 'Edit Tutor';
+            document.getElementById('modalTitle').textContent = 'Edit Staff Member';
             document.getElementById('tutorId').value = t.id;
             document.getElementById('name').value = t.name || '';
+            document.getElementById('type').value = t.type || 'tutor';
             document.getElementById('title').value = t.short_bio || '';
+            document.getElementById('qualifications').value = t.qualifications || '';
             document.getElementById('subjects').value = t.subjects || '';
             document.getElementById('experience').value = t.experience || '';
+            document.getElementById('email').value = t.contact_email || '';
+            document.getElementById('phone').value = t.phone || '';
             document.getElementById('photo').value = t.photo || '';
             document.getElementById('bio').value = t.long_bio || '';
             document.getElementById('is_active').checked = t.is_active == 1;
             document.getElementById('is_featured').checked = t.is_featured == 1;
+            updateFormForType();
             document.getElementById('tutorModal').style.display = 'flex';
         }
     } catch (e) {
-        Swal.fire('Error', 'Failed to load tutor data', 'error');
+        Swal.fire('Error', 'Failed to load staff data', 'error');
     }
 }
 

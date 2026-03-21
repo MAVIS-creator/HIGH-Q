@@ -4217,23 +4217,26 @@ input.form-input {
 }
 
 .tutors-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   justify-content: center;
-  gap: 24px;
+  gap: 28px;
   margin-top: 18px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tutor-card {
-  width: 320px;
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  box-shadow: 0 6px 20px rgba(19, 24, 33, 0.06);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Animate tutor cards into view */
@@ -4249,38 +4252,36 @@ input.form-input {
 }
 
 .tutor-card.hover-zoom {
-  transition: transform .28s ease, box-shadow .28s ease;
+  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
 }
 
 .tutor-card.hover-zoom:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
 }
 
 .tutor-thumb {
-  background: linear-gradient(135deg, #f6f8fa, #eaeef2);
-  /* banner background */
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 140px;
-  /* controls the height of the top box */
+  height: 160px;
   position: relative;
 }
 
 .tutor-thumb img {
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   border-radius: 50%;
-  border: 3px solid #fff;
+  border: 4px solid #fff;
   background: #fff;
   position: absolute;
-  bottom: -40px;
-  /* makes it float into the body area */
+  bottom: -35px;
   left: 50%;
   transform: translateX(-50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
 }
 
 /* Lead card (full-width / standalone row) */
@@ -4378,122 +4379,222 @@ input.form-input {
 }
 
 .tutor-lead .tutor-thumb {
-  height: 200px;
+  height: 180px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
   display: flex;
   align-items: center;
-  justify-content: center
+  justify-content: center;
+  position: relative;
 }
 
 .tutor-lead .tutor-thumb img {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  box-shadow: 0 6px 18px rgba(11, 37, 64, 0.06);
-  border: none;
-  bottom: -60px;
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
+  border: 4px solid #fff;
+  object-fit: cover;
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .tutor-lead .tutor-body {
-  /* Leave extra top padding for the larger lead avatar so it doesn't overlap content */
-  padding: 96px 16px 20px;
+  padding: 90px 24px 24px;
 }
 
 .qualification-line {
-  margin: 2px 0;
-  color: #d99a00;
-  /* gold-like color */
-  font-weight: 600;
+  margin: 0;
+  color: #0ea5e9;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Ensure thumbnails center the circular avatar similar to provided image */
-.tutor-thumb {
-  background-position: center;
+/* Lead card (CEO) */
+.tutor-lead-wrap {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
 }
 
-.tutor-body {
-  /* increase top padding so the floating avatar (positioned absolute) doesn't cover the tutor name */
-  padding: 72px 16px 16px;
-  /* leave room at top for floating avatar */
+.tutor-lead {
+  width: 100%;
+  max-width: 500px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.tutor-lead:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.18);
+  border-color: #3b82f6;
+}
+
+.tutor-short {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* Tutor/Staff body text colors and styling */
+.tutors-section .tutor-body h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.tutors-section .tutor-body {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+.tutors-section .qualification-line {
+  color: #0ea5e9;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.tutors-section .tutor-short {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Staff body h4 styling */
+.staff-body h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.3px;
+}
+
 @media (max-width: 800px) {
+  .tutors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-grid {
+    grid-template-columns: 1fr;
+  }
+
   .tutor-card {
     width: 100%;
   }
 
   .tutor-thumb {
-    /* let the banner expand and provide padding so avatar fits inside without overlapping */
     height: auto !important;
-    padding: 22px 0 !important;
+    padding: 20px 0 !important;
   }
 
   .tutor-thumb img {
-    width: 96px;
-    height: 96px;
+    width: 120px;
+    height: 120px;
     bottom: 0;
-    /* no floating - avatar in flow */
-  }
-
-  .tutor-lead .tutor-thumb {
-    height: 160px;
-  }
-
-  .tutor-lead .tutor-thumb img {
-    width: 140px;
-    height: 140px;
-    bottom: 0;
-  }
-
-  /* Remove absolute positioning for avatars on small screens so they don't overlap names */
-  .tutors-section .tutor-thumb img,
-  .tutor-card .tutor-thumb img {
-    /* place avatar in normal flow and center it */
     position: static !important;
-    bottom: auto !important;
     left: auto !important;
     transform: none !important;
     display: block !important;
-    margin: 0 auto 12px !important;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+    margin: 0 auto 16px !important;
+    border-radius: 50% !important;
   }
 
-  /* Reduce the top padding now that avatar sits inside flow */
-  .tutors-section .tutor-body {
-    padding-top: 12px !important;
+  .tutor-lead .tutor-thumb {
+    height: 140px;
   }
 
-  /* Extra safety: push the name lower and increase avatar spacing so they never overlap */
-  .tutors-section .tutor-thumb img,
-  .tutor-card .tutor-thumb img {
-    margin-bottom: 20px !important;
+  .tutor-lead .tutor-thumb img {
+    width: 130px;
+    height: 130px;
+    bottom: auto !important;
+    margin: 0 auto 16px !important;
+    position: static !important;
+    transform: none !important;
   }
 
-  .tutors-section .tutor-body h3,
-  .tutor-card .tutor-body h3 {
-    margin-top: 10px !important;
-  }
-
-  /* Final mobile adjustments for tutor cards (avatars now in flow) */
-  .tutors-section .tutor-body {
+  /* Adjusted padding for mobile */
+  .tutor-body {
     padding: 16px 16px 16px !important;
   }
 
-  /* Lead tutor gets a little more breathing room */
-  .tutors-section .tutor-lead .tutor-body {
+  .tutor-lead .tutor-body {
     padding: 24px 16px 16px !important;
   }
 
-  /* Ensure individual tutor card bodies default to sensible padding on mobile */
-  .tutor-lead .tutor-body {
-    padding: 24px 16px 20px;
+  .staff-body {
+    padding: 1.5rem 1rem !important;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutors-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .staff-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tutor-card {
+    margin: 0 auto;
+  }
+
+  .tutor-thumb img {
+    width: 100px;
+    height: 100px !important;
+    border-radius: 50% !important;
   }
 
   .tutor-body {
-    padding-top: 16px;
+    padding: 12px 12px 12px !important;
+    gap: 6px;
   }
+
+  .tutor-body h3 {
+    font-size: 1.1rem;
+  }
+
+  .staff-body h4 {
+    font-size: 1.1rem;
+  }
+
+  .staff-body {
+    padding: 1rem !important;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+}
 }
 
 /* Tablet breakpoint: prevent avatar overlap for mid-width devices (~884px devices) */
@@ -5153,5 +5254,209 @@ input.form-input {
   .nysc-topbar-badge {
     padding: 3px;
     border-radius: 50%;
+  }
+}
+
+/* ========================================
+   ADMINISTRATIVE STAFF SECTION - Modern Tailwind-Inspired
+   ======================================== */
+
+.staff-section {
+  margin: 4rem 0;
+  padding: 3rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.staff-section.admin-staff-section {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(99, 102, 241, 0.02) 100%);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  margin-top: 2.5rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Professional Staff Card */
+.staff-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.staff-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+}
+
+.admin-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.admin-card:hover {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+}
+
+.staff-thumb {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.staff-thumb img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+}
+
+.staff-card:hover .staff-thumb img {
+  transform: scale(1.08);
+}
+
+.staff-body {
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.staff-body h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.3px;
+}
+
+.staff-position {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0ea5e9;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.staff-qualification {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #475569;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.staff-qualification i {
+  color: #0ea5e9;
+  font-size: 1.1rem;
+}
+
+.staff-bio {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Responsive adjustments for staff cards */
+@media (max-width: 768px) {
+  .staff-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .admin-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .section-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .staff-section {
+    margin: 2rem 0;
+    padding: 2rem 0;
+  }
+  
+  .staff-section.admin-staff-section {
+    padding: 2rem 1.5rem;
+  }
+  
+  .staff-body {
+    padding: 1.5rem;
+  }
+  
+  .staff-thumb {
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+  }
+  
+  .staff-body h4 {
+    font-size: 1.1rem;
   }
 }

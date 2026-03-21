@@ -1,27 +1,38 @@
 <?php
 // public/tutors.php - partial for displaying featured tutors
 $tutors = [];
+$adminStaff = [];
+$teachingStaff = [];
+
 // load DB connection if available
 if (file_exists(__DIR__ . '/config/db.php')) {
   try {
     require_once __DIR__ . '/config/db.php';
     if (isset($pdo)) {
-      // Try featured tutors first (preserve featured if any), but when falling back or listing ensure tutors are ordered by id ascending per UX request
-      // Show all featured tutors, oldest first (no limit)
-      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 ORDER BY created_at ASC");
+      // Get featured tutors
+      $stmt = $pdo->prepare("SELECT * FROM tutors WHERE is_featured=1 AND type='tutor' ORDER BY created_at ASC");
       $stmt->execute();
-      $tutors = $stmt->fetchAll();
-      // If none are featured, fall back to any tutors so the section is visible for testing
-      if (empty($tutors)) {
-        // order by id ascending as requested (oldest first)
-        $stmt2 = $pdo->prepare("SELECT * FROM tutors ORDER BY id ASC");
+      $teachingStaff = $stmt->fetchAll();
+      
+      // If no featured tutors, get all teaching staff
+      if (empty($teachingStaff)) {
+        $stmt2 = $pdo->prepare("SELECT * FROM tutors WHERE type='tutor' ORDER BY id ASC");
         $stmt2->execute();
-        $tutors = $stmt2->fetchAll();
+        $teachingStaff = $stmt2->fetchAll();
       }
+      
+      // Get all administrative staff
+      $stmt3 = $pdo->prepare("SELECT * FROM tutors WHERE type='admin_staff' ORDER BY created_at ASC");
+      $stmt3->execute();
+      $adminStaff = $stmt3->fetchAll();
+      
+      $tutors = $teachingStaff;
     }
   } catch (Throwable $e) {
     // swallow DB errors and render an empty state
     $tutors = [];
+    $adminStaff = [];
+    $teachingStaff = [];
   }
 }
 ?>
@@ -30,24 +41,12 @@ if (file_exists(__DIR__ . '/config/db.php')) {
   <!-- moved page-scoped styles into public/assets/css/public.css -->
   <div class="container">
     <div class="ceo-heading">
-      <h2>Meet Our Expert <span class="highlight">Tutors</span></h2>
-      <p class="lead">Our dedicated team of experienced educators is committed to your academic success</p>
+      <h2>Meet Our Expert <span class="highlight">Team</span></h2>
+      <p class="lead">Our dedicated team of experienced educators and staff is committed to your academic success</p>
     </div>
 
-    <?php if (empty($tutors)): ?>
-      <p class="no-posts">No tutors available at this time. (If you're testing, create a tutor in the admin area.)</p>
-      <!-- Placeholder tutor so layout can be previewed -->
-      <div class="tutors-grid">
-        <article class="tutor-card">
-      <div class="tutor-thumb"><img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="Placeholder"></div>
-          <div class="tutor-body">
-            <h3>Sample Tutor</h3>
-            <p class="role">B.Sc, M.Ed</p>
-            <p class="tutor-short">Experienced educator in Mathematics and Sciences.</p>
-            <div class="subjects"><span class="tag">Mathematics</span><span class="tag">Physics</span></div>
-          </div>
-        </article>
-      </div>
+    <?php if (empty($tutors) && empty($adminStaff)): ?>
+      <p class="no-posts">No staff available at this time.</p>
     <?php else: ?>
       <?php
         // Static lead card for Adebule Quam (CEO) — manually inserted so it always appears first
@@ -65,54 +64,141 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         </article>
       </div>
 
-      <div class="tutors-grid">
-        <?php foreach ($tutors as $t): ?>
-          <article class="tutor-card">
-              <div class="tutor-thumb">
-              <img src="<?= htmlspecialchars($t['photo'] ?: app_url('assets/images/hq-logo.jpeg')) ?>" alt="<?= htmlspecialchars($t['name']) ?>">
-            </div>
-            <div class="tutor-body">
-              <h3><?= htmlspecialchars($t['name']) ?></h3>
-
-              <?php
-                // qualifications: show as single line or 'Not specified'
-                $quals = array_filter(array_map('trim', explode(',', $t['qualifications'] ?? '')));
-                if (!empty($quals)):
-              ?>
-                <p class="qualification-line"><?= htmlspecialchars(implode(', ', $quals)) ?></p>
-              <?php else: ?>
-                <p class="qualification-line">Not specified</p>
-              <?php endif; ?>
-
-              <!-- Long bio (full description) next -->
-              <?php if (!empty($t['long_bio'])): ?>
-                <div class="tutor-long-bio"><?= nl2br(htmlspecialchars($t['long_bio'])) ?></div>
-              <?php endif; ?>
-
-              <!-- Subjects with label as requested -->
-              <?php $subs = json_decode($t['subjects'] ?? '[]', true); if (!empty($subs)): ?>
-                <div class="subjects">
-                  <div class="subjects-label"><strong>Subjects:</strong></div>
-                  <div class="subjects-list">
-                    <?php foreach ($subs as $s): ?>
-                      <span class="tag"><?= htmlspecialchars($s) ?></span>
-                    <?php endforeach; ?>
-                  </div>
-                </div>
-              <?php endif; ?>
-
-              <!-- Short bio (years of experience) at the bottom -->
-              <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
+      <!-- Administrative Staff Section -->
+      <?php if (!empty($adminStaff)): ?>
+        <div class="staff-section admin-staff-section">
+          <div class="section-header">
+            <h3 class="section-title">Administrative Staff</h3>
+            <p class="section-subtitle">Our dedicated support team ensuring operational excellence</p>
           </div>
-        </article>
-      <?php endforeach; ?>
-    </div>
+          <div class="staff-grid admin-grid">
+            <?php foreach ($adminStaff as $staff): ?>
+              <article class="staff-card admin-card">
+                <div class="staff-thumb">
+                  <?php 
+                    $photoPath = $staff['photo'] ?? '';
+                    // If empty, try common filenames
+                    if (empty($photoPath)) {
+                      $commonFilenames = ['secretary.jpeg', 'secretary.jpg', 'secretary.png'];
+                      foreach ($commonFilenames as $fn) {
+                        if (file_exists(__DIR__ . '/uploads/tutors/' . $fn)) {
+                          $photoPath = 'uploads/tutors/' . $fn;
+                          break;
+                        }
+                      }
+                    }
+                    // Construct absolute app URL
+                    if (!empty($photoPath)) {
+                      if (preg_match('#^https?://#', $photoPath)) {
+                        // Already a full URL
+                      } elseif (strpos($photoPath, 'uploads/tutors/') !== false) {
+                        // Relative path: prepend app_url
+                        $photoPath = app_url($photoPath);
+                      } else {
+                        // Just filename
+                        $photoPath = app_url('uploads/tutors/' . basename($photoPath));
+                      }
+                    } else {
+                      $photoPath = app_url('assets/images/hq-logo.jpeg');
+                    }
+                  ?>
+                  <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($staff['name']) ?>" onerror="this.src='<?= app_url('assets/images/hq-logo.jpeg') ?>'">
+                </div>
+                <div class="staff-body">
+                  <h4><?= htmlspecialchars($staff['name']) ?></h4>
+                  <p class="staff-position"><?= htmlspecialchars($staff['short_bio'] ?? 'Administrative Staff') ?></p>
+                  
+                  <?php
+                    $quals = array_filter(array_map('trim', explode(',', $staff['qualifications'] ?? '')));
+                    if (!empty($quals)):
+                  ?>
+                    <p class="staff-qualification">
+                      <i class='bx bx-medal'></i> <?= htmlspecialchars(implode(', ', $quals)) ?>
+                    </p>
+                  <?php endif; ?>
+                  
+                  <?php if (!empty($staff['long_bio'])): ?>
+                    <p class="staff-bio"><?= htmlspecialchars(substr($staff['long_bio'], 0, 150)) ?></p>
+                  <?php endif; ?>
+                </div>
+              </article>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
 
-    <!-- Tutors footer text -->
-    <div class="tutors-footer text-center mt-4">
-      <p class="lead">And many other experienced tutors dedicated to your academic success...</p>
-      <p class="tutor-description">Working together with our team of dedicated educators to nurture the next generation of academic achievers.</p>
-    </div>
+      <!-- Teaching Staff Section -->
+      <?php if (!empty($teachingStaff)): ?>
+        <div class="staff-section teaching-staff-section">
+          <div class="section-header">
+            <h3 class="section-title">Teaching Staff & Tutors</h3>
+            <p class="section-subtitle">Expert educators dedicated to your academic excellence</p>
+          </div>
+          <div class="tutors-grid">
+            <?php foreach ($teachingStaff as $t): ?>
+              <article class="tutor-card">
+                <div class="tutor-thumb">
+                  <?php 
+                    $photoPath = $t['photo'] ?? '';
+                    if (!empty($photoPath)) {
+                      if (preg_match('#^https?://#', $photoPath)) {
+                        // Already a full URL
+                      } elseif (strpos($photoPath, 'uploads/tutors/') !== false) {
+                        // Relative path: prepend app_url
+                        $photoPath = app_url($photoPath);
+                      } else {
+                        // Just filename
+                        $photoPath = app_url('uploads/tutors/' . basename($photoPath));
+                      }
+                    } else {
+                      $photoPath = app_url('assets/images/hq-logo.jpeg');
+                    }
+                  ?>
+                  <img src="<?= htmlspecialchars($photoPath) ?>" alt="<?= htmlspecialchars($t['name']) ?>" onerror="this.src='<?= app_url('assets/images/hq-logo.jpeg') ?>'">
+                </div>
+                <div class="tutor-body">
+                  <h3><?= htmlspecialchars($t['name']) ?></h3>
+
+                  <?php
+                    $quals = array_filter(array_map('trim', explode(',', $t['qualifications'] ?? '')));
+                    if (!empty($quals)):
+                  ?>
+                    <p class="qualification-line"><?= htmlspecialchars(implode(', ', $quals)) ?></p>
+                  <?php else: ?>
+                    <p class="qualification-line">Not specified</p>
+                  <?php endif; ?>
+
+                  <!-- Long bio (full description) next -->
+                  <?php if (!empty($t['long_bio'])): ?>
+                    <div class="tutor-long-bio"><?= nl2br(htmlspecialchars($t['long_bio'])) ?></div>
+                  <?php endif; ?>
+
+                  <!-- Subjects with label as requested -->
+                  <?php $subs = json_decode($t['subjects'] ?? '[]', true); if (!empty($subs)): ?>
+                    <div class="subjects">
+                      <div class="subjects-label"><strong>Subjects:</strong></div>
+                      <div class="subjects-list">
+                        <?php foreach ($subs as $s): ?>
+                          <span class="tag"><?= htmlspecialchars($s) ?></span>
+                        <?php endforeach; ?>
+                      </div>
+                    </div>
+                  <?php endif; ?>
+
+                  <!-- Short bio (years of experience) at the bottom -->
+                  <p class="tutor-short"><?= htmlspecialchars($t['short_bio']) ?></p>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        </div>
+        </div>
+      <?php endif; ?>
+
+      <!-- Tutors footer text -->
+      <div class="tutors-footer text-center mt-4">
+        <p class="lead">And many other experienced tutors dedicated to your academic success...</p>
+        <p class="tutor-description">Working together with our team of dedicated educators to nurture the next generation of academic achievers.</p>
+      </div>
     <?php endif; ?>
   </div>
 </section>
