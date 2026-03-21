@@ -80,19 +80,21 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             <?php foreach ($adminStaff as $staff): ?>
               <?php
               $staffQualifications = array_values(array_filter(array_map('trim', explode(',', $staff['qualifications'] ?? ''))));
-              $staffRole = 'Administrative Staff';
               $staffShortBio = trim((string)($staff['short_bio'] ?? ''));
+              $staffRole = $staffShortBio;
 
-              if (!empty($staffQualifications)) {
+              if ($staffRole === '' && !empty($staffQualifications)) {
                 $staffRole = $staffQualifications[0];
-              } elseif ($staffShortBio !== '' && strlen($staffShortBio) <= 40) {
-                $staffRole = $staffShortBio;
+              }
+
+              if ($staffRole === '') {
+                $staffRole = 'Administrative Staff';
               }
 
               $staffDescription = trim((string)($staff['long_bio'] ?? ''));
               if ($staffDescription === '') {
-                if ($staffShortBio !== '' && strlen($staffShortBio) > 40) {
-                  $staffDescription = $staffShortBio;
+                if (!empty($staffQualifications) && count($staffQualifications) > 1) {
+                  $staffDescription = implode(', ', array_slice($staffQualifications, 1));
                 } else {
                   $staffDescription = 'Dedicated team member supporting smooth academic and administrative operations.';
                 }
@@ -154,8 +156,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
             <?php foreach ($teachingStaff as $t): ?>
               <?php
               $quals = array_values(array_filter(array_map('trim', explode(',', $t['qualifications'] ?? ''))));
-              $shortBio = trim((string)($t['short_bio'] ?? ''));
-              $longBioText = trim(strip_tags((string)($t['long_bio'] ?? '')));
+              $shortBio = trim((string)($t['short_bio'] ?? '')); // short summary / experience line
+              $longBioText = trim(strip_tags((string)($t['long_bio'] ?? ''))); // full profile paragraph
 
               $primaryRole = !empty($quals) ? $quals[0] : '';
               if ($primaryRole === '' && $shortBio !== '' && strlen($shortBio) <= 55) {
@@ -165,15 +167,17 @@ if (file_exists(__DIR__ . '/config/db.php')) {
                 $primaryRole = 'Qualification Not Provided';
               }
 
-              $tutorDescription = $shortBio;
-              if ($tutorDescription === '' || strlen($tutorDescription) <= 55) {
-                $tutorDescription = $longBioText;
+              $displayShortBio = $shortBio;
+              if ($displayShortBio === '') {
+                $displayShortBio = 'Experienced tutor committed to student success and strong academic outcomes.';
               }
+              $displayShortBio = substr($displayShortBio, 0, 130);
 
-              if ($tutorDescription === '') {
-                $tutorDescription = 'Focused on helping students build confidence, mastery, and excellent exam performance.';
+              $displayLongBio = $longBioText;
+              if ($displayLongBio === '') {
+                $displayLongBio = 'Focused on helping students build confidence, mastery, and excellent exam performance.';
               }
-              $tutorDescription = substr($tutorDescription, 0, 180);
+              $displayLongBio = substr($displayLongBio, 0, 220);
 
               $subs = json_decode($t['subjects'] ?? '[]', true);
               if (!is_array($subs)) {
@@ -210,7 +214,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
                 <div class="tutor-body">
                   <h3><?= htmlspecialchars($t['name']) ?></h3>
                   <p class="qualification-line"><?= htmlspecialchars($primaryRole) ?></p>
-                  <p class="tutor-short"><?= htmlspecialchars($tutorDescription) ?></p>
+                  <p class="tutor-short"><?= htmlspecialchars($displayShortBio) ?></p>
+                  <p class="tutor-long-bio"><?= htmlspecialchars($displayLongBio) ?></p>
                   <?php if (!empty($displayTags)): ?>
                     <div class="subjects-list">
                       <?php foreach ($displayTags as $s): ?>

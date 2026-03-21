@@ -5674,6 +5674,25 @@ input.form-input {
   padding: 0;
 }
 
+.tutors-section .tutor-short {
+  font-weight: 600;
+  color: #334155;
+  min-height: 0;
+}
+
+.tutors-section .tutor-long-bio {
+  margin: 2px 0 0;
+  color: #1f2937;
+  font-size: 0.95rem;
+  line-height: 1.48;
+  min-height: 68px;
+}
+
+.tutors-section .staff-position {
+  color: #b88900;
+  font-weight: 800;
+}
+
 .tutors-section .subjects-list {
   display: flex;
   flex-wrap: wrap;
