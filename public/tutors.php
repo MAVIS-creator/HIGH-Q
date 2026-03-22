@@ -159,25 +159,20 @@ if (file_exists(__DIR__ . '/config/db.php')) {
               $shortBio = trim((string)($t['short_bio'] ?? '')); // short summary / experience line
               $longBioText = trim(strip_tags((string)($t['long_bio'] ?? ''))); // full profile paragraph
 
-              $primaryRole = !empty($quals) ? $quals[0] : '';
-              if ($primaryRole === '' && $shortBio !== '' && strlen($shortBio) <= 55) {
-                $primaryRole = $shortBio;
-              }
-              if ($primaryRole === '') {
-                $primaryRole = 'Qualification Not Provided';
-              }
+              // Show full qualification string in subheading (not just first item).
+              $primaryRole = !empty($quals) ? implode(' | ', $quals) : 'Qualification Not Provided';
 
               $displayShortBio = $shortBio;
               if ($displayShortBio === '') {
                 $displayShortBio = 'Experienced tutor committed to student success and strong academic outcomes.';
               }
-              $displayShortBio = substr($displayShortBio, 0, 130);
+              $displayShortBio = substr($displayShortBio, 0, 240);
 
               $displayLongBio = $longBioText;
               if ($displayLongBio === '') {
                 $displayLongBio = 'Focused on helping students build confidence, mastery, and excellent exam performance.';
               }
-              $displayLongBio = substr($displayLongBio, 0, 220);
+              $displayLongBio = substr($displayLongBio, 0, 420);
 
               $subs = json_decode($t['subjects'] ?? '[]', true);
               if (!is_array($subs)) {
@@ -442,6 +437,32 @@ if (!function_exists('hq_build_student_feature_image_map')) {
     return $map;
   }
 }
+
+if (!function_exists('hq_format_outcome_badge')) {
+  function hq_format_outcome_badge($badge)
+  {
+    $badge = trim((string)$badge);
+    if ($badge === '') {
+      return '';
+    }
+
+    $lower = strtolower($badge);
+    if (strpos($lower, 'jamb') !== false) {
+      return 'JAMB Success';
+    }
+    if (strpos($lower, 'waec') !== false) {
+      return 'WAEC Success';
+    }
+    if (strpos($lower, 'neco') !== false) {
+      return 'NECO Success';
+    }
+    if (preg_match('/\d{2,}/', $badge)) {
+      return 'Academic Success';
+    }
+
+    return $badge;
+  }
+}
 ?>
 
 <!-- Wall of Fame - Horizontal Scrolling Testimonials -->
@@ -513,7 +534,7 @@ if (!function_exists('hq_build_student_feature_image_map')) {
 
               <div class="wall-testimony-content">
                 <?php if ($t['outcome_badge']): ?>
-                  <span class="wall-testimony-badge"><?= htmlspecialchars($t['outcome_badge']) ?></span>
+                  <span class="wall-testimony-badge"><?= htmlspecialchars(hq_format_outcome_badge($t['outcome_badge'])) ?></span>
                 <?php endif; ?>
 
                 <p class="wall-testimony-text">"<?= htmlspecialchars($t['testimonial_text']) ?>"</p>
