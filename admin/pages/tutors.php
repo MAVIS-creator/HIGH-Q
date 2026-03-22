@@ -1300,6 +1300,176 @@ try {
     document.getElementById('tutorModal')?.addEventListener('click', e => {
         if (e.target.classList.contains('modal-overlay')) closeModal();
     });
+
+    // ============ DEBUG LOGGER FOR CARD VISIBILITY TRACING ============
+    (function initDebugLogger() {
+        const logs = [];
+        const maxLogs = 100;
+        let debugActive = true;
+
+        // Create debug overlay
+        const debugOverlay = document.createElement('div');
+        debugOverlay.id = 'hq-debug-overlay';
+        debugOverlay.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            max-height: 300px;
+            background: #222;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 11px;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 99999;
+            box-shadow: 0 0 20px rgba(251,191,36,0.3);
+        `;
+        debugOverlay.innerHTML = '<strong style="color: #fbbf24">CARD DEBUG LOG</strong><br>';
+        document.body.appendChild(debugOverlay);
+
+        function addLog(msg, severity = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${msg}`;
+            logs.push({ msg: logEntry, severity });
+            
+            console.log(`%c${logEntry}`, severity === 'warn' ? 'color: orange' : severity === 'error' ? 'color: red' : 'color: green');
+            
+            if (logs.length > maxLogs) logs.shift();
+            updateDebugDisplay();
+        }
+
+        function updateDebugDisplay() {
+            const logsHtml = logs.map(l => {
+                const color = l.severity === 'warn' ? 'orange' : l.severity === 'error' ? '#ff4444' : '#0f0';
+                return `<span style="color: ${color}">${l.msg}</span>`;
+            }).join('<br>');
+            debugOverlay.innerHTML = `<strong style="color: #fbbf24">CARD DEBUG LOG</strong> (${logs.length})<br>${logsHtml}`;
+        }
+
+        // Watch for click events on entire page with capture phase
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            const clickedCard = target.closest('.staff-card-item');
+            const clickedButton = target.closest('button');
+            const clickPath = target.tagName + (target.id ? '#' + target.id : '') + (target.className ? '.' + target.className.split(' ')[0] : '');
+            
+            if (clickedButton) {
+                addLog(`CLICK on button: ${clickedButton.title || clickedButton.innerHTML.substring(0, 20)}`);
+            } else if (clickedCard) {
+                addLog(`CLICK on card (id: ${clickedCard.dataset?.id || 'unknown'})`);
+            } else if (e.target !== window) {
+                addLog(`CLICK on: ${clickPath}`);
+            }
+            
+            // Check all cards visibility after click
+            setTimeout(() => {
+                document.querySelectorAll('.staff-card-item').forEach((card, idx) => {
+                    const computedStyle = window.getComputedStyle(card);
+                    const visibility = computedStyle.visibility;
+                    const opacity = computedStyle.opacity;
+                    const display = computedStyle.display;
+                    const transform = computedStyle.transform;
+                    
+                    if (display === 'none' || visibility === 'hidden' || opacity === '0' || transform.includes('matrix(0')) {
+                        addLog(`⚠ CARD ${idx} INVISIBLE: display=${display} opacity=${opacity} visibility=${visibility}`, 'error');
+                    }
+                });
+            }, 10);
+        }, true); // Use capture phase to catch all events
+
+        // MutationObserver to watch for CSS/attribute changes on cards
+        const cardGrid = document.getElementById('tutorsGrid');
+        if (cardGrid) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    if (mutation.type === 'attributes' && mutation.target.classList.contains('staff-card-item')) {
+                        const card = mutation.target;
+                        const cardName = card.querySelector('.tutor-name')?.textContent || 'unknown';
+                        addLog(`ATTR changed on card "${cardName}": ${mutation.attributeName}`, 'warn');
+                    } else if (mutation.type === 'childList') {
+                        // Check if any cards were added/removed
+                        mutation.addedNodes.forEach(node => {
+                            if (node.nodeType === 1 && node.classList && node.classList.contains('staff-card-item')) {
+                                addLog(`NEW CARD added to DOM`);
+                            }
+                        });
+                        mutation.removedNodes.forEach(node => {
+                            if (node.nodeType === 1 && node.classList && node.classList.contains('staff-card-item')) {
+                                addLog(`CARD removed from DOM`);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            observer.observe(cardGrid, {
+                attributes: true,
+                attributeFilter: ['style', 'class', 'data-search', 'data-type'],
+                subtree: true,
+                childList: true
+            });
+        }
+
+        // Watch for CSS property changes via Proxy or direct style modifications
+        const originalSetProperty = CSSStyleDeclaration.prototype.setProperty;
+        const originalSetAttribute = Element.prototype.setAttribute;
+
+        Element.prototype.setProperty = function(prop, value, priority) {
+            const card = this.closest?.('.staff-card-item');
+            if (card) {
+                const cardName = card.querySelector('.tutor-name')?.textContent || 'unknown';
+                if (prop.toLowerCase().includes('opacity') || prop.toLowerCase().includes('visibility') || prop.toLowerCase().includes('display') || prop.toLowerCase().includes('transform')) {
+                    addLog(`CSS PROPERTY SET on "${cardName}": ${prop}=${value}`, 'warn');
+                }
+            }
+            return originalSetProperty.call(this, prop, value, priority);
+        };
+
+        Element.prototype.setAttribute = function(name, value) {
+            if (this.classList && this.classList.contains('staff-card-item')) {
+                const cardName = this.querySelector('.tutor-name')?.textContent || 'unknown';
+                if (name === 'style' || name === 'class') {
+                    addLog(`ATTR SET on "${cardName}": ${name}="${value.substring(0, 40)}"`, 'warn');
+                }
+            }
+            return originalSetAttribute.call(this, name, value);
+        };
+
+        // Intercept filter functions
+        const originalFilterTutors = window.filterTutors;
+        if (originalFilterTutors) {
+            window.filterTutors = function() {
+                addLog('filterTutors() called');
+                const result = originalFilterTutors.call(this);
+                setTimeout(() => {
+                    const visibleCount = document.querySelectorAll('.staff-card-item:not([style*="display: none"])').length;
+                    addLog(`After filter: ${visibleCount} cards visible`);
+                }, 0);
+                return result;
+            };
+        }
+
+        // Periodic status check
+        setInterval(() => {
+            const totalCards = document.querySelectorAll('.staff-card-item').length;
+            const visibleCards = Array.from(document.querySelectorAll('.staff-card-item')).filter(card => {
+                const style = window.getComputedStyle(card);
+                return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+            }).length;
+            
+            if (visibleCards < totalCards) {
+                addLog(`STATUS: ${visibleCards}/${totalCards} cards visible (${totalCards - visibleCards} hidden)`, 'error');
+            }
+        }, 2000);
+
+        // Log initial state
+        addLog('Debug logger initialized');
+        addLog(`Grid has ${document.querySelectorAll('.staff-card-item').length} cards`);
+        addLog('Watching for mutations and click events...');
+    })();
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
