@@ -59,9 +59,9 @@ try {
     <div class="content-card">
         <div class="card-body">
             <div class="staff-filter">
-                <button class="filter-btn active" onclick="filterByType('all')">All Staff</button>
-                <button class="filter-btn" onclick="filterByType('tutor')">Teaching Staff</button>
-                <button class="filter-btn" onclick="filterByType('admin_staff')">Administrative Staff</button>
+                <button class="filter-btn active" onclick="filterByType('all', this)">All Staff</button>
+                <button class="filter-btn" onclick="filterByType('tutor', this)">Teaching Staff</button>
+                <button class="filter-btn" onclick="filterByType('admin_staff', this)">Administrative Staff</button>
             </div>
         </div>
     </div>
@@ -92,7 +92,29 @@ try {
             </div>
         <?php else: ?>
             <?php foreach ($tutors as $tutor): ?>
-                <div class="tutor-card" data-name="<?= strtolower(htmlspecialchars($tutor['name'] ?? '')) ?>" data-subject="<?= strtolower(htmlspecialchars($tutor['subject'] ?? '')) ?>" data-type="<?= htmlspecialchars($tutor['type'] ?? 'tutor') ?>">
+                <?php
+                $subjectsText = '';
+                $subjectsRaw = $tutor['subjects'] ?? '';
+                if (is_string($subjectsRaw) && $subjectsRaw !== '') {
+                    $decoded = json_decode($subjectsRaw, true);
+                    if (is_array($decoded)) {
+                        $subjectsText = implode(', ', array_map('trim', $decoded));
+                    } else {
+                        $subjectsText = $subjectsRaw;
+                    }
+                }
+
+                $searchBlob = strtolower(trim(implode(' ', [
+                    (string)($tutor['name'] ?? ''),
+                    (string)($tutor['short_bio'] ?? ''),
+                    (string)($tutor['qualifications'] ?? ''),
+                    (string)($tutor['contact_email'] ?? ''),
+                    (string)($tutor['phone'] ?? ''),
+                    (string)($tutor['type'] ?? ''),
+                    (string)$subjectsText
+                ])));
+                ?>
+                <div class="staff-card-item" data-search="<?= htmlspecialchars($searchBlob) ?>" data-type="<?= htmlspecialchars(($tutor['type'] ?? '') !== '' ? $tutor['type'] : 'tutor') ?>">
                     <div class="tutor-avatar">
                         <?php if (!empty($tutor['photo'])): ?>
                             <?php
@@ -144,7 +166,17 @@ try {
                                 <span class="subjects-label">Subjects:</span>
                                 <div class="subject-tags">
                                     <?php
-                                    $subjectList = is_string($tutor['subjects']) ? explode(',', $tutor['subjects']) : (array)$tutor['subjects'];
+                                    $subjectList = [];
+                                    if (is_string($tutor['subjects'])) {
+                                        $decodedSubjects = json_decode($tutor['subjects'], true);
+                                        if (is_array($decodedSubjects)) {
+                                            $subjectList = $decodedSubjects;
+                                        } else {
+                                            $subjectList = explode(',', $tutor['subjects']);
+                                        }
+                                    } elseif (is_array($tutor['subjects'])) {
+                                        $subjectList = $tutor['subjects'];
+                                    }
                                     foreach (array_slice($subjectList, 0, 3) as $subj): ?>
                                         <span class="subject-tag"><?= htmlspecialchars(trim($subj)) ?></span>
                                     <?php endforeach; ?>
@@ -461,7 +493,7 @@ try {
         }
     }
 
-    .tutor-card {
+    .staff-card-item {
         background: #fff;
         border-radius: 1rem;
         border: 1px solid #e2e8f0;
@@ -471,9 +503,16 @@ try {
         transition: all 0.2s;
     }
 
-    .tutor-card:hover {
+    .staff-card-item:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         border-color: #fbbf24;
+    }
+
+    /* Keep admin cards stable even if global/public animation utilities are present */
+    #tutorsGrid .staff-card-item {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
     }
 
     .tutor-avatar {
@@ -834,7 +873,7 @@ try {
             grid-template-columns: 1fr;
         }
 
-        .tutor-card {
+        .staff-card-item {
             flex-direction: column;
         }
 
@@ -915,27 +954,26 @@ try {
     let currentTypeFilter = 'all';
 
     function filterTutors() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const cards = document.querySelectorAll('.tutor-card');
+        const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+        const cards = document.querySelectorAll('.staff-card-item');
 
         cards.forEach(card => {
-            const name = card.dataset.name || '';
-            const subject = card.dataset.subject || '';
-            const type = card.dataset.type || 'tutor';
+            const searchText = (card.dataset.search || '').toLowerCase();
+            const type = ((card.dataset.type || 'tutor') + '').toLowerCase().trim() || 'tutor';
             const matchType = currentTypeFilter === 'all' || type === currentTypeFilter;
-            const matchSearch = name.includes(query) || subject.includes(query);
+            const matchSearch = query === '' || searchText.includes(query);
             card.style.display = (matchType && matchSearch) ? '' : 'none';
         });
     }
 
-    function filterByType(type) {
-        currentTypeFilter = type;
+    function filterByType(type, btnEl) {
+        currentTypeFilter = ((type || 'all') + '').toLowerCase().trim() || 'all';
 
         // Update button states
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        event.target.classList.add('active');
+        if (btnEl) btnEl.classList.add('active');
 
         // Filter cards
         filterTutors();

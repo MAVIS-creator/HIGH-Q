@@ -21,8 +21,8 @@ if (file_exists(__DIR__ . '/config/db.php')) {
         $teachingStaff = $stmt2->fetchAll();
       }
 
-      // Get all administrative staff
-      $stmt3 = $pdo->prepare("SELECT * FROM tutors WHERE type='admin_staff' ORDER BY created_at ASC");
+      // Show only featured administrative staff on public page
+      $stmt3 = $pdo->prepare("SELECT * FROM tutors WHERE type='admin_staff' AND is_featured=1 ORDER BY created_at ASC");
       $stmt3->execute();
       $adminStaff = $stmt3->fetchAll();
 
