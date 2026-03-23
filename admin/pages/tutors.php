@@ -1306,7 +1306,6 @@ try {
     document.getElementById('tutorModal')?.addEventListener('click', e => {
         if (e.target.classList.contains('modal-overlay')) closeModal();
     });
-
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
