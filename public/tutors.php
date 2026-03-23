@@ -58,9 +58,10 @@ if (file_exists(__DIR__ . '/config/db.php')) {
           </div>
           <div class="tutor-body">
             <h3>Adebule Quam</h3>
-            <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY</p>
+            <p class="qualification-line">CEO of HIGH Q SOLID ACADEMY<br>B.Sc. and M.Sc. in Chemistry | CPR, AED &amp; First Aid Certified (2024).</p>
             <p class="tutor-short">Seasoned tutor whose students excel in GCE, WAEC, JAMB, NECO and coding certifications.</p>
             <div class="subjects-list">
+              <span class="tag">Chemistry</span>
               <span class="tag">Leadership</span>
               <span class="tag">Exam Strategy</span>
               <span class="tag">Mentorship</span>
