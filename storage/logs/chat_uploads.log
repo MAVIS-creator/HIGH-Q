@@ -19,3 +19,6 @@
 2026-02-08T21:18:24+01:00 incoming $_FILES: {"name":["main.py"],"full_path":["main.py"],"type":["text\/x-python"],"tmp_name":["C:\\xampp\\tmp\\php6C50.tmp"],"error":[0],"size":[0]}
 2026-02-08T21:18:24+01:00 loop idx=0 name=main.py type_raw=text/x-python size=0
 2026-02-08T21:18:24+01:00 skip disallowed type text/x-python for main.py
+2026-04-15T01:56:05+02:00 incoming $_FILES: {"name":["FastAPI.png"],"full_path":["FastAPI.png"],"type":["image\/png"],"tmp_name":["C:\\xampp\\tmp\\phpAE91.tmp"],"error":[0],"size":[2666265]}
+2026-04-15T01:56:05+02:00 loop idx=0 name=FastAPI.png type_raw=image/png size=2666265
+2026-04-15T01:56:05+02:00 saved FastAPI.png -> C:\xampp\htdocs\HIGH-Q\public/uploads/chat/af75cef7dd8f34be.png

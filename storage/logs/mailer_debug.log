@@ -39567,3 +39567,9 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2026-02-19T15:38:41+01:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-4839ea37b4asm22828565e9.8 - gsmtp
 
+[2026-04-15T01:55:00+02:00] [level=1] SMTP ERROR: Failed to connect to server: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known.  (0)
+[2026-04-15T01:55:00+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2026-04-15T01:55:39+02:00] [level=1] SMTP ERROR: Failed to connect to server: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known.  (0)
+[2026-04-15T01:55:39+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2026-04-15T01:58:23+02:00] [level=1] SMTP ERROR: Failed to connect to server: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known.  (0)
+[2026-04-15T01:58:23+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
