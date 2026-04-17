@@ -28,15 +28,41 @@ if (isset($pdo) && $pdo instanceof PDO) {
     $programs = [];
   }
 }
+
+if (!function_exists('hq_format_outcome_badge')) {
+  function hq_format_outcome_badge($badge)
+  {
+    $badge = trim((string)$badge);
+    if ($badge === '') {
+      return '';
+    }
+
+    $lower = strtolower($badge);
+    if (strpos($lower, 'jamb') !== false) {
+      return 'JAMB Success';
+    }
+    if (strpos($lower, 'waec') !== false) {
+      return 'WAEC Success';
+    }
+    if (strpos($lower, 'neco') !== false) {
+      return 'NECO Success';
+    }
+    if (preg_match('/\d{2,}/', $badge)) {
+      return 'Academic Success';
+    }
+
+    return $badge;
+  }
+}
 ?>
 
 <section class="hero py-5">
   <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-between">
     <div class="hero-left text-center text-lg-start mb-4 mb-lg-0 col-12 col-lg-6">
       <div class="hero-badge mb-3">
-        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy 
+        <i class='bx bxs-star'></i> Nigeria's Premier Tutorial Academy
       </div>
-      
+
       <h1>Excellence in <span class="accent">Education</span></h1>
       <p class="lead">
         At High Q Solid Academy, we are committed to making our students excel academically and mentally.
@@ -177,7 +203,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
       <button class="testimonials-scroll-btn testimonials-scroll-left" aria-label="Scroll left">
         <i class='bx bx-chevron-left'></i>
       </button>
-      
+
       <div class="testimonials-scroll-container">
         <?php
         // Fetch testimonials from database (more for scrollable view)
@@ -188,7 +214,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         } catch (Exception $e) {
           // Silently fail
         }
-        
+
         if (empty($topTestimonials)):
           // Fallback hardcoded testimonials
         ?>
@@ -199,8 +225,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
         </article>
 
         <article class="testimonial-mini">
-          <div class="badge-outcome">305 JAMB Score</div>
-          <p class="quote">"Structured mocks and tutor feedback pushed me past 300."</p>
+          <div class="badge-outcome">JAMB Success</div>
+          <p class="quote">"Structured mocks and tutor feedback helped me secure admission."</p>
           <div class="meta">— Tunde A., JAMB + CBT Mastery</div>
         </article>
 
@@ -209,13 +235,13 @@ if (isset($pdo) && $pdo instanceof PDO) {
           <p class="quote">"Tech track plus interview coaching → internship in 10 weeks."</p>
           <div class="meta">— Chidinma E., Digital Skills Track</div>
         </article>
-        
+
         <article class="testimonial-mini">
           <div class="badge-outcome">Medical Student</div>
-          <p class="quote">"From 180 to 285 JAMB score in just 3 months of intensive prep."</p>
+          <p class="quote">"Intensive prep improved my confidence and helped me gain admission."</p>
           <div class="meta">— Favour A., JAMB Track</div>
         </article>
-        
+
         <article class="testimonial-mini">
           <div class="badge-outcome">UI/UX Designer</div>
           <p class="quote">"The digital skills track opened doors I never knew existed."</p>
@@ -225,7 +251,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           <?php foreach ($topTestimonials as $t): ?>
           <article class="testimonial-mini">
             <?php if ($t['outcome_badge']): ?>
-              <div class="badge-outcome"><?= htmlspecialchars($t['outcome_badge']) ?></div>
+              <div class="badge-outcome"><?= htmlspecialchars(hq_format_outcome_badge($t['outcome_badge'])) ?></div>
             <?php endif; ?>
             <p class="quote">"<?= htmlspecialchars($t['testimonial_text']) ?>"</p>
             <div class="meta">— <?= htmlspecialchars($t['name']) ?><?php if ($t['role_institution']): ?>, <?= htmlspecialchars($t['role_institution']) ?><?php endif; ?></div>
@@ -233,7 +259,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           <?php endforeach; ?>
         <?php endif; ?>
       </div>
-      
+
       <button class="testimonials-scroll-btn testimonials-scroll-right" aria-label="Scroll right">
         <i class='bx bx-chevron-right'></i>
       </button>
@@ -360,12 +386,12 @@ if (isset($pdo) && $pdo instanceof PDO) {
   .testimonials-scroll-container {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .testimonials-scroll-btn {
     width: 38px;
     height: 38px;
   }
-  
+
   .testimonials-scroll-btn i {
     font-size: 20px;
   }
@@ -373,29 +399,29 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
 @media (max-width: 768px) {
   .testimonials-strip { padding: 36px 0; }
-  
+
   .testimonials-scroll-wrapper {
     padding: 0 40px;
   }
-  
+
   .testimonials-scroll-btn {
     width: 34px;
     height: 34px;
     display: flex;
   }
-  
+
   .testimonials-scroll-btn i {
     font-size: 18px;
   }
-  
+
   .testimonials-scroll-left {
     left: 5px;
   }
-  
+
   .testimonials-scroll-right {
     right: 5px;
   }
-  
+
   .testimonial-mini {
     flex: 0 0 260px;
   }
@@ -535,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="programs-cta-inner">
         <h3 class="mb-3">Ready to Start Your Success Journey?</h3>
         <p class="mb-4 mx-auto" style="max-width: 700px;">
-          Join our proven programs and take the first step towards academic excellence. 
+          Join our proven programs and take the first step towards academic excellence.
           Our expert tutors are ready to guide you to success.
         </p>
 

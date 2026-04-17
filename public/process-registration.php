@@ -15,7 +15,7 @@ if (!verifyToken('registration_wizard', $csrf)) {
     $errors[] = 'Invalid session token. Please refresh and try again.';
 }
 
-$validTypes = ['jamb','waec','postutme','digital','international'];
+$validTypes = ['jamb', 'waec', 'postutme', 'digital', 'international'];
 if (!in_array($programType, $validTypes, true)) {
     $errors[] = 'Invalid program type.';
 }
@@ -25,7 +25,9 @@ $siteSettings = [];
 try {
     $stmt = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
     $siteSettings = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-} catch (Throwable $e) { $siteSettings = []; }
+} catch (Throwable $e) {
+    $siteSettings = [];
+}
 $registrationEnabled = true;
 if (!empty($siteSettings)) {
     if (isset($siteSettings['registration'])) $registrationEnabled = (bool)$siteSettings['registration'];
@@ -45,6 +47,39 @@ $address = trim($_POST['home_address'] ?? ($_POST['address'] ?? ''));
 if ($first === '') $errors[] = 'First name is required.';
 if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required.';
 if ($phone === '') $errors[] = 'Phone number is required.';
+
+if ($programType === 'waec') {
+    $examType = trim((string)($_POST['exam_type'] ?? ''));
+    $validExamTypes = ['WAEC', 'WAEC GCE', 'NECO', 'NECO GCE'];
+    if (!in_array($examType, $validExamTypes, true)) {
+        $errors[] = 'Please select a valid exam type for WAEC/NECO/GCE registration.';
+    }
+
+    $subjects = $_POST['subjects'] ?? [];
+    if (!is_array($subjects)) {
+        $subjects = [];
+    }
+
+    $subjects = array_values(array_unique(array_filter(array_map('trim', $subjects), static function ($s) {
+        return $s !== '';
+    })));
+
+    if ($examType === 'WAEC' || $examType === 'WAEC GCE') {
+        if (count($subjects) < 7 || count($subjects) > 9) {
+            $errors[] = $examType . ' requires a minimum of 7 subjects and a maximum of 9 subjects.';
+        }
+
+        if (!in_array('English Language', $subjects, true) || !in_array('General Mathematics', $subjects, true)) {
+            $errors[] = $examType . ' requires English Language and General Mathematics.';
+        }
+    }
+
+    if ($examType === 'NECO' || $examType === 'NECO GCE') {
+        if (count($subjects) < 6 || count($subjects) > 9) {
+            $errors[] = $examType . ' requires a minimum of 6 subjects and a maximum of 9 subjects.';
+        }
+    }
+}
 
 // Amount map (fallback if no course price pulled)
 $basePrices = [
@@ -75,7 +110,8 @@ try {
             $basePrices[$programType] = (float)$p['price'];
         }
     }
-} catch (Throwable $e) { /* ignore price lookup */ }
+} catch (Throwable $e) { /* ignore price lookup */
+}
 
 $amount = $basePrices[$programType] + $formFee + $cardFee;
 
