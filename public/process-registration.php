@@ -95,11 +95,11 @@ $cardFee = 1500;
 // Attempt to use courses table price when available
 try {
     $slugMap = [
-        'jamb' => 'jamb-post-utme',
-        'waec' => 'professional-services',
-        'postutme' => 'jamb-post-utme',
+        'jamb' => 'jamb',
+        'waec' => 'waec',
+        'postutme' => 'post-utme',
         'digital' => 'digital-skills',
-        'international' => null,
+        'international' => 'international-programs',
     ];
     $slug = $slugMap[$programType] ?? null;
     if ($slug) {
@@ -124,6 +124,23 @@ if (!empty($errors)) {
 // Build payload (store all POST for auditing)
 $payload = $_POST;
 unset($payload['_csrf_token']);
+
+// Handle Passport Photo Upload
+if (!empty($_FILES['passport_photo']['tmp_name'])) {
+    $uploadDir = __DIR__ . '/uploads/passports/';
+    if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+    
+    $fileInfo = pathinfo($_FILES['passport_photo']['name']);
+    $ext = strtolower($fileInfo['extension']);
+    
+    // Quick validation (same as frontend)
+    if (in_array($ext, ['jpg', 'jpeg', 'png']) && $_FILES['passport_photo']['size'] <= 2097152) {
+        $filename = 'passport_' . $programType . '_' . uniqid() . '.' . $ext;
+        if (move_uploaded_file($_FILES['passport_photo']['tmp_name'], $uploadDir . $filename)) {
+            $payload['passport_photo'] = 'uploads/passports/' . $filename;
+        }
+    }
+}
 
 require_once __DIR__ . '/config/payment_references.php';
 // Use program-type-specific reference prefixes

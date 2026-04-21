@@ -420,14 +420,14 @@ if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
     // TRIGGER: Generate welcome kit and send email
     try {
         // Get student registration details from payments table
-        $stmt = $pdo->prepare('SELECT program_type FROM payments WHERE reference = ? LIMIT 1');
+        $stmt = $pdo->prepare('SELECT registration_type FROM payments WHERE reference = ? LIMIT 1');
         $stmt->execute([$ref]);
         $paymentData = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        if ($paymentData && !empty($paymentData['program_type'])) {
+        if ($paymentData && !empty($paymentData['registration_type'])) {
             $studentEmailForKit = $p['payer_email'] ?? $p['email'] ?? '';
             $studentNameForKit = $p['payer_account_name'] ?? $p['payer_name'] ?? 'Student';
-            $programTypeForKit = $paymentData['program_type'];
+            $programTypeForKit = $paymentData['registration_type'];
             $registrationId = $p['id'] ?? $ref;
             
             if (!empty($studentEmailForKit)) {

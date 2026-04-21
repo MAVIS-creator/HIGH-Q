@@ -5,6 +5,8 @@ require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
 require_once __DIR__ . '/includes/seo-helpers.php';
 
+if (session_status() === PHP_SESSION_NONE) session_start();
+
 // SEO Configuration
 set_page_title('Admission & Registration', true);
 define('PAGE_DESCRIPTION', 'Start your educational journey at High Q Tutorial. Quick, secure enrollment for all programs.');
@@ -267,6 +269,18 @@ require_once 'includes/header.php';
 
             <?php elseif ($step === 2): ?>
                 <!-- Step 2: Program-specific form -->
+                <?php if (!empty($_SESSION['registration_errors'])): ?>
+                    <div style="background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; padding: 15px; margin-bottom: 25px; border-radius: 4px;">
+                        <h4 style="margin-top: 0; font-size: 16px; font-weight: bold;"><i class='bx bx-error-circle'></i> Registration Failed</h4>
+                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                            <?php foreach ($_SESSION['registration_errors'] as $err): ?>
+                                <li><?= htmlspecialchars($err) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php unset($_SESSION['registration_errors']); ?>
+                <?php endif; ?>
+
                 <?php
                 switch ($programType) {
                     case 'jamb':

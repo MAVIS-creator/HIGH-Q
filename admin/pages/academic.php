@@ -9,7 +9,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 // --- Early AJAX handling: ensure JSON responses are not contaminated by HTML ---
 // Determine requested action (AJAX clients typically send action via POST)
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
-if (!empty($earlyAction)) {
+if (!empty($earlyAction) && $earlyAction !== 'export_single') {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
   header('Content-Type: application/json');
 
@@ -1500,8 +1500,13 @@ function viewRegistration(id) {
     if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
     const d = data.data || data;
     
-    // Store passport URL for download
-    const passportUrl = d.passport_photo || '';
+    // Store and properly format passport URL
+    let passportUrl = d.passport_photo || '';
+    if (passportUrl && !passportUrl.startsWith('http') && !passportUrl.startsWith('/')) {
+        // If it's a relative path starting with 'uploads/', make sure it points to the public directory
+        passportUrl = '../public/' + passportUrl;
+    }
+
     const studentName = (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || '');
     
     // Build premium passport section
@@ -1511,20 +1516,20 @@ function viewRegistration(id) {
         <div style="text-align:center;margin-bottom:1.5rem;position:relative;">
           <div style="position:relative;display:inline-block;">
             <img src="${passportUrl}" alt="Passport Photo" 
-                 style="width:140px;height:140px;object-fit:cover;border-radius:16px;border:4px solid #ffd600;box-shadow:0 8px 24px rgba(0,0,0,0.15);">
+                 style="width:130px;height:130px;object-fit:cover;border-radius:50%;border:4px solid #fff;box-shadow:0 10px 25px rgba(0,0,0,0.1);">
             <button onclick="downloadPassport('${passportUrl}', '${studentName.replace(/'/g, "\\'")} - Passport')" 
-                    style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#0b1a2c 0%,#1e3a5f 100%);color:#ffd600;border:none;padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-              <i class='bx bx-download'></i> Download Photo
+                    style="position:absolute;bottom:0;right:0;background:#0f172a;color:#fff;border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s;">
+              <i class='bx bx-download' style="font-size:1.1rem;"></i>
             </button>
           </div>
         </div>`;
     } else {
       passportHtml = `
         <div style="text-align:center;margin-bottom:1.5rem;">
-          <div style="width:140px;height:140px;border-radius:16px;border:4px dashed #e2e8f0;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#f8fafc;">
-            <i class='bx bx-user' style="font-size:4rem;color:#cbd5e1;"></i>
+          <div style="width:110px;height:110px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#f1f5f9;box-shadow:inset 0 2px 5px rgba(0,0,0,0.05);">
+            <i class='bx bx-user' style="font-size:3.5rem;color:#cbd5e1;"></i>
           </div>
-          <p style="margin-top:0.5rem;color:#94a3b8;font-size:0.8rem;">No passport photo</p>
+          <p style="margin-top:0.75rem;color:#64748b;font-size:0.8rem;font-weight:500;">No passport photo provided</p>
         </div>`;
     }
     
@@ -1540,15 +1545,15 @@ function viewRegistration(id) {
     
     let html = `
     <style>
-      .view-modal-section { background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border-radius:16px;padding:1.25rem;margin-bottom:1rem;border:1px solid #e2e8f0; }
-      .view-modal-section:hover { border-color:#ffd600;box-shadow:0 4px 12px rgba(255,214,0,0.1); }
-      .view-modal-title { font-size:0.8rem;font-weight:700;color:#0b1a2c;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;gap:8px;padding-bottom:0.75rem;border-bottom:2px solid #ffd600; }
-      .view-modal-title i { color:#ffd600;font-size:1.2rem; }
-      .view-modal-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.75rem; }
-      .view-modal-item { }
+      .view-modal-section { background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+      .view-modal-section:hover { border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+      .view-modal-title { font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:8px;padding-bottom:0.75rem;border-bottom:1px solid #e2e8f0; }
+      .view-modal-title i { color:#3b82f6;font-size:1.25rem; }
+      .view-modal-grid { display:grid;grid-template-columns:1fr 1fr;gap:1.25rem 1rem; }
+      .view-modal-item { display:flex;flex-direction:column;gap:4px; }
       .view-modal-item.full { grid-column:1/-1; }
-      .view-modal-label { font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px; }
-      .view-modal-value { font-size:0.95rem;color:#1e293b;font-weight:500; }
+      .view-modal-label { font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;font-weight:600; }
+      .view-modal-value { font-size:0.95rem;color:#1e293b;font-weight:400;word-break:break-word; }
     </style>
     
     <div style="max-height:65vh;overflow-y:auto;padding:0 0.5rem;">
@@ -1732,7 +1737,12 @@ function viewRegistration(id) {
     }).then((result) => {
       if (result.isConfirmed) {
         // Export PDF
-        window.open('index.php?pages=academic&action=export_single&id=' + id, '_blank');
+        const a = document.createElement('a');
+        a.href = 'index.php?pages=academic&action=export_single&id=' + id;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       } else if (result.dismiss === Swal.DismissReason.cancel && passportUrl) {
         // Download passport photo
         downloadPassport(passportUrl, studentName + ' - Passport');
@@ -1749,34 +1759,14 @@ function downloadPassport(url, filename) {
     return;
   }
   
-  // Create a temporary link to trigger download
-  fetch(url)
-    .then(response => response.blob())
-    .then(blob => {
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = (filename || 'passport') + '.jpg';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-      
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Photo downloaded!',
-        showConfirmButton: false,
-        timer: 2000,
-        background: '#ffd600',
-        color: '#0b1a2c'
-      });
-    })
-    .catch(() => {
-      // Fallback: open in new tab
-      window.open(url, '_blank');
-    });
+  // Use anchor download attribute behavior directly
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (filename || 'passport') + '.jpg';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
