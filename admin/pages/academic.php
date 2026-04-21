@@ -345,7 +345,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         if (!empty($s3['payload'])) {
           $payload = json_decode($s3['payload'], true) ?: [];
         }
-        // Map universal_registrations fields to expected view format
+        // Build absolute URL for passport photo so modal img can load it
+        $rawPassport = $payload['passport_photo'] ?? null;
+        if ($rawPassport && !preg_match('#^https?://#i', $rawPassport)) {
+            $pScheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $pHost   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $rawPassport = $pScheme . '://' . $pHost . '/HIGH-Q/public/' . ltrim($rawPassport, '/');
+        }
+
         echo json_encode([
           'id' => $s3['id'],
           'surname' => $payload['surname'] ?? $s3['last_name'] ?? null,
@@ -373,12 +380,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
           'emergency_contact_name' => $payload['next_of_kin_name'] ?? null,
           'emergency_contact_phone' => $payload['next_of_kin_phone'] ?? null,
           'emergency_relationship' => $payload['next_of_kin_relationship'] ?? null,
-          'passport_photo' => $payload['passport_photo'] ?? null,
+          'passport_photo' => $rawPassport,
           'status' => $s3['status'] ?? null,
           'payment_status' => $s3['payment_status'] ?? null,
           'program_type' => $s3['program_type'] ?? null,
           'created_at' => $s3['created_at'] ?? null,
-        ]); 
+        ]);
         exit;
       }
     } catch (Throwable $e) {
@@ -419,10 +426,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     exit;
   }
   
-  // Get passport path
+  // Get passport path — for universal_registrations, passport is stored in payload JSON
   $passportPath = $s['passport_photo'] ?? $s['passport_path'] ?? '';
+  if (empty($passportPath) && !empty($s['payload'])) {
+      $pl = json_decode($s['payload'], true);
+      $passportPath = $pl['passport_photo'] ?? '';
+  }
+
+  // Build absolute URL from relative path (e.g. 'uploads/passports/file.jpg')
+  $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+  if ($passportPath && !preg_match('#^https?://#i', $passportPath)) {
+      // Ensure the path starts from the public directory
+      $cleanPath = ltrim($passportPath, '/');
+      $passportPath = $scheme . '://' . $host . '/HIGH-Q/public/' . $cleanPath;
+  }
+
   $fullName = trim(($s['surname'] ?? $s['first_name'] ?? '') . ' ' . ($s['other_names'] ?? $s['last_name'] ?? ''));
-  
+
   ?>
   <!DOCTYPE html>
   <html lang="en">
@@ -452,7 +473,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
       .status-confirmed { background: #d1fae5; color: #065f46; }
       .status-pending { background: #fef3c7; color: #92400e; }
       .status-rejected { background: #fee2e2; color: #991b1b; }
-      .print-btn { position: fixed; bottom: 20px; right: 20px; background: #0b1a2c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+      .print-btn { position: fixed; bottom: 20px; right: 20px; background: #0b1a2c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
       .print-btn:hover { background: #1e3a5f; }
       @media print {
         body { background: white; padding: 0; }
@@ -460,6 +481,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         .print-btn { display: none; }
       }
     </style>
+    <script>
+      // Auto-open print dialog after page loads so user can Save As PDF
+      window.addEventListener('load', function() {
+        setTimeout(function() { window.print(); }, 600);
+      });
+    </script>
   </head>
   <body>
     <div class="container">
@@ -1500,12 +1527,8 @@ function viewRegistration(id) {
     if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
     const d = data.data || data;
     
-    // Store and properly format passport URL
+    // Passport URL is already absolute (set by the server)
     let passportUrl = d.passport_photo || '';
-    if (passportUrl && !passportUrl.startsWith('http') && !passportUrl.startsWith('/')) {
-        // If it's a relative path starting with 'uploads/', make sure it points to the public directory
-        passportUrl = '../public/' + passportUrl;
-    }
 
     const studentName = (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || '');
     
@@ -1516,11 +1539,18 @@ function viewRegistration(id) {
         <div style="text-align:center;margin-bottom:1.5rem;position:relative;">
           <div style="position:relative;display:inline-block;">
             <img src="${passportUrl}" alt="Passport Photo" 
-                 style="width:130px;height:130px;object-fit:cover;border-radius:50%;border:4px solid #fff;box-shadow:0 10px 25px rgba(0,0,0,0.1);">
-            <button onclick="downloadPassport('${passportUrl}', '${studentName.replace(/'/g, "\\'")} - Passport')" 
-                    style="position:absolute;bottom:0;right:0;background:#0f172a;color:#fff;border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:all 0.2s;">
-              <i class='bx bx-download' style="font-size:1.1rem;"></i>
-            </button>
+                 style="width:130px;height:130px;object-fit:cover;border-radius:50%;border:4px solid #fff;box-shadow:0 10px 25px rgba(0,0,0,0.1);"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div style="display:none;width:130px;height:130px;border-radius:50%;background:#f1f5f9;align-items:center;justify-content:center;">
+              <i class='bx bx-image-alt' style="font-size:3rem;color:#94a3b8;"></i>
+            </div>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <a href="${passportUrl}" download target="_blank"
+               onclick="event.stopPropagation();"
+               style="display:inline-flex;align-items:center;gap:6px;background:#0f172a;color:#fff;text-decoration:none;padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;">
+              <i class='bx bx-download'></i> Download Photo
+            </a>
           </div>
         </div>`;
     } else {
@@ -1708,44 +1738,24 @@ function viewRegistration(id) {
       showCloseButton: true,
       showConfirmButton: true,
       showDenyButton: true,
-      showCancelButton: !!passportUrl,
-      confirmButtonText: '<i class="bx bx-file"></i> Export PDF',
+      showCancelButton: false,
+      confirmButtonText: '<i class="bx bx-printer"></i> Print / PDF',
       denyButtonText: '<i class="bx bx-x"></i> Close',
-      cancelButtonText: '<i class="bx bx-image"></i> Download Photo',
-      customClass: {
-        confirmButton: 'swal-btn-primary',
-        denyButton: 'swal-btn-secondary',
-        cancelButton: 'swal-btn-photo'
-      },
       didOpen: () => {
-        // Style buttons
         const popup = Swal.getPopup();
         const confirmBtn = popup.querySelector('.swal2-confirm');
         const denyBtn = popup.querySelector('.swal2-deny');
-        const cancelBtn = popup.querySelector('.swal2-cancel');
-        
         if (confirmBtn) {
           confirmBtn.style.cssText = 'background:linear-gradient(135deg,#ffd600 0%,#e6c200 100%);color:#0b1a2c;font-weight:700;padding:12px 24px;border-radius:10px;border:none;box-shadow:0 4px 12px rgba(255,214,0,0.3);';
         }
         if (denyBtn) {
           denyBtn.style.cssText = 'background:#f1f5f9;color:#475569;font-weight:600;padding:12px 24px;border-radius:10px;border:none;';
         }
-        if (cancelBtn) {
-          cancelBtn.style.cssText = 'background:linear-gradient(135deg,#0b1a2c 0%,#1e3a5f 100%);color:#ffd600;font-weight:600;padding:12px 24px;border-radius:10px;border:none;';
-        }
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Export PDF
-        const a = document.createElement('a');
-        a.href = 'index.php?pages=academic&action=export_single&id=' + id;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else if (result.dismiss === Swal.DismissReason.cancel && passportUrl) {
-        // Download passport photo
-        downloadPassport(passportUrl, studentName + ' - Passport');
+        // Open print/PDF page in new tab
+        window.open('index.php?pages=academic&action=export_single&id=' + id, '_blank');
       }
     });
   })
