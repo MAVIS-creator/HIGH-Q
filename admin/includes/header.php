@@ -83,6 +83,7 @@ if ($idx !== false) {
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/modern-tables.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/introjs.min.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/ai-chat-widget.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -96,6 +97,7 @@ if ($idx !== false) {
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/account-settings-modal.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/intro.min.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/role-tour.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/ai-chat-widget.js" defer></script>
     <?php
     // Output the correct admin.css for the detected admin path
     echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($adminBasePath) . "/assets/css/admin.css\">\n";

@@ -507,6 +507,22 @@ $csrf = generateToken('settings_form');
         <div class="alert <?= $flash['type'] === 'error' ? 'alert-error' : 'alert-success' ?>"><?= htmlspecialchars($flash['message']) ?></div>
     <?php endif; ?>
 
+    <div class="admin-card" style="margin-bottom:16px;">
+        <div class="admin-card-header">
+            <h3 class="admin-card-title"><i class='bx bx-bot'></i> AI Assistant Runtime</h3>
+        </div>
+        <div class="admin-card-body" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+                <div style="font-weight:600;">Provider &amp; Model Configuration</div>
+                <div class="text-muted" style="margin-top:4px;">Manage AI provider mode and model override used by the admin assistant.</div>
+            </div>
+            <a href="index.php?pages=ai_provider" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                <i class='bx bx-slider-alt'></i>
+                <span>Open AI Provider Settings</span>
+            </a>
+        </div>
+    </div>
+
     <form id="settingsForm" method="post">
         <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
         <div class="settings-tabs">

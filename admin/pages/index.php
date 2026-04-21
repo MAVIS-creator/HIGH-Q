@@ -35,6 +35,9 @@ $pageMeta = [
     'ai_queue' => [
         'subtitle' => 'Review assistant suggestions before approval or rejection',
     ],
+    'ai_provider' => [
+        'subtitle' => 'Configure AI provider/model runtime overrides for the assistant',
+    ],
     'posts' => [
         'subtitle' => 'Create and manage news articles and blog posts',
         'css' => 'assets/css/posts.css',

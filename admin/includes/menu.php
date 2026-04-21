@@ -20,6 +20,7 @@ return [
     'chat'      => ['title' => 'Chat Support', 'icon' => 'bx bxs-message-dots', 'url' => 'index.php?pages=chat'],
     'ai_assistant' => ['title' => 'AI Assistant', 'icon' => 'bx bx-bot', 'url' => 'index.php?pages=ai_assistant'],
     'ai_queue' => ['title' => 'AI Review Queue', 'icon' => 'bx bx-list-check', 'url' => 'index.php?pages=ai_queue'],
+    'ai_provider' => ['title' => 'AI Provider Settings', 'icon' => 'bx bx-slider-alt', 'url' => 'index.php?pages=ai_provider'],
     'audit_logs' => ['title' => 'Audit Logs', 'icon' => 'bx bxs-report', 'url' => 'index.php?pages=audit_logs'],
     'appointments' => ['title' => 'Appointments', 'icon' => 'bx bx-calendar', 'url' => 'index.php?pages=appointments'],
     'sentinel' => ['title' => 'Security Scan', 'icon' => 'bx bxs-shield-alt', 'url' => 'index.php?pages=sentinel'],

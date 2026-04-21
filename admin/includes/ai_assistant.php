@@ -10,27 +10,71 @@
  * 4) AI_GEMINI_API_KEY
  */
 
-function ai_assistant_pick_provider(): array {
+function ai_assistant_load_runtime_settings(?PDO $pdo = null): array {
+    if (!$pdo) return [];
+
+    try {
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+        $stmt->execute(['ai_assistant_settings']);
+        $raw = $stmt->fetchColumn();
+        if (!$raw) return [];
+
+        $decoded = json_decode((string)$raw, true);
+        return is_array($decoded) ? $decoded : [];
+    } catch (Throwable $e) {
+        return [];
+    }
+}
+
+function ai_assistant_pick_provider(?PDO $pdo = null): array {
+    $runtime = ai_assistant_load_runtime_settings($pdo);
+    $selectedProvider = strtolower(trim((string)($runtime['provider'] ?? 'env_auto')));
+    $modelOverride = trim((string)($runtime['model_override'] ?? ''));
+    $serviceOverride = trim((string)($runtime['service_url'] ?? ''));
+
+    if (!empty($runtime['enabled']) && (int)$runtime['enabled'] === 0) {
+        return ['provider' => 'none'];
+    }
+
     $serviceUrl = trim((string)($_ENV['AI_ASSISTANT_SERVICE_URL'] ?? getenv('AI_ASSISTANT_SERVICE_URL') ?? ''));
+    if ($serviceOverride !== '') {
+        $serviceUrl = $serviceOverride;
+    }
     if ($serviceUrl !== '') {
+        if ($selectedProvider !== 'env_auto' && $selectedProvider !== 'service') {
+            // Skip service when user explicitly selected a different provider.
+        } else {
         return ['provider' => 'service', 'url' => $serviceUrl];
+        }
     }
 
     $groqKey = trim((string)($_ENV['GROQ_API_KEY'] ?? getenv('GROQ_API_KEY') ?? ''));
     $groqUrl = trim((string)($_ENV['GROQ_API_URL'] ?? getenv('GROQ_API_URL') ?? 'https://api.groq.com/openai/v1/chat/completions'));
     if ($groqKey !== '') {
-        return ['provider' => 'groq', 'url' => $groqUrl, 'api_key' => $groqKey, 'model' => (string)($_ENV['GROQ_MODEL'] ?? getenv('GROQ_MODEL') ?? 'llama-3.1-8b-instant')];
+        if ($selectedProvider === 'env_auto' || $selectedProvider === 'groq') {
+            $model = (string)($_ENV['GROQ_MODEL'] ?? getenv('GROQ_MODEL') ?? 'llama-3.1-8b-instant');
+            if ($modelOverride !== '') $model = $modelOverride;
+            return ['provider' => 'groq', 'url' => $groqUrl, 'api_key' => $groqKey, 'model' => $model];
+        }
     }
 
     $orKey = trim((string)($_ENV['AI_OPENROUTER_API_KEY'] ?? getenv('AI_OPENROUTER_API_KEY') ?? ''));
     $orUrl = trim((string)($_ENV['AI_OPENROUTER_API_URL'] ?? getenv('AI_OPENROUTER_API_URL') ?? 'https://openrouter.ai/api/v1/chat/completions'));
     if ($orKey !== '') {
-        return ['provider' => 'openrouter', 'url' => $orUrl, 'api_key' => $orKey, 'model' => (string)($_ENV['AI_OPENROUTER_MODEL'] ?? getenv('AI_OPENROUTER_MODEL') ?? 'openrouter/auto')];
+        if ($selectedProvider === 'env_auto' || $selectedProvider === 'openrouter') {
+            $model = (string)($_ENV['AI_OPENROUTER_MODEL'] ?? getenv('AI_OPENROUTER_MODEL') ?? 'openrouter/auto');
+            if ($modelOverride !== '') $model = $modelOverride;
+            return ['provider' => 'openrouter', 'url' => $orUrl, 'api_key' => $orKey, 'model' => $model];
+        }
     }
 
     $geminiKey = trim((string)($_ENV['AI_GEMINI_API_KEY'] ?? getenv('AI_GEMINI_API_KEY') ?? ''));
     if ($geminiKey !== '') {
-        return ['provider' => 'gemini', 'api_key' => $geminiKey, 'model' => (string)($_ENV['AI_GEMINI_MODEL'] ?? getenv('AI_GEMINI_MODEL') ?? 'gemini-2.0-flash')];
+        if ($selectedProvider === 'env_auto' || $selectedProvider === 'gemini') {
+            $model = (string)($_ENV['AI_GEMINI_MODEL'] ?? getenv('AI_GEMINI_MODEL') ?? 'gemini-2.0-flash');
+            if ($modelOverride !== '') $model = $modelOverride;
+            return ['provider' => 'gemini', 'api_key' => $geminiKey, 'model' => $model];
+        }
     }
 
     return ['provider' => 'none'];
@@ -105,8 +149,8 @@ function ai_assistant_system_prompt(string $roleName, array $allowedSlugs): stri
         . "If requested action is out of role scope, explain why and suggest a safe next step.";
 }
 
-function ai_assistant_query(string $question, string $context, string $roleName, array $allowedSlugs): array {
-    $provider = ai_assistant_pick_provider();
+function ai_assistant_query(string $question, string $context, string $roleName, array $allowedSlugs, ?PDO $pdo = null): array {
+    $provider = ai_assistant_pick_provider($pdo);
     if (($provider['provider'] ?? 'none') === 'none') {
         throw new RuntimeException('AI assistant provider is not configured in environment variables.');
     }

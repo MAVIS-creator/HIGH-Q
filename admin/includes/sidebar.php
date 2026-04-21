@@ -64,6 +64,8 @@ try {
                     if (!$show && $slug === 'appointments' && (in_array('settings', $permissions) || in_array('students', $permissions))) $show = true;
                     // Show testimonials to users with 'settings' permission
                     if (!$show && $slug === 'testimonials' && in_array('settings', $permissions)) $show = true;
+                    // Show AI provider settings to users with 'settings' permission
+                    if (!$show && $slug === 'ai_provider' && in_array('settings', $permissions)) $show = true;
                 ?>
                 <?php if ($show): ?>
                     <?php

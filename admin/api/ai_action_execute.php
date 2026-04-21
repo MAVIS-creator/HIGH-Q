@@ -26,21 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $csrf = $_POST['_csrf'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
-if (!verifyToken('ai_action_review_api', (string)$csrf)) {
+if (!verifyToken('ai_action_execute_api', (string)$csrf)) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
     exit;
 }
 
 $queueId = (int)($_POST['queue_id'] ?? 0);
-$decision = strtolower(trim((string)($_POST['decision'] ?? '')));
 $note = trim((string)($_POST['note'] ?? ''));
-$markExecuted = !empty($_POST['mark_executed']);
 $userId = (int)($_SESSION['user']['id'] ?? 0);
 
-if ($queueId <= 0 || !in_array($decision, ['approved', 'rejected'], true)) {
+if ($queueId <= 0) {
     http_response_code(422);
-    echo json_encode(['status' => 'error', 'message' => 'Invalid queue item or decision']);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid queue item']);
     exit;
 }
 
@@ -55,27 +53,24 @@ try {
         exit;
     }
 
+    if (($item['status'] ?? '') !== 'approved') {
+        http_response_code(422);
+        echo json_encode(['status' => 'error', 'message' => 'Only approved items can be executed']);
+        exit;
+    }
+
+    // In this pass we only transition the proposal to executed and log it.
+    // Actual business mutations remain a manual/admin-reviewed follow-up step.
     try {
-        $upd = $pdo->prepare('UPDATE ai_action_queue SET status = ?, review_note = ?, reviewed_by = ?, reviewed_at = NOW(), updated_at = NOW() WHERE id = ?');
-        $upd->execute([$decision, $note !== '' ? $note : null, $userId > 0 ? $userId : null, $queueId]);
+        $upd = $pdo->prepare('UPDATE ai_action_queue SET status = ?, execution_note = ?, executed_by = ?, executed_at = NOW(), updated_at = NOW() WHERE id = ?');
+        $upd->execute(['executed', $note !== '' ? $note : null, $userId > 0 ? $userId : null, $queueId]);
     } catch (Throwable $schemaEx) {
         // Backward compatibility before the notes migration is applied.
         $upd = $pdo->prepare('UPDATE ai_action_queue SET status = ?, updated_at = NOW() WHERE id = ?');
-        $upd->execute([$decision, $queueId]);
+        $upd->execute(['executed', $queueId]);
     }
 
-    if ($decision === 'approved' && $markExecuted) {
-        try {
-            $upd2 = $pdo->prepare('UPDATE ai_action_queue SET status = ?, execution_note = ?, executed_by = ?, executed_at = NOW(), updated_at = NOW() WHERE id = ?');
-            $upd2->execute(['executed', $note !== '' ? $note : null, $userId > 0 ? $userId : null, $queueId]);
-        } catch (Throwable $schemaEx2) {
-            $upd2 = $pdo->prepare('UPDATE ai_action_queue SET status = ?, updated_at = NOW() WHERE id = ?');
-            $upd2->execute(['executed', $queueId]);
-        }
-        $decision = 'executed';
-    }
-
-    logAction($pdo, $userId, 'ai_action_review_' . $decision, [
+    logAction($pdo, $userId, 'ai_action_executed', [
         'queue_id' => $queueId,
         'action_type' => $item['action_type'] ?? null,
         'note' => $note,
@@ -83,16 +78,16 @@ try {
 
     echo json_encode([
         'status' => 'ok',
-        'message' => 'Queue item marked as ' . $decision . '.',
+        'message' => 'Queue item marked as executed.',
         'queue_id' => $queueId,
-        'decision' => $decision,
+        'decision' => 'executed',
     ]);
 } catch (Throwable $e) {
-    logAction($pdo, $userId, 'ai_action_review_error', [
+    logAction($pdo, $userId, 'ai_action_execute_error', [
         'queue_id' => $queueId,
         'message' => $e->getMessage(),
     ]);
 
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Unable to update queue item right now.']);
+    echo json_encode(['status' => 'error', 'message' => 'Unable to execute queue item right now.']);
 }

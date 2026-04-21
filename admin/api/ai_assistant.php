@@ -53,7 +53,7 @@ $allowedSlugs = getRoleMenuPermissions($pdo, $roleId);
 $context = preg_replace('/(password|secret|api[_-]?key|token)\s*[:=].*/i', '[REDACTED]', $context);
 
 try {
-    $result = ai_assistant_query($question, $context, $roleName, $allowedSlugs);
+    $result = ai_assistant_query($question, $context, $roleName, $allowedSlugs, $pdo);
 
     logAction($pdo, $userId, 'ai_assistant_query', [
         'provider' => $result['provider'] ?? null,
