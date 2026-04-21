@@ -952,38 +952,49 @@ try {
   $hasUniversal = !empty($check3);
 } catch (Throwable $e) { $hasUniversal = false; }
 
-// Allow admin to request a source via GET ?source=postutme|regular|universal
-$requestedSource = strtolower(trim($_GET['source'] ?? ''));
-$registrations_source = 'student_registrations';
-if ($requestedSource === 'postutme' && $hasPostUtme) {
-  $registrations_source = 'post_utme_registrations';
-  $hasRegistrations = true;
-} elseif ($requestedSource === 'universal' && $hasUniversal) {
-  $registrations_source = 'universal_registrations';
-  $hasRegistrations = true;
-} elseif ($requestedSource === 'regular') {
-  // prefer student_registrations if present; otherwise fall back to post_utme
-  if ($hasRegistrations) {
-    $registrations_source = 'student_registrations';
-  } elseif ($hasPostUtme) {
-    $registrations_source = 'post_utme_registrations';
-    $hasRegistrations = true;
-  }
-} else {
-  // default behavior: if universal_registrations exists, use that; else student_registrations; else post_utme
-  if ($hasUniversal) {
-    $hasRegistrations = true;
-    $registrations_source = 'universal_registrations';
-    $requestedSource = 'universal';
-  } elseif (!$hasRegistrations && $hasPostUtme) {
-    $hasRegistrations = true;
-    $registrations_source = 'post_utme_registrations';
-    $requestedSource = 'postutme';
-  }
+// All program types from register-new.php — always show the full list in the filter.
+$validProgramTypes = [
+  'jamb'          => 'JAMB/UTME',
+  'waec'          => 'WAEC/NECO/GCE',
+  'postutme'      => 'Post-UTME',
+  'digital'       => 'Digital Skills',
+  'international' => 'International Programs',
+  'regular'       => 'Regular Admission',
+];
+
+// Add legacy tables as extra manual dropdown filters if they exist
+if ($hasPostUtme) {
+  $validProgramTypes['legacy_postutme'] = 'Legacy Post-UTME (Old Form)';
+}
+// We can always offer Legacy Regular if student_registrations exists
+if (isset($hasRegistrations) && $hasRegistrations) {
+  $validProgramTypes['legacy_regular'] = 'Legacy Regular (Old Form)';
 }
 
-// expose for template UI
-$current_source = $requestedSource ?: ($registrations_source === 'universal_registrations' ? 'universal' : ($registrations_source === 'post_utme_registrations' ? 'postutme' : 'regular'));
+$filterProgramType = strtolower(trim($_GET['program_type'] ?? ''));
+if ($filterProgramType !== '' && !array_key_exists($filterProgramType, $validProgramTypes)) {
+  $filterProgramType = '';
+}
+
+// ---------------------------------------------------------
+// Determine which table to query based on exactly ONE filter
+// ---------------------------------------------------------
+if ($filterProgramType === 'legacy_regular') {
+  $registrations_source = 'student_registrations';
+  // So we don't apply `program_type` WHERE clause since old table doesn't have it
+  $active_program_query = ''; 
+} elseif ($filterProgramType === 'legacy_postutme') {
+  $registrations_source = 'post_utme_registrations';
+  $active_program_query = '';
+} else {
+  // Anything else (including empty 'All Programs') uses the new universal table
+  $registrations_source = 'universal_registrations';
+  $active_program_query = $filterProgramType;
+}
+
+// expose for template UI (ensure it doesn't break legacy exports)
+$current_source = ($registrations_source === 'universal_registrations') ? 'universal' : 
+                  (($registrations_source === 'post_utme_registrations') ? 'postutme' : 'regular');
 
 // ensure counters exist regardless of which data path is used
 $active = 0; $pending = 0; $banned = 0; $total = 0;
@@ -1014,23 +1025,37 @@ if ($hasRegistrations) {
     $stmt->execute();
     $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } elseif ($registrations_source === 'universal_registrations') {
-    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations");
-    $countStmt->execute();
+    // Build WHERE clause with optional program_type filter
+    $whereClause = '';
+    $whereParams = [];
+    if ($active_program_query !== '') {
+      $whereClause = 'WHERE program_type = ?';
+      $whereParams[] = $active_program_query;
+    }
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations $whereClause");
+    $countStmt->execute($whereParams);
     $total = (int)$countStmt->fetchColumn();
 
-    // KPI counts (best-effort)
+    // KPI counts scoped to current filter
     try {
-      $countAwaiting = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'awaiting_payment'")->fetchColumn();
-      $countConfirmed = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'confirmed'")->fetchColumn();
-      $countRejected = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'rejected'")->fetchColumn();
+      // Use safe param binding for KPI instead of string interpolation
+      $kpiBase = $active_program_query !== '' ? ' AND program_type = ?' : '';
+      $kpiP    = $active_program_query !== '' ? [$active_program_query] : [];
+      
+      $s1 = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations WHERE status='awaiting_payment'$kpiBase"); $s1->execute($kpiP); $countAwaiting = (int)$s1->fetchColumn();
+      $s2 = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations WHERE status='confirmed'$kpiBase");         $s2->execute($kpiP); $countConfirmed = (int)$s2->fetchColumn();
+      $s3 = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations WHERE status='rejected'$kpiBase");          $s3->execute($kpiP); $countRejected  = (int)$s3->fetchColumn();
     } catch (Throwable $_) { }
 
-    $stmt = $pdo->prepare("SELECT * FROM universal_registrations ORDER BY created_at DESC LIMIT ? OFFSET ?");
-    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt = $pdo->prepare("SELECT * FROM universal_registrations $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    // Bind typed params
+    $bindOffset = 1;
+    if ($active_program_query !== '') { $stmt->bindValue($bindOffset++, $active_program_query, PDO::PARAM_STR); }
+    $stmt->bindValue($bindOffset++, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue($bindOffset,   $offset,  PDO::PARAM_INT);
     $stmt->execute();
     $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // mark entries so template can render appropriate actions
     foreach ($academic as &$ss) { $ss['__universal'] = 1; }
     unset($ss);
   } else {
@@ -1242,43 +1267,70 @@ if ($__hqStandalone) {
     <div class="filter-card">
       <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
         <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center" style="flex:1;">
-          <div class="position-relative" style="flex:1; max-width: 420px;">
+          <div class="position-relative" style="flex:1; max-width: 380px;">
             <i class='bx bx-search' style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;"></i>
             <input type="text" id="searchInput" placeholder="Search by name, email..." class="form-control" style="padding-left:40px; border-radius: 0.75rem;">
           </div>
 
-          <select id="statusFilter" class="form-select" style="border-radius: 0.75rem; max-width: 220px;">
+          <select id="statusFilter" class="form-select" style="border-radius: 0.75rem; max-width: 200px;">
             <option value="">All Statuses</option>
-            <option value="active">Approved</option>
+            <option value="confirmed">Confirmed</option>
             <option value="pending">Pending</option>
-            <option value="banned">Rejected</option>
+            <option value="awaiting_payment">Awaiting Payment</option>
+            <option value="rejected">Rejected</option>
           </select>
+
+          <!-- Program Type Filter (from register-new.php wizard) -->
+          <form method="GET" action="index.php" id="programFilterForm" style="display:contents;">
+            <input type="hidden" name="pages" value="academic">
+            <select name="program_type" id="programTypeFilter" class="form-select"
+                    style="border-radius:0.75rem; max-width:220px; border-color:<?= $filterProgramType ? '#ffd600' : '#e2e8f0' ?>;"
+                    onchange="document.getElementById('programFilterForm').submit()">
+              <option value="" <?= $filterProgramType === '' ? 'selected' : '' ?>>All Programs</option>
+              
+              <?php foreach ($validProgramTypes as $typeKey => $typeLabel): ?>
+              <?php if (strpos($typeKey, 'legacy_') === 0): ?>
+                <optgroup label="Legacy Data">
+                  <option value="<?= htmlspecialchars($typeKey) ?>" <?= $filterProgramType === $typeKey ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($typeLabel) ?>
+                  </option>
+                </optgroup>
+              <?php else: ?>
+                <option value="<?= htmlspecialchars($typeKey) ?>" <?= $filterProgramType === $typeKey ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($typeLabel) ?>
+                </option>
+              <?php endif; ?>
+              <?php endforeach; ?>
+            </select>
+          </form>
         </div>
 
-        <div class="btn-group" role="group" aria-label="Registration source">
-          <a href="index.php?pages=academic" class="btn btn-sm <?= ($current_source==='regular' || $current_source==='') ? 'btn-dark' : 'btn-outline-secondary' ?>">Regular</a>
-          <?php if ($hasPostUtme): ?>
-          <a href="index.php?pages=academic&source=postutme" class="btn btn-sm <?= ($current_source==='postutme') ? 'btn-dark' : 'btn-outline-secondary' ?>">Post-UTME</a>
-          <?php endif; ?>
-          <?php if ($hasUniversal): ?>
-          <a href="index.php?pages=academic&source=universal" class="btn btn-sm <?= ($current_source==='universal') ? 'btn-dark' : 'btn-outline-secondary' ?>">New Wizard</a>
-          <?php endif; ?>
-        </div>
-        
-        <!-- Export Buttons - Uses API endpoint -->
+        <!-- Export Buttons -->
         <div class="btn-group ms-2">
-          <a href="api/export_registration.php?action=export_csv&source=<?= htmlspecialchars($current_source) ?>" 
-             class="btn btn-sm btn-warning" 
+          <a href="api/export_registration.php?action=export_csv&source=<?= htmlspecialchars($current_source) ?><?= $filterProgramType ? '&program_type='.htmlspecialchars($filterProgramType) : '' ?>"
+             class="btn btn-sm btn-warning"
              style="background: #ffd600; border-color: #ffd600; color: #0b1a2c; font-weight: 600;">
             <i class='bx bx-download'></i> CSV
           </a>
-          <a href="api/export_registration.php?action=export_pdf&source=<?= htmlspecialchars($current_source) ?>" 
-             class="btn btn-sm btn-danger" 
+          <a href="api/export_registration.php?action=export_pdf&source=<?= htmlspecialchars($current_source) ?><?= $filterProgramType ? '&program_type='.htmlspecialchars($filterProgramType) : '' ?>"
+             class="btn btn-sm btn-danger"
              style="font-weight: 600;">
             <i class='bx bxs-file-pdf'></i> PDF
           </a>
         </div>
       </div>
+
+      <?php if ($filterProgramType): ?>
+      <!-- Active filter pill -->
+      <div class="mt-3 d-flex align-items-center gap-2">
+        <span style="font-size:0.8rem;color:#64748b;">Filtered by:</span>
+        <span style="background:#ffd600;color:#111;padding:4px 12px;border-radius:9999px;font-size:0.8rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+          <i class='bx bx-filter-alt'></i> <?= htmlspecialchars($validProgramTypes[$filterProgramType] ?? $filterProgramType) ?>
+          <a href="index.php?pages=academic" style="color:#111;text-decoration:none;font-size:1rem;line-height:1;" title="Clear filter">×</a>
+        </span>
+        <span style="font-size:0.8rem;color:#64748b;"><?= number_format($total) ?> result<?= $total !== 1 ? 's' : '' ?></span>
+      </div>
+      <?php endif; ?>
     </div>
 
     <!-- KPI Summary -->
@@ -1316,7 +1368,9 @@ if ($__hqStandalone) {
                 $programTypeBadge = $isUniversal && !empty($s['program_type']) ? ucfirst($s['program_type']) : null;
             ?>
             <div class="student-card academic-card"
-                 data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>">
+                 data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>"
+                 data-name="<?= htmlspecialchars(strtolower($displayName)) ?>"
+                 data-email="<?= htmlspecialchars(strtolower($displayEmail)) ?>">
               <div class="d-flex align-items-start gap-3 mb-3">
                 <div class="academic-avatar">
                   <img src="<?= htmlspecialchars($passportThumb ?: 'assets/img/hq-logo.jpeg') ?>"
@@ -1328,13 +1382,22 @@ if ($__hqStandalone) {
                   <h3 class="card-name" style="margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayName) ?></h3>
                   <div class="card-email" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayEmail) ?></div>
                   <div class="d-flex flex-wrap gap-2 mt-2">
-                    <span class="badge bg-primary-subtle text-primary"><?= $programTypeBadge ?: 'Student' ?></span>
+                    <?php
+                    // Program type badge: prefer human-readable label from validProgramTypes
+                    $progTypeRaw = $isUniversal && !empty($s['program_type']) ? strtolower($s['program_type']) : null;
+                    $progBadgeLabel = $progTypeRaw && isset($validProgramTypes[$progTypeRaw])
+                      ? $validProgramTypes[$progTypeRaw]
+                      : ($programTypeBadge ?: 'Student');
+                    ?>
+                    <span class="badge bg-primary-subtle text-primary"><?= htmlspecialchars($progBadgeLabel) ?></span>
                     <?php if ($status==='paid' || $status==='confirmed' || $status==='active'): ?>
                       <span class="badge bg-success-subtle text-success"><?= htmlspecialchars(ucfirst($status)) ?></span>
                     <?php elseif ($status==='rejected' || $status==='banned'): ?>
                       <span class="badge bg-danger-subtle text-danger"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                    <?php elseif ($status==='awaiting_payment'): ?>
+                      <span class="badge bg-warning-subtle text-warning">Awaiting Payment</span>
                     <?php else: ?>
-                      <span class="badge bg-warning-subtle text-warning"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                      <span class="badge bg-secondary-subtle text-secondary"><?= htmlspecialchars(ucfirst($status)) ?></span>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -1378,8 +1441,12 @@ if ($__hqStandalone) {
         <?php endif; ?>
     </div>
 
-    <!-- Pagination -->
-    <?php if (!empty($total) && isset($perPage)): $pages = (int) ceil($total / $perPage); $baseLink = 'index.php?pages=academic' . ($current_source==='postutme' ? '&source=postutme' : ''); $currentPage = (int)($page ?? 1); ?>
+    <?php if (!empty($total) && isset($perPage)):
+      $pages = (int) ceil($total / $perPage);
+      $baseLink = 'index.php?pages=academic';
+      if ($filterProgramType) $baseLink .= '&program_type=' . urlencode($filterProgramType);
+      $currentPage = (int)($page ?? 1);
+    ?>
     <?php if ($pages > 1): ?>
     <nav aria-label="Academic pagination" class="mt-4">
       <ul class="pagination justify-content-center">
@@ -1405,19 +1472,19 @@ if ($__hqStandalone) {
 // Client-side search
 document.getElementById('searchInput').addEventListener('keyup', function(e) {
     const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.academic-card').forEach(card => {
-        const name = card.querySelector('.card-name').textContent.toLowerCase();
-        const email = card.querySelector('.card-email').textContent.toLowerCase();
-    card.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+    document.querySelectorAll('.academic-card').forEach(card => {
+        const name  = (card.dataset.name  || card.querySelector('.card-name')?.textContent   || '').toLowerCase();
+        const email = (card.dataset.email || card.querySelector('.card-email')?.textContent  || '').toLowerCase();
+        card.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
     });
 });
 
 document.getElementById('statusFilter').addEventListener('change', function(e) {
     const status = e.target.value.toLowerCase();
-  document.querySelectorAll('.academic-card').forEach(card => {
-        const cardStatus = card.dataset.status;
-    if (!status) card.style.display = '';
-    else card.style.display = (cardStatus.includes(status)) ? '' : 'none';
+    document.querySelectorAll('.academic-card').forEach(card => {
+        const cardStatus = (card.dataset.status || '').toLowerCase();
+        if (!status) card.style.display = '';
+        else card.style.display = cardStatus === status ? '' : 'none';
     });
 });
 
