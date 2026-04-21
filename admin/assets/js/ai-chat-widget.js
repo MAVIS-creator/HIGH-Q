@@ -44,7 +44,7 @@
         <div class="hq-chat-header-icon"><i class='bx bx-bot'></i></div>
         <div class="hq-chat-header-info">
           <div class="hq-chat-header-title">AI Assistant</div>
-          <div class="hq-chat-header-sub" id="hqChatProviderLabel">Role-aware · Confirm before write</div>
+          <div class="hq-chat-header-sub" id="hqChatProviderLabel">Role-aware · Secure</div>
         </div>
         <div class="hq-chat-header-actions">
           <button class="hq-chat-icon-btn" id="hqChatClearBtn" title="Clear conversation" aria-label="Clear conversation">
@@ -150,19 +150,16 @@
 
     const bubble = document.createElement('div');
     bubble.className = 'hq-msg-bubble';
-    bubble.style.whiteSpace = 'pre-wrap';
-    bubble.textContent = text;
+    
+    if (isUser) {
+      bubble.style.whiteSpace = 'pre-wrap';
+      bubble.textContent = text;
+    } else {
+      bubble.innerHTML = parseMarkdown(text);
+    }
 
     wrap.appendChild(avatar);
-    wrap.appendChild(document.createElement('div')); // spacer column
-    wrap.lastChild.appendChild(bubble);
-
-    if (meta) {
-      const metaEl = document.createElement('div');
-      metaEl.className = 'hq-msg-meta';
-      metaEl.textContent = meta;
-      wrap.lastChild.appendChild(metaEl);
-    }
+    wrap.appendChild(bubble);
 
     container.appendChild(wrap);
     container.scrollTop = container.scrollHeight;
@@ -180,11 +177,11 @@
     wrap.id = 'hqTypingIndicator';
     wrap.innerHTML = `
       <div class="hq-msg-avatar">AI</div>
-      <div><div class="hq-msg-bubble">
+      <div class="hq-msg-bubble">
         <span class="hq-typing-dot"></span>
         <span class="hq-typing-dot"></span>
         <span class="hq-typing-dot"></span>
-      </div></div>`;
+      </div>`;
     container.appendChild(wrap);
     container.scrollTop = container.scrollHeight;
   }
@@ -199,9 +196,9 @@
     const card = document.createElement('div');
     card.className = 'hq-proposal-card';
     card.innerHTML = `
-      <p><strong>Safe automation proposal detected.</strong> Review and confirm to queue it for human review.</p>
+      <p><strong>Action required.</strong> Review and confirm to automate this task.</p>
       <button class="hq-proposal-btn hq-proposal-confirm" data-proposal="${escapeAttr(proposalText)}">
-        <i class='bx bx-check-shield'></i> Queue for Review
+        <i class='bx bx-check-shield'></i> Authorise
       </button>
       <button class="hq-proposal-btn hq-proposal-dismiss">Dismiss</button>`;
 
@@ -268,19 +265,15 @@
       }
 
       const answer = data.answer || 'No response.';
-      const meta   = (data.provider && data.model)
-        ? `via ${data.provider} / ${data.model}`
-        : null;
 
-      appendMessage('assistant', answer, meta);
+      appendMessage('assistant', answer, null);
 
-      if (meta) {
-        const label = document.getElementById('hqChatProviderLabel');
-        if (label) label.textContent = meta;
-      }
-
-      // Heuristic: if response mentions "queue" or "review" or "proposal", show card
-      if (/\b(queue|proposal|suggest|action|automat)/i.test(answer)) {
+      // Heuristic: only show the proposal card if the AI explicitly used a JSON block or specific action keywords 
+      // indicating an intent to modify data (e.g. UPDATE, DELETE, INSERT, or JSON tool calls).
+      const stringLower = answer.toLowerCase();
+      if ((stringLower.includes('```json') && stringLower.includes('action')) || 
+          stringLower.includes('please confirm if you would like me to proceed') ||
+          stringLower.includes('confirm to execute')) {
         appendProposalCard(answer);
       }
     } catch (err) {
@@ -311,9 +304,9 @@
       });
       const data = await res.json();
       if (res.ok && data.status === 'ok') {
-        appendMessage('assistant', `✅ Proposal queued for review (ID: ${data.queue_id ?? 'n/a'}). An admin will evaluate it before any changes are applied.`, null);
+        appendMessage('assistant', `✅ Task has been queued securely (ID: ${data.queue_id ?? 'n/a'}). It will be executed pending review.`, null);
       } else {
-        appendMessage('assistant', '⚠ Could not queue proposal: ' + (data.message || 'Unknown error'), null);
+        appendMessage('assistant', '⚠ Could not process the request: ' + (data.message || 'Unknown error'), null);
       }
     } catch (err) {
       appendMessage('assistant', '⚠ Queue request failed. Please use the AI Queue page.', null);
@@ -345,6 +338,31 @@
   ───────────────────────────────────────────── */
   function escapeAttr(str) {
     return (str || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function parseMarkdown(text) {
+    if (!text) return '';
+    // Escape HTML first to prevent XSS
+    let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Parse Markdown
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
+    html = html.replace(/`(.*?)`/g, '<code style="background:rgba(0,0,0,0.06);padding:2px 4px;border-radius:4px;font-size:0.9em;">$1</code>'); // Inline code
+    
+    // Convert links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#0056b3;text-decoration:underline;">$1</a>');
+
+    // Handle newlines as breaks
+    html = html.replace(/\n\n/g, '</p><p style="margin: 8px 0;">');
+    html = html.replace(/\n/g, '<br/>');
+
+    // Clean up lists (optional simple approach)
+    html = html.replace(/<br\/>- (.*?)(?=(<br\/>|$))/g, '<li style="margin-left: 15px;">$1</li>');
+    html = html.replace(/<br\/>\* (.*?)(?=(<br\/>|$))/g, '<li style="margin-left: 15px;">$1</li>');
+    html = html.replace(/<br\/>(\d+)\. (.*?)(?=(<br\/>|$))/g, '<li style="margin-left: 15px;"><strong>$1.</strong> $2</li>');
+
+    return `<div style="line-height: 1.6; margin: 0;">${html}</div>`;
   }
 
   /* ─────────────────────────────────────────────

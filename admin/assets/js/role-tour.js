@@ -30,19 +30,32 @@
     const steps = [];
     rawSteps.forEach(function (step) {
       if (!step || !step.intro) return;
-      const selector = step.selector || '';
-      const el = selector ? document.querySelector(selector) : null;
-      if (selector && !el) return;
 
-      const introText = step.title
-        ? '<strong>' + step.title + '</strong><br>' + step.intro
-        : step.intro;
-
-      if (el) {
-        steps.push({ element: el, intro: introText });
-      } else {
-        steps.push({ intro: introText });
+      const slug = step.slug || '';
+      let previewHtml = '';
+      
+      if (slug) {
+        // Create an iframe to preview the page instantly
+        const previewUrl = adminBase + '/index.php?pages=' + encodeURIComponent(slug);
+        previewHtml = `
+          <div style="margin-top: 15px; border-radius: 12px; overflow: hidden; height: 220px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #eaeaea;">
+            <div style="position: absolute; inset: 0; z-index: 10; cursor: default;"></div>
+            <iframe src="${previewUrl}" style="width: 100%; height: 800px; border: none; transform: scale(0.4); transform-origin: top left; pointer-events: none;" tabindex="-1"></iframe>
+          </div>
+        `;
       }
+
+      const introText = `
+        <div style="text-align: center; padding: 10px 4px;">
+          ${step.title ? `<h3 style="margin: 0 0 10px 0; font-size: 1.25rem; font-weight: 800; color: #111;">${step.title}</h3>` : ''}
+          <p style="margin: 0; font-size: 0.95rem; color: #444; line-height: 1.6;">${step.intro}</p>
+          ${previewHtml}
+        </div>
+      `;
+
+      // Deliberately omitting the `element` property so Intro.js centers it on screen.
+      // This ensures mobile users are not broken by hidden sidebars.
+      steps.push({ intro: introText });
     });
 
     return steps;
@@ -85,10 +98,11 @@
       steps: steps,
       showProgress: true,
       showBullets: false,
-      nextLabel: 'Next',
-      prevLabel: 'Back',
-      doneLabel: 'Finish',
-      skipLabel: 'Skip'
+      nextLabel: 'Next <i class="bx bx-chevron-right"></i>',
+      prevLabel: '<i class="bx bx-chevron-left"></i> Back',
+      doneLabel: '<i class="bx bx-check"></i> Finish Tour',
+      skipLabel: 'Skip',
+      tooltipClass: 'hq-intro-modal'
     });
 
     let completed = false;

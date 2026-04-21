@@ -385,3 +385,67 @@
     max-height: 65vh;
   }
 }
+
+/* ── Tour Modal (Intro.js Override) ── */
+.introjs-tooltip.hq-intro-modal {
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.2) !important;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-family: inherit;
+  padding: 8px;
+  max-width: 440px !important;
+  width: calc(100vw - 32px);
+  background: #fff;
+}
+
+.hq-intro-modal .introjs-tooltiptext {
+  padding: 10px;
+}
+
+.hq-intro-modal .introjs-tooltipbuttons {
+  border-top: none;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.hq-intro-modal .introjs-button {
+  border: none;
+  background: #f4f5f7;
+  color: #333;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  text-shadow: none;
+  box-shadow: none;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hq-intro-modal .introjs-button:hover {
+  background: #e5e7eb;
+}
+
+.hq-intro-modal .introjs-nextbutton {
+  background: linear-gradient(135deg, #ffd600, #ffb300) !important;
+  color: #111 !important;
+}
+
+.hq-intro-modal .introjs-nextbutton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,179,0,0.4) !important;
+}
+
+.hq-intro-modal .introjs-progress {
+  background: #f3f4f6;
+  border-radius: 4px;
+  margin: 10px 10px 0;
+  height: 6px;
+}
+
+.hq-intro-modal .introjs-progressbar {
+  background: linear-gradient(135deg, #ffd600, #ffb300);
+}

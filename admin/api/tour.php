@@ -113,6 +113,7 @@ if ($action === 'status') {
         $steps[] = [
             'title' => ucwords(str_replace('_', ' ', $slug)),
             'intro' => $intro,
+            'slug' => $slug,
             'selector' => 'a[data-menu-slug="' . $slug . '"]',
         ];
     }
@@ -120,6 +121,7 @@ if ($action === 'status') {
     $steps[] = [
         'title' => 'Profile and Notifications',
         'intro' => 'Use the bell icon and profile menu for alerts and account settings.',
+        'slug' => '',
         'selector' => '#notifBtn',
     ];
 
