@@ -36,6 +36,13 @@ if (!function_exists('admin_url') || !function_exists('app_url')) {
     }
 }
 
+if (!function_exists('generateToken')) {
+    $csrfPath = __DIR__ . '/csrf.php';
+    if (file_exists($csrfPath)) {
+        require_once $csrfPath;
+    }
+}
+
 // Start output buffering so downstream header() calls succeed even if this file emits HTML
 if (!headers_sent()) {
     ob_start();
@@ -75,6 +82,7 @@ if ($idx !== false) {
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/notifications.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/modern-tables.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/introjs.min.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -86,6 +94,8 @@ if ($idx !== false) {
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/viewport-check.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/admin-forms.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/account-settings-modal.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/intro.min.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/role-tour.js" defer></script>
     <?php
     // Output the correct admin.css for the detected admin path
     echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($adminBasePath) . "/assets/css/admin.css\">\n";
@@ -158,6 +168,11 @@ if ($idx !== false) {
     echo "window.HQ_ADMIN_BASE = '" . $adminBaseFull . "';\n";
     echo "window.HQ_ADMIN_PATH = '" . $adminPath . "';\n";
     echo "window.HQ_APP_BASE = '" . $scheme . '://' . $host . "';\n";
+    if (function_exists('generateToken')) {
+        $tourCsrf = generateToken('tour_api');
+        $aiCsrf = generateToken('ai_assistant_api');
+        echo "window.HQ_CSRF = { tour: '" . $tourCsrf . "', ai: '" . $aiCsrf . "' };\n";
+    }
     echo "console.log('ADMIN_BASE derived from request:', '" . $adminBaseFull . "');\n";
     echo "</script>\n";
     ?>

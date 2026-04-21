@@ -389,6 +389,86 @@ function admin_url(string $path = ''): string {
 }
 
 /**
+ * Return menu slugs assigned to a role.
+ */
+function getRoleMenuPermissions(PDO $pdo, int $roleId): array {
+    if ($roleId <= 0) return [];
+
+    try {
+        $stmt = $pdo->prepare('SELECT menu_slug FROM role_permissions WHERE role_id = ?');
+        $stmt->execute([$roleId]);
+        return array_values(array_unique(array_filter(array_map('strval', $stmt->fetchAll(PDO::FETCH_COLUMN)))));
+    } catch (Throwable $e) {
+        return [];
+    }
+}
+
+/**
+ * Read onboarding tour flags from users table with a safe fallback when migration is not yet applied.
+ */
+function getUserOnboardingTourState(PDO $pdo, int $userId): array {
+    $default = ['pending' => true, 'completed_at' => null, 'started_at' => null];
+    if ($userId <= 0) return $default;
+
+    try {
+        $stmt = $pdo->prepare('SELECT onboarding_tour_pending, onboarding_tour_started_at, onboarding_tour_completed_at FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) return $default;
+
+        return [
+            'pending' => isset($row['onboarding_tour_pending']) ? ((int)$row['onboarding_tour_pending'] === 1) : true,
+            'started_at' => $row['onboarding_tour_started_at'] ?? null,
+            'completed_at' => $row['onboarding_tour_completed_at'] ?? null,
+        ];
+    } catch (Throwable $e) {
+        return $default;
+    }
+}
+
+/**
+ * Persist onboarding tour state. Returns false when migration columns are unavailable.
+ */
+function updateUserOnboardingTourState(PDO $pdo, int $userId, array $state): bool {
+    if ($userId <= 0) return false;
+
+    $pending = isset($state['pending']) ? ((bool)$state['pending'] ? 1 : 0) : null;
+    $startedAt = $state['started_at'] ?? null;
+    $completedAt = $state['completed_at'] ?? null;
+
+    try {
+        $sets = [];
+        $params = [];
+
+        if ($pending !== null) {
+            $sets[] = 'onboarding_tour_pending = ?';
+            $params[] = $pending;
+        }
+
+        if (array_key_exists('started_at', $state)) {
+            $sets[] = 'onboarding_tour_started_at = ?';
+            $params[] = $startedAt;
+        }
+
+        if (array_key_exists('completed_at', $state)) {
+            $sets[] = 'onboarding_tour_completed_at = ?';
+            $params[] = $completedAt;
+        }
+
+        if (empty($sets)) {
+            return false;
+        }
+
+        $params[] = $userId;
+        $sql = 'UPDATE users SET ' . implode(', ', $sets) . ' WHERE id = ?';
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute($params);
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
+/**
  * Check if user has permission for a specific resource.
  * Throws exception if permission denied. Returns true if allowed.
  */

@@ -191,8 +191,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
 
+            $uid = (int)$pdo->lastInsertId();
+            try {
+                $tourStmt = $pdo->prepare('UPDATE users SET onboarding_tour_pending = 1, onboarding_tour_started_at = NULL, onboarding_tour_completed_at = NULL WHERE id = ?');
+                $tourStmt->execute([$uid]);
+            } catch (Throwable $e) {
+                // Non-fatal on databases where migration has not yet been applied.
+            }
+
             if (!$is_active) {
-                $uid = $pdo->lastInsertId();
                 $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
                 $uupd->execute([$sentAt, $uid]);
 

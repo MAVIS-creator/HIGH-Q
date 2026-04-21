@@ -63,6 +63,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'role_slug' => $user['role_slug'],
                         'role_name' => $user['role_name']
                     ];
+
+                    $tourState = ['pending' => true, 'completed_at' => null];
+                    if (function_exists('getUserOnboardingTourState')) {
+                        $tourState = getUserOnboardingTourState($pdo, (int)$user['id']);
+                    }
+
+                    $_SESSION['onboarding_tour'] = [
+                        'pending' => (bool)($tourState['pending'] ?? true),
+                        'completed_at' => $tourState['completed_at'] ?? null,
+                        'show_after_signup' => !empty($_SESSION['post_signup_tour_trigger']),
+                    ];
+
+                    unset($_SESSION['post_signup_tour_trigger']);
+
                     try {
                         $stmtDel = $pdo->prepare('DELETE FROM login_attempts WHERE ip = ? OR email = ?');
                         $stmtDel->execute([$ip, $email]);

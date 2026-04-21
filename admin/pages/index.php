@@ -29,6 +29,12 @@ $pageMeta = [
     'tutors' => [
         'subtitle' => 'Manage tutor profiles and listings',
     ],
+    'ai_assistant' => [
+        'subtitle' => 'Role-aware AI assistant for explanations, summaries, and safe action suggestions',
+    ],
+    'ai_queue' => [
+        'subtitle' => 'Review assistant suggestions before approval or rejection',
+    ],
     'posts' => [
         'subtitle' => 'Create and manage news articles and blog posts',
         'css' => 'assets/css/posts.css',

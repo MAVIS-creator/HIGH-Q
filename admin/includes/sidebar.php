@@ -74,6 +74,7 @@ try {
                     ?>
                     <li>
                         <a href="<?= $item['url']; ?>" 
+                           data-menu-slug="<?= htmlspecialchars($slug); ?>"
                            class="<?= $current === $slug ? 'active' : ''; ?>"
                            <?= isset($item['target']) ? 'target="' . htmlspecialchars($item['target']) . '"' : ''; ?>>
                             <i class='<?= htmlspecialchars($iconClass); ?>'></i>

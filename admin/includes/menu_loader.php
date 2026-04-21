@@ -30,6 +30,8 @@ try {
 // Also update students to academic
 $required = [
     'academic' => ['title' => 'Academic Management', 'icon' => 'bx bxs-graduation', 'url' => 'index.php?pages=academic'],
+    'ai_assistant' => ['title' => 'AI Assistant', 'icon' => 'bx bx-bot', 'url' => 'index.php?pages=ai_assistant'],
+    'ai_queue' => ['title' => 'AI Review Queue', 'icon' => 'bx bx-list-check', 'url' => 'index.php?pages=ai_queue'],
     'sentinel' => ['title' => 'Security Scan', 'icon' => 'bx bxs-shield-alt', 'url' => 'index.php?pages=sentinel'],
     'patcher' => ['title' => 'Smart Patcher', 'icon' => 'bx bx-wrench', 'url' => 'index.php?pages=patcher', 'target' => '_blank'],
     'automator' => ['title' => 'Automator', 'icon' => 'bx bx-cog', 'url' => 'index.php?pages=automator'],
