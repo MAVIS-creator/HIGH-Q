@@ -167,6 +167,23 @@ try {
         json_encode($payload, JSON_UNESCAPED_UNICODE),
     ]);
     $regId = (int)$pdo->lastInsertId();
+    
+    // Send notification to all admins about new registration
+    try {
+        notifyAdminChange($pdo, 'New Registration Submitted', [
+            'Registration ID' => $regId,
+            'Program Type' => ucfirst(str_replace('-', ' ', $programType)),
+            'Student Name' => trim($first . ' ' . $last),
+            'Email' => $email,
+            'Phone' => $phone,
+            'Amount' => '₦' . number_format($amount, 2),
+            'Payment Reference' => $reference,
+            'Status' => 'Pending Admin Review'
+        ]);
+    } catch (Throwable $e) {
+        // Don't block registration if notification fails
+        error_log('Registration notification error: ' . $e->getMessage());
+    }
 } catch (Throwable $e) {
     $_SESSION['registration_errors'] = ['Unable to save your registration. Please try again.'];
     header('Location: register-new.php?step=2&type=' . urlencode($programType));

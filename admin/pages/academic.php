@@ -348,9 +348,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         // Build absolute URL for passport photo so modal img can load it
         $rawPassport = $payload['passport_photo'] ?? null;
         if ($rawPassport && !preg_match('#^https?://#i', $rawPassport)) {
-            $pScheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $pHost   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            $rawPassport = $pScheme . '://' . $pHost . '/HIGH-Q/public/' . ltrim($rawPassport, '/');
+            $pScheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $pHost      = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $docRoot    = rtrim(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'] ?? '')), '/');
+            $publicReal = rtrim(str_replace('\\', '/', realpath(__DIR__ . '/../../public')), '/');
+            $publicWeb  = str_replace($docRoot, '', $publicReal);
+            $rawPassport = $pScheme . '://' . $pHost . $publicWeb . '/' . ltrim($rawPassport, '/');
         }
 
         echo json_encode([
@@ -434,12 +437,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
   }
 
   // Build absolute URL from relative path (e.g. 'uploads/passports/file.jpg')
-  $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-  $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+  $scheme     = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  $host       = $_SERVER['HTTP_HOST'] ?? 'localhost';
+  $docRoot    = rtrim(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'] ?? '')), '/');
+  $publicReal = rtrim(str_replace('\\', '/', realpath(__DIR__ . '/../../public')), '/');
+  $publicWeb  = str_replace($docRoot, '', $publicReal);
   if ($passportPath && !preg_match('#^https?://#i', $passportPath)) {
-      // Ensure the path starts from the public directory
-      $cleanPath = ltrim($passportPath, '/');
-      $passportPath = $scheme . '://' . $host . '/HIGH-Q/public/' . $cleanPath;
+      $passportPath = $scheme . '://' . $host . $publicWeb . '/' . ltrim($passportPath, '/');
   }
 
   $fullName = trim(($s['surname'] ?? $s['first_name'] ?? '') . ' ' . ($s['other_names'] ?? $s['last_name'] ?? ''));
