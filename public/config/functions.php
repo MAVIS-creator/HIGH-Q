@@ -346,11 +346,7 @@ function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null, ?stri
 
         if (!empty($allowedSlugs)) {
             $placeholders = implode(',', array_fill(0, count($allowedSlugs), '?'));
-            $sql .= " AND (
-                        LOWER(COALESCE(r.slug, '')) = 'admin'
-                     OR LOWER(COALESCE(r.name, '')) = 'admin'
-                     OR rp.menu_slug IN ($placeholders)
-                  )";
+            $sql .= " AND rp.menu_slug IN ($placeholders)";
             $params = $allowedSlugs;
         } else {
             $sql .= " AND (
