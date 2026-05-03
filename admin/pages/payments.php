@@ -47,6 +47,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         $upd = $pdo->prepare('UPDATE payments SET status = "confirmed", confirmed_at = NOW(), updated_at = NOW() WHERE id = ?');
         $ok = $upd->execute([$id]);
     if ($ok) {
+            // Send admin notification about payment confirmation
+            try {
+                require_once __DIR__ . '/../config/db.php';
+                require_once __DIR__ . '/../../public/config/functions.php';
+                $pmt = $pdo->prepare('SELECT * FROM payments WHERE id = ? LIMIT 1');
+                $pmt->execute([$id]);
+                $paymentData = $pmt->fetch(PDO::FETCH_ASSOC);
+                if ($paymentData) {
+                    notifyAdminChange($pdo, 'Payment Confirmed by Admin', [
+                        'Payment ID' => $paymentData['id'],
+                        'Reference' => $paymentData['reference'],
+                        'Amount' => '₦' . number_format($paymentData['amount'], 2),
+                        'Gateway' => $paymentData['gateway'] ?? 'Bank Transfer',
+                        'Status' => 'Successfully Confirmed'
+                    ], (int)($_SESSION['user']['id'] ?? 0));
+                }
+            } catch (Throwable $e) {
+                // Don't block if notification fails
+                error_log('Admin payment notification error: ' . $e->getMessage());
+            }
             // log action: admin confirmed payment
             try { logAction($pdo, (int)($_SESSION['user']['id'] ?? 0), 'confirm_payment', ['payment_id'=>$id]); } catch(Throwable $e){}
             // fetch payment details

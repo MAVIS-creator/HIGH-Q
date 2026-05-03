@@ -59,6 +59,8 @@ try {
                         'test_registration' => 'Test registration notification',
                         'test_payment' => 'Test payment notification',
                         'test_chat' => 'Test chat notification',
+                        'test_public_chat' => 'Test public chat message notification',
+                        'test_public_payment' => 'Test public payment confirmation notification',
                         'test_settings' => 'Test notification settings',
                     ]
                 ]
@@ -148,6 +150,54 @@ try {
             ];
             break;
 
+        case 'test_public_chat':
+            // Test public visitor chat notification
+            $testData = [
+                'Thread ID' => 'PUBLIC-TEST-' . uniqid(),
+                'Visitor Name' => 'Test Visitor',
+                'Visitor Email' => 'visitor@example.com',
+                'Message Preview' => 'This is a test public chat message from system testing',
+                'Has Attachments' => 'No',
+                'Status' => 'Awaiting Admin Response'
+            ];
+            
+            $sent = sendAdminChangeNotification($pdo, 'New Chat Message from Visitor', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $result = [
+                'status' => $sent ? 'ok' : 'warning',
+                'message' => $sent ? 'Public chat test notification sent (simulating visitor message)' : 'No admin recipients found or notifications disabled',
+                'details' => [
+                    'test_data' => $testData,
+                    'trigger_location' => 'public/chatbox.php (when visitor sends message)',
+                    'recipients_count' => count(hqAdminNotificationRecipients($pdo)),
+                    'recipients' => hqAdminNotificationRecipients($pdo),
+                ]
+            ];
+            break;
+
+        case 'test_public_payment':
+            // Test bank transfer payment confirmation notification (admin confirms payment)
+            $testData = [
+                'Payment ID' => 'TEST-PAY-' . uniqid(),
+                'Reference' => 'BANK-' . rand(100000, 999999),
+                'Amount' => '₦50,000.00',
+                'Gateway' => 'Bank Transfer',
+                'Status' => 'Successfully Confirmed'
+            ];
+            
+            $sent = sendAdminChangeNotification($pdo, 'Payment Confirmed by Admin', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $result = [
+                'status' => $sent ? 'ok' : 'warning',
+                'message' => $sent ? 'Bank transfer payment test notification sent (admin confirmation)' : 'No admin recipients found or notifications disabled',
+                'details' => [
+                    'test_data' => $testData,
+                    'trigger_location' => 'admin/pages/payments.php (when admin confirms payment)',
+                    'payment_system' => 'Bank Transfer (Not Paystack)',
+                    'recipients_count' => count(hqAdminNotificationRecipients($pdo)),
+                    'recipients' => hqAdminNotificationRecipients($pdo),
+                ]
+            ];
+            break;
+
         case 'test_settings':
             // Test notification settings
             $settings = [];
@@ -182,6 +232,8 @@ try {
                 'registration' => [],
                 'payment' => [],
                 'chat' => [],
+                'public_chat' => [],
+                'public_payment' => [],
                 'settings' => [],
             ];
             
@@ -230,6 +282,37 @@ try {
                 'message' => $chatSent ? 'Notification sent' : 'Failed to send',
             ];
             
+            // Public chat notification test
+            $pubChatData = [
+                'Thread ID' => 'PUBLIC-TEST-' . uniqid(),
+                'Visitor Name' => 'Test Visitor',
+                'Visitor Email' => 'visitor@example.com',
+                'Message Preview' => 'Test public chat message',
+                'Has Attachments' => 'No',
+                'Status' => 'Awaiting Admin Response'
+            ];
+            $pubChatSent = sendAdminChangeNotification($pdo, 'New Chat Message from Visitor', $pubChatData, (int)($_SESSION['user']['id'] ?? 0));
+            $allTests['public_chat'] = [
+                'status' => $pubChatSent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
+                'message' => $pubChatSent ? 'Public chat notification sent' : 'Failed to send',
+                'trigger' => 'public/chatbox.php'
+            ];
+            
+            // Public payment notification test
+            $pubPayData = [
+                'Payment ID' => 'TEST-PAY-' . uniqid(),
+                'Reference' => 'BANK-' . rand(100000, 999999),
+                'Amount' => '₦50,000.00',
+                'Gateway' => 'Bank Transfer',
+                'Status' => 'Successfully Confirmed'
+            ];
+            $pubPaySent = sendAdminChangeNotification($pdo, 'Payment Confirmed by Admin', $pubPayData, (int)($_SESSION['user']['id'] ?? 0));
+            $allTests['public_payment'] = [
+                'status' => $pubPaySent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
+                'message' => $pubPaySent ? 'Bank transfer payment notification sent' : 'Failed to send',
+                'trigger' => 'admin/pages/payments.php'
+            ];
+            
             // Settings test
             $allTests['settings'] = [
                 'status' => hqAdminEmailNotificationsEnabled($pdo) ? 'pass' : 'warning',
@@ -249,7 +332,7 @@ try {
             break;
 
         default:
-            $result['message'] = 'Unknown action. Use ?action=test_all, test_admin_list, test_registration, test_payment, test_chat, test_settings, or info';
+            $result['message'] = 'Unknown action. Use ?action=test_all, test_admin_list, test_registration, test_payment, test_chat, test_public_chat, test_public_payment, test_settings, or info';
     }
 } catch (Throwable $e) {
     $result = [

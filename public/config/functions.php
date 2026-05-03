@@ -289,7 +289,7 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
             $value = (string)$v;
         }
         $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        $rowsHtml .= "<tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>{$label}</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>{$value}</td></tr>";
+        $rowsHtml .= "<tr><td style='padding:14px 16px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0b1a2c;background:#f9fafb;width:35%;font-size:13px'>{$label}</td><td style='padding:14px 16px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px'>{$value}</td></tr>";
     }
 
     $panelUrl = app_url('admin/');
@@ -299,27 +299,61 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
     $safeOccurredAt = htmlspecialchars($occurredAt, ENT_QUOTES, 'UTF-8');
 
     $html = "
-    <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
-      <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
-        <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
-          <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
-          <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+    <div style='margin:0;padding:0;font-family:&quot;Segoe UI&quot;, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, sans-serif;background:#f8f9fb'>
+      <div style='max-width:720px;margin:0 auto;background:#ffffff;box-shadow:0 4px 32px rgba(0,0,0,0.08)'>
+        <!-- Header -->
+        <div style='background:linear-gradient(135deg, #0b1a2c 0%, #1e3a5f 100%);padding:40px 32px;text-align:center'>
+          <div style='font-size:24px;font-weight:700;color:#ffd600;margin-bottom:8px;letter-spacing:-0.5px'>HIGH-Q</div>
+          <h1 style='margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3'>Admin Notification</h1>
+          <p style='margin:12px 0 0;font-size:13px;color:#a8c5dd;letter-spacing:0.3px;text-transform:uppercase'>System Event Alert</p>
         </div>
-        <div style='padding:20px 24px'>
-          <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> {$safeTitle}</p>
-          <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
-            <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> {$safeActorName}</p>
-            <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> {$safeActorEmail}</p>
-            <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> {$safeOccurredAt}</p>
+        
+        <!-- Content -->
+        <div style='padding:40px 32px'>
+          <!-- Event Title -->
+          <div style='margin-bottom:28px'>
+            <div style='font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>Event Details</div>
+            <h2 style='margin:0;font-size:20px;font-weight:600;color:#0b1a2c;line-height:1.4'>{$safeTitle}</h2>
           </div>
-          <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
-            <tbody>
-              {$rowsHtml}
-            </tbody>
-          </table>
-          <div style='margin-top:20px'>
-            <a href='{$panelUrl}' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+          
+          <!-- Actor Info Box -->
+          <div style='background:linear-gradient(135deg, #f0f7ff 0%, #f8fbff 100%);border:1px solid #d4e6f7;border-radius:12px;padding:20px;margin-bottom:28px'>
+            <div style='display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:13px'>
+              <div>
+                <div style='font-weight:600;color:#334155;margin-bottom:4px'>Triggered By</div>
+                <div style='color:#475569'>{$safeActorName}</div>
+              </div>
+              <div>
+                <div style='font-weight:600;color:#334155;margin-bottom:4px'>Email</div>
+                <div style='color:#475569;word-break:break-all'>{$safeActorEmail}</div>
+              </div>
+              <div style='grid-column:1/-1'>
+                <div style='font-weight:600;color:#334155;margin-bottom:4px'>Timestamp</div>
+                <div style='color:#475569'>{$safeOccurredAt}</div>
+              </div>
+            </div>
           </div>
+          
+          <!-- Details Table -->
+          <div style='margin-bottom:28px'>
+            <div style='font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px'>Details</div>
+            <table style='width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden'>
+              <tbody>
+                {$rowsHtml}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- CTA Button -->
+          <div style='text-align:center;margin-bottom:20px'>
+            <a href='{$panelUrl}' style='display:inline-block;padding:14px 32px;background:linear-gradient(135deg, #ffd600 0%, #e6c200 100%);color:#0b1a2c;text-decoration:none;border-radius:8px;font-weight:700;font-size:14px;letter-spacing:0.3px;transition:all 0.2s ease;box-shadow:0 4px 12px rgba(255,214,0,0.3)'>Access Admin Panel</a>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style='background:#f8f9fb;border-top:1px solid #e2e8f0;padding:24px 32px;text-align:center;font-size:12px;color:#64748b'>
+          <p style='margin:0 0 8px'>This is an automated notification from HIGH-Q Admin System</p>
+          <p style='margin:0;opacity:0.8'>Do not reply to this email. Contact support if you have questions.</p>
         </div>
       </div>
     </div>";

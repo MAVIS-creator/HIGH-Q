@@ -36,6 +36,10 @@ if ($event === 'charge.success' || $event === 'payment.success') {
                 $upd = $pdo->prepare("UPDATE payments SET status='confirmed', metadata = ?, gateway='paystack', confirmed_at = NOW(), updated_at = NOW() WHERE id = ?");
                 $upd->execute([$meta, $p['id']]);
 
+                // NOTE: Payment notification for this webhook disabled.
+                // Notifications are sent from admin/pages/payments.php when admin confirms payment.
+                // This webhook is for Paystack verification only.
+
                 // activate user
                 if (!empty($p['student_id'])) {
                     $act = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');

@@ -1,10 +1,16 @@
 # Admin Notification System - Setup & Verification Guide
 
 ## Overview
-Your HIGH-Q system now sends automatic email notifications to ALL admin users for:
-- ✅ **New Registrations** (public side)
-- ✅ **Payment Confirmations/Rejections** (admin side)
-- ✅ **Chat Messages & Support Updates** (admin side)
+Your HIGH-Q system now sends automatic email notifications to ALL admin users for all updates from the public side:
+
+### 📋 Events That Trigger Notifications
+
+**Public User Actions:**
+- ✅ **New Registrations** (via public registration forms)
+- ✅ **Chat Messages from Visitors** (public chat widget)
+- ✅ **Payment Confirmations** (Paystack webhook callback)
+
+These keep admins informed of all user activity in real-time without needing to log in.
 
 ---
 
@@ -22,33 +28,51 @@ Added three new functions available to both public and admin code:
   - Returns: `array` of email addresses
   - Automatically deduplicates and validates emails
 
-- **`notifyAdminChange($pdo, $title, $details, $actorUserId)`**
+- **`sendAdminChangeNotification($title, $details, $actorUserId)`**
   - Sends styled HTML email to all admin recipients
   - Includes event details in formatted table
   - Shows who triggered the action and when
-  - Fire-and-forget (won't block execution if email fails)
 
-### 2. **Registration Updates** (`public/process-registration.php`)
+- **`notifyAdminChange($pdo, $title, $details, $actorUserId)`**
+  - Fire-and-forget wrapper (won't block execution if email fails)
+
+### 2. **Public Registration Updates** (`public/process-registration.php`)
 When a new registration is submitted through the universal registration wizard:
 - Registration is saved to database
 - `notifyAdminChange()` automatically sends notification to all admins
-- Includes: Registration ID, Student Name, Email, Phone, Amount, Payment Reference
-- Notification is logged but doesn't block the registration process
+- Includes: Registration ID, Program Type, Student Name, Email, Phone, Amount, Payment Reference
+- Notification is sent but doesn't block the registration process
 
-### 3. **Legacy Registration** (`public/register.php`)
+### 3. **Public Chat Messages** (`public/chatbox.php`) - ⭐ NEW
+When a visitor sends a chat message from the public chatbox:
+- Message is saved to database
+- `notifyAdminChange()` automatically sends notification to all admins  
+- Includes: Thread ID, Visitor Name, Email, Message Preview, Attachments
+- Notifies admins immediately so they can respond quickly
+- Works for both new conversations and existing threads
+
+### 4. **Public Payment Confirmations** (`public/api/payments_webhook.php`) - ⭐ NEW
+When Paystack confirms a payment from a public user:
+- Payment status updated from pending to confirmed
+- `notifyAdminChange()` automatically sends notification to all admins
+- Includes: Payment ID, Reference, Amount, Gateway, Confirmation Time
+- Notifies admins when payment is successfully processed
+- User account is automatically activated upon confirmation
+
+### 5. **Legacy Registration** (`public/register.php`)
 Updated old registration flow to use same `notifyAdminChange()` system:
 - Replaced single admin email notification with multi-admin system
 - Maintains internal notification record in database
 - Sends same comprehensive details to all admins
 
-### 4. **Payment Notifications** (`admin/pages/payments.php`)
-Already using `notifyAdminChange()`:
-- ✅ Payment confirmed → notifies all admins
-- ✅ Payment rejected → notifies all admins
+### 6. **Admin-Side Payment Actions** (`admin/pages/payments.php`)
+Existing admin actions also notify all admins:
+- ✅ Payment confirmed by admin → notifies all admins
+- ✅ Payment rejected by admin → notifies all admins
 - With payment reference and reason included
 
-### 5. **Chat Notifications** (`admin/pages/chat.php`)
-Already using `notifyAdminChange()`:
+### 7. **Admin-Side Chat Actions** (`admin/pages/chat.php`)
+Existing admin actions also notify all admins:
 - ✅ Chat thread claimed → notifies all admins
 - ✅ Admin reply sent → notifies all admins
 - ✅ Chat thread closed → notifies all admins
@@ -232,6 +256,101 @@ Then check: `storage/logs/mailer_debug.log`
 ---
 
 ## What Admins Will See
+
+### Email Design Features ✨
+
+All admin notification emails feature:
+- **Professional Header**: HIGH-Q branding with gradient background (Navy Blue to Slate)
+- **Gold Accent**: ₦ Symbol and branding in premium gold (#ffd600)
+- **Clean Typography**: System UI fonts with optimized spacing and hierarchy
+- **Color-coded Sections**: Actor info box with soft blue gradient
+- **Details Table**: Clean tabular format with alternating row backgrounds
+- **Call-to-Action Button**: Golden button linking to admin panel
+- **Professional Footer**: Auto-notification disclaimer
+
+### 1. Registration Email (Public Submission)
+**Subject**: `HIGH-Q Admin Update: New Registration Submitted`
+
+**Visual Layout**:
+- Header: "HIGH-Q" logo + "Admin Notification" title
+- Actor Info Box: Shows who triggered it, their email, timestamp
+- Details Table with:
+  - Registration ID
+  - Program Type
+  - Student Name & Email
+  - Phone Number
+  - Amount & Payment Reference
+  - Status
+
+---
+
+### 2. Chat Message Email (Visitor Message) - ⭐
+**Subject**: `HIGH-Q Admin Update: New Chat Message from Visitor`
+
+**Visual Layout**:
+- Same professional header as registration
+- Actor Info Box: Visitor name/email and timestamp
+- Details Table with:
+  - Thread ID
+  - Visitor Contact Info
+  - Message Preview (first 100 chars)
+  - Attachment Count
+  - Status: "Awaiting Admin Response"
+
+---
+
+### 3. Payment Confirmation Email (Admin Confirms) - ⭐ BANK TRANSFER
+**Subject**: `HIGH-Q Admin Update: Payment Confirmed by Admin`
+
+**Visual Layout**:
+- Professional header with navy/slate gradient
+- Actor Info Box: Which admin confirmed it
+- Details Table with:
+  - Payment ID
+  - Reference Number
+  - Amount (₦ formatted)
+  - Gateway: "Bank Transfer"
+  - Status: "Successfully Confirmed"
+
+---
+
+## Email Styling Showcase
+
+**Header Section**:
+```
+═══════════════════════════════════════════
+        HIGH-Q
+   Admin Notification
+    SYSTEM EVENT ALERT
+═══════════════════════════════════════════
+```
+
+**Actor Info Section**:
+```
+┌─────────────────────────────────────────┐
+│ Triggered By:   John Admin              │
+│ Email:          john@highq.com          │
+│ Timestamp:      2026-05-03 14:30:45     │
+└─────────────────────────────────────────┘
+```
+
+**Details Table**:
+```
+┌──────────────────────┬──────────────────┐
+│ Field               │ Value             │
+├──────────────────────┼──────────────────┤
+│ Registration ID     │ REG-12345         │
+│ Program Type        │ Post-UTME         │
+│ Student Name        │ John Doe          │
+└──────────────────────┴──────────────────┘
+```
+
+**Call-to-Action**:
+```
+    [ACCESS ADMIN PANEL] ← Golden button
+```
+
+---
 
 ### Registration Email Subject
 `HIGH-Q Admin Update: New Registration Submitted`

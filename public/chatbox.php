@@ -111,6 +111,22 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id=:id');
         $u->execute([':id' => $thread_id]);
 
+        // Send admin notification about visitor message
+        try {
+            require_once __DIR__ . '/config/functions.php';
+            notifyAdminChange($pdo, 'New Chat Message from Visitor', [
+                'Thread ID' => $thread_id,
+                'Visitor Name' => $name ?: 'Guest',
+                'Visitor Email' => $email ?: 'N/A',
+                'Message Preview' => substr(strip_tags($message), 0, 100) . (strlen(strip_tags($message)) > 100 ? '...' : ''),
+                'Has Attachments' => !empty($savedAttachUrls) ? 'Yes (' . count($savedAttachUrls) . ')' : 'No',
+                'Status' => 'Awaiting Admin Response'
+            ]);
+        } catch (Throwable $e) {
+            // Don't block chat if notification fails
+            error_log('Chat notification error: ' . $e->getMessage());
+        }
+
         jsonResponse(['status' => 'ok', 'thread_id' => $thread_id, 'attachments' => $savedAttachUrls, 'attachments_table' => $attachmentsTableExists]);
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
