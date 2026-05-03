@@ -1,4 +1,34 @@
 <?php
+function hqAdminBasePathFromRequest(): string {
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $scriptFilename = $_SERVER['SCRIPT_FILENAME'] ?? '';
+    $adminRoot = realpath(__DIR__ . '/..') ?: '';
+
+    if (is_string($scriptName) && trim($scriptName) !== '' && is_string($scriptFilename) && trim($scriptFilename) !== '' && $adminRoot !== '') {
+        $scriptName = str_replace('\\', '/', $scriptName);
+        $scriptFilename = str_replace('\\', '/', realpath($scriptFilename) ?: $scriptFilename);
+        $adminRoot = str_replace('\\', '/', $adminRoot);
+
+        if (strpos(strtolower($scriptFilename), strtolower(rtrim($adminRoot, '/'))) === 0) {
+            $relativeScript = str_replace('\\', '/', substr($scriptFilename, strlen($adminRoot)));
+            $relativeScript = '/' . ltrim($relativeScript, '/');
+
+            if ($relativeScript !== '/' && str_ends_with(strtolower($scriptName), strtolower($relativeScript))) {
+                $basePath = substr($scriptName, 0, strlen($scriptName) - strlen($relativeScript));
+                $basePath = rtrim(str_replace('\\', '/', $basePath), '/');
+                return ($basePath === '/' || $basePath === '.') ? '' : $basePath;
+            }
+        }
+    }
+
+    $dir = rtrim(str_replace('\\', '/', dirname((string)$scriptName)), '/');
+    if ($dir === '/' || $dir === '.') {
+        return '';
+    }
+
+    return $dir;
+}
+
 function hqAdminClientIp(): string {
     $candidates = [
         $_SERVER['HTTP_CF_CONNECTING_IP'] ?? null,
@@ -68,12 +98,7 @@ function requirePermission($menuSlug) {
     $userId = $_SESSION['user']['id'] ?? null;
     if (!$userId) {
         // Compute admin base path for safe redirects
-        $script = $_SERVER['SCRIPT_NAME'] ?? '';
-        $parts = explode('/', trim($script, '/'));
-        $idx = array_search('admin', $parts, true);
-        $adminBasePath = ($idx !== false)
-            ? '/' . implode('/', array_slice($parts, 0, $idx + 1))
-            : '/admin';
+        $adminBasePath = hqAdminBasePathFromRequest();
 
         // If there are no users in the system yet, redirect to signup for initial setup.
         try {
@@ -169,12 +194,7 @@ function ensureAuthenticated(): void {
         echo json_encode(['status' => 'error', 'message' => 'Unauthenticated']);
         exit;
     } else {
-        $script = $_SERVER['SCRIPT_NAME'] ?? '';
-        $parts = explode('/', trim($script, '/'));
-        $idx = array_search('admin', $parts, true);
-        $adminBasePath = ($idx !== false)
-            ? '/' . implode('/', array_slice($parts, 0, $idx + 1))
-            : '/admin';
+        $adminBasePath = hqAdminBasePathFromRequest();
 
         if ($total === 0) {
             header('Location: ' . $adminBasePath . '/signup.php');

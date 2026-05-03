@@ -3,14 +3,30 @@
 require_once __DIR__ . '/db.php';
 
 // Compute admin base path so asset links work when served from /admin/index.php
-$script = $_SERVER['SCRIPT_NAME'] ?? '';
-$parts = explode('/', trim($script, '/'));
-$idx = array_search('admin', $parts, true);
-if ($idx !== false) {
-    $adminBasePath = '/' . implode('/', array_slice($parts, 0, $idx + 1));
-} else {
-    $adminBasePath = rtrim(dirname($script), '/');
-    if ($adminBasePath === '') $adminBasePath = '/admin';
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$scriptFilename = $_SERVER['SCRIPT_FILENAME'] ?? '';
+$adminRoot = realpath(__DIR__ . '/..') ?: '';
+$adminBasePath = '';
+
+if (is_string($scriptName) && trim($scriptName) !== '' && is_string($scriptFilename) && trim($scriptFilename) !== '' && $adminRoot !== '') {
+    $scriptName = str_replace('\\', '/', $scriptName);
+    $scriptFilename = str_replace('\\', '/', realpath($scriptFilename) ?: $scriptFilename);
+    $adminRoot = str_replace('\\', '/', $adminRoot);
+
+    if (strpos(strtolower($scriptFilename), strtolower(rtrim($adminRoot, '/'))) === 0) {
+        $relativeScript = str_replace('\\', '/', substr($scriptFilename, strlen($adminRoot)));
+        $relativeScript = '/' . ltrim($relativeScript, '/');
+
+        if ($relativeScript !== '/' && str_ends_with(strtolower($scriptName), strtolower($relativeScript))) {
+            $adminBasePath = substr($scriptName, 0, strlen($scriptName) - strlen($relativeScript));
+            $adminBasePath = rtrim(str_replace('\\', '/', $adminBasePath), '/');
+        }
+    }
+}
+
+if ($adminBasePath === '') {
+    $dir = rtrim(str_replace('\\', '/', dirname((string)$scriptName)), '/');
+    $adminBasePath = ($dir === '/' || $dir === '.') ? '' : $dir;
 }
 
 $current = $_GET['pages'] ?? 'dashboard'; // match index.php

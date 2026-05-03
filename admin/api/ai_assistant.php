@@ -38,7 +38,8 @@ if ($question === '') {
     exit;
 }
 
-if (mb_strlen($question) > 3000) {
+$questionLength = function_exists('mb_strlen') ? mb_strlen($question) : strlen($question);
+if ($questionLength > 3000) {
     http_response_code(422);
     echo json_encode(['status' => 'error', 'message' => 'Question is too long']);
     exit;

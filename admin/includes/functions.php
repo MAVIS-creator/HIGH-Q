@@ -448,6 +448,79 @@ function hq_url_parts(): array {
 }
 
 /**
+ * Build the current request origin, honoring reverse-proxy headers.
+ */
+function hq_request_origin(): string {
+    $scheme = 'http';
+    if (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on')
+    ) {
+        $scheme = 'https';
+    }
+
+    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
+    return $scheme . '://' . $host;
+}
+
+/**
+ * Derive the admin base path from the actual executing script.
+ * Examples:
+ * - /HIGH-Q/admin/index.php => /HIGH-Q/admin
+ * - /index.php (admin mounted as docroot) => ''
+ * - /HIGH-Q/admin/pages/post_edit.php => /HIGH-Q/admin
+ */
+function hq_admin_request_base_path(): ?string {
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $scriptFilename = $_SERVER['SCRIPT_FILENAME'] ?? '';
+    $adminRoot = realpath(__DIR__ . '/..') ?: '';
+
+    if (!is_string($scriptName) || trim($scriptName) === '') {
+        return null;
+    }
+
+    $scriptName = str_replace('\\', '/', $scriptName);
+    $scriptFilename = $scriptFilename ? str_replace('\\', '/', realpath($scriptFilename) ?: $scriptFilename) : '';
+    $adminRoot = $adminRoot ? str_replace('\\', '/', $adminRoot) : '';
+
+    if ($scriptFilename !== '' && $adminRoot !== '') {
+        $adminRootLower = strtolower(rtrim($adminRoot, '/'));
+        $scriptLower = strtolower($scriptFilename);
+
+        if (strpos($scriptLower, $adminRootLower) === 0) {
+            $relativeScript = str_replace('\\', '/', substr($scriptFilename, strlen($adminRoot)));
+            $relativeScript = '/' . ltrim($relativeScript, '/');
+
+            if ($relativeScript !== '/' && str_ends_with(strtolower($scriptName), strtolower($relativeScript))) {
+                $basePath = substr($scriptName, 0, strlen($scriptName) - strlen($relativeScript));
+                $basePath = rtrim(str_replace('\\', '/', $basePath), '/');
+                return $basePath === '' ? '' : $basePath;
+            }
+        }
+    }
+
+    $dir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+    if ($dir === '/' || $dir === '.') {
+        return '';
+    }
+
+    return $dir;
+}
+
+/**
+ * Build the current admin request base URL when code is executing under the admin app.
+ */
+function hq_admin_request_base_url(): ?string {
+    $basePath = hq_admin_request_base_path();
+    if ($basePath === null) {
+        return null;
+    }
+
+    return rtrim(hq_request_origin() . ($basePath !== '' ? $basePath : ''), '/');
+}
+
+/**
  * Return the configured application base URL (public site).
  * Prefer APP_URL from environment; otherwise derive from request so ngrok/local/prod and subfolders work.
  */
@@ -467,6 +540,11 @@ function app_url(string $path = ''): string {
  * Return the admin base URL (admin area lives alongside /public as /admin).
  */
 function admin_url(string $path = ''): string {
+    $requestBase = hq_admin_request_base_url();
+    if (!empty($requestBase)) {
+        return $path === '' ? $requestBase : ($requestBase . '/' . ltrim($path, '/'));
+    }
+
     $env = $_ENV['ADMIN_URL'] ?? null;
     if (!empty($env)) {
         $base = rtrim($env, '/');

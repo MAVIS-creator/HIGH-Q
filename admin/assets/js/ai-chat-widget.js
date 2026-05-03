@@ -11,6 +11,8 @@
 (function () {
   'use strict';
 
+  const assistantName = 'HighQ AI';
+
   /* ── Guard: only mount if backend enabled this ── */
   if (!window.HQ_AI_WIDGET_ENABLED) return;
 
@@ -30,27 +32,27 @@
     /* FAB */
     const fab = document.createElement('button');
     fab.id = 'hqAiChatFab';
-    fab.title = 'AI Assistant';
-    fab.setAttribute('aria-label', 'Open AI Assistant');
+    fab.title = assistantName;
+    fab.setAttribute('aria-label', 'Open ' + assistantName);
     fab.innerHTML = "<i class='bx bx-bot'></i>";
 
     /* Panel */
     const panel = document.createElement('div');
     panel.id = 'hqAiChatPanel';
     panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-label', 'AI Assistant Chat');
+    panel.setAttribute('aria-label', assistantName + ' Chat');
     panel.innerHTML = `
       <div class="hq-chat-header">
         <div class="hq-chat-header-icon"><i class='bx bx-bot'></i></div>
         <div class="hq-chat-header-info">
-          <div class="hq-chat-header-title">AI Assistant</div>
-          <div class="hq-chat-header-sub" id="hqChatProviderLabel">Role-aware · Secure</div>
+          <div class="hq-chat-header-title">${assistantName}</div>
+          <div class="hq-chat-header-sub" id="hqChatProviderLabel">Site-aware · Role-aware · Secure</div>
         </div>
         <div class="hq-chat-header-actions">
           <button class="hq-chat-icon-btn" id="hqChatClearBtn" title="Clear conversation" aria-label="Clear conversation">
             <i class='bx bx-trash'></i>
           </button>
-          <button class="hq-chat-icon-btn" id="hqChatCloseBtn" title="Close" aria-label="Close AI Assistant">
+          <button class="hq-chat-icon-btn" id="hqChatCloseBtn" title="Close" aria-label="Close ${assistantName}">
             <i class='bx bx-x'></i>
           </button>
         </div>
@@ -61,7 +63,7 @@
       </div>
       <div class="hq-chat-messages" id="hqChatMessages"></div>
       <div class="hq-chat-input-area">
-        <textarea id="hqChatInput" placeholder="Ask about settings, users, payments…" rows="1" autocomplete="off"></textarea>
+        <textarea id="hqChatInput" placeholder="Ask about admin pages, registrations, payments, posts..." rows="1" autocomplete="off"></textarea>
         <button id="hqChatSendBtn" title="Send" aria-label="Send message">
           <i class='bx bx-send'></i>
         </button>
@@ -105,7 +107,7 @@
 
     /* Welcome message */
     appendMessage('assistant',
-      "Hi! I'm your role-aware AI assistant. I can explain admin pages, summarise logs, draft responses, and suggest safe automation tasks.\n\nWhat would you like help with?",
+      "Hi! I'm HighQ AI. I know the admin panel, the public workflows, and the main site setup, so I can help with page questions, registrations, payments, support replies, and post drafts.\n\nWhat would you like help with?",
       null
     );
   }
@@ -217,7 +219,7 @@
     if (!container) return;
     container.innerHTML = '';
     history.length = 0;
-    appendMessage('assistant', "Chat cleared. How can I help?", null);
+    appendMessage('assistant', "Chat cleared. What should we work on next?", null);
   }
 
   /* ─────────────────────────────────────────────
@@ -240,11 +242,21 @@
     sendBtn.disabled = true;
 
     // Build context from last 4 assistant messages for continuity
-    const contextLines = history
+    const memoryContext = history
       .filter(m => m.role === 'assistant')
       .slice(-4)
       .map(m => m.content)
       .join('\n---\n');
+
+    const params = new URLSearchParams(window.location.search || '');
+    const currentPageSlug = params.get('pages') || 'dashboard_shell';
+    const headerTitle = (document.querySelector('.header-title') || {}).textContent || '';
+    const liveContext = [
+      `Current admin page slug: ${currentPageSlug}`,
+      `Current admin page title: ${(headerTitle || document.title || '').trim()}`,
+      `Current admin URL: ${window.location.href}`
+    ].join('\n');
+    const contextLines = [memoryContext, liveContext].filter(Boolean).join('\n---\n');
 
     const fd = new FormData();
     fd.append('question', question);
@@ -322,12 +334,28 @@
     fd.append('_csrf', tourCsrf());
 
     try {
-      await fetch(apiBase + '/tour.php', {
+      const res = await fetch(apiBase + '/tour.php', {
         method: 'POST',
         body: fd,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
       });
-      appendMessage('assistant', '✅ Tour reset. Reload the page and the onboarding tour will start again.', null);
+      const data = await res.json();
+      if (!res.ok || data.status !== 'ok') {
+        throw new Error(data.message || 'Restart failed');
+      }
+
+      sessionStorage.removeItem('hq_role_tour_running');
+      appendMessage('assistant', '✅ Restarting the onboarding tour now.', null);
+
+      if (typeof window.HQ_START_ROLE_TOUR === 'function') {
+        setTimeout(function () {
+          window.HQ_START_ROLE_TOUR();
+        }, 250);
+      } else {
+        setTimeout(function () {
+          window.location.reload();
+        }, 250);
+      }
     } catch (e) {
       appendMessage('assistant', '⚠ Could not reset tour. Please try again.', null);
     }

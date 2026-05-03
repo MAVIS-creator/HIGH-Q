@@ -35,20 +35,22 @@
       let previewHtml = '';
       
       if (slug) {
-        // Create an iframe to preview the page instantly
         const previewUrl = adminBase + '/index.php?pages=' + encodeURIComponent(slug);
         previewHtml = `
-          <div style="margin-top: 15px; border-radius: 12px; overflow: hidden; height: 220px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #eaeaea;">
-            <div style="position: absolute; inset: 0; z-index: 10; cursor: default;"></div>
-            <iframe src="${previewUrl}" style="width: 100%; height: 800px; border: none; transform: scale(0.4); transform-origin: top left; pointer-events: none;" tabindex="-1"></iframe>
+          <div class="hq-tour-preview-shell">
+            <div class="hq-tour-preview-label">Live preview</div>
+            <div class="hq-tour-preview-frame">
+              <div class="hq-tour-preview-overlay" aria-hidden="true"></div>
+              <iframe src="${previewUrl}" class="hq-tour-preview-iframe" tabindex="-1"></iframe>
+            </div>
           </div>
         `;
       }
 
       const introText = `
-        <div style="text-align: center; padding: 10px 4px;">
-          ${step.title ? `<h3 style="margin: 0 0 10px 0; font-size: 1.25rem; font-weight: 800; color: #111;">${step.title}</h3>` : ''}
-          <p style="margin: 0; font-size: 0.95rem; color: #444; line-height: 1.6;">${step.intro}</p>
+        <div class="hq-tour-step">
+          ${step.title ? `<h3 class="hq-tour-step-title">${step.title}</h3>` : ''}
+          <p class="hq-tour-step-copy">${step.intro}</p>
           ${previewHtml}
         </div>
       `;
@@ -61,9 +63,9 @@
     return steps;
   }
 
-  async function startRoleTourIfNeeded() {
+  async function startRoleTourIfNeeded(forceStart) {
     // Prevent reruns while user navigates quickly in same tab.
-    if (sessionStorage.getItem('hq_role_tour_running') === '1') return;
+    if (!forceStart && sessionStorage.getItem('hq_role_tour_running') === '1') return;
 
     let payload;
     try {
@@ -72,7 +74,7 @@
       return;
     }
 
-    if (!payload || payload.status !== 'ok' || !payload.show_tour) {
+    if (!payload || payload.status !== 'ok' || (!payload.show_tour && !forceStart)) {
       return;
     }
 
@@ -102,7 +104,9 @@
       prevLabel: '<i class="bx bx-chevron-left"></i> Back',
       doneLabel: '<i class="bx bx-check"></i> Finish Tour',
       skipLabel: 'Skip',
-      tooltipClass: 'hq-intro-modal'
+      tooltipClass: 'hq-intro-modal',
+      scrollTo: false,
+      exitOnOverlayClick: false
     });
 
     let completed = false;
@@ -122,6 +126,11 @@
 
     tour.start();
   }
+
+  window.HQ_START_ROLE_TOUR = function () {
+    sessionStorage.removeItem('hq_role_tour_running');
+    return startRoleTourIfNeeded(true);
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startRoleTourIfNeeded);

@@ -393,13 +393,77 @@
   border: 1px solid rgba(0,0,0,0.08);
   font-family: inherit;
   padding: 8px;
-  max-width: 440px !important;
-  width: calc(100vw - 32px);
+  max-width: min(980px, calc(100vw - 32px)) !important;
+  width: min(980px, calc(100vw - 32px)) !important;
   background: #fff;
 }
 
 .hq-intro-modal .introjs-tooltiptext {
-  padding: 10px;
+  padding: 12px;
+}
+
+.hq-tour-step {
+  text-align: center;
+  padding: 6px 6px 2px;
+}
+
+.hq-tour-step-title {
+  margin: 0 0 10px;
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.45rem);
+  font-weight: 800;
+  color: #111827;
+}
+
+.hq-tour-step-copy {
+  margin: 0 auto;
+  max-width: 720px;
+  font-size: 0.97rem;
+  color: #4b5563;
+  line-height: 1.65;
+}
+
+.hq-tour-preview-shell {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.hq-tour-preview-label {
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.hq-tour-preview-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  width: 100%;
+  height: clamp(300px, 48vh, 560px);
+}
+
+.hq-tour-preview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.hq-tour-preview-iframe {
+  width: 200%;
+  height: 200%;
+  border: 0;
+  pointer-events: none;
+  transform: scale(0.5);
+  transform-origin: top left;
+}
+
+.introjs-overlay {
+  opacity: 0.55 !important;
 }
 
 .hq-intro-modal .introjs-tooltipbuttons {
@@ -448,4 +512,48 @@
 
 .hq-intro-modal .introjs-progressbar {
   background: linear-gradient(135deg, #ffd600, #ffb300);
+}
+
+@media (max-width: 768px) {
+  .introjs-tooltip.hq-intro-modal {
+    max-width: calc(100vw - 20px) !important;
+    width: calc(100vw - 20px) !important;
+    padding: 6px;
+    border-radius: 14px;
+  }
+
+  .hq-tour-step {
+    padding: 2px 0 0;
+  }
+
+  .hq-tour-step-title {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+
+  .hq-tour-step-copy {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .hq-tour-preview-shell {
+    margin-top: 14px;
+  }
+
+  .hq-tour-preview-frame {
+    height: min(52vh, 360px);
+    border-radius: 12px;
+  }
+
+  .hq-intro-modal .introjs-tooltipbuttons {
+    padding-top: 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .hq-intro-modal .introjs-button {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 44px;
+  }
 }

@@ -164,8 +164,18 @@ if (function_exists('admin_url')) {
                         // Build a resilient avatar fallback using the computed app base so hardcoded /HIGH-Q paths are avoided
                         $avatar = $_SESSION['user']['avatar'] ?? null;
                         if (empty($avatar)) {
-                            // Use the admin logo asset that exists in this project
-                            $avatar = $adminBasePath . '/assets/img/hq-logo.jpeg';
+                            $avatar = ($adminBasePath !== '' ? $adminBasePath : '') . '/assets/img/hq-logo.jpeg';
+                        } else {
+                            $avatar = trim((string)$avatar);
+                            if (!preg_match('#^(https?:)?//#i', $avatar) && strpos($avatar, '/') !== 0) {
+                                $avatarFile = basename($avatar);
+                                $adminAvatarDisk = __DIR__ . '/../assets/avatars/' . $avatarFile;
+                                if (is_file($adminAvatarDisk)) {
+                                    $avatar = ($adminBasePath !== '' ? $adminBasePath : '') . '/assets/avatars/' . rawurlencode($avatarFile);
+                                } elseif (function_exists('app_url')) {
+                                    $avatar = app_url(ltrim($avatar, '/'));
+                                }
+                            }
                         }
                         $userName = $_SESSION['user']['name'] ?? 'User';
                         $userRole = $_SESSION['user']['role'] ?? 'Admin';
