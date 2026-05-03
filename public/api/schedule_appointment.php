@@ -70,26 +70,17 @@ try {
     $stmt->execute([$name, $email, $phone, $visit_date, $dbTime, $message]);
     $appointmentId = $pdo->lastInsertId();
 
-    // Send email notification to admin
+    // Send notification email to all admins
     try {
-        $adminEmail = 'highqsolidacademy@gmail.com';
-        $subject = 'New Appointment Request - High Q Academy';
-        
-        $emailBody = "<h2>New Appointment Request</h2>";
-        $emailBody .= "<p><strong>Appointment ID:</strong> #" . $appointmentId . "</p>";
-        $emailBody .= "<p><strong>Name:</strong> " . htmlspecialchars($name) . "</p>";
-        $emailBody .= "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>";
-        $emailBody .= "<p><strong>Phone:</strong> " . htmlspecialchars($phone ?: 'Not provided') . "</p>";
-        $emailBody .= "<p><strong>Requested Date:</strong> " . date('F j, Y', strtotime($visit_date)) . "</p>";
-        $emailBody .= "<p><strong>Requested Time:</strong> " . $visit_time . "</p>";
-        
-        if ($message) {
-            $emailBody .= "<p><strong>Message:</strong><br>" . nl2br(htmlspecialchars($message)) . "</p>";
-        }
-        
-        $emailBody .= "<p><a href='" . (function_exists('app_url') ? app_url('admin/appointments.php') : 'http://localhost/HIGH-Q/admin/appointments.php') . "'>View in Admin Panel</a></p>";
-        
-        sendEmail($adminEmail, $subject, $emailBody);
+        notifyAdminChange($pdo, 'New Appointment Request', [
+            'Appointment ID' => '#' . $appointmentId,
+            'Name' => $name,
+            'Email' => $email,
+            'Phone' => $phone ?: 'Not provided',
+            'Requested Date' => date('F j, Y', strtotime($visit_date)),
+            'Requested Time' => $visit_time,
+            'Message' => $message ?: 'None'
+        ], null, admin_url('index.php?pages=appointments'));
     } catch (Exception $e) {
         // Log error but don't fail the appointment creation
         error_log('Failed to send appointment notification email: ' . $e->getMessage());

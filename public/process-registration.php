@@ -179,7 +179,7 @@ try {
             'Amount' => '₦' . number_format($amount, 2),
             'Payment Reference' => $reference,
             'Status' => 'Pending Admin Review'
-        ]);
+        ], null, admin_url('index.php?pages=academic'));
     } catch (Throwable $e) {
         // Don't block registration if notification fails
         error_log('Registration notification error: ' . $e->getMessage());

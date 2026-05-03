@@ -719,19 +719,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// Diagnostic: mark that registration DB work committed
 			try { @file_put_contents(__DIR__ . '/../storage/logs/registration_payment_debug.log', date('c') . " AFTER_REG_COMMIT: registrationId=" . ($registrationId ?? 'NULL') . " reference=" . ($reference ?? 'NULL') . " paymentId=" . ($paymentId ?? 'NULL') . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
 
-			// Create an admin notification and send email to admins about new registration
+			// Create an admin notification and send email to all admins about new registration
 			try {
-				// Fetch admin email from site_settings (fallback to settings table)
-				$adminEmail = null;
-				$r = $pdo->query("SELECT contact_email FROM site_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC);
-				if (!empty($r['contact_email'])) { $adminEmail = $r['contact_email']; }
-				else {
-					$s = $pdo->query("SELECT system_settings FROM settings LIMIT 1")->fetch(PDO::FETCH_ASSOC);
-					if (!empty($s['system_settings'])) {
-						$json = json_decode($s['system_settings'], true);
-						$adminEmail = $json['contact_email'] ?? $json['site']['contact_email'] ?? null;
-					}
-				}
+				notifyAdminChange($pdo, 'New Student Registration', [
+					'Registration ID' => $registrationId,
+					'Student Name' => trim($first_name . ' ' . $last_name),
+					'Email' => $email_contact,
+					'Programs' => !empty($programs) ? implode(', ', (array)$programs) : 'None',
+					'Payment Reference' => $reference ?: 'Pending',
+					'Amount' => $totalAmount ? '₦' . number_format($totalAmount, 2) : 'TBD'
+				], null, admin_url('index.php?pages=academic'));
 
 				// Insert notification
 				$insNotif = $pdo->prepare('INSERT INTO notifications (user_id, title, body, type, metadata, is_read, created_at) VALUES (NULL, ?, ?, ?, ?, 0, NOW())');
@@ -739,16 +736,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$body = "$first_name $last_name registered for programs." . ($reference ? " Reference: $reference" : "");
 				$meta = json_encode(['registration_id'=>$registrationId,'email'=>$email_contact,'programs'=>$programs], JSON_UNESCAPED_SLASHES);
 				$insNotif->execute([$title, $body, 'registration', $meta]);
-
-				// Send email if admin email exists and email notifications enabled
-				if (!empty($adminEmail)) {
-					$subject = 'New registration: ' . ($first_name . ' ' . $last_name);
-					$html = "<p>A new student has registered.</p><p><strong>Name:</strong> " . htmlspecialchars($first_name . ' ' . $last_name) . "</p>";
-					$html .= "<p><strong>Email:</strong> " . htmlspecialchars($email_contact ?: '') . "</p>";
-					$html .= "<p><strong>Reference:</strong> " . htmlspecialchars($reference) . "</p>";
-					// Use helper sendEmail (declared in public/config/functions.php)
-					@sendEmail($adminEmail, $subject, $html);
-				}
 			} catch (Throwable $e) {
 				// don't block user on notification/email errors
 				error_log('Registration notification error: ' . $e->getMessage());

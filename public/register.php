@@ -750,7 +750,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					'Programs' => !empty($programs) ? implode(', ', (array)$programs) : 'None',
 					'Payment Reference' => $reference ?: 'Pending',
 					'Amount' => $totalAmount ? '₦' . number_format($totalAmount, 2) : 'TBD'
-				]);
+				], null, admin_url('index.php?pages=academic'));
 				
 				// Also insert internal notification for dashboard
 				$insNotif = $pdo->prepare('INSERT INTO notifications (user_id, title, body, type, metadata, is_read, created_at) VALUES (NULL, ?, ?, ?, ?, 0, NOW())');

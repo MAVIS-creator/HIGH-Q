@@ -118,6 +118,27 @@ function app_url(string $path = ''): string {
 }
 
 /**
+ * Return the admin application base URL.
+ * Honors ADMIN_URL when configured, otherwise derives it from APP_URL/app_url().
+ */
+function admin_url(string $path = ''): string {
+    $adminEnv = $_ENV['ADMIN_URL'] ?? null;
+    if (!empty($adminEnv)) {
+        $base = rtrim((string)$adminEnv, '/');
+        return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+    }
+
+    $base = rtrim(app_url(''), '/');
+    if (preg_match('#/public$#i', $base)) {
+        $base = preg_replace('#/public$#i', '/admin', $base);
+    } elseif (!preg_match('#/admin$#i', $base)) {
+        $base .= '/admin';
+    }
+
+    return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+}
+
+/**
  * Send email using PHPMailer (SMTP). Optionally attach files.
  * $attachments = ['/path/to/file1', '/path/to/file2']
  */
@@ -265,7 +286,7 @@ function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null): arra
 /**
  * Send a styled notification email for important admin updates.
  */
-function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null): bool {
+function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null, ?string $linkUrl = null): bool {
     if (!hqAdminEmailNotificationsEnabled($pdo)) {
         return false;
     }
@@ -292,7 +313,7 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
         $rowsHtml .= "<tr><td style='padding:14px 16px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0b1a2c;background:#f9fafb;width:35%;font-size:13px'>{$label}</td><td style='padding:14px 16px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px'>{$value}</td></tr>";
     }
 
-    $panelUrl = app_url('admin/');
+    $panelUrl = htmlspecialchars($linkUrl ?? admin_url('index.php?pages=dashboard'), ENT_QUOTES, 'UTF-8');
     $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
     $safeActorName = htmlspecialchars($actorName, ENT_QUOTES, 'UTF-8');
     $safeActorEmail = htmlspecialchars($actorEmail, ENT_QUOTES, 'UTF-8');
@@ -374,9 +395,10 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
 /**
  * Fire-and-forget wrapper for admin change notifications.
  */
-function notifyAdminChange(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null): void {
+function notifyAdminChange(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null, ?string $linkUrl = null): void {
     try {
-        sendAdminChangeNotification($pdo, $title, $details, $actorUserId);
+        sendAdminChangeNotification($pdo, $title, $details, $actorUserId, $linkUrl);
     } catch (Throwable $e) {
+        error_log('Notification send error: ' . $e->getMessage());
     }
 }

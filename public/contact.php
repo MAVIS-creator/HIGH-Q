@@ -104,6 +104,17 @@ HTML;
 
 				$sent = sendEmail($to, $subject, $html);
 				if ($sent) {
+						try {
+							notifyAdminChange($pdo, 'New Contact Form Submission', [
+								'Name' => trim($first_name . ' ' . $last_name),
+								'Email' => $email,
+								'Phone' => $phone ?: 'Not provided',
+								'Program of Interest' => $program ?: 'General Inquiry',
+								'Message Preview' => mb_substr(trim(preg_replace('/\s+/', ' ', $message)), 0, 140)
+							]);
+						} catch (Throwable $e) {
+							error_log('Contact notification error: ' . $e->getMessage());
+						}
 						$success = 'Thanks! Your message has been sent. We will get back to you within 24 hours.';
 				} else {
 						$errors[] = 'Failed to send your message. Please try again later.';

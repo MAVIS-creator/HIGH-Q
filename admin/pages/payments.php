@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                         'Amount' => '₦' . number_format($paymentData['amount'], 2),
                         'Gateway' => $paymentData['gateway'] ?? 'Bank Transfer',
                         'Status' => 'Successfully Confirmed'
-                    ], (int)($_SESSION['user']['id'] ?? 0));
+                    ], (int)($_SESSION['user']['id'] ?? 0), app_url('admin/pages/payments.php'));
                 }
             } catch (Throwable $e) {
                 // Don't block if notification fails

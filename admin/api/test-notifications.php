@@ -94,7 +94,7 @@ try {
                 'Status' => 'Test Notification'
             ];
             
-            $sent = sendAdminChangeNotification($pdo, 'TEST: New Registration Submitted', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $sent = sendAdminChangeNotification($pdo, 'TEST: New Registration Submitted', $testData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=academic'));
             $result = [
                 'status' => $sent ? 'ok' : 'warning',
                 'message' => $sent ? 'Registration test notification sent' : 'No admin recipients found or notifications disabled',
@@ -117,7 +117,7 @@ try {
                 'Status' => 'Test Confirmed'
             ];
             
-            $sent = sendAdminChangeNotification($pdo, 'TEST: Payment Confirmed', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $sent = sendAdminChangeNotification($pdo, 'TEST: Payment Confirmed', $testData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=payments'));
             $result = [
                 'status' => $sent ? 'ok' : 'warning',
                 'message' => $sent ? 'Payment test notification sent' : 'No admin recipients found or notifications disabled',
@@ -138,7 +138,7 @@ try {
                 'Message Preview' => 'This is a test chat message from system testing'
             ];
             
-            $sent = sendAdminChangeNotification($pdo, 'TEST: Chat Message', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $sent = sendAdminChangeNotification($pdo, 'TEST: Chat Message', $testData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=chat'));
             $result = [
                 'status' => $sent ? 'ok' : 'warning',
                 'message' => $sent ? 'Chat test notification sent' : 'No admin recipients found or notifications disabled',
@@ -161,7 +161,7 @@ try {
                 'Status' => 'Awaiting Admin Response'
             ];
             
-            $sent = sendAdminChangeNotification($pdo, 'New Chat Message from Visitor', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $sent = sendAdminChangeNotification($pdo, 'New Chat Message from Visitor', $testData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=chat'));
             $result = [
                 'status' => $sent ? 'ok' : 'warning',
                 'message' => $sent ? 'Public chat test notification sent (simulating visitor message)' : 'No admin recipients found or notifications disabled',
@@ -184,7 +184,7 @@ try {
                 'Status' => 'Successfully Confirmed'
             ];
             
-            $sent = sendAdminChangeNotification($pdo, 'Payment Confirmed by Admin', $testData, (int)($_SESSION['user']['id'] ?? 0));
+            $sent = sendAdminChangeNotification($pdo, 'Payment Confirmed by Admin', $testData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=payments'));
             $result = [
                 'status' => $sent ? 'ok' : 'warning',
                 'message' => $sent ? 'Bank transfer payment test notification sent (admin confirmation)' : 'No admin recipients found or notifications disabled',
@@ -252,7 +252,7 @@ try {
                 'Student Name' => 'Test Student',
                 'Email' => 'test@example.com',
             ];
-            $regSent = sendAdminChangeNotification($pdo, 'TEST: New Registration', $regData, (int)($_SESSION['user']['id'] ?? 0));
+            $regSent = sendAdminChangeNotification($pdo, 'TEST: New Registration', $regData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=academic'));
             $allTests['registration'] = [
                 'status' => $regSent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
                 'message' => $regSent ? 'Notification sent' : 'Failed to send',
@@ -264,7 +264,7 @@ try {
                 'Reference' => 'PAY-TEST-' . date('YmdHis'),
                 'Amount' => '₦10,000.00',
             ];
-            $paySent = sendAdminChangeNotification($pdo, 'TEST: Payment Confirmed', $payData, (int)($_SESSION['user']['id'] ?? 0));
+            $paySent = sendAdminChangeNotification($pdo, 'TEST: Payment Confirmed', $payData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=payments'));
             $allTests['payment'] = [
                 'status' => $paySent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
                 'message' => $paySent ? 'Notification sent' : 'Failed to send',
@@ -276,7 +276,7 @@ try {
                 'Visitor Name' => 'Test Visitor',
                 'Message Preview' => 'Test message',
             ];
-            $chatSent = sendAdminChangeNotification($pdo, 'TEST: Chat Message', $chatData, (int)($_SESSION['user']['id'] ?? 0));
+            $chatSent = sendAdminChangeNotification($pdo, 'TEST: Chat Message', $chatData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=chat'));
             $allTests['chat'] = [
                 'status' => $chatSent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
                 'message' => $chatSent ? 'Notification sent' : 'Failed to send',
@@ -291,7 +291,7 @@ try {
                 'Has Attachments' => 'No',
                 'Status' => 'Awaiting Admin Response'
             ];
-            $pubChatSent = sendAdminChangeNotification($pdo, 'New Chat Message from Visitor', $pubChatData, (int)($_SESSION['user']['id'] ?? 0));
+            $pubChatSent = sendAdminChangeNotification($pdo, 'New Chat Message from Visitor', $pubChatData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=chat'));
             $allTests['public_chat'] = [
                 'status' => $pubChatSent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
                 'message' => $pubChatSent ? 'Public chat notification sent' : 'Failed to send',
@@ -306,7 +306,7 @@ try {
                 'Gateway' => 'Bank Transfer',
                 'Status' => 'Successfully Confirmed'
             ];
-            $pubPaySent = sendAdminChangeNotification($pdo, 'Payment Confirmed by Admin', $pubPayData, (int)($_SESSION['user']['id'] ?? 0));
+            $pubPaySent = sendAdminChangeNotification($pdo, 'Payment Confirmed by Admin', $pubPayData, (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=payments'));
             $allTests['public_payment'] = [
                 'status' => $pubPaySent ? 'pass' : (count($admins) > 0 ? 'warning' : 'fail'),
                 'message' => $pubPaySent ? 'Bank transfer payment notification sent' : 'Failed to send',

@@ -40319,3 +40319,1783 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2026-05-03T17:41:10+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8eba865fsm184485745e9.10 - gsmtp
 
+[2026-05-03T17:50:53+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a8fe928f6sm59102095e9.6 - gsmtp
+
+[2026-05-03T17:50:53+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:50:53+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.75.65]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:50:53+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:50:53+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:50:55+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:50:55+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.75.65]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:50:55+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:50:55+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:50:55+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:50:55+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:50:55+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:50:55+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:50:55+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:50:56+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a8fe928f6sm59102095e9.6 - gsmtp
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:50:56+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a8fe928f6sm59102095e9.6 - gsmtp
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:50:56+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a8fe928f6sm59102095e9.6 - gsmtp
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:50:53 +0200
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST: New Registration
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: Message-ID: <uT51huBkiFAnllgaE8n0Gvv4cfqg08UhZ36BpeayTU@localhost>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:     <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:       <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:         <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:         <div style='padding:20px 24px'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> TEST: New Registration</p>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> 2026-05-03 17:50:53</p>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:               <tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Registration ID</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>TEST-69f76edd3d113</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Program Type</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Post-UTME</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Student Name</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Test Student</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Email</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>test@example.com</td></tr>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           <div style='margin-top:20px'>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:             <a href='https://slaphappy-premillennially-louann.ngrok-free.dev/admin/index.php?pages=dashboard' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:50:56+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:50:57+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823458 5b1f17b1804b1-48a8fe928f6sm59102095e9.6 - gsmtp
+
+[2026-05-03T17:50:57+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:50:57+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8fe928f6sm59102095e9.6 - gsmtp
+
+[2026-05-03T17:50:57+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a82307f28sm439244945e9.13 - gsmtp
+
+[2026-05-03T17:50:57+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:50:58+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:50:58+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:50:58+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:50:58+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:50:59+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:50:59+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:50:59+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:50:59+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:50:59+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:50:59+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:00+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:51:00+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:01+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a82307f28sm439244945e9.13 - gsmtp
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:01+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a82307f28sm439244945e9.13 - gsmtp
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:51:01+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a82307f28sm439244945e9.13 - gsmtp
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:50:57 +0200
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST: Payment Confirmed
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: Message-ID: <NZ8jIC917loP1AFb0eJTHKK3PgUFTBm2ZrH6uP9GhY@localhost>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:     <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:       <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:         <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:         <div style='padding:20px 24px'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> TEST: Payment Confirmed</p>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> 2026-05-03 17:50:57</p>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:               <tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Payment ID</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>TEST-69f76ee17f1d8</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Reference</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>PAY-TEST-20260503175057</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Amount</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>₦10,000.00</td></tr>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           <div style='margin-top:20px'>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:             <a href='https://slaphappy-premillennially-louann.ngrok-free.dev/admin/index.php?pages=dashboard' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:01+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:51:02+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823463 5b1f17b1804b1-48a82307f28sm439244945e9.13 - gsmtp
+
+[2026-05-03T17:51:02+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:51:03+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a82307f28sm439244945e9.13 - gsmtp
+
+[2026-05-03T17:51:03+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a8feee4d2sm59607495e9.26 - gsmtp
+
+[2026-05-03T17:51:03+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:51:03+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.252]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:51:03+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:51:03+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:51:04+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:51:04+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.252]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:51:04+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:51:04+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:51:04+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:04+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:51:04+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:05+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:05+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a8feee4d2sm59607495e9.26 - gsmtp
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:05+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a8feee4d2sm59607495e9.26 - gsmtp
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:51:05+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a8feee4d2sm59607495e9.26 - gsmtp
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:51:03 +0200
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST: Chat Message
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: Message-ID: <m2d0sRGVVxToUu6qi3dgZFFER8FcMQlAy3jngEvQfIc@localhost>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:     <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:       <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:         <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:         <div style='padding:20px 24px'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> TEST: Chat Message</p>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> 2026-05-03 17:51:03</p>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:               <tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Thread ID</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>TEST-69f76ee708c65</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Visitor Name</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Test Visitor</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Message Preview</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Test message</td></tr>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           <div style='margin-top:20px'>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:             <a href='https://slaphappy-premillennially-louann.ngrok-free.dev/admin/index.php?pages=dashboard' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:05+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:51:07+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823467 5b1f17b1804b1-48a8feee4d2sm59607495e9.26 - gsmtp
+
+[2026-05-03T17:51:07+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:51:07+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8feee4d2sm59607495e9.26 - gsmtp
+
+[2026-05-03T17:51:07+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a81b99127sm258599185e9.0 - gsmtp
+
+[2026-05-03T17:51:07+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:51:08+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.75.65]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:51:08+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:51:08+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:51:10+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:51:10+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.75.65]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:51:10+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:51:10+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:51:10+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:10+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:51:10+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:11+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:11+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a81b99127sm258599185e9.0 - gsmtp
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:11+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a81b99127sm258599185e9.0 - gsmtp
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:51:11+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a81b99127sm258599185e9.0 - gsmtp
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:51:07 +0200
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: New Chat Message from Visitor
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: Message-ID: <4r6i8xIve8wgDTXtM0WBot8FrQuAcX2wnbXYz9eQ@localhost>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:     <div style=3D'margin:0;padding:24px;background:#f4f6fb;font-family:Sego=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: e UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:       <div style=3D'max-width:680px;margin:0 auto;background:#ffffff;border=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: :1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'background:linear-gradient(135deg,#111827,#1f2937);pa=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: dding:20px 24px'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           <h2 style=3D'margin:0;font-size:20px;color:#ffffff'>Admin Update =
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: Notification</h2>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q S=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: ystem Alert</p>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'padding:20px 24px'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:0 0 14px;font-size:15px;color:#111827'><strong=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: >Event:</strong> New Chat Message from Visitor</p>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin:0 0 16px;padding:12px 14px;background:#fff7e=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: d;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: g>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: g>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0;font-size:13px;color:#9a3412'><strong>Time=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: :</strong> 2026-05-03 17:51:07</p>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           <table style=3D'width:100%;border-collapse:collapse;border:1px so=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: lid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:               <tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: ;font-weight:600;color:#1f2937'>Thread ID</td><td style=3D'padding:10px;bor=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: der-bottom:1px solid #eef2f7;color:#374151'>PUBLIC-TEST-69f76eeb990cc</td><=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: /tr><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;font-weig=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: ht:600;color:#1f2937'>Visitor Name</td><td style=3D'padding:10px;border-bot=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: tom:1px solid #eef2f7;color:#374151'>Test Visitor</td></tr><tr><td style=3D=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: 'padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: '>Visitor Email</td><td style=3D'padding:10px;border-bottom:1px solid #eef2=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: f7;color:#374151'>visitor@example.com</td></tr><tr><td style=3D'padding:10p=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: x;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Message Pr=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: eview</td><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;color:#=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: 374151'>Test public chat message</td></tr><tr><td style=3D'padding:10px;bor=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: der-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Has Attachments=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: </td><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;color:#37415=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: 1'>No</td></tr><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: 7;font-weight:600;color:#1f2937'>Status</td><td style=3D'padding:10px;borde=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: r-bottom:1px solid #eef2f7;color:#374151'>Awaiting Admin Response</td></tr>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin-top:20px'>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:             <a href=3D'https://slaphappy-premillennially-louann.ngrok-free.=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: dev/admin/index.php?pages=3Ddashboard' style=3D'display:inline-block;paddin=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: g:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-ra=
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: dius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:51:11+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:51:12+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823473 5b1f17b1804b1-48a81b99127sm258599185e9.0 - gsmtp
+
+[2026-05-03T17:51:12+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:51:12+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a81b99127sm258599185e9.0 - gsmtp
+
+[2026-05-03T17:51:12+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a8fee4f79sm56591615e9.20 - gsmtp
+
+[2026-05-03T17:51:12+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:51:13+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:51:13+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:51:13+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:51:15+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:51:15+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:51:15+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:51:15+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:51:15+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:15+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:51:15+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:51:15+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:51:15+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:15+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a8fee4f79sm56591615e9.20 - gsmtp
+
+[2026-05-03T17:51:15+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:16+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a8fee4f79sm56591615e9.20 - gsmtp
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:51:16+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a8fee4f79sm56591615e9.20 - gsmtp
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:51:12 +0200
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: Payment Confirmed by Admin
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: Message-ID: <O94ouZhFhd13jGlwUQo5nBOPxcnPedpedoeYHg@localhost>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:     <div style=3D'margin:0;padding:24px;background:#f4f6fb;font-family:Sego=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: e UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:       <div style=3D'max-width:680px;margin:0 auto;background:#ffffff;border=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: :1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'background:linear-gradient(135deg,#111827,#1f2937);pa=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: dding:20px 24px'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           <h2 style=3D'margin:0;font-size:20px;color:#ffffff'>Admin Update =
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: Notification</h2>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q S=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: ystem Alert</p>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'padding:20px 24px'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:0 0 14px;font-size:15px;color:#111827'><strong=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: >Event:</strong> Payment Confirmed by Admin</p>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin:0 0 16px;padding:12px 14px;background:#fff7e=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: d;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: g>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: g>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0;font-size:13px;color:#9a3412'><strong>Time=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: :</strong> 2026-05-03 17:51:12</p>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           <table style=3D'width:100%;border-collapse:collapse;border:1px so=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: lid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:               <tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: ;font-weight:600;color:#1f2937'>Payment ID</td><td style=3D'padding:10px;bo=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: rder-bottom:1px solid #eef2f7;color:#374151'>TEST-PAY-69f76ef08f568</td></t=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: r><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;font-weight=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: :600;color:#1f2937'>Reference</td><td style=3D'padding:10px;border-bottom:1=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: px solid #eef2f7;color:#374151'>BANK-205415</td></tr><tr><td style=3D'paddi=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: ng:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Amou=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: nt</td><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;color:#374=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: 151'>=E2=82=A650,000.00</td></tr><tr><td style=3D'padding:10px;border-botto=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: m:1px solid #eef2f7;font-weight:600;color:#1f2937'>Gateway</td><td style=3D=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: 'padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Bank Transfer<=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: /td></tr><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;font=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: -weight:600;color:#1f2937'>Status</td><td style=3D'padding:10px;border-bott=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: om:1px solid #eef2f7;color:#374151'>Successfully Confirmed</td></tr>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin-top:20px'>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:             <a href=3D'https://slaphappy-premillennially-louann.ngrok-free.=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: dev/admin/index.php?pages=3Ddashboard' style=3D'display:inline-block;paddin=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: g:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-ra=
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: dius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:51:16+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:51:17+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823478 5b1f17b1804b1-48a8fee4f79sm56591615e9.20 - gsmtp
+
+[2026-05-03T17:51:17+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:51:17+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8fee4f79sm56591615e9.20 - gsmtp
+
+[2026-05-03T17:57:44+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a8fed8b8dsm79203425e9.4 - gsmtp
+
+[2026-05-03T17:57:44+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:44+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:57:44+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:57:44+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:57:45+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:45+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:57:45+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:57:45+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:57:45+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:45+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:57:45+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:46+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:46+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a8fed8b8dsm79203425e9.4 - gsmtp
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:46+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a8fed8b8dsm79203425e9.4 - gsmtp
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:57:46+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a8fed8b8dsm79203425e9.4 - gsmtp
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:57:44 +0200
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST: New Registration
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: Message-ID: <apv103OhgLRd2H9BhGU4L8zCkuBMX5iZj8EnFu6HY90@localhost>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:     <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:       <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:         <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:         <div style='padding:20px 24px'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> TEST: New Registration</p>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> 2026-05-03 17:57:44</p>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:               <tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Registration ID</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>TEST-69f77078225dd</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Program Type</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Post-UTME</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Student Name</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Test Student</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Email</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>test@example.com</td></tr>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           <div style='margin-top:20px'>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:             <a href='https://slaphappy-premillennially-louann.ngrok-free.dev/admin/index.php?pages=dashboard' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:46+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:57:47+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823868 5b1f17b1804b1-48a8fed8b8dsm79203425e9.4 - gsmtp
+
+[2026-05-03T17:57:47+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:57:47+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8fed8b8dsm79203425e9.4 - gsmtp
+
+[2026-05-03T17:57:47+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a8fee325asm71344355e9.7 - gsmtp
+
+[2026-05-03T17:57:47+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:47+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.76.60]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:57:47+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:57:48+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:57:48+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:48+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.76.60]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:57:48+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:57:49+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:57:49+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:49+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:57:49+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:49+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:57:49+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:49+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a8fee325asm71344355e9.7 - gsmtp
+
+[2026-05-03T17:57:49+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:49+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a8fee325asm71344355e9.7 - gsmtp
+
+[2026-05-03T17:57:49+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:57:50+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a8fee325asm71344355e9.7 - gsmtp
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:57:47 +0200
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST: Payment Confirmed
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: Message-ID: <mxUREoEhfofiIg9tidquke7oQGjdeH9y6QyUq6lGqU@localhost>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: 8bit
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:     <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:       <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:         <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:         <div style='padding:20px 24px'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> TEST: Payment Confirmed</p>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> 2026-05-03 17:57:47</p>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:               <tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Payment ID</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>TEST-69f7707b72d14</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Reference</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>PAY-TEST-20260503175747</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Amount</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>₦10,000.00</td></tr>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           <div style='margin-top:20px'>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:             <a href='https://slaphappy-premillennially-louann.ngrok-free.dev/admin/index.php?pages=dashboard' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:57:50+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823871 5b1f17b1804b1-48a8fee325asm71344355e9.7 - gsmtp
+
+[2026-05-03T17:57:50+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:57:51+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8fee325asm71344355e9.7 - gsmtp
+
+[2026-05-03T17:57:51+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP 5b1f17b1804b1-48a8fee4d60sm58091725e9.19 - gsmtp
+
+[2026-05-03T17:57:51+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:51+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.252]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:57:51+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:57:51+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:57:52+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:52+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.252]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:57:52+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:57:52+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:57:52+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:52+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:57:52+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:53+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:53+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK 5b1f17b1804b1-48a8fee4d60sm58091725e9.19 - gsmtp
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:53+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK 5b1f17b1804b1-48a8fee4d60sm58091725e9.19 - gsmtp
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:57:53+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead 5b1f17b1804b1-48a8fee4d60sm58091725e9.19 - gsmtp
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:57:51 +0200
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST: Chat Message
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: Message-ID: <mnPWglRY9PGk9IWfHRsO8v4eLDXaC9hoNuAu7csMaQ8@localhost>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:     <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:       <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:         <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:         <div style='padding:20px 24px'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> TEST: Chat Message</p>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:             <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> 2026-05-03 17:57:51</p>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:               <tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Thread ID</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>TEST-69f7707f09440</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Visitor Name</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Test Visitor</td></tr><tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Message Preview</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Test message</td></tr>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           <div style='margin-top:20px'>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:             <a href='https://slaphappy-premillennially-louann.ngrok-free.dev/admin/index.php?pages=dashboard' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:53+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:57:54+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823875 5b1f17b1804b1-48a8fee4d60sm58091725e9.19 - gsmtp
+
+[2026-05-03T17:57:54+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:57:54+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection 5b1f17b1804b1-48a8fee4d60sm58091725e9.19 - gsmtp
+
+[2026-05-03T17:57:55+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-44a981dee0bsm19175949f8f.19 - gsmtp
+
+[2026-05-03T17:57:55+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:55+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:57:55+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:57:55+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:57:56+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:56+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:57:56+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:57:56+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:57:56+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:56+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:57:56+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:57:56+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:57:56+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:56+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-44a981dee0bsm19175949f8f.19 - gsmtp
+
+[2026-05-03T17:57:56+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:57+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-44a981dee0bsm19175949f8f.19 - gsmtp
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:57:57+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-44a981dee0bsm19175949f8f.19 - gsmtp
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:57:54 +0200
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: New Chat Message from Visitor
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: Message-ID: <YzT2TZASSzB0RPxgDzNhNayGXpJqbQ43IZQOXmTTeoY@localhost>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:     <div style=3D'margin:0;padding:24px;background:#f4f6fb;font-family:Sego=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: e UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:       <div style=3D'max-width:680px;margin:0 auto;background:#ffffff;border=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: :1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'background:linear-gradient(135deg,#111827,#1f2937);pa=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: dding:20px 24px'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           <h2 style=3D'margin:0;font-size:20px;color:#ffffff'>Admin Update =
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: Notification</h2>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q S=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: ystem Alert</p>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'padding:20px 24px'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:0 0 14px;font-size:15px;color:#111827'><strong=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: >Event:</strong> New Chat Message from Visitor</p>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin:0 0 16px;padding:12px 14px;background:#fff7e=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: d;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: g>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: g>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0;font-size:13px;color:#9a3412'><strong>Time=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: :</strong> 2026-05-03 17:57:54</p>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           <table style=3D'width:100%;border-collapse:collapse;border:1px so=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: lid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:               <tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: ;font-weight:600;color:#1f2937'>Thread ID</td><td style=3D'padding:10px;bor=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: der-bottom:1px solid #eef2f7;color:#374151'>PUBLIC-TEST-69f77082c2c25</td><=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: /tr><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;font-weig=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: ht:600;color:#1f2937'>Visitor Name</td><td style=3D'padding:10px;border-bot=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: tom:1px solid #eef2f7;color:#374151'>Test Visitor</td></tr><tr><td style=3D=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: 'padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: '>Visitor Email</td><td style=3D'padding:10px;border-bottom:1px solid #eef2=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: f7;color:#374151'>visitor@example.com</td></tr><tr><td style=3D'padding:10p=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: x;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Message Pr=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: eview</td><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;color:#=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: 374151'>Test public chat message</td></tr><tr><td style=3D'padding:10px;bor=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: der-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Has Attachments=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: </td><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;color:#37415=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: 1'>No</td></tr><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: 7;font-weight:600;color:#1f2937'>Status</td><td style=3D'padding:10px;borde=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: r-bottom:1px solid #eef2f7;color:#374151'>Awaiting Admin Response</td></tr>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin-top:20px'>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:             <a href=3D'https://slaphappy-premillennially-louann.ngrok-free.=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: dev/admin/index.php?pages=3Ddashboard' style=3D'display:inline-block;paddin=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: g:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-ra=
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: dius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:57:57+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:57:58+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823879 ffacd0b85a97d-44a981dee0bsm19175949f8f.19 - gsmtp
+
+[2026-05-03T17:57:58+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:57:58+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-44a981dee0bsm19175949f8f.19 - gsmtp
+
+[2026-05-03T17:57:58+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-44a8ea7cf5dsm19648663f8f.1 - gsmtp
+
+[2026-05-03T17:57:58+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:58+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T17:57:58+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T17:57:58+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T17:57:59+02:00] [level=1] CLIENT -> SERVER: EHLO localhost
+
+[2026-05-03T17:57:59+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.84.219]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T17:57:59+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T17:57:59+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T17:57:59+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:58:00+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T17:58:00+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:58:00+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-44a8ea7cf5dsm19648663f8f.1 - gsmtp
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:58:00+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-44a8ea7cf5dsm19648663f8f.1 - gsmtp
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T17:58:00+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-44a8ea7cf5dsm19648663f8f.1 - gsmtp
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 17:57:58 +0200
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: Payment Confirmed by Admin
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: Message-ID: <03s12mlQ42ZlVJdUZ7JkD55ePfTgYJe61K6ZIxWYE@localhost>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:     <div style=3D'margin:0;padding:24px;background:#f4f6fb;font-family:Sego=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: e UI,Arial,sans-serif;color:#111827'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:       <div style=3D'max-width:680px;margin:0 auto;background:#ffffff;border=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: :1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'background:linear-gradient(135deg,#111827,#1f2937);pa=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: dding:20px 24px'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           <h2 style=3D'margin:0;font-size:20px;color:#ffffff'>Admin Update =
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: Notification</h2>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q S=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: ystem Alert</p>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'padding:20px 24px'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:0 0 14px;font-size:15px;color:#111827'><strong=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: >Event:</strong> Payment Confirmed by Admin</p>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin:0 0 16px;padding:12px 14px;background:#fff7e=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: d;border:1px solid #fed7aa;border-radius:10px'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: g>Triggered By:</strong> Akintunde Dolapo</p>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0 0 4px;font-size:13px;color:#9a3412'><stron=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: g>Actor Email:</strong> akintunde.dolapo1@gmail.com</p>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:             <p style=3D'margin:0;font-size:13px;color:#9a3412'><strong>Time=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: :</strong> 2026-05-03 17:57:58</p>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           <table style=3D'width:100%;border-collapse:collapse;border:1px so=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: lid #eef2f7;border-radius:10px;overflow:hidden'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:             <tbody>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:               <tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: ;font-weight:600;color:#1f2937'>Payment ID</td><td style=3D'padding:10px;bo=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: rder-bottom:1px solid #eef2f7;color:#374151'>TEST-PAY-69f7708650944</td></t=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: r><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;font-weight=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: :600;color:#1f2937'>Reference</td><td style=3D'padding:10px;border-bottom:1=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: px solid #eef2f7;color:#374151'>BANK-845686</td></tr><tr><td style=3D'paddi=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: ng:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>Amou=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: nt</td><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;color:#374=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: 151'>=E2=82=A650,000.00</td></tr><tr><td style=3D'padding:10px;border-botto=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: m:1px solid #eef2f7;font-weight:600;color:#1f2937'>Gateway</td><td style=3D=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: 'padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>Bank Transfer<=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: /td></tr><tr><td style=3D'padding:10px;border-bottom:1px solid #eef2f7;font=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: -weight:600;color:#1f2937'>Status</td><td style=3D'padding:10px;border-bott=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: om:1px solid #eef2f7;color:#374151'>Successfully Confirmed</td></tr>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:             </tbody>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           </table>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin-top:20px'>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:             <a href=3D'https://slaphappy-premillennially-louann.ngrok-free.=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: dev/admin/index.php?pages=3Ddashboard' style=3D'display:inline-block;paddin=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: g:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-ra=
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: dius:8px;font-weight:700'>Open Admin Panel</a>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T17:58:00+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T17:58:01+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777823882 ffacd0b85a97d-44a8ea7cf5dsm19648663f8f.1 - gsmtp
+
+[2026-05-03T17:58:01+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T17:58:01+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-44a8ea7cf5dsm19648663f8f.1 - gsmtp
+
+[2026-05-03T18:06:50+02:00] [level=2] SERVER -> CLIENT: 220 smtp.gmail.com ESMTP ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
+
+[2026-05-03T18:06:50+02:00] [level=1] CLIENT -> SERVER: EHLO VIKKY
+
+[2026-05-03T18:06:51+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.76.60]
+250-SIZE 35882577
+250-8BITMIME
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250 SMTPUTF8
+
+[2026-05-03T18:06:51+02:00] [level=1] CLIENT -> SERVER: STARTTLS
+
+[2026-05-03T18:06:51+02:00] [level=2] SERVER -> CLIENT: 220 2.0.0 Ready to start TLS
+
+[2026-05-03T18:06:51+02:00] [level=1] CLIENT -> SERVER: EHLO VIKKY
+
+[2026-05-03T18:06:52+02:00] [level=2] SERVER -> CLIENT: 250-smtp.gmail.com at your service, [102.89.76.60]
+250-SIZE 35882577
+250-8BITMIME
+250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-CHUNKING
+250 SMTPUTF8
+
+[2026-05-03T18:06:52+02:00] [level=1] CLIENT -> SERVER: AUTH LOGIN
+
+[2026-05-03T18:06:52+02:00] [level=2] SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[2026-05-03T18:06:52+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T18:06:52+02:00] [level=2] SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[2026-05-03T18:06:52+02:00] [level=1] CLIENT -> SERVER: [credentials hidden]
+[2026-05-03T18:06:52+02:00] [level=2] SERVER -> CLIENT: 235 2.7.0 Accepted
+
+[2026-05-03T18:06:52+02:00] [level=1] CLIENT -> SERVER: MAIL FROM:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T18:06:53+02:00] [level=2] SERVER -> CLIENT: 250 2.1.0 OK ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: RCPT TO:<akintunde.dolapo1@gmail.com>
+
+[2026-05-03T18:06:53+02:00] [level=2] SERVER -> CLIENT: 250 2.1.5 OK ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: DATA
+
+[2026-05-03T18:06:53+02:00] [level=2] SERVER -> CLIENT: 354 Go ahead ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: Date: Sun, 3 May 2026 18:06:50 +0200
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: To: akintunde.dolapo1@gmail.com
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: From: HIGH Q SOLID ACADEMY <akintunde.dolapo1@gmail.com>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: Subject: HIGH-Q Admin Update: TEST VERIFY: Register New Flow
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: Message-ID: <YzwqIuj10N4xGUHkLJmosonjV8WkRYIVgDcarBzR8U@VIKKY>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: X-Mailer: PHPMailer 6.10.0 (https://github.com/PHPMailer/PHPMailer)
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: MIME-Version: 1.0
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: Content-Type: text/html; charset=iso-8859-1
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: 
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:     <div style=3D'margin:0;padding:0;font-family:&quot;Segoe UI&quot;, -app=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: le-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, sans-serif;backg=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: round:#f8f9fb'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:       <div style=3D'max-width:720px;margin:0 auto;background:#ffffff;box-sh=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: adow:0 4px 32px rgba(0,0,0,0.08)'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         <!-- Header -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'background:linear-gradient(135deg, #0b1a2c 0%, #1e3a5=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: f 100%);padding:40px 32px;text-align:center'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'font-size:24px;font-weight:700;color:#ffd600;margin=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: -bottom:8px;letter-spacing:-0.5px'>HIGH-Q</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <h1 style=3D'margin:0;font-size:24px;font-weight:700;color:#fffff=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: f;line-height:1.3'>Admin Notification</h1>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:12px 0 0;font-size:13px;color:#a8c5dd;letter-s=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: pacing:0.3px;text-transform:uppercase'>System Event Alert</p>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:        =20
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         <!-- Content -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'padding:40px 32px'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <!-- Event Title -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin-bottom:28px'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             <div style=3D'font-size:11px;font-weight:600;color:#64748b;text=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: -transform:uppercase;letter-spacing:1px;margin-bottom:8px'>Event Details</d=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: iv>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             <h2 style=3D'margin:0;font-size:20px;font-weight:600;color:#0b1=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: a2c;line-height:1.4'>TEST VERIFY: Register New Flow</h2>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:          =20
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <!-- Actor Info Box -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'background:linear-gradient(135deg, #f0f7ff 0%, #f8f=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: bff 100%);border:1px solid #d4e6f7;border-radius:12px;padding:20px;margin-b=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: ottom:28px'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             <div style=3D'display:grid;grid-template-columns:1fr 1fr;gap:16=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: px;font-size:13px'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               <div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <div style=3D'font-weight:600;color:#334155;margin-bottom:4=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: px'>Triggered By</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <div style=3D'color:#475569'>System</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               <div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <div style=3D'font-weight:600;color:#334155;margin-bottom:4=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: px'>Email</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <div style=3D'color:#475569;word-break:break-all'>N/A</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               <div style=3D'grid-column:1/-1'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <div style=3D'font-weight:600;color:#334155;margin-bottom:4=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: px'>Timestamp</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <div style=3D'color:#475569'>2026-05-03 18:06:50</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:          =20
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <!-- Details Table -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'margin-bottom:28px'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             <div style=3D'font-size:11px;font-weight:600;color:#64748b;text=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: -transform:uppercase;letter-spacing:1px;margin-bottom:12px'>Details</div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             <table style=3D'width:100%;border-collapse:collapse;border:1px =
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: solid #e2e8f0;border-radius:8px;overflow:hidden'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               <tbody>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:                 <tr><td style=3D'padding:14px 16px;border-bottom:1px solid =
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: #e2e8f0;font-weight:600;color:#0b1a2c;background:#f9fafb;width:35%;font-siz=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: e:13px'>Registration ID</td><td style=3D'padding:14px 16px;border-bottom:1p=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: x solid #e2e8f0;color:#334155;font-size:13px'>VERIFY-20260503180650</td></t=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: r><tr><td style=3D'padding:14px 16px;border-bottom:1px solid #e2e8f0;font-w=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: eight:600;color:#0b1a2c;background:#f9fafb;width:35%;font-size:13px'>Progra=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: m Type</td><td style=3D'padding:14px 16px;border-bottom:1px solid #e2e8f0;c=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: olor:#334155;font-size:13px'>JAMB</td></tr><tr><td style=3D'padding:14px 16=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0b1a2c;background=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: :#f9fafb;width:35%;font-size:13px'>Student Name</td><td style=3D'padding:14=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: px 16px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px'>Codex=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:  Verification</td></tr><tr><td style=3D'padding:14px 16px;border-bottom:1px=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:  solid #e2e8f0;font-weight:600;color:#0b1a2c;background:#f9fafb;width:35%;f=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: ont-size:13px'>Email</td><td style=3D'padding:14px 16px;border-bottom:1px s=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: olid #e2e8f0;color:#334155;font-size:13px'>verify@example.com</td></tr><tr>=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: <td style=3D'padding:14px 16px;border-bottom:1px solid #e2e8f0;font-weight:=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: 600;color:#0b1a2c;background:#f9fafb;width:35%;font-size:13px'>Payment Refe=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: rence</td><td style=3D'padding:14px 16px;border-bottom:1px solid #e2e8f0;co=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: lor:#334155;font-size:13px'>VERIFY-180650</td></tr><tr><td style=3D'padding=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: :14px 16px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#0b1a2c;ba=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: ckground:#f9fafb;width:35%;font-size:13px'>Status</td><td style=3D'padding:=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: 14px 16px;border-bottom:1px solid #e2e8f0;color:#334155;font-size:13px'>Ver=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: ification Run</td></tr>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:               </tbody>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             </table>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:          =20
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <!-- CTA Button -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <div style=3D'text-align:center;margin-bottom:20px'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:             <a href=3D'https://slaphappy-premillennially-louann.ngrok-free.=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: dev/admin/index.php?pages=3Dacademic' style=3D'display:inline-block;padding=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: :14px 32px;background:linear-gradient(135deg, #ffd600 0%, #e6c200 100%);col=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: or:#0b1a2c;text-decoration:none;border-radius:8px;font-weight:700;font-size=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: :14px;letter-spacing:0.3px;transition:all 0.2s ease;box-shadow:0 4px 12px r=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: gba(255,214,0,0.3)'>Access Admin Panel</a>=0A          </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:        =20
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         <!-- Footer -->
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         <div style=3D'background:#f8f9fb;border-top:1px solid #e2e8f0;paddi=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: ng:24px 32px;text-align:center;font-size:12px;color:#64748b'>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:0 0 8px'>This is an automated notification fro=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: m HIGH-Q Admin System</p>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:           <p style=3D'margin:0;opacity:0.8'>Do not reply to this email. Con=
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: tact support if you have questions.</p>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:         </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:       </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER:     </div>
+
+[2026-05-03T18:06:53+02:00] [level=1] CLIENT -> SERVER: .
+
+[2026-05-03T18:06:54+02:00] [level=2] SERVER -> CLIENT: 250 2.0.0 OK  1777824415 ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
+
+[2026-05-03T18:06:54+02:00] [level=1] CLIENT -> SERVER: QUIT
+
+[2026-05-03T18:06:54+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
+

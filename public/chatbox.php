@@ -121,7 +121,7 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 'Message Preview' => substr(strip_tags($message), 0, 100) . (strlen(strip_tags($message)) > 100 ? '...' : ''),
                 'Has Attachments' => !empty($savedAttachUrls) ? 'Yes (' . count($savedAttachUrls) . ')' : 'No',
                 'Status' => 'Awaiting Admin Response'
-            ]);
+            ], null, admin_url('index.php?pages=chat'));
         } catch (Throwable $e) {
             // Don't block chat if notification fails
             error_log('Chat notification error: ' . $e->getMessage());

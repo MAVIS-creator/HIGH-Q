@@ -193,7 +193,7 @@ function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null): arra
 /**
  * Send a styled notification email for important admin updates.
  */
-function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null): bool {
+function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null, ?string $linkUrl = null): bool {
     if (!hqAdminEmailNotificationsEnabled($pdo)) {
         return false;
     }
@@ -220,7 +220,7 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
         $rowsHtml .= "<tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>{$label}</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>{$value}</td></tr>";
     }
 
-    $panelUrl = htmlspecialchars(admin_url('index.php?pages=dashboard'), ENT_QUOTES, 'UTF-8');
+    $panelUrl = htmlspecialchars($linkUrl ?? admin_url('index.php?pages=dashboard'), ENT_QUOTES, 'UTF-8');
     $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
     $safeActorName = htmlspecialchars($actorName, ENT_QUOTES, 'UTF-8');
     $safeActorEmail = htmlspecialchars($actorEmail, ENT_QUOTES, 'UTF-8');
@@ -268,9 +268,9 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
 /**
  * Fire-and-forget wrapper for admin change notifications.
  */
-function notifyAdminChange(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null): void {
+function notifyAdminChange(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null, ?string $linkUrl = null): void {
     try {
-        sendAdminChangeNotification($pdo, $title, $details, $actorUserId);
+        sendAdminChangeNotification($pdo, $title, $details, $actorUserId, $linkUrl);
     } catch (Throwable $e) {
     }
 }
