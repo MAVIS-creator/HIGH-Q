@@ -3,6 +3,7 @@ session_start();
 require './includes/db.php';
 require './includes/functions.php';
 require './includes/csrf.php';
+require './includes/auth.php';
 
 $recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/config/recaptcha.php' : (file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>'']);
 
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($maxAttempts < 1) $maxAttempts = 5;
             } catch (Throwable $e) { }
 
-            $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+            $ip = function_exists('hqAdminClientIp') ? hqAdminClientIp() : ($_SERVER['REMOTE_ADDR'] ?? '');
             try {
                 if (!empty($ip)) {
                     $stmtLA = $pdo->prepare('SELECT attempts, last_attempt FROM login_attempts WHERE ip = ? LIMIT 1');
@@ -76,6 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ];
 
                     unset($_SESSION['post_signup_tour_trigger']);
+                    if (!empty($ip)) {
+                        $_SESSION['user_ip'] = $ip;
+                    }
 
                     try {
                         $stmtDel = $pdo->prepare('DELETE FROM login_attempts WHERE ip = ? OR email = ?');

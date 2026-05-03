@@ -938,7 +938,7 @@ $csrf = generateToken('signup_form');
 															showCancelButton: true,
 															confirmButtonText: 'Go to Dashboard',
 															cancelButtonText: 'Stay on this page',
-															footer: '<a href="/public/terms.php" target="_blank" class="swal-footer-link">Terms & Privacy</a>',
+															footer: '<a href="<?= htmlspecialchars(app_url('terms.php'), ENT_QUOTES, 'UTF-8') ?>" target="_blank" class="swal-footer-link">Terms & Privacy</a>',
 															didClose: () => {
 																// optional: focus return
 															}

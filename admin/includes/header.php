@@ -48,17 +48,9 @@ if (!headers_sent()) {
     ob_start();
 }
 
-// Compute admin base path once so asset URLs work from both:
-//  - /.../admin/index.php?pages=...
-//  - /.../admin/pages/index.php?pages=...
-$script = $_SERVER['SCRIPT_NAME'] ?? '';
-$parts = explode('/', trim($script, '/'));
-$idx = array_search('admin', $parts, true);
-if ($idx !== false) {
-    $adminBasePath = '/' . implode('/', array_slice($parts, 0, $idx + 1));
-} else {
-    $adminBasePath = rtrim(dirname($script), '/');
-    if ($adminBasePath === '') $adminBasePath = '/admin';
+$adminBasePath = '';
+if (function_exists('admin_url')) {
+    $adminBasePath = rtrim((string)(parse_url(admin_url(''), PHP_URL_PATH) ?? ''), '/');
 }
 ?>
 <!DOCTYPE html>
@@ -129,53 +121,19 @@ if ($idx !== false) {
         "label{display:block;margin:6px 0;font-weight:600;}input.input, textarea.input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;}\n" .
         "</style>\n";
 
-    // Expose admin base dynamically from current request URL (just like public site)
-    // Extract scheme and host from the actual request
-    // Check for X-Forwarded-Proto header (set by reverse proxies/load balancers like CloudFlare, nginx, etc.)
-    $scheme = 'http';
-    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-        $scheme = strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']);
-    } elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-        $scheme = 'https';
-    }
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    
-    // Extract the admin base path from the current request URI
-    // E.g., /HIGH-Q/admin/pages/index.php?pages=dashboard -> /HIGH-Q/admin
-    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    
-    // Find where '/admin' appears in the URI
-    $adminPos = strpos($requestUri, '/admin');
-    if ($adminPos !== false) {
-        // Extract everything up to and including '/admin'
-        $endPos = $adminPos + strlen('/admin');
-        $adminPath = substr($requestUri, 0, $endPos);
-    } else {
-        // Fallback: extract from script name
-        $adminPos = strpos($scriptName, '/admin');
-        if ($adminPos !== false) {
-            $adminPath = substr($scriptName, 0, $adminPos + strlen('/admin'));
-        } else {
-            // Last resort: use filesystem project name
-            $rootName = basename(dirname(__DIR__, 2));
-            $adminPath = '/' . $rootName . '/admin';
-        }
-    }
-    
-    // Build the full admin base URL
-    $adminBaseFull = $scheme . '://' . $host . $adminPath;
+    $adminBaseFull = function_exists('admin_url') ? rtrim(admin_url(''), '/') : '';
+    $publicBaseFull = function_exists('app_url') ? rtrim(app_url(''), '/') : '';
     
     echo "<script>\n";
     echo "window.HQ_ADMIN_BASE = '" . $adminBaseFull . "';\n";
-    echo "window.HQ_ADMIN_PATH = '" . $adminPath . "';\n";
-    echo "window.HQ_APP_BASE = '" . $scheme . '://' . $host . "';\n";
+    echo "window.HQ_ADMIN_PATH = '" . ($adminBasePath !== '' ? $adminBasePath : '/') . "';\n";
+    echo "window.HQ_APP_BASE = '" . $publicBaseFull . "';\n";
     if (function_exists('generateToken')) {
         $tourCsrf = generateToken('tour_api');
         $aiCsrf = generateToken('ai_assistant_api');
         echo "window.HQ_CSRF = { tour: '" . $tourCsrf . "', ai: '" . $aiCsrf . "' };\n";
     }
-    echo "console.log('ADMIN_BASE derived from request:', '" . $adminBaseFull . "');\n";
+    echo "console.log('ADMIN_BASE derived from helper:', '" . $adminBaseFull . "');\n";
     echo "</script>\n";
     ?>
 </head>

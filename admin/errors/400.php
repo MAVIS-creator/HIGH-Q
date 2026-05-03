@@ -1,5 +1,7 @@
 <?php
 http_response_code(400);
+require_once __DIR__ . '/../includes/functions.php';
+$dashboardUrl = admin_url('index.php?pages=dashboard');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +9,7 @@ http_response_code(400);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>400 Bad Request - Admin Panel</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(admin_url('assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
     <style>
         .error-container {
             min-height: 60vh;
@@ -47,7 +49,7 @@ http_response_code(400);
         <div class="error-code">400</div>
         <h1>Bad Request</h1>
         <p class="error-message">The request could not be processed.</p>
-        <a href="./index.php" class="back-link">← Return to Dashboard</a>
+        <a href="<?= htmlspecialchars($dashboardUrl, ENT_QUOTES, 'UTF-8') ?>" class="back-link">← Return to Dashboard</a>
     </div>
 </body>
 </html>

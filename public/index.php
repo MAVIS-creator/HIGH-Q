@@ -6,16 +6,13 @@ if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/public/p
 	exit;
 }
 
+require_once __DIR__ . '/config/functions.php';
+
 // Friendly payment links: /pay/{reference} -> /public/payments_wait.php?ref={reference}
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
 if (preg_match('#/pay/([^/]+)$#', $requestPath, $m)) {
 	$reference = urldecode($m[1]);
-	$scriptName = $_SERVER['SCRIPT_NAME'] ?? '/public/index.php';
-	$basePath = '';
-	if (preg_match('#^(.*)/public/index\.php$#', $scriptName, $sm)) {
-		$basePath = $sm[1];
-	}
-	$target = rtrim($basePath, '/') . '/public/payments_wait.php?ref=' . urlencode($reference);
+	$target = app_url('payments_wait.php?ref=' . urlencode($reference));
 	header('Location: ' . $target, true, 302);
 	exit;
 }

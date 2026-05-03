@@ -1,5 +1,9 @@
 <?php
 http_response_code(404);
+if (!function_exists('app_url') && file_exists(__DIR__ . '/../config/functions.php')) {
+    require_once __DIR__ . '/../config/functions.php';
+}
+$homeUrl = function_exists('app_url') ? app_url('index.php') : '/';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +11,6 @@ http_response_code(404);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found - HIGH Q SOLID ACADEMY</title>
-        <?php if (!function_exists('app_url')) { if (file_exists(__DIR__ . '/../config/functions.php')) require_once __DIR__ . '/../config/functions.php'; } ?>
         <link rel="stylesheet" href="<?= function_exists('app_url') ? app_url('assets/css/public.css') : '/assets/css/public.css' ?>">
     <style>
         .error-container {
@@ -39,18 +42,15 @@ http_response_code(404);
     </style>
 </head>
 <body>
-    <?php include '../includes/header.php'; ?>
-        <?php if (file_exists(__DIR__ . '/../includes/header.php')) include __DIR__ . '/../includes/header.php'; ?>
+    <?php if (file_exists(__DIR__ . '/../includes/header.php')) include __DIR__ . '/../includes/header.php'; ?>
     
     <div class="error-container">
         <div class="error-code">404</div>
         <h1>Page Not Found</h1>
         <p class="error-message">The page you're looking for does not exist or has been moved.</p>
-    <a href="../index.php" class="back-link">← Return to Homepage</a>
-        <a href="/" class="back-link">← Return to Homepage</a>
+    <a href="<?= htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8') ?>" class="back-link">← Return to Homepage</a>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
-        <?php if (file_exists(__DIR__ . '/../includes/footer.php')) include __DIR__ . '/../includes/footer.php'; ?>
+    <?php if (file_exists(__DIR__ . '/../includes/footer.php')) include __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

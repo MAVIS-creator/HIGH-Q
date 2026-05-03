@@ -49,8 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     if ($ok) {
             // Send admin notification about payment confirmation
             try {
-                require_once __DIR__ . '/../config/db.php';
-                require_once __DIR__ . '/../../public/config/functions.php';
                 $pmt = $pdo->prepare('SELECT * FROM payments WHERE id = ? LIMIT 1');
                 $pmt->execute([$id]);
                 $paymentData = $pmt->fetch(PDO::FETCH_ASSOC);
@@ -61,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                         'Amount' => '₦' . number_format($paymentData['amount'], 2),
                         'Gateway' => $paymentData['gateway'] ?? 'Bank Transfer',
                         'Status' => 'Successfully Confirmed'
-                    ], (int)($_SESSION['user']['id'] ?? 0), app_url('admin/pages/payments.php'));
+                    ], (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=payments'));
                 }
             } catch (Throwable $e) {
                 // Don't block if notification fails

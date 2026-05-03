@@ -140,10 +140,100 @@ function hqAdminEmailNotificationsEnabled(PDO $pdo): bool {
 }
 
 /**
- * Collect admin/team recipient emails for operational notifications.
+ * Normalize admin menu/page slugs used for permission-scoped notifications.
  */
-function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null): array {
+function hqNormalizeNotificationMenuSlug(?string $slug): ?string {
+    $slug = trim((string)$slug);
+    if ($slug === '') {
+        return null;
+    }
+
+    $slug = strtolower($slug);
+    $map = [
+        'payment' => 'payments',
+        'payments' => 'payments',
+        'registration' => 'academic',
+        'registrations' => 'academic',
+        'student' => 'academic',
+        'students' => 'academic',
+        'academic' => 'academic',
+        'appointment' => 'appointments',
+        'appointments' => 'appointments',
+        'chat' => 'chat',
+        'chat_view' => 'chat',
+        'comment' => 'comments',
+        'comments' => 'comments',
+        'course' => 'courses',
+        'courses' => 'courses',
+        'post' => 'post',
+        'posts' => 'post',
+        'testimonial' => 'testimonials',
+        'testimonials' => 'testimonials',
+        'user' => 'users',
+        'users' => 'users',
+        'role' => 'roles',
+        'roles' => 'roles',
+        'setting' => 'settings',
+        'settings' => 'settings',
+        'dashboard' => 'dashboard',
+        'support' => 'chat',
+    ];
+
+    return $map[$slug] ?? $slug;
+}
+
+/**
+ * Infer the admin menu slug a notification targets from a link or current request context.
+ */
+function hqNotificationTargetMenuSlug(?string $linkUrl = null): ?string {
+    if (!empty($linkUrl)) {
+        $query = parse_url($linkUrl, PHP_URL_QUERY);
+        if (is_string($query)) {
+            parse_str($query, $queryParts);
+            if (!empty($queryParts['pages'])) {
+                return hqNormalizeNotificationMenuSlug((string)$queryParts['pages']);
+            }
+        }
+
+        $path = parse_url($linkUrl, PHP_URL_PATH);
+        if (is_string($path) && $path !== '') {
+            $basename = pathinfo($path, PATHINFO_FILENAME);
+            $normalized = hqNormalizeNotificationMenuSlug($basename);
+            if ($normalized !== null) {
+                return $normalized;
+            }
+        }
+    }
+
+    if (!empty($_GET['pages'])) {
+        return hqNormalizeNotificationMenuSlug((string)$_GET['pages']);
+    }
+
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    if (is_string($scriptName) && $scriptName !== '') {
+        $basename = pathinfo($scriptName, PATHINFO_FILENAME);
+        return hqNormalizeNotificationMenuSlug($basename);
+    }
+
+    return null;
+}
+
+/**
+ * Collect recipient emails for operational notifications based on the admin page they can access.
+ */
+function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null, ?string $targetMenuSlug = null): array {
     $emails = [];
+    $targetMenuSlug = hqNormalizeNotificationMenuSlug($targetMenuSlug);
+    $allowedSlugs = [];
+
+    if ($targetMenuSlug !== null) {
+        $allowedSlugs[] = $targetMenuSlug;
+        if ($targetMenuSlug === 'payments') {
+            $allowedSlugs[] = 'create_payment_link';
+        } elseif ($targetMenuSlug === 'create_payment_link') {
+            $allowedSlugs[] = 'payments';
+        }
+    }
 
     try {
         $sql = "SELECT DISTINCT u.email
@@ -152,13 +242,28 @@ function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null): arra
                 LEFT JOIN role_permissions rp ON rp.role_id = u.role_id
                 WHERE u.email IS NOT NULL
                   AND u.email <> ''
-                  AND (
+                  AND COALESCE(u.is_active, 1) = 1";
+        $params = [];
+
+        if (!empty($allowedSlugs)) {
+            $placeholders = implode(',', array_fill(0, count($allowedSlugs), '?'));
+            $sql .= " AND (
+                        LOWER(COALESCE(r.slug, '')) = 'admin'
+                     OR LOWER(COALESCE(r.name, '')) = 'admin'
+                     OR rp.menu_slug IN ($placeholders)
+                  )";
+            $params = $allowedSlugs;
+        } else {
+            $sql .= " AND (
                         LOWER(COALESCE(r.slug, '')) = 'admin'
                      OR LOWER(COALESCE(r.name, '')) = 'admin'
                      OR rp.menu_slug = 'settings'
                   )";
-        $stmt = $pdo->query($sql);
-        $rows = $stmt ? $stmt->fetchAll(PDO::FETCH_COLUMN) : [];
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         foreach ($rows as $email) {
             $email = trim((string)$email);
             if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -198,7 +303,8 @@ function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [
         return false;
     }
 
-    $recipients = hqAdminNotificationRecipients($pdo, $actorUserId);
+    $targetMenuSlug = hqNotificationTargetMenuSlug($linkUrl);
+    $recipients = hqAdminNotificationRecipients($pdo, $actorUserId, $targetMenuSlug);
     if (empty($recipients)) {
         return false;
     }

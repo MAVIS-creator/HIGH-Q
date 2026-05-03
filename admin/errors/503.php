@@ -1,5 +1,7 @@
 <?php
 http_response_code(503);
+require_once __DIR__ . '/../includes/functions.php';
+$adminHomeUrl = admin_url('index.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +9,7 @@ http_response_code(503);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>503 Service Unavailable - Admin Panel</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars(admin_url('assets/css/admin.css'), ENT_QUOTES, 'UTF-8') ?>">
     <style>
         .error-container {
             min-height: 60vh;
@@ -47,7 +49,7 @@ http_response_code(503);
         <div class="error-code">503</div>
         <h1>Service Unavailable</h1>
         <p class="error-message">The site is temporarily down for maintenance. We'll be back shortly.</p>
-        <a href="./index.php" class="back-link">← Return to Admin</a>
+        <a href="<?= htmlspecialchars($adminHomeUrl, ENT_QUOTES, 'UTF-8') ?>" class="back-link">← Return to Admin</a>
     </div>
 </body>
 </html>
