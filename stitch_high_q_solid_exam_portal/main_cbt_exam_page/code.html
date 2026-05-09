@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#191c1e",
+                      "outline-variant": "#c5c6cd",
+                      "surface-container": "#eceef0",
+                      "on-primary-fixed-variant": "#39475f",
+                      "on-error": "#ffffff",
+                      "on-secondary-container": "#6e5c00",
+                      "primary-fixed-dim": "#b9c7e4",
+                      "surface": "#f7f9fb",
+                      "on-surface": "#191c1e",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#e9c400",
+                      "on-secondary-fixed": "#221b00",
+                      "surface-variant": "#e0e3e5",
+                      "surface-container-low": "#f2f4f6",
+                      "primary-fixed": "#d6e3ff",
+                      "tertiary-fixed-dim": "#ffb3b1",
+                      "on-primary-fixed": "#0d1c32",
+                      "on-tertiary-container": "#f1414d",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface-tint": "#515f78",
+                      "background": "#f7f9fb",
+                      "on-tertiary": "#ffffff",
+                      "secondary": "#705d00",
+                      "on-tertiary-fixed": "#410007",
+                      "outline": "#75777e",
+                      "tertiary-fixed": "#ffdad8",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#2d3133",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#44474d",
+                      "tertiary-container": "#410007",
+                      "surface-container-high": "#e6e8ea",
+                      "primary-container": "#0d1c32",
+                      "secondary-fixed": "#ffe16d",
+                      "on-secondary-fixed-variant": "#544600",
+                      "on-secondary": "#ffffff",
+                      "tertiary": "#000000",
+                      "on-primary-container": "#76849f",
+                      "secondary-container": "#fcd400",
+                      "on-tertiary-fixed-variant": "#92001c",
+                      "surface-dim": "#d8dadc",
+                      "surface-bright": "#f7f9fb",
+                      "primary": "#000000",
+                      "inverse-primary": "#b9c7e4"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "32px",
+                      "stack-lg": "48px",
+                      "margin-mobile": "16px",
+                      "base": "8px",
+                      "stack-md": "24px",
+                      "stack-sm": "12px",
+                      "container-max": "1280px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "title-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar (Small Type) -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-surface-dim border-b-2 border-secondary dark:border-secondary-fixed shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-title-md font-title-md font-bold text-primary dark:text-primary-fixed">Mathematics - Final Exam</span>
+<div class="hidden md:flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-lg text-label-md">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+<span>Alex Rivers</span>
+</div>
+</div>
+<div class="flex items-center gap-base">
+<div class="flex items-center gap-2 px-4 py-2 bg-error-container text-on-error-container rounded-lg font-bold">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+<span class="font-mono text-title-md">01:42:15</span>
+</div>
+<div class="hidden md:flex gap-1">
+<button class="p-2 hover:bg-error-container dark:hover:bg-on-tertiary-fixed-variant transition-colors rounded-full" title="Map">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+</button>
+<button class="p-2 hover:bg-error-container dark:hover:bg-on-tertiary-fixed-variant transition-colors rounded-full" title="Flag">
+<span class="material-symbols-outlined" data-icon="flag">flag</span>
+</button>
+</div>
+<button class="ml-2 px-4 py-2 bg-error text-on-error rounded-lg font-bold transition-transform active:scale-98">
+                End Exam
+            </button>
+</div>
+</header>
+<!-- Main Content Layout -->
+<main class="flex-1 flex pt-16 pb-20 md:pb-0">
+<!-- Sidebar: Question Navigation Grid -->
+<aside class="hidden md:flex flex-col w-80 bg-surface-container-low border-r border-outline-variant fixed left-0 top-16 bottom-0 overflow-y-auto">
+<div class="p-margin-desktop">
+<div class="mb-stack-md">
+<h3 class="font-title-md text-title-md mb-2">Question Palette</h3>
+<p class="text-label-sm text-on-surface-variant">60 Questions Total</p>
+</div>
+<div class="grid grid-cols-5 gap-2 mb-stack-lg">
+<!-- Dynamic Grid Mockup -->
+<!-- Current -->
+<button class="w-10 h-10 flex items-center justify-center rounded bg-secondary-container text-on-secondary-container font-bold border-2 border-secondary">1</button>
+<!-- Answered -->
+<button class="w-10 h-10 flex items-center justify-center rounded bg-primary-fixed text-on-primary-fixed font-bold">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded bg-primary-fixed text-on-primary-fixed font-bold">3</button>
+<!-- Flagged -->
+<button class="w-10 h-10 flex items-center justify-center rounded bg-secondary-fixed text-on-secondary-fixed font-bold border-2 border-secondary relative">
+                        4
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<!-- Unanswered -->
+<button class="w-10 h-10 flex items-center justify-center rounded border border-outline text-on-surface-variant">5</button>
+<!-- Generating more for visual density -->
+<script>
+                        const container = document.currentScript.parentElement;
+                        for(let i=6; i<=60; i++) {
+                            const btn = document.createElement('button');
+                            btn.className = "w-10 h-10 flex items-center justify-center rounded border border-outline text-on-surface-variant hover:bg-surface-container-highest transition-colors";
+                            btn.innerText = i;
+                            container.appendChild(btn);
+                        }
+                    </script>
+</div>
+<div class="space-y-3 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<h4 class="text-label-md font-bold uppercase tracking-wider text-outline">Legend</h4>
+<div class="flex items-center gap-3 text-label-sm">
+<span class="w-4 h-4 rounded bg-secondary-container border border-secondary"></span>
+<span>Current</span>
+</div>
+<div class="flex items-center gap-3 text-label-sm">
+<span class="w-4 h-4 rounded bg-primary-fixed"></span>
+<span>Answered</span>
+</div>
+<div class="flex items-center gap-3 text-label-sm">
+<span class="w-4 h-4 rounded bg-secondary-fixed relative"><span class="absolute top-0 right-0 w-1 h-1 bg-error rounded-full"></span></span>
+<span>Flagged</span>
+</div>
+<div class="flex items-center gap-3 text-label-sm">
+<span class="w-4 h-4 rounded border border-outline"></span>
+<span>Unanswered</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Exam Workspace -->
+<section class="flex-1 md:ml-80 bg-surface-container overflow-y-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col items-center">
+<div class="w-full max-w-4xl space-y-stack-md">
+<!-- Progress Indicator -->
+<div class="w-full bg-surface-container-highest rounded-full h-3 overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full w-[15%]" style="box-shadow: 0 0 10px rgba(233, 196, 0, 0.3)"></div>
+</div>
+<!-- Question Card -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
+<header class="flex justify-between items-start mb-stack-md">
+<div class="px-3 py-1 bg-surface-container-high rounded-full text-label-sm font-bold text-on-surface-variant">
+                            Question 1 of 60
+                        </div>
+<div class="text-label-sm text-outline">Marks: +4 / -1</div>
+</header>
+<div class="mb-stack-lg">
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+                            A parabolic satellite dish is represented by the equation \(y = 0.05x^2\). If a receiver is placed at the focus of the parabola, what are the coordinates of the focus point relative to the vertex at (0,0)?
+                        </p>
+</div>
+<div class="space-y-stack-sm">
+<!-- Option A -->
+<label class="flex items-center p-4 rounded-lg border-2 border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-container-low cursor-pointer transition-all group">
+<input class="w-5 h-5 text-on-primary-fixed focus:ring-primary-fixed-dim" name="exam-option" type="radio"/>
+<span class="ml-4 flex-1 font-body-md text-body-md">
+<span class="font-bold mr-2 text-primary">A.</span> (0, 5)
+                            </span>
+</label>
+<!-- Option B (Selected State Mockup) -->
+<label class="flex items-center p-4 rounded-lg border-2 border-primary bg-primary-fixed/20 cursor-pointer transition-all group">
+<input checked="" class="w-5 h-5 text-primary focus:ring-primary" name="exam-option" type="radio"/>
+<span class="ml-4 flex-1 font-body-md text-body-md">
+<span class="font-bold mr-2 text-primary">B.</span> (0, 10)
+                            </span>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</label>
+<!-- Option C -->
+<label class="flex items-center p-4 rounded-lg border-2 border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-container-low cursor-pointer transition-all group">
+<input class="w-5 h-5 text-on-primary-fixed focus:ring-primary-fixed-dim" name="exam-option" type="radio"/>
+<span class="ml-4 flex-1 font-body-md text-body-md">
+<span class="font-bold mr-2 text-primary">C.</span> (0, 0.2)
+                            </span>
+</label>
+<!-- Option D -->
+<label class="flex items-center p-4 rounded-lg border-2 border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-container-low cursor-pointer transition-all group">
+<input class="w-5 h-5 text-on-primary-fixed focus:ring-primary-fixed-dim" name="exam-option" type="radio"/>
+<span class="ml-4 flex-1 font-body-md text-body-md">
+<span class="font-bold mr-2 text-primary">D.</span> (0, 20)
+                            </span>
+</label>
+</div>
+</article>
+<!-- Responsive Hint / Image for Question -->
+<div class="rounded-xl overflow-hidden border border-outline-variant aspect-[16/9] w-full bg-surface-container-highest">
+<img alt="Coordinate Geometry Diagram" class="w-full h-full object-cover mix-blend-multiply opacity-80" data-alt="A clean, scientific illustration of a parabolic curve on a Cartesian coordinate plane. The graph is rendered in a minimalist style with crisp black grid lines against a soft gray background. Mathematical annotations and variables are clearly labeled in a modern sans-serif font. The aesthetic is educational and focused, fitting for a high-stakes academic exam environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6oV9lu5MplSCNi5SOE5rmA6rQ7rjTbRjQ5xb2ckdCmSreqj-qPNWbyhDRoYTngDYFKTGSIAOFSkBfWkWlaFlJuu3e60uiNnoHU5dZGIuXy0ngNXp40U0NyNzdosWCfdcpy6OxaXhN1wmoKsG6U3xKp4zZBNojt8yaLOvbcuz-1iTGAAOWTOc9C-0F-QBMYrXOh4juK4s8Js6D-J-TH6SnyNYyNW5-Hfu12Go8f2H7eVj_Dt2S2mwrQLoXMsDxe4Ty1Z7zNOk9Gw"/>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Bar (CBT Specialized) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant h-20 px-margin-mobile md:px-margin-desktop shadow-lg flex items-center justify-between">
+<div class="flex items-center gap-stack-sm">
+<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-low border border-outline-variant rounded-lg font-bold text-on-surface hover:bg-surface-container-high transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+                Previous
+            </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-lg font-bold hover:opacity-90 transition-opacity active:scale-95">
+                Next
+                <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-stack-sm">
+<button class="flex items-center gap-2 px-4 py-3 text-on-surface-variant hover:text-primary transition-all font-bold">
+<span class="material-symbols-outlined" data-icon="calculate">calculate</span>
+<span class="hidden md:inline">Calculator</span>
+</button>
+<div class="h-8 w-px bg-outline-variant"></div>
+<button class="flex items-center gap-2 px-4 py-3 text-secondary font-bold hover:bg-secondary-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="flag">flag</span>
+                Flag for Review
+            </button>
+</div>
+<div class="hidden md:flex items-center">
+<button class="px-8 py-3 bg-secondary-container text-on-secondary-container font-bold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-95">
+                Submit Exam
+            </button>
+</div>
+</footer>
+<!-- Mobile Navigation Toggle (BottomNavBar Pattern) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant shadow-lg pb-safe">
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="text-label-sm font-label-sm">Palette</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold bg-secondary-fixed-dim/20 rounded-full px-4 py-1">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+<span class="text-label-sm font-label-sm">Exam</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-label-sm font-label-sm">Support</span>
+</button>
+</nav>
+</body></html>

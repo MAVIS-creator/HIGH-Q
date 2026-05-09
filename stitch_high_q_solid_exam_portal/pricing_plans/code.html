@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#eff1f3",
+                    "on-secondary-fixed": "#221b00",
+                    "surface-bright": "#f7f9fb",
+                    "background": "#f7f9fb",
+                    "tertiary": "#000000",
+                    "on-primary-fixed-variant": "#39475f",
+                    "secondary-fixed-dim": "#e9c400",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface-variant": "#44474d",
+                    "secondary": "#705d00",
+                    "secondary-fixed": "#ffe16d",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary-container": "#76849f",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e0e3e5",
+                    "on-surface": "#191c1e",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f2f4f6",
+                    "surface": "#f7f9fb",
+                    "primary-fixed-dim": "#b9c7e4",
+                    "on-tertiary-fixed-variant": "#92001c",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e6e8ea",
+                    "secondary-container": "#fcd400",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#6e5c00",
+                    "on-tertiary-container": "#f1414d",
+                    "primary-container": "#0d1c32",
+                    "tertiary-fixed-dim": "#ffb3b1",
+                    "on-secondary-fixed-variant": "#544600",
+                    "outline": "#75777e",
+                    "surface-tint": "#515f78",
+                    "primary": "#000000",
+                    "surface-dim": "#d8dadc",
+                    "inverse-primary": "#b9c7e4",
+                    "tertiary-fixed": "#ffdad8",
+                    "surface-container": "#eceef0",
+                    "on-primary-fixed": "#0d1c32",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#410007",
+                    "on-tertiary-fixed": "#410007",
+                    "on-background": "#191c1e",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c5c6cd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "stack-sm": "12px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "margin-desktop": "32px",
+                    "stack-lg": "48px",
+                    "margin-mobile": "16px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "title-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-on-background border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg tracking-tight text-primary dark:text-inverse-primary">
+                HIGH-Q Solid Academy
+            </div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Exams</a>
+<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-secondary font-label-md text-label-md" href="#">Pricing</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Study Guide</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Support</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors">Sign In</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-label-md text-label-md active:opacity-80 active:scale-95 transition-all">Get Started</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Hero Section -->
+<section class="text-center mb-stack-lg">
+<h1 class="font-display-lg text-display-lg text-primary mb-4">Invest in Your Academic Future</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Choose a plan that fits your study goals. From comprehensive mock exams to AI-driven insights, we provide the tools you need to excel.</p>
+</section>
+<!-- Pricing Cards - Bento Inspired -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-lg">
+<!-- Trial Plan -->
+<div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl flex flex-col hover:shadow-lg transition-shadow duration-300">
+<div class="mb-6">
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full font-label-sm text-label-sm">Free Access</span>
+<h3 class="font-title-md text-title-md mt-4">Trial</h3>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="text-4xl font-bold text-primary">$0</span>
+</div>
+<p class="text-on-surface-variant font-label-md text-label-md mt-2">7 days of limited exploration</p>
+</div>
+<ul class="space-y-4 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        10 Sample Questions
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        1 Exam Board Preview
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined">cancel</span>
+                        Performance Tracking
+                    </li>
+</ul>
+<button class="w-full py-3 border-2 border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all">Start Free Trial</button>
+</div>
+<!-- Standard Plan (Featured) -->
+<div class="bg-surface-container border-2 border-secondary p-stack-md rounded-xl flex flex-col relative shadow-md scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-secondary text-on-secondary px-4 py-1 rounded-full font-label-sm text-label-sm">MOST POPULAR</div>
+<div class="mb-6">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Full Board Access</span>
+<h3 class="font-title-md text-title-md mt-4 text-primary">Standard</h3>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="text-4xl font-bold text-primary">$49</span>
+<span class="text-on-surface-variant">/year</span>
+</div>
+<p class="text-on-surface-variant font-label-md text-label-md mt-2">Complete toolkit for one board</p>
+</div>
+<ul class="space-y-4 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Unlimited Questions (1 Board)
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Performance Tracking
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Timed Mock Simulations
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Topic-wise Analysis
+                    </li>
+</ul>
+<button class="w-full py-3 bg-primary text-on-primary font-label-md text-label-md rounded-lg active:scale-95 transition-all">Choose Standard</button>
+</div>
+<!-- Premium Plan -->
+<div class="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl flex flex-col hover:shadow-lg transition-shadow duration-300">
+<div class="mb-6">
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Academic Mastery</span>
+<h3 class="font-title-md text-title-md mt-4">Premium</h3>
+<div class="mt-2 flex items-baseline gap-1">
+<span class="text-4xl font-bold text-primary">$99</span>
+<span class="text-on-surface-variant">/year</span>
+</div>
+<p class="text-on-surface-variant font-label-md text-label-md mt-2">Access to all boards &amp; AI insights</p>
+</div>
+<ul class="space-y-4 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        All Exam Boards Included
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        AI-Powered Weakness Analysis
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Priority Expert Support
+                    </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Predictive Score Modeling
+                    </li>
+</ul>
+<button class="w-full py-3 border-2 border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-primary text-on-primary transition-all">Go Premium</button>
+</div>
+</section>
+<!-- Comparison Table -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden mb-stack-lg">
+<div class="p-stack-md border-b border-outline-variant">
+<h2 class="font-title-md text-title-md">Compare Features</h2>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-md text-body-md">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="p-4 border-b border-outline-variant">Feature</th>
+<th class="p-4 border-b border-outline-variant text-center">Trial</th>
+<th class="p-4 border-b border-outline-variant text-center">Standard</th>
+<th class="p-4 border-b border-outline-variant text-center">Premium</th>
+</tr>
+</thead>
+<tbody>
+<tr class="hover:bg-surface-container">
+<td class="p-4 border-b border-outline-variant">Subject Content</td>
+<td class="p-4 border-b border-outline-variant text-center">Limited</td>
+<td class="p-4 border-b border-outline-variant text-center">Full (1 Board)</td>
+<td class="p-4 border-b border-outline-variant text-center">Full (All Boards)</td>
+</tr>
+<tr class="hover:bg-surface-container">
+<td class="p-4 border-b border-outline-variant">Mock Exams</td>
+<td class="p-4 border-b border-outline-variant text-center text-on-error">
+<span class="material-symbols-outlined">close</span>
+</td>
+<td class="p-4 border-b border-outline-variant text-center">Unlimited</td>
+<td class="p-4 border-b border-outline-variant text-center">Unlimited</td>
+</tr>
+<tr class="hover:bg-surface-container">
+<td class="p-4 border-b border-outline-variant">Performance Analytics</td>
+<td class="p-4 border-b border-outline-variant text-center">Basic</td>
+<td class="p-4 border-b border-outline-variant text-center">Advanced</td>
+<td class="p-4 border-b border-outline-variant text-center">AI-Powered</td>
+</tr>
+<tr class="hover:bg-surface-container">
+<td class="p-4 border-b border-outline-variant">Device Support</td>
+<td class="p-4 border-b border-outline-variant text-center">Web Only</td>
+<td class="p-4 border-b border-outline-variant text-center">Multi-Device</td>
+<td class="p-4 border-b border-outline-variant text-center">Multi-Device</td>
+</tr>
+<tr class="hover:bg-surface-container">
+<td class="p-4 border-b border-outline-variant">Customer Support</td>
+<td class="p-4 border-b border-outline-variant text-center">Email</td>
+<td class="p-4 border-b border-outline-variant text-center">Priority Email</td>
+<td class="p-4 border-b border-outline-variant text-center">24/7 Priority Chat</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="max-w-3xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg text-center mb-stack-md">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<details class="group bg-surface-container-low p-4 rounded-lg cursor-pointer" open="">
+<summary class="flex justify-between items-center font-title-md text-title-md list-none">
+                        Can I switch plans later?
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-4 text-on-surface-variant font-body-md text-body-md">Yes! You can upgrade your plan at any time from your account settings. If you upgrade from Standard to Premium, we will prorate the remaining balance of your current subscription.</p>
+</details>
+<details class="group bg-surface-container-low p-4 rounded-lg cursor-pointer">
+<summary class="flex justify-between items-center font-title-md text-title-md list-none">
+                        Which exam boards do you support?
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-4 text-on-surface-variant font-body-md text-body-md">We currently support all major national and international exam boards including Pearson Edexcel, AQA, OCR, and Cambridge Assessment. Premium users get access to the entire library.</p>
+</details>
+<details class="group bg-surface-container-low p-4 rounded-lg cursor-pointer">
+<summary class="flex justify-between items-center font-title-md text-title-md list-none">
+                        Is there a student discount?
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-4 text-on-surface-variant font-body-md text-body-md">Our current pricing is already optimized for individual students. For institutional or group bulk licenses (10+ students), please contact our support team for a custom quote.</p>
+</details>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="mt-stack-lg rounded-3xl bg-primary p-12 text-center text-on-primary relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-display-lg text-display-lg mb-6">Ready to Ace Your Exams?</h2>
+<p class="font-body-lg text-body-lg mb-8 max-w-xl mx-auto opacity-90">Join over 50,000 students who have improved their scores using HIGH-Q Solid Academy's precision-engineered testing platform.</p>
+<div class="flex flex-col md:flex-row justify-center gap-4">
+<button class="bg-secondary text-on-secondary px-8 py-4 rounded-xl font-label-md text-label-md hover:shadow-lg active:scale-95 transition-all">Start Your Free Trial</button>
+<button class="border-2 border-on-primary px-8 py-4 rounded-xl font-label-md text-label-md hover:bg-on-primary hover:text-primary active:scale-95 transition-all">View Demo Exam</button>
+</div>
+</div>
+<!-- Decorative Pattern -->
+<div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+<svg height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
+<path d="M0 0 L100 100 M100 0 L0 100" stroke="white" stroke-width="0.5"></path>
+</svg>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-high border-t border-outline-variant dark:border-outline mt-stack-lg">
+<div class="w-full flex flex-col md:flex-row justify-between items-center py-stack-md px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto gap-6">
+<div class="flex flex-col gap-2">
+<div class="font-title-md text-title-md font-bold text-primary dark:text-inverse-primary">HIGH-Q Solid Academy</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant dark:text-outline-variant">© 2024 HIGH-Q Solid Academy. Empowering Academic Excellence.</div>
+</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary dark:hover:text-secondary-container transition-colors active:underline decoration-2" href="#">Academic Integrity</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary dark:hover:text-secondary-container transition-colors active:underline decoration-2" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary dark:hover:text-secondary-container transition-colors active:underline decoration-2" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary dark:hover:text-secondary-container transition-colors active:underline decoration-2" href="#">Institutional Login</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary dark:hover:text-secondary-container transition-colors active:underline decoration-2" href="#">Help Center</a>
+</nav>
+</div>
+</footer>
+</body></html>

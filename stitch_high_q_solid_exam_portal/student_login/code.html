@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - HIGH-Q Solid Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#0d1c32",
+                      "on-primary-fixed-variant": "#39475f",
+                      "surface-container-high": "#e6e8ea",
+                      "tertiary-fixed": "#ffdad8",
+                      "on-secondary-fixed": "#221b00",
+                      "on-primary-fixed": "#0d1c32",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "secondary-fixed-dim": "#e9c400",
+                      "on-surface": "#191c1e",
+                      "surface-tint": "#515f78",
+                      "tertiary-fixed-dim": "#ffb3b1",
+                      "outline": "#75777e",
+                      "secondary-container": "#fcd400",
+                      "surface-dim": "#d8dadc",
+                      "secondary-fixed": "#ffe16d",
+                      "on-tertiary-fixed-variant": "#92001c",
+                      "surface": "#f7f9fb",
+                      "surface-container": "#eceef0",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#6e5c00",
+                      "outline-variant": "#c5c6cd",
+                      "background": "#f7f9fb",
+                      "secondary": "#705d00",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#410007",
+                      "primary-fixed": "#d6e3ff",
+                      "on-tertiary-fixed": "#410007",
+                      "primary": "#000000",
+                      "on-tertiary-container": "#f1414d",
+                      "error-container": "#ffdad6",
+                      "on-primary-container": "#76849f",
+                      "surface-variant": "#e0e3e5",
+                      "on-error-container": "#93000a",
+                      "on-background": "#191c1e",
+                      "inverse-primary": "#b9c7e4",
+                      "tertiary": "#000000",
+                      "surface-container-low": "#f2f4f6",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#f7f9fb",
+                      "on-surface-variant": "#44474d",
+                      "inverse-surface": "#2d3133",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#b9c7e4",
+                      "on-secondary-fixed-variant": "#544600"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "stack-md": "24px",
+                      "stack-lg": "48px",
+                      "stack-sm": "12px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "base": "8px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "title-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar (Medium - Task Context: Login/Suppressed Logic applies but shown for Brand Consistency as requested for Student Login) -->
+<header class="bg-surface border-b border-outline-variant dock full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-20 max-w-container-max mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="school">school</span>
+<span class="text-title-md font-title-md font-bold text-primary">HIGH-Q Solid Academy</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Programs</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<div class="flex items-center">
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md hover:opacity-90 transition-opacity">Login</button>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-margin-mobile py-stack-lg relative overflow-hidden">
+<!-- Abstract Background Decoration -->
+<div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl"></div>
+<div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-secondary-container/10 rounded-full blur-3xl"></div>
+<!-- Login Card -->
+<div class="w-full max-w-md z-10">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_4px_12px_rgba(10,25,47,0.05)] p-8 md:p-10">
+<div class="flex flex-col items-center mb-stack-md">
+<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="account_circle">account_circle</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Student Login</h1>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Enter your academic credentials to access the portal.</p>
+</div>
+<form action="#" class="space-y-6">
+<!-- Email/Phone Field -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="identity">Email or Phone Number</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="person">person</span>
+</div>
+<input class="w-full h-12 pl-12 pr-4 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" id="identity" name="identity" placeholder="student@highq.edu" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="password">Password</label>
+<a class="font-label-md text-label-md text-on-tertiary-container hover:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant group-focus-within:text-primary transition-colors" data-icon="lock">lock</span>
+</div>
+<input class="w-full h-12 pl-12 pr-12 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md" id="password" name="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-on-surface-variant hover:text-primary" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary" id="remember" name="remember" type="checkbox"/>
+<label class="ml-2 font-body-md text-on-surface-variant" for="remember">Remember me</label>
+</div>
+<!-- Login Button (Red) -->
+<button class="w-full h-14 bg-on-tertiary-container text-on-tertiary font-title-md text-title-md rounded-lg shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+<span>Login</span>
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<div class="mt-8 pt-8 border-t border-outline-variant text-center">
+<p class="font-body-md text-on-surface-variant">
+                        New to HIGH-Q Academy? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Register here</a>
+</p>
+</div>
+</div>
+<!-- Supporting Text -->
+<div class="mt-8 flex flex-col items-center gap-4">
+<div class="flex gap-6 text-on-surface-variant font-label-sm">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Support</a>
+</div>
+<div class="flex items-center gap-2 grayscale opacity-40">
+<img alt="Accreditation Logo" class="h-6" data-alt="A clean, minimalist monochrome accreditation badge or educational logo representing institutional quality and standards. The style is professional and corporate, using high-contrast black and white against a soft grey background to emphasize reliability and authoritative academic excellence. The logo features sharp vector lines and modern geometric forms suitable for a prestigious university portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_ogHI4aiyEIsKR1HFwyFFIGi2eAle62KBv0cmCzKmF4S0eSkVqI4eib9dtBrlGbvuGayADigdvijh6zOJdCK4KCZ7kIeuhgagaNzD3Eaw4pyOY6CPwoQfw6Qimj4y2LnOL_K3faCkR6CqBIZXqOQKcG1KPZt0JJ99_KzYCxzzLMKGmFX901f6irEcl41Ogjo-OnfW6vqqVVWUj2LUe91WQo4cEOwgA6qQP-l-xghCJ_KwPOUfrRpDRu9iYWfF633hFO-4Z_FyJA"/>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Space -->
+<footer class="py-stack-md text-center">
+<p class="font-label-sm text-on-surface-variant">© 2024 HIGH-Q Solid Academy. All rights reserved.</p>
+</footer>
+<!-- BottomNavBar (Mobile Only) - Shown for Contextual Consistency -->
+<div class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 pb-safe bg-surface-container-highest shadow-lg border-t border-outline-variant">
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+<span class="font-label-sm text-label-sm">Exams</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary font-bold bg-secondary-fixed-dim/20 rounded-full px-4 py-1">
+<span class="material-symbols-outlined" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</div>
+</div>
+</body></html>

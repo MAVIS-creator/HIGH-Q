@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HIGH-Q Exam Portal | National Examination Excellence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#0d1c32",
+                    "on-primary-fixed-variant": "#39475f",
+                    "surface-container-high": "#e6e8ea",
+                    "tertiary-fixed": "#ffdad8",
+                    "on-secondary-fixed": "#221b00",
+                    "on-primary-fixed": "#0d1c32",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "secondary-fixed-dim": "#e9c400",
+                    "on-surface": "#191c1e",
+                    "surface-tint": "#515f78",
+                    "tertiary-fixed-dim": "#ffb3b1",
+                    "outline": "#75777e",
+                    "secondary-container": "#fcd400",
+                    "surface-dim": "#d8dadc",
+                    "secondary-fixed": "#ffe16d",
+                    "on-tertiary-fixed-variant": "#92001c",
+                    "surface": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#6e5c00",
+                    "outline-variant": "#c5c6cd",
+                    "background": "#f7f9fb",
+                    "secondary": "#705d00",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#410007",
+                    "primary-fixed": "#d6e3ff",
+                    "on-tertiary-fixed": "#410007",
+                    "primary": "#000000",
+                    "on-tertiary-container": "#f1414d",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#76849f",
+                    "surface-variant": "#e0e3e5",
+                    "on-error-container": "#93000a",
+                    "on-background": "#191c1e",
+                    "inverse-primary": "#b9c7e4",
+                    "tertiary": "#000000",
+                    "surface-container-low": "#f2f4f6",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#f7f9fb",
+                    "on-surface-variant": "#44474d",
+                    "inverse-surface": "#2d3133",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#b9c7e4",
+                    "on-secondary-fixed-variant": "#544600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1280px",
+                    "stack-md": "24px",
+                    "stack-lg": "48px",
+                    "stack-sm": "12px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "title-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .nav-active { border-bottom: 2px solid #000000; padding-bottom: 4px; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md overflow-x-hidden">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface border-b border-outline-variant docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-20 max-w-container-max mx-auto">
+<div class="text-title-md font-title-md font-bold text-primary">HIGH-Q Solid Academy</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-primary border-b-2 border-primary pb-1 font-title-md text-title-md transition-colors" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-title-md text-title-md" href="#">Programs</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-title-md text-title-md" href="#">Pricing</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-title-md text-title-md" href="#">About</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden md:block px-6 py-2 rounded-lg font-bold text-primary hover:bg-surface-container-highest transition-all">Login</button>
+<button class="px-6 py-2 bg-on-tertiary-container text-white rounded-lg font-bold shadow-sm active:scale-95 transition-transform">Start Practicing</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Hero Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center mb-stack-lg">
+<div class="lg:col-span-7 space-y-stack-md">
+<span class="inline-block bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full font-label-md text-label-md">Premier Exam Preparation</span>
+<h1 class="font-display-lg text-display-lg leading-tight">HIGH-Q Exam Portal</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Master your future with professional JAMB, WAEC, NECO, and GCE practice modules. Experience real-world exam conditions with our curated mock exams designed by leading Nigerian educators.
+                </p>
+<div class="flex flex-wrap gap-4 pt-base">
+<button class="bg-on-tertiary-container text-white px-8 py-4 rounded-lg font-title-md text-title-md hover:shadow-lg transition-all active:scale-95">Start Practicing</button>
+<button class="border-2 border-outline text-primary px-8 py-4 rounded-lg font-title-md text-title-md hover:bg-surface-container-low transition-all active:scale-95">Login</button>
+<button class="text-secondary font-bold px-4 py-4 flex items-center gap-2 hover:underline">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+                        View Leaderboard
+                    </button>
+</div>
+</div>
+<div class="lg:col-span-5 relative">
+<div class="aspect-square rounded-2xl overflow-hidden shadow-2xl border border-outline-variant">
+<img alt="Students Studying" class="w-full h-full object-cover" data-alt="A group of focused diverse students studying together in a modern, bright library setting. The atmosphere is professional and educational with soft morning light streaming through large windows. The scene features a clean, high-key aesthetic with a palette of soft whites and deep navy accents, reflecting a prestigious institutional environment. Students are using tablets and high-quality printed materials, embodying academic excellence and modern digital learning." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkQdhuFiiyMNc7t33wmGyTlCHXeV7dq4JD6JYO4bB9c6E_C7saWlwzl4aoIPhn6ckCRdzNE04KI5cOUk0-ei0ZmcIQrivtR7Sxarfes4fgdP6HpOc6HBdw3szk_NWf0NarY1oZb3hIOqvCGbTUd1tin-ZSnk7mXP2uVHADnJd_9t1HgzLh4oRWykBQXI66G-Wfj6u1NunPTEJESBm0jbKrjyTjfdRxmzELc0eNlsESx7szqUqOFmMFKaF9IbtCRU4NUpEIYWPZ7A"/>
+</div>
+<div class="absolute -bottom-6 -left-6 glass-card p-6 rounded-xl shadow-xl border border-outline-variant hidden md:block">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</div>
+<div>
+<div class="font-bold text-primary">98% Success Rate</div>
+<div class="text-label-sm text-on-surface-variant">High-Q Alumni 2023</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Exam Types Grid -->
+<section class="mb-stack-lg">
+<div class="flex justify-between items-end mb-stack-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg">Choose Your Path</h2>
+<p class="text-on-surface-variant">Select an examination board to begin your preparation</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- JAMB -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-outline-variant hover:shadow-md transition-shadow group cursor-pointer">
+<div class="w-16 h-16 bg-primary-container text-white rounded-lg flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="menu_book">menu_book</span>
+</div>
+<h3 class="font-title-md text-title-md mb-2">JAMB</h3>
+<p class="text-label-md text-on-surface-variant mb-4">Unified Tertiary Matriculation Examination practice.</p>
+<div class="text-on-tertiary-container font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Explore Modules <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- WAEC -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-outline-variant hover:shadow-md transition-shadow group cursor-pointer">
+<div class="w-16 h-16 bg-on-tertiary-container text-white rounded-lg flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="history_edu">history_edu</span>
+</div>
+<h3 class="font-title-md text-title-md mb-2">WAEC</h3>
+<p class="text-label-md text-on-surface-variant mb-4">West African Senior School Certificate Examination prep.</p>
+<div class="text-on-tertiary-container font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Explore Modules <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- NECO -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-outline-variant hover:shadow-md transition-shadow group cursor-pointer">
+<div class="w-16 h-16 bg-secondary text-white rounded-lg flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="assignment">assignment</span>
+</div>
+<h3 class="font-title-md text-title-md mb-2">NECO</h3>
+<p class="text-label-md text-on-surface-variant mb-4">National Examination Council mock tests and resources.</p>
+<div class="text-on-tertiary-container font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Explore Modules <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- GCE -->
+<div class="bg-surface-container-lowest p-stack-md rounded-xl border border-outline-variant hover:shadow-md transition-shadow group cursor-pointer">
+<div class="w-16 h-16 bg-on-primary-fixed-variant text-white rounded-lg flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="edit_square">edit_square</span>
+</div>
+<h3 class="font-title-md text-title-md mb-2">GCE</h3>
+<p class="text-label-md text-on-surface-variant mb-4">General Certificate of Education intensive revision.</p>
+<div class="text-on-tertiary-container font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Explore Modules <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Features & Resources Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Main Features (Bento Style) -->
+<div class="lg:col-span-8 space-y-gutter">
+<h2 class="font-headline-lg text-headline-lg">Why Study With High-Q?</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-primary-container text-white p-margin-desktop rounded-2xl flex flex-col justify-between min-h-[240px]">
+<span class="material-symbols-outlined text-5xl text-secondary-fixed" data-icon="timer">timer</span>
+<div>
+<h4 class="font-title-md text-title-md mb-2">Timed Exam Simulation</h4>
+<p class="text-on-primary-container">Practice under real-time constraints to build speed and accuracy for the big day.</p>
+</div>
+</div>
+<div class="bg-surface-container p-margin-desktop rounded-2xl flex flex-col justify-between border border-outline-variant min-h-[240px]">
+<span class="material-symbols-outlined text-5xl text-on-tertiary-container" data-icon="query_stats">query_stats</span>
+<div>
+<h4 class="font-title-md text-title-md mb-2 text-primary">Instant Detailed Analytics</h4>
+<p class="text-on-surface-variant">Get comprehensive results immediately after submission with topic-wise breakdown.</p>
+</div>
+</div>
+<div class="bg-surface-container p-margin-desktop rounded-2xl border border-outline-variant md:col-span-2">
+<div class="flex flex-col md:flex-row gap-gutter items-center">
+<div class="md:w-1/2">
+<h4 class="font-title-md text-title-md mb-2 text-primary">Progress Tracking &amp; History</h4>
+<p class="text-on-surface-variant mb-base">Visualize your growth over time. Our dashboard tracks every attempt and identifies your strength and weakness areas automatically.</p>
+<div class="w-full bg-surface-variant h-3 rounded-full overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full w-3/4"></div>
+</div>
+<div class="flex justify-between mt-2 text-label-sm font-bold text-secondary">
+<span>Current Level: Advanced</span>
+<span>75% to Mastery</span>
+</div>
+</div>
+<div class="md:w-1/2 w-full aspect-video rounded-xl overflow-hidden shadow-sm">
+<img alt="Data Dashboard" class="w-full h-full object-cover" data-alt="A clean and modern data visualization dashboard on a high-resolution screen showing student progress charts. The UI features elegant line graphs and bar charts in shades of navy, gold, and soft gray. The environment is a professional, well-lit office space with a blurred background, emphasizing a data-driven approach to education. The lighting is soft and even, highlighting the clarity of the academic performance metrics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPY4ESP5HPJkYo-Hxo8hU8OQ_QT8k151OwLTMK_LLPAMyYIZ7B7_gJtWdcefZ8gApJjH_RNr2yeEHZXlB3oeJ3xhn9fkcJOmidgzAW8x62cziOW7s242Gv6J73hxrufzoRkvKYatDZWwDZX_8KFQm70JK6LEIWlSNdYe1RCTc8TvVSCJ6gOsPP_ab2aui60d4uZipddKFFO4B83DebxQI9iSqPGkjLtNVOMGvs2DBa8iaicfCX53U21ocltnq4bhoQrAiANN28FQ"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Announcements & Resources Sidebar -->
+<aside class="lg:col-span-4 space-y-gutter">
+<div class="bg-surface-container-low border border-outline-variant rounded-2xl p-margin-desktop">
+<h3 class="font-title-md text-title-md mb-gutter flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="notifications_active">notifications_active</span>
+                        Announcements
+                    </h3>
+<div class="space-y-stack-md">
+<div class="pb-base border-b border-outline-variant">
+<span class="text-label-sm font-bold text-on-tertiary-container">NEW</span>
+<h5 class="font-bold text-primary">JAMB 2024 Registration Guidelines</h5>
+<p class="text-label-md text-on-surface-variant">Step-by-step guide for candidates...</p>
+</div>
+<div class="pb-base border-b border-outline-variant">
+<span class="text-label-sm font-bold text-outline">2 DAYS AGO</span>
+<h5 class="font-bold text-primary">Mock Exam Schedule Released</h5>
+<p class="text-label-md text-on-surface-variant">Check your assigned time slots for the national mock...</p>
+</div>
+<div class="pb-base">
+<span class="text-label-sm font-bold text-outline">1 WEEK AGO</span>
+<h5 class="font-bold text-primary">System Maintenance Notice</h5>
+<p class="text-label-md text-on-surface-variant">Scheduled downtime on Saturday 2 AM...</p>
+</div>
+</div>
+</div>
+<div class="bg-secondary-fixed text-on-secondary-fixed p-margin-desktop rounded-2xl">
+<h3 class="font-title-md text-title-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="book">book</span>
+                        Free Resources
+                    </h3>
+<ul class="space-y-2 font-label-md">
+<li class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Past Question Archive (2010-2023)
+                        </li>
+<li class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Subject Syllabuses (Official)
+                        </li>
+<li class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Exam Strategy Whitepaper
+                        </li>
+</ul>
+<button class="mt-gutter w-full py-3 bg-on-secondary-fixed text-white rounded-lg font-bold hover:opacity-90 transition-opacity">Access All Resources</button>
+</div>
+</aside>
+</div>
+</main>
+<footer class="bg-primary-container text-on-primary-container py-stack-lg mt-stack-lg border-t border-on-primary-fixed-variant">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="col-span-1 md:col-span-1">
+<div class="text-title-md font-bold text-white mb-4">HIGH-Q Solid Academy</div>
+<p class="text-label-md">Empowering the next generation of scholars through rigorous preparation and innovative testing solutions.</p>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Quick Links</h4>
+<ul class="space-y-2 text-label-md">
+<li><a class="hover:text-white transition-colors" href="#">Start Mock Exam</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Leaderboard</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Pricing Plans</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Support Center</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Exams</h4>
+<ul class="space-y-2 text-label-md">
+<li><a class="hover:text-white transition-colors" href="#">JAMB Practice</a></li>
+<li><a class="hover:text-white transition-colors" href="#">WAEC Prep</a></li>
+<li><a class="hover:text-white transition-colors" href="#">NECO Modules</a></li>
+<li><a class="hover:text-white transition-colors" href="#">GCE Revision</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Stay Updated</h4>
+<div class="flex gap-2">
+<input class="bg-on-primary-fixed-variant border-none rounded-lg text-white w-full" placeholder="Email address" type="email"/>
+<button class="bg-secondary-container text-on-secondary-container p-2 rounded-lg">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-stack-lg pt-base border-t border-on-primary-fixed-variant text-label-sm text-center">
+            © 2024 HIGH-Q Solid Academy. All rights reserved.
+        </div>
+</footer>
+<!-- BottomNavBar (Shared Component Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface-container-highest flex justify-around items-center h-16 pb-safe shadow-lg border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-primary font-bold bg-secondary-fixed-dim/20 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+<span class="text-label-sm">Exams</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="text-label-sm">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-label-sm">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#410007",
+                    "primary-fixed": "#d6e3ff",
+                    "tertiary-container": "#410007",
+                    "on-primary-container": "#76849f",
+                    "error-container": "#ffdad6",
+                    "primary": "#000000",
+                    "on-tertiary-container": "#f1414d",
+                    "secondary": "#705d00",
+                    "background": "#f7f9fb",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#44474d",
+                    "surface-bright": "#f7f9fb",
+                    "on-secondary-fixed-variant": "#544600",
+                    "primary-fixed-dim": "#b9c7e4",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "tertiary": "#000000",
+                    "inverse-primary": "#b9c7e4",
+                    "on-error-container": "#93000a",
+                    "on-background": "#191c1e",
+                    "surface-variant": "#e0e3e5",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "tertiary-fixed-dim": "#ffb3b1",
+                    "outline": "#75777e",
+                    "surface-tint": "#515f78",
+                    "on-surface": "#191c1e",
+                    "surface-container-highest": "#e0e3e5",
+                    "secondary-fixed-dim": "#e9c400",
+                    "surface-container-high": "#e6e8ea",
+                    "primary-container": "#0d1c32",
+                    "on-primary-fixed-variant": "#39475f",
+                    "on-secondary-fixed": "#221b00",
+                    "on-primary-fixed": "#0d1c32",
+                    "tertiary-fixed": "#ffdad8",
+                    "surface-container": "#eceef0",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c5c6cd",
+                    "on-secondary-container": "#6e5c00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "secondary-container": "#fcd400",
+                    "on-tertiary-fixed-variant": "#92001c",
+                    "secondary-fixed": "#ffe16d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "32px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "12px",
+                    "stack-lg": "48px",
+                    "stack-md": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant fixed top-0 left-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max mx-auto">
+<div class="text-title-md font-title-md font-bold text-primary">HIGH-Q Solid Academy</div>
+<nav class="hidden md:flex gap-stack-md">
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors" href="#">Programs</a>
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-bold hover:opacity-80 transition-opacity">Login</button>
+</div>
+</header>
+<main class="pt-24 pb-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Result Summary Section -->
+<div class="flex flex-col items-center justify-center mb-stack-lg">
+<div class="w-full max-w-4xl bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-stack-lg flex flex-col md:flex-row gap-stack-lg items-center">
+<!-- Large Circular Progress Chart -->
+<div class="relative flex items-center justify-center">
+<svg class="w-64 h-64 md:w-80 md:h-80">
+<circle class="text-surface-container-high stroke-current" cx="160" cy="160" fill="transparent" r="100" stroke-width="12"></circle>
+<circle class="text-secondary-container stroke-current progress-ring__circle" cx="160" cy="160" fill="transparent" r="100" stroke-linecap="round" stroke-width="12" style="stroke-dasharray: 628.318; stroke-dashoffset: 94.2477;"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-lg text-display-lg text-primary">85%</span>
+<div class="mt-2 inline-flex items-center gap-1 bg-secondary-fixed-dim/30 text-on-secondary-fixed-variant px-4 py-1 rounded-full font-label-md text-label-md border border-secondary">
+<span class="material-symbols-outlined text-[18px]" data-weight="fill">verified</span>
+<span>Passed</span>
+</div>
+</div>
+</div>
+<!-- Score Details and Bento Stats -->
+<div class="flex-1 w-full">
+<div class="mb-stack-md">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-1">Examination Results</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Mathematics - Final Exam • Completed on Oct 24, 2023</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter mb-stack-md">
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary-fixed-dim mb-1" data-icon="check_circle">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Correct</span>
+<span class="font-title-md text-title-md text-primary">51/60</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-on-tertiary-container mb-1" data-icon="cancel">cancel</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Incorrect</span>
+<span class="font-title-md text-title-md text-primary">4</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-outline mb-1" data-icon="block">block</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Skipped</span>
+<span class="font-title-md text-title-md text-primary">5</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<button class="w-full bg-on-tertiary-container text-on-tertiary px-6 py-4 rounded-lg font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+                            Review Answers
+                        </button>
+<div class="flex flex-col sm:flex-row gap-3">
+<button class="flex-1 bg-surface-container-highest text-primary border border-outline-variant px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-surface-variant active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="replay">replay</span>
+                                Retry Exam
+                            </button>
+<button class="flex-1 bg-surface-container-highest text-primary border border-outline-variant px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-surface-variant active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                                Back to Dashboard
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Subject-Level Breakdown Section -->
+<div class="max-w-4xl mx-auto">
+<h2 class="font-title-md text-title-md text-primary mb-stack-md px-2">Subject Performance Breakdown</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Mathematics Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-title-md text-title-md text-primary">Mathematics</span>
+<span class="font-label-md text-label-md text-secondary">92%</span>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container" style="width: 92%"></div>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>23/25 Correct</span>
+<span>High Perf.</span>
+</div>
+</div>
+<!-- Physics Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-title-md text-title-md text-primary">Physics</span>
+<span class="font-label-md text-label-md text-secondary">78%</span>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container" style="width: 78%"></div>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>16/20 Correct</span>
+<span>Stable</span>
+</div>
+</div>
+<!-- Chemistry Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-title-md text-title-md text-primary">Chemistry</span>
+<span class="font-label-md text-label-md text-secondary">80%</span>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container" style="width: 80%"></div>
+</div>
+<div class="flex justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>12/15 Correct</span>
+<span>Stable</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Feedback Section (Bento Style Card) -->
+<div class="max-w-4xl mx-auto mt-stack-lg">
+<div class="bg-primary-container text-on-primary-fixed p-stack-md rounded-xl flex flex-col md:flex-row items-center gap-stack-md">
+<div class="p-4 bg-on-primary-fixed-variant/20 rounded-full">
+<span class="material-symbols-outlined text-[48px] text-primary-fixed-dim" data-icon="emoji_events">emoji_events</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-primary-fixed">Excellent Work, Student!</h3>
+<p class="font-body-md text-body-md text-primary-fixed/80">You've exceeded the institutional passing threshold of 70%. Your strongest area was <strong class="text-primary-fixed">Advanced Algebra</strong>. Consider focusing more on <strong class="text-primary-fixed">Organic Mechanics</strong> in Physics for your next session.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 pb-safe bg-surface-container-highest border-t border-outline-variant shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold bg-secondary-fixed-dim/20 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+<span class="font-label-sm text-label-sm">Exams</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+</body></html>

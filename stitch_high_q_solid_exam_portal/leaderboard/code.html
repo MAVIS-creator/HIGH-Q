@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#410007",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-container": "#410007",
+                        "on-primary-container": "#76849f",
+                        "error-container": "#ffdad6",
+                        "primary": "#000000",
+                        "on-tertiary-container": "#f1414d",
+                        "secondary": "#705d00",
+                        "background": "#f7f9fb",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#44474d",
+                        "surface-bright": "#f7f9fb",
+                        "on-secondary-fixed-variant": "#544600",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#000000",
+                        "inverse-primary": "#b9c7e4",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-fixed-dim": "#ffb3b1",
+                        "outline": "#75777e",
+                        "surface-tint": "#515f78",
+                        "on-surface": "#191c1e",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary-fixed-dim": "#e9c400",
+                        "surface-container-high": "#e6e8ea",
+                        "primary-container": "#0d1c32",
+                        "on-primary-fixed-variant": "#39475f",
+                        "on-secondary-fixed": "#221b00",
+                        "on-primary-fixed": "#0d1c32",
+                        "tertiary-fixed": "#ffdad8",
+                        "surface-container": "#eceef0",
+                        "surface": "#f7f9fb",
+                        "outline-variant": "#c5c6cd",
+                        "on-secondary-container": "#6e5c00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "secondary-container": "#fcd400",
+                        "on-tertiary-fixed-variant": "#92001c",
+                        "secondary-fixed": "#ffe16d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "stack-md": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max mx-auto docked full-width top-0">
+<div class="text-title-md font-title-md font-bold text-primary">HIGH-Q Solid Academy</div>
+<nav class="hidden md:flex gap-gutter items-center">
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Programs</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md active:opacity-80 transition-opacity">Login</button>
+</header>
+<div class="flex max-w-container-max mx-auto min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-64 bg-surface-container-low border-r border-outline-variant py-base">
+<div class="px-6 py-stack-md">
+<h2 class="font-title-md text-title-md font-bold text-on-primary-container">Student Portal</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">HIGH-Q Academy</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span> Dashboard
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="assignment">assignment</span> Exams
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span> Results
+                </a>
+<a class="bg-secondary-container text-on-secondary-container rounded-lg font-bold flex items-center px-4 py-3 mx-2 font-label-md text-label-md active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="leaderboard" style="font-variation-settings: 'FILL' 1;">leaderboard</span> Leaderboard
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span> Subscriptions
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span> Settings
+                </a>
+</nav>
+<div class="mt-auto px-4 py-4">
+<button class="w-full bg-surface-container-highest text-on-surface py-2 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="support">support</span> Support
+                </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-grow p-margin-mobile md:p-margin-desktop overflow-y-auto pb-24 md:pb-margin-desktop">
+<!-- Header Section -->
+<div class="mb-stack-lg">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-2">Performance Leaderboard</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Celebrating academic excellence across all disciplines.</p>
+</div>
+<!-- Top 3 Podium (Bento Grid Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-lg items-end">
+<!-- Silver (Rank 2) -->
+<div class="order-2 md:order-1 bg-surface-container-lowest p-gutter rounded-xl border border-outline-variant shadow-sm flex flex-col items-center text-center">
+<div class="relative mb-4">
+<img alt="Sarah J." class="w-24 h-24 rounded-full object-cover border-4 border-surface-variant" data-alt="A professional studio portrait of a young adult female student with a confident smile, wearing casual academic attire. The lighting is high-key and soft, set against a minimalist light gray studio background. The overall aesthetic is clean, modern, and prestigious, aligning with a high-end educational brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJGmTPfPjhl9OaOYZfYSArLVZl-JOE81-8F6sIv-weHQgymDOhXTyBYcr6i0MDpdU9632WvT1_n9htoW1jlyzf_sPCgzab9MVRZWBDwPIu1FaNJNE6qcs5_-s9R7383jGYigRkasIpqTzd5NcAXQa0HfAMGiMwo9UCk7wzy5fXKgTr9LCK6bPQOkTWU6YFO4DFs-QFVmc23AhtXCe3g5HbJNeqkw7HGubIOqmDCxHnRQQJmhZ8cKNrqeCtQS5RHv1EUZGEdKRfZQ"/>
+<div class="absolute -bottom-2 -right-2 bg-surface-container-highest text-on-surface-variant w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 border-surface-container-lowest">2</div>
+</div>
+<h3 class="font-title-md text-title-md text-primary">Sarah Jenkins</h3>
+<p class="font-label-md text-label-md text-on-surface-variant mb-4">WAEC • 342 Points</p>
+<span class="px-4 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-sm text-label-sm">Silver Scholar</span>
+</div>
+<!-- Gold (Rank 1) -->
+<div class="order-1 md:order-2 bg-primary-container p-8 rounded-xl border border-primary shadow-lg flex flex-col items-center text-center transform md:-translate-y-4">
+<div class="relative mb-4">
+<img alt="David O." class="w-32 h-32 rounded-full object-cover border-4 border-secondary-fixed" data-alt="A high-resolution headshot of a male student in his early twenties, looking determined and intelligent. He is photographed in a bright, modern library setting with soft out-of-focus bookshelves in the background. The lighting is warm and inspiring, emphasizing a look of leadership and academic success." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4Bf1O1IeYkz77aqh1b0S02wErlffSq5wZbOcfSmcES2vB4IBD7DHAs-9XvgQrwcEPdUuzDAOGKlVYLm9z4lSeqWGBy1964LxACcA9dCmgXSbfQY2gFXiAKG-xB4m1l_CgcHp0HftuFZkT_Mn4-IR8Z_jDZahoHVULcW2Bx0DyiA7hTm7w9lPhBy8mMBIr3nuTz7euVI6le6Q4175wEMiVu9IjW3SzIifN180YvveXCJ7mPzrBqsIOV2rICfD_tjMZ_-zDdyYm7Q"/>
+<div class="absolute -bottom-2 -right-2 bg-secondary-fixed text-on-secondary-fixed w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg border-4 border-primary-container">1</div>
+</div>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-primary">David Okoro</h3>
+<p class="font-label-md text-label-md text-on-primary-fixed mb-4">JAMB • 388 Points</p>
+<span class="px-6 py-2 bg-secondary-container text-on-secondary-container rounded-full font-label-md text-label-md font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="workspace_premium" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                        Gold Medalist
+                    </span>
+</div>
+<!-- Bronze (Rank 3) -->
+<div class="order-3 bg-surface-container-lowest p-gutter rounded-xl border border-outline-variant shadow-sm flex flex-col items-center text-center">
+<div class="relative mb-4">
+<img alt="Ibrahim A." class="w-24 h-24 rounded-full object-cover border-4 border-on-tertiary-fixed" data-alt="A portrait of a male student with a calm and focused expression, wearing a neat navy blue sweater. The background is a clean, minimalist educational setting with subtle geometric shadows. The lighting is crisp and professional, highlighting a sense of dedication and achievement in an academic environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD_RBUhOo439q22JMjkLh70peBjYB4Fv3qy4ITUOAJ-16Jbh8sHH7EonAf5zT-dUkvbwiYHyYlqYQTNUCmDOp0EDrEViS-9UMr5Ay6p3OSTYxTN2QwZUyzOfuNYDc6lu9dPGr5phGEVdDKICx2yXVFIohZ_Hsuar4kMwBkoCAYwrJzqE-w2ktc6KG2EnpReilWm5jI4jYyl3AYMXY4jKKST2igdeI4CZ6aNjzcm7eD_Xi6YekNscu8E9ln2NPn_GUpAm0od2sn6g"/>
+<div class="absolute -bottom-2 -right-2 bg-tertiary-fixed text-on-tertiary-fixed-variant w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 border-surface-container-lowest">3</div>
+</div>
+<h3 class="font-title-md text-title-md text-primary">Ibrahim Aliyu</h3>
+<p class="font-label-md text-label-md text-on-surface-variant mb-4">NECO • 325 Points</p>
+<span class="px-4 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full font-label-sm text-label-sm">Bronze Merit</span>
+</div>
+</div>
+<!-- Filters & Search -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-stack-md mb-stack-md">
+<div class="flex bg-surface-container-high p-1 rounded-lg">
+<button class="px-6 py-2 bg-surface-container-lowest text-primary rounded-md shadow-sm font-label-md text-label-md font-bold">Weekly</button>
+<button class="px-6 py-2 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">All Time</button>
+</div>
+<div class="flex flex-wrap gap-stack-sm w-full md:w-auto">
+<div class="relative flex-grow md:flex-grow-0 min-w-[200px]">
+<select class="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2.5 font-label-md text-label-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option>All Exam Boards</option>
+<option>JAMB</option>
+<option>WAEC</option>
+<option>NECO</option>
+<option>Post-UTME</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant bg-surface-container-low">
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Rank</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Student Name</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Exam Type</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Score</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Date</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- User Highlighted Row -->
+<tr class="bg-secondary-fixed/10 group">
+<td class="px-6 py-4">
+<span class="font-bold text-secondary font-title-md text-title-md">14</span>
+</td>
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center font-bold text-on-secondary-container">YA</div>
+<div>
+<div class="font-label-md text-label-md text-primary font-bold">You (Aminu Yusuf)</div>
+<div class="text-xs text-on-surface-variant">Level 4 Scholar</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md">JAMB</td>
+<td class="px-6 py-4 font-bold text-primary font-body-lg text-body-lg">298</td>
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">22 Oct 2023</td>
+<td class="px-6 py-4">
+<span class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Current User</span>
+</td>
+</tr>
+<!-- Regular Rows -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">4</td>
+<td class="px-6 py-4 font-label-md text-label-md text-primary">Chiamaka Adeleke</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">WAEC</td>
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">318</td>
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">21 Oct 2023</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-secondary" data-icon="trending_up">trending_up</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">5</td>
+<td class="px-6 py-4 font-label-md text-label-md text-primary">Marcus Onyeama</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Post-UTME</td>
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">312</td>
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">20 Oct 2023</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="trending_flat">trending_flat</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">6</td>
+<td class="px-6 py-4 font-label-md text-label-md text-primary">Blessing Effiong</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">JAMB</td>
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">305</td>
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">20 Oct 2023</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-error" data-icon="trending_down">trending_down</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">7</td>
+<td class="px-6 py-4 font-label-md text-label-md text-primary">Samuel Thompson</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">NECO</td>
+<td class="px-6 py-4 font-bold text-primary font-body-md text-body-md">299</td>
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">19 Oct 2023</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-secondary" data-icon="trending_up">trending_up</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Showing 1-15 of 2,408 students</p>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant rounded hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 pb-safe bg-surface-container-highest border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+<span class="font-label-sm text-label-sm">Exams</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold bg-secondary-fixed-dim/20 rounded-full px-4 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-label-sm text-label-sm">Board</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+</body></html>

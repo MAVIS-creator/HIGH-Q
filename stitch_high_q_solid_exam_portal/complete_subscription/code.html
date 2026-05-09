@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#eff1f3",
+                    "on-secondary-fixed": "#221b00",
+                    "surface-bright": "#f7f9fb",
+                    "background": "#f7f9fb",
+                    "tertiary": "#000000",
+                    "on-primary-fixed-variant": "#39475f",
+                    "secondary-fixed-dim": "#e9c400",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface-variant": "#44474d",
+                    "secondary": "#705d00",
+                    "secondary-fixed": "#ffe16d",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary-container": "#76849f",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e0e3e5",
+                    "on-surface": "#191c1e",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f2f4f6",
+                    "surface": "#f7f9fb",
+                    "primary-fixed-dim": "#b9c7e4",
+                    "on-tertiary-fixed-variant": "#92001c",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e6e8ea",
+                    "secondary-container": "#fcd400",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#6e5c00",
+                    "on-tertiary-container": "#f1414d",
+                    "primary-container": "#0d1c32",
+                    "tertiary-fixed-dim": "#ffb3b1",
+                    "on-secondary-fixed-variant": "#544600",
+                    "outline": "#75777e",
+                    "surface-tint": "#515f78",
+                    "primary": "#000000",
+                    "surface-dim": "#d8dadc",
+                    "inverse-primary": "#b9c7e4",
+                    "tertiary-fixed": "#ffdad8",
+                    "surface-container": "#eceef0",
+                    "on-primary-fixed": "#0d1c32",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#410007",
+                    "on-tertiary-fixed": "#410007",
+                    "on-background": "#191c1e",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c5c6cd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "stack-sm": "12px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "margin-desktop": "32px",
+                    "stack-lg": "48px",
+                    "margin-mobile": "16px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "title-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-on-background border-b border-outline-variant dark:border-outline sticky top-0 z-50 transition-all">
+<div class="flex justify-between items-center w-full h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg tracking-tight text-primary dark:text-inverse-primary">HIGH-Q Solid Academy</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Exams</a>
+<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-secondary font-label-md text-label-md" href="#">Pricing</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Study Guide</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-200" href="#">Support</a>
+</nav>
+<div class="flex gap-4 items-center">
+<button class="font-label-md text-label-md text-primary px-4 py-2 hover:opacity-80 transition-all">Sign In</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 active:scale-95 transition-all">Get Started</button>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-stack-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Payment Information -->
+<div class="lg:col-span-7 space-y-gutter">
+<div class="flex items-center gap-2 mb-stack-sm">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Return to Pricing</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Secure Checkout</h1>
+<!-- Payment Method Selection -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md">Select Payment Method</h2>
+<div class="space-y-4">
+<!-- Card Option -->
+<label class="flex items-center p-4 border-2 border-primary rounded-lg cursor-pointer bg-primary-fixed/10 transition-all">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio"/>
+<div class="ml-4 flex-grow flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface" data-icon="credit_card">credit_card</span>
+<span class="font-body-md text-body-md font-semibold">Credit / Debit Card</span>
+</div>
+<div class="flex gap-2 opacity-60">
+<span class="material-symbols-outlined text-on-surface" data-icon="payments">payments</span>
+</div>
+</div>
+</label>
+<!-- Card Details Expansion -->
+<div class="p-4 border border-outline-variant rounded-lg space-y-4 bg-surface-container-low">
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Card Number</label>
+<div class="relative">
+<input class="w-full h-12 px-4 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface-container-lowest" placeholder="0000 0000 0000 0000" type="text"/>
+<div class="absolute right-4 top-3 flex gap-2">
+<img alt="Visa" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt4XurFLs5d3PYyRbiXfZgjWLnrWNdR5d4XavllJMz98VwH-FXv8oE4d9L1dB7ye1kaatPr1JNdLjOBTCHUGw2cF67aRmgBim-Gg0gSuy-bdTDGidj-Ycs_y5Tk32jDb5s4LgStiiBDl6BaqXd7nkoNZZSR0kKMlZDyScBJHVieST525h9DWuvZQTN8-3aGMrPxkWhv4FJg7ayG-uBDZ8KfqiwamX66rXyglB8nOPiRjqo0euDyoLs4GcNoSbQ27SE1l42ACalnA"/>
+<img alt="Mastercard" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCroFgByh14KTScEcc8mbCiU5nVAeCP3bG2_IL-b_CJTMsGpsQ5ShJ4lP4L1J_C52tDwo3TfJNlPKeMk2qTcOBKepMQeuhZr1gNQcE63s_wBdJLxOhHbKbrZffEqnJ5VDGl79z492FY6OeECsNpymxTwTp3rLLmm3cx2gVsuLQpTA-PeRyBfKjJIoECqQg4CIrVGrGnGiOzuP9d3JpoMSvnqTeMZLcX1QFTciulvghXUXMkT4cTY_OIxsI8uePiykCx6T_Hm1Rd8Q"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Expiry Date</label>
+<input class="w-full h-12 px-4 rounded-lg border border-outline-variant focus:border-primary bg-surface-container-lowest" placeholder="MM/YY" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">CVC/CVV</label>
+<input class="w-full h-12 px-4 rounded-lg border border-outline-variant focus:border-primary bg-surface-container-lowest" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+<!-- Bank Transfer -->
+<label class="flex items-center p-4 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-all">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio"/>
+<div class="ml-4 flex-grow flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface" data-icon="account_balance">account_balance</span>
+<span class="font-body-md text-body-md font-semibold">Bank Transfer</span>
+</div>
+</label>
+<!-- Digital Wallet -->
+<label class="flex items-center p-4 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-all">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="payment" type="radio"/>
+<div class="ml-4 flex-grow flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-body-md text-body-md font-semibold">Digital Wallet (Apple Pay / Google Pay)</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Billing Address -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md">Billing Address</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Country</label>
+<select class="w-full h-12 px-4 rounded-lg border border-outline-variant focus:border-primary bg-surface-container-lowest">
+<option>United States</option>
+<option>United Kingdom</option>
+<option>Canada</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Zip / Postal Code</label>
+<input class="w-full h-12 px-4 rounded-lg border border-outline-variant focus:border-primary bg-surface-container-lowest" placeholder="10001" type="text"/>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Summary -->
+<aside class="lg:col-span-5 space-y-gutter">
+<div class="bg-surface-container-high rounded-xl p-stack-md border border-outline-variant sticky top-24">
+<h2 class="font-title-md text-title-md text-on-surface mb-stack-md">Order Summary</h2>
+<!-- Selected Plan Details -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 mb-stack-md">
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-label-sm text-label-sm mb-2 inline-block">Premium</span>
+<h3 class="font-title-md text-title-md">Full Academy Pass</h3>
+<p class="font-body-md text-on-surface-variant">Billed Annually</p>
+</div>
+<span class="font-title-md text-title-md">$199.00</span>
+</div>
+<ul class="space-y-2 mt-4 border-t border-outline-variant pt-4">
+<li class="flex items-center gap-2 text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[20px] text-primary" data-icon="check_circle">check_circle</span>
+                                Unlimited Mock Exams
+                            </li>
+<li class="flex items-center gap-2 text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[20px] text-primary" data-icon="check_circle">check_circle</span>
+                                AI-Powered Performance Analytics
+                            </li>
+<li class="flex items-center gap-2 text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[20px] text-primary" data-icon="check_circle">check_circle</span>
+                                24/7 Academic Support
+                            </li>
+</ul>
+</div>
+<!-- Promo Code -->
+<div class="mb-stack-md">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Promo Code</label>
+<div class="flex gap-2">
+<input class="flex-grow h-12 px-4 rounded-lg border border-outline-variant focus:border-primary bg-surface-container-lowest" placeholder="Enter code" type="text"/>
+<button class="bg-inverse-surface text-inverse-on-surface px-6 rounded-lg font-label-md hover:opacity-90 transition-all">Apply</button>
+</div>
+</div>
+<!-- Calculations -->
+<div class="space-y-3 border-t border-outline-variant pt-stack-md mb-stack-md">
+<div class="flex justify-between text-on-surface-variant font-body-md">
+<span>Subtotal</span>
+<span>$199.00</span>
+</div>
+<div class="flex justify-between text-on-surface-variant font-body-md">
+<span>Tax (Calculated at checkout)</span>
+<span>$0.00</span>
+</div>
+<div class="flex justify-between text-on-surface font-title-md pt-2">
+<span>Total Due</span>
+<span>$199.00</span>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary text-on-primary h-14 rounded-lg font-title-md text-title-md shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+                        Pay Now
+                    </button>
+<!-- Trust Badges -->
+<div class="mt-stack-md pt-stack-md border-t border-outline-variant flex flex-wrap justify-center gap-6 opacity-60">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[20px]" data-icon="verified_user">verified_user</span>
+<span class="font-label-sm text-label-sm">Secure SSL</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[20px]" data-icon="security">security</span>
+<span class="font-label-sm text-label-sm">PCI Compliant</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[20px]" data-icon="replay">replay</span>
+<span class="font-label-sm text-label-sm">30-Day Guarantee</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-high border-t border-outline-variant dark:border-outline">
+<div class="w-full flex flex-col md:flex-row justify-between items-center py-stack-md px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto gap-4">
+<div class="font-title-md text-title-md font-bold text-primary dark:text-inverse-primary">HIGH-Q Solid Academy</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary transition-colors" href="#">Academic Integrity</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-sm text-label-sm hover:text-secondary transition-colors" href="#">Help Center</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface dark:text-inverse-on-surface text-on-surface-variant text-center md:text-right">
+                © 2024 HIGH-Q Solid Academy. Empowering Academic Excellence.
+            </p>
+</div>
+</footer>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant flex justify-around py-3 z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-sm">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="font-label-sm">Checkout</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm">Profile</span>
+</button>
+</nav>
+</body></html>

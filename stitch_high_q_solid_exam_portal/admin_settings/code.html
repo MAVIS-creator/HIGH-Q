@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Settings - HIGH-Q Solid Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#fcd400",
+                      "surface-tint": "#515f78",
+                      "surface-container-low": "#f2f4f6",
+                      "inverse-surface": "#2d3133",
+                      "secondary": "#705d00",
+                      "primary": "#000000",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed-variant": "#39475f",
+                      "on-secondary-container": "#6e5c00",
+                      "tertiary-fixed-dim": "#ffb3b1",
+                      "on-surface": "#191c1e",
+                      "on-surface-variant": "#44474d",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#ffdad8",
+                      "surface-bright": "#f7f9fb",
+                      "on-error": "#ffffff",
+                      "on-tertiary-container": "#f1414d",
+                      "on-secondary-fixed": "#221b00",
+                      "secondary-fixed-dim": "#e9c400",
+                      "background": "#f7f9fb",
+                      "tertiary-container": "#410007",
+                      "on-secondary-fixed-variant": "#544600",
+                      "primary-container": "#0d1c32",
+                      "error-container": "#ffdad6",
+                      "surface-dim": "#d8dadc",
+                      "surface-container": "#eceef0",
+                      "secondary-fixed": "#ffe16d",
+                      "tertiary": "#000000",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-primary-container": "#76849f",
+                      "outline-variant": "#c5c6cd",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed-dim": "#b9c7e4",
+                      "on-tertiary-fixed": "#410007",
+                      "surface-container-high": "#e6e8ea",
+                      "surface": "#f7f9fb",
+                      "on-primary-fixed": "#0d1c32",
+                      "on-tertiary-fixed-variant": "#92001c",
+                      "on-error-container": "#93000a",
+                      "primary-fixed": "#d6e3ff",
+                      "inverse-on-surface": "#eff1f3",
+                      "outline": "#75777e",
+                      "surface-variant": "#e0e3e5",
+                      "inverse-primary": "#b9c7e4",
+                      "error": "#ba1a1a",
+                      "on-background": "#191c1e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "12px",
+                      "margin-mobile": "16px",
+                      "base": "8px",
+                      "stack-lg": "48px",
+                      "gutter": "24px",
+                      "stack-md": "24px",
+                      "margin-desktop": "32px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Inter"],
+                      "title-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopNavBar (Medium - Admin View) -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop h-20 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<span class="text-title-md font-title-md font-bold text-primary">HIGH-Q Solid Academy</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Admin Control</span>
+</div>
+<nav class="hidden md:flex gap-gutter">
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Programs</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container rounded-full">notifications</button>
+<div class="h-10 w-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold">AD</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full py-base bg-surface-container-low border-r border-outline-variant w-64 fixed left-0 top-0 pt-24 z-10">
+<div class="px-6 mb-8">
+<h2 class="font-title-md text-title-md font-bold text-on-primary-container">Student Portal</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">HIGH-Q Academy</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span> Dashboard
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3">assignment</span> Exams
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span> Results
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3">leaderboard</span> Leaderboard
+                </a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 mx-2 hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3">payments</span> Subscriptions
+                </a>
+<a class="bg-secondary-container text-on-secondary-container rounded-lg font-bold flex items-center px-4 py-3 mx-2 font-label-md text-label-md shadow-sm" href="#">
+<span class="material-symbols-outlined mr-3">settings</span> Settings
+                </a>
+</nav>
+<div class="px-4 pb-4">
+<button class="w-full py-3 bg-primary-container text-on-primary-container rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">contact_support</span> Support
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 p-margin-mobile md:p-margin-desktop bg-background pb-32">
+<div class="max-w-5xl mx-auto space-y-stack-md">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary">System Settings</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Global configuration for HIGH-Q Solid Academy platform.</p>
+</div>
+<div class="flex items-center gap-base">
+<button class="px-6 py-2 border border-outline text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-colors">Discard Changes</button>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md shadow-sm hover:opacity-90 transition-opacity">Save All Settings</button>
+</div>
+</div>
+<!-- Bento Grid Layout for Settings -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- General Site Settings -->
+<div class="md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">language</span>
+<h3 class="font-title-md text-title-md text-primary">General Site Settings</h3>
+</div>
+<div class="space-y-gutter">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Platform Name</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-container focus:border-secondary outline-none transition-all" type="text" value="HIGH-Q Solid Academy"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Support Email</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-container focus:border-secondary outline-none transition-all" type="email" value="admin@highq-academy.edu"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Contact Phone Number</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 focus:ring-2 focus:ring-secondary-container focus:border-secondary outline-none transition-all" type="text" value="+1 (555) 012-3456"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Academy Logo</label>
+<div class="flex items-center gap-4 p-4 border-2 border-dashed border-outline-variant rounded-xl bg-surface-container-low">
+<div class="h-16 w-16 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container font-bold text-xl">HQ</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Upload new logo</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Recommended size: 512x512px (PNG, SVG)</p>
+</div>
+<button class="px-4 py-2 bg-surface text-primary border border-outline rounded-lg font-label-md text-label-md">Change</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Maintenance Mode & Status -->
+<div class="md:col-span-4 space-y-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error">engineering</span>
+<h3 class="font-title-md text-title-md text-primary">Maintenance</h3>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-error"></div>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Enabling maintenance mode will restrict access for all students except administrators.</p>
+<div class="flex items-center gap-2 text-on-surface font-label-md text-label-md bg-error-container/20 p-3 rounded-lg border border-error/10">
+<span class="material-symbols-outlined text-error text-sm">info</span>
+<span>Currently: Live &amp; Online</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary">workspace_premium</span>
+<h3 class="font-title-md text-title-md text-primary">Leaderboard</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Control public visibility of student rankings.</p>
+<div class="space-y-4">
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-secondary-container focus:ring-secondary" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface">Show Top 10 Only</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-secondary-container focus:ring-secondary" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface">Allow Anonymous Mode</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Exam Rules Configuration -->
+<div class="md:col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-2 mb-8">
+<span class="material-symbols-outlined text-primary">rule</span>
+<h3 class="font-title-md text-title-md text-primary">Exam Rules Configuration</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-lg">
+<div class="space-y-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">timer</span>
+<h4 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-wider">Timer Settings</h4>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Standard Exam Duration (Mins)</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3" type="number" value="120"/>
+</div>
+<label class="flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface">Auto-Submit on Timeout</span>
+</label>
+</div>
+<div class="space-y-4 border-l border-outline-variant pl-gutter">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">visibility</span>
+<h4 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-wider">Result Visibility</h4>
+</div>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="font-label-md text-label-md text-on-surface">Show instant score</span>
+<div class="w-11 h-6 bg-outline-variant rounded-full relative">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="font-label-md text-label-md text-on-surface">Detailed explanations</span>
+<div class="w-11 h-6 bg-primary rounded-full relative">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="font-label-md text-label-md text-on-surface">Allow question review</span>
+<div class="w-11 h-6 bg-primary rounded-full relative">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</label>
+</div>
+<div class="space-y-4 border-l border-outline-variant pl-gutter">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">security_update_good</span>
+<h4 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-wider">Integrity Checks</h4>
+</div>
+<label class="flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface">Enable Full-Screen Lockdown</span>
+</label>
+<label class="flex items-center gap-3">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface">AI Proctoring (Experimental)</span>
+</label>
+<label class="flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface">Disable Copy/Paste</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Security Settings -->
+<div class="md:col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-on-tertiary-container">security</span>
+<h3 class="font-title-md text-title-md text-primary">Security &amp; Admin Access</h3>
+</div>
+<div class="flex flex-col md:flex-row gap-gutter">
+<div class="flex-1 space-y-gutter">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Current Admin Password</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3" placeholder="••••••••••••" type="password"/>
+</div>
+<div class="hidden md:block"></div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">New Admin Password</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3" placeholder="Min 12 characters" type="password"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Confirm New Password</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3" placeholder="Confirm password" type="password"/>
+</div>
+</div>
+<div class="flex justify-end">
+<button class="px-6 py-2 bg-on-tertiary-container text-on-tertiary rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">Update Credentials</button>
+</div>
+</div>
+<div class="md:w-72 p-6 bg-surface-container rounded-xl">
+<h4 class="font-label-md text-label-md font-bold text-primary mb-3">Two-Factor Auth</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-4">Add an extra layer of security to your administrator account.</p>
+<button class="w-full py-2 bg-white border border-outline-variant text-primary rounded-lg font-label-md text-label-md flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">cell_tower</span>
+                                    Enable 2FA
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 pb-safe bg-surface-container-highest border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span> Home
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span> Exams
+        </a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span> History
+        </a>
+<a class="flex flex-col items-center justify-center text-primary font-bold bg-secondary-fixed-dim/20 rounded-full px-4 py-1 font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span> Profile
+        </a>
+</nav>
+</body></html>
