@@ -150,15 +150,33 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         $debugEnabled = !empty($_ENV['MAIL_DEBUG']) && ($_ENV['MAIL_DEBUG'] === '1' || strtolower($_ENV['MAIL_DEBUG']) === 'true');
         $logDir = __DIR__ . '/../../storage/logs'; if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
         $debugLog = $logDir . '/mailer_debug.log';
+        $smtpHost = trim((string)($_ENV['MAIL_HOST'] ?? ''));
+        $smtpPort = (int)($_ENV['MAIL_PORT'] ?? 587);
+        $smtpEncryption = strtolower(trim((string)($_ENV['MAIL_ENCRYPTION'] ?? PHPMailer::ENCRYPTION_STARTTLS)));
 
-        // Server settings (from .env)
-        $mail->isSMTP();
-        $mail->Host       = $_ENV['MAIL_HOST'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $_ENV['MAIL_USERNAME'];
-        $mail->Password   = $_ENV['MAIL_PASSWORD'];
-        $mail->SMTPSecure = $_ENV['MAIL_ENCRYPTION'] ?? PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = $_ENV['MAIL_PORT'] ?? 587;
+        $transportCandidates = [
+            ['host' => $smtpHost, 'port' => $smtpPort, 'secure' => $smtpEncryption],
+        ];
+        if (strcasecmp($smtpHost, 'smtp.gmail.com') === 0) {
+            $gmailFallbacks = [
+                ['host' => 'smtp.gmail.com', 'port' => 465, 'secure' => 'ssl'],
+                ['host' => 'smtp.gmail.com', 'port' => 587, 'secure' => 'tls'],
+            ];
+            foreach ($gmailFallbacks as $candidate) {
+                $duplicate = false;
+                foreach ($transportCandidates as $existing) {
+                    if ($existing['host'] === $candidate['host']
+                        && (int)$existing['port'] === (int)$candidate['port']
+                        && strtolower((string)$existing['secure']) === strtolower((string)$candidate['secure'])) {
+                        $duplicate = true;
+                        break;
+                    }
+                }
+                if (!$duplicate) {
+                    $transportCandidates[] = $candidate;
+                }
+            }
+        }
 
         if (!empty($debugEnabled)) {
             $mail->SMTPDebug = 2; // show client/server messages
@@ -180,6 +198,13 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
             ];
         }
 
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Username = trim((string)($_ENV['MAIL_USERNAME'] ?? ''));
+        $mail->Password = trim((string)($_ENV['MAIL_PASSWORD'] ?? ''));
+        $mail->Timeout = (int)($_ENV['MAIL_TIMEOUT'] ?? 15);
+        $mail->Timelimit = (int)($_ENV['MAIL_TIMELIMIT'] ?? 30);
+
         // Recipients
         $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
         $mail->addAddress($to);
@@ -196,7 +221,42 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         $mail->Subject = $subject;
         $mail->Body    = $html;
 
-        return $mail->send();
+        $lastError = 'No SMTP transport candidates were attempted.';
+        foreach ($transportCandidates as $candidate) {
+            $mail->Host = (string)$candidate['host'];
+            $mail->Port = (int)$candidate['port'];
+            $mail->SMTPSecure = (string)$candidate['secure'];
+
+            try {
+                if (!empty($debugEnabled)) {
+                    @file_put_contents(
+                        $debugLog,
+                        "[" . date('c') . "] [transport] Trying host={$mail->Host};port={$mail->Port};secure={$mail->SMTPSecure}\n",
+                        FILE_APPEND | LOCK_EX
+                    );
+                }
+
+                if ($mail->send()) {
+                    return true;
+                }
+            } catch (Exception $transportException) {
+                $lastError = $mail->ErrorInfo ?: $transportException->getMessage();
+                try {
+                    $mail->getSMTPInstance()->reset();
+                } catch (Throwable $_) {
+                    // Ignore reset failures between transport attempts
+                }
+                if (!empty($debugEnabled)) {
+                    @file_put_contents(
+                        $debugLog,
+                        "[" . date('c') . "] [transport-error] host={$mail->Host};port={$mail->Port};secure={$mail->SMTPSecure};error={$lastError}\n",
+                        FILE_APPEND | LOCK_EX
+                    );
+                }
+            }
+        }
+
+        throw new Exception($lastError);
     } catch (Exception $e) {
         // Log PHPMailer error (includes Debug output if enabled)
         try { @file_put_contents(__DIR__ . '/../../storage/logs/students_confirm_errors.log', "[" . date('c') . "] Mailer Exception: " . ($mail->ErrorInfo ?? $e->getMessage()) . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
