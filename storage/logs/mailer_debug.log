@@ -42099,3 +42099,11 @@ error:0A000086:SSL routines::certificate verify failed
 
 [2026-05-03T18:06:54+02:00] [level=2] SERVER -> CLIENT: 221 2.0.0 closing connection ffacd0b85a97d-44a8ea7cf5dsm19691047f8f.1 - gsmtp
 
+[2026-05-03T21:12:45+02:00] [level=1] SMTP ERROR: Failed to connect to server: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond (10060)
+[2026-05-03T21:12:45+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2026-05-03T21:13:33+02:00] [level=1] SMTP ERROR: Failed to connect to server: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond (10060)
+[2026-05-03T21:13:33+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2026-05-03T21:14:35+02:00] [level=1] SMTP ERROR: Failed to connect to server: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond (10060)
+[2026-05-03T21:14:35+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2026-05-03T21:14:56+02:00] [level=1] SMTP ERROR: Failed to connect to server: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond (10060)
+[2026-05-03T21:14:56+02:00] [level=2] SMTP Error: Could not connect to SMTP host. Failed to connect to server
