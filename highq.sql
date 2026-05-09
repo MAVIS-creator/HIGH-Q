@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2026 at 06:28 PM
+-- Generation Time: May 09, 2026 at 06:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `highq`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ai_action_queue`
+--
+
+CREATE TABLE `ai_action_queue` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `action_type` varchar(100) NOT NULL,
+  `proposal` longtext NOT NULL,
+  `context` longtext DEFAULT NULL,
+  `status` enum('queued','approved','rejected','executed','failed') NOT NULL DEFAULT 'queued',
+  `review_note` varchar(500) DEFAULT NULL,
+  `reviewed_by` int(11) DEFAULT NULL,
+  `reviewed_at` datetime DEFAULT NULL,
+  `execution_note` varchar(500) DEFAULT NULL,
+  `executed_by` int(11) DEFAULT NULL,
+  `executed_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1594,7 +1617,11 @@ INSERT INTO `ip_logs` (`id`, `ip`, `user_agent`, `path`, `referer`, `user_id`, `
 (756, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/assets/assets/images/library.jpg', 'http://localhost/HIGH-Q/assets/css/public.css', NULL, NULL, '2026-05-09 13:17:03');
 INSERT INTO `ip_logs` (`id`, `ip`, `user_agent`, `path`, `referer`, `user_id`, `headers`, `created_at`) VALUES
 (757, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/contact.php', 'http://localhost/HIGH-Q/register-new.php', NULL, NULL, '2026-05-09 13:17:04'),
-(758, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/assets/assets/images/library.jpg', 'http://localhost/HIGH-Q/assets/css/public.css', NULL, NULL, '2026-05-09 13:17:04');
+(758, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/assets/assets/images/library.jpg', 'http://localhost/HIGH-Q/assets/css/public.css', NULL, NULL, '2026-05-09 13:17:04'),
+(759, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/about.php', 'http://localhost/HIGH-Q/contact.php', NULL, NULL, '2026-05-09 17:33:19'),
+(760, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/assets/assets/images/library.jpg', 'http://localhost/HIGH-Q/assets/css/public.css', NULL, NULL, '2026-05-09 17:33:19'),
+(761, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/about.php', 'http://localhost/HIGH-Q/contact.php', NULL, NULL, '2026-05-09 17:35:16'),
+(762, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0', '/HIGH-Q/assets/assets/images/library.jpg', 'http://localhost/HIGH-Q/assets/css/public.css', NULL, NULL, '2026-05-09 17:35:17');
 
 -- --------------------------------------------------------
 
@@ -2236,6 +2263,23 @@ INSERT INTO `role_permissions` (`id`, `role_id`, `menu_slug`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `security_scans`
+--
+
+CREATE TABLE `security_scans` (
+  `id` int(11) NOT NULL,
+  `scan_type` varchar(20) NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'completed',
+  `threat_count` int(11) NOT NULL DEFAULT 0,
+  `report_file` varchar(255) DEFAULT NULL,
+  `scan_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `duration` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `settings`
 --
 
@@ -2505,6 +2549,17 @@ INSERT INTO `users` (`id`, `role_id`, `name`, `phone`, `email`, `password`, `ava
 --
 
 --
+-- Indexes for table `ai_action_queue`
+--
+ALTER TABLE `ai_action_queue`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_ai_action_queue_user_id` (`user_id`),
+  ADD KEY `idx_ai_action_queue_status` (`status`),
+  ADD KEY `idx_ai_action_queue_created_at` (`created_at`),
+  ADD KEY `idx_ai_action_queue_reviewed_by` (`reviewed_by`),
+  ADD KEY `idx_ai_action_queue_executed_by` (`executed_by`);
+
+--
 -- Indexes for table `appointments`
 --
 ALTER TABLE `appointments`
@@ -2747,6 +2802,14 @@ ALTER TABLE `role_permissions`
   ADD KEY `role_id` (`role_id`);
 
 --
+-- Indexes for table `security_scans`
+--
+ALTER TABLE `security_scans`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_scan_date` (`scan_date`),
+  ADD KEY `idx_scan_type` (`scan_type`);
+
+--
 -- Indexes for table `settings`
 --
 ALTER TABLE `settings`
@@ -2825,6 +2888,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `ai_action_queue`
+--
+ALTER TABLE `ai_action_queue`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `appointments`
@@ -2920,7 +2989,7 @@ ALTER TABLE `icons`
 -- AUTO_INCREMENT for table `ip_logs`
 --
 ALTER TABLE `ip_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=759;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=763;
 
 --
 -- AUTO_INCREMENT for table `login_attempts`
@@ -3011,6 +3080,12 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `role_permissions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+
+--
+-- AUTO_INCREMENT for table `security_scans`
+--
+ALTER TABLE `security_scans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `settings`
