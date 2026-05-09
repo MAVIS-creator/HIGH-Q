@@ -4,6 +4,7 @@
 // Use public-side config and DB
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/functions.php';
+require_once __DIR__ . '/../includes/admission-package.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 $cfg = require __DIR__ . '/../config/payments.php';
 $paymentsHelper = new \Src\Helpers\Payments($cfg);
@@ -35,6 +36,12 @@ if ($event === 'charge.success' || $event === 'payment.success') {
                 $meta = json_encode($data);
                 $upd = $pdo->prepare("UPDATE payments SET status='confirmed', metadata = ?, gateway='paystack', confirmed_at = NOW(), updated_at = NOW() WHERE id = ?");
                 $upd->execute([$meta, $p['id']]);
+                try {
+                    $uup = $pdo->prepare('UPDATE universal_registrations SET payment_status = ?, status = ?, updated_at = NOW() WHERE payment_reference = ?');
+                    $uup->execute(['confirmed', 'confirmed', $reference]);
+                } catch (Throwable $e) {
+                    error_log('Universal registration update error: ' . $e->getMessage());
+                }
 
                 try {
                     notifyAdminChange($pdo, 'Online Payment Confirmed', [
@@ -63,6 +70,12 @@ if ($event === 'charge.success' || $event === 'payment.success') {
                         // sendEmail comes from public/config/functions.php
                         @sendEmail($user['email'], $subject, $html);
                     }
+                }
+
+                try {
+                    hqSendAdmissionPackageEmail($pdo, $reference, null);
+                } catch (Throwable $e) {
+                    error_log('Admission package email error: ' . $e->getMessage());
                 }
             } else {
                 error_log('Payment amount mismatch for reference: ' . $reference);

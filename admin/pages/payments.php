@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../../public/includes/admission-package.php';
 
 // Ensure logs directory exists for AJAX handlers
 try { if (!is_dir(__DIR__ . '/../../storage/logs')) @mkdir(__DIR__ . '/../../storage/logs', 0755, true); } catch (Throwable $e) {}
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                         'Amount' => '₦' . number_format($paymentData['amount'], 2),
                         'Gateway' => $paymentData['gateway'] ?? 'Bank Transfer',
                         'Status' => 'Successfully Confirmed'
-                    ], (int)($_SESSION['user']['id'] ?? 0), app_url('admin/pages/payments.php'));
+                    ], (int)($_SESSION['user']['id'] ?? 0), admin_url('index.php?pages=payments'));
                 }
             } catch (Throwable $e) {
                 // Don't block if notification fails
@@ -72,17 +73,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
             // fetch payment details
                 // include receipt download link in admin email log (if any)
             $stmt = $pdo->prepare('SELECT p.*, u.email, u.name, u.id as user_id FROM payments p LEFT JOIN users u ON u.id = p.student_id WHERE p.id = ?'); $stmt->execute([$id]); $p = $stmt->fetch();
+            // update registration state for universal and legacy flows
+            try {
+                $uup = $pdo->prepare('UPDATE universal_registrations SET payment_status = ?, status = ?, updated_at = NOW() WHERE payment_reference = ?');
+                $uup->execute(['confirmed', 'confirmed', $p['reference']]);
+            } catch (Throwable $e) { /* ignore */ }
+
             // update latest registration for this user to confirmed
-            if ($p && !empty($p['user_id'])) {
-                try {
-                    // find latest non-confirmed registration
-                    $r = $pdo->prepare('SELECT id FROM student_registrations WHERE user_id = ? ORDER BY created_at DESC LIMIT 1');
-                    $r->execute([$p['user_id']]); $reg = $r->fetch();
-                    if ($reg && !empty($reg['id'])) {
-                        $uup = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?');
-                        $uup->execute(['confirmed', $reg['id']]);
-                    }
-                } catch (Throwable $e) { /* ignore if table missing */ }
+            if ($p) {
+                if (!empty($p['user_id'])) {
+                    try {
+                        // find latest non-confirmed registration
+                        $r = $pdo->prepare('SELECT id FROM student_registrations WHERE user_id = ? ORDER BY created_at DESC LIMIT 1');
+                        $r->execute([$p['user_id']]); $reg = $r->fetch();
+                        if ($reg && !empty($reg['id'])) {
+                            $uup = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?');
+                            $uup->execute(['confirmed', $reg['id']]);
+                        }
+                    } catch (Throwable $e) { /* ignore if table missing */ }
+                }
 
                 // generate a receipt (prefer PDF if Dompdf is available), save to uploads/receipts
                 $receiptPath = '';
@@ -216,8 +225,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
                     }
                 } catch (Throwable $e) { /* ignore email errors */ }
 
+                // send admission package email for the public registration flow
+                try {
+                    $receiptFullPath = '';
+                    if (!empty($receiptPath)) {
+                        $candidate = __DIR__ . '/../../public/' . ltrim($receiptPath, '/');
+                        if (is_readable($candidate)) {
+                            $receiptFullPath = $candidate;
+                        }
+                    }
+                    hqSendAdmissionPackageEmail($pdo, (string)$p['reference'], $receiptFullPath ?: null);
+                } catch (Throwable $e) { /* ignore admission email issues */ }
+
                 // activate user
-                $act = $pdo->prepare('UPDATE users SET is_active = 1 WHERE id = ?'); $act->execute([$p['user_id']]);
+                if (!empty($p['user_id'])) {
+                    $act = $pdo->prepare('UPDATE users SET is_active = 1 WHERE id = ?'); $act->execute([$p['user_id']]);
+                }
 
                 // send confirmation email to user (attach receipt if available)
                 if (!empty($p['email'])) {

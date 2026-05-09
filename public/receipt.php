@@ -417,45 +417,6 @@ if (isset($_GET['format']) && strtolower($_GET['format']) === 'pdf') {
     $dompdf->render();
     $filename = 'receipt-' . preg_replace('/[^A-Za-z0-9_-]+/', '-', $ref) . '.pdf';
     
-    // TRIGGER: Generate welcome kit and send email
-    try {
-        // Get student registration details from payments table
-        $stmt = $pdo->prepare('SELECT registration_type FROM payments WHERE reference = ? LIMIT 1');
-        $stmt->execute([$ref]);
-        $paymentData = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($paymentData && !empty($paymentData['registration_type'])) {
-            $studentEmailForKit = $p['payer_email'] ?? $p['email'] ?? '';
-            $studentNameForKit = $p['payer_account_name'] ?? $p['payer_name'] ?? 'Student';
-            $programTypeForKit = $paymentData['registration_type'];
-            $registrationId = $p['id'] ?? $ref;
-            
-            if (!empty($studentEmailForKit)) {
-                // Generate welcome kit PDF
-                $kitResult = generateWelcomeKitPDF($programTypeForKit, $studentNameForKit, $studentEmailForKit, $registrationId);
-                
-                if ($kitResult['success']) {
-                    // Send welcome kit email
-                    sendWelcomeKitEmail($studentEmailForKit, $studentNameForKit, $programTypeForKit, $registrationId, $kitResult['filepath']);
-                    
-                    // Log the action
-                    @file_put_contents(
-                        __DIR__ . '/../storage/logs/welcome-kit-sent.log', 
-                        date('Y-m-d H:i:s') . " | Payment: {$ref} | Email: {$studentEmailForKit} | Program: {$programTypeForKit}\n",
-                        FILE_APPEND | LOCK_EX
-                    );
-                }
-            }
-        }
-    } catch (Exception $e) {
-        // Log error but don't break receipt download
-        @file_put_contents(
-            __DIR__ . '/../storage/logs/welcome-kit-error.log',
-            date('Y-m-d H:i:s') . " | Payment: {$ref} | Error: " . $e->getMessage() . "\n",
-            FILE_APPEND | LOCK_EX
-        );
-    }
-    
     $dompdf->stream($filename, ['Attachment' => true]);
     exit;
 }
