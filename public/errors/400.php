@@ -1,5 +1,9 @@
 <?php
 http_response_code(400);
+if (!function_exists('app_url') && file_exists(__DIR__ . '/../config/functions.php')) {
+    require_once __DIR__ . '/../config/functions.php';
+}
+$homeUrl = function_exists('app_url') ? app_url('index.php') : '/';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +49,7 @@ http_response_code(400);
         <div class="error-code">400</div>
         <h1>Bad Request</h1>
         <p class="error-message">Sorry, your browser sent a request that this server could not understand.</p>
-        <a href="/" class="back-link">← Return to Homepage</a>
+        <a href="<?= htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8') ?>" class="back-link">← Return to Homepage</a>
     </div>
 
     <?php if (file_exists(__DIR__ . '/../includes/footer.php')) include __DIR__ . '/../includes/footer.php'; ?>

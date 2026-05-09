@@ -3,30 +3,55 @@
  * Customizes all SweetAlert2 popups with HIGH-Q brand colors
  */
 
-// Set global defaults for SweetAlert2
+// Set global defaults for SweetAlert2 with device capability awareness
 if (typeof SwalHighQ === 'undefined') {
-const SwalHighQ = Swal.mixin({
-  customClass: {
-    popup: 'highq-popup',
-    confirmButton: 'highq-confirm-btn',
-    cancelButton: 'highq-cancel-btn',
-    title: 'highq-title',
-    htmlContainer: 'highq-content'
-  },
-  buttonsStyling: false,
-  confirmButtonText: 'Confirm',
-  cancelButtonText: 'Cancel',
-  showClass: {
-    popup: 'swal2-show',
-    backdrop: 'swal2-backdrop-show',
-    icon: 'swal2-icon-show'
-  },
-  hideClass: {
-    popup: 'swal2-hide',
-    backdrop: 'swal2-backdrop-hide',
-    icon: 'swal2-icon-hide'
+  const baseConfig = {
+    customClass: {
+      popup: 'highq-popup',
+      confirmButton: 'highq-confirm-btn',
+      cancelButton: 'highq-cancel-btn',
+      title: 'highq-title',
+      htmlContainer: 'highq-content'
+    },
+    buttonsStyling: false,
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
+    showClass: {
+      popup: 'swal2-show',
+      backdrop: 'swal2-backdrop-show',
+      icon: 'swal2-icon-show'
+    },
+    hideClass: {
+      popup: 'swal2-hide',
+      backdrop: 'swal2-backdrop-hide',
+      icon: 'swal2-icon-hide'
+    }
+  };
+
+  // Merge with minimal config when needed
+  let capabilityConfig = {};
+  if (window.HQDeviceCapability && typeof window.HQDeviceCapability.getSweetAlertConfig === 'function') {
+    capabilityConfig = window.HQDeviceCapability.getSweetAlertConfig() || {};
   }
-});
+
+  const mergedConfig = {
+    ...baseConfig,
+    ...capabilityConfig,
+    customClass: {
+      ...(baseConfig.customClass || {}),
+      ...(capabilityConfig.customClass || {})
+    },
+    showClass: {
+      ...(baseConfig.showClass || {}),
+      ...(capabilityConfig.showClass || {})
+    },
+    hideClass: {
+      ...(baseConfig.hideClass || {}),
+      ...(capabilityConfig.hideClass || {})
+    }
+  };
+
+  const SwalHighQ = Swal.mixin(mergedConfig);
 
 // Add custom styles dynamically
 if (!document.getElementById('highq-swal-styles')) {

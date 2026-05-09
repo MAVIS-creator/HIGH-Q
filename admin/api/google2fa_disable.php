@@ -3,6 +3,7 @@
 // Disable Google Authenticator 2FA
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 header('Content-Type: application/json');
 
@@ -39,6 +40,20 @@ try {
 
     unset($_SESSION['google2fa_temp_secret']);
     $_SESSION['user']['google2fa_enabled'] = false;
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $pdo,
+                'Google Authenticator Disabled',
+                [
+                    'User ID' => $userId,
+                    'Action' => '2FA disabled'
+                ],
+                $userId
+            );
+        } catch (Throwable $_) {}
+    }
 
     echo json_encode([
         'success' => true,

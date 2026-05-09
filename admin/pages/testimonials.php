@@ -62,7 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $stmt = $pdo->prepare("INSERT INTO testimonials (name, role_institution, testimonial_text, image_path, outcome_badge, display_order, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
                     $stmt->execute([$name, $role, $text, $imagePath, $badge, $order, $active]);
                     $success[] = "Testimonial created successfully.";
-                    logAction($pdo, $_SESSION['user']['id'], 'testimonial_created', ['testimonial_id' => $pdo->lastInsertId()]);
+                    $newId = (int)$pdo->lastInsertId();
+                    logAction($pdo, $_SESSION['user']['id'], 'testimonial_created', ['testimonial_id' => $newId]);
+                    notifyAdminChange($pdo, 'Testimonial Created', ['Testimonial ID' => $newId, 'Name' => $name], (int)($_SESSION['user']['id'] ?? 0));
                 } catch (Exception $e) {
                     $errors[] = "Database error: " . $e->getMessage();
                 }
@@ -84,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                     $stmt->execute([$name, $role, $text, $imagePath, $badge, $order, $active, $id]);
                     $success[] = "Testimonial updated successfully.";
                     logAction($pdo, $_SESSION['user']['id'], 'testimonial_updated', ['testimonial_id' => $id]);
+                    notifyAdminChange($pdo, 'Testimonial Updated', ['Testimonial ID' => $id, 'Name' => $name], (int)($_SESSION['user']['id'] ?? 0));
                 } catch (Exception $e) {
                     $errors[] = "Database error: " . $e->getMessage();
                 }
@@ -105,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $stmt->execute([$id]);
                 $success[] = "Testimonial deleted successfully.";
                 logAction($pdo, $_SESSION['user']['id'], 'testimonial_deleted', ['testimonial_id' => $id]);
+                notifyAdminChange($pdo, 'Testimonial Deleted', ['Testimonial ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
             } catch (Exception $e) {
                 $errors[] = "Database error: " . $e->getMessage();
             }

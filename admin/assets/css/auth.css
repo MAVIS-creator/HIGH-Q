@@ -55,6 +55,23 @@
     overflow-y: auto;
 }
 
+/* Minimal mode: static background and no motion */
+html.hq-minimal-animations .auth-page {
+    background: #0f172a;
+    background-size: cover;
+    animation: none;
+}
+html.hq-minimal-animations .auth-page::before,
+html.hq-minimal-animations .auth-page::after {
+    display: none;
+}
+html.hq-minimal-animations .auth-card {
+    animation: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
 @keyframes gradientShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }

@@ -12,8 +12,27 @@ require_once __DIR__ . '/../includes/sidebar.php';
 // Get latest scan reports
 $latestScans = [];
 try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS security_scans (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        scan_type VARCHAR(20) NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'completed',
+        threat_count INT NOT NULL DEFAULT 0,
+        report_file VARCHAR(255) NULL,
+        scan_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        duration INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_scan_date (scan_date),
+        INDEX idx_scan_type (scan_type)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    try {
+        $pdo->exec("ALTER TABLE security_scans ADD COLUMN report_file VARCHAR(255) NULL AFTER threat_count");
+    } catch (Throwable $e) {
+        // already exists
+    }
+
     $stmt = $pdo->query("
-        SELECT id, scan_type, status, threat_count, scan_date, duration
+        SELECT id, scan_type, status, threat_count, report_file, scan_date, duration
         FROM security_scans 
         ORDER BY scan_date DESC 
         LIMIT 5
@@ -21,6 +40,40 @@ try {
     $latestScans = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $latestScans = [];
+}
+
+// Fallback: load recent report files if DB history is empty
+if (count($latestScans) === 0) {
+    try {
+        $reportDir = realpath(__DIR__ . '/../../storage/scan_reports');
+        if ($reportDir && is_dir($reportDir)) {
+            $files = glob($reportDir . DIRECTORY_SEPARATOR . '*.json') ?: [];
+            rsort($files);
+            foreach (array_slice($files, 0, 5) as $index => $file) {
+                $raw = @file_get_contents($file);
+                $json = $raw ? json_decode($raw, true) : null;
+                $scan = $json['scan_data']['report'] ?? null;
+                if (!is_array($scan)) continue;
+
+                $critical = count($scan['critical'] ?? []);
+                $warnings = count($scan['warnings'] ?? []);
+                $started = !empty($scan['started_at']) ? strtotime($scan['started_at']) : time();
+                $finished = !empty($scan['finished_at']) ? strtotime($scan['finished_at']) : $started;
+
+                $latestScans[] = [
+                    'id' => 0 - ($index + 1),
+                    'scan_type' => $scan['scan_type'] ?? 'quick',
+                    'status' => ($scan['status'] ?? 'completed') === 'completed' ? 'completed' : 'error',
+                    'threat_count' => $critical + $warnings,
+                    'report_file' => basename($file),
+                    'scan_date' => date('Y-m-d H:i:s', $finished),
+                    'duration' => max(0, (int)($finished - $started)),
+                ];
+            }
+        }
+    } catch (Throwable $e) {
+        // keep empty state when fallback parsing fails
+    }
 }
 ?>
 <div class="sentinel-fullscreen">
@@ -160,6 +213,13 @@ try {
                         </div>
                     </div>
                     <p id="lastScanTime" class="last-scan-time">No scans performed yet</p>
+                    <div id="issueAlertBanner" class="issue-alert-banner issue-alert-banner--hidden" role="alert" aria-live="polite">
+                        <div class="issue-alert-banner-icon"><i class='bx bx-shield-quarter'></i></div>
+                        <div class="issue-alert-banner-content">
+                            <p id="issueAlertTitle" class="issue-alert-banner-title">No active issues</p>
+                            <p id="issueAlertMessage" class="issue-alert-banner-message">Run a scan to monitor security posture.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -210,7 +270,7 @@ try {
                             <td><?= (int)$scan['threat_count'] ?> threat<?= $scan['threat_count'] != 1 ? 's' : '' ?></td>
                             <td><?= htmlspecialchars($scan['duration']) ?>s</td>
                             <td>
-                                <a href="#" onclick="viewReport(<?= $scan['id'] ?>); return false;" class="view-report-link">View</a>
+                                <a href="#" onclick="viewReport(<?= (int)$scan['id'] ?>, <?= json_encode($scan['report_file'] ?? '') ?>); return false;" class="view-report-link">View</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -648,6 +708,113 @@ try {
     margin: 0;
 }
 
+.issue-alert-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+    padding: 0.85rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+}
+
+.issue-alert-banner--hidden {
+    display: none;
+}
+
+.issue-alert-banner--safe {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.issue-alert-banner--warning {
+    border-color: #fde68a;
+    background: #fffbeb;
+}
+
+.issue-alert-banner--critical {
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+.issue-alert-banner-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    background: rgba(15, 23, 42, 0.06);
+    color: #334155;
+    flex-shrink: 0;
+}
+
+.issue-alert-banner--safe .issue-alert-banner-icon {
+    color: #166534;
+    background: rgba(22, 163, 74, 0.12);
+}
+
+.issue-alert-banner--warning .issue-alert-banner-icon {
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.18);
+}
+
+.issue-alert-banner--critical .issue-alert-banner-icon {
+    color: #b91c1c;
+    background: rgba(220, 38, 38, 0.16);
+}
+
+.issue-alert-banner-title {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.issue-alert-banner-message {
+    margin: 0.2rem 0 0;
+    font-size: 0.75rem;
+    color: #475569;
+    line-height: 1.35;
+}
+
+.swal-report-popup .swal2-title {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.swal-report-popup .swal2-actions {
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+}
+
+.swal-report-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.swal-report-btn.swal-report-btn--pdf {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+}
+
+.swal-report-btn.swal-report-btn--email {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+}
+
+.swal-report-btn.swal-report-btn--close {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
 /* Table */
 .sentinel-table-wrapper {
     overflow-x: auto;
@@ -814,6 +981,9 @@ try {
 </style>
 
 <script>
+const ADMIN_BASE = (window.HQ_ADMIN_BASE || '').replace(/\/$/, '');
+const APP_BASE = ADMIN_BASE.replace(/\/admin$/, '');
+
 function startScan() {
     const scanType = document.querySelector('input[name="scan_type"]:checked').value;
     const progressDiv = document.getElementById('scanProgress');
@@ -855,7 +1025,7 @@ function startScan() {
         }
     }, 300);
 
-    fetch('../api/scan-engine.php', {
+    fetch(ADMIN_BASE + '/api/scan-engine.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -863,7 +1033,19 @@ function startScan() {
         },
         body: 'scan_type=' + encodeURIComponent(scanType)
     })
-    .then(response => response.json())
+    .then(async response => {
+        const raw = await response.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            throw new Error('Invalid JSON response from scan API.');
+        }
+        if (!response.ok) {
+            throw new Error(data.message || 'Scan request failed');
+        }
+        return data;
+    })
     .then(data => {
         clearInterval(progressInterval);
         progress = 100;
@@ -897,22 +1079,117 @@ function updateScanSummary(report) {
     window.lastScanReport = report;
     const now = new Date();
     document.getElementById('lastScanTime').textContent = `Last scan: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`;
+
+    updateIssueAlertBanner(critical, warnings, info);
+    notifyIfIssuesDetected(critical, warnings);
     
     // Auto-show report modal after scan
     showReportModal();
 }
 
-function viewReport(id) {
-    if (!window.lastScanReport) {
+function updateIssueAlertBanner(critical, warnings, info) {
+    const banner = document.getElementById('issueAlertBanner');
+    const title = document.getElementById('issueAlertTitle');
+    const message = document.getElementById('issueAlertMessage');
+    if (!banner || !title || !message) return;
+
+    banner.classList.remove('issue-alert-banner--hidden', 'issue-alert-banner--safe', 'issue-alert-banner--warning', 'issue-alert-banner--critical');
+
+    if (critical > 0) {
+        banner.classList.add('issue-alert-banner--critical');
+        title.textContent = `Critical issues detected: ${critical}`;
+        message.textContent = `Warnings: ${warnings}. Action is required now to reduce risk.`;
+        return;
+    }
+
+    if (warnings > 0) {
+        banner.classList.add('issue-alert-banner--warning');
+        title.textContent = `Warnings detected: ${warnings}`;
+        message.textContent = `No critical issues found. Review warnings and harden sensitive files/configuration.`;
+        return;
+    }
+
+    banner.classList.add('issue-alert-banner--safe');
+    title.textContent = 'No critical findings';
+    message.textContent = `Security posture looks clean. Informational findings: ${info}.`;
+}
+
+function notifyIfIssuesDetected(critical, warnings) {
+    if (critical <= 0 && warnings <= 0) {
         Swal.fire({
-            icon: 'info',
-            title: 'No Scan Data',
-            text: 'Run a scan first to view reports.',
-            confirmButtonColor: '#f59e0b'
+            icon: 'success',
+            title: 'Scan clean',
+            text: 'No critical or warning issues detected.',
+            timer: 2200,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
         });
         return;
     }
-    showReportModal();
+
+    const icon = critical > 0 ? 'error' : 'warning';
+    const title = critical > 0 ? 'Security alert: critical findings' : 'Security alert: warnings found';
+    const text = `Critical: ${critical}, Warnings: ${warnings}. Open the report and address them.`;
+
+    Swal.fire({
+        icon,
+        title,
+        text,
+        toast: true,
+        position: 'top-end',
+        timer: critical > 0 ? 5000 : 3800,
+        showConfirmButton: false
+    });
+}
+
+async function viewReport(id, reportFile = '') {
+    if (reportFile || (id && id > 0)) {
+        try {
+            const url = new URL(ADMIN_BASE + '/api/scan-report.php', window.location.origin);
+            if (reportFile) {
+                url.searchParams.set('file', reportFile);
+            } else {
+                url.searchParams.set('id', String(id));
+            }
+
+            const res = await fetch(url.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+            const raw = await res.text();
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (e) {
+                throw new Error('Invalid JSON while loading scan report.');
+            }
+
+            if (!res.ok || data.status !== 'ok' || !data.report) {
+                throw new Error(data.message || 'Report data unavailable for this scan.');
+            }
+
+            window.lastScanReport = data.report;
+            showReportModal();
+            return;
+        } catch (error) {
+            console.warn('Failed to load historical scan report:', error);
+        }
+    }
+
+    if (window.lastScanReport) {
+        showReportModal();
+        return;
+    }
+
+    Swal.fire({
+        icon: 'info',
+        title: 'No Scan Data',
+        text: 'Report file for this scan was not found. Run a new scan to generate one.',
+        confirmButtonColor: '#f59e0b'
+    });
 }
 
 function showReportModal() {
@@ -932,6 +1209,10 @@ function showReportModal() {
     
     let html = `
         <div style="text-align: left; max-height: 60vh; overflow-y: auto;">
+            <div style="margin-bottom: 14px; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 12px; color: #334155;">
+                <strong style="display:block; margin-bottom: 4px;">How to read this report</strong>
+                Findings are rule-based security checks from the scan engine (not AI-generated guesses). Each warning is matched by deterministic patterns and system checks.
+            </div>
             <!-- Summary Cards -->
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
                 <div style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border-radius: 12px; padding: 16px; text-align: center; border: 1px solid #fecaca;">
@@ -996,6 +1277,7 @@ function showReportModal() {
         title: '<i class="bx bx-bar-chart-alt-2" style="margin-right: 8px;"></i> Security Scan Report',
         html: html,
         width: '800px',
+        buttonsStyling: false,
         showCancelButton: true,
         confirmButtonText: '<i class="bx bxs-file-pdf"></i> Download PDF',
         confirmButtonColor: '#dc2626',
@@ -1005,7 +1287,10 @@ function showReportModal() {
         denyButtonText: '<i class="bx bx-envelope"></i> Email Report',
         denyButtonColor: '#f59e0b',
         customClass: {
-            popup: 'swal-wide'
+            popup: 'swal-wide swal-report-popup',
+            confirmButton: 'swal-report-btn swal-report-btn--pdf',
+            denyButton: 'swal-report-btn swal-report-btn--email',
+            cancelButton: 'swal-report-btn swal-report-btn--close'
         }
     }).then((result) => {
         if (result.isConfirmed) {
@@ -1019,9 +1304,13 @@ function showReportModal() {
 function renderFinding(item, type) {
     const colors = { critical: '#fef2f2', warning: '#fffbeb', info: '#eff6ff' };
     const borders = { critical: '#dc2626', warning: '#d97706', info: '#2563eb' };
+    const explanation = getFindingExplanation(item);
     
     let html = `<div style="background: ${colors[type]}; border-left: 4px solid ${borders[type]}; padding: 10px 12px; margin-bottom: 8px; border-radius: 0 6px 6px 0;">`;
     html += `<div style="font-weight: 600; font-size: 12px; color: #1f2937;">${item.message || item.type || 'Issue detected'}</div>`;
+    if (explanation) {
+        html += `<div style="font-size: 11px; color: #475569; margin-top: 4px;">${escapeHtml(explanation)}</div>`;
+    }
     
     if (item.file) {
         html += `<div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6b7280; font-family: monospace; margin-top: 4px;"><i class='bx bx-file'></i> ${item.file}`;
@@ -1035,6 +1324,29 @@ function renderFinding(item, type) {
     
     html += `</div>`;
     return html;
+}
+
+function getFindingExplanation(item) {
+    const type = (item?.type || '').toLowerCase();
+    const msg = (item?.message || '').toLowerCase();
+
+    if (type === 'scan_limit' || msg.includes('limited to')) {
+        return 'Quick scan checks up to a fixed file limit for speed. Run Full Scan for deeper coverage.';
+    }
+
+    if (type === 'sensitive_file_exposed' || msg.includes('sensitive file') || msg.includes('world-readable')) {
+        return 'A sensitive file can be read by broad users/processes. Restrict file permissions and prevent public web access.';
+    }
+
+    if (type === 'syntax_error' || msg.includes('syntax')) {
+        return 'PHP syntax issue detected during lint check; this can break pages or APIs.';
+    }
+
+    if (type === 'webshell' || type === 'exec_shell' || type === 'file_inclusion' || msg.includes('suspicious pattern')) {
+        return 'Potentially dangerous code pattern detected by signature matching. Review the file content immediately.';
+    }
+
+    return 'Detected by deterministic scan rules. Review this finding and remediate if it is valid for your environment.';
 }
 
 function escapeHtml(text) {
@@ -1058,7 +1370,7 @@ function generatePdfReport() {
     
     const reportData = { status: 'completed', report: window.lastScanReport };
     
-    fetch('../api/send-report.php', {
+    fetch(ADMIN_BASE + '/api/send-report.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -1070,14 +1382,26 @@ function generatePdfReport() {
             generate_pdf: true
         })
     })
-    .then(response => response.json())
+    .then(async response => {
+        const raw = await response.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            throw new Error('Invalid JSON response from report API.');
+        }
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to generate report');
+        }
+        return data;
+    })
     .then(data => {
         if (data.status === 'success' && data.pdf_path) {
             Swal.fire({
                 icon: 'success',
                 title: 'PDF Generated!',
                 html: `<p>Report saved: <code>${data.pdf_filename}</code></p>
-                       <a href="../storage/reports/${data.pdf_filename}" download class="swal2-confirm swal2-styled" style="display: inline-block; margin-top: 10px;">
+                       <a href="${APP_BASE}/storage/reports/${data.pdf_filename}" download class="swal2-confirm swal2-styled" style="display: inline-block; margin-top: 10px;">
                            <i class='bx bx-download'></i> Download PDF
                        </a>`,
                 confirmButtonColor: '#22c55e'
@@ -1113,7 +1437,7 @@ function emailReport() {
 
     const reportData = { status: 'completed', report: window.lastScanReport };
 
-    fetch('../api/send-report.php', {
+    fetch(ADMIN_BASE + '/api/send-report.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -1126,7 +1450,19 @@ function emailReport() {
             generate_pdf: true
         })
     })
-    .then(response => response.json())
+    .then(async response => {
+        const raw = await response.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            throw new Error('Invalid JSON response from report API.');
+        }
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to send report');
+        }
+        return data;
+    })
     .then(data => {
         if (data.status === 'success' && data.sent) {
             Swal.fire({

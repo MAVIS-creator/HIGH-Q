@@ -2,9 +2,6 @@
     RewriteEngine On
     Options -Indexes
 
-    # RewriteBase needs to be the location of THIS .htaccess file relative to DocumentRoot
-    RewriteBase /HIGH-Q/
-
     # Allow direct access to files that exist
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
@@ -57,3 +54,4 @@ ErrorDocument 401 /public/errors/401.php
 ErrorDocument 403 /public/errors/403.php
 ErrorDocument 404 /public/errors/404.php
 ErrorDocument 500 /public/errors/500.php
+ErrorDocument 503 /public/errors/503.php

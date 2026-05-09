@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     if ($stmt->rowCount() > 0) {
       // audit log: admin claimed thread
       logAction($pdo, $_SESSION['user']['id'], 'chat_claimed', ['thread_id' => $threadId]);
+      notifyAdminChange($pdo, 'Chat Thread Claimed', ['Thread ID' => $threadId], (int)($_SESSION['user']['id'] ?? 0));
       echo json_encode(['status'=>'ok','message'=>'Claimed']);
     } else {
       // already claimed, return current assignment and admin name
@@ -105,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?'); $u->execute([$threadId]);
     // audit log: admin replied
     logAction($pdo, $_SESSION['user']['id'], 'chat_reply', ['thread_id' => $threadId, 'message_preview' => mb_substr($msg,0,120)]);
+    notifyAdminChange($pdo, 'Chat Reply Sent', ['Thread ID' => $threadId, 'Message Preview' => mb_substr($msg,0,120)], (int)($_SESSION['user']['id'] ?? 0));
     echo json_encode(['status'=>'ok']); exit;
   }
   // Close thread (AJAX)
@@ -112,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
     $upd = $pdo->prepare("UPDATE chat_threads SET status = 'closed', last_activity = NOW() WHERE id = ?");
     $upd->execute([$threadId]);
     logAction($pdo, $_SESSION['user']['id'], 'chat_closed', ['thread_id' => $threadId]);
+    notifyAdminChange($pdo, 'Chat Thread Closed', ['Thread ID' => $threadId], (int)($_SESSION['user']['id'] ?? 0));
     echo json_encode(['status'=>'ok']); exit;
   }
   echo json_encode(['status'=>'error','message'=>'Invalid action']); exit;

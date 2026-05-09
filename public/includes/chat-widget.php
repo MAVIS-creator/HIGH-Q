@@ -11,9 +11,15 @@
                 <i class="bx bx-chat"></i>
                 <span>Live Support</span>
             </div>
-            <button id="chatClose" class="chat-close-btn" aria-label="Close chat">
-                <i class="bx bx-x"></i>
-            </button>
+            <div class="chat-header-actions">
+                <button id="chatBackToMain" class="chat-back-btn" type="button" aria-label="Back to main">
+                    <i class="bx bx-left-arrow-alt"></i>
+                    <span>Back</span>
+                </button>
+                <button id="chatClose" class="chat-close-btn" aria-label="Close chat">
+                    <i class="bx bx-x"></i>
+                </button>
+            </div>
         </div>
         
         <div class="chat-widget-body" id="chatWidgetBody">
@@ -40,9 +46,9 @@
                         <i class="bx bx-credit-card"></i>
                         <span>Payment Options</span>
                     </button>
-                    <button class="faq-option" data-question="How do I check my admission status?">
-                        <i class="bx bx-file-find"></i>
-                        <span>Check Admission</span>
+                    <button class="faq-option" data-question="Do you have a community forum?">
+                        <i class="bx bx-group"></i>
+                        <span>Community Q&amp;A</span>
                     </button>
                     <button class="faq-option" data-question="What are your contact details?">
                         <i class="bx bx-phone"></i>
@@ -111,9 +117,7 @@
     position:absolute; bottom:80px; right:0; width:380px; max-width:calc(100vw - 40px);
     height:600px; max-height:calc(100vh - 120px); background:#fff; border-radius:16px;
     box-shadow:0 12px 48px rgba(0,0,0,0.18); display:none; flex-direction:column; overflow:hidden;
-    animation:slideUp 0.3s ease-out;
 }
-@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 .chat-panel.show { display:flex; }
 
 .chat-widget-header {
@@ -122,6 +126,15 @@
 }
 .chat-header-left { display:flex; align-items:center; gap:10px; font-weight:600; font-size:16px; }
 .chat-header-left i { font-size:22px; }
+.chat-header-actions { display:flex; align-items:center; gap:8px; }
+.chat-back-btn {
+    display:none;
+    background:rgba(0,0,0,0.12); border:none; height:32px; border-radius:999px; padding:0 10px;
+    cursor:pointer; align-items:center; gap:6px; transition:all 0.2s ease;
+    color:#111; font-size:12px; font-weight:600;
+}
+.chat-back-btn i { font-size:18px; }
+.chat-back-btn:hover { background:rgba(0,0,0,0.2); transform:translateY(-1px); }
 .chat-close-btn {
     background:rgba(0,0,0,0.1); border:none; width:32px; height:32px; border-radius:50%;
     cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s ease;
@@ -136,9 +149,8 @@
 /* Bot Landing */
 .chat-bot-landing {
     padding:24px; display:flex; flex-direction:column; gap:20px; align-items:center; justify-content:center;
-    height:100%; animation:fadeIn 0.3s ease;
+    height:100%;
 }
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 .bot-welcome { text-align:center; }
 .bot-avatar {
     width:80px; height:80px; background:linear-gradient(135deg, #ffbf00, #d99a00); border-radius:50%;
@@ -165,9 +177,8 @@
     padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; height:100%;
 }
 .chat-message {
-    display:flex; gap:10px; animation:messageSlide 0.3s ease;
+    display:flex; gap:10px;
 }
-@keyframes messageSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .chat-message.bot { align-self:flex-start; }
 .chat-message.user { align-self:flex-end; flex-direction:row-reverse; }
 .chat-message.agent { align-self:flex-start; }
@@ -189,7 +200,6 @@
 /* Agent Form */
 .agent-form {
     padding:24px; display:flex; flex-direction:column; gap:16px; height:100%; justify-content:center;
-    animation:fadeIn 0.3s ease;
 }
 .form-header { text-align:center; margin-bottom:8px; }
 .form-header i { font-size:48px; color:#ffbf00; margin-bottom:8px; }
@@ -209,6 +219,7 @@
     box-shadow:0 4px 12px rgba(255,191,0,0.3);
 }
 .btn-submit:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(255,191,0,0.4); }
+.btn-submit.btn-compact { font-size:13px; padding:8px 14px; }
 
 /* Chat Footer */
 .chat-widget-footer {
@@ -241,6 +252,7 @@
 (function() {
     const chatToggle = document.getElementById('chatToggle');
     const chatClose = document.getElementById('chatClose');
+    const chatBackToMain = document.getElementById('chatBackToMain');
     const chatPanel = document.getElementById('chatPanel');
     const chatBotLanding = document.getElementById('chatBotLanding');
     const chatMessages = document.getElementById('chatMessages');
@@ -248,44 +260,95 @@
     const chatFooter = document.getElementById('chatFooter');
     const chatInput = document.getElementById('chatInput');
     const chatSendBtn = document.getElementById('chatSendBtn');
+    const chatAttachBtn = document.getElementById('chatAttachBtn');
+    const chatAttachment = document.getElementById('chatAttachment');
+    const chatAttachPreview = document.getElementById('chatAttachPreview');
     const startAgentFormEl = document.getElementById('startAgentForm');
     
     const faqData = {
         "How do I register for a program?": "To register, visit our <strong>Programs</strong> page, select your desired program, and click <strong>Find Your Path</strong>. Fill out the form and complete payment to secure your spot!",
         "What programs are available?": "We offer JAMB, WAEC, POST-UTME, and professional tutoring programs. Visit our <a href='<?= app_url('programs.php') ?>' target='_parent'>Programs page</a> to learn more.",
         "What are your payment options?": "We accept bank transfers, Paystack, and Stripe payments. You'll receive payment instructions after registration.",
-        "How do I check my admission status?": "Login to your dashboard and navigate to <strong>My Registrations</strong> to view your admission status and payment history.",
+        "Do you have a community forum?": "Yes! Join our <a href='<?= app_url('community.php') ?>' target='_parent'>Community Q&amp;A</a> to ask questions, share tips, and get support from other students and tutors.",
         "What are your contact details?": "Email: <strong>highqsolidacademy@gmail.com</strong><br>Phone: <strong>+234 XXX XXX XXXX</strong><br>Or chat with us right here!"
     };
     
     let threadId = null;
     let chatMode = 'bot'; // 'bot' or 'agent'
+    let pollTimer = null;
+
+    const STORAGE_THREAD = 'hq_chat_thread_id';
+    const STORAGE_MODE = 'hq_chat_mode';
+    const STORAGE_OPEN = 'hq_chat_open';
     
+    function setBackButtonVisible(show) {
+        if (!chatBackToMain) return;
+        chatBackToMain.style.display = show ? 'inline-flex' : 'none';
+    }
+
     function loadThreadId() {
-        threadId = localStorage.getItem('hq_chat_thread_id');
+        threadId = localStorage.getItem(STORAGE_THREAD);
         return threadId;
     }
-    
+
     function saveThreadId(id) {
         threadId = id;
-        localStorage.setItem('hq_chat_thread_id', id);
+        localStorage.setItem(STORAGE_THREAD, id);
+    }
+
+    function clearThreadId() {
+        threadId = null;
+        localStorage.removeItem(STORAGE_THREAD);
+    }
+
+    function loadChatMode() {
+        const saved = localStorage.getItem(STORAGE_MODE);
+        if (saved === 'agent' || saved === 'bot') chatMode = saved;
+        return chatMode;
+    }
+
+    function saveChatMode(mode) {
+        chatMode = mode;
+        localStorage.setItem(STORAGE_MODE, mode);
+    }
+
+    function setChatOpen(isOpen) {
+        localStorage.setItem(STORAGE_OPEN, isOpen ? '1' : '0');
+    }
+
+    function wasChatOpen() {
+        return localStorage.getItem(STORAGE_OPEN) === '1';
     }
     
     chatToggle.addEventListener('click', () => {
         chatPanel.classList.toggle('show');
-        if (chatPanel.classList.contains('show')) {
-            // Check if we have an existing agent thread
+        const isOpen = chatPanel.classList.contains('show');
+        setChatOpen(isOpen);
+        if (isOpen) {
             const tid = loadThreadId();
-            if (tid && chatMode === 'agent') {
+            loadChatMode();
+            if (tid) {
+                if (chatMode !== 'agent') saveChatMode('agent');
                 showAgentChat();
                 loadMessages();
+                startPolling();
             }
+        } else {
+            stopPolling();
         }
     });
     
     chatClose.addEventListener('click', () => {
         chatPanel.classList.remove('show');
+        setChatOpen(false);
+        stopPolling();
     });
+
+    if (chatBackToMain) {
+        chatBackToMain.addEventListener('click', () => {
+            showBotLanding();
+        });
+    }
     
     // FAQ option click
     document.querySelectorAll('.faq-option').forEach(btn => {
@@ -305,7 +368,9 @@
     function showBotResponse(question) {
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'flex';
-        chatMode = 'bot';
+        chatFooter.style.display = 'none';
+        setBackButtonVisible(true);
+        saveChatMode('bot');
         
         // Add user question
         addMessage('user', 'You', question);
@@ -323,7 +388,7 @@
                     <div class="message-avatar"><i class="bx bx-bot"></i></div>
                     <div class="message-content">
                         <p style="margin:0 0 12px 0;">Need more help?</p>
-                        <button class="btn-submit" onclick="window.hqChatShowAgentForm()" style="font-size:13px; padding:8px 16px;">Talk to Agent</button>
+                        <button class="btn-submit btn-compact" onclick="window.hqChatShowAgentForm()">Talk to Agent</button>
                     </div>
                 `;
                 chatMessages.appendChild(agentBtn);
@@ -331,12 +396,24 @@
             }, 800);
         }, 600);
     }
-    
+
+    function showBotLanding() {
+        chatBotLanding.style.display = 'flex';
+        chatMessages.style.display = 'none';
+        agentForm.style.display = 'none';
+        chatFooter.style.display = 'none';
+        chatMessages.innerHTML = '';
+        setBackButtonVisible(false);
+        saveChatMode('bot');
+    }
+
     function showAgentForm() {
         chatBotLanding.style.display = 'none';
         chatMessages.style.display = 'none';
         agentForm.style.display = 'flex';
-        chatMode = 'agent';
+        chatFooter.style.display = 'none';
+        setBackButtonVisible(true);
+        saveChatMode('agent');
     }
     
     function showAgentChat() {
@@ -344,7 +421,8 @@
         chatMessages.style.display = 'flex';
         agentForm.style.display = 'none';
         chatFooter.style.display = 'flex';
-        chatMode = 'agent';
+        setBackButtonVisible(true);
+        saveChatMode('agent');
     }
     
     function addMessage(type, sender, message) {
@@ -362,6 +440,84 @@
         
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addBackToMainButton() {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message bot';
+        msgDiv.innerHTML = `
+            <div class="message-avatar"><i class="bx bx-bot"></i></div>
+            <div class="message-content">
+                <p style="margin:0 0 12px 0;">Back to main?</p>
+                <button type="button" class="btn-submit btn-compact">Back to Main</button>
+            </div>
+        `;
+        const btn = msgDiv.querySelector('button');
+        btn.addEventListener('click', showBotLanding);
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    const allowedMime = [
+        'image/jpeg',
+        'image/jpg',
+        'image/pjpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'application/pdf',
+        'application/x-pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/msword'
+    ];
+    const allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'docx', 'doc'];
+
+    function isSupportedFile(file) {
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (allowedExt.includes(ext)) return true;
+        if (!file.type) return false;
+        if (file.type.startsWith('image/')) return true;
+        if (allowedMime.includes(file.type)) return true;
+        if (file.type.includes('pdf')) return true;
+        if (file.type.includes('word')) return true;
+        return false;
+    }
+
+    function updateAttachmentPreview() {
+        if (!chatAttachment || !chatAttachPreview) return;
+        const allFiles = Array.from(chatAttachment.files || []);
+        if (allFiles.length === 0) {
+            chatAttachPreview.style.display = 'none';
+            chatAttachPreview.innerHTML = '';
+            return;
+        }
+
+        const valid = [];
+        const invalid = [];
+        allFiles.forEach(file => {
+            if (isSupportedFile(file)) valid.push(file); else invalid.push(file.name);
+        });
+
+        if (invalid.length > 0) {
+            chatAttachPreview.style.display = 'block';
+            chatAttachPreview.innerHTML = `<span style="display:inline-block;margin-right:6px;font-size:12px;color:#ef4444;">Unsupported file(s): ${invalid.join(', ')}</span>`;
+        } else {
+            chatAttachPreview.style.display = 'block';
+            chatAttachPreview.innerHTML = valid.map(f => `<span style="display:inline-block;margin-right:6px;font-size:12px;color:#6b7280;">${f.name}</span>`).join('');
+        }
+
+        if (invalid.length > 0) {
+            const dt = new DataTransfer();
+            valid.forEach(f => dt.items.add(f));
+            chatAttachment.files = dt.files;
+        }
+    }
+
+    if (chatAttachBtn && chatAttachment) {
+        chatAttachBtn.addEventListener('click', () => {
+            chatAttachment.click();
+        });
+        chatAttachment.addEventListener('change', updateAttachmentPreview);
     }
     
     // Agent form submit
@@ -393,6 +549,7 @@
                 addMessage('user', name, message);
                 addMessage('agent', 'Agent', 'Thanks for contacting us! An agent will respond shortly.');
                 startAgentFormEl.reset();
+                startPolling();
             }
         } catch (err) {
             console.error('Chat error:', err);
@@ -410,7 +567,8 @@
     
     async function sendAgentMessage() {
         const message = chatInput.value.trim();
-        if (!message || !threadId) return;
+        const files = Array.from(chatAttachment?.files || []);
+        if ((!message && files.length === 0) || !threadId) return;
         
         try {
             const formData = new FormData();
@@ -418,6 +576,10 @@
             formData.append('thread_id', threadId);
             formData.append('message', message);
             
+            if (files.length > 0) {
+                files.forEach(file => formData.append('attachments[]', file));
+            }
+
             const resp = await fetch('<?= app_url('chatbox.php') ?>', {
                 method: 'POST',
                 body: formData
@@ -428,6 +590,8 @@
                 addMessage('user', 'You', message);
                 chatInput.value = '';
                 chatInput.style.height = 'auto';
+                if (chatAttachment) chatAttachment.value = '';
+                updateAttachmentPreview();
             }
         } catch (err) {
             console.error('Send error:', err);
@@ -442,14 +606,41 @@
             const data = await resp.json();
             
             if (data.status === 'ok' && data.messages) {
+                if (data.thread_status && data.thread_status === 'closed') {
+                    clearThreadId();
+                    saveChatMode('bot');
+                    stopPolling();
+                    chatFooter.style.display = 'none';
+                    chatMessages.style.display = 'flex';
+                    chatMessages.innerHTML = '';
+                    addMessage('bot', 'Bot', 'This conversation has been closed by our support team. You can start a new chat anytime.');
+                    addBackToMainButton();
+                    return;
+                }
+
                 chatMessages.innerHTML = '';
                 data.messages.forEach(msg => {
-                    const type = msg.is_from_staff ? 'agent' : 'user';
+                    const isStaff = msg.is_from_staff === 1 || msg.is_from_staff === '1' || msg.is_from_staff === true;
+                    const type = isStaff ? 'agent' : 'user';
                     addMessage(type, msg.sender_name, msg.message);
                 });
             }
         } catch (err) {
             console.error('Load messages error:', err);
+        }
+    }
+
+    function startPolling() {
+        if (pollTimer) return;
+        pollTimer = setInterval(() => {
+            if (threadId) loadMessages();
+        }, 4000);
+    }
+
+    function stopPolling() {
+        if (pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
         }
     }
     
@@ -459,6 +650,19 @@
         chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
     });
     
+    // Restore previous state on load
+    loadThreadId();
+    loadChatMode();
+    if (threadId) {
+        if (chatMode !== 'agent') saveChatMode('agent');
+        showAgentChat();
+        loadMessages();
+        startPolling();
+    }
+    if (wasChatOpen()) {
+        chatPanel.classList.add('show');
+    }
+
     // Global function for bot button
     window.hqChatShowAgentForm = showAgentForm;
 })();

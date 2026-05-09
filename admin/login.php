@@ -3,6 +3,7 @@ session_start();
 require './includes/db.php';
 require './includes/functions.php';
 require './includes/csrf.php';
+require './includes/auth.php';
 
 $recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/config/recaptcha.php' : (file_exists(__DIR__ . '/../config/recaptcha.php') ? require __DIR__ . '/../config/recaptcha.php' : ['site_key'=>'','secret'=>'']);
 
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($maxAttempts < 1) $maxAttempts = 5;
             } catch (Throwable $e) { }
 
-            $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+            $ip = function_exists('hqAdminClientIp') ? hqAdminClientIp() : ($_SERVER['REMOTE_ADDR'] ?? '');
             try {
                 if (!empty($ip)) {
                     $stmtLA = $pdo->prepare('SELECT attempts, last_attempt FROM login_attempts WHERE ip = ? LIMIT 1');
@@ -63,6 +64,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'role_slug' => $user['role_slug'],
                         'role_name' => $user['role_name']
                     ];
+
+                    $tourState = ['pending' => true, 'completed_at' => null];
+                    if (function_exists('getUserOnboardingTourState')) {
+                        $tourState = getUserOnboardingTourState($pdo, (int)$user['id']);
+                    }
+
+                    $_SESSION['onboarding_tour'] = [
+                        'pending' => (bool)($tourState['pending'] ?? true),
+                        'completed_at' => $tourState['completed_at'] ?? null,
+                        'show_after_signup' => !empty($_SESSION['post_signup_tour_trigger']),
+                    ];
+
+                    unset($_SESSION['post_signup_tour_trigger']);
+                    if (!empty($ip)) {
+                        $_SESSION['user_ip'] = $ip;
+                    }
+
                     try {
                         $stmtDel = $pdo->prepare('DELETE FROM login_attempts WHERE ip = ? OR email = ?');
                         $stmtDel->execute([$ip, $email]);
@@ -101,6 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/auth.css">
+    <link rel="stylesheet" href="./assets/css/admin-minimal.css">
+    <script src="./assets/js/device-capability.js"></script>
 </head>
 <body class="auth-page">
     <div class="auth-container">

@@ -24,6 +24,7 @@ try {
 }
 ?>
 <div class="modal-content-inner">
+  <span class="modal-close" onclick="closeEditModal()"><i class='bx bx-x'></i></span>
   <h3>Edit Post: <?= htmlspecialchars($post['title']) ?></h3>
   <form id="ajaxEditPostForm" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
@@ -43,6 +44,9 @@ try {
     <div class="form-row">
       <label>Content</label>
       <textarea name="content" rows="6"><?= htmlspecialchars($post['content']) ?></textarea>
+      <div class="muted" style="margin-top:8px;font-size:12px;color:#64748b;">
+        Embed images with <code>![Alt text](https://example.com/image.jpg)</code> or paste an image URL on its own line.
+      </div>
     </div>
     <div class="form-row">
       <label>Tags</label>

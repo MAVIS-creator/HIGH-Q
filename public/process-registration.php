@@ -15,7 +15,7 @@ if (!verifyToken('registration_wizard', $csrf)) {
     $errors[] = 'Invalid session token. Please refresh and try again.';
 }
 
-$validTypes = ['jamb','waec','postutme','digital','international'];
+$validTypes = ['jamb', 'waec', 'postutme', 'digital', 'international'];
 if (!in_array($programType, $validTypes, true)) {
     $errors[] = 'Invalid program type.';
 }
@@ -25,7 +25,9 @@ $siteSettings = [];
 try {
     $stmt = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
     $siteSettings = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-} catch (Throwable $e) { $siteSettings = []; }
+} catch (Throwable $e) {
+    $siteSettings = [];
+}
 $registrationEnabled = true;
 if (!empty($siteSettings)) {
     if (isset($siteSettings['registration'])) $registrationEnabled = (bool)$siteSettings['registration'];
@@ -46,6 +48,39 @@ if ($first === '') $errors[] = 'First name is required.';
 if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required.';
 if ($phone === '') $errors[] = 'Phone number is required.';
 
+if ($programType === 'waec') {
+    $examType = trim((string)($_POST['exam_type'] ?? ''));
+    $validExamTypes = ['WAEC', 'WAEC GCE', 'NECO', 'NECO GCE'];
+    if (!in_array($examType, $validExamTypes, true)) {
+        $errors[] = 'Please select a valid exam type for WAEC/NECO/GCE registration.';
+    }
+
+    $subjects = $_POST['subjects'] ?? [];
+    if (!is_array($subjects)) {
+        $subjects = [];
+    }
+
+    $subjects = array_values(array_unique(array_filter(array_map('trim', $subjects), static function ($s) {
+        return $s !== '';
+    })));
+
+    if ($examType === 'WAEC' || $examType === 'WAEC GCE') {
+        if (count($subjects) < 7 || count($subjects) > 9) {
+            $errors[] = $examType . ' requires a minimum of 7 subjects and a maximum of 9 subjects.';
+        }
+
+        if (!in_array('English Language', $subjects, true) || !in_array('General Mathematics', $subjects, true)) {
+            $errors[] = $examType . ' requires English Language and General Mathematics.';
+        }
+    }
+
+    if ($examType === 'NECO' || $examType === 'NECO GCE') {
+        if (count($subjects) < 6 || count($subjects) > 9) {
+            $errors[] = $examType . ' requires a minimum of 6 subjects and a maximum of 9 subjects.';
+        }
+    }
+}
+
 // Amount map (fallback if no course price pulled)
 $basePrices = [
     'jamb' => 10000,
@@ -60,11 +95,11 @@ $cardFee = 1500;
 // Attempt to use courses table price when available
 try {
     $slugMap = [
-        'jamb' => 'jamb-post-utme',
-        'waec' => 'professional-services',
-        'postutme' => 'jamb-post-utme',
+        'jamb' => 'jamb',
+        'waec' => 'waec',
+        'postutme' => 'post-utme',
         'digital' => 'digital-skills',
-        'international' => null,
+        'international' => 'international-programs',
     ];
     $slug = $slugMap[$programType] ?? null;
     if ($slug) {
@@ -75,7 +110,8 @@ try {
             $basePrices[$programType] = (float)$p['price'];
         }
     }
-} catch (Throwable $e) { /* ignore price lookup */ }
+} catch (Throwable $e) { /* ignore price lookup */
+}
 
 $amount = $basePrices[$programType] + $formFee + $cardFee;
 
@@ -89,7 +125,34 @@ if (!empty($errors)) {
 $payload = $_POST;
 unset($payload['_csrf_token']);
 
-$reference = 'REG-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
+// Handle Passport Photo Upload
+if (!empty($_FILES['passport_photo']['tmp_name'])) {
+    $uploadDir = __DIR__ . '/uploads/passports/';
+    if (!is_dir($uploadDir)) @mkdir($uploadDir, 0755, true);
+    
+    $fileInfo = pathinfo($_FILES['passport_photo']['name']);
+    $ext = strtolower($fileInfo['extension']);
+    
+    // Quick validation (same as frontend)
+    if (in_array($ext, ['jpg', 'jpeg', 'png']) && $_FILES['passport_photo']['size'] <= 2097152) {
+        $filename = 'passport_' . $programType . '_' . uniqid() . '.' . $ext;
+        if (move_uploaded_file($_FILES['passport_photo']['tmp_name'], $uploadDir . $filename)) {
+            $payload['passport_photo'] = 'uploads/passports/' . $filename;
+        }
+    }
+}
+
+require_once __DIR__ . '/config/payment_references.php';
+// Use program-type-specific reference prefixes
+$prefixMap = [
+    'jamb' => 'JAMB',
+    'waec' => 'WAEC',
+    'postutme' => 'PUTM',
+    'digital' => 'DIGI',
+    'international' => 'INTL',
+];
+$prefix = $prefixMap[$programType] ?? 'REG';
+$reference = generatePaymentReference($prefix);
 
 try {
     $stmt = $pdo->prepare('INSERT INTO universal_registrations (program_type, first_name, last_name, email, phone, status, payment_reference, payment_status, amount, payment_method, payload, created_at) VALUES (?, ?, ?, ?, ?, "pending", ?, "pending", ?, "online", ?, NOW())');
@@ -104,6 +167,23 @@ try {
         json_encode($payload, JSON_UNESCAPED_UNICODE),
     ]);
     $regId = (int)$pdo->lastInsertId();
+    
+    // Send notification to all admins about new registration
+    try {
+        notifyAdminChange($pdo, 'New Registration Submitted', [
+            'Registration ID' => $regId,
+            'Program Type' => ucfirst(str_replace('-', ' ', $programType)),
+            'Student Name' => trim($first . ' ' . $last),
+            'Email' => $email,
+            'Phone' => $phone,
+            'Amount' => '₦' . number_format($amount, 2),
+            'Payment Reference' => $reference,
+            'Status' => 'Pending Admin Review'
+        ], null, admin_url('index.php?pages=academic'));
+    } catch (Throwable $e) {
+        // Don't block registration if notification fails
+        error_log('Registration notification error: ' . $e->getMessage());
+    }
 } catch (Throwable $e) {
     $_SESSION['registration_errors'] = ['Unable to save your registration. Please try again.'];
     header('Location: register-new.php?step=2&type=' . urlencode($programType));

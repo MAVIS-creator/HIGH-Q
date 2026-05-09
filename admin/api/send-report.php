@@ -92,11 +92,7 @@ try {
         // Prepare attachment
         $attachments = [];
         if ($pdfPath && file_exists($pdfPath)) {
-            $attachments[] = [
-                'path' => $pdfPath,
-                'name' => $pdfFilename,
-                'type' => 'application/pdf'
-            ];
+            $attachments[] = $pdfPath;
         }
         
         $sent = sendEmail(
@@ -111,7 +107,7 @@ try {
             $response['message'] = 'Report generated and sent successfully';
             
             // Log the action
-            logAction($pdo, $_SESSION['user_id'] ?? 0, 'security_report_sent', [
+            logAction($pdo, (int)($_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0), 'security_report_sent', [
                 'scan_type' => $scanType,
                 'recipient' => $recipientEmail,
                 'pdf_attached' => !empty($pdfPath),
@@ -120,6 +116,21 @@ try {
                     'warnings' => count($scanData['report']['warnings'] ?? []),
                 ]
             ]);
+
+            try {
+                sendAdminChangeNotification(
+                    $pdo,
+                    'Security Report Sent',
+                    [
+                        'Scan Type' => $scanType,
+                        'Recipient' => $recipientEmail,
+                        'PDF Attached' => !empty($pdfPath) ? 'Yes' : 'No',
+                        'Critical Findings' => count($scanData['report']['critical'] ?? []),
+                        'Warnings' => count($scanData['report']['warnings'] ?? [])
+                    ],
+                    (int)($_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0)
+                );
+            } catch (Throwable $_) {}
         } else {
             $response['sent'] = false;
             $response['message'] = 'Report generated but email could not be sent';
@@ -143,8 +154,8 @@ try {
     
     echo json_encode($response);
     
-} catch (Exception $e) {
-    http_response_code(400);
+} catch (Throwable $e) {
+    http_response_code(500);
     echo json_encode([
         'status' => 'error',
         'message' => $e->getMessage()

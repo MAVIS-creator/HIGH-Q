@@ -3,6 +3,7 @@
 // Verify Google Authenticator code and enable 2FA
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Sonata\GoogleAuthenticator\GoogleAuthenticator;
@@ -46,6 +47,20 @@ try {
 
     $_SESSION['user']['google2fa_enabled'] = true;
     unset($_SESSION['google2fa_temp_secret']);
+
+    if (function_exists('sendAdminChangeNotification')) {
+        try {
+            sendAdminChangeNotification(
+                $pdo,
+                'Google Authenticator Enabled',
+                [
+                    'User ID' => $userId,
+                    'Action' => '2FA enabled'
+                ],
+                $userId
+            );
+        } catch (Throwable $_) {}
+    }
 
     echo json_encode(['success' => true, 'message' => 'Google Authenticator enabled']);
 } catch (PDOException $e) {

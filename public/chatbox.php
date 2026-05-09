@@ -111,6 +111,22 @@ if ($action === 'send_message' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $u = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id=:id');
         $u->execute([':id' => $thread_id]);
 
+        // Send admin notification about visitor message
+        try {
+            require_once __DIR__ . '/config/functions.php';
+            notifyAdminChange($pdo, 'New Chat Message from Visitor', [
+                'Thread ID' => $thread_id,
+                'Visitor Name' => $name ?: 'Guest',
+                'Visitor Email' => $email ?: 'N/A',
+                'Message Preview' => substr(strip_tags($message), 0, 100) . (strlen(strip_tags($message)) > 100 ? '...' : ''),
+                'Has Attachments' => !empty($savedAttachUrls) ? 'Yes (' . count($savedAttachUrls) . ')' : 'No',
+                'Status' => 'Awaiting Admin Response'
+            ], null, admin_url('index.php?pages=chat'));
+        } catch (Throwable $e) {
+            // Don't block chat if notification fails
+            error_log('Chat notification error: ' . $e->getMessage());
+        }
+
         jsonResponse(['status' => 'ok', 'thread_id' => $thread_id, 'attachments' => $savedAttachUrls, 'attachments_table' => $attachmentsTableExists]);
     } catch (Throwable $e) {
         jsonResponse(['status' => 'error', 'message' => $e->getMessage()]);
@@ -377,6 +393,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             border-top: 2px solid #e8e8e8;
             background: #fafafa;
             animation: fadeIn 0.3s ease-in;
+            position: relative;
+            flex-wrap: wrap;
         }
 
         .chat-footer input[type=text],
@@ -429,7 +447,7 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             bottom: 100%;
             left: 12px;
             right: 12px;
-            display: flex;
+            display: none;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 8px;
@@ -437,6 +455,11 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             padding: 8px;
             border-radius: 8px;
             box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .attachment-preview:not(:empty) {
+            display: flex;
         }
 
         .attachment-preview img {
@@ -444,6 +467,36 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
             height: 60px;
             object-fit: cover;
             border-radius: 6px;
+        }
+
+        .attachment-preview .file-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .attachment-preview .file-item i {
+            font-size: 16px;
+            color: var(--hq-yellow-dark);
+        }
+
+        .attachment-preview .remove-file {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 14px;
+            padding: 2px;
+            margin-left: 4px;
+        }
+
+        .attachment-preview .remove-file:hover {
+            color: #d63031;
         }
 
         .chat-alert {
@@ -569,8 +622,53 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 } catch(e) {}
             });
 
-            // Landing logic: show choices first
-            function showLanding() {
+            // Initialize chat - auto-resume if there's an active thread
+            async function initChat() {
+                const tid = getThreadId();
+                
+                if (!tid) {
+                    // No previous thread, show landing
+                    showLanding(false);
+                    return;
+                }
+                
+                // Check if thread is still active
+                try {
+                    const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
+                    const j = await res.json();
+                    
+                    if (j.status === 'ok') {
+                        // Check if thread is closed
+                        if (j.thread_status === 'closed') {
+                            // Thread is closed, show landing with option to start new
+                            showLanding(true, true); // hasHistory=true, isClosed=true
+                        } else {
+                            // Thread is open, auto-resume!
+                            autoResumeChat();
+                        }
+                    } else {
+                        // Thread not found, clear and show landing
+                        clearThreadId();
+                        showLanding(false);
+                    }
+                } catch (e) {
+                    console.error('initChat error:', e);
+                    showLanding(!!tid);
+                }
+            }
+            
+            // Auto-resume an existing active chat
+            function autoResumeChat() {
+                landingEl.style.display = 'none';
+                chatStartEl.style.display = 'none';
+                chatDiv.style.display = 'flex';
+                chatFooterEl.style.display = 'flex';
+                newChatBtn.style.display = 'inline-block';
+                getMessages();
+            }
+
+            // Landing logic: show choices
+            function showLanding(hasHistory = false, isClosed = false) {
                 if (!landingEl) return;
                 landingEl.style.display = 'flex';
                 chatStartEl.style.display = 'none';
@@ -578,15 +676,21 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 chatFooterEl.style.display = 'none';
                 newChatBtn.style.display = 'none';
 
-                const tid = getThreadId();
-                if (tid) {
+                if (hasHistory && !isClosed) {
                     resumeChatBtn.disabled = false;
-                    resumeChatBtn.title = 'Resume chat #' + tid;
-                    landingHint.textContent = 'You have an existing chat. Resume or start a new one.';
+                    resumeChatBtn.style.display = 'inline-block';
+                    resumeChatBtn.title = 'Resume your conversation';
+                    landingHint.textContent = 'You have an ongoing chat. Resume or start a new one.';
+                } else if (hasHistory && isClosed) {
+                    resumeChatBtn.disabled = true;
+                    resumeChatBtn.style.display = 'none';
+                    landingHint.innerHTML = '<i class="bx bx-check-circle" style="color:#22c55e"></i> Your previous chat was closed. Start a new conversation below.';
+                    // Clear the closed thread so next time they start fresh
+                    clearThreadId();
                 } else {
                     resumeChatBtn.disabled = true;
-                    resumeChatBtn.title = 'No previous chat';
-                    landingHint.textContent = 'Start a new chat to begin.';
+                    resumeChatBtn.style.display = 'none';
+                    landingHint.textContent = 'Start a new chat to get support.';
                 }
             }
 
@@ -700,19 +804,58 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
                         reader.onload = e => {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'file-item';
+                            wrapper.dataset.filename = file.name;
+                            
                             const img = document.createElement('img');
                             img.src = e.target.result;
-                            attachmentPreview.appendChild(img);
+                            img.style.width = '50px';
+                            img.style.height = '50px';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '4px';
+                            wrapper.appendChild(img);
+                            
+                            const nameSpan = document.createElement('span');
+                            nameSpan.textContent = file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name;
+                            wrapper.appendChild(nameSpan);
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-file';
+                            removeBtn.innerHTML = '<i class="bx bx-x"></i>';
+                            removeBtn.title = 'Remove';
+                            removeBtn.onclick = function() {
+                                wrapper.remove();
+                            };
+                            wrapper.appendChild(removeBtn);
+                            
+                            attachmentPreview.appendChild(wrapper);
                         };
                         reader.readAsDataURL(file);
                     } else {
-                        const div = document.createElement('div');
-                        div.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
-                        div.style.padding = '6px 8px';
-                        div.style.borderRadius = '6px';
-                        div.style.background = '#fff';
-                        div.style.fontSize = '12px';
-                        attachmentPreview.appendChild(div);
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'file-item';
+                        wrapper.dataset.filename = file.name;
+                        
+                        const icon = document.createElement('i');
+                        icon.className = file.type.includes('pdf') ? 'bx bxs-file-pdf' : 'bx bxs-file-doc';
+                        wrapper.appendChild(icon);
+                        
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+                        nameSpan.title = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                        wrapper.appendChild(nameSpan);
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-file';
+                        removeBtn.innerHTML = '<i class="bx bx-x"></i>';
+                        removeBtn.title = 'Remove';
+                        removeBtn.onclick = function() {
+                            wrapper.remove();
+                        };
+                        wrapper.appendChild(removeBtn);
+                        
+                        attachmentPreview.appendChild(wrapper);
                     }
                 }
             });
@@ -828,8 +971,8 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                 }
             });
 
-            // Show landing first; user can resume or start new
-            showLanding();
+            // Initialize chat - auto-resume active threads, show landing for new/closed
+            initChat();
 
             async function getMessages() {
                 const tid = getThreadId();
@@ -839,19 +982,37 @@ if ($action === 'get_messages' && isset($_GET['thread_id'])) {
                     const res = await fetch('?action=get_messages&thread_id=' + encodeURIComponent(tid));
                     const j = await res.json();
                     
+                    console.log('getMessages response:', j); // Debug
+                    
                     if (j.status !== 'ok') return;
                     
                     chatDiv.innerHTML = '';
                     j.messages.forEach(m => {
-                        appendMessage(m.sender_name, m.message, m.is_from_staff == 1, false, (m.attachments || []));
+                        // Handle is_from_staff as string "1" or integer 1
+                        const isStaff = m.is_from_staff === 1 || m.is_from_staff === '1' || m.is_from_staff === true;
+                        console.log('Message:', m.sender_name, 'isStaff:', isStaff, 'raw is_from_staff:', m.is_from_staff); // Debug
+                        appendMessage(m.sender_name, m.message, isStaff, false, (m.attachments || []));
                     });
                     
-                    // If thread is closed, disable inputs
+                    // If thread is closed, disable inputs and show option to start new
                     if (j.thread_status && j.thread_status === 'closed') {
                         chatFooterEl.style.display = 'none';
-                        appendMessage('', '<i class="bx bx-check-circle"></i> This conversation has been closed. Thank you for contacting us!', false, true);
+                        appendMessage('', '<i class="bx bx-check-circle" style="color:#22c55e"></i> This conversation has been closed by our support team. Thank you for contacting us!', false, true);
+                        
+                        // Clear thread so next refresh shows landing
+                        clearThreadId();
+                        
+                        // Show the NEW CHAT button prominently
+                        newChatBtn.style.display = 'inline-block';
+                        newChatBtn.textContent = '+ Start New Chat';
+                        newChatBtn.style.textDecoration = 'none';
+                        newChatBtn.style.background = 'var(--hq-dark)';
+                        newChatBtn.style.color = 'var(--hq-yellow)';
+                        newChatBtn.style.padding = '6px 12px';
+                        newChatBtn.style.borderRadius = '6px';
                     }
                 } catch (e) {
+                    console.error('getMessages error:', e);
                     console.error(e);
                 }
             }

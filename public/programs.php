@@ -199,7 +199,7 @@ $programs = [
 
 			<div class="stat">
 				<i class="bx bx-calendar"></i>
-				<strong>6+</strong>
+				<strong>9+</strong>
 				<span>Years of Excellence</span>
 			</div>
 		</div>

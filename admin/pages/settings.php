@@ -507,6 +507,22 @@ $csrf = generateToken('settings_form');
         <div class="alert <?= $flash['type'] === 'error' ? 'alert-error' : 'alert-success' ?>"><?= htmlspecialchars($flash['message']) ?></div>
     <?php endif; ?>
 
+    <div class="admin-card" style="margin-bottom:16px;">
+        <div class="admin-card-header">
+            <h3 class="admin-card-title"><i class='bx bx-bot'></i> AI Assistant Runtime</h3>
+        </div>
+        <div class="admin-card-body" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+                <div style="font-weight:600;">Provider &amp; Model Configuration</div>
+                <div class="text-muted" style="margin-top:4px;">Manage AI provider mode and model override used by the admin assistant.</div>
+            </div>
+            <a href="index.php?pages=ai_provider" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                <i class='bx bx-slider-alt'></i>
+                <span>Open AI Provider Settings</span>
+            </a>
+        </div>
+    </div>
+
     <form id="settingsForm" method="post">
         <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
         <div class="settings-tabs">
@@ -755,8 +771,20 @@ $csrf = generateToken('settings_form');
         </div>
     </form>
 
-    <script src="../assets/js/settings.js"></script>
-    <script src="../assets/js/admin-security.js"></script>
+    <?php
+    // Compute admin base path for script includes (matches header.php logic)
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    $parts = explode('/', trim($script, '/'));
+    $idx = array_search('admin', $parts, true);
+    if ($idx !== false) {
+        $adminBaseForScripts = '/' . implode('/', array_slice($parts, 0, $idx + 1));
+    } else {
+        $adminBaseForScripts = rtrim(dirname($script), '/');
+        if ($adminBaseForScripts === '') $adminBaseForScripts = '/admin';
+    }
+    ?>
+    <script src="<?= htmlspecialchars($adminBaseForScripts) ?>/assets/js/settings.js"></script>
+    <script src="<?= htmlspecialchars($adminBaseForScripts) ?>/assets/js/admin-security.js"></script>
 
 <?php
 require_once __DIR__ . '/../includes/footer.php';

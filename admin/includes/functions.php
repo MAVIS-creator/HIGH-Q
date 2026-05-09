@@ -26,9 +26,23 @@ try {
 /**
  * Log actions into audit_logs
  */
-function logAction(PDO $pdo, int $user_id, string $action, array $meta = []): void {
+function logAction(PDO $pdo, ?int $user_id, string $action, array $meta = []): void {
+    $resolvedUserId = null;
+
+    if (!empty($user_id) && $user_id > 0) {
+        try {
+            $check = $pdo->prepare('SELECT 1 FROM users WHERE id = ? LIMIT 1');
+            $check->execute([$user_id]);
+            if ($check->fetchColumn()) {
+                $resolvedUserId = $user_id;
+            }
+        } catch (Throwable $e) {
+            $resolvedUserId = null;
+        }
+    }
+
     $stmt = $pdo->prepare("INSERT INTO audit_logs (user_id, action, meta, created_at) VALUES (?, ?, ?, NOW())");
-    $stmt->execute([$user_id, $action, json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)]);
+    $stmt->execute([$resolvedUserId, $action, json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)]);
 }
 
 /**
@@ -95,6 +109,271 @@ function sendEmail(string $to, string $subject, string $html, array $attachments
         try { @file_put_contents(__DIR__ . '/../../storage/logs/students_confirm_errors.log', "[" . date('c') . "] Mailer Exception: " . ($mail->ErrorInfo ?? $e->getMessage()) . "\n", FILE_APPEND | LOCK_EX); } catch (Throwable $_) {}
         error_log("Mailer Error: " . ($mail->ErrorInfo ?? $e->getMessage()));
         return false;
+    }
+}
+
+/**
+ * Check if system email notifications are enabled in settings.
+ */
+function hqAdminEmailNotificationsEnabled(PDO $pdo): bool {
+    try {
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+        $stmt->execute(['system_settings']);
+        $raw = $stmt->fetchColumn();
+        if (!$raw) {
+            return true;
+        }
+
+        $settings = json_decode((string)$raw, true);
+        if (!is_array($settings)) {
+            return true;
+        }
+
+        if (isset($settings['notifications']) && is_array($settings['notifications']) && array_key_exists('email', $settings['notifications'])) {
+            return (bool)$settings['notifications']['email'];
+        }
+
+        return true;
+    } catch (Throwable $e) {
+        return true;
+    }
+}
+
+/**
+ * Normalize admin menu/page slugs used for permission-scoped notifications.
+ */
+function hqNormalizeNotificationMenuSlug(?string $slug): ?string {
+    $slug = trim((string)$slug);
+    if ($slug === '') {
+        return null;
+    }
+
+    $slug = strtolower($slug);
+    $map = [
+        'payment' => 'payments',
+        'payments' => 'payments',
+        'registration' => 'academic',
+        'registrations' => 'academic',
+        'student' => 'academic',
+        'students' => 'academic',
+        'academic' => 'academic',
+        'appointment' => 'appointments',
+        'appointments' => 'appointments',
+        'chat' => 'chat',
+        'chat_view' => 'chat',
+        'comment' => 'comments',
+        'comments' => 'comments',
+        'course' => 'courses',
+        'courses' => 'courses',
+        'post' => 'post',
+        'posts' => 'post',
+        'testimonial' => 'testimonials',
+        'testimonials' => 'testimonials',
+        'user' => 'users',
+        'users' => 'users',
+        'role' => 'roles',
+        'roles' => 'roles',
+        'setting' => 'settings',
+        'settings' => 'settings',
+        'dashboard' => 'dashboard',
+        'support' => 'chat',
+    ];
+
+    return $map[$slug] ?? $slug;
+}
+
+/**
+ * Infer the admin menu slug a notification targets from a link or current request context.
+ */
+function hqNotificationTargetMenuSlug(?string $linkUrl = null): ?string {
+    if (!empty($linkUrl)) {
+        $query = parse_url($linkUrl, PHP_URL_QUERY);
+        if (is_string($query)) {
+            parse_str($query, $queryParts);
+            if (!empty($queryParts['pages'])) {
+                return hqNormalizeNotificationMenuSlug((string)$queryParts['pages']);
+            }
+        }
+
+        $path = parse_url($linkUrl, PHP_URL_PATH);
+        if (is_string($path) && $path !== '') {
+            $basename = pathinfo($path, PATHINFO_FILENAME);
+            $normalized = hqNormalizeNotificationMenuSlug($basename);
+            if ($normalized !== null) {
+                return $normalized;
+            }
+        }
+    }
+
+    if (!empty($_GET['pages'])) {
+        return hqNormalizeNotificationMenuSlug((string)$_GET['pages']);
+    }
+
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    if (is_string($scriptName) && $scriptName !== '') {
+        $basename = pathinfo($scriptName, PATHINFO_FILENAME);
+        return hqNormalizeNotificationMenuSlug($basename);
+    }
+
+    return null;
+}
+
+/**
+ * Collect recipient emails for operational notifications based on the admin page they can access.
+ */
+function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null, ?string $targetMenuSlug = null): array {
+    $emails = [];
+    $targetMenuSlug = hqNormalizeNotificationMenuSlug($targetMenuSlug);
+    $allowedSlugs = [];
+
+    if ($targetMenuSlug !== null) {
+        $allowedSlugs[] = $targetMenuSlug;
+        if ($targetMenuSlug === 'payments') {
+            $allowedSlugs[] = 'create_payment_link';
+        } elseif ($targetMenuSlug === 'create_payment_link') {
+            $allowedSlugs[] = 'payments';
+        }
+    }
+
+    try {
+        $sql = "SELECT DISTINCT u.email
+                FROM users u
+                LEFT JOIN roles r ON r.id = u.role_id
+                LEFT JOIN role_permissions rp ON rp.role_id = u.role_id
+                WHERE u.email IS NOT NULL
+                  AND u.email <> ''
+                  AND COALESCE(u.is_active, 1) = 1";
+        $params = [];
+
+        if (!empty($allowedSlugs)) {
+            $placeholders = implode(',', array_fill(0, count($allowedSlugs), '?'));
+            $sql .= " AND rp.menu_slug IN ($placeholders)";
+            $params = $allowedSlugs;
+        } else {
+            $sql .= " AND (
+                        LOWER(COALESCE(r.slug, '')) = 'admin'
+                     OR LOWER(COALESCE(r.name, '')) = 'admin'
+                     OR rp.menu_slug = 'settings'
+                  )";
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($rows as $email) {
+            $email = trim((string)$email);
+            if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $emails[] = strtolower($email);
+            }
+        }
+    } catch (Throwable $e) {
+    }
+
+    if ($actorUserId && $actorUserId > 0) {
+        try {
+            $stmt = $pdo->prepare("SELECT email FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$actorUserId]);
+            $actorEmail = trim((string)$stmt->fetchColumn());
+            if ($actorEmail !== '' && filter_var($actorEmail, FILTER_VALIDATE_EMAIL)) {
+                $emails[] = strtolower($actorEmail);
+            }
+        } catch (Throwable $e) {
+        }
+    }
+
+    if (!empty($_SESSION['user']['email'])) {
+        $sessionEmail = trim((string)$_SESSION['user']['email']);
+        if (filter_var($sessionEmail, FILTER_VALIDATE_EMAIL)) {
+            $emails[] = strtolower($sessionEmail);
+        }
+    }
+
+    return array_values(array_unique($emails));
+}
+
+/**
+ * Send a styled notification email for important admin updates.
+ */
+function sendAdminChangeNotification(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null, ?string $linkUrl = null): bool {
+    if (!hqAdminEmailNotificationsEnabled($pdo)) {
+        return false;
+    }
+
+    $targetMenuSlug = hqNotificationTargetMenuSlug($linkUrl);
+    $recipients = hqAdminNotificationRecipients($pdo, $actorUserId, $targetMenuSlug);
+    if (empty($recipients)) {
+        return false;
+    }
+
+    $subject = 'HIGH-Q Admin Update: ' . $title;
+    $actorName = trim((string)($_SESSION['user']['name'] ?? 'System'));
+    $actorEmail = trim((string)($_SESSION['user']['email'] ?? 'N/A'));
+    $occurredAt = date('Y-m-d H:i:s');
+
+    $rowsHtml = '';
+    foreach ($details as $k => $v) {
+        $label = htmlspecialchars((string)$k, ENT_QUOTES, 'UTF-8');
+        if (is_array($v) || is_object($v)) {
+            $value = json_encode($v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } else {
+            $value = (string)$v;
+        }
+        $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        $rowsHtml .= "<tr><td style='padding:10px;border-bottom:1px solid #eef2f7;font-weight:600;color:#1f2937'>{$label}</td><td style='padding:10px;border-bottom:1px solid #eef2f7;color:#374151'>{$value}</td></tr>";
+    }
+
+    $panelUrl = htmlspecialchars($linkUrl ?? admin_url('index.php?pages=dashboard'), ENT_QUOTES, 'UTF-8');
+    $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+    $safeActorName = htmlspecialchars($actorName, ENT_QUOTES, 'UTF-8');
+    $safeActorEmail = htmlspecialchars($actorEmail, ENT_QUOTES, 'UTF-8');
+    $safeOccurredAt = htmlspecialchars($occurredAt, ENT_QUOTES, 'UTF-8');
+
+    $html = "
+    <div style='margin:0;padding:24px;background:#f4f6fb;font-family:Segoe UI,Arial,sans-serif;color:#111827'>
+      <div style='max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden'>
+        <div style='background:linear-gradient(135deg,#111827,#1f2937);padding:20px 24px'>
+          <h2 style='margin:0;font-size:20px;color:#ffffff'>Admin Update Notification</h2>
+          <p style='margin:6px 0 0;color:#d1d5db;font-size:13px'>HIGH-Q System Alert</p>
+        </div>
+        <div style='padding:20px 24px'>
+          <p style='margin:0 0 14px;font-size:15px;color:#111827'><strong>Event:</strong> {$safeTitle}</p>
+          <div style='margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px'>
+            <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Triggered By:</strong> {$safeActorName}</p>
+            <p style='margin:0 0 4px;font-size:13px;color:#9a3412'><strong>Actor Email:</strong> {$safeActorEmail}</p>
+            <p style='margin:0;font-size:13px;color:#9a3412'><strong>Time:</strong> {$safeOccurredAt}</p>
+          </div>
+          <table style='width:100%;border-collapse:collapse;border:1px solid #eef2f7;border-radius:10px;overflow:hidden'>
+            <tbody>
+              {$rowsHtml}
+            </tbody>
+          </table>
+          <div style='margin-top:20px'>
+            <a href='{$panelUrl}' style='display:inline-block;padding:10px 16px;background:#ffd600;color:#111827;text-decoration:none;border-radius:8px;font-weight:700'>Open Admin Panel</a>
+          </div>
+        </div>
+      </div>
+    </div>";
+
+    $sentAny = false;
+    foreach ($recipients as $email) {
+        try {
+            if (sendEmail($email, $subject, $html)) {
+                $sentAny = true;
+            }
+        } catch (Throwable $e) {
+        }
+    }
+
+    return $sentAny;
+}
+
+/**
+ * Fire-and-forget wrapper for admin change notifications.
+ */
+function notifyAdminChange(PDO $pdo, string $title, array $details = [], ?int $actorUserId = null, ?string $linkUrl = null): void {
+    try {
+        sendAdminChangeNotification($pdo, $title, $details, $actorUserId, $linkUrl);
+    } catch (Throwable $e) {
     }
 }
 
@@ -169,6 +448,79 @@ function hq_url_parts(): array {
 }
 
 /**
+ * Build the current request origin, honoring reverse-proxy headers.
+ */
+function hq_request_origin(): string {
+    $scheme = 'http';
+    if (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+        (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on')
+    ) {
+        $scheme = 'https';
+    }
+
+    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
+    return $scheme . '://' . $host;
+}
+
+/**
+ * Derive the admin base path from the actual executing script.
+ * Examples:
+ * - /HIGH-Q/admin/index.php => /HIGH-Q/admin
+ * - /index.php (admin mounted as docroot) => ''
+ * - /HIGH-Q/admin/pages/post_edit.php => /HIGH-Q/admin
+ */
+function hq_admin_request_base_path(): ?string {
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $scriptFilename = $_SERVER['SCRIPT_FILENAME'] ?? '';
+    $adminRoot = realpath(__DIR__ . '/..') ?: '';
+
+    if (!is_string($scriptName) || trim($scriptName) === '') {
+        return null;
+    }
+
+    $scriptName = str_replace('\\', '/', $scriptName);
+    $scriptFilename = $scriptFilename ? str_replace('\\', '/', realpath($scriptFilename) ?: $scriptFilename) : '';
+    $adminRoot = $adminRoot ? str_replace('\\', '/', $adminRoot) : '';
+
+    if ($scriptFilename !== '' && $adminRoot !== '') {
+        $adminRootLower = strtolower(rtrim($adminRoot, '/'));
+        $scriptLower = strtolower($scriptFilename);
+
+        if (strpos($scriptLower, $adminRootLower) === 0) {
+            $relativeScript = str_replace('\\', '/', substr($scriptFilename, strlen($adminRoot)));
+            $relativeScript = '/' . ltrim($relativeScript, '/');
+
+            if ($relativeScript !== '/' && str_ends_with(strtolower($scriptName), strtolower($relativeScript))) {
+                $basePath = substr($scriptName, 0, strlen($scriptName) - strlen($relativeScript));
+                $basePath = rtrim(str_replace('\\', '/', $basePath), '/');
+                return $basePath === '' ? '' : $basePath;
+            }
+        }
+    }
+
+    $dir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+    if ($dir === '/' || $dir === '.') {
+        return '';
+    }
+
+    return $dir;
+}
+
+/**
+ * Build the current admin request base URL when code is executing under the admin app.
+ */
+function hq_admin_request_base_url(): ?string {
+    $basePath = hq_admin_request_base_path();
+    if ($basePath === null) {
+        return null;
+    }
+
+    return rtrim(hq_request_origin() . ($basePath !== '' ? $basePath : ''), '/');
+}
+
+/**
  * Return the configured application base URL (public site).
  * Prefer APP_URL from environment; otherwise derive from request so ngrok/local/prod and subfolders work.
  */
@@ -188,6 +540,11 @@ function app_url(string $path = ''): string {
  * Return the admin base URL (admin area lives alongside /public as /admin).
  */
 function admin_url(string $path = ''): string {
+    $requestBase = hq_admin_request_base_url();
+    if (!empty($requestBase)) {
+        return $path === '' ? $requestBase : ($requestBase . '/' . ltrim($path, '/'));
+    }
+
     $env = $_ENV['ADMIN_URL'] ?? null;
     if (!empty($env)) {
         $base = rtrim($env, '/');
@@ -209,6 +566,86 @@ function admin_url(string $path = ''): string {
     [$scheme, $host, $projPrefix] = hq_url_parts();
     $base = $scheme . '://' . $host . $projPrefix . '/admin';
     return $path === '' ? $base : ($base . '/' . ltrim($path, '/'));
+}
+
+/**
+ * Return menu slugs assigned to a role.
+ */
+function getRoleMenuPermissions(PDO $pdo, int $roleId): array {
+    if ($roleId <= 0) return [];
+
+    try {
+        $stmt = $pdo->prepare('SELECT menu_slug FROM role_permissions WHERE role_id = ?');
+        $stmt->execute([$roleId]);
+        return array_values(array_unique(array_filter(array_map('strval', $stmt->fetchAll(PDO::FETCH_COLUMN)))));
+    } catch (Throwable $e) {
+        return [];
+    }
+}
+
+/**
+ * Read onboarding tour flags from users table with a safe fallback when migration is not yet applied.
+ */
+function getUserOnboardingTourState(PDO $pdo, int $userId): array {
+    $default = ['pending' => true, 'completed_at' => null, 'started_at' => null];
+    if ($userId <= 0) return $default;
+
+    try {
+        $stmt = $pdo->prepare('SELECT onboarding_tour_pending, onboarding_tour_started_at, onboarding_tour_completed_at FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) return $default;
+
+        return [
+            'pending' => isset($row['onboarding_tour_pending']) ? ((int)$row['onboarding_tour_pending'] === 1) : true,
+            'started_at' => $row['onboarding_tour_started_at'] ?? null,
+            'completed_at' => $row['onboarding_tour_completed_at'] ?? null,
+        ];
+    } catch (Throwable $e) {
+        return $default;
+    }
+}
+
+/**
+ * Persist onboarding tour state. Returns false when migration columns are unavailable.
+ */
+function updateUserOnboardingTourState(PDO $pdo, int $userId, array $state): bool {
+    if ($userId <= 0) return false;
+
+    $pending = isset($state['pending']) ? ((bool)$state['pending'] ? 1 : 0) : null;
+    $startedAt = $state['started_at'] ?? null;
+    $completedAt = $state['completed_at'] ?? null;
+
+    try {
+        $sets = [];
+        $params = [];
+
+        if ($pending !== null) {
+            $sets[] = 'onboarding_tour_pending = ?';
+            $params[] = $pending;
+        }
+
+        if (array_key_exists('started_at', $state)) {
+            $sets[] = 'onboarding_tour_started_at = ?';
+            $params[] = $startedAt;
+        }
+
+        if (array_key_exists('completed_at', $state)) {
+            $sets[] = 'onboarding_tour_completed_at = ?';
+            $params[] = $completedAt;
+        }
+
+        if (empty($sets)) {
+            return false;
+        }
+
+        $params[] = $userId;
+        $sql = 'UPDATE users SET ' . implode(', ', $sets) . ' WHERE id = ?';
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute($params);
+    } catch (Throwable $e) {
+        return false;
+    }
 }
 
 /**

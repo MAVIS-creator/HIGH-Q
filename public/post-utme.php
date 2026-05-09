@@ -3,6 +3,7 @@
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/csrf.php';
 require_once __DIR__ . '/config/functions.php';
+require_once __DIR__ . '/config/payment_references.php';
 $cfg = require __DIR__ . '/../config/payments.php';
 // Determine whether Paystack is actually configured (placeholder keys contain 'xxx')
 $paystackEnabled = !empty($cfg['paystack']['public']) && strpos($cfg['paystack']['public'], 'xxx') === false;
@@ -13,10 +14,6 @@ $success = '';
 // Fees
 $form_fee = 1000; // ₦1,000 form processing
 $card_fee = 1500; // ₦1,500 card fee
-
-function generatePaymentReference($prefix='PAY') {
-    return $prefix . '-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(3)),0,6);
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['_csrf_token'] ?? '';
@@ -199,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // create payment placeholder for Post-UTME
-            $reference = generatePaymentReference('PTU');
+            $reference = generatePaymentReference('postutme');
             $paymentMetadata = json_encode([
                 'components' => [
                     'post_form_fee' => number_format((float)$post_form_fee, 2, '.', ''),

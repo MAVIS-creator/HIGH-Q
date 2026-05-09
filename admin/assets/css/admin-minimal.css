@@ -1,0 +1,77 @@
+/* Minimal animation overrides for low-capacity/mobile admin devices */
+html.hq-minimal-animations,
+html[data-animation-mode="minimal"] {
+  scroll-behavior: auto;
+}
+
+html.hq-minimal-animations * {
+  animation: none !important;
+  transition: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Auth/landing pages: make backgrounds static and light */
+html.hq-minimal-animations .auth-page {
+  background: #0f172a !important;
+  background-size: cover !important;
+  animation: none !important;
+}
+html.hq-minimal-animations .auth-page::before,
+html.hq-minimal-animations .auth-page::after {
+  display: none !important;
+}
+html.hq-minimal-animations .auth-card,
+html.hq-minimal-animations .landing-card {
+  animation: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.hq-minimal-animations .landing-header::before,
+html.hq-minimal-animations .landing-header::after {
+  display: none !important;
+}
+
+/* Dashboard subtle motions */
+html.hq-minimal-animations .card,
+html.hq-minimal-animations .stat-card,
+html.hq-minimal-animations .table-hover tbody tr,
+html.hq-minimal-animations .btn,
+html.hq-minimal-animations .badge,
+html.hq-minimal-animations .nav-link {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* SweetAlert minimal theme hooks */
+.hq-swal-minimal {
+  border-radius: 12px !important;
+  padding: 16px !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12) !important;
+}
+.swal-title-minimal {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+}
+.swal-content-minimal {
+  font-size: 0.95rem !important;
+}
+.swal-button-minimal,
+.swal-button-cancel-minimal {
+  transition: none !important;
+}
+
+/* Disable shimmer/gradient animations on badges and accent bars */
+html.hq-minimal-animations .auth-card::before,
+html.hq-minimal-animations .header-cta,
+html.hq-minimal-animations .status-badge,
+html.hq-minimal-animations .tag-pill {
+  animation: none !important;
+}
+
+/* Reduce floating menus/backdrops */
+html.hq-minimal-animations .modal,
+html.hq-minimal-animations .dropdown-menu {
+  animation: none !important;
+}

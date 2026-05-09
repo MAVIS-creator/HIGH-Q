@@ -9,6 +9,14 @@ require_once __DIR__ . '/../includes/functions.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
+try {
+    requirePermission('settings');
+} catch (Throwable $e) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Forbidden']);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
@@ -167,6 +175,26 @@ try {
 
     // Log action
     try { logAction($pdo, $_SESSION['user']['id'] ?? 0, 'settings_saved', ['by' => $_SESSION['user']['email'] ?? null]); } catch (Exception $e) {}
+
+    try {
+        $changedGroups = [];
+        foreach (['site', 'contact', 'security', 'notifications', 'advanced'] as $group) {
+            if (isset($posted[$group]) && is_array($posted[$group]) && !empty($posted[$group])) {
+                $changedGroups[] = $group;
+            }
+        }
+
+        sendAdminChangeNotification(
+            $pdo,
+            'System Settings Updated',
+            [
+                'Updated By' => $_SESSION['user']['email'] ?? 'Unknown',
+                'Changed Groups' => empty($changedGroups) ? 'Not specified' : implode(', ', $changedGroups)
+            ],
+            (int)($_SESSION['user']['id'] ?? 0)
+        );
+    } catch (Throwable $e) {
+    }
 
     echo json_encode(['status' => 'ok', 'message' => 'Settings saved successfully']);
     exit;

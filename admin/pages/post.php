@@ -147,6 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                 if ($ok) {
                                     $newId = $pdo->lastInsertId();
                                     logAction($pdo, $_SESSION['user']['id'], 'post_created', ['slug' => $slug]);
+                                    notifyAdminChange($pdo, 'Post Created', ['Post ID' => $newId, 'Slug' => $slug, 'Status' => $status], (int)($_SESSION['user']['id'] ?? 0));
                                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB CREATED ID: " . $newId . "\n", FILE_APPEND | LOCK_EX);
                                     // Set a session flash so admin UI can show a notification after redirect
                                     $_SESSION['flash_post'] = [
@@ -271,6 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                                 }
                 if ($ok) {
                     logAction($pdo, $_SESSION['user']['id'], 'post_updated', ['post_id' => $id]);
+                    notifyAdminChange($pdo, 'Post Updated', ['Post ID' => $id, 'Slug' => $slug, 'Status' => $status], (int)($_SESSION['user']['id'] ?? 0));
                     @file_put_contents(__DIR__ . '/../../storage/posts-debug.log', date('c') . " DB UPDATED ID: " . $id . "\n", FILE_APPEND | LOCK_EX);
                     // If this is an AJAX edit, return JSON including published state
                     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -331,6 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             if ($act === 'delete' && $id) {
                 $pdo->prepare("DELETE FROM posts WHERE id=?")->execute([$id]);
                 logAction($pdo, $_SESSION['user']['id'], 'post_deleted', ['post_id' => $id]);
+                notifyAdminChange($pdo, 'Post Deleted', ['Post ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
                 $success[] = "Article deleted.";
             }
 
@@ -339,6 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 $stmt = $pdo->prepare("UPDATE posts SET status = IF(status='draft','published','draft') WHERE id=?");
                 $stmt->execute([$id]);
                 logAction($pdo, $_SESSION['user']['id'], 'post_toggled', ['post_id' => $id]);
+                notifyAdminChange($pdo, 'Post Status Toggled', ['Post ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
                 $success[] = "Article status toggled.";
             }
         }
@@ -601,6 +605,11 @@ try {
                           <li><code>## Subsection</code> &rarr; <em>&lt;h3&gt;Subsection&lt;/h3&gt;</em></li>
                           <li><code>### Sub-sub</code> &rarr; <em>&lt;h4&gt;Sub-sub&lt;/h4&gt;</em></li>
                         </ul>
+                                                <div style="margin-top:10px"><strong>Embed images in the content</strong></div>
+                                                <ul style="margin:6px 0 0 18px;padding:0;">
+                                                    <li><code>![Alt text](https://example.com/image.jpg)</code> &rarr; embedded image</li>
+                                                    <li>Paste an image URL on its own line (ending in .jpg/.png/.gif/.webp) to embed.</li>
+                                                </ul>
                         <div style="margin-top:8px;color:var(--hq-gray);">Leave a blank line between headings and paragraphs for best results.</div>
                     </div>
                 </div>
@@ -731,10 +740,14 @@ document.querySelectorAll('.edit-link').forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const id = link.dataset.id;
-    fetch(`index.php?pages=post_edit&id=${id}`)
+        const adminBase = (window.HQ_ADMIN_BASE || '').replace(/\/$/, '');
+        const editUrl = (adminBase ? adminBase + '/pages/post_edit.php' : 'pages/post_edit.php') + `?id=${id}&ajax=1`;
+        fetch(editUrl, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
       .then(res => res.text())
       .then(html => {
-        editContent.innerHTML = html;
+                editContent.innerHTML = html && html.trim() ? html : '<div style="padding:16px;color:#b91c1c;">Could not load post editor. Please refresh and try again.</div>';
         overlay.classList.add('open');
         editModal.classList.add('open');
         bindAjaxForm(id);

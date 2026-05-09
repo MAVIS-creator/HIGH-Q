@@ -4,6 +4,36 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/csrf.php';
 
+// Support DELETE via POST when a guest/user wants to delete their own comment
+// Expect: method POST with _method=delete and comment_id
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_method']) && strtolower($_POST['_method']) === 'delete') {
+    $cid = intval($_POST['comment_id'] ?? 0);
+    if ($cid <= 0) { echo json_encode(['status'=>'error','success'=>false,'message'=>'Missing comment id']); exit; }
+    try {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        // fetch comment
+        $cstmt = $pdo->prepare('SELECT id, session_id, user_id FROM comments WHERE id = ? LIMIT 1');
+        $cstmt->execute([$cid]);
+        $c = $cstmt->fetch(PDO::FETCH_ASSOC);
+        if (!$c) { echo json_encode(['status'=>'error','success'=>false,'message'=>'Not found']); exit; }
+        $allowed = false;
+        // owner by session
+        if (!empty($c['session_id']) && $c['session_id'] === session_id()) $allowed = true;
+        // owner by logged-in user
+        if (!$allowed && isset($_SESSION['user']) && !empty($c['user_id']) && $_SESSION['user']['id'] == $c['user_id']) $allowed = true;
+        if (!$allowed) { echo json_encode(['status'=>'error','success'=>false,'message'=>'Permission denied']); exit; }
+        // soft-delete: mark as deleted
+        $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?');
+        $ok = $upd->execute([$cid]);
+        if ($ok) {
+            echo json_encode(['status'=>'ok','success'=>true]);
+        } else {
+            echo json_encode(['status'=>'error','success'=>false,'message'=>'DB failed']);
+        }
+    } catch (Throwable $e) { echo json_encode(['status'=>'error','success'=>false,'message'=>'Exception']); }
+    exit;
+}
+
 // Support GET for fetching comments (used by the public post page) and POST for submitting
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $postId = intval($_GET['post_id'] ?? 0);
@@ -58,7 +88,7 @@ $email = trim($_POST['email'] ?? '');
 $content = trim($_POST['content'] ?? '');
 
 if (!$postId || $content === '') {
-    echo json_encode(['status'=>'error','message'=>'Missing required fields']);
+    echo json_encode(['status'=>'error','success'=>false,'message'=>'Missing required fields']);
     exit;
 }
 
@@ -91,41 +121,13 @@ try {
     try { @file_put_contents(__DIR__ . '/../storage/comments-debug.log', date('c') . " INSERT post={$postId} parent={$parentId} status={$status}\n", FILE_APPEND | LOCK_EX); } catch (Throwable $e) {}
     if ($status === 'pending') {
         // Friendly message for pending comments
-        echo json_encode(['status'=>'ok','message'=>'Comment submitted — awaiting moderation. It will appear once approved.']);
+        echo json_encode(['status'=>'ok','success'=>true,'message'=>'Comment submitted - awaiting moderation. It will appear once approved.']);
     } else {
-        echo json_encode(['status'=>'ok','message'=>'Comment submitted']);
+        echo json_encode(['status'=>'ok','success'=>true,'message'=>'Comment submitted']);
     }
+    exit;
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['status'=>'error','message'=>'DB error']);
+    echo json_encode(['status'=>'error','success'=>false,'message'=>'DB error']);
 }
 
-// Support DELETE via POST when a guest/user wants to delete their own comment
-// Expect: method POST with _method=delete and comment_id
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_method']) && strtolower($_POST['_method']) === 'delete') {
-    $cid = intval($_POST['comment_id'] ?? 0);
-    if ($cid <= 0) { echo json_encode(['status'=>'error','message'=>'Missing comment id']); exit; }
-    try {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        // fetch comment
-        $cstmt = $pdo->prepare('SELECT id, session_id, user_id FROM comments WHERE id = ? LIMIT 1');
-        $cstmt->execute([$cid]);
-        $c = $cstmt->fetch(PDO::FETCH_ASSOC);
-        if (!$c) { echo json_encode(['status'=>'error','message'=>'Not found']); exit; }
-        $allowed = false;
-        // owner by session
-        if (!empty($c['session_id']) && $c['session_id'] === session_id()) $allowed = true;
-        // owner by logged-in user
-        if (!$allowed && isset($_SESSION['user']) && !empty($c['user_id']) && $_SESSION['user']['id'] == $c['user_id']) $allowed = true;
-        if (!$allowed) { echo json_encode(['status'=>'error','message'=>'Permission denied']); exit; }
-        // soft-delete: mark as deleted
-        $upd = $pdo->prepare('UPDATE comments SET status = "deleted" WHERE id = ?');
-        $ok = $upd->execute([$cid]);
-        if ($ok) {
-            echo json_encode(['status'=>'ok']);
-        } else {
-            echo json_encode(['status'=>'error','message'=>'DB failed']);
-        }
-    } catch (Throwable $e) { echo json_encode(['status'=>'error','message'=>'Exception']); }
-    exit;
-}

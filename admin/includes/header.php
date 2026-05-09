@@ -36,22 +36,21 @@ if (!function_exists('admin_url') || !function_exists('app_url')) {
     }
 }
 
+if (!function_exists('generateToken')) {
+    $csrfPath = __DIR__ . '/csrf.php';
+    if (file_exists($csrfPath)) {
+        require_once $csrfPath;
+    }
+}
+
 // Start output buffering so downstream header() calls succeed even if this file emits HTML
 if (!headers_sent()) {
     ob_start();
 }
 
-// Compute admin base path once so asset URLs work from both:
-//  - /.../admin/index.php?pages=...
-//  - /.../admin/pages/index.php?pages=...
-$script = $_SERVER['SCRIPT_NAME'] ?? '';
-$parts = explode('/', trim($script, '/'));
-$idx = array_search('admin', $parts, true);
-if ($idx !== false) {
-    $adminBasePath = '/' . implode('/', array_slice($parts, 0, $idx + 1));
-} else {
-    $adminBasePath = rtrim(dirname($script), '/');
-    if ($adminBasePath === '') $adminBasePath = '/admin';
+$adminBasePath = '';
+if (function_exists('admin_url')) {
+    $adminBasePath = rtrim((string)(parse_url(admin_url(''), PHP_URL_PATH) ?? ''), '/');
 }
 ?>
 <!DOCTYPE html>
@@ -59,6 +58,7 @@ if ($idx !== false) {
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title><?= isset($pageTitle) ? $pageTitle : 'Admin Panel'; ?> - HIGH Q SOLID ACADEMY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="<?= htmlspecialchars($adminBasePath) ?>/assets/img/favicon.ico" type="image/x-icon">
@@ -70,21 +70,26 @@ if ($idx !== false) {
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-modern.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/account-settings-modal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-style.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/admin-minimal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/notifications.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/responsive.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/profile-modal.css">
     <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/modern-tables.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/introjs.min.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($adminBasePath) ?>/assets/css/ai-chat-widget.css">
     <!-- SweetAlert2 (used by many admin pages) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/storage-helper.js"></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/device-capability.js"></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/sweetalert-config.js"></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/notifications.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/header-notifications.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/viewport-check.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/admin-forms.js" defer></script>
-    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/profile-modal.js" defer></script>
     <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/account-settings-modal.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/minified/intro.min.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/role-tour.js" defer></script>
+    <script src="<?= htmlspecialchars($adminBasePath) ?>/assets/js/ai-chat-widget.js" defer></script>
     <?php
     // Output the correct admin.css for the detected admin path
     echo "<link rel=\"stylesheet\" href=\"" . htmlspecialchars($adminBasePath) . "/assets/css/admin.css\">\n";
@@ -116,42 +121,19 @@ if ($idx !== false) {
         "label{display:block;margin:6px 0;font-weight:600;}input.input, textarea.input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;}\n" .
         "</style>\n";
 
-    // Expose admin base dynamically from current request URL (just like public site)
-    // Extract scheme and host from the actual request
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    
-    // Extract the admin base path from the current request URI
-    // E.g., /HIGH-Q/admin/pages/index.php?pages=dashboard -> /HIGH-Q/admin
-    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    
-    // Find where '/admin' appears in the URI
-    $adminPos = strpos($requestUri, '/admin');
-    if ($adminPos !== false) {
-        // Extract everything up to and including '/admin'
-        $endPos = $adminPos + strlen('/admin');
-        $adminPath = substr($requestUri, 0, $endPos);
-    } else {
-        // Fallback: extract from script name
-        $adminPos = strpos($scriptName, '/admin');
-        if ($adminPos !== false) {
-            $adminPath = substr($scriptName, 0, $adminPos + strlen('/admin'));
-        } else {
-            // Last resort: use filesystem project name
-            $rootName = basename(dirname(__DIR__, 2));
-            $adminPath = '/' . $rootName . '/admin';
-        }
-    }
-    
-    // Build the full admin base URL
-    $adminBaseFull = $scheme . '://' . $host . $adminPath;
+    $adminBaseFull = function_exists('admin_url') ? rtrim(admin_url(''), '/') : '';
+    $publicBaseFull = function_exists('app_url') ? rtrim(app_url(''), '/') : '';
     
     echo "<script>\n";
     echo "window.HQ_ADMIN_BASE = '" . $adminBaseFull . "';\n";
-    echo "window.HQ_ADMIN_PATH = '" . $adminPath . "';\n";
-    echo "window.HQ_APP_BASE = '" . $scheme . '://' . $host . "';\n";
-    echo "console.log('ADMIN_BASE derived from request:', '" . $adminBaseFull . "');\n";
+    echo "window.HQ_ADMIN_PATH = '" . ($adminBasePath !== '' ? $adminBasePath : '/') . "';\n";
+    echo "window.HQ_APP_BASE = '" . $publicBaseFull . "';\n";
+    if (function_exists('generateToken')) {
+        $tourCsrf = generateToken('tour_api');
+        $aiCsrf = generateToken('ai_assistant_api');
+        echo "window.HQ_CSRF = { tour: '" . $tourCsrf . "', ai: '" . $aiCsrf . "' };\n";
+    }
+    echo "console.log('ADMIN_BASE derived from helper:', '" . $adminBaseFull . "');\n";
     echo "</script>\n";
     ?>
 </head>
@@ -182,8 +164,18 @@ if ($idx !== false) {
                         // Build a resilient avatar fallback using the computed app base so hardcoded /HIGH-Q paths are avoided
                         $avatar = $_SESSION['user']['avatar'] ?? null;
                         if (empty($avatar)) {
-                            // Use the admin logo asset that exists in this project
-                            $avatar = $adminBasePath . '/assets/img/hq-logo.jpeg';
+                            $avatar = ($adminBasePath !== '' ? $adminBasePath : '') . '/assets/img/hq-logo.jpeg';
+                        } else {
+                            $avatar = trim((string)$avatar);
+                            if (!preg_match('#^(https?:)?//#i', $avatar) && strpos($avatar, '/') !== 0) {
+                                $avatarFile = basename($avatar);
+                                $adminAvatarDisk = __DIR__ . '/../assets/avatars/' . $avatarFile;
+                                if (is_file($adminAvatarDisk)) {
+                                    $avatar = ($adminBasePath !== '' ? $adminBasePath : '') . '/assets/avatars/' . rawurlencode($avatarFile);
+                                } elseif (function_exists('app_url')) {
+                                    $avatar = app_url(ltrim($avatar, '/'));
+                                }
+                            }
                         }
                         $userName = $_SESSION['user']['name'] ?? 'User';
                         $userRole = $_SESSION['user']['role'] ?? 'Admin';
@@ -201,13 +193,9 @@ if ($idx !== false) {
                                 </div>
                             </div>
                             <div class="profile-dropdown-divider"></div>
-                            <a href="javascript:void(0)" onclick="openProfileModal()" class="profile-dropdown-item">
-                                <i class='bx bx-user'></i>
-                                <span>Profile Settings</span>
-                            </a>
                             <a href="javascript:void(0)" onclick="openAccountSettings()" class="profile-dropdown-item">
                                 <i class='bx bx-cog'></i>
-                                <span>Account Settings</span>
+                                <span>Profile &amp; Account Settings</span>
                             </a>
                             <div class="profile-dropdown-divider"></div>
                             <a href="<?= htmlspecialchars($adminBasePath) ?>/logout.php" class="profile-dropdown-item profile-dropdown-item--logout">

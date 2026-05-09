@@ -38,12 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $pdo->prepare("UPDATE appointments SET notification_sent = 1 WHERE id = ?")->execute([$appointmentId]);
                 }
                 if ($subject && $message) { sendEmail($appointment['email'], $subject, $message); }
+                notifyAdminChange($pdo, 'Appointment Status Updated', [
+                    'Appointment ID' => $appointmentId,
+                    'Visitor Email' => $appointment['email'] ?? 'N/A',
+                    'New Status' => $newStatus
+                ], (int)($_SESSION['user']['id'] ?? 0));
             }
             $_SESSION['success_message'] = 'Appointment status updated and notification sent.';
             header('Location: index.php?pages=appointments'); exit;
         } elseif ($action === 'delete') {
             $stmt = $pdo->prepare("DELETE FROM appointments WHERE id = ?");
             $stmt->execute([$appointmentId]);
+            notifyAdminChange($pdo, 'Appointment Deleted', ['Appointment ID' => $appointmentId], (int)($_SESSION['user']['id'] ?? 0));
             $_SESSION['success_message'] = 'Appointment deleted successfully.';
             header('Location: index.php?pages=appointments'); exit;
         }

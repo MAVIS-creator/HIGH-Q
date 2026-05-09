@@ -1,4 +1,57 @@
 <?php
+function hqAdminBasePathFromRequest(): string {
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $scriptFilename = $_SERVER['SCRIPT_FILENAME'] ?? '';
+    $adminRoot = realpath(__DIR__ . '/..') ?: '';
+
+    if (is_string($scriptName) && trim($scriptName) !== '' && is_string($scriptFilename) && trim($scriptFilename) !== '' && $adminRoot !== '') {
+        $scriptName = str_replace('\\', '/', $scriptName);
+        $scriptFilename = str_replace('\\', '/', realpath($scriptFilename) ?: $scriptFilename);
+        $adminRoot = str_replace('\\', '/', $adminRoot);
+
+        if (strpos(strtolower($scriptFilename), strtolower(rtrim($adminRoot, '/'))) === 0) {
+            $relativeScript = str_replace('\\', '/', substr($scriptFilename, strlen($adminRoot)));
+            $relativeScript = '/' . ltrim($relativeScript, '/');
+
+            if ($relativeScript !== '/' && str_ends_with(strtolower($scriptName), strtolower($relativeScript))) {
+                $basePath = substr($scriptName, 0, strlen($scriptName) - strlen($relativeScript));
+                $basePath = rtrim(str_replace('\\', '/', $basePath), '/');
+                return ($basePath === '/' || $basePath === '.') ? '' : $basePath;
+            }
+        }
+    }
+
+    $dir = rtrim(str_replace('\\', '/', dirname((string)$scriptName)), '/');
+    if ($dir === '/' || $dir === '.') {
+        return '';
+    }
+
+    return $dir;
+}
+
+function hqAdminClientIp(): string {
+    $candidates = [
+        $_SERVER['HTTP_CF_CONNECTING_IP'] ?? null,
+        $_SERVER['HTTP_X_FORWARDED_FOR'] ?? null,
+        $_SERVER['HTTP_X_REAL_IP'] ?? null,
+        $_SERVER['REMOTE_ADDR'] ?? null,
+    ];
+
+    foreach ($candidates as $candidate) {
+        if (!is_string($candidate) || trim($candidate) === '') {
+            continue;
+        }
+        foreach (explode(',', $candidate) as $part) {
+            $ip = trim($part);
+            if ($ip !== '' && filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+    }
+
+    return '';
+}
+
 // Secure session configuration
 if (session_status() === PHP_SESSION_NONE) {
     // 1. Prevent Javascript from accessing cookies (Stops XSS stealing)
@@ -19,7 +72,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
     
     // 5. IP Binding (Security lock - kills session if IP changes)
-    if (isset($_SESSION['user_ip']) && $_SESSION['user_ip'] !== $_SERVER['REMOTE_ADDR']) {
+    $clientIp = hqAdminClientIp();
+    if (isset($_SESSION['user_ip']) && $clientIp !== '' && $_SESSION['user_ip'] !== $clientIp) {
         session_unset();
         session_destroy();
         header('Location: ../login.php?error=session_invalid');
@@ -27,8 +81,8 @@ if (session_status() === PHP_SESSION_NONE) {
     }
     
     // Set the IP when they first log in
-    if (!empty($_SESSION['user']) && !isset($_SESSION['user_ip'])) {
-        $_SESSION['user_ip'] = $_SERVER['REMOTE_ADDR'];
+    if (!empty($_SESSION['user']) && !isset($_SESSION['user_ip']) && $clientIp !== '') {
+        $_SESSION['user_ip'] = $clientIp;
     }
 }
 
@@ -44,12 +98,7 @@ function requirePermission($menuSlug) {
     $userId = $_SESSION['user']['id'] ?? null;
     if (!$userId) {
         // Compute admin base path for safe redirects
-        $script = $_SERVER['SCRIPT_NAME'] ?? '';
-        $parts = explode('/', trim($script, '/'));
-        $idx = array_search('admin', $parts, true);
-        $adminBasePath = ($idx !== false)
-            ? '/' . implode('/', array_slice($parts, 0, $idx + 1))
-            : '/admin';
+        $adminBasePath = hqAdminBasePathFromRequest();
 
         // If there are no users in the system yet, redirect to signup for initial setup.
         try {
@@ -145,12 +194,7 @@ function ensureAuthenticated(): void {
         echo json_encode(['status' => 'error', 'message' => 'Unauthenticated']);
         exit;
     } else {
-        $script = $_SERVER['SCRIPT_NAME'] ?? '';
-        $parts = explode('/', trim($script, '/'));
-        $idx = array_search('admin', $parts, true);
-        $adminBasePath = ($idx !== false)
-            ? '/' . implode('/', array_slice($parts, 0, $idx + 1))
-            : '/admin';
+        $adminBasePath = hqAdminBasePathFromRequest();
 
         if ($total === 0) {
             header('Location: ' . $adminBasePath . '/signup.php');

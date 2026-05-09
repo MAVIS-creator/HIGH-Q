@@ -154,6 +154,34 @@ if (!isset($skipMainClose) || !$skipMainClose) {
 
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
+<?php
+// ── Floating AI Chat Widget ──────────────────────────────────────────────────
+// Only render for users who have the ai_assistant menu permission.
+$_hqShowAiWidget = false;
+$_hqShowTourBtn  = false;
+try {
+    if (!empty($_SESSION['user']['id']) && isset($pdo)) {
+        $__roleId  = (int)($_SESSION['user']['role_id'] ?? 0);
+        if ($__roleId > 0) {
+            $__slugs = getRoleMenuPermissions($pdo, $__roleId);
+            $_hqShowAiWidget = in_array('ai_assistant', $__slugs, true);
+            // Show tour-restart in widget for admin / sub-admin
+            $_hqShowTourBtn  = $_hqShowAiWidget && (
+                in_array('settings', $__slugs, true) || in_array('roles', $__slugs, true)
+            );
+        }
+    }
+} catch (Throwable $__e) { /* non-fatal */ }
+?>
+<?php if ($_hqShowAiWidget): ?>
+<script>
+window.HQ_AI_WIDGET_ENABLED  = true;
+window.HQ_AI_SHOW_TOUR_BTN   = <?= $_hqShowTourBtn ? 'true' : 'false' ?>;
+// Inject ai_action CSRF for proposal queue calls
+if (window.HQ_CSRF) { window.HQ_CSRF.action = window.HQ_CSRF.ai; }
+</script>
+<?php endif; ?>
+
 </body>
 
 </html>

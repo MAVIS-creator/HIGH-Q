@@ -464,3 +464,65 @@ Notes
 
 If you'd like, I can add these suggestions as a dedicated `docs/DEPLOY.md` file or prepare preview diffs for your `.htaccess` files (I will back them up first). Let me know which you prefer.
 
+## Admin Panel Guide
+
+The admin panel is the control center for HIGH Q Solid Academy. It is accessed from `admin/login.php` and, after login, routes into `admin/index.php?pages=dashboard`. The panel uses role-based access control, so the navigation you see depends on the permissions assigned to your account.
+
+### How the admin layout works
+
+- The left sidebar is the main navigation.
+- The logo at the top of the sidebar returns you to the dashboard.
+- The active page is highlighted automatically.
+- The logout button is always available at the bottom of the sidebar.
+- Some menu items are shown only when your role has permission for that section.
+- The `Smart Patcher` item opens in a new tab.
+
+### Navigation and what each section does
+
+| Menu item | Purpose |
+| --- | --- |
+| Dashboard | Overview of the academy and quick access to admin tasks. |
+| Manage Users | Create, review, and manage user accounts. |
+| Roles Management | Control role names and access permissions. |
+| Site Settings | Update site-wide details such as academy information and configuration. |
+| Courses | Manage course records and course content. |
+| Tutors | Manage tutor profiles and tutor-related content. |
+| Academic Management | Handle academic records, learning data, and related administration. |
+| Payments | Review and manage payment records. |
+| Create Payment Link | Generate a new payment link for a student or payment request. |
+| Icons | View or manage the icon set used across the project. |
+| News / Blog | Create, edit, and publish news or blog posts. |
+| Comments | Review and moderate user comments. |
+| Testimonials | Manage testimonials displayed on the site. |
+| Chat Support | Monitor and respond to support chats. |
+| Audit Logs | Review recorded administrative actions and system activity. |
+| Appointments | Manage scheduled appointments and related requests. |
+| Security Scan | Run or review security scans for the admin area. |
+| Smart Patcher | Open the patching tool in a separate tab for maintenance tasks. |
+| Automator | Run automation-related admin tasks. |
+| Canary Trap | Security-trap and monitoring section for suspicious activity. |
+
+### Permission behavior
+
+- Admin accounts automatically get access to newly added menu items.
+- Other roles only see the items stored in their `role_permissions` records.
+- `Audit Logs` can also appear for users who have `settings` permission.
+- `Create Payment Link` can appear for users who have `payments` permission.
+- `Appointments` can appear for users who have `settings` or `students` permission.
+- `Testimonials` can appear for users who have `settings` permission.
+
+### Typical admin workflow
+
+1. Sign in through `admin/login.php`.
+2. Open the dashboard to check the latest overview.
+3. Use the sidebar to move between management areas.
+4. Update users, roles, courses, payments, posts, and settings from the matching menu item.
+5. Review logs or run security tools when you need audit or maintenance checks.
+6. Sign out when finished.
+
+### Notes for administrators
+
+- If a menu item is missing, check the role permissions assigned to the account.
+- If a page does not load correctly, verify that the admin route still matches the menu URL in `admin/includes/menu.php`.
+- The admin panel is designed to be used from desktop browsers for the best experience.
+

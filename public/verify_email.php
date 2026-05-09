@@ -52,7 +52,7 @@ if ($token) {
         <div class="notice <?= $success ? 'success' : 'error' ?>">
             <p><?= htmlspecialchars($message) ?></p>
         </div>
-        <p><a href="/public/login.php">Go to login</a></p>
+        <p><a href="<?= htmlspecialchars(app_url('login.php'), ENT_QUOTES, 'UTF-8') ?>">Go to login</a></p>
     </div>
 </body>
 </html>

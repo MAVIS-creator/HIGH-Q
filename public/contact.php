@@ -104,6 +104,17 @@ HTML;
 
 				$sent = sendEmail($to, $subject, $html);
 				if ($sent) {
+						try {
+							notifyAdminChange($pdo, 'New Contact Form Submission', [
+								'Name' => trim($first_name . ' ' . $last_name),
+								'Email' => $email,
+								'Phone' => $phone ?: 'Not provided',
+								'Program of Interest' => $program ?: 'General Inquiry',
+								'Message Preview' => mb_substr(trim(preg_replace('/\s+/', ' ', $message)), 0, 140)
+							]);
+						} catch (Throwable $e) {
+							error_log('Contact notification error: ' . $e->getMessage());
+						}
 						$success = 'Thanks! Your message has been sent. We will get back to you within 24 hours.';
 				} else {
 						$errors[] = 'Failed to send your message. Please try again later.';
@@ -374,39 +385,17 @@ include __DIR__ . '/includes/header.php';
 	</div>
 </div>
 
-<!-- Chat widget positioned bottom-right near floating button (no overlay) -->
-<div id="chatIframeModal" style="display:none;position:fixed;bottom:90px;right:20px;z-index:9998;width:400px;max-width:calc(100vw - 40px);height:600px;max-height:calc(100vh - 110px);box-shadow:0 12px 48px rgba(0,0,0,0.25);border-radius:16px;overflow:hidden;background:#fff;">
-	<div style="width:100%;height:100%;position:relative;">
-		<button id="closeChatModal" aria-label="Close chat" style="position:absolute;right:8px;top:8px;border:none;background:rgba(255,255,255,0.95);padding:8px 10px;border-radius:50%;cursor:pointer;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:18px;line-height:1;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#333;"><i class="bx bx-x"></i></button>
-		<iframe id="chatIframe" src="chatbox.php" style="width:100%;height:100%;border:0;display:block;" title="Live Chat"></iframe>
-	</div>
-</div>
-
-<style>
-/* Mobile chat positioning */
-@media (max-width: 700px) {
-	#chatIframeModal {
-		bottom: 75px !important;
-		right: 12px !important;
-		width: calc(100vw - 24px) !important;
-		height: calc(100vh - 95px) !important;
-		max-height: 550px !important;
-	}
-}
-</style>
-
-<!-- Inline mini chat removed to avoid duplicate chat widget; iframe modal remains -->
+<!-- Using global chat widget included via footer; removed legacy iframe modal to avoid path issues -->
 
 <script>
-// If user came via the floating chat link (contact.php#livechat), focus the message field and scroll into view
+// If contact.php#livechat, open the chatbot (bot landing with FAQ)
 document.addEventListener('DOMContentLoaded', function(){
-	try{
-				if(window.location.hash === '#livechat'){
-						var ta = document.getElementById('contact_message');
-						if(ta){ ta.focus(); ta.scrollIntoView({behavior:'smooth', block:'center'}); }
-						// iframe modal will be used for live chat
-				}
-	}catch(e){/* ignore */}
+	try {
+		if (window.location.hash === '#livechat') {
+			var toggle = document.getElementById('chatToggle');
+			if (toggle) toggle.click();
+		}
+	} catch(e) { /* ignore */ }
 });
 </script>
 
@@ -440,8 +429,10 @@ document.addEventListener('DOMContentLoaded', function(){
 		if (modal) {
 			modal.classList.remove('open'); 
 			modal.setAttribute('aria-hidden','true');
-			// Restore body scroll
+			// Restore body scroll - use multiple methods to ensure it works
 			document.body.style.overflow = '';
+			document.body.style.overflow = 'auto';
+			document.documentElement.style.overflow = 'auto';
 			// Reset form
 			if (scheduleForm) scheduleForm.reset();
 		}
@@ -593,54 +584,24 @@ document.addEventListener('DOMContentLoaded', function(){
 		document.body.removeChild(link);
 	}
 
-	// Live Chat: open iframe modal only. Keep cookie helpers and badge update.
+	// Live Chat: open the chatbot widget (from chat-widget.php in footer)
 	var openLive = document.getElementById('openLiveChat');
 
-	function updateFloatingBadge(){ try{ var badge = document.querySelector('.floating-chat .badge'); var thread = getCookie('hq_thread_id'); if(thread){ if(!badge){ var n=document.createElement('span'); n.className='badge'; n.textContent='1'; var fc = document.querySelector('.floating-chat'); if(fc) fc.appendChild(n); } } else { if(badge) badge.remove(); } }catch(e){}
+	function openChatbot() {
+		var toggle = document.getElementById('chatToggle');
+		if (toggle) toggle.click();
+		// Opens the bot landing with FAQ options first
 	}
 
-	// call once on load to sync badge state
-	updateFloatingBadge();
-
-	// if there's an existing thread for this visitor, keep polling in background (uses iframe API when modal open)
-	try{ var existingThread = getCookie('hq_thread_id'); if(existingThread){ /* polling may be handled by iframe/chatbox */ } }catch(e){}
-
-	function openChatModal() {
-		var chatModal = document.getElementById('chatIframeModal');
-		if(chatModal){
-			chatModal.style.display = 'block';
-			chatModal.setAttribute('aria-hidden','false');
-			var iframe = document.getElementById('chatIframe'); 
-			if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'focus'}, '*');
-		}
+	if (openLive) {
+		openLive.addEventListener('click', function(e){ e.preventDefault(); openChatbot(); });
+		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openChatbot(); });
 	}
 
-	if(openLive){
-		openLive.addEventListener('click', openChatModal);
-		openLive.addEventListener('keypress', function(e){ if(e.key==='Enter') openLive.click(); });
+	// Auto-open chatbot if page loaded with #livechat hash
+	if (window.location.hash === '#livechat') {
+		openChatbot();
 	}
-
-	// Auto-open chat modal if page loaded with #livechat hash
-	if(window.location.hash === '#livechat') {
-		openChatModal();
-	}
-
-	// chat iframe modal close button
-	var closeChatModal = document.getElementById('closeChatModal');
-	if(closeChatModal){ 
-		closeChatModal.addEventListener('click', function(){ 
-			var chatModal = document.getElementById('chatIframeModal'); 
-			if(chatModal){ 
-				chatModal.style.display='none'; 
-				chatModal.setAttribute('aria-hidden','true'); 
-				var iframe = document.getElementById('chatIframe'); 
-				if(iframe && iframe.contentWindow) iframe.contentWindow.postMessage({hq_chat_action:'close'}, '*'); 
-			} 
-		}); 
-	}
-
-	// listen for messages from iframe (chatbox) to allow it to request close
-	window.addEventListener('message', function(ev){ try{ if(ev.data && ev.data.hq_chat_action === 'close'){ var m = document.getElementById('chatIframeModal'); if(m) m.style.display='none'; } }catch(e){} });
 
 	// clear chat form placeholder removed with mini chat; no-op kept to avoid errors
 

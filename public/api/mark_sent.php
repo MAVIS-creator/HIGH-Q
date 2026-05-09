@@ -2,6 +2,7 @@
 // public/api/mark_sent.php
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/csrf.php';
+require_once __DIR__ . '/../config/functions.php';
 header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo json_encode(['status'=>'error','message'=>'Method not allowed']); exit; }
 $token = $_POST['_csrf'] ?? '';
@@ -36,6 +37,18 @@ try {
         // log audit
         if (function_exists('logAction')) {
             try { logAction($pdo, 0, 'mark_sent', ['payment_id'=>$payment_id,'payer_name'=>$payer_name,'payer_number'=>$payer_number,'payer_bank'=>$payer_bank,'reference'=>$payment['reference']]); } catch(Throwable $e){}
+        }
+        try {
+            notifyAdminChange($pdo, 'Bank Transfer Payment Submitted', [
+                'Payment ID' => $payment_id,
+                'Reference' => $payment['reference'],
+                'Payer Name' => $payer_name,
+                'Payer Account Number' => $payer_number,
+                'Payer Bank' => $payer_bank,
+                'Status' => 'Awaiting Admin Confirmation'
+            ], null, admin_url('index.php?pages=payments'));
+        } catch (Throwable $e) {
+            error_log('mark_sent notification error: ' . $e->getMessage());
         }
         echo json_encode(['status'=>'ok','message'=>'Recorded','payment'=>['id'=>$payment_id,'reference'=>$payment['reference'],'status'=>'sent','payer_name'=>$payer_name,'payer_number'=>$payer_number,'payer_bank'=>$payer_bank]]); exit;
     }

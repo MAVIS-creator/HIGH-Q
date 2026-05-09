@@ -191,8 +191,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$role_id, $name, $phone, $email, $hashedPassword, $avatarPath, $is_active, $verificationToken, $verifiedAt]);
 
+            $uid = (int)$pdo->lastInsertId();
+            try {
+                $tourStmt = $pdo->prepare('UPDATE users SET onboarding_tour_pending = 1, onboarding_tour_started_at = NULL, onboarding_tour_completed_at = NULL WHERE id = ?');
+                $tourStmt->execute([$uid]);
+            } catch (Throwable $e) {
+                // Non-fatal on databases where migration has not yet been applied.
+            }
+
             if (!$is_active) {
-                $uid = $pdo->lastInsertId();
                 $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
                 $uupd->execute([$sentAt, $uid]);
 
@@ -251,6 +258,8 @@ $csrfToken = generateToken('signup_form');
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/auth.css">
+    <link rel="stylesheet" href="./assets/css/admin-minimal.css">
+    <script src="./assets/js/device-capability.js"></script>
     <style>
         .auth-container { max-width: 480px; }
         .avatar-upload {

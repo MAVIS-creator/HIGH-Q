@@ -212,6 +212,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title><?= isset($pageTitle) ? $pageTitle : 'HIGH Q SOLID ACADEMY'; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -265,8 +266,10 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
   <link rel="stylesheet" href="<?= app_url('assets/css/responsive.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/ceo-responsive.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/animations.css') ?>">
+  <link rel="stylesheet" href="<?= app_url('assets/css/mobile-animations.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/social-icons.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/post-toc.css') ?>">
+  <link rel="stylesheet" href="<?= app_url('assets/css/post-page.css') ?>">
   <link rel="stylesheet" href="<?= app_url('assets/css/hero.css') ?>">
   <!-- Small site-specific hero overrides (loaded after hero.css) -->
   <link rel="stylesheet" href="<?= app_url('assets/css/hero-fixed.css') ?>">
@@ -316,6 +319,11 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       <div class="container">
   <span><i class="fas fa-phone"></i> <?= htmlentities($siteSettings['contact']['phone'] ?? $contact_phone) ?></span>
   <span><i class="fas fa-envelope"></i> <?= htmlentities($siteSettings['contact']['email'] ?? 'info@hqacademy.com') ?></span>
+        <!-- NYSC Badge in Top Bar -->
+        <span class="nysc-topbar-badge">
+          <img src="<?= app_url('assets/images/nysc-logo.png') ?>" alt="NYSC" class="nysc-topbar-logo">
+          <span class="nysc-topbar-text">NYSC Accredited</span>
+        </span>
         <span class="motto">"Always Ahead of Others"</span>
       </div>
     </div>

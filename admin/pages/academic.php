@@ -9,7 +9,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 // --- Early AJAX handling: ensure JSON responses are not contaminated by HTML ---
 // Determine requested action (AJAX clients typically send action via POST)
 $earlyAction = $_POST['action'] ?? $_GET['action'] ?? '';
-if (!empty($earlyAction)) {
+if (!empty($earlyAction) && $earlyAction !== 'export_single') {
   // Treat these as JSON/JSON-AJAX requests so we can set proper headers early
   header('Content-Type: application/json');
 
@@ -66,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!$reg) { echo json_encode(['success'=>false,'error'=>'Registration not found']); exit; }
 
     // Generate unique payment reference
-    $reference = 'PAY-' . strtoupper(bin2hex(random_bytes(5)));
+    require_once __DIR__ . '/../../public/config/payment_references.php';
+    $reference = generatePaymentReference('course');
     $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0.0;
   $method = $_POST['method'] ?? 'bank_transfer';
   // normalize common values
@@ -328,9 +329,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     $stmt2 = $pdo->prepare('SELECT * FROM post_utme_registrations WHERE id = ? LIMIT 1');
     $stmt2->execute([$id]);
     $s2 = $stmt2->fetch(PDO::FETCH_ASSOC);
-    if (!$s2) { echo json_encode(['error'=>'Not found']); exit; }
-    // return post-UTME record
-    echo json_encode($s2); exit;
+    if ($s2) {
+      // return post-UTME record
+      echo json_encode($s2); exit;
+    }
+    
+    // Try universal_registrations as another fallback (new wizard registrations)
+    try {
+      $stmt3 = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+      $stmt3->execute([$id]);
+      $s3 = $stmt3->fetch(PDO::FETCH_ASSOC);
+      if ($s3) {
+        // Parse payload JSON for additional fields
+        $payload = [];
+        if (!empty($s3['payload'])) {
+          $payload = json_decode($s3['payload'], true) ?: [];
+        }
+        // Build absolute URL for passport photo so modal img can load it
+        $rawPassport = $payload['passport_photo'] ?? null;
+        if ($rawPassport && !preg_match('#^https?://#i', $rawPassport)) {
+            $pScheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $pHost      = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $docRoot    = rtrim(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'] ?? '')), '/');
+            $publicReal = rtrim(str_replace('\\', '/', realpath(__DIR__ . '/../../public')), '/');
+            $publicWeb  = str_replace($docRoot, '', $publicReal);
+            $rawPassport = $pScheme . '://' . $pHost . $publicWeb . '/' . ltrim($rawPassport, '/');
+        }
+
+        echo json_encode([
+          'id' => $s3['id'],
+          'surname' => $payload['surname'] ?? $s3['last_name'] ?? null,
+          'first_name' => $s3['first_name'] ?? $payload['first_name'] ?? null,
+          'last_name' => $s3['last_name'] ?? $payload['last_name'] ?? null,
+          'other_names' => $payload['other_name'] ?? $payload['last_name'] ?? null,
+          'email' => $s3['email'] ?? $payload['email'] ?? null,
+          'phone' => $s3['phone'] ?? $payload['phone'] ?? null,
+          'date_of_birth' => $payload['date_of_birth'] ?? null,
+          'gender' => $payload['gender'] ?? null,
+          'marital_status' => $payload['marital_status'] ?? null,
+          'home_address' => $payload['home_address'] ?? $payload['address'] ?? null,
+          'state_of_origin' => $payload['state_of_origin'] ?? null,
+          'local_government' => $payload['local_government'] ?? null,
+          'nin' => $payload['nin'] ?? null,
+          'profile_code' => $payload['profile_code'] ?? null,
+          'registration_type' => $s3['program_type'] ?? null,
+          'exam_type' => $payload['exam_type'] ?? null,
+          'exam_year' => $payload['exam_year'] ?? null,
+          'previous_education' => $payload['previous_education'] ?? $payload['education_level'] ?? null,
+          'academic_goals' => $payload['intended_course'] ?? $payload['academic_goals'] ?? null,
+          'sponsor_name' => $payload['sponsor_name'] ?? null,
+          'sponsor_phone' => $payload['sponsor_phone'] ?? null,
+          'sponsor_address' => $payload['sponsor_address'] ?? null,
+          'emergency_contact_name' => $payload['next_of_kin_name'] ?? null,
+          'emergency_contact_phone' => $payload['next_of_kin_phone'] ?? null,
+          'emergency_relationship' => $payload['next_of_kin_relationship'] ?? null,
+          'passport_photo' => $rawPassport,
+          'status' => $s3['status'] ?? null,
+          'payment_status' => $s3['payment_status'] ?? null,
+          'program_type' => $s3['program_type'] ?? null,
+          'created_at' => $s3['created_at'] ?? null,
+        ]);
+        exit;
+      }
+    } catch (Throwable $e) {
+      // Table may not exist, ignore
+    }
+    
+    echo json_encode(['error'=>'Not found']); exit;
   }
   echo json_encode($s); exit;
 }
@@ -364,10 +429,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     exit;
   }
   
-  // Get passport path
+  // Get passport path — for universal_registrations, passport is stored in payload JSON
   $passportPath = $s['passport_photo'] ?? $s['passport_path'] ?? '';
+  if (empty($passportPath) && !empty($s['payload'])) {
+      $pl = json_decode($s['payload'], true);
+      $passportPath = $pl['passport_photo'] ?? '';
+  }
+
+  // Build absolute URL from relative path (e.g. 'uploads/passports/file.jpg')
+  $scheme     = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  $host       = $_SERVER['HTTP_HOST'] ?? 'localhost';
+  $docRoot    = rtrim(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'] ?? '')), '/');
+  $publicReal = rtrim(str_replace('\\', '/', realpath(__DIR__ . '/../../public')), '/');
+  $publicWeb  = str_replace($docRoot, '', $publicReal);
+  if ($passportPath && !preg_match('#^https?://#i', $passportPath)) {
+      $passportPath = $scheme . '://' . $host . $publicWeb . '/' . ltrim($passportPath, '/');
+  }
+
   $fullName = trim(($s['surname'] ?? $s['first_name'] ?? '') . ' ' . ($s['other_names'] ?? $s['last_name'] ?? ''));
-  
+
   ?>
   <!DOCTYPE html>
   <html lang="en">
@@ -397,7 +477,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
       .status-confirmed { background: #d1fae5; color: #065f46; }
       .status-pending { background: #fef3c7; color: #92400e; }
       .status-rejected { background: #fee2e2; color: #991b1b; }
-      .print-btn { position: fixed; bottom: 20px; right: 20px; background: #0b1a2c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+      .print-btn { position: fixed; bottom: 20px; right: 20px; background: #0b1a2c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
       .print-btn:hover { background: #1e3a5f; }
       @media print {
         body { background: white; padding: 0; }
@@ -405,6 +485,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         .print-btn { display: none; }
       }
     </style>
+    <script>
+      // Auto-open print dialog after page loads so user can Save As PDF
+      window.addEventListener('load', function() {
+        setTimeout(function() { window.print(); }, 600);
+      });
+    </script>
   </head>
   <body>
     <div class="container">
@@ -586,6 +672,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $stmt = $pdo->prepare('UPDATE users SET is_active = 2, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_deactivate', ['student_id'=>$id]);
+  notifyAdminChange($pdo, 'Student Deactivated', ['Student ID' => $id], (int)$currentUserId);
   header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
 
@@ -593,6 +680,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $stmt = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $stmt->execute([$id]);
   logAction($pdo, $currentUserId, 'student_activate', ['student_id'=>$id]);
+  notifyAdminChange($pdo, 'Student Activated', ['Student ID' => $id], (int)$currentUserId);
   header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
 
@@ -602,6 +690,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
           $del = $pdo->prepare('DELETE FROM post_utme_registrations WHERE id = ?');
           $del->execute([$id]);
           logAction($pdo, $currentUserId, 'postutme_delete', ['postutme_id'=>$id]);
+          notifyAdminChange($pdo, 'Post-UTME Registration Deleted', ['Registration ID' => $id], (int)$currentUserId);
         } catch (Throwable $e) {
           // ignore errors
         }
@@ -617,6 +706,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $del = $pdo->prepare('DELETE FROM student_registrations WHERE id = ?');
       $del->execute([$id]);
       logAction($pdo, $currentUserId, 'registration_delete', ['registration_id'=>$id]);
+        notifyAdminChange($pdo, 'Student Registration Deleted', ['Registration ID' => $id], (int)$currentUserId);
   header('Location: ' . admin_url('index.php?pages=academic')); exit;
     }
   
@@ -626,6 +716,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $del = $pdo->prepare('DELETE FROM post_utme_registrations WHERE id = ?');
         $del->execute([$id]);
         logAction($pdo, $currentUserId, 'postutme_delete', ['postutme_id'=>$id]);
+        notifyAdminChange($pdo, 'Post-UTME Registration Deleted', ['Registration ID' => $id], (int)$currentUserId);
       } catch (Throwable $e) {
         // swallow and continue to redirect
       }
@@ -637,11 +728,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $stmt = $pdo->prepare('UPDATE users SET is_active = 3, updated_at = NOW() WHERE id = ?');
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete', ['student_id'=>$id]);
+      notifyAdminChange($pdo, 'Student Soft Deleted', ['Student ID' => $id], (int)$currentUserId);
     } catch (Exception $e) {
       // Fallback to hard delete
       $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
       $stmt->execute([$id]);
       logAction($pdo, $currentUserId, 'student_delete_hard', ['student_id'=>$id]);
+      notifyAdminChange($pdo, 'Student Hard Deleted', ['Student ID' => $id], (int)$currentUserId);
     }
   header('Location: ' . admin_url('pages/academic.php')); exit;
   }
@@ -660,13 +753,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $ust = $pdo->prepare('UPDATE users SET is_active = 1, updated_at = NOW() WHERE id = ?');
         $ust->execute([$id]);
         logAction($pdo, $currentUserId, 'student_activate_via_modal', ['student_id'=>$id]);
+        notifyAdminChange($pdo, 'Student Activated Via Modal', ['Student ID' => $id], (int)$currentUserId);
       }
 
       // send email using existing helper if available
       if (function_exists('sendEmail') && filter_var($student['email'], FILTER_VALIDATE_EMAIL)) {
         $subject = 'Message from HIGH Q admin';
         $body = "Hello " . htmlspecialchars($student['name']) . ",\n\n" . $message . "\n\nRegards,\nHIGH Q Team";
-        try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); } catch (Exception $e) { /* ignore send errors */ }
+        try { sendEmail($student['email'], $subject, $body); logAction($pdo, $currentUserId, 'student_message_sent', ['student_id'=>$id]); notifyAdminChange($pdo, 'Student Message Sent', ['Student ID' => $id, 'Recipient' => $student['email']], (int)$currentUserId); } catch (Exception $e) { /* ignore send errors */ }
       }
     }
   header('Location: ' . admin_url('pages/academic.php')); exit;
@@ -692,6 +786,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       $pdo->beginTransaction();
       $upd = $pdo->prepare('UPDATE student_registrations SET status = ?, updated_at = NOW() WHERE id = ?'); $upd->execute(['confirmed', $id]);
       logAction($pdo, $currentUserId, 'confirm_registration', ['registration_id'=>$id]);
+      notifyAdminChange($pdo, 'Student Registration Confirmed', ['Registration ID' => $id], (int)$currentUserId);
 
       // Optional payment creation: admin may include create_payment=1 and amount in POST (AJAX)
       if (!empty($_POST['create_payment']) && !empty($_POST['amount'])) {
@@ -703,6 +798,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
         $ins->execute([$amount, $method, $ref]);
         $paymentId = $pdo->lastInsertId();
         logAction($pdo, $currentUserId, 'create_payment_for_registration', ['registration_id'=>$id,'payment_id'=>$paymentId,'reference'=>$ref,'amount'=>$amount]);
+        notifyAdminChange($pdo, 'Payment Created For Registration', ['Registration ID' => $id, 'Payment ID' => $paymentId, 'Reference' => $ref, 'Amount' => $amount], (int)$currentUserId);
 
           // send email to registrant with link to payments_wait (if email present)
           $emailSent = false;
@@ -769,6 +865,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
     if ($reg) {
       $upd = $pdo->prepare('UPDATE student_registrations SET status = ? WHERE id = ?'); $upd->execute(['rejected', $id]);
       logAction($pdo, $currentUserId, 'reject_registration', ['registration_id'=>$id, 'reason'=>$reason]);
+      notifyAdminChange($pdo, 'Student Registration Rejected', ['Registration ID' => $id, 'Reason' => $reason ?: 'Not provided'], (int)$currentUserId);
       $emailSent = false;
       if (!empty($reg['email']) && filter_var($reg['email'], FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
         $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
@@ -779,6 +876,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && isset($_G
       if ($isAjax) { echo json_encode(['status'=>'ok','message'=>'Registration rejected','email_sent'=>!empty($emailSent)]); exit; }
     }
   header('Location: ' . admin_url('pages/academic.php')); exit;
+  }
+
+  // Confirm universal registration
+  if ($action === 'confirm_universal') {
+    $stmt = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+    
+    if (!$reg) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Registration not found']); exit; }
+      header('Location: ' . admin_url('pages/academic.php')); exit;
+    }
+    
+    if (strtolower($reg['status'] ?? '') === 'confirmed') {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Already confirmed']); exit; }
+      header('Location: ' . admin_url('pages/academic.php')); exit;
+    }
+    
+    try {
+      $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, updated_at = NOW() WHERE id = ?');
+      $upd->execute(['confirmed', $id]);
+      logAction($pdo, $currentUserId, 'confirm_universal', ['registration_id' => $id]);
+      notifyAdminChange($pdo, 'Universal Registration Confirmed', ['Registration ID' => $id], (int)$currentUserId);
+      
+      if ($isAjax) {
+        echo json_encode(['success' => true, 'message' => 'Registration confirmed']);
+        exit;
+      }
+    } catch (Throwable $e) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Server error']); exit; }
+    }
+    header('Location: ' . admin_url('pages/academic.php')); exit;
+  }
+
+  // Reject universal registration
+  if ($action === 'reject_universal') {
+    $reason = trim($_POST['reason'] ?? '');
+    $stmt = $pdo->prepare('SELECT * FROM universal_registrations WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $reg = $stmt->fetch(PDO::FETCH_ASSOC);
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']);
+    
+    if (!$reg) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Registration not found']); exit; }
+      header('Location: ' . admin_url('pages/academic.php')); exit;
+    }
+    
+    try {
+      $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, updated_at = NOW() WHERE id = ?');
+      $upd->execute(['rejected', $id]);
+      logAction($pdo, $currentUserId, 'reject_universal', ['registration_id' => $id, 'reason' => $reason]);
+      notifyAdminChange($pdo, 'Universal Registration Rejected', ['Registration ID' => $id, 'Reason' => $reason ?: 'Not provided'], (int)$currentUserId);
+      
+      // Send rejection email
+      $email = $reg['email'] ?? null;
+      if (empty($email) && !empty($reg['payload'])) {
+        $payload = json_decode($reg['payload'], true);
+        $email = $payload['email'] ?? null;
+      }
+      
+      $emailSent = false;
+      if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) && function_exists('sendEmail')) {
+        $studentName = trim(($reg['first_name'] ?? '') . ' ' . ($reg['last_name'] ?? '')) ?: 'Student';
+        $subject = 'Registration Update — HIGH Q SOLID ACADEMY';
+        $body = '<p>Hi ' . htmlspecialchars($studentName) . ',</p>';
+        $body .= '<p>We regret to inform you that your registration has been <strong style="color:#dc2626;">rejected</strong>.</p>';
+        if ($reason) {
+          $body .= '<p><strong>Reason:</strong> ' . htmlspecialchars($reason) . '</p>';
+        }
+        $body .= '<p>If you have questions, please contact our support team.</p>';
+        $body .= '<p>Best regards,<br>HIGH Q SOLID ACADEMY</p>';
+        try { $emailSent = (bool) sendEmail($email, $subject, $body); } catch (Throwable $e) { $emailSent = false; }
+      }
+      
+      if ($isAjax) {
+        echo json_encode(['success' => true, 'message' => 'Registration rejected', 'email_sent' => $emailSent]);
+        exit;
+      }
+    } catch (Throwable $e) {
+      if ($isAjax) { echo json_encode(['success' => false, 'error' => 'Server error']); exit; }
+    }
+    header('Location: ' . admin_url('pages/academic.php')); exit;
   }
 }
 
@@ -803,38 +983,49 @@ try {
   $hasUniversal = !empty($check3);
 } catch (Throwable $e) { $hasUniversal = false; }
 
-// Allow admin to request a source via GET ?source=postutme|regular|universal
-$requestedSource = strtolower(trim($_GET['source'] ?? ''));
-$registrations_source = 'student_registrations';
-if ($requestedSource === 'postutme' && $hasPostUtme) {
-  $registrations_source = 'post_utme_registrations';
-  $hasRegistrations = true;
-} elseif ($requestedSource === 'universal' && $hasUniversal) {
-  $registrations_source = 'universal_registrations';
-  $hasRegistrations = true;
-} elseif ($requestedSource === 'regular') {
-  // prefer student_registrations if present; otherwise fall back to post_utme
-  if ($hasRegistrations) {
-    $registrations_source = 'student_registrations';
-  } elseif ($hasPostUtme) {
-    $registrations_source = 'post_utme_registrations';
-    $hasRegistrations = true;
-  }
-} else {
-  // default behavior: if universal_registrations exists, use that; else student_registrations; else post_utme
-  if ($hasUniversal) {
-    $hasRegistrations = true;
-    $registrations_source = 'universal_registrations';
-    $requestedSource = 'universal';
-  } elseif (!$hasRegistrations && $hasPostUtme) {
-    $hasRegistrations = true;
-    $registrations_source = 'post_utme_registrations';
-    $requestedSource = 'postutme';
-  }
+// All program types from register-new.php — always show the full list in the filter.
+$validProgramTypes = [
+  'jamb'          => 'JAMB/UTME',
+  'waec'          => 'WAEC/NECO/GCE',
+  'postutme'      => 'Post-UTME',
+  'digital'       => 'Digital Skills',
+  'international' => 'International Programs',
+  'regular'       => 'Regular Admission',
+];
+
+// Add legacy tables as extra manual dropdown filters if they exist
+if ($hasPostUtme) {
+  $validProgramTypes['legacy_postutme'] = 'Legacy Post-UTME (Old Form)';
+}
+// We can always offer Legacy Regular if student_registrations exists
+if (isset($hasRegistrations) && $hasRegistrations) {
+  $validProgramTypes['legacy_regular'] = 'Legacy Regular (Old Form)';
 }
 
-// expose for template UI
-$current_source = $requestedSource ?: ($registrations_source === 'universal_registrations' ? 'universal' : ($registrations_source === 'post_utme_registrations' ? 'postutme' : 'regular'));
+$filterProgramType = strtolower(trim($_GET['program_type'] ?? ''));
+if ($filterProgramType !== '' && !array_key_exists($filterProgramType, $validProgramTypes)) {
+  $filterProgramType = '';
+}
+
+// ---------------------------------------------------------
+// Determine which table to query based on exactly ONE filter
+// ---------------------------------------------------------
+if ($filterProgramType === 'legacy_regular') {
+  $registrations_source = 'student_registrations';
+  // So we don't apply `program_type` WHERE clause since old table doesn't have it
+  $active_program_query = ''; 
+} elseif ($filterProgramType === 'legacy_postutme') {
+  $registrations_source = 'post_utme_registrations';
+  $active_program_query = '';
+} else {
+  // Anything else (including empty 'All Programs') uses the new universal table
+  $registrations_source = 'universal_registrations';
+  $active_program_query = $filterProgramType;
+}
+
+// expose for template UI (ensure it doesn't break legacy exports)
+$current_source = ($registrations_source === 'universal_registrations') ? 'universal' : 
+                  (($registrations_source === 'post_utme_registrations') ? 'postutme' : 'regular');
 
 // ensure counters exist regardless of which data path is used
 $active = 0; $pending = 0; $banned = 0; $total = 0;
@@ -865,23 +1056,37 @@ if ($hasRegistrations) {
     $stmt->execute();
     $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
   } elseif ($registrations_source === 'universal_registrations') {
-    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations");
-    $countStmt->execute();
+    // Build WHERE clause with optional program_type filter
+    $whereClause = '';
+    $whereParams = [];
+    if ($active_program_query !== '') {
+      $whereClause = 'WHERE program_type = ?';
+      $whereParams[] = $active_program_query;
+    }
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations $whereClause");
+    $countStmt->execute($whereParams);
     $total = (int)$countStmt->fetchColumn();
 
-    // KPI counts (best-effort)
+    // KPI counts scoped to current filter
     try {
-      $countAwaiting = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'awaiting_payment'")->fetchColumn();
-      $countConfirmed = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'confirmed'")->fetchColumn();
-      $countRejected = (int)$pdo->query("SELECT COUNT(*) FROM universal_registrations WHERE status = 'rejected'")->fetchColumn();
+      // Use safe param binding for KPI instead of string interpolation
+      $kpiBase = $active_program_query !== '' ? ' AND program_type = ?' : '';
+      $kpiP    = $active_program_query !== '' ? [$active_program_query] : [];
+      
+      $s1 = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations WHERE status='awaiting_payment'$kpiBase"); $s1->execute($kpiP); $countAwaiting = (int)$s1->fetchColumn();
+      $s2 = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations WHERE status='confirmed'$kpiBase");         $s2->execute($kpiP); $countConfirmed = (int)$s2->fetchColumn();
+      $s3 = $pdo->prepare("SELECT COUNT(*) FROM universal_registrations WHERE status='rejected'$kpiBase");          $s3->execute($kpiP); $countRejected  = (int)$s3->fetchColumn();
     } catch (Throwable $_) { }
 
-    $stmt = $pdo->prepare("SELECT * FROM universal_registrations ORDER BY created_at DESC LIMIT ? OFFSET ?");
-    $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-    $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+    $stmt = $pdo->prepare("SELECT * FROM universal_registrations $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    // Bind typed params
+    $bindOffset = 1;
+    if ($active_program_query !== '') { $stmt->bindValue($bindOffset++, $active_program_query, PDO::PARAM_STR); }
+    $stmt->bindValue($bindOffset++, $perPage, PDO::PARAM_INT);
+    $stmt->bindValue($bindOffset,   $offset,  PDO::PARAM_INT);
     $stmt->execute();
     $academic = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // mark entries so template can render appropriate actions
     foreach ($academic as &$ss) { $ss['__universal'] = 1; }
     unset($ss);
   } else {
@@ -1093,43 +1298,70 @@ if ($__hqStandalone) {
     <div class="filter-card">
       <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center">
         <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center" style="flex:1;">
-          <div class="position-relative" style="flex:1; max-width: 420px;">
+          <div class="position-relative" style="flex:1; max-width: 380px;">
             <i class='bx bx-search' style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;"></i>
             <input type="text" id="searchInput" placeholder="Search by name, email..." class="form-control" style="padding-left:40px; border-radius: 0.75rem;">
           </div>
 
-          <select id="statusFilter" class="form-select" style="border-radius: 0.75rem; max-width: 220px;">
+          <select id="statusFilter" class="form-select" style="border-radius: 0.75rem; max-width: 200px;">
             <option value="">All Statuses</option>
-            <option value="active">Approved</option>
+            <option value="confirmed">Confirmed</option>
             <option value="pending">Pending</option>
-            <option value="banned">Rejected</option>
+            <option value="awaiting_payment">Awaiting Payment</option>
+            <option value="rejected">Rejected</option>
           </select>
+
+          <!-- Program Type Filter (from register-new.php wizard) -->
+          <form method="GET" action="index.php" id="programFilterForm" style="display:contents;">
+            <input type="hidden" name="pages" value="academic">
+            <select name="program_type" id="programTypeFilter" class="form-select"
+                    style="border-radius:0.75rem; max-width:220px; border-color:<?= $filterProgramType ? '#ffd600' : '#e2e8f0' ?>;"
+                    onchange="document.getElementById('programFilterForm').submit()">
+              <option value="" <?= $filterProgramType === '' ? 'selected' : '' ?>>All Programs</option>
+              
+              <?php foreach ($validProgramTypes as $typeKey => $typeLabel): ?>
+              <?php if (strpos($typeKey, 'legacy_') === 0): ?>
+                <optgroup label="Legacy Data">
+                  <option value="<?= htmlspecialchars($typeKey) ?>" <?= $filterProgramType === $typeKey ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($typeLabel) ?>
+                  </option>
+                </optgroup>
+              <?php else: ?>
+                <option value="<?= htmlspecialchars($typeKey) ?>" <?= $filterProgramType === $typeKey ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($typeLabel) ?>
+                </option>
+              <?php endif; ?>
+              <?php endforeach; ?>
+            </select>
+          </form>
         </div>
 
-        <div class="btn-group" role="group" aria-label="Registration source">
-          <a href="index.php?pages=academic" class="btn btn-sm <?= ($current_source==='regular' || $current_source==='') ? 'btn-dark' : 'btn-outline-secondary' ?>">Regular</a>
-          <?php if ($hasPostUtme): ?>
-          <a href="index.php?pages=academic&source=postutme" class="btn btn-sm <?= ($current_source==='postutme') ? 'btn-dark' : 'btn-outline-secondary' ?>">Post-UTME</a>
-          <?php endif; ?>
-          <?php if ($hasUniversal): ?>
-          <a href="index.php?pages=academic&source=universal" class="btn btn-sm <?= ($current_source==='universal') ? 'btn-dark' : 'btn-outline-secondary' ?>">New Wizard</a>
-          <?php endif; ?>
-        </div>
-        
-        <!-- Export Buttons - Uses API endpoint -->
+        <!-- Export Buttons -->
         <div class="btn-group ms-2">
-          <a href="api/export_registration.php?action=export_csv&source=<?= htmlspecialchars($current_source) ?>" 
-             class="btn btn-sm btn-warning" 
+          <a href="api/export_registration.php?action=export_csv&source=<?= htmlspecialchars($current_source) ?><?= $filterProgramType ? '&program_type='.htmlspecialchars($filterProgramType) : '' ?>"
+             class="btn btn-sm btn-warning"
              style="background: #ffd600; border-color: #ffd600; color: #0b1a2c; font-weight: 600;">
             <i class='bx bx-download'></i> CSV
           </a>
-          <a href="api/export_registration.php?action=export_pdf&source=<?= htmlspecialchars($current_source) ?>" 
-             class="btn btn-sm btn-danger" 
+          <a href="api/export_registration.php?action=export_pdf&source=<?= htmlspecialchars($current_source) ?><?= $filterProgramType ? '&program_type='.htmlspecialchars($filterProgramType) : '' ?>"
+             class="btn btn-sm btn-danger"
              style="font-weight: 600;">
             <i class='bx bxs-file-pdf'></i> PDF
           </a>
         </div>
       </div>
+
+      <?php if ($filterProgramType): ?>
+      <!-- Active filter pill -->
+      <div class="mt-3 d-flex align-items-center gap-2">
+        <span style="font-size:0.8rem;color:#64748b;">Filtered by:</span>
+        <span style="background:#ffd600;color:#111;padding:4px 12px;border-radius:9999px;font-size:0.8rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+          <i class='bx bx-filter-alt'></i> <?= htmlspecialchars($validProgramTypes[$filterProgramType] ?? $filterProgramType) ?>
+          <a href="index.php?pages=academic" style="color:#111;text-decoration:none;font-size:1rem;line-height:1;" title="Clear filter">×</a>
+        </span>
+        <span style="font-size:0.8rem;color:#64748b;"><?= number_format($total) ?> result<?= $total !== 1 ? 's' : '' ?></span>
+      </div>
+      <?php endif; ?>
     </div>
 
     <!-- KPI Summary -->
@@ -1167,7 +1399,9 @@ if ($__hqStandalone) {
                 $programTypeBadge = $isUniversal && !empty($s['program_type']) ? ucfirst($s['program_type']) : null;
             ?>
             <div class="student-card academic-card"
-                 data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>">
+                 data-status="<?= strtolower($status) ?>" data-id="<?= $s['id'] ?>"
+                 data-name="<?= htmlspecialchars(strtolower($displayName)) ?>"
+                 data-email="<?= htmlspecialchars(strtolower($displayEmail)) ?>">
               <div class="d-flex align-items-start gap-3 mb-3">
                 <div class="academic-avatar">
                   <img src="<?= htmlspecialchars($passportThumb ?: 'assets/img/hq-logo.jpeg') ?>"
@@ -1179,28 +1413,42 @@ if ($__hqStandalone) {
                   <h3 class="card-name" style="margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayName) ?></h3>
                   <div class="card-email" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($displayEmail) ?></div>
                   <div class="d-flex flex-wrap gap-2 mt-2">
-                    <span class="badge bg-primary-subtle text-primary"><?= $programTypeBadge ?: 'Student' ?></span>
+                    <?php
+                    // Program type badge: prefer human-readable label from validProgramTypes
+                    $progTypeRaw = $isUniversal && !empty($s['program_type']) ? strtolower($s['program_type']) : null;
+                    $progBadgeLabel = $progTypeRaw && isset($validProgramTypes[$progTypeRaw])
+                      ? $validProgramTypes[$progTypeRaw]
+                      : ($programTypeBadge ?: 'Student');
+                    ?>
+                    <span class="badge bg-primary-subtle text-primary"><?= htmlspecialchars($progBadgeLabel) ?></span>
                     <?php if ($status==='paid' || $status==='confirmed' || $status==='active'): ?>
                       <span class="badge bg-success-subtle text-success"><?= htmlspecialchars(ucfirst($status)) ?></span>
                     <?php elseif ($status==='rejected' || $status==='banned'): ?>
                       <span class="badge bg-danger-subtle text-danger"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                    <?php elseif ($status==='awaiting_payment'): ?>
+                      <span class="badge bg-warning-subtle text-warning">Awaiting Payment</span>
                     <?php else: ?>
-                      <span class="badge bg-warning-subtle text-warning"><?= htmlspecialchars(ucfirst($status)) ?></span>
+                      <span class="badge bg-secondary-subtle text-secondary"><?= htmlspecialchars(ucfirst($status)) ?></span>
                     <?php endif; ?>
                   </div>
                 </div>
               </div>
 
                 <div class="pt-3 mt-auto" style="border-top:1px solid #eef2f7; display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:flex-end;">
-                    <?php if (!$isPostUtme && !$isUniversal): ?>
-                        <?php if (!empty($s['status'])): ?>
-                      <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-success">
-                                Confirm
-                            </button>
-                      <button type="button" onclick="rejectRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-danger">
-                                Reject
-                            </button>
-                        <?php endif; ?>
+                    <?php 
+                    // Show Confirm/Reject for all registration types (student_registrations, post_utme, and universal)
+                    $showConfirmReject = !empty($s['status']) && strtolower($s['status']) !== 'confirmed' && strtolower($s['status']) !== 'paid';
+                    if ($showConfirmReject): 
+                    ?>
+                      <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-outline-success" title="Confirm registration">
+                        <i class='bx bx-check'></i> Confirm
+                      </button>
+                      <button type="button" onclick="confirmWithPrice(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-success" title="Confirm and send payment link">
+                        <i class='bx bx-send'></i> Confirm & Send Price
+                      </button>
+                      <button type="button" onclick="rejectRegistration(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-outline-danger" title="Reject registration">
+                        <i class='bx bx-x'></i> Reject
+                      </button>
                     <?php endif; ?>
                     
                   <button type="button" onclick="viewRegistration(<?= $s['id'] ?>)" class="btn btn-sm btn-outline-primary">
@@ -1224,8 +1472,12 @@ if ($__hqStandalone) {
         <?php endif; ?>
     </div>
 
-    <!-- Pagination -->
-    <?php if (!empty($total) && isset($perPage)): $pages = (int) ceil($total / $perPage); $baseLink = 'index.php?pages=academic' . ($current_source==='postutme' ? '&source=postutme' : ''); $currentPage = (int)($page ?? 1); ?>
+    <?php if (!empty($total) && isset($perPage)):
+      $pages = (int) ceil($total / $perPage);
+      $baseLink = 'index.php?pages=academic';
+      if ($filterProgramType) $baseLink .= '&program_type=' . urlencode($filterProgramType);
+      $currentPage = (int)($page ?? 1);
+    ?>
     <?php if ($pages > 1): ?>
     <nav aria-label="Academic pagination" class="mt-4">
       <ul class="pagination justify-content-center">
@@ -1251,19 +1503,19 @@ if ($__hqStandalone) {
 // Client-side search
 document.getElementById('searchInput').addEventListener('keyup', function(e) {
     const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.academic-card').forEach(card => {
-        const name = card.querySelector('.card-name').textContent.toLowerCase();
-        const email = card.querySelector('.card-email').textContent.toLowerCase();
-    card.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+    document.querySelectorAll('.academic-card').forEach(card => {
+        const name  = (card.dataset.name  || card.querySelector('.card-name')?.textContent   || '').toLowerCase();
+        const email = (card.dataset.email || card.querySelector('.card-email')?.textContent  || '').toLowerCase();
+        card.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
     });
 });
 
 document.getElementById('statusFilter').addEventListener('change', function(e) {
     const status = e.target.value.toLowerCase();
-  document.querySelectorAll('.academic-card').forEach(card => {
-        const cardStatus = card.dataset.status;
-    if (!status) card.style.display = '';
-    else card.style.display = (cardStatus.includes(status)) ? '' : 'none';
+    document.querySelectorAll('.academic-card').forEach(card => {
+        const cardStatus = (card.dataset.status || '').toLowerCase();
+        if (!status) card.style.display = '';
+        else card.style.display = cardStatus === status ? '' : 'none';
     });
 });
 
@@ -1279,162 +1531,401 @@ function viewRegistration(id) {
     if(data.error) { Swal.fire('Error', data.error, 'error'); return; }
     const d = data.data || data;
     
-    // Build passport preview
+    // Passport URL is already absolute (set by the server)
+    let passportUrl = d.passport_photo || '';
+
+    const studentName = (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || '');
+    
+    // Build premium passport section
     let passportHtml = '';
-    if (d.passport_photo) {
-      passportHtml = `<div class="text-center mb-3">
-        <img src="${d.passport_photo}" alt="Passport Photo" style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:3px solid #ffd600;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-      </div>`;
+    if (passportUrl) {
+      passportHtml = `
+        <div style="text-align:center;margin-bottom:1.5rem;position:relative;">
+          <div style="position:relative;display:inline-block;">
+            <img src="${passportUrl}" alt="Passport Photo" 
+                 style="width:130px;height:130px;object-fit:cover;border-radius:50%;border:4px solid #fff;box-shadow:0 10px 25px rgba(0,0,0,0.1);"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div style="display:none;width:130px;height:130px;border-radius:50%;background:#f1f5f9;align-items:center;justify-content:center;">
+              <i class='bx bx-image-alt' style="font-size:3rem;color:#94a3b8;"></i>
+            </div>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <a href="${passportUrl}" download target="_blank"
+               onclick="event.stopPropagation();"
+               style="display:inline-flex;align-items:center;gap:6px;background:#0f172a;color:#fff;text-decoration:none;padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;">
+              <i class='bx bx-download'></i> Download Photo
+            </a>
+          </div>
+        </div>`;
+    } else {
+      passportHtml = `
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <div style="width:110px;height:110px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#f1f5f9;box-shadow:inset 0 2px 5px rgba(0,0,0,0.05);">
+            <i class='bx bx-user' style="font-size:3.5rem;color:#cbd5e1;"></i>
+          </div>
+          <p style="margin-top:0.75rem;color:#64748b;font-size:0.8rem;font-weight:500;">No passport photo provided</p>
+        </div>`;
     }
     
+    // Status badge styling
+    const statusColors = {
+      'confirmed': { bg: '#dcfce7', text: '#166534', icon: 'bx-check-circle' },
+      'paid': { bg: '#dcfce7', text: '#166534', icon: 'bx-check-circle' },
+      'rejected': { bg: '#fee2e2', text: '#991b1b', icon: 'bx-x-circle' },
+      'pending': { bg: '#fef3c7', text: '#92400e', icon: 'bx-time-five' },
+      'awaiting_payment': { bg: '#dbeafe', text: '#1e40af', icon: 'bx-credit-card' }
+    };
+    const statusStyle = statusColors[(d.status || 'pending').toLowerCase()] || statusColors.pending;
+    
     let html = `
-    <div style="max-height:65vh;overflow-y:auto;padding:0 1rem;">
+    <style>
+      .view-modal-section { background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+      .view-modal-section:hover { border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+      .view-modal-title { font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:8px;padding-bottom:0.75rem;border-bottom:1px solid #e2e8f0; }
+      .view-modal-title i { color:#3b82f6;font-size:1.25rem; }
+      .view-modal-grid { display:grid;grid-template-columns:1fr 1fr;gap:1.25rem 1rem; }
+      .view-modal-item { display:flex;flex-direction:column;gap:4px; }
+      .view-modal-item.full { grid-column:1/-1; }
+      .view-modal-label { font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;font-weight:600; }
+      .view-modal-value { font-size:0.95rem;color:#1e293b;font-weight:400;word-break:break-word; }
+    </style>
+    
+    <div style="max-height:65vh;overflow-y:auto;padding:0 0.5rem;">
       ${passportHtml}
       
-      <!-- Personal Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-user'></i> Personal Information
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Surname:</strong> ${d.surname || d.last_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Other Names:</strong> ${d.other_names || d.first_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Email:</strong> ${d.email || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Phone:</strong> ${d.phone || d.emergency_contact_phone || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Gender:</strong> ${d.gender || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>DOB:</strong> ${d.date_of_birth || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Marital Status:</strong> ${d.marital_status || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>NIN:</strong> ${d.nin || '-'}</p>
+      <!-- Status Banner -->
+      <div style="background:${statusStyle.bg};border-radius:12px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;">
+        <i class='bx ${statusStyle.icon}' style="font-size:1.5rem;color:${statusStyle.text};"></i>
+        <div>
+          <div style="font-size:0.75rem;color:${statusStyle.text};opacity:0.8;">Status</div>
+          <div style="font-size:1rem;font-weight:700;color:${statusStyle.text};text-transform:uppercase;">${(d.status || 'Pending')}</div>
+        </div>
+        <div style="margin-left:auto;font-size:0.8rem;color:${statusStyle.text};opacity:0.8;">
+          <i class='bx bx-calendar'></i> ${d.created_at || 'N/A'}
         </div>
       </div>
       
-      <!-- Location Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-map'></i> Location Details
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>State of Origin:</strong> ${d.state_of_origin || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Local Govt:</strong> ${d.local_government || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Home Address:</strong> ${d.home_address || '-'}</p>
+      <!-- Personal Information -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-user'></i> Personal Information</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Surname</div>
+            <div class="view-modal-value">${d.surname || d.last_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Other Names</div>
+            <div class="view-modal-value">${d.other_names || d.first_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Email</div>
+            <div class="view-modal-value">${d.email || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Phone</div>
+            <div class="view-modal-value">${d.phone || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Gender</div>
+            <div class="view-modal-value">${d.gender || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Date of Birth</div>
+            <div class="view-modal-value">${d.date_of_birth || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Marital Status</div>
+            <div class="view-modal-value">${d.marital_status || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">NIN</div>
+            <div class="view-modal-value">${d.nin || '-'}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Location Details -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-map'></i> Location Details</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">State of Origin</div>
+            <div class="view-modal-value">${d.state_of_origin || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Local Government</div>
+            <div class="view-modal-value">${d.local_government || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Home Address</div>
+            <div class="view-modal-value">${d.home_address || '-'}</div>
+          </div>
         </div>
       </div>
       
       <!-- Academic Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-book'></i> Academic Information
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Profile Code:</strong> ${d.profile_code || d.jamb_profile_code || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Exam Type:</strong> ${d.exam_type || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Exam Year:</strong> ${d.exam_year || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Course:</strong> ${d.academic_goals || d.course_of_study || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Previous Education:</strong> ${d.previous_education || '-'}</p>
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-book-open'></i> Academic Information</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Profile Code</div>
+            <div class="view-modal-value">${d.profile_code || d.jamb_profile_code || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Exam Type</div>
+            <div class="view-modal-value">${d.exam_type || d.program_type || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Exam Year</div>
+            <div class="view-modal-value">${d.exam_year || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Course</div>
+            <div class="view-modal-value">${d.academic_goals || d.course_of_study || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Previous Education</div>
+            <div class="view-modal-value">${d.previous_education || '-'}</div>
+          </div>
         </div>
       </div>
       
-      <!-- Sponsor/Guardian Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-group'></i> Sponsor/Guardian Information
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Sponsor Name:</strong> ${d.sponsor_name || d.guardian_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Sponsor Phone:</strong> ${d.sponsor_phone || d.guardian_phone || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Sponsor Address:</strong> ${d.sponsor_address || d.guardian_address || '-'}</p>
+      <!-- Sponsor/Guardian -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-group'></i> Sponsor / Guardian</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Name</div>
+            <div class="view-modal-value">${d.sponsor_name || d.guardian_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Phone</div>
+            <div class="view-modal-value">${d.sponsor_phone || d.guardian_phone || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Address</div>
+            <div class="view-modal-value">${d.sponsor_address || d.guardian_address || '-'}</div>
+          </div>
         </div>
       </div>
       
-      <!-- Next of Kin Information -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-user-plus'></i> Next of Kin
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Name:</strong> ${d.next_of_kin_name || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Phone:</strong> ${d.next_of_kin_phone || '-'}</p>
-          <p style="margin:0;font-size:0.9rem;grid-column:1/-1;"><strong>Address:</strong> ${d.next_of_kin_address || '-'}</p>
-        </div>
-      </div>
-      
-      <!-- Registration Status -->
-      <div style="background:#f8fafc;border-radius:12px;padding:1rem;">
-        <h5 style="font-size:0.85rem;font-weight:700;color:#64748b;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">
-          <i class='bx bx-check-circle'></i> Registration Status
-        </h5>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-          <p style="margin:0;font-size:0.9rem;"><strong>Status:</strong> <span style="padding:0.25rem 0.5rem;border-radius:999px;font-size:0.75rem;font-weight:600;background:${d.status === 'confirmed' ? '#d1fae5' : d.status === 'rejected' ? '#fee2e2' : '#fef3c7'};color:${d.status === 'confirmed' ? '#065f46' : d.status === 'rejected' ? '#991b1b' : '#92400e'}">${(d.status || 'Pending').toUpperCase()}</span></p>
-          <p style="margin:0;font-size:0.9rem;"><strong>Created:</strong> ${d.created_at || '-'}</p>
+      <!-- Next of Kin -->
+      <div class="view-modal-section">
+        <div class="view-modal-title"><i class='bx bx-user-plus'></i> Next of Kin</div>
+        <div class="view-modal-grid">
+          <div class="view-modal-item">
+            <div class="view-modal-label">Name</div>
+            <div class="view-modal-value">${d.emergency_contact_name || d.next_of_kin_name || '-'}</div>
+          </div>
+          <div class="view-modal-item">
+            <div class="view-modal-label">Phone</div>
+            <div class="view-modal-value">${d.emergency_contact_phone || d.next_of_kin_phone || '-'}</div>
+          </div>
+          <div class="view-modal-item full">
+            <div class="view-modal-label">Relationship</div>
+            <div class="view-modal-value">${d.emergency_relationship || d.next_of_kin_relationship || '-'}</div>
+          </div>
         </div>
       </div>
     </div>`;
     
     Swal.fire({
-      title: (d.surname || d.first_name || '') + ' ' + (d.other_names || d.last_name || ''),
-      html: html,
-      width: '700px',
+      title: '',
+      html: `
+        <div style="margin:-20px -20px 0;background:linear-gradient(135deg,#0b1a2c 0%,#1e3a5f 100%);padding:24px 20px;border-radius:12px 12px 0 0;">
+          <h2 style="margin:0;color:#ffd600;font-size:1.5rem;font-weight:700;">${studentName}</h2>
+          <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:0.9rem;">${d.program_type ? d.program_type.toUpperCase() + ' Registration' : 'Student Registration'}</p>
+        </div>
+        <div style="padding-top:1rem;">${html}</div>
+      `,
+      width: '750px',
       showCloseButton: true,
       showConfirmButton: true,
-      confirmButtonText: '<i class="bx bx-download"></i> Export PDF',
-      confirmButtonColor: '#ffd600',
       showDenyButton: true,
-      denyButtonText: 'Close',
-      denyButtonColor: '#64748b'
+      showCancelButton: false,
+      confirmButtonText: '<i class="bx bx-printer"></i> Print / PDF',
+      denyButtonText: '<i class="bx bx-x"></i> Close',
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        const confirmBtn = popup.querySelector('.swal2-confirm');
+        const denyBtn = popup.querySelector('.swal2-deny');
+        if (confirmBtn) {
+          confirmBtn.style.cssText = 'background:linear-gradient(135deg,#ffd600 0%,#e6c200 100%);color:#0b1a2c;font-weight:700;padding:12px 24px;border-radius:10px;border:none;box-shadow:0 4px 12px rgba(255,214,0,0.3);';
+        }
+        if (denyBtn) {
+          denyBtn.style.cssText = 'background:#f1f5f9;color:#475569;font-weight:600;padding:12px 24px;border-radius:10px;border:none;';
+        }
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Trigger export for this student
+        // Open print/PDF page in new tab
         window.open('index.php?pages=academic&action=export_single&id=' + id, '_blank');
       }
     });
-  });
+  })
+  .catch(err => Swal.fire('Error', 'Failed to load registration: ' + err.message, 'error'));
 }
 
-function confirmRegistration(id) {
+// Function to download passport photo
+function downloadPassport(url, filename) {
+  if (!url) {
+    Swal.fire('No Photo', 'This registration has no passport photo.', 'warning');
+    return;
+  }
+  
+  // Use anchor download attribute behavior directly
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (filename || 'passport') + '.jpg';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
     Swal.fire({
         title: 'Confirm Registration?',
-        text: "This will approve the student.",
+        text: "This will approve the student's registration.",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Yes, confirm'
+        confirmButtonText: 'Yes, confirm',
+        confirmButtonColor: '#22c55e'
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'index.php?pages=academic&action=confirm_registration';
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= $csrf ?>';
-            form.appendChild(idInput); form.appendChild(csrf);
-            document.body.appendChild(form);
-            form.submit();
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('csrf_token', '<?= $csrf ?>');
+            fd.append('action', isUniversal ? 'confirm_universal' : (isPostUtme ? 'confirm_postutme' : 'confirm_registration'));
+            
+            fetch('api/confirm_registration.php', {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success || data.status === 'ok') {
+                    Swal.fire('Confirmed!', 'Registration has been approved.', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.error || data.message || 'Failed to confirm', 'error');
+                }
+            })
+            .catch(err => Swal.fire('Error', 'Network error: ' + err.message, 'error'));
         }
     });
 }
 
-function rejectRegistration(id) {
+function confirmWithPrice(id, isUniversal = false, isPostUtme = false) {
+    Swal.fire({
+        title: 'Confirm & Send Payment',
+        html: `
+            <div style="text-align:left;">
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Amount to Pay (₦)</label>
+                    <input type="number" id="swal-amount" class="swal2-input" placeholder="e.g. 15000" style="width:100%;margin:0;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Custom Message (Optional)</label>
+                    <textarea id="swal-message" class="swal2-textarea" placeholder="Add a personal message to include in the email..." style="width:100%;margin:0;height:80px;"></textarea>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: '<i class="bx bx-send"></i> Confirm & Send Email',
+        confirmButtonColor: '#22c55e',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const amount = document.getElementById('swal-amount').value;
+            const message = document.getElementById('swal-message').value;
+            if (!amount || parseFloat(amount) <= 0) {
+                Swal.showValidationMessage('Please enter a valid amount');
+                return false;
+            }
+            return { amount: parseFloat(amount), message: message };
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            Swal.fire({
+                title: 'Sending...',
+                text: 'Confirming registration and sending payment link...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('amount', result.value.amount);
+            fd.append('custom_message', result.value.message || '');
+            fd.append('csrf_token', '<?= $csrf ?>');
+            fd.append('action', 'confirm_and_send_price');
+            fd.append('source', isUniversal ? 'universal' : (isPostUtme ? 'postutme' : 'regular'));
+            
+            fetch('api/confirm_with_price.php', {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Payment Link Sent!',
+                        html: `
+                            <p>Registration confirmed and payment link sent to:</p>
+                            <p><strong>${data.email || 'the student'}</strong></p>
+                            <p>Amount: <strong>₦${parseFloat(data.amount || result.value.amount).toLocaleString()}</strong></p>
+                            ${data.reference ? '<p>Reference: <code>' + data.reference + '</code></p>' : ''}
+                        `,
+                        confirmButtonColor: '#22c55e'
+                    }).then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.error || data.message || 'Failed to send payment link', 'error');
+                }
+            })
+            .catch(err => Swal.fire('Error', 'Network error: ' + err.message, 'error'));
+        }
+    });
+}
+
+function rejectRegistration(id, isUniversal = false, isPostUtme = false) {
     Swal.fire({
         title: 'Reject Registration',
-        input: 'text',
-        inputLabel: 'Reason for rejection',
+        html: `
+            <div style="text-align:left;">
+                <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Reason for rejection</label>
+                <textarea id="swal-reason" class="swal2-textarea" placeholder="Enter reason for rejection..." style="width:100%;margin:0;height:80px;"></textarea>
+            </div>
+        `,
         showCancelButton: true,
         confirmButtonText: 'Reject',
-        confirmButtonColor: '#e11d48'
+        confirmButtonColor: '#e11d48',
+        preConfirm: () => {
+            return document.getElementById('swal-reason').value || '';
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'index.php?pages=academic&action=reject_registration';
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = id;
-            const reasonInput = document.createElement('input');
-            reasonInput.type = 'hidden'; reasonInput.name = 'reason'; reasonInput.value = result.value;
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= $csrf ?>';
-            form.appendChild(idInput); form.appendChild(reasonInput); form.appendChild(csrf);
-            document.body.appendChild(form);
-            form.submit();
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('reason', result.value);
+            fd.append('csrf_token', '<?= $csrf ?>');
+            fd.append('action', isUniversal ? 'reject_universal' : (isPostUtme ? 'reject_postutme' : 'reject_registration'));
+            
+            fetch('api/reject_registration.php', {
+                method: 'POST',
+                body: fd,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success || data.status === 'ok') {
+                    Swal.fire('Rejected', 'Registration has been rejected.', 'info').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.error || data.message || 'Failed to reject', 'error');
+                }
+            })
+            .catch(err => Swal.fire('Error', 'Network error: ' + err.message, 'error'));
         }
     });
 }

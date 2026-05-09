@@ -123,8 +123,7 @@ $pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educ
   </div>
 </section>
 
-<?php
-// Include tutors partial (keeps heavy markup in a separate file)
-include __DIR__ . '/tutors.php';
+<?php include __DIR__ . '/tutors.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
 
-include __DIR__ . '/includes/footer.php'; ?>
+

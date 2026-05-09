@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 }
 
                 logAction($pdo, $_SESSION['user']['id'], 'role_created', ['slug' => $slug]);
+                notifyAdminChange($pdo, 'Role Created', ['Role Name' => $name, 'Slug' => $slug, 'Permissions Count' => count($menus)], (int)($_SESSION['user']['id'] ?? 0));
                 $flash[] = "Role '{$name}' created.";
             }
         }
@@ -83,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
                 }
 
                 logAction($pdo, $_SESSION['user']['id'], 'role_updated', ['role_id' => $id]);
+                notifyAdminChange($pdo, 'Role Updated', ['Role ID' => $id, 'Role Name' => $name, 'Permissions Count' => count($menus)], (int)($_SESSION['user']['id'] ?? 0));
                 $flash[] = "Role '{$name}' updated.";
             }
         }
@@ -93,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             $stmt->execute([$id]);
             // role_permissions cascade delete
             logAction($pdo, $_SESSION['user']['id'], 'role_deleted', ['role_id' => $id]);
+            notifyAdminChange($pdo, 'Role Deleted', ['Role ID' => $id], (int)($_SESSION['user']['id'] ?? 0));
             $flash[] = "Role deleted.";
         }
     }

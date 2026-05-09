@@ -2,6 +2,7 @@
 // public/api/chat.php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/functions.php';
 
 // Simple actions: send_message, get_threads, get_messages
 $action = $_GET['action'] ?? $_POST['action'] ?? 'send_message';
@@ -25,6 +26,18 @@ if ($action === 'send_message') {
     // Update thread last_activity so admin list shows latest activity
     $upd = $pdo->prepare('UPDATE chat_threads SET last_activity = NOW() WHERE id = ?');
     $upd->execute([$thread_id]);
+    try {
+        notifyAdminChange($pdo, 'New Chat Message from Visitor', [
+            'Thread ID' => $thread_id,
+            'Visitor Name' => $visitor_name ?: 'Guest',
+            'Visitor Email' => $visitor_email ?: 'N/A',
+            'Message Preview' => mb_substr(strip_tags($message), 0, 120),
+            'Status' => 'Awaiting Admin Response'
+        ], null, admin_url('index.php?pages=chat'));
+    } catch (Throwable $e) {
+        error_log('public/api/chat notification error: ' . $e->getMessage());
+    }
+
     echo json_encode(['status'=>'ok','thread_id'=>$thread_id]);
     } catch (Exception $e) { http_response_code(500); echo json_encode(['status'=>'error','message'=>'DB error']); }
     exit;
