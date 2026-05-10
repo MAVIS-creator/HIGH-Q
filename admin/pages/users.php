@@ -10,6 +10,15 @@ requirePermission('users');
 
 // Generate CSRF token
 $csrf = generateToken('users_form');
+$emailVerificationRequired = true;
+try {
+  $settings = function_exists('hqLoadSystemSettings') ? hqLoadSystemSettings($pdo) : [];
+  if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('email_verification', $settings['security'])) {
+    $emailVerificationRequired = (bool)$settings['security']['email_verification'];
+  }
+} catch (Throwable $e) {
+  $emailVerificationRequired = true;
+}
 
 // Fetch roles for dropdowns
 $all_roles = $pdo->query("SELECT id, name, slug FROM roles ORDER BY name ASC")->fetchAll();
@@ -54,6 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
       }
 
         if ($action === 'resend_verification') {
+          if (!$emailVerificationRequired) {
+            header('Location: index.php?pages=users'); exit;
+          }
           // Resend verification email to user (admin action)
           $u = $pdo->prepare('SELECT id, email, name, is_active, email_verification_sent_at FROM users WHERE id = ? LIMIT 1');
           $u->execute([$id]); $usr = $u->fetch(PDO::FETCH_ASSOC);
@@ -512,6 +524,48 @@ async function loadUser(id, mode='view'){
   activateTab(mode==='edit'?'editTab':'viewTab');
   openModal();
 }
+
+// Form submission handler
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const action = this.action;
+  
+  try {
+    const response = await fetch(action, {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin'
+    });
+    
+    if (response.ok) {
+      // Success - redirect or show message
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: 'Success',
+          text: 'User updated successfully',
+          icon: 'success',
+          timer: 1500
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        alert('User updated successfully');
+        window.location.reload();
+      }
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    console.error('Form submission error:', error);
+    if (typeof Swal !== 'undefined') {
+      Swal.fire('Error', 'Failed to update user. Please try again.', 'error');
+    } else {
+      alert('Failed to update user. Please try again.');
+    }
+  }
+});
 
 // Button handlers
 document.querySelectorAll('.btn-view').forEach(btn=>btn.addEventListener('click', e=>{

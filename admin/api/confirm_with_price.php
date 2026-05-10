@@ -19,11 +19,6 @@ if ($id <= 0) {
     exit;
 }
 
-if ($amount <= 0) {
-    echo json_encode(['success' => false, 'error' => 'Invalid amount']);
-    exit;
-}
-
 try {
     $pdo->beginTransaction();
     
@@ -54,13 +49,31 @@ try {
         exit;
     }
     
+    $registrationPayload = [];
+    if ($source === 'universal' && !empty($registration['payload'])) {
+        $registrationPayload = json_decode((string)$registration['payload'], true) ?: [];
+    }
+    $paymentPolicy = is_array($registrationPayload['_payment_policy'] ?? null) ? $registrationPayload['_payment_policy'] : [];
+    $isDeferredServiceFeeFlow = $source === 'universal' && !empty($paymentPolicy['verify_before_final_payment']);
+    $initialFee = (float)($paymentPolicy['initial_fee'] ?? 0);
+    $remainingServiceFee = (float)($paymentPolicy['remaining_service_fee'] ?? 0);
+
+    if ($amount <= 0 && $isDeferredServiceFeeFlow && $remainingServiceFee > 0) {
+        $amount = $remainingServiceFee;
+    }
+
+    if ($amount <= 0) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'error' => 'Invalid amount']);
+        exit;
+    }
+
     // Get email from registration
     $email = $registration['email'] ?? null;
     
     // For universal registrations, also check payload
-    if ($source === 'universal' && empty($email) && !empty($registration['payload'])) {
-        $payload = json_decode($registration['payload'], true);
-        $email = $payload['email'] ?? null;
+    if ($source === 'universal' && empty($email) && !empty($registrationPayload)) {
+        $email = $registrationPayload['email'] ?? null;
     }
     
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -95,14 +108,34 @@ try {
         'email' => $email,
         'name' => $studentName,
         'custom_message' => $customMessage,
+        'payment_phase' => $isDeferredServiceFeeFlow ? 'approved_service_fee' : 'standard',
+        'initial_fee' => $initialFee,
+        'remaining_service_fee_before_approval' => $remainingServiceFee,
     ]);
     $insPayment->execute([$amount, 'bank', $reference, $metadata, $programType]);
     $paymentId = $pdo->lastInsertId();
     
     // Update registration status
     if ($source === 'universal') {
-        $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, payment_status = ?, amount = ?, payment_reference = ? WHERE id = ?');
-        $upd->execute(['awaiting_payment', 'pending', $amount, $reference, $id]);
+        if ($isDeferredServiceFeeFlow) {
+            $paymentPolicy['approved_service_fee'] = $amount;
+            $paymentPolicy['remaining_service_fee'] = max(0, $remainingServiceFee - $amount);
+            $paymentPolicy['service_fee_payment_reference'] = $reference;
+            $paymentPolicy['service_fee_payment_id'] = (int)$paymentId;
+            $paymentPolicy['service_fee_approved_at'] = date('Y-m-d H:i:s');
+            $registrationPayload['_payment_policy'] = $paymentPolicy;
+
+            $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, payment_status = ?, payload = ? WHERE id = ?');
+            $upd->execute([
+                'awaiting_payment',
+                'pending',
+                json_encode($registrationPayload, JSON_UNESCAPED_UNICODE),
+                $id
+            ]);
+        } else {
+            $upd = $pdo->prepare('UPDATE universal_registrations SET status = ?, payment_status = ?, amount = ?, payment_reference = ? WHERE id = ?');
+            $upd->execute(['awaiting_payment', 'pending', $amount, $reference, $id]);
+        }
     } elseif ($source === 'postutme') {
         $upd = $pdo->prepare('UPDATE post_utme_registrations SET status = ?, payment_status = ? WHERE id = ?');
         $upd->execute(['awaiting_payment', 'pending', $id]);
@@ -140,6 +173,9 @@ try {
     $body .= '<div style="background:#fff;border:1px solid #e2e8f0;border-top:0;padding:24px;">';
     $body .= '<h2 style="color:#0b1a2c;margin-top:0;">Hello ' . htmlspecialchars($studentName) . ',</h2>';
     $body .= '<p>Great news! Your registration has been <strong style="color:#22c55e;">approved</strong>. To complete your enrollment, please make the following payment:</p>';
+    if ($isDeferredServiceFeeFlow && $initialFee > 0) {
+        $body .= '<p style="color:#475569;">Your initial form and registration fee of <strong>₦' . number_format($initialFee, 2) . '</strong> remains separate. This new payment request covers only the approved course/service fee.</p>';
+    }
     
     $body .= '<div style="background:linear-gradient(135deg,#fefce8 0%,#fef9c3 100%);border:2px solid #ffd600;border-radius:12px;padding:20px;margin:20px 0;text-align:center;">';
     $body .= '<p style="margin:0;font-size:0.9rem;color:#64748b;">Amount to Pay</p>';

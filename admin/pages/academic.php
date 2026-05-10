@@ -345,6 +345,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         if (!empty($s3['payload'])) {
           $payload = json_decode($s3['payload'], true) ?: [];
         }
+        $paymentPolicy = is_array($payload['_payment_policy'] ?? null) ? $payload['_payment_policy'] : [];
         // Build absolute URL for passport photo so modal img can load it
         $rawPassport = $payload['passport_photo'] ?? null;
         if ($rawPassport && !preg_match('#^https?://#i', $rawPassport)) {
@@ -386,7 +387,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
           'passport_photo' => $rawPassport,
           'status' => $s3['status'] ?? null,
           'payment_status' => $s3['payment_status'] ?? null,
+          'amount' => $s3['amount'] ?? null,
+          'payment_reference' => $s3['payment_reference'] ?? null,
           'program_type' => $s3['program_type'] ?? null,
+          'payment_policy' => $paymentPolicy,
           'created_at' => $s3['created_at'] ?? null,
         ]);
         exit;
@@ -1395,6 +1399,20 @@ if ($__hqStandalone) {
                 $passportThumb = $s['passport_path'] ?? ($s['avatar'] ?? null);
                 $isPostUtme = !empty($s['__postutme']);
                 $isUniversal = !empty($s['__universal']);
+                $confirmSuggestedAmount = '';
+                $confirmInitialFee = '';
+                $confirmCurrentAmount = '';
+                $confirmDeferredFlow = false;
+                if ($isUniversal && !empty($s['payload'])) {
+                    $cardPayload = json_decode((string)$s['payload'], true) ?: [];
+                    $cardPolicy = is_array($cardPayload['_payment_policy'] ?? null) ? $cardPayload['_payment_policy'] : [];
+                    if (!empty($cardPolicy['verify_before_final_payment'])) {
+                        $confirmDeferredFlow = true;
+                        $confirmSuggestedAmount = (string)($cardPolicy['remaining_service_fee'] ?? '');
+                        $confirmInitialFee = (string)($cardPolicy['initial_fee'] ?? '');
+                        $confirmCurrentAmount = (string)($cardPolicy['current_payable_amount'] ?? '');
+                    }
+                }
                 // Universal registrations display program type badge
                 $programTypeBadge = $isUniversal && !empty($s['program_type']) ? ucfirst($s['program_type']) : null;
             ?>
@@ -1443,7 +1461,14 @@ if ($__hqStandalone) {
                       <button type="button" onclick="confirmRegistration(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-outline-success" title="Confirm registration">
                         <i class='bx bx-check'></i> Confirm
                       </button>
-                      <button type="button" onclick="confirmWithPrice(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-success" title="Confirm and send payment link">
+                      <button type="button"
+                              onclick="confirmWithPrice(this, <?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)"
+                              class="btn btn-sm btn-success"
+                              title="Confirm and send payment link"
+                              data-suggested-amount="<?= htmlspecialchars($confirmSuggestedAmount) ?>"
+                              data-initial-fee="<?= htmlspecialchars($confirmInitialFee) ?>"
+                              data-current-amount="<?= htmlspecialchars($confirmCurrentAmount) ?>"
+                              data-deferred-flow="<?= $confirmDeferredFlow ? '1' : '0' ?>">
                         <i class='bx bx-send'></i> Confirm & Send Price
                       </button>
                       <button type="button" onclick="rejectRegistration(<?= $s['id'] ?>, <?= $isUniversal ? 'true' : 'false' ?>, <?= $isPostUtme ? 'true' : 'false' ?>)" class="btn btn-sm btn-outline-danger" title="Reject registration">
@@ -1816,23 +1841,38 @@ function confirmRegistration(id, isUniversal = false, isPostUtme = false) {
     });
 }
 
-function confirmWithPrice(id, isUniversal = false, isPostUtme = false) {
+function confirmWithPrice(button, id, isUniversal = false, isPostUtme = false) {
+    const suggestedAmount = parseFloat(button?.dataset?.suggestedAmount || '0');
+    const initialFee = parseFloat(button?.dataset?.initialFee || '0');
+    const currentAmount = parseFloat(button?.dataset?.currentAmount || '0');
+    const deferredFlow = (button?.dataset?.deferredFlow || '0') === '1';
+    const helperText = deferredFlow
+        ? `
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;margin-bottom:1rem;font-size:0.9rem;color:#1e3a8a;text-align:left;">
+                The student already has the initial form/registration fee recorded at <strong>₦${initialFee.toLocaleString()}</strong>.
+                Create the next payment request only for the approved course/service fee.
+                ${currentAmount > 0 ? `<div style="margin-top:6px;color:#475569;">Current public-side payable amount: ₦${currentAmount.toLocaleString()}</div>` : ''}
+            </div>
+          `
+        : '';
+
     Swal.fire({
-        title: 'Confirm & Send Payment',
+        title: deferredFlow ? 'Approve & Send Course Payment' : 'Confirm & Send Payment',
         html: `
             <div style="text-align:left;">
+                ${helperText}
                 <div style="margin-bottom:1rem;">
                     <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Amount to Pay (₦)</label>
-                    <input type="number" id="swal-amount" class="swal2-input" placeholder="e.g. 15000" style="width:100%;margin:0;">
+                    <input type="number" id="swal-amount" class="swal2-input" placeholder="e.g. 15000" value="${suggestedAmount > 0 ? suggestedAmount : ''}" style="width:100%;margin:0;">
                 </div>
                 <div style="margin-bottom:1rem;">
                     <label style="display:block;font-weight:600;margin-bottom:0.5rem;">Custom Message (Optional)</label>
-                    <textarea id="swal-message" class="swal2-textarea" placeholder="Add a personal message to include in the email..." style="width:100%;margin:0;height:80px;"></textarea>
+                    <textarea id="swal-message" class="swal2-textarea" placeholder="Add a personal message to include in the email..." style="width:100%;margin:0;height:80px;">${deferredFlow ? 'Your registration details have been approved. Please complete this final course/service payment to proceed.' : ''}</textarea>
                 </div>
             </div>
         `,
         showCancelButton: true,
-        confirmButtonText: '<i class="bx bx-send"></i> Confirm & Send Email',
+        confirmButtonText: deferredFlow ? '<i class="bx bx-send"></i> Approve & Send Course Fee' : '<i class="bx bx-send"></i> Confirm & Send Email',
         confirmButtonColor: '#22c55e',
         cancelButtonText: 'Cancel',
         preConfirm: () => {

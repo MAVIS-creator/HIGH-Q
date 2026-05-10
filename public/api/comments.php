@@ -106,7 +106,11 @@ try {
             $stmt2->execute(['system_settings']);
             $val = $stmt2->fetchColumn();
             $j = $val ? json_decode($val, true) : [];
-            if (isset($j['content']['comment_moderation'])) $commentModeration = (bool)$j['content']['comment_moderation'];
+            if (isset($j['security']['comment_moderation'])) {
+                $commentModeration = (bool)$j['security']['comment_moderation'];
+            } elseif (isset($j['content']['comment_moderation'])) {
+                $commentModeration = (bool)$j['content']['comment_moderation'];
+            }
         }
     } catch (Throwable $e) {
         // ignore and default to moderation on

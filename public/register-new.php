@@ -30,6 +30,10 @@ try {
     $siteSettings = $stmtS->fetch(PDO::FETCH_ASSOC) ?: [];
 } catch (Throwable $e) { $siteSettings = []; }
 
+$publicRegistrationEnabled = hqPublicStudentRegistrationEnabled($pdo);
+$verifyBeforePayment = hqVerifyRegistrationBeforePayment($pdo);
+$initialRegistrationFee = 2500;
+
 require_once 'includes/header.php';
 ?>
 
@@ -141,6 +145,14 @@ require_once 'includes/header.php';
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
+.program-card.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+}
+
 .program-icon {
     font-size: 48px;
     margin-bottom: 15px;
@@ -210,6 +222,18 @@ require_once 'includes/header.php';
 <div class="container register-layout">
     <main class="register-main">
     <div class="wizard-container">
+        <?php if (!$publicRegistrationEnabled): ?>
+            <div style="background:#fff7ed;border-left:4px solid #f59e0b;color:#9a3412;padding:16px 18px;margin-bottom:24px;border-radius:8px;">
+                <strong style="display:block;margin-bottom:6px;"><i class='bx bx-pause-circle'></i> Registration Temporarily Closed</strong>
+                <span>New student registrations are currently paused by the school administration. Please contact the office for the next opening window.</span>
+            </div>
+        <?php elseif ($verifyBeforePayment): ?>
+            <div style="background:#ecfeff;border-left:4px solid #06b6d4;color:#155e75;padding:16px 18px;margin-bottom:24px;border-radius:8px;">
+                <strong style="display:block;margin-bottom:6px;"><i class='bx bx-info-circle'></i> Payment Policy Update</strong>
+                <span>At this stage you will only pay the form and registration fee of <strong>₦<?= number_format($initialRegistrationFee, 2) ?></strong>. Any service fee will be reviewed and requested later by admin if needed.</span>
+            </div>
+        <?php endif; ?>
+
         <!-- Progress Bar -->
         <div class="wizard-progress">
             <div class="progress-step <?= $step >= 1 ? 'active' : '' ?> <?= $step > 1 ? 'completed' : '' ?>">
@@ -236,31 +260,31 @@ require_once 'includes/header.php';
                 </div>
 
                 <div class="program-grid">
-                    <a href="?step=2&type=jamb" class="program-card">
+                    <a href="?step=2&type=jamb" class="program-card <?= !$publicRegistrationEnabled ? 'disabled' : '' ?>">
                         <div class="program-icon"><i class='bx bxs-graduation'></i></div>
                         <div class="program-title">JAMB/UTME</div>
                         <div class="program-desc">Comprehensive preparation for JAMB and university entrance</div>
                     </a>
 
-                    <a href="?step=2&type=waec" class="program-card">
+                    <a href="?step=2&type=waec" class="program-card <?= !$publicRegistrationEnabled ? 'disabled' : '' ?>">
                         <div class="program-icon"><i class='bx bxs-book-open'></i></div>
                         <div class="program-title">WAEC/NECO/GCE</div>
                         <div class="program-desc">O-Level exam preparation and tutoring</div>
                     </a>
 
-                    <a href="?step=2&type=postutme" class="program-card">
+                    <a href="?step=2&type=postutme" class="program-card <?= !$publicRegistrationEnabled ? 'disabled' : '' ?>">
                         <div class="program-icon"><i class='bx bxs-school'></i></div>
                         <div class="program-title">Post-UTME</div>
                         <div class="program-desc">University screening exam preparation</div>
                     </a>
 
-                    <a href="?step=2&type=digital" class="program-card">
+                    <a href="?step=2&type=digital" class="program-card <?= !$publicRegistrationEnabled ? 'disabled' : '' ?>">
                         <div class="program-icon"><i class='bx bxs-devices'></i></div>
                         <div class="program-title">Digital Skills</div>
                         <div class="program-desc">Web development, cybersecurity, and tech training</div>
                     </a>
 
-                    <a href="?step=2&type=international" class="program-card">
+                    <a href="?step=2&type=international" class="program-card <?= !$publicRegistrationEnabled ? 'disabled' : '' ?>">
                         <div class="program-icon"><i class='bx bxs-world'></i></div>
                         <div class="program-title">International Programs</div>
                         <div class="program-desc">SAT, IELTS, TOEFL, JUPEB preparation</div>
@@ -269,13 +293,20 @@ require_once 'includes/header.php';
 
             <?php elseif ($step === 2): ?>
                 <!-- Step 2: Program-specific form -->
+                <?php if (!$publicRegistrationEnabled): ?>
+                    <div style="background:#fef2f2;border-left:4px solid #ef4444;color:#991b1b;padding:15px;margin-bottom:25px;border-radius:4px;">
+                        <h4 style="margin-top:0;font-size:16px;font-weight:bold;"><i class='bx bx-error-circle'></i> Registration Closed</h4>
+                        <p style="margin-bottom:0;">Public student registration is currently disabled. Please check back later or contact the school directly.</p>
+                    </div>
+                    <a href="?step=1" class="btn btn-primary">Back to Program Selection</a>
+                <?php else: ?>
                 <?php if (!empty($_SESSION['registration_errors'])): ?>
                     <div style="background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; padding: 15px; margin-bottom: 25px; border-radius: 4px;">
                         <h4 style="margin-top: 0; font-size: 16px; font-weight: bold;"><i class='bx bx-error-circle'></i> Registration Failed</h4>
                         <ul style="margin-bottom: 0; padding-left: 20px;">
                             <?php foreach ($_SESSION['registration_errors'] as $err): ?>
                                 <li><?= htmlspecialchars($err) ?></li>
-                            <?php endforeach; ?>
+                    <?php endforeach; ?>
                         </ul>
                     </div>
                     <?php unset($_SESSION['registration_errors']); ?>
@@ -303,6 +334,7 @@ require_once 'includes/header.php';
                         echo '<a href="?step=1" class="btn btn-primary">Back to Program Selection</a>';
                 }
                 ?>
+                <?php endif; ?>
 
             <?php endif; ?>
         </div>
@@ -325,6 +357,11 @@ require_once 'includes/header.php';
 
         <div class="sidebar-card payment-box">
             <h4>Payment Options</h4>
+            <?php if ($verifyBeforePayment): ?>
+                <div style="background:#fefce8;border:1px solid #facc15;border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:#854d0e;">
+                    Initial payment is limited to <strong>₦<?= number_format($initialRegistrationFee, 2) ?></strong> for form and registration only.
+                </div>
+            <?php endif; ?>
             <div class="payment-method" data-method="bank">
                 <strong>Bank Transfer</strong>
                 <p>Account Name: <?= htmlspecialchars($siteSettings['bank_account_name'] ?? 'High Q Solid Academy Limited') ?><br>

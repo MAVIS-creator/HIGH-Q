@@ -14,6 +14,24 @@ $recfg = file_exists(__DIR__ . '/config/recaptcha.php')
 
 $errors = [];
 $success = '';
+$signupBlocked = false;
+$emailVerificationRequired = true;
+
+try {
+    $totalUsers = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    $settings = function_exists('hqLoadSystemSettings') ? hqLoadSystemSettings($pdo) : [];
+    if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('email_verification', $settings['security'])) {
+        $emailVerificationRequired = (bool)$settings['security']['email_verification'];
+    }
+} catch (Throwable $e) {
+    $totalUsers = 0;
+    $emailVerificationRequired = true;
+}
+
+if ($totalUsers > 0 && function_exists('hqAdminRegistrationEnabled') && !hqAdminRegistrationEnabled($pdo)) {
+    $signupBlocked = true;
+    $errors[] = 'Admin account registration is currently disabled by system settings.';
+}
 
 function resizeAndCrop($srcPath, $destPath, $targetWidth = 300, $targetHeight = 300)
 {
@@ -83,6 +101,10 @@ function resizeAndCrop($srcPath, $destPath, $targetWidth = 300, $targetHeight = 
 // Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        if ($signupBlocked) {
+            throw new RuntimeException('Admin signup is disabled.');
+        }
+
         $token = $_POST['_csrf_token'] ?? '';
 
         // reCAPTCHA validation
@@ -183,9 +205,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $is_active = $isFirstAdmin ? 1 : 0;
 
-            $verificationToken = $is_active ? null : bin2hex(random_bytes(32));
-            $verifiedAt = $is_active ? date('Y-m-d H:i:s') : null;
-            $sentAt = $is_active ? null : date('Y-m-d H:i:s');
+            $needsVerification = !$is_active && $emailVerificationRequired;
+            $verificationToken = $needsVerification ? bin2hex(random_bytes(32)) : null;
+            $verifiedAt = ($is_active || !$needsVerification) ? date('Y-m-d H:i:s') : null;
+            $sentAt = $needsVerification ? date('Y-m-d H:i:s') : null;
 
             $stmt = $pdo->prepare("INSERT INTO users (role_id, name, phone, email, password, avatar, is_active, email_verification_token, email_verified_at) 
                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -200,24 +223,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if (!$is_active) {
-                $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
-                $uupd->execute([$sentAt, $uid]);
+                if ($needsVerification) {
+                    $uupd = $pdo->prepare('UPDATE users SET email_verification_sent_at = ? WHERE id = ?');
+                    $uupd->execute([$sentAt, $uid]);
 
-                $verifyUrl = admin_url('verify_email.php?token=' . urlencode($verificationToken));
+                    $verifyUrl = admin_url('verify_email.php?token=' . urlencode($verificationToken));
 
-                $subject = "Verify your email for HIGH Q SOLID ACADEMY";
-                $html = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-                    <div style='background: linear-gradient(135deg, #ffd600, #ff4b2b); padding: 30px; text-align: center;'>
-                        <h1 style='color: #fff; margin: 0;'>HIGH Q SOLID ACADEMY</h1>
-                    </div>
-                    <div style='padding: 30px; background: #fff;'>
-                        <p style='font-size: 16px;'>Hello <strong>$name</strong>,</p>
-                        <p style='font-size: 16px;'>Thanks for registering! Your application is pending admin approval.</p>
-                        <p style='font-size: 16px;'>Please verify your email:</p>
-                        <a href=\"{$verifyUrl}\" style='display: inline-block; padding: 14px 28px; background: #1a73e8; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;'>Verify Email</a>
-                    </div>
-                </div>";
-                @sendEmail($email, $subject, $html);
+                    $subject = "Verify your email for HIGH Q SOLID ACADEMY";
+                    $html = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                        <div style='background: linear-gradient(135deg, #ffd600, #ff4b2b); padding: 30px; text-align: center;'>
+                            <h1 style='color: #fff; margin: 0;'>HIGH Q SOLID ACADEMY</h1>
+                        </div>
+                        <div style='padding: 30px; background: #fff;'>
+                            <p style='font-size: 16px;'>Hello <strong>$name</strong>,</p>
+                            <p style='font-size: 16px;'>Thanks for registering! Your application is pending admin approval.</p>
+                            <p style='font-size: 16px;'>Please verify your email:</p>
+                            <a href=\"{$verifyUrl}\" style='display: inline-block; padding: 14px 28px; background: #1a73e8; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;'>Verify Email</a>
+                        </div>
+                    </div>";
+                    @sendEmail($email, $subject, $html);
+                }
 
                 try {
                     $admins = $pdo->prepare('SELECT email, name FROM users WHERE role_id = 1');
@@ -230,7 +255,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 } catch (Throwable $_) {}
 
-                $success = "Application submitted! Please check your email to verify your account.";
+                $success = $needsVerification
+                    ? "Application submitted! Please check your email to verify your account."
+                    : "Application submitted! Your account is pending admin approval.";
             } else {
                 $subject = "Welcome to HIGH Q SOLID ACADEMY";
                 $html = "<p>Hello $name,</p><p>Your account has been created with Main Admin privileges.</p>";
@@ -340,6 +367,11 @@ $csrfToken = generateToken('signup_form');
                     </div>
                 <?php endforeach; ?>
 
+                <?php if ($signupBlocked): ?>
+                    <a href="login.php" class="btn-primary" style="display: block; text-align: center; text-decoration: none; margin-top: 16px;">
+                        <i class='bx bx-log-in'></i>&nbsp; Go to Login
+                    </a>
+                <?php else: ?>
                 <!-- Signup Form -->
                 <form method="POST" enctype="multipart/form-data" class="auth-form" id="signupForm">
                     <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
@@ -392,6 +424,7 @@ $csrfToken = generateToken('signup_form');
                         <i class='bx bx-user-plus'></i>&nbsp; Create Account
                     </button>
                 </form>
+                <?php endif; ?>
             <?php endif; ?>
 
             <!-- Links -->

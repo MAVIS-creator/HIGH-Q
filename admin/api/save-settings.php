@@ -79,6 +79,113 @@ if (!is_array($posted) || empty($posted)) {
     exit;
 }
 
+$defaults = [
+    'site' => [
+        'name' => 'HIGH Q SOLID ACADEMY',
+        'tagline' => '',
+        'logo' => '',
+        'bank_name' => '',
+        'bank_account_name' => '',
+        'bank_account_number' => '',
+        'vision' => '',
+        'about' => ''
+    ],
+    'contact' => [
+        'phone' => '',
+        'email' => '',
+        'address' => '',
+        'facebook' => '',
+        'tiktok' => '',
+        'instagram' => ''
+    ],
+    'security' => [
+        'maintenance' => false,
+        'maintenance_allowed_ips' => '',
+        'registration' => true,
+        'public_student_registration' => true,
+        'email_verification' => true,
+        'allow_admin_public_view_during_maintenance' => false,
+        'enforcement_mode' => 'mac',
+        'verify_registration_before_payment' => false,
+        'two_factor' => false,
+        'comment_moderation' => true
+    ],
+    'notifications' => [
+        'email' => true,
+        'sms' => false,
+        'push' => true
+    ],
+    'advanced' => [
+        'ip_logging' => true,
+        'security_scanning' => false,
+        'brute_force' => true,
+        'ssl_enforce' => false,
+        'auto_backup' => true,
+        'max_login_attempts' => 5,
+        'session_timeout' => 30
+    ]
+];
+
+$current = array_replace_recursive($defaults, hqLoadSystemSettings($pdo));
+$next = $current;
+
+if (isset($posted['site']) && is_array($posted['site'])) {
+    foreach (['name','tagline','logo','bank_name','bank_account_name','bank_account_number','vision','about'] as $key) {
+        if (array_key_exists($key, $posted['site'])) {
+            $next['site'][$key] = trim((string)$posted['site'][$key]);
+        }
+    }
+}
+
+if (isset($posted['contact']) && is_array($posted['contact'])) {
+    foreach (['phone','email','address','facebook','tiktok','instagram'] as $key) {
+        if (array_key_exists($key, $posted['contact'])) {
+            $next['contact'][$key] = trim((string)$posted['contact'][$key]);
+        }
+    }
+}
+
+if (isset($posted['security']) && is_array($posted['security'])) {
+    foreach (['maintenance','registration','public_student_registration','email_verification','allow_admin_public_view_during_maintenance','verify_registration_before_payment','two_factor','comment_moderation'] as $key) {
+        if (array_key_exists($key, $posted['security'])) {
+            $next['security'][$key] = (bool)$posted['security'][$key];
+        }
+    }
+    if (array_key_exists('maintenance_allowed_ips', $posted['security'])) {
+        $next['security']['maintenance_allowed_ips'] = trim((string)$posted['security']['maintenance_allowed_ips']);
+    }
+    if (array_key_exists('enforcement_mode', $posted['security'])) {
+        $mode = trim((string)$posted['security']['enforcement_mode']);
+        if (in_array($mode, ['mac', 'ip', 'both'], true)) {
+            $next['security']['enforcement_mode'] = $mode;
+        }
+    }
+}
+
+if (isset($posted['notifications']) && is_array($posted['notifications'])) {
+    foreach (['email','sms','push'] as $key) {
+        if (array_key_exists($key, $posted['notifications'])) {
+            $next['notifications'][$key] = (bool)$posted['notifications'][$key];
+        }
+    }
+}
+
+if (isset($posted['advanced']) && is_array($posted['advanced'])) {
+    foreach (['ip_logging','security_scanning','brute_force','ssl_enforce','auto_backup'] as $key) {
+        if (array_key_exists($key, $posted['advanced'])) {
+            $next['advanced'][$key] = (bool)$posted['advanced'][$key];
+        }
+    }
+    if (array_key_exists('max_login_attempts', $posted['advanced'])) {
+        $next['advanced']['max_login_attempts'] = max(1, (int)$posted['advanced']['max_login_attempts']);
+    }
+    if (array_key_exists('session_timeout', $posted['advanced'])) {
+        $next['advanced']['session_timeout'] = max(1, (int)$posted['advanced']['session_timeout']);
+    }
+}
+
+$posted = $next;
+
 // Minimal saveSettingsToDb logic (isolated copy to avoid including admin page)
 try {
     $json = json_encode($posted, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
@@ -127,7 +234,9 @@ try {
             'maintenance' => !empty($security['maintenance']) ? 1 : 0,
             'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
             'allow_admin_public_view_during_maintenance' => !empty($security['allow_admin_public_view_during_maintenance']) ? 1 : 0,
-            'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
+            'registration' => isset($security['public_student_registration'])
+                ? ($security['public_student_registration'] ? 1 : 0)
+                : (isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1),
             'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
             'two_factor' => !empty($security['two_factor']) ? 1 : 0,
             'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0

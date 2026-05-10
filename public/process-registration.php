@@ -20,19 +20,8 @@ if (!in_array($programType, $validTypes, true)) {
     $errors[] = 'Invalid program type.';
 }
 
-// Site registration toggle (reuse settings logic)
-$siteSettings = [];
-try {
-    $stmt = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
-    $siteSettings = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-} catch (Throwable $e) {
-    $siteSettings = [];
-}
-$registrationEnabled = true;
-if (!empty($siteSettings)) {
-    if (isset($siteSettings['registration'])) $registrationEnabled = (bool)$siteSettings['registration'];
-    elseif (isset($siteSettings['security']['registration'])) $registrationEnabled = (bool)$siteSettings['security']['registration'];
-}
+// Public student-registration toggle
+$registrationEnabled = hqPublicStudentRegistrationEnabled($pdo);
 if (!$registrationEnabled) {
     $errors[] = 'Registrations are temporarily closed by the administrator.';
 }
@@ -113,7 +102,10 @@ try {
 } catch (Throwable $e) { /* ignore price lookup */
 }
 
-$amount = $basePrices[$programType] + $formFee + $cardFee;
+$serviceFee = (float)($basePrices[$programType] ?? 0);
+$initialRegistrationFee = $formFee + $cardFee;
+$verifyBeforePayment = hqVerifyRegistrationBeforePayment($pdo);
+$amount = $verifyBeforePayment ? $initialRegistrationFee : ($serviceFee + $initialRegistrationFee);
 
 if (!empty($errors)) {
     $_SESSION['registration_errors'] = $errors;
@@ -124,6 +116,13 @@ if (!empty($errors)) {
 // Build payload (store all POST for auditing)
 $payload = $_POST;
 unset($payload['_csrf_token']);
+$payload['_payment_policy'] = [
+    'verify_before_final_payment' => $verifyBeforePayment ? 1 : 0,
+    'service_fee' => $serviceFee,
+    'initial_fee' => $initialRegistrationFee,
+    'current_payable_amount' => $amount,
+    'remaining_service_fee' => $verifyBeforePayment ? $serviceFee : 0,
+];
 
 // Handle Passport Photo Upload
 if (!empty($_FILES['passport_photo']['tmp_name'])) {
@@ -176,7 +175,8 @@ try {
             'Student Name' => trim($first . ' ' . $last),
             'Email' => $email,
             'Phone' => $phone,
-            'Amount' => '₦' . number_format($amount, 2),
+            'Amount Due Now' => '₦' . number_format($amount, 2),
+            'Deferred Service Fee' => $verifyBeforePayment && $serviceFee > 0 ? '₦' . number_format($serviceFee, 2) : 'None',
             'Payment Reference' => $reference,
             'Status' => 'Pending Admin Review'
         ], null, admin_url('index.php?pages=academic'));
@@ -197,6 +197,10 @@ $metadata = [
     'email' => $email,
     'phone' => $phone,
     'name' => trim($first . ' ' . $last),
+    'verify_registration_before_payment' => $verifyBeforePayment ? 1 : 0,
+    'service_fee' => $serviceFee,
+    'initial_fee' => $initialRegistrationFee,
+    'remaining_service_fee' => $verifyBeforePayment ? $serviceFee : 0,
 ];
 try {
     $pstmt = $pdo->prepare('INSERT INTO payments (student_id, amount, payment_method, reference, status, created_at, metadata, registration_type) VALUES (NULL, ?, ?, ?, "pending", NOW(), ?, ?)');

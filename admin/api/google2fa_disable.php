@@ -16,6 +16,13 @@ if (empty($_SESSION['user'])) {
 $userId = (int)($_SESSION['user']['id'] ?? 0);
 
 try {
+    $systemSettings = function_exists('hqLoadSystemSettings') ? hqLoadSystemSettings($pdo) : [];
+    if (!empty($systemSettings['security']['two_factor'])) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Google Authenticator is required by system policy and cannot be disabled right now.']);
+        exit;
+    }
+
     $data = json_decode(file_get_contents('php://input'), true);
     $password = $data['password'] ?? '';
 

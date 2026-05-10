@@ -9,6 +9,26 @@ $recfg = file_exists(__DIR__ . '/config/recaptcha.php') ? require __DIR__ . '/co
 
 $error = '';
 $csrfToken = generateToken('login_form');
+$allowAdminSignup = true;
+$bruteForceEnabled = true;
+$globalTwoFactorRequired = false;
+try {
+    $totalUsers = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    if ($totalUsers > 0 && function_exists('hqAdminRegistrationEnabled')) {
+        $allowAdminSignup = hqAdminRegistrationEnabled($pdo);
+    }
+    $settings = function_exists('hqLoadSystemSettings') ? hqLoadSystemSettings($pdo) : [];
+    if (isset($settings['advanced']) && is_array($settings['advanced']) && array_key_exists('brute_force', $settings['advanced'])) {
+        $bruteForceEnabled = (bool)$settings['advanced']['brute_force'];
+    }
+    if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('two_factor', $settings['security'])) {
+        $globalTwoFactorRequired = (bool)$settings['security']['two_factor'];
+    }
+} catch (Throwable $e) {
+    $allowAdminSignup = true;
+    $bruteForceEnabled = true;
+    $globalTwoFactorRequired = false;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['_csrf_token'] ?? '';
@@ -38,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $ip = function_exists('hqAdminClientIp') ? hqAdminClientIp() : ($_SERVER['REMOTE_ADDR'] ?? '');
             try {
-                if (!empty($ip)) {
+                if ($bruteForceEnabled && !empty($ip)) {
                     $stmtLA = $pdo->prepare('SELECT attempts, last_attempt FROM login_attempts WHERE ip = ? LIMIT 1');
                     $stmtLA->execute([$ip]);
                     $la = $stmtLA->fetch(PDO::FETCH_ASSOC);
@@ -56,35 +76,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } elseif ($user['is_active'] == 2) {
                     $error = "Your account has been banned.";
                 } else {
-                    $_SESSION['user'] = [
-                        'id'        => $user['id'],
-                        'name'      => $user['name'],
-                        'email'     => $user['email'],
-                        'role_id'   => $user['role_id'],
-                        'role_slug' => $user['role_slug'],
-                        'role_name' => $user['role_name']
-                    ];
-
-                    $tourState = ['pending' => true, 'completed_at' => null];
-                    if (function_exists('getUserOnboardingTourState')) {
-                        $tourState = getUserOnboardingTourState($pdo, (int)$user['id']);
+                    $userHasGoogle2fa = !empty($user['google2fa_enabled']) && !empty($user['google2fa_secret']);
+                    if ($globalTwoFactorRequired || $userHasGoogle2fa) {
+                        $_SESSION['pending_admin_login'] = [
+                            'id' => (int)$user['id'],
+                            'name' => $user['name'],
+                            'email' => $user['email'],
+                            'role_id' => (int)$user['role_id'],
+                            'role_slug' => $user['role_slug'],
+                            'role_name' => $user['role_name'],
+                            'google2fa_enabled' => $userHasGoogle2fa,
+                            'force_two_factor' => $globalTwoFactorRequired,
+                            'ip' => $ip,
+                        ];
+                        unset($_SESSION['google2fa_temp_secret'], $_SESSION['user']);
+                        header("Location: verify_2fa.php");
+                        exit;
                     }
 
-                    $_SESSION['onboarding_tour'] = [
-                        'pending' => (bool)($tourState['pending'] ?? true),
-                        'completed_at' => $tourState['completed_at'] ?? null,
-                        'show_after_signup' => !empty($_SESSION['post_signup_tour_trigger']),
-                    ];
-
-                    unset($_SESSION['post_signup_tour_trigger']);
-                    if (!empty($ip)) {
-                        $_SESSION['user_ip'] = $ip;
+                    if (function_exists('hqFinalizeAdminLoginSession')) {
+                        hqFinalizeAdminLoginSession($pdo, $user, $ip);
                     }
-
-                    try {
-                        $stmtDel = $pdo->prepare('DELETE FROM login_attempts WHERE ip = ? OR email = ?');
-                        $stmtDel->execute([$ip, $email]);
-                    } catch (Throwable $e) { error_log('clear login attempts failed: ' . $e->getMessage()); }
 
                     header("Location: index.php?pages=dashboard");
                     exit;
@@ -92,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $error = "Invalid email or password.";
                 try {
-                    if (!empty($ip)) {
+                    if ($bruteForceEnabled && !empty($ip)) {
                         $stmtUp = $pdo->prepare('INSERT INTO login_attempts (email, ip, attempts, last_attempt) VALUES (?, ?, 1, NOW()) ON DUPLICATE KEY UPDATE attempts = attempts + 1, last_attempt = NOW()');
                         $stmtUp->execute([$email, $ip]);
                         $stmtChk = $pdo->prepare('SELECT attempts FROM login_attempts WHERE ip = ? LIMIT 1');
@@ -149,6 +161,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
+            <?php if ($globalTwoFactorRequired): ?>
+                <div class="alert" style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-bottom:18px;padding:12px 14px;border-radius:10px;">
+                    <span class="alert-icon"><i class='bx bx-shield-quarter'></i></span>
+                    <span>Two-factor authentication is required for admin access. After your password is verified, you'll complete a Google Authenticator step.</span>
+                </div>
+            <?php endif; ?>
+
             <!-- Login Form -->
             <form method="POST" class="auth-form" id="loginForm">
                 <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
@@ -178,9 +197,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a href="forgot_password.php" class="auth-link">
                     <i class='bx bx-lock-alt'></i> Forgot your password?
                 </a>
+                <?php if ($allowAdminSignup): ?>
                 <a href="signup.php" class="auth-link auth-link-primary">
                     <i class='bx bx-user-plus'></i> Don't have an account? Sign up
                 </a>
+                <?php endif; ?>
             </div>
 
             <!-- Features -->

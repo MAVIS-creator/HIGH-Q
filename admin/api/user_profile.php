@@ -61,6 +61,10 @@ try {
     }
     $user['preferences'] = $prefs ? json_decode($prefs, true) : new stdClass();
 
+    $systemSettings = function_exists('hqLoadSystemSettings') ? hqLoadSystemSettings($pdo) : [];
+    $user['global_two_factor_required'] = !empty($systemSettings['security']['two_factor']);
+    $user['can_disable_google2fa'] = !$user['global_two_factor_required'];
+
     echo json_encode($user);
 } catch (Exception $e) {
     http_response_code(500);

@@ -16,6 +16,13 @@ $siteSettings = [
 if (file_exists(__DIR__ . '/../config/db.php')) {
   try {
     require_once __DIR__ . '/../config/db.php';
+    if (!function_exists('hqIsLocalHost')) {
+      function hqIsLocalHost(?string $host = null): bool {
+        $host = $host ?? ($_SERVER['HTTP_HOST'] ?? '');
+        $host = strtolower((string)preg_replace('/:\d+$/', '', (string)$host));
+        return $host === 'localhost' || $host === '127.0.0.1' || $host === '::1' || str_ends_with($host, '.localhost');
+      }
+    }
     if (isset($pdo)) {
       // Try to fetch the structured site_settings row first
       try {
@@ -62,6 +69,8 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
       // If maintenance mode is enabled, and visitor is not an admin or allowlisted IP, show maintenance page
       try {
         $maintenance = false;
+        $sslEnforce = false;
+        $ipLoggingEnabled = true;
         // Prefer structured site_settings row if available
         if (!empty($row) && isset($row['maintenance'])) $maintenance = (bool)$row['maintenance'];
         else {
@@ -70,6 +79,19 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
           $val = $stmt2->fetchColumn();
           $j = $val ? json_decode($val, true) : [];
           if (!empty($j['security']['maintenance'])) $maintenance = (bool)$j['security']['maintenance'];
+        }
+        if (!empty($j['advanced']['ssl_enforce'])) $sslEnforce = (bool)$j['advanced']['ssl_enforce'];
+        if (isset($j['advanced']['ip_logging'])) $ipLoggingEnabled = (bool)$j['advanced']['ip_logging'];
+
+        if ($sslEnforce) {
+          $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower((string)$_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https');
+          $host = $_SERVER['HTTP_HOST'] ?? '';
+          if (!$isSecure && $host !== '' && !hqIsLocalHost($host)) {
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+            header('Location: https://' . $host . $requestUri, true, 302);
+            exit;
+          }
         }
 
         // Build allowlist of IPs from structured row or legacy settings (comma-separated)
@@ -126,24 +148,346 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
 
         // If maintenance is on, block public pages unless requester is admin by session (and in admin area) or allowed via flag/IP/auth page
         if ($maintenance && !(($isAdminBySession && $isAdminArea) || $ipAllowed || $isAdminAuthPage || ($isAdminBySession && $allowAdminPublicView))) {
-          // Render a simple maintenance notice and exit
+          $supportPhone = trim((string)($siteSettings['contact']['phone'] ?? $contact_phone));
+          $supportEmail = trim((string)($siteSettings['contact']['email'] ?? 'info@hqacademy.com'));
+          $supportAddress = trim((string)($siteSettings['contact']['address'] ?? ''));
+          $siteName = trim((string)($siteSettings['site']['name'] ?? 'HIGH Q SOLID ACADEMY'));
+          $logoUrl = app_url('assets/images/hq-logo.jpeg');
+
           http_response_code(503);
           ?>
           <!doctype html>
-          <html><head><meta charset="utf-8"><title>Maintenance</title><link rel="stylesheet" href="<?= app_url('assets/css/public.css') ?>"></head><body>
-          <main style="display:flex;align-items:center;justify-content:center;height:80vh;text-align:center;padding:24px;">
-            <div style="max-width:720px;padding:28px;border-radius:10px;background:linear-gradient(90deg,#ffd54f,#ffb300);box-shadow:0 8px 30px rgba(0,0,0,0.12);color:#111;">
-              <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:12px;">
-                <div style="width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,0.08);">
-                  <img src="<?= app_url('assets/images/hq-logo.jpeg') ?>" alt="Logo" style="width:36px;height:36px;object-fit:contain;">
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Maintenance | <?= htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8') ?></title>
+            <link rel="icon" type="image/x-icon" href="<?= app_url('assets/images/favicon.ico') ?>">
+            <style>
+              :root {
+                --hq-gold: #f7c325;
+                --hq-gold-deep: #e3a300;
+                --hq-ink: #0f172a;
+                --hq-slate: #475569;
+                --hq-border: rgba(15, 23, 42, 0.08);
+                --hq-surface: rgba(255,255,255,0.9);
+              }
+              * { box-sizing: border-box; }
+              html, body { margin: 0; min-height: 100%; font-family: Inter, "Segoe UI", Arial, sans-serif; color: var(--hq-ink); }
+              body {
+                background:
+                  radial-gradient(circle at top left, rgba(247, 195, 37, 0.24), transparent 30%),
+                  radial-gradient(circle at bottom right, rgba(255, 213, 79, 0.26), transparent 24%),
+                  linear-gradient(180deg, #fffaf0 0%, #f8fafc 100%);
+              }
+              .maintenance-shell {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 32px 20px;
+              }
+              .maintenance-panel {
+                width: min(1100px, 100%);
+                display: grid;
+                grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+                background: rgba(255,255,255,0.82);
+                border: 1px solid var(--hq-border);
+                border-radius: 28px;
+                box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+                overflow: hidden;
+                backdrop-filter: blur(18px);
+              }
+              .maintenance-main {
+                padding: 52px;
+                background:
+                  linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,248,220,0.88)),
+                  linear-gradient(120deg, #fff 0%, #fff6d9 100%);
+              }
+              .maintenance-side {
+                padding: 40px 34px;
+                background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+                color: #f8fafc;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                gap: 24px;
+              }
+              .brand-row {
+                display: flex;
+                align-items: center;
+                gap: 18px;
+                margin-bottom: 28px;
+              }
+              .brand-logo {
+                width: 74px;
+                height: 74px;
+                border-radius: 22px;
+                background: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 18px 40px rgba(227, 163, 0, 0.18);
+                flex-shrink: 0;
+              }
+              .brand-logo img {
+                width: 48px;
+                height: 48px;
+                object-fit: contain;
+              }
+              .brand-text small {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 7px 12px;
+                border-radius: 999px;
+                background: rgba(247, 195, 37, 0.18);
+                color: #8a5a00;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                font-size: 12px;
+                margin-bottom: 12px;
+              }
+              .brand-text h1 {
+                margin: 0;
+                font-size: clamp(2.1rem, 4vw, 3.5rem);
+                line-height: 1.02;
+                letter-spacing: 0;
+              }
+              .brand-text p {
+                margin: 14px 0 0;
+                max-width: 640px;
+                color: var(--hq-slate);
+                font-size: 1.04rem;
+                line-height: 1.7;
+              }
+              .status-strip {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                margin: 0 0 20px;
+                padding: 10px 14px;
+                border-radius: 999px;
+                background: rgba(247, 195, 37, 0.16);
+                color: #8a5a00;
+                font-weight: 700;
+                font-size: 0.95rem;
+              }
+              .status-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #f59e0b;
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.18);
+              }
+              .detail-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+                margin-top: 34px;
+              }
+              .detail-card {
+                padding: 18px 18px 16px;
+                border-radius: 18px;
+                background: rgba(255,255,255,0.8);
+                border: 1px solid rgba(15,23,42,0.08);
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+              }
+              .detail-card strong,
+              .side-card strong {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 0.95rem;
+              }
+              .detail-card p,
+              .side-card p {
+                margin: 0;
+                color: var(--hq-slate);
+                line-height: 1.65;
+                font-size: 0.95rem;
+              }
+              .detail-card p a,
+              .side-card p a { color: inherit; text-decoration: none; }
+              .action-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 14px;
+                margin-top: 30px;
+              }
+              .action-btn {
+                appearance: none;
+                border: none;
+                border-radius: 14px;
+                padding: 14px 18px;
+                font-size: 0.96rem;
+                font-weight: 700;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+              }
+              .action-btn:hover { transform: translateY(-1px); }
+              .action-btn-primary {
+                background: linear-gradient(135deg, var(--hq-gold), var(--hq-gold-deep));
+                color: #111827;
+                box-shadow: 0 14px 28px rgba(227, 163, 0, 0.24);
+              }
+              .action-btn-secondary {
+                background: rgba(15, 23, 42, 0.06);
+                color: var(--hq-ink);
+                border: 1px solid rgba(15, 23, 42, 0.08);
+              }
+              .side-top h2 {
+                margin: 0 0 10px;
+                font-size: 1.4rem;
+              }
+              .side-top p {
+                margin: 0;
+                color: rgba(248, 250, 252, 0.8);
+                line-height: 1.7;
+              }
+              .side-stack {
+                display: grid;
+                gap: 14px;
+              }
+              .side-card {
+                padding: 16px 18px;
+                border-radius: 18px;
+                background: rgba(255,255,255,0.06);
+                border: 1px solid rgba(255,255,255,0.08);
+              }
+              .side-card p {
+                color: rgba(248, 250, 252, 0.84);
+              }
+              .side-footer {
+                padding-top: 8px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                color: rgba(248, 250, 252, 0.7);
+                font-size: 0.92rem;
+                line-height: 1.6;
+              }
+              @media (max-width: 920px) {
+                .maintenance-panel {
+                  grid-template-columns: 1fr;
+                }
+                .maintenance-main,
+                .maintenance-side {
+                  padding: 28px 22px;
+                }
+                .detail-grid {
+                  grid-template-columns: 1fr;
+                }
+              }
+              @media (max-width: 560px) {
+                .maintenance-shell {
+                  padding: 16px;
+                }
+                .maintenance-panel {
+                  border-radius: 22px;
+                }
+                .brand-row {
+                  align-items: flex-start;
+                }
+                .brand-logo {
+                  width: 62px;
+                  height: 62px;
+                  border-radius: 18px;
+                }
+                .brand-logo img {
+                  width: 40px;
+                  height: 40px;
+                }
+                .action-row {
+                  flex-direction: column;
+                }
+                .action-btn {
+                  width: 100%;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <main class="maintenance-shell">
+              <section class="maintenance-panel" aria-labelledby="maintenance-title">
+                <div class="maintenance-main">
+                  <div class="status-strip">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    Scheduled maintenance in progress
+                  </div>
+
+                  <div class="brand-row">
+                    <div class="brand-logo">
+                      <img src="<?= htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8') ?> logo">
+                    </div>
+                    <div class="brand-text">
+                      <small>HighQ Update Window</small>
+                      <h1 id="maintenance-title">We’ll be back soon</h1>
+                      <p>
+                        <?= htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8') ?> is currently being updated to keep everything running smoothly.
+                        We’re working to restore full access as quickly as possible.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="detail-grid">
+                    <article class="detail-card">
+                      <strong>What’s happening</strong>
+                      <p>We’re carrying out maintenance and service checks across the public site. Some pages and actions are temporarily unavailable while we finish that work.</p>
+                    </article>
+                    <article class="detail-card">
+                      <strong>What to do next</strong>
+                      <p>Please check back shortly. If you already have admin access, you can continue through the admin area while this maintenance window is active.</p>
+                    </article>
+                  </div>
+
+                  <div class="action-row">
+                    <button class="action-btn action-btn-primary" type="button" onclick="window.location.reload()">
+                      Refresh Page
+                    </button>
+                  </div>
                 </div>
-                <h1 style="margin:0;font-size:1.6rem;">We'll be back soon</h1>
-              </div>
-              <p style="margin:0 0 12px;color:rgba(0,0,0,0.8);">Our site is currently undergoing scheduled maintenance. We're working to bring it back online as quickly as possible.</p>
-              <p style="margin:0;color:rgba(0,0,0,0.7);font-size:0.95rem">If you are an administrator and need access, log in via the admin area or contact support.</p>
-            </div>
-          </main>
-          </body></html>
+
+                <aside class="maintenance-side">
+                  <div class="side-top">
+                    <h2>Need help while we’re away?</h2>
+                    <p>If your visit is urgent, use the contact details below. If you are the administrator, please try to resolve the issue from your side.</p>
+                  </div>
+
+                  <div class="side-stack">
+                    <div class="side-card">
+                      <strong>Phone</strong>
+                      <p><?= htmlspecialchars($supportPhone !== '' ? $supportPhone : 'Not available right now', ENT_QUOTES, 'UTF-8') ?></p>
+                    </div>
+                    <div class="side-card">
+                      <strong>Email</strong>
+                      <p>
+                        <?php if ($supportEmail !== ''): ?>
+                          <a href="mailto:<?= htmlspecialchars($supportEmail, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($supportEmail, ENT_QUOTES, 'UTF-8') ?></a>
+                        <?php else: ?>
+                          Not available right now
+                        <?php endif; ?>
+                      </p>
+                    </div>
+                    <?php if ($supportAddress !== ''): ?>
+                    <div class="side-card">
+                      <strong>Centre Address</strong>
+                      <p><?= nl2br(htmlspecialchars($supportAddress, ENT_QUOTES, 'UTF-8')) ?></p>
+                    </div>
+                    <?php endif; ?>
+                  </div>
+
+                  <div class="side-footer">
+                    Thank you for your patience. We’re using this window to keep the experience fast, reliable, and ready when you return.
+                  </div>
+                </aside>
+              </section>
+            </main>
+          </body>
+          </html>
           <?php
           exit;
         }
@@ -158,7 +502,7 @@ if (file_exists(__DIR__ . '/../config/db.php')) {
             if (!empty($_SERVER[$h])) { $headers[$h] = $_SERVER[$h]; }
           }
           $hdrJson = !empty($headers) ? json_encode($headers) : null;
-          if (!empty($pdo)) {
+          if ($ipLoggingEnabled && !empty($pdo)) {
             $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, headers, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
             $ins->execute([$remoteIp, $ua, $path, $referer, $hdrJson]);
           }

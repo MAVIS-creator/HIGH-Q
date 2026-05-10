@@ -52,6 +52,17 @@ $adminBasePath = '';
 if (function_exists('admin_url')) {
     $adminBasePath = rtrim((string)(parse_url(admin_url(''), PHP_URL_PATH) ?? ''), '/');
 }
+$allowAdminSignup = true;
+if (isset($pdo) && $pdo instanceof PDO && function_exists('hqAdminRegistrationEnabled')) {
+    try {
+        $totalUsers = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+        if ($totalUsers > 0) {
+            $allowAdminSignup = hqAdminRegistrationEnabled($pdo);
+        }
+    } catch (Throwable $e) {
+        $allowAdminSignup = true;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -151,7 +162,9 @@ if (function_exists('admin_url')) {
         </div>
         <div class="header-right">
             <?php if (empty($_SESSION['user'])): ?>
+                <?php if ($allowAdminSignup): ?>
                 <a href="<?= htmlspecialchars($adminBasePath) ?>/signup.php" class="header-cta"><i class='bx bx-user-plus'></i> Sign up</a>
+                <?php endif; ?>
             <?php else: ?>
                     <div class="header-notifications">
                         <button id="notifBtn" class="header-cta" title="Notifications">
@@ -229,23 +242,33 @@ if (function_exists('admin_url')) {
             $path = $_SERVER['REQUEST_URI'] ?? null;
             $referer = $_SERVER['HTTP_REFERER'] ?? null;
             $userId = $_SESSION['user']['id'] ?? null;
+            $ipLoggingEnabled = true;
+            $enforcement = 'mac';
+            $settingsJson = [];
             $headers = [];
             foreach (['HTTP_X_DEVICE_MAC','HTTP_X_CLIENT_MAC','HTTP_MAC','HTTP_X_MAC_ADDRESS'] as $h) {
                 if (!empty($_SERVER[$h])) $headers[$h] = $_SERVER[$h];
             }
             $hdrJson = !empty($headers) ? json_encode($headers) : null;
-            $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, user_id, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
-            $ins->execute([$remoteIp, $ua, $path, $referer, $userId, $hdrJson]);
 
-            // Decide enforcement mode: 'mac' | 'ip' | 'both' (default 'mac')
-            $enforcement = 'mac';
             try {
                 $stmtS = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
                 $stmtS->execute(['system_settings']);
                 $val = $stmtS->fetchColumn();
-                $j = $val ? json_decode($val, true) : [];
-                $enforcement = $j['security']['enforcement_mode'] ?? $j['security']['enforce_by'] ?? $enforcement;
+                $settingsJson = $val ? json_decode($val, true) : [];
+                if (!is_array($settingsJson)) {
+                    $settingsJson = [];
+                }
+                $enforcement = $settingsJson['security']['enforcement_mode'] ?? $settingsJson['security']['enforce_by'] ?? $enforcement;
+                if (array_key_exists('ip_logging', $settingsJson['advanced'] ?? [])) {
+                    $ipLoggingEnabled = !empty($settingsJson['advanced']['ip_logging']);
+                }
             } catch (Throwable $e) { /* ignore */ }
+
+            if ($ipLoggingEnabled) {
+                $ins = $pdo->prepare('INSERT INTO ip_logs (ip, user_agent, path, referer, user_id, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())');
+                $ins->execute([$remoteIp, $ua, $path, $referer, $userId, $hdrJson]);
+            }
 
             // Check MAC header if allowed
             $mac = null;

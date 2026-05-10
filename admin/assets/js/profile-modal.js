@@ -146,6 +146,9 @@
                                 <p class="security-option-description">
                                     Use Google Authenticator app for secure two-factor authentication.
                                 </p>
+                                <div id="google2faPolicyNote" style="display:none;margin:10px 0;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;font-size:0.92rem;">
+                                    Google Authenticator is currently required by the system. You can set it up here, but you cannot disable it while the policy is active.
+                                </div>
                                 <button class="security-action-btn btn-setup" id="setupGoogle2faBtn">
                                     <i class='bx bx-plus-circle'></i> Setup Google Authenticator
                                 </button>
@@ -492,7 +495,8 @@
                 statusEl.className = 'otp-status enabled';
                 
                 document.getElementById('setupGoogle2faBtn').style.display = 'none';
-                document.getElementById('disableGoogle2faBtn').style.display = 'inline-block';
+                const allowDisable = !document.getElementById('google2faPolicyNote') || document.getElementById('google2faPolicyNote').style.display === 'none';
+                document.getElementById('disableGoogle2faBtn').style.display = allowDisable ? 'inline-block' : 'none';
             } else {
                 throw new Error(data.message || 'Verification failed');
             }
@@ -655,13 +659,18 @@
         }
 
         // Update Google 2FA status
+        const policyNote = document.getElementById('google2faPolicyNote');
+        if (policyNote) {
+            policyNote.style.display = data.global_two_factor_required ? 'block' : 'none';
+        }
+
         if (data.google2fa_enabled) {
             const statusEl = document.getElementById('google2faStatus');
             statusEl.className = 'otp-status enabled';
             statusEl.innerHTML = '<i class=\'bx bx-check-circle\'></i> Enabled';
             
             document.getElementById('setupGoogle2faBtn').style.display = 'none';
-            document.getElementById('disableGoogle2faBtn').style.display = 'inline-block';
+            document.getElementById('disableGoogle2faBtn').style.display = data.can_disable_google2fa ? 'inline-block' : 'none';
         } else {
             const statusEl = document.getElementById('google2faStatus');
             statusEl.className = 'otp-status disabled';

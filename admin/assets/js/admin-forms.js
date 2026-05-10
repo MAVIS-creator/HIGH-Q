@@ -24,6 +24,7 @@ function initAdminForms() {
     // Handle general form submissions
     document.querySelectorAll('form:not([action*="delete"])').forEach(form => {
         if (form.classList.contains('search-form')) return; // Skip search forms
+        if (form.id === 'settingsForm' || form.dataset.skipAdminAjax === '1') return; // Let page-specific handlers own these forms
         
         form.onsubmit = async (e) => {
             e.preventDefault();

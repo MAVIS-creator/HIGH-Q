@@ -57,6 +57,7 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            e.stopImmediatePropagation();
 
             // Show loading state
             Swal.fire({
@@ -64,8 +65,8 @@
                 text: 'Please wait while we save your settings',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                allowEnterKey: false,
                 showConfirmButton: false,
+                preConfirm: () => false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
@@ -76,6 +77,9 @@
             // Remove any previous helpers first.
             this.querySelectorAll('input.auto-zero').forEach(function(n){ n.remove(); });
             this.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+                if (cb.disabled) {
+                    return;
+                }
                 if (!cb.checked) {
                     var hidden = document.createElement('input');
                     hidden.type = 'hidden';
@@ -144,8 +148,8 @@
                 text: 'Please wait while we process your request',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                allowEnterKey: false,
                 showConfirmButton: false,
+                preConfirm: () => false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
@@ -219,6 +223,36 @@
             clearLogsBtn.addEventListener('click', function() { Swal.fire({
                 title: 'Clear Audit Logs?', text: 'This will clear all audit logs except seed data. This action cannot be undone.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, clear logs'
             }).then((result) => { if (result.isConfirmed) doAction('clearLogs'); }); });
+        }
+
+        var downloadLogsBtn = document.getElementById('downloadLogs');
+        if (downloadLogsBtn) {
+            downloadLogsBtn.addEventListener('click', function() {
+                var url = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=settings&action=download_logs';
+                window.location.href = url;
+            });
+        }
+
+        var exportClearBtn = document.getElementById('exportClear');
+        if (exportClearBtn) {
+            exportClearBtn.addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Export and clear logs?',
+                    text: 'We will download the current audit logs first, then clear them.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, continue'
+                }).then(function(result) {
+                    if (!result.isConfirmed) return;
+                    var url = (window.HQ_ADMIN_BASE || '') + '/index.php?pages=settings&action=download_logs';
+                    window.location.href = url;
+                    setTimeout(function() {
+                        doAction('clearLogs');
+                    }, 1200);
+                });
+            });
         }
     }
 

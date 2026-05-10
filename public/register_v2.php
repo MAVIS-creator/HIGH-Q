@@ -30,27 +30,8 @@ $success = '';
 $form_fee = 1000; // ₦1,000 form processing
 $card_fee = 1500; // ₦1,500 card fee
 
-// Load site settings to respect registration toggle (structured site_settings preferred)
-$siteSettings = [];
-try {
-	$stmt = $pdo->query("SELECT * FROM site_settings ORDER BY id ASC LIMIT 1");
-	$siteSettings = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-} catch (Throwable $e) {
-	try {
-		$st = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
-		$st->execute(['system_settings']);
-		$val = $st->fetchColumn();
-		$j = $val ? json_decode($val, true) : [];
-		if (is_array($j)) $siteSettings = $j;
-	} catch (Throwable $e2) { /* ignore */ }
-}
-
 // If registration is disabled, do not allow registrations
-$registrationEnabled = true;
-if (!empty($siteSettings)) {
-	if (isset($siteSettings['registration'])) $registrationEnabled = (bool)$siteSettings['registration'];
-	elseif (isset($siteSettings['security']['registration'])) $registrationEnabled = (bool)$siteSettings['security']['registration'];
-}
+$registrationEnabled = hqPublicStudentRegistrationEnabled($pdo);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$registrationEnabled) {
 	$errors[] = 'Registrations are temporarily closed by the site administrator.';
 }

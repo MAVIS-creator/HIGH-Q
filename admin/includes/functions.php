@@ -200,6 +200,80 @@ function hqAdminEmailNotificationsEnabled(PDO $pdo): bool {
 }
 
 /**
+ * Load the JSON-backed system settings payload.
+ */
+function hqLoadSystemSettings(PDO $pdo): array {
+    try {
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+        $stmt->execute(['system_settings']);
+        $raw = $stmt->fetchColumn();
+        if (!$raw) {
+            return [];
+        }
+
+        $settings = json_decode((string)$raw, true);
+        return is_array($settings) ? $settings : [];
+    } catch (Throwable $e) {
+        return [];
+    }
+}
+
+/**
+ * Read the public student-registration switch, with fallback to legacy structured settings.
+ */
+function hqPublicStudentRegistrationEnabled(PDO $pdo): bool {
+    try {
+        $settings = hqLoadSystemSettings($pdo);
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('public_student_registration', $settings['security'])) {
+            return (bool)$settings['security']['public_student_registration'];
+        }
+
+        $stmt = $pdo->query("SELECT registration FROM site_settings ORDER BY id ASC LIMIT 1");
+        $legacy = $stmt ? $stmt->fetchColumn() : null;
+        if ($legacy !== false && $legacy !== null) {
+            return (bool)$legacy;
+        }
+
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('registration', $settings['security'])) {
+            return (bool)$settings['security']['registration'];
+        }
+    } catch (Throwable $e) {
+    }
+
+    return true;
+}
+
+/**
+ * Read the admin-account registration switch.
+ */
+function hqAdminRegistrationEnabled(PDO $pdo): bool {
+    try {
+        $settings = hqLoadSystemSettings($pdo);
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('registration', $settings['security'])) {
+            return (bool)$settings['security']['registration'];
+        }
+    } catch (Throwable $e) {
+    }
+
+    return true;
+}
+
+/**
+ * Read the "verify registration before payment" switch.
+ */
+function hqVerifyRegistrationBeforePayment(PDO $pdo): bool {
+    try {
+        $settings = hqLoadSystemSettings($pdo);
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('verify_registration_before_payment', $settings['security'])) {
+            return (bool)$settings['security']['verify_registration_before_payment'];
+        }
+    } catch (Throwable $e) {
+    }
+
+    return false;
+}
+
+/**
  * Normalize admin menu/page slugs used for permission-scoped notifications.
  */
 function hqNormalizeNotificationMenuSlug(?string $slug): ?string {
@@ -511,16 +585,20 @@ function hq_url_parts(): array {
  * Build the current request origin, honoring reverse-proxy headers.
  */
 function hq_request_origin(): string {
+    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
+    $hostOnly = strtolower((string)preg_replace('/:\d+$/', '', (string)$host));
+
     $scheme = 'http';
-    if (
+    if ($hostOnly !== 'localhost' && $hostOnly !== '127.0.0.1' && $hostOnly !== '::1' &&
+        !str_ends_with($hostOnly, '.localhost') &&
+        (
         (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
         (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
         (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on')
+        )
     ) {
         $scheme = 'https';
     }
-
-    $host = $_SERVER['HTTP_HOST'] ?? ($_ENV['APP_FALLBACK_HOST'] ?? 'localhost');
     return $scheme . '://' . $host;
 }
 
@@ -705,6 +783,44 @@ function updateUserOnboardingTourState(PDO $pdo, int $userId, array $state): boo
         return $stmt->execute($params);
     } catch (Throwable $e) {
         return false;
+    }
+}
+
+/**
+ * Finalize an admin login after password and any required second-factor checks.
+ */
+function hqFinalizeAdminLoginSession(PDO $pdo, array $user, ?string $ip = null): void {
+    $_SESSION['user'] = [
+        'id' => $user['id'],
+        'name' => $user['name'],
+        'email' => $user['email'],
+        'role_id' => $user['role_id'],
+        'role_slug' => $user['role_slug'] ?? null,
+        'role_name' => $user['role_name'] ?? null,
+        'google2fa_enabled' => !empty($user['google2fa_enabled']),
+    ];
+
+    $tourState = ['pending' => true, 'completed_at' => null];
+    $tourState = getUserOnboardingTourState($pdo, (int)$user['id']);
+
+    $_SESSION['onboarding_tour'] = [
+        'pending' => (bool)($tourState['pending'] ?? true),
+        'completed_at' => $tourState['completed_at'] ?? null,
+        'show_after_signup' => !empty($_SESSION['post_signup_tour_trigger']),
+    ];
+
+    unset($_SESSION['post_signup_tour_trigger'], $_SESSION['pending_admin_login']);
+
+    if (!empty($ip)) {
+        $_SESSION['user_ip'] = $ip;
+    }
+    $_SESSION['last_activity_at'] = time();
+
+    try {
+        $stmtDel = $pdo->prepare('DELETE FROM login_attempts WHERE ip = ? OR email = ?');
+        $stmtDel->execute([$ip, $user['email'] ?? '']);
+    } catch (Throwable $e) {
+        error_log('clear login attempts failed: ' . $e->getMessage());
     }
 }
 

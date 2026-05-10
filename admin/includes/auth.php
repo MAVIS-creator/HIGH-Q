@@ -52,6 +52,24 @@ function hqAdminClientIp(): string {
     return '';
 }
 
+function hqAdminIsLocalHost(?string $host = null): bool {
+    $host = $host ?? ($_SERVER['HTTP_HOST'] ?? '');
+    $host = strtolower((string)preg_replace('/:\d+$/', '', (string)$host));
+    return $host === 'localhost' || $host === '127.0.0.1' || $host === '::1' || str_ends_with($host, '.localhost');
+}
+
+function hqAdminLoadSystemSettings(PDO $pdo): array {
+    try {
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+        $stmt->execute(['system_settings']);
+        $raw = $stmt->fetchColumn();
+        $decoded = $raw ? json_decode((string)$raw, true) : [];
+        return is_array($decoded) ? $decoded : [];
+    } catch (Throwable $e) {
+        return [];
+    }
+}
+
 // Secure session configuration
 if (session_status() === PHP_SESSION_NONE) {
     // 1. Prevent Javascript from accessing cookies (Stops XSS stealing)
@@ -70,6 +88,23 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_samesite', 'Lax');
     
     session_start();
+
+    $runtimeSettings = [];
+    if (isset($pdo) && $pdo instanceof PDO) {
+        $runtimeSettings = hqAdminLoadSystemSettings($pdo);
+    }
+
+    $sslEnforced = !empty($runtimeSettings['advanced']['ssl_enforce']);
+    if ($sslEnforced) {
+        $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower((string)$_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https');
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if (!$isSecure && $host !== '' && !hqAdminIsLocalHost($host)) {
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+            header('Location: https://' . $host . $requestUri, true, 302);
+            exit;
+        }
+    }
     
     // 5. IP Binding (Security lock - kills session if IP changes)
     $clientIp = hqAdminClientIp();
@@ -83,6 +118,23 @@ if (session_status() === PHP_SESSION_NONE) {
     // Set the IP when they first log in
     if (!empty($_SESSION['user']) && !isset($_SESSION['user_ip']) && $clientIp !== '') {
         $_SESSION['user_ip'] = $clientIp;
+    }
+
+    if (!empty($_SESSION['user'])) {
+        $timeoutMinutes = (int)($runtimeSettings['advanced']['session_timeout'] ?? 30);
+        if ($timeoutMinutes < 1) {
+            $timeoutMinutes = 30;
+        }
+        $timeoutSeconds = $timeoutMinutes * 60;
+        $lastActivity = (int)($_SESSION['last_activity_at'] ?? 0);
+        if ($lastActivity > 0 && (time() - $lastActivity) > $timeoutSeconds) {
+            session_unset();
+            session_destroy();
+            $adminBasePath = hqAdminBasePathFromRequest();
+            header('Location: ' . $adminBasePath . '/login.php?error=session_timeout');
+            exit;
+        }
+        $_SESSION['last_activity_at'] = time();
     }
 }
 

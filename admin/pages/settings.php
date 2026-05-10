@@ -82,7 +82,10 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         'contact_instagram' => $contact['instagram'] ?? null,
         'maintenance' => !empty($security['maintenance']) ? 1 : 0,
         'maintenance_allowed_ips' => !empty($security['maintenance_allowed_ips']) ? $security['maintenance_allowed_ips'] : null,
-        'registration' => isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1,
+        'allow_admin_public_view_during_maintenance' => !empty($security['allow_admin_public_view_during_maintenance']) ? 1 : 0,
+        'registration' => isset($security['public_student_registration'])
+            ? ($security['public_student_registration'] ? 1 : 0)
+            : (isset($security['registration']) ? ($security['registration'] ? 1 : 0) : 1),
         'email_verification' => isset($security['email_verification']) ? ($security['email_verification'] ? 1 : 0) : 1,
         'two_factor' => !empty($security['two_factor']) ? 1 : 0,
         'comment_moderation' => !empty($security['comment_moderation']) ? 1 : 0,
@@ -105,7 +108,7 @@ function upsertSiteSettings(PDO $pdo, array $data) {
             vision = :vision, about = :about,
             contact_phone = :contact_phone, contact_email = :contact_email, contact_address = :contact_address,
             contact_facebook = :contact_facebook, contact_tiktok = :contact_tiktok, contact_instagram = :contact_instagram,
-            maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, registration = :registration, email_verification = :email_verification,
+            maintenance = :maintenance, maintenance_allowed_ips = :maintenance_allowed_ips, allow_admin_public_view_during_maintenance = :allow_admin_public_view_during_maintenance, registration = :registration, email_verification = :email_verification,
             two_factor = :two_factor, comment_moderation = :comment_moderation, new_column_name = :new_column_name, updated_at = NOW()
             WHERE id = :id";
         $params['id'] = $id;
@@ -120,15 +123,15 @@ function upsertSiteSettings(PDO $pdo, array $data) {
         $sql = "INSERT INTO site_settings
             (site_name, tagline, logo_url, vision, about,
              bank_name, bank_account_name, bank_account_number,
-             contact_phone, contact_email, contact_address,
-             contact_facebook, contact_tiktok, contact_instagram,
-            maintenance, maintenance_allowed_ips, registration, email_verification, two_factor, comment_moderation, new_column_name)
+            contact_phone, contact_email, contact_address,
+            contact_facebook, contact_tiktok, contact_instagram,
+            maintenance, maintenance_allowed_ips, allow_admin_public_view_during_maintenance, registration, email_verification, two_factor, comment_moderation, new_column_name)
             VALUES
             (:site_name, :tagline, :logo_url, :vision, :about,
              :bank_name, :bank_account_name, :bank_account_number,
              :contact_phone, :contact_email, :contact_address,
              :contact_facebook, :contact_tiktok, :contact_instagram,
-             :maintenance, :maintenance_allowed_ips, :registration, :email_verification, :two_factor, :comment_moderation, :new_column_name)";
+             :maintenance, :maintenance_allowed_ips, :allow_admin_public_view_during_maintenance, :registration, :email_verification, :two_factor, :comment_moderation, :new_column_name)";
         $ins = $pdo->prepare($sql);
         $result = $ins->execute($params);
         if (!$result) {
@@ -175,7 +178,9 @@ $defaults = [
         'maintenance' => false,
         'maintenance_allowed_ips' => '',
         'registration' => true,
+        'public_student_registration' => true,
         'email_verification' => true,
+        'allow_admin_public_view_during_maintenance' => false,
         'enforcement_mode' => 'mac',
         // If true, registrations are saved but payment references are NOT auto-created;
         // admin must verify the registration and create/send a payment reference.
@@ -205,6 +210,19 @@ $dbSettings = [];
 try { $dbSettings = loadSettingsFromDb($pdo); } catch (Exception $e) { $dbSettings = []; }
 if (is_array($dbSettings) && !empty($dbSettings)) {
     $current = array_replace_recursive($defaults, $dbSettings);
+}
+if (!isset($current['security']['public_student_registration'])) {
+    try {
+        $stmtLegacy = $pdo->query("SELECT registration FROM site_settings ORDER BY id ASC LIMIT 1");
+        $legacyRegistration = $stmtLegacy ? $stmtLegacy->fetchColumn() : null;
+        if ($legacyRegistration !== false && $legacyRegistration !== null) {
+            $current['security']['public_student_registration'] = (bool)$legacyRegistration;
+        } else {
+            $current['security']['public_student_registration'] = (bool)($current['security']['registration'] ?? true);
+        }
+    } catch (Throwable $e) {
+        $current['security']['public_student_registration'] = (bool)($current['security']['registration'] ?? true);
+    }
 }
 
 // Handle save action (POST)
@@ -523,7 +541,7 @@ $csrf = generateToken('settings_form');
         </div>
     </div>
 
-    <form id="settingsForm" method="post">
+    <form id="settingsForm" method="post" data-skip-admin-ajax="1">
         <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
         <div class="settings-tabs">
             <button type="button" class="settings-tab-btn tab-btn active" data-tab="site"><i class='bx bxs-building'></i> Site Info</button>
@@ -628,7 +646,8 @@ $csrf = generateToken('settings_form');
                     <?php
                         $sec = [
                             'maintenance' => ['label'=>'Maintenance Mode','desc'=>'Temporarily disable public access to the site'],
-                            'registration' => ['label'=>'User Registration','desc'=>'Allow new users to register for accounts'],
+                            'registration' => ['label'=>'Admin Account Registration','desc'=>'Allow new admin users to create accounts from the admin signup page'],
+                            'public_student_registration' => ['label'=>'Public Student Registration','desc'=>'Allow new student registrations from the public site'],
                             'email_verification' => ['label'=>'Email Verification','desc'=>'Require email verification for new accounts'],
                             'verify_registration_before_payment' => ['label'=>'Verify registration before payment','desc'=>'Require admin verification of registration details before creating payment reference and sending it to registrant'],
                             'two_factor' => ['label'=>'Two-Factor Authentication','desc'=>'Enable 2FA for enhanced security'],
@@ -691,11 +710,12 @@ $csrf = generateToken('settings_form');
                     <?php
                         $notes = [
                             'email' => ['label'=>'Email Notifications','desc'=>'Send email notifications for important events'],
-                            'sms' => ['label'=>'SMS Notifications','desc'=>'Send SMS notifications for critical alerts'],
-                            'push' => ['label'=>'Push Notifications','desc'=>'Send browser push notifications']
+                            'sms' => ['label'=>'SMS Notifications','desc'=>'SMS delivery wiring is not active yet for this site.','disabled'=>true],
+                            'push' => ['label'=>'Push Notifications','desc'=>'Browser push delivery is not active yet for this site.','disabled'=>true]
                         ];
                         foreach ($notes as $k=>$meta) {
                             $v = !empty($current['notifications'][$k]);
+                            $disabled = !empty($meta['disabled']);
                     ?>
                         <div class="toggle-row">
                             <div class="meta">
@@ -704,7 +724,7 @@ $csrf = generateToken('settings_form');
                             </div>
                             <div>
                                 <label class="toggle">
-                                    <input type="checkbox" name="settings[notifications][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                    <input type="checkbox" name="settings[notifications][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> <?= $disabled ? 'disabled' : '' ?> />
                                     <span class="track"><span class="thumb"></span></span>
                                 </label>
                             </div>
@@ -727,13 +747,14 @@ $csrf = generateToken('settings_form');
                     <?php
                         $adv = [
                           'ip_logging'=>['label'=>'IP Address Logging','desc'=>'Log visitor IP addresses for security monitoring'],
-                          'security_scanning'=>['label'=>'Security Scanning','desc'=>'Automatically scan for security vulnerabilities'],
+                          'security_scanning'=>['label'=>'Security Scanning','desc'=>'Automatic scheduled scanning is not active yet. Use the Run Security Scan button below for manual scans.','disabled'=>true],
                           'brute_force'=>['label'=>'Brute Force Protection','desc'=>'Block IPs after 5 failed login attempts'],
                           'ssl_enforce'=>['label'=>'SSL Enforcement','desc'=>'Force HTTPS connections for all users'],
-                          'auto_backup'=>['label'=>'Automated Backups','desc'=>'Automatically backup site data daily']
+                          'auto_backup'=>['label'=>'Automated Backups','desc'=>'Scheduled backups are not wired yet in this deployment.','disabled'=>true]
                         ];
                         foreach ($adv as $k=>$meta) {
                             $v = !empty($current['advanced'][$k]);
+                            $disabled = !empty($meta['disabled']);
                     ?>
                         <div class="toggle-row">
                             <div class="meta">
@@ -742,7 +763,7 @@ $csrf = generateToken('settings_form');
                             </div>
                             <div>
                                 <label class="toggle">
-                                    <input type="checkbox" name="settings[advanced][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> />
+                                    <input type="checkbox" name="settings[advanced][<?= $k ?>]" value="1" <?= $v ? 'checked' : '' ?> <?= $disabled ? 'disabled' : '' ?> />
                                     <span class="track"><span class="thumb"></span></span>
                                 </label>
                             </div>
@@ -759,6 +780,7 @@ $csrf = generateToken('settings_form');
                         <button type="button" id="clearLogs" class="btn">Clear Logs</button>
                         <button type="button" id="downloadLogs" class="btn">Download Logs</button>
                         <button type="button" id="exportClear" class="btn">Export &amp; Clear Logs</button>
+                        <button type="button" id="runScan" class="btn">Run Security Scan</button>
                         <button type="button" id="openMacManager" class="btn">Manage MAC Blocklist</button>
                         <button type="button" id="openIpLogs" class="btn">View IP Logs</button>
                     </div>

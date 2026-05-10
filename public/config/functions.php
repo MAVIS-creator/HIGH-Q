@@ -293,6 +293,82 @@ function hqAdminEmailNotificationsEnabled(PDO $pdo): bool {
 }
 
 /**
+ * Load the JSON-backed system settings payload.
+ */
+function hqLoadSystemSettings(PDO $pdo): array {
+    try {
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+        $stmt->execute(['system_settings']);
+        $raw = $stmt->fetchColumn();
+        if (!$raw) {
+            return [];
+        }
+
+        $settings = json_decode((string)$raw, true);
+        return is_array($settings) ? $settings : [];
+    } catch (Throwable $e) {
+        return [];
+    }
+}
+
+/**
+ * Read the current public-side registration toggle.
+ * Falls back to the legacy site_settings.registration column for backward compatibility.
+ */
+function hqPublicStudentRegistrationEnabled(PDO $pdo): bool {
+    try {
+        $settings = hqLoadSystemSettings($pdo);
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('public_student_registration', $settings['security'])) {
+            return (bool)$settings['security']['public_student_registration'];
+        }
+
+        $stmt = $pdo->query("SELECT registration FROM site_settings ORDER BY id ASC LIMIT 1");
+        $legacy = $stmt ? $stmt->fetchColumn() : null;
+        if ($legacy !== false && $legacy !== null) {
+            return (bool)$legacy;
+        }
+
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('registration', $settings['security'])) {
+            return (bool)$settings['security']['registration'];
+        }
+    } catch (Throwable $e) {
+    }
+
+    return true;
+}
+
+/**
+ * Read the admin-account signup toggle.
+ */
+function hqAdminRegistrationEnabled(PDO $pdo): bool {
+    try {
+        $settings = hqLoadSystemSettings($pdo);
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('registration', $settings['security'])) {
+            return (bool)$settings['security']['registration'];
+        }
+    } catch (Throwable $e) {
+    }
+
+    return true;
+}
+
+/**
+ * Determine whether the public registration flow should collect only the initial fee
+ * and defer the service fee until after admin review.
+ */
+function hqVerifyRegistrationBeforePayment(PDO $pdo): bool {
+    try {
+        $settings = hqLoadSystemSettings($pdo);
+        if (isset($settings['security']) && is_array($settings['security']) && array_key_exists('verify_registration_before_payment', $settings['security'])) {
+            return (bool)$settings['security']['verify_registration_before_payment'];
+        }
+    } catch (Throwable $e) {
+    }
+
+    return false;
+}
+
+/**
  * Collect admin/team recipient emails for operational notifications.
  */
 function hqAdminNotificationRecipients(PDO $pdo, ?int $actorUserId = null): array {
