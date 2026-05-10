@@ -32,6 +32,15 @@
         })();
 
         // Helper to parse JSON but handle HTML error pages gracefully
+        function escapeHtml(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function tryParseJSONOrShowHtml(text) {
             try {
                 return JSON.parse(text);
@@ -43,7 +52,7 @@
                     Swal.fire({
                         title: 'Server Error (HTML response)',
                         html: '<div style="text-align:left;max-height:400px;overflow:auto"><pre style="white-space:pre-wrap; word-wrap:break-word;">'+
-                            Swal.escapeHtml(preview)+
+                            escapeHtml(preview)+
                         '</pre></div>',
                         width: '80%',
                         confirmButtonText: 'OK'
@@ -288,7 +297,7 @@
                             var resetUrl = (window.HQ_ADMIN_BASE || '') + '/reset_htpasswd.php';
                             Swal.fire({
                                 title: 'Reset Token Ready',
-                                html: '<p style="margin-bottom:12px;">Copy this token now. For security, it will not be shown again.</p><textarea readonly style="width:100%;min-height:110px;padding:10px;border:1px solid #ccc;border-radius:8px;">' + Swal.escapeHtml(parsed.token) + '</textarea><p style="margin-top:12px;font-size:0.92rem;">Then open <code>' + Swal.escapeHtml(resetUrl) + '</code> and paste the token into the reset form.</p>',
+                                html: '<p style="margin-bottom:12px;">Copy this token now. For security, it will not be shown again.</p><textarea readonly style="width:100%;min-height:110px;padding:10px;border:1px solid #ccc;border-radius:8px;">' + escapeHtml(parsed.token) + '</textarea><p style="margin-top:12px;font-size:0.92rem;">Then open <code>' + escapeHtml(resetUrl) + '</code> and paste the token into the reset form.</p>',
                                 icon: 'success',
                                 confirmButtonText: 'Done'
                             });
