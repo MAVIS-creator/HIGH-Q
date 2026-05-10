@@ -275,7 +275,7 @@
                     fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
 
                     var xhr = new XMLHttpRequest();
-                    xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=settings', true);
+                    xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/api/save-settings.php', true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                     xhr.onload = function() {
                         var parsed = null;
@@ -285,9 +285,10 @@
                             var updatedNode = document.getElementById('htpasswdTokenUpdated');
                             if (statusNode) statusNode.textContent = 'Configured';
                             if (updatedNode) updatedNode.textContent = ' | Updated: ' + (parsed.updated_at || 'just now');
+                            var resetUrl = (window.HQ_ADMIN_BASE || '') + '/reset_htpasswd.php';
                             Swal.fire({
                                 title: 'Reset Token Ready',
-                                html: '<p style="margin-bottom:12px;">Copy this token now. For security, it will not be shown again.</p><textarea readonly style="width:100%;min-height:110px;padding:10px;border:1px solid #ccc;border-radius:8px;">' + Swal.escapeHtml(parsed.token) + '</textarea>',
+                                html: '<p style="margin-bottom:12px;">Copy this token now. For security, it will not be shown again.</p><textarea readonly style="width:100%;min-height:110px;padding:10px;border:1px solid #ccc;border-radius:8px;">' + Swal.escapeHtml(parsed.token) + '</textarea><p style="margin-top:12px;font-size:0.92rem;">Then open <code>' + Swal.escapeHtml(resetUrl) + '</code> and paste the token into the reset form.</p>',
                                 icon: 'success',
                                 confirmButtonText: 'Done'
                             });

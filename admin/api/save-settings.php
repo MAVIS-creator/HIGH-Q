@@ -30,6 +30,92 @@ if (!verifyToken('settings_form', $token)) {
     exit;
 }
 
+if (!empty($_POST['action'])) {
+    try {
+        $settings = array_replace_recursive([
+            'advanced' => [
+                'htpasswd_reset_token_hash' => '',
+                'htpasswd_reset_token_updated_at' => ''
+            ]
+        ], hqLoadSystemSettings($pdo));
+
+        if ($_POST['action'] === 'rotateHtpasswdToken') {
+            $tokenPlain = bin2hex(random_bytes(24));
+            if (!isset($settings['advanced']) || !is_array($settings['advanced'])) {
+                $settings['advanced'] = [];
+            }
+            $settings['advanced']['htpasswd_reset_token_hash'] = password_hash($tokenPlain, PASSWORD_BCRYPT, ['cost' => 12]);
+            $settings['advanced']['htpasswd_reset_token_updated_at'] = date('Y-m-d H:i:s');
+
+            $json = json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            if ($json === false) {
+                throw new Exception('Failed to encode token settings');
+            }
+
+            $stmt = $pdo->prepare("SELECT id FROM settings WHERE `key` = ? LIMIT 1");
+            $stmt->execute(['system_settings']);
+            $id = $stmt->fetchColumn();
+            if ($id) {
+                $upd = $pdo->prepare("UPDATE settings SET `value` = ? WHERE id = ?");
+                $ok = $upd->execute([$json, $id]);
+            } else {
+                $ins = $pdo->prepare("INSERT INTO settings (`key`,`value`) VALUES (?, ?)");
+                $ok = $ins->execute(['system_settings', $json]);
+            }
+            if (!$ok) {
+                throw new Exception('Failed to save reset token');
+            }
+
+            echo json_encode([
+                'status' => 'ok',
+                'title' => 'Reset Token Generated',
+                'message' => 'A new reset token has been generated.',
+                'token' => $tokenPlain,
+                'updated_at' => $settings['advanced']['htpasswd_reset_token_updated_at']
+            ]);
+            exit;
+        }
+
+        if ($_POST['action'] === 'clearHtpasswdToken') {
+            if (!isset($settings['advanced']) || !is_array($settings['advanced'])) {
+                $settings['advanced'] = [];
+            }
+            $settings['advanced']['htpasswd_reset_token_hash'] = '';
+            $settings['advanced']['htpasswd_reset_token_updated_at'] = '';
+
+            $json = json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            if ($json === false) {
+                throw new Exception('Failed to encode token settings');
+            }
+
+            $stmt = $pdo->prepare("SELECT id FROM settings WHERE `key` = ? LIMIT 1");
+            $stmt->execute(['system_settings']);
+            $id = $stmt->fetchColumn();
+            if ($id) {
+                $upd = $pdo->prepare("UPDATE settings SET `value` = ? WHERE id = ?");
+                $ok = $upd->execute([$json, $id]);
+            } else {
+                $ins = $pdo->prepare("INSERT INTO settings (`key`,`value`) VALUES (?, ?)");
+                $ok = $ins->execute(['system_settings', $json]);
+            }
+            if (!$ok) {
+                throw new Exception('Failed to clear reset token');
+            }
+
+            echo json_encode([
+                'status' => 'ok',
+                'title' => 'Reset Token Cleared',
+                'message' => 'Hosted reset token access has been disabled.'
+            ]);
+            exit;
+        }
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
 // Parse settings payload: accept either a JSON string in 'settings' or form fields prefixed with settings[...] via PHP's form parsing
 // Build $posted from either a JSON payload or nested form fields (settings[...] )
 $posted = [];

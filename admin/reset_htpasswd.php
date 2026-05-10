@@ -234,12 +234,15 @@ if ($requestMethod === 'POST') {
                     </div>
                 <?php endif; ?>
                 <form method="post" autocomplete="off">
-                    <?php if (!$isLocal): ?>
                     <div class="field">
                         <label for="access_token">Reset Token</label>
-                        <input type="password" id="access_token" name="access_token" value="<?= htmlspecialchars((string)($_POST['access_token'] ?? $_GET['token'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" required autocomplete="one-time-code">
+                        <input type="password" id="access_token" name="access_token" value="<?= htmlspecialchars((string)($_POST['access_token'] ?? $_GET['token'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" <?= $isLocal ? '' : 'required' ?> autocomplete="one-time-code">
+                        <div class="meta" style="margin-top:8px;">
+                            <?= $isLocal
+                                ? 'Optional on localhost. On hosted admin, this token is required.'
+                                : 'Required on hosted admin. Generate it from Admin Settings first.' ?>
+                        </div>
                     </div>
-                    <?php endif; ?>
                     <div class="field">
                         <label for="username">Username</label>
                         <input type="text" id="username" name="username" value="<?= htmlspecialchars((string)($_POST['username'] ?? $defaultUsername), ENT_QUOTES, 'UTF-8') ?>" required>
@@ -256,7 +259,6 @@ if ($requestMethod === 'POST') {
                 </form>
                 <div class="meta">
                     <strong>Recommended:</strong> use a long unique password here, different from the admin dashboard login password.<br>
-                    File path: <code><?= htmlspecialchars($htpasswdFile, ENT_QUOTES, 'UTF-8') ?></code>
                 </div>
         </div>
     </div>
