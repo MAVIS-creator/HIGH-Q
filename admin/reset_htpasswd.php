@@ -40,7 +40,7 @@ function hq_has_valid_reset_access(): bool
         return true;
     }
 
-    $token = trim((string)($_ENV['ADMIN_HTPASSWD_RESET_TOKEN'] ?? ''));
+    $token = hq_get_reset_token_secret();
     if ($token === '' || strlen($token) < 24) {
         return false;
     }
@@ -51,6 +51,61 @@ function hq_has_valid_reset_access(): bool
     }
 
     return hash_equals($token, $provided);
+}
+
+function hq_load_settings_token_hash(): ?string
+{
+    try {
+        $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: '127.0.0.1';
+        $db = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: 'highq';
+        $user = $_ENV['DB_USER'] ?? getenv('DB_USER') ?: 'root';
+        $pass = $_ENV['DB_PASS'] ?? getenv('DB_PASS') ?: '';
+        $charset = $_ENV['DB_CHARSET'] ?? getenv('DB_CHARSET') ?: 'utf8mb4';
+        $pdo = new PDO(
+            "mysql:host={$host};dbname={$db};charset={$charset}",
+            $user,
+            $pass,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]
+        );
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE `key` = ? LIMIT 1");
+        $stmt->execute(['system_settings']);
+        $raw = $stmt->fetchColumn();
+        if (!$raw) {
+            return null;
+        }
+        $settings = json_decode((string)$raw, true);
+        if (!is_array($settings)) {
+            return null;
+        }
+        $hash = $settings['advanced']['htpasswd_reset_token_hash'] ?? null;
+        return is_string($hash) && $hash !== '' ? $hash : null;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+function hq_get_reset_token_secret(): string
+{
+    $provided = trim((string)($_POST['access_token'] ?? $_GET['token'] ?? ''));
+    if ($provided === '') {
+        return '';
+    }
+
+    $hash = hq_load_settings_token_hash();
+    if (is_string($hash) && $hash !== '' && password_verify($provided, $hash)) {
+        return $provided;
+    }
+
+    $envToken = trim((string)($_ENV['ADMIN_HTPASSWD_RESET_TOKEN'] ?? ''));
+    if ($envToken !== '' && hash_equals($envToken, $provided)) {
+        return $provided;
+    }
+
+    return '';
 }
 
 function hq_upsert_htpasswd_user(string $file, string $username, string $password): bool
@@ -90,17 +145,22 @@ function hq_upsert_htpasswd_user(string $file, string $username, string $passwor
 }
 
 $isLocal = hq_is_local_request();
+$settingsTokenHash = hq_load_settings_token_hash();
+$hasSettingsToken = is_string($settingsTokenHash) && $settingsTokenHash !== '';
+$hasEnvToken = strlen(trim((string)($_ENV['ADMIN_HTPASSWD_RESET_TOKEN'] ?? ''))) >= 24;
 $hasAccess = hq_has_valid_reset_access();
-$resetTokenConfigured = strlen(trim((string)($_ENV['ADMIN_HTPASSWD_RESET_TOKEN'] ?? ''))) >= 24;
+$resetTokenConfigured = $hasSettingsToken || $hasEnvToken;
 $error = null;
 $success = null;
 
-if (!$hasAccess) {
-    http_response_code(403);
-    hq_reset_log('Denied reset access from ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . ' host=' . ($_SERVER['HTTP_HOST'] ?? 'unknown'), $logFile);
-}
+$requestMethod = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+if ($requestMethod === 'POST') {
+    if (!$hasAccess) {
+        $error = 'Invalid reset token.';
+        hq_reset_log('Denied reset access from ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . ' host=' . ($_SERVER['HTTP_HOST'] ?? 'unknown'), $logFile);
+    }
 
-if ($hasAccess && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($hasAccess) {
     $username = trim((string)($_POST['username'] ?? $defaultUsername));
     $newPassword = (string)($_POST['password'] ?? '');
     $confirmPassword = (string)($_POST['confirm_password'] ?? '');
@@ -121,6 +181,7 @@ if ($hasAccess && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Could not write the .htpasswd file. Check file permissions on the admin folder.';
             hq_reset_log('Failed writing .htpasswd username=' . $username, $logFile);
         }
+    }
     }
 }
 ?><!DOCTYPE html>
@@ -158,14 +219,6 @@ if ($hasAccess && $_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>Update the outer admin gate password safely.</p>
         </div>
         <div class="card-body">
-            <?php if (!$hasAccess): ?>
-                <div class="alert alert-error">
-                    Access denied. This reset page is only available on localhost or with a valid reset token.
-                </div>
-                <div class="meta">
-                    For hosted access, set a strong token in <code>.env</code> as <code>ADMIN_HTPASSWD_RESET_TOKEN</code> and open this page with <code>?token=YOUR_TOKEN</code>.
-                </div>
-            <?php else: ?>
                 <?php if ($error): ?>
                     <div class="alert alert-error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
@@ -177,12 +230,15 @@ if ($hasAccess && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <?php if (!$isLocal && !$resetTokenConfigured): ?>
                     <div class="alert alert-warning">
-                        No hosted reset token is configured yet. Localhost access still works, but hosted recovery should not be left without a token.
+                        No hosted reset token is configured yet. Generate one from Admin Settings or set <code>ADMIN_HTPASSWD_RESET_TOKEN</code> in <code>.env</code>.
                     </div>
                 <?php endif; ?>
                 <form method="post" autocomplete="off">
                     <?php if (!$isLocal): ?>
-                        <input type="hidden" name="access_token" value="<?= htmlspecialchars((string)($_GET['token'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                    <div class="field">
+                        <label for="access_token">Reset Token</label>
+                        <input type="password" id="access_token" name="access_token" value="<?= htmlspecialchars((string)($_POST['access_token'] ?? $_GET['token'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" required autocomplete="one-time-code">
+                    </div>
                     <?php endif; ?>
                     <div class="field">
                         <label for="username">Username</label>
@@ -202,9 +258,7 @@ if ($hasAccess && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     <strong>Recommended:</strong> use a long unique password here, different from the admin dashboard login password.<br>
                     File path: <code><?= htmlspecialchars($htpasswdFile, ENT_QUOTES, 'UTF-8') ?></code>
                 </div>
-            <?php endif; ?>
         </div>
     </div>
 </body>
 </html>
-

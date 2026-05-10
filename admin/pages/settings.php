@@ -200,7 +200,9 @@ $defaults = [
         'ssl_enforce' => false,
         'auto_backup' => true,
         'max_login_attempts' => 5,
-        'session_timeout' => 30
+        'session_timeout' => 30,
+        'htpasswd_reset_token_hash' => '',
+        'htpasswd_reset_token_updated_at' => ''
     ]
 ];
 
@@ -412,6 +414,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && !empty($
             // Delete audit logs (CAUTION) - we keep the very first seed entry id=1 if exists
             $count = $pdo->exec("DELETE FROM audit_logs WHERE id > 1");
             echo json_encode(['status' => 'ok', 'message' => 'Cleared audit logs (except first seed).', 'rows' => $count]);
+            exit;
+        }
+        if ($action === 'rotateHtpasswdToken') {
+            $settings = array_replace_recursive($defaults, loadSettingsFromDb($pdo));
+            $tokenPlain = bin2hex(random_bytes(24));
+            $settings['advanced']['htpasswd_reset_token_hash'] = password_hash($tokenPlain, PASSWORD_BCRYPT, ['cost' => 12]);
+            $settings['advanced']['htpasswd_reset_token_updated_at'] = date('Y-m-d H:i:s');
+            if (!saveSettingsToDb($pdo, $settings)) {
+                throw new Exception('Failed to save reset token');
+            }
+            try { upsertSiteSettings($pdo, $settings); } catch (Throwable $_) {}
+            echo json_encode([
+                'status' => 'ok',
+                'title' => 'Reset Token Generated',
+                'message' => 'A new reset token has been generated.',
+                'token' => $tokenPlain,
+                'updated_at' => $settings['advanced']['htpasswd_reset_token_updated_at']
+            ]);
+            exit;
+        }
+        if ($action === 'clearHtpasswdToken') {
+            $settings = array_replace_recursive($defaults, loadSettingsFromDb($pdo));
+            $settings['advanced']['htpasswd_reset_token_hash'] = '';
+            $settings['advanced']['htpasswd_reset_token_updated_at'] = '';
+            if (!saveSettingsToDb($pdo, $settings)) {
+                throw new Exception('Failed to clear reset token');
+            }
+            try { upsertSiteSettings($pdo, $settings); } catch (Throwable $_) {}
+            echo json_encode([
+                'status' => 'ok',
+                'title' => 'Reset Token Cleared',
+                'message' => 'Hosted reset token access has been disabled.'
+            ]);
             exit;
         }
     } catch (Exception $e) {
@@ -774,6 +809,28 @@ $csrf = generateToken('settings_form');
                     <input type="number" min="1" name="settings[advanced][max_login_attempts]" value="<?= htmlspecialchars($current['advanced']['max_login_attempts']) ?>" class="input">
                     <label>Session Timeout (minutes)</label>
                     <input type="number" min="1" name="settings[advanced][session_timeout]" value="<?= htmlspecialchars($current['advanced']['session_timeout']) ?>" class="input">
+
+                    <div style="margin-top:18px;padding:14px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa;">
+                        <strong>.htpasswd Reset Token</strong>
+                        <div class="muted" style="margin-top:6px;">
+                            Use this token on the reset page to change the outer admin Basic Auth password without editing files manually.
+                        </div>
+                        <div class="muted" style="margin-top:6px;">
+                            Status:
+                            <span id="htpasswdTokenStatus">
+                                <?= !empty($current['advanced']['htpasswd_reset_token_hash']) ? 'Configured' : 'Not configured' ?>
+                            </span>
+                            <?php if (!empty($current['advanced']['htpasswd_reset_token_updated_at'])): ?>
+                                <span id="htpasswdTokenUpdated"> | Updated: <?= htmlspecialchars((string)$current['advanced']['htpasswd_reset_token_updated_at']) ?></span>
+                            <?php else: ?>
+                                <span id="htpasswdTokenUpdated"></span>
+                            <?php endif; ?>
+                        </div>
+                        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                            <button type="button" id="rotateHtpasswdToken" class="btn">Generate Reset Token</button>
+                            <button type="button" id="clearHtpasswdToken" class="btn">Disable Hosted Reset Token</button>
+                        </div>
+                    </div>
 
                     <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
                         <button type="button" id="clearIPs" class="btn">Clear Blocked IPs</button>

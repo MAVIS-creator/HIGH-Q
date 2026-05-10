@@ -177,7 +177,9 @@
                         text: parsed.message || 'Action completed successfully',
                         icon: 'success',
                         confirmButtonColor: '#3085d6'
-                    }).then(() => { if (action === 'clearIPs' || action === 'clearLogs') location.reload(); });
+                    }).then(() => {
+                        if (action === 'clearIPs' || action === 'clearLogs' || action === 'clearHtpasswdToken') location.reload();
+                    });
                 } else {
                     Swal.fire({
                         title: parsed.title || 'Error',
@@ -251,6 +253,69 @@
                     setTimeout(function() {
                         doAction('clearLogs');
                     }, 1200);
+                });
+            });
+        }
+
+        var rotateHtpasswdTokenBtn = document.getElementById('rotateHtpasswdToken');
+        if (rotateHtpasswdTokenBtn) {
+            rotateHtpasswdTokenBtn.addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Generate new reset token?',
+                    text: 'This replaces the current hosted reset token immediately.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Generate token'
+                }).then(function(result) {
+                    if (!result.isConfirmed) return;
+                    var fd = new FormData();
+                    fd.append('action', 'rotateHtpasswdToken');
+                    fd.append('_csrf', document.querySelector('input[name="_csrf"]').value);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', (window.HQ_ADMIN_BASE || '') + '/index.php?pages=settings', true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.onload = function() {
+                        var parsed = null;
+                        try { parsed = JSON.parse(xhr.responseText || '{}'); } catch (e) {}
+                        if (xhr.status === 200 && parsed && parsed.status === 'ok' && parsed.token) {
+                            var statusNode = document.getElementById('htpasswdTokenStatus');
+                            var updatedNode = document.getElementById('htpasswdTokenUpdated');
+                            if (statusNode) statusNode.textContent = 'Configured';
+                            if (updatedNode) updatedNode.textContent = ' | Updated: ' + (parsed.updated_at || 'just now');
+                            Swal.fire({
+                                title: 'Reset Token Ready',
+                                html: '<p style="margin-bottom:12px;">Copy this token now. For security, it will not be shown again.</p><textarea readonly style="width:100%;min-height:110px;padding:10px;border:1px solid #ccc;border-radius:8px;">' + Swal.escapeHtml(parsed.token) + '</textarea>',
+                                icon: 'success',
+                                confirmButtonText: 'Done'
+                            });
+                        } else {
+                            Swal.fire('Error', (parsed && parsed.message) ? parsed.message : 'Could not generate reset token.', 'error');
+                        }
+                    };
+                    xhr.onerror = function() {
+                        Swal.fire('Error', 'Network error occurred while generating the token.', 'error');
+                    };
+                    xhr.send(fd);
+                });
+            });
+        }
+
+        var clearHtpasswdTokenBtn = document.getElementById('clearHtpasswdToken');
+        if (clearHtpasswdTokenBtn) {
+            clearHtpasswdTokenBtn.addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Disable hosted reset token?',
+                    text: 'This removes the settings-managed token. Localhost reset will still work.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Disable token'
+                }).then(function(result) {
+                    if (result.isConfirmed) doAction('clearHtpasswdToken');
                 });
             });
         }
