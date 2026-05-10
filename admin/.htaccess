@@ -1,12 +1,16 @@
-# Basic Authentication (temporarily disabled for local debugging)
-# AuthType Basic
-# AuthName "Admin Login"
-# AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
-# Require valid-user
+# Basic Authentication for the whole admin area.
+# IMPORTANT: update AuthUserFile on production to the real absolute server path.
+AuthType Basic
+AuthName "HIGH Q Admin Access"
+AuthUserFile "C:/xampp/htdocs/HIGH-Q/admin/.htpasswd"
+Require valid-user
 
-# Allow accessing assets after authentication
-<FilesMatch "\.(css|js|gif|jpg|jpeg|png|ico|woff|woff2|ttf|svg)$">
+# Allow the password-recovery utility and error pages to bypass the outer prompt.
+<FilesMatch "^(reset_htpasswd|rstpaswrd|create_htpasswd|create_pass|400|401|403|404|500|503)\.php$">
+    AuthType None
+    Require all granted
     Satisfy Any
+    Order allow,deny
     Allow from all
 </FilesMatch>
 
@@ -23,14 +27,6 @@ Options -Indexes
 
 # Enable URL rewriting
 RewriteEngine On
-
-# Allow access to error pages
-<FilesMatch "^(400|401|403|404|500)\.php$">
-    Satisfy Any
-    Require all granted
-    Order allow,deny
-    Allow from all
-</FilesMatch>
 
 # PHP Settings (only valid when using mod_php; comment out if using CGI/FPM)
 <IfModule mod_php.c>
