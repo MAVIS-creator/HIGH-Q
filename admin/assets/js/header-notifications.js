@@ -1,7 +1,7 @@
 // Initialize notifications
 document.addEventListener('DOMContentLoaded', function() {
     // Use the admin base provided by the server (derived from actual request URL)
-    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
+    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin;
     
     console.log('NOTIFICATIONS ADMIN_BASE:', ADMIN_BASE);
 

@@ -80,7 +80,7 @@ try {
 $siteStatus = $siteUrl ? checkUrl($siteUrl) : ['ok' => false, 'message' => 'Unknown'];
 
 // For admin URL, use the same base URL but add admin path
-$adminUrl = rtrim(app_url(''), '/') . '/admin/';
+$adminUrl = rtrim(admin_url(''), '/') . '/';
 $adminStatus = $adminUrl ? checkUrl($adminUrl) : ['ok' => false, 'message' => 'Unknown'];
 
 // Get recent activity
@@ -316,7 +316,7 @@ try {
                     <?php foreach ($recentUsers as $user): ?>
                     <div class="recent-item">
                         <div class="recent-avatar">
-                            <img src="<?= !empty($user['avatar']) ? htmlspecialchars($user['avatar']) : app_url('assets/images/hq-logo.jpeg') ?>" alt="">
+                            <img src="<?= !empty($user['avatar']) ? htmlspecialchars(app_url($user['avatar'])) : app_url('assets/images/hq-logo.jpeg') ?>" alt="">
                         </div>
                         <div class="recent-info">
                             <span class="recent-name"><?= htmlspecialchars($user['name'] ?? 'Unknown') ?></span>

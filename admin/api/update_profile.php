@@ -96,7 +96,7 @@ try {
         $uploadPath = $uploadDir . $filename;
 
         if (move_uploaded_file($_FILES['avatar']['tmp_name'], $uploadPath)) {
-            $avatarPath = 'public/uploads/avatars/' . $filename;
+            $avatarPath = 'uploads/avatars/' . $filename;
         }
     }
 

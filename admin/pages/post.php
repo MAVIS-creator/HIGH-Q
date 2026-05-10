@@ -499,12 +499,7 @@ try {
                                 <?php
                                     // Support both full URLs and legacy relative paths stored in DB.
                                     $fi = $p['featured_image'];
-                                    if (preg_match('#^https?://#i', $fi) || strpos($fi, '//') === 0 || strpos($fi, '/') === 0) {
-                                        $imgSrc = $fi;
-                                    } else {
-                                        // legacy relative path (e.g. uploads/posts/xxx.jpg) -> prefix admin->public
-                                        $imgSrc = '../public/' . ltrim($fi, '/');
-                                    }
+                                    $imgSrc = app_url($fi);
                                 ?>
                                 <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb">
                             <?php else: ?>
@@ -795,9 +790,9 @@ function bindAjaxForm(id) {
                         let fi = data.post.featured_image;
                         let src = fi;
                         try {
-                            if (!/^https?:\/\//i.test(fi) && !fi.startsWith('//') && !fi.startsWith('/')) {
-                                // legacy relative path -> prefix with ../public/
-                                src = '../public/' + fi.replace(/^\/+/, '');
+                            if (!/^[a-z][a-z0-9+.-]*:/i.test(fi) && !fi.startsWith('//')) {
+                                const appBase = (window.HQ_APP_BASE || '').replace(/\/$/, '');
+                                src = appBase ? (appBase + '/' + fi.replace(/^\/+/, '')) : fi;
                             }
                         } catch (e) { src = fi; }
                         img.src = src;

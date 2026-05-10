@@ -65,6 +65,16 @@ function og_tag(string $property, string $content): string {
  */
 function app_url(string $path = ''): string {
     static $cachedBase = null;
+
+    if ($path !== '' && (preg_match('#^[a-z][a-z0-9+.-]*:#i', $path) || strpos($path, '//') === 0)) {
+        return $path;
+    }
+
+    $envBase = trim((string)($_ENV['APP_URL'] ?? ''));
+    if ($envBase !== '') {
+        $envBase = rtrim($envBase, '/');
+        return $path === '' ? $envBase : ($envBase . '/' . ltrim($path, '/'));
+    }
     
     // Return cached base URL if already computed
     if ($cachedBase !== null) {
@@ -122,6 +132,10 @@ function app_url(string $path = ''): string {
  * Honors ADMIN_URL when configured, otherwise derives it from APP_URL/app_url().
  */
 function admin_url(string $path = ''): string {
+    if ($path !== '' && (preg_match('#^[a-z][a-z0-9+.-]*:#i', $path) || strpos($path, '//') === 0)) {
+        return $path;
+    }
+
     $adminEnv = $_ENV['ADMIN_URL'] ?? null;
     if (!empty($adminEnv)) {
         $base = rtrim((string)$adminEnv, '/');

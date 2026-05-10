@@ -74,7 +74,7 @@ function handlePhotoUpload($conn)
     }
 
     // Create upload directory if not exists
-    $uploadDir = __DIR__ . '/../../uploads/tutors/';
+    $uploadDir = __DIR__ . '/../../public/uploads/tutors/';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
@@ -89,7 +89,7 @@ function handlePhotoUpload($conn)
         throw new Exception('Failed to save uploaded file');
     }
 
-    // Return relative path (from project root)
+    // Return public-relative path so the same value works from both public and admin hosts.
     $relativePath = 'uploads/tutors/' . $filename;
 
     echo json_encode([
@@ -280,10 +280,17 @@ function deleteTutor($conn)
     $stmt->execute([$id]);
 
     // Delete photo file if exists
-    if ($tutor && $tutor['photo']) {
-        $photoPath = __DIR__ . '/../../' . $tutor['photo'];
-        if (file_exists($photoPath)) {
-            unlink($photoPath);
+    if ($tutor && !empty($tutor['photo']) && !preg_match('#^[a-z][a-z0-9+.-]*:#i', (string)$tutor['photo']) && strpos((string)$tutor['photo'], '//') !== 0) {
+        $relativePhoto = ltrim((string)$tutor['photo'], '/');
+        $candidates = [
+            __DIR__ . '/../../public/' . $relativePhoto,
+            __DIR__ . '/../../' . $relativePhoto,
+        ];
+        foreach ($candidates as $photoPath) {
+            if (is_file($photoPath)) {
+                @unlink($photoPath);
+                break;
+            }
         }
     }
 

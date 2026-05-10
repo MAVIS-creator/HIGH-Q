@@ -510,8 +510,8 @@ async function loadUser(id, mode='view'){
   document.getElementById('mPosts').textContent = data.posts_count;
   document.getElementById('mComments').textContent = data.comments_count;
   document.getElementById('mAvatar').src = data.avatar
-    ? ((window.HQ_APP_BASE || '') + '/' + data.avatar.replace(/^\/+/, ''))
-    : ((window.HQ_ADMIN_PATH || '/admin') + '/assets/img/hq-logo.jpeg');
+    ? ((window.HQ_APP_BASE || '').replace(/\/$/, '') + '/' + data.avatar.replace(/^\/+/, ''))
+    : ((window.HQ_ADMIN_BASE || window.location.origin).replace(/\/$/, '') + '/assets/img/hq-logo.jpeg');
 
   // Fill edit form
   const form = document.getElementById('editForm');

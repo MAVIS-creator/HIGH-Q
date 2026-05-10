@@ -155,11 +155,7 @@ require_once __DIR__ . '/includes/header.php';
   <?php if (!empty($post['featured_image'])): ?>
     <?php
       $fi = $post['featured_image'];
-      if (preg_match('#^https?://#i', $fi) || strpos($fi,'//')===0 || strpos($fi,'/')===0) {
-        $imgSrc = $fi;
-      } else {
-        $imgSrc = './' . ltrim($fi, '/');
-      }
+      $imgSrc = app_url($fi);
     ?>
     <div class="post-hero">
       <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="post-hero-image">

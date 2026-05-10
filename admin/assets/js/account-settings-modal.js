@@ -1,6 +1,6 @@
 // Account Settings Modal - Unique, focused, no scrolling
 (function(){
-  const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
+  const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin;
   let accountVerified = false;
   let originalPhone = '';
 

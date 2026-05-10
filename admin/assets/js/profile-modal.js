@@ -7,10 +7,10 @@
     'use strict';
 
     // Use the admin base provided by the server (derived from actual request URL)
-    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin + '/admin';
-    const ADMIN_PATH = window.HQ_ADMIN_PATH || '/admin';
+    const ADMIN_BASE = window.HQ_ADMIN_BASE || window.location.origin;
+    const ADMIN_PATH = window.HQ_ADMIN_PATH || '';
     const APP_BASE = window.HQ_APP_BASE || window.location.origin;
-    const FALLBACK_AVATAR = APP_BASE + ADMIN_PATH + '/assets/img/hq-logo.jpeg';
+    const FALLBACK_AVATAR = ADMIN_BASE.replace(/\/$/, '') + '/assets/img/hq-logo.jpeg';
     
     console.log('PROFILE_MODAL ADMIN_BASE:', ADMIN_BASE);
     

@@ -162,8 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif ($avatar['size'] > $maxSize) {
                 $errors[] = "Avatar too large. Max 2MB allowed.";
             } else {
-                $uploadDir = __DIR__ . "/assets/avatars/";
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                $uploadDir = __DIR__ . "/../public/uploads/avatars/";
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
 
                 $ext = strtolower(pathinfo($avatar['name'], PATHINFO_EXTENSION));
                 $fileName = uniqid("avatar_") . "." . $ext;

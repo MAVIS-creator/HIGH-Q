@@ -663,6 +663,10 @@ function hq_admin_request_base_url(): ?string {
  * Prefer APP_URL from environment; otherwise derive from request so ngrok/local/prod and subfolders work.
  */
 function app_url(string $path = ''): string {
+    if ($path !== '' && (preg_match('#^[a-z][a-z0-9+.-]*:#i', $path) || strpos($path, '//') === 0)) {
+        return $path;
+    }
+
     $env = $_ENV['APP_URL'] ?? null;
     if (!empty($env)) {
         $base = rtrim($env, '/');
@@ -678,6 +682,10 @@ function app_url(string $path = ''): string {
  * Return the admin base URL (admin area lives alongside /public as /admin).
  */
 function admin_url(string $path = ''): string {
+    if ($path !== '' && (preg_match('#^[a-z][a-z0-9+.-]*:#i', $path) || strpos($path, '//') === 0)) {
+        return $path;
+    }
+
     $requestBase = hq_admin_request_base_url();
     if (!empty($requestBase)) {
         return $path === '' ? $requestBase : ($requestBase . '/' . ltrim($path, '/'));

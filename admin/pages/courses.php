@@ -307,11 +307,7 @@ if ($__hqStandalone) {
               <?php
                 // If icon is an absolute URL or starts with / -> use directly, else assume filename in public assets
                 $iconVal = $c['icon'];
-                if (preg_match('#^https?://#i', $iconVal) || strpos($iconVal, '/') === 0 || strpos($iconVal, '//') === 0) {
-                    $iconSrc = $iconVal;
-                } else {
-                    $iconSrc = '../public/assets/images/icons/' . ltrim($iconVal, '/');
-                }
+                $iconSrc = app_url('assets/images/icons/' . ltrim($iconVal, '/'));
               ?>
               <img src="<?= htmlspecialchars($iconSrc) ?>" alt="<?= htmlspecialchars($c['title']) ?>">
             <?php endif; ?>
@@ -473,7 +469,8 @@ if ($__hqStandalone) {
       if (ic.class && ic.class.indexOf('bx') !== -1) {
         preview = `<i class='${ic.class}' style='font-size:28px;color:#222'></i>`;
       } else {
-        preview = `<img src='../public/assets/images/icons/${ic.filename}' style='width:28px;height:28px;object-fit:contain'>`;
+        const appBase = (window.HQ_APP_BASE || '').replace(/\/$/, '');
+        preview = `<img src='${appBase}/assets/images/icons/${encodeURIComponent(ic.filename).replace(/%2F/g, "/")}' style='width:28px;height:28px;object-fit:contain'>`;
       }
       el.innerHTML = `${preview}<span style='font-size:0.95em;color:#444'>${ic.name}</span>`;
       el.title = ic.name;
@@ -634,7 +631,8 @@ function updateIconPreview() {
     iconPreview.innerHTML = `<i class="${escapeHtml(v)}" style="font-size:20px"></i>`;
   } else {
     // assume filename
-    iconPreview.innerHTML = `<img src="../public/assets/images/icons/${escapeHtml(v)}" style="width:28px;height:28px;object-fit:contain">`;
+    const appBase = (window.HQ_APP_BASE || '').replace(/\/$/, '');
+    iconPreview.innerHTML = `<img src="${appBase}/assets/images/icons/${escapeHtml(v)}" style="width:28px;height:28px;object-fit:contain">`;
   }
 }
 

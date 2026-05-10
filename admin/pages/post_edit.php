@@ -71,11 +71,7 @@ try {
       <?php if (!empty($post['featured_image'])): ?>
         <?php
           $fi = $post['featured_image'];
-          if (preg_match('#^https?://#i', $fi) || strpos($fi, '//') === 0 || strpos($fi, '/') === 0) {
-            $imgSrc = $fi;
-          } else {
-            $imgSrc = '../public/' . ltrim($fi, '/');
-          }
+          $imgSrc = app_url($fi);
         ?>
         <img src="<?= htmlspecialchars($imgSrc) ?>" class="thumb" id="existingThumb" style="margin-top:0.5rem;max-width:180px;border-radius:6px;">
       <?php endif; ?>

@@ -100,7 +100,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php foreach ($posts as $p): ?>
           <article class="post-card">
             <?php if (!empty($p['featured_image'] ?? '')): ?>
-              <img src="<?= htmlspecialchars($p['featured_image']) ?>" alt="" class="thumb">
+              <img src="<?= htmlspecialchars(app_url($p['featured_image'])) ?>" alt="" class="thumb">
             <?php endif; ?>
             <h3><a href="./post.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a></h3>
             <p class="muted"><?= htmlspecialchars($p['created_at']) ?></p>
