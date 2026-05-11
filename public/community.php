@@ -335,17 +335,32 @@ try {
     document.addEventListener('click', function(e) {
       var t = e.target.closest && e.target.closest('.reply-toggle');
       if (!t) return;
+      e.preventDefault();
       var id = t.getAttribute('data-id');
       var parent = t.getAttribute('data-parent') || '';
-      var form = document.querySelector('.forum-reply-form[data-qid="' + id + '"]');
+      var question = t.closest('.forum-question');
+      var form = question ? question.querySelector('.forum-reply-form[data-qid="' + id + '"]') : document.querySelector('.forum-reply-form[data-qid="' + id + '"]');
       if (!form) return;
+      document.querySelectorAll('.forum-reply-form.active').forEach(function(openForm) {
+        if (openForm !== form) {
+          openForm.classList.remove('active');
+          var openParent = openForm.querySelector('input[name="parent_id"]');
+          if (openParent) openParent.value = '';
+        }
+      });
       form.querySelector('input[name="parent_id"]').value = parent;
       var isHidden = !form.classList.contains('active');
       form.classList.toggle('active');
-      if (isHidden) form.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
+      if (isHidden) {
+        form.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        var textarea = form.querySelector('textarea[name="rcontent"]');
+        if (textarea) {
+          setTimeout(function() { textarea.focus(); }, 120);
+        }
+      }
     });
     // Expand/collapse replies
     document.addEventListener('click', function(e) {

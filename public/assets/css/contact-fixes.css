@@ -50,9 +50,16 @@
 @media (max-width: 768px) {
   /* FAQ card container should expand with content */
   .faq-card {
-    overflow: visible;
-    height: auto;
+    overflow: hidden !important;
+    height: auto !important;
+    min-height: 0 !important;
     transition: all 0.3s ease;
+  }
+
+  .faq-card.expanded {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
   /* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
@@ -127,6 +134,17 @@
     display: none !important;
     opacity: 0 !important;
     height: 0 !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .faq-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .faq-card {
+    height: auto !important;
+    min-height: 0 !important;
   }
 }
 

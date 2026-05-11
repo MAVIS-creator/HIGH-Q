@@ -50,6 +50,7 @@
           btn.addEventListener('click', function(){
             var expanded = btn.getAttribute('aria-expanded') === 'true';
             clamped.classList.toggle('faq-clamped--expanded', !expanded);
+            card.classList.toggle('expanded', !expanded);
             btn.classList.toggle('expanded', !expanded);
             btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
             clamped.style.maxHeight = expanded ? (maxH + 'px') : '';
@@ -61,6 +62,7 @@
             }
           });
         } else {
+          card.classList.remove('expanded');
           clamped.style.maxHeight = '';
           clamped.style.overflow = '';
           btn.style.display = 'none';

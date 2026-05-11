@@ -38,7 +38,7 @@ function hq_render_question_card(array $qq, array $replies, array $userQuestionV
                   </div>
                   <div class="post-body"><?= nl2br(htmlspecialchars($rep['content'])) ?></div>
                   <div class="post-actions" style="margin-top:4px;">
-                    <button class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>" data-parent="<?= $rep['id'] ?>"><i class='bx bx-reply'></i> Reply</button>
+                    <button type="button" class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>" data-parent="<?= $rep['id'] ?>"><i class='bx bx-reply'></i> Reply</button>
                   </div>
                 </div>
               </div>
@@ -73,8 +73,8 @@ function hq_render_question_card(array $qq, array $replies, array $userQuestionV
             <?= nl2br(htmlspecialchars($qq['content'])) ?>
           </div>
           <div class="post-actions">
-            <button class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>"><i class='bx bx-message-rounded-dots'></i>Reply (<?= (int)($qq['replies_count'] ?? 0) ?>)</button>
-            <button class="btn-lite" onclick="navigator.clipboard.writeText(location.origin+location.pathname+'#q<?= (int)$qq['id'] ?>'); this.innerHTML='<i class=\'bx bx-check\'></i>Copied'; setTimeout(()=>this.innerHTML='<i class=\'bx bx-link-alt\'></i>Share',1500)"><i class='bx bx-link-alt'></i>Share</button>
+            <button type="button" class="btn-lite reply-toggle" data-id="<?= $qq['id'] ?>"><i class='bx bx-message-rounded-dots'></i>Reply (<?= (int)($qq['replies_count'] ?? 0) ?>)</button>
+            <button type="button" class="btn-lite" onclick="navigator.clipboard.writeText(location.origin+location.pathname+'#q<?= (int)$qq['id'] ?>'); this.innerHTML='<i class=\'bx bx-check\'></i>Copied'; setTimeout(()=>this.innerHTML='<i class=\'bx bx-link-alt\'></i>Share',1500)"><i class='bx bx-link-alt'></i>Share</button>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ function hq_render_question_card(array $qq, array $replies, array $userQuestionV
         </div>
       <?php endif; ?>
 
-      <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>" style="display:none;">
+      <form method="post" class="forum-reply-form" data-qid="<?= $qq['id'] ?>">
         <input type="hidden" name="question_id" value="<?= $qq['id'] ?>">
         <input type="hidden" name="parent_id" value="">
         <div class="form-row">
