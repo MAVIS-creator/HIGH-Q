@@ -8,7 +8,70 @@ $pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educ
 
 <style>
   /* Mobile-only: center history logo and add small gap under it without affecting desktop */
+  .history-copy {
+    position: relative;
+    overflow: hidden;
+    max-height: 25rem;
+    transition: max-height 0.35s ease;
+  }
+
+  .history-copy::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5.5rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0), #ffffff 88%);
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .history-copy.is-expanded {
+    max-height: 120rem;
+  }
+
+  .history-copy.is-expanded::after,
+  .history-copy.is-static::after {
+    opacity: 0;
+    display: none;
+  }
+
+  .history-toggle {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 1rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--hq-yellow);
+    font-weight: 700;
+    font-size: 0.98rem;
+    cursor: pointer;
+  }
+
+  .history-toggle .less-text {
+    display: none;
+  }
+
+  .history-toggle.expanded .read-text {
+    display: none;
+  }
+
+  .history-toggle.expanded .less-text {
+    display: inline;
+  }
+
   @media (max-width: 767.98px) {
+    .history-copy {
+      max-height: 18rem;
+    }
+
+    .history-toggle {
+      font-size: 0.95rem;
+    }
+
     .history-logo {
       display: flex !important;
       justify-content: center !important; /* center horizontally */
@@ -40,15 +103,21 @@ $pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educ
     <div class="row align-items-start">
       <div class="col-12 col-md-8 order-2 order-md-1 history-content">
       <h3>History About High Q Solid Academy</h3>
-      <p>High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
+      <div class="history-copy" id="historyCopy">
+        <p>High Q tutorial founded in 2018/2019 by Mr. Adebule Quam Okikiola and Mr. Adebule Ibrahim has left an enduring legacy since its inception. Named after its visionary founders, the tutorial symbolizes a commitment to education empowerment that resonates within the community.</p>
 
-      <p>Following Mr. Ibrahim's departure for overseas opportunities, Mr. Adebule Quam assumed sole leadership, steering the tutorial toward remarkable success. Under Mr. Adebule Quam's guidance, High Q Tutorial has blossomed into a hub of academic excellence and technological proficiency.</p>
+        <p>Following Mr. Ibrahim's departure for overseas opportunities, Mr. Adebule Quam assumed sole leadership, steering the tutorial toward remarkable success. Under Mr. Adebule Quam's guidance, High Q Tutorial has blossomed into a hub of academic excellence and technological proficiency.</p>
 
-      <p>Beyond conventional tutorial work, it serves as a catalyst for holistic development. Through meticulous instruction, students have sharpened their academic prowess, achieving commendable results in examinations such as JAMB, WAEC, and NECO since 2018.</p>
+        <p>Beyond conventional tutorial work, it serves as a catalyst for holistic development. Through meticulous instruction, students have sharpened their academic prowess, achieving commendable results in examinations such as JAMB, WAEC, and NECO since 2018.</p>
 
-      <p>High Q Tutorial’s impact transcends the classroom, enriching lives and fostering digital literacy essential for navigating the complexities of the modern world. By equipping learners with practical skills in Microsoft Word, Excel, graphic design, and programming, the tutorial prepares students for both academic success and real-world challenges.</p>
+        <p>High Q Tutorial’s impact transcends the classroom, enriching lives and fostering digital literacy essential for navigating the complexities of the modern world. By equipping learners with practical skills in Microsoft Word, Excel, graphic design, and programming, the tutorial prepares students for both academic success and real-world challenges.</p>
 
-      <p>The tutorial’s unwavering dedication to educational enrichment has solidified its position as a cornerstone of the community.</p>
+        <p>The tutorial’s unwavering dedication to educational enrichment has solidified its position as a cornerstone of the community.</p>
+      </div>
+      <button type="button" class="history-toggle" id="historyToggle" aria-expanded="false">
+        <span class="read-text">Show more</span>
+        <span class="less-text">Show less</span>
+      </button>
       </div>
 
       <div class="col-12 col-md-4 order-1 order-md-2 history-logo d-flex justify-content-md-center justify-content-end">
@@ -59,6 +128,34 @@ $pageKeywords = 'about High Q Tutorial, exam coaching Nigeria, JAMB tutors, educ
     </div>
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var historyCopy = document.getElementById('historyCopy');
+  var historyToggle = document.getElementById('historyToggle');
+
+  if (!historyCopy || !historyToggle) {
+    return;
+  }
+
+  if (historyCopy.scrollHeight <= historyCopy.clientHeight + 8) {
+    historyCopy.classList.add('is-static');
+    return;
+  }
+
+  historyToggle.style.display = 'inline-flex';
+  historyToggle.addEventListener('click', function () {
+    var expanded = historyToggle.getAttribute('aria-expanded') === 'true';
+    historyCopy.classList.toggle('is-expanded', !expanded);
+    historyToggle.classList.toggle('expanded', !expanded);
+    historyToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+
+    if (expanded) {
+      historyCopy.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
 
 
 <!-- Vision & Mission -->

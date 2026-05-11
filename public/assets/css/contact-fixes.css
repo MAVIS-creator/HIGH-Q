@@ -70,7 +70,9 @@
 
   /* FAQ read-more/show-less button - mobile only */
   .faq-readmore {
-    display: inline-block !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
     margin-top: 8px;
     background: transparent;
     border: none;
@@ -84,6 +86,8 @@
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 214, 0, 0.2);
     font-size: 14px;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   .faq-readmore:active {

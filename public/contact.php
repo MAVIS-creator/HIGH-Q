@@ -613,29 +613,6 @@ document.addEventListener('DOMContentLoaded', function(){
 		try { if (base && base.slice(-1) === '/') base = base.slice(0, -1); } catch(e){}
 		location.href = (base ? (base + '/contact.php#livechat') : 'contact.php#livechat'); }); }
 
-	// FAQ read-more toggle for mobile view
-	try {
-		Array.from(document.querySelectorAll('.faq-readmore')).forEach(function(btn) {
-			btn.addEventListener('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				var card = this.closest('.faq-card');
-				if (!card) return;
-				var clamped = card.querySelector('.faq-clamped');
-				if (!clamped) return;
-				// Toggle expanded class on both clamped content and button
-				clamped.classList.toggle('faq-clamped--expanded');
-				this.classList.toggle('expanded');
-			}, { passive: false });
-			
-			// Also handle touch events for better mobile support
-			btn.addEventListener('touchend', function(e) {
-				e.preventDefault();
-				this.click();
-			}, { passive: false });
-		});
-	} catch(e) { console.warn('FAQ toggle error:', e); }
-
 });
 </script>
 

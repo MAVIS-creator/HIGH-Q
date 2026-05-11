@@ -8,24 +8,65 @@
   function initReadMore(){
     try{
       var clampLines = 4;
-      var cards = document.querySelectorAll('.faq-card p');
-      cards.forEach(function(p, idx){
-        if (p.nextElementSibling && p.nextElementSibling.classList && p.nextElementSibling.classList.contains('faq-readmore')) return;
-        var style = window.getComputedStyle(p);
+      var cards = document.querySelectorAll('.faq-card');
+      cards.forEach(function(card){
+        var clamped = card.querySelector('.faq-clamped');
+        if (!clamped) return;
+
+        var content = clamped.querySelector('p') || clamped;
+        var btn = card.querySelector('.faq-readmore');
+        var readText;
+        var lessText;
+        var createdButton = false;
+
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'faq-readmore';
+          btn.innerHTML = '<span class="read-text">Read more</span><span class="less-text">Show less</span>';
+          clamped.insertAdjacentElement('afterend', btn);
+          createdButton = true;
+        }
+
+        if (btn.dataset.hqFaqBound === '1') return;
+
+        readText = btn.querySelector('.read-text');
+        lessText = btn.querySelector('.less-text');
+        if (!readText || !lessText) {
+          btn.innerHTML = '<span class="read-text">Read more</span><span class="less-text">Show less</span>';
+        }
+
+        var style = window.getComputedStyle(content);
         var lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize)*1.2 || 16;
         var maxH = Math.round(lineHeight * clampLines);
-        if (p.scrollHeight > maxH + 2) {
-          p.classList.add('faq-clamped');
-          p.style.maxHeight = maxH + 'px';
-          p.style.overflow = 'hidden';
-          var btn = document.createElement('button');
-          btn.type = 'button'; btn.className = 'faq-readmore'; btn.setAttribute('aria-expanded','false'); btn.textContent = 'Read more';
+
+        if (content.scrollHeight > maxH + 2) {
+          clamped.style.maxHeight = maxH + 'px';
+          clamped.style.overflow = 'hidden';
+          btn.setAttribute('aria-expanded', 'false');
+          btn.classList.remove('expanded');
+          btn.dataset.hqFaqBound = '1';
+
           btn.addEventListener('click', function(){
             var expanded = btn.getAttribute('aria-expanded') === 'true';
-            if (!expanded) { p.style.maxHeight=''; p.classList.add('faq-clamped--expanded'); btn.setAttribute('aria-expanded','true'); btn.textContent='Show less'; setTimeout(function(){ p.scrollIntoView({behavior:'smooth', block:'nearest'}); },60); }
-            else { p.style.maxHeight = maxH + 'px'; p.classList.remove('faq-clamped--expanded'); btn.setAttribute('aria-expanded','false'); btn.textContent='Read more'; }
+            clamped.classList.toggle('faq-clamped--expanded', !expanded);
+            btn.classList.toggle('expanded', !expanded);
+            btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            clamped.style.maxHeight = expanded ? (maxH + 'px') : '';
+
+            if (!expanded) {
+              setTimeout(function(){
+                clamped.scrollIntoView({behavior:'smooth', block:'nearest'});
+              }, 60);
+            }
           });
-          p.insertAdjacentElement('afterend', btn);
+        } else {
+          clamped.style.maxHeight = '';
+          clamped.style.overflow = '';
+          btn.style.display = 'none';
+          if (createdButton) {
+            btn.setAttribute('hidden', 'hidden');
+          }
         }
       });
     }catch(e){console && console.error && console.error('readmore init failed', e);}  
