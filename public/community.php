@@ -213,7 +213,7 @@ try {
         .filters .btn { flex:0 0 auto; }
 
         .forum-reply-form { display:none; margin:10px 0 0 48px; border:1px solid #e2e8f0; border-radius:12px; padding:12px; background:#fff; }
-        .forum-reply-form.active { display:block; }
+        .forum-reply-form.active { display:block !important; }
         @media (max-width:1100px) { .community-grid { grid-template-columns:1fr; } .community-grid aside { order:-1; } .community-grid aside .card { position:relative; top:auto; } .forum-reply-form { margin-left:0; } }
         @media (max-width: 768px) {
           .forum-question { padding:12px; }

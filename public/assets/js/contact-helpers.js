@@ -7,69 +7,52 @@
   if (window.hq_contact_helpers_loaded) return; window.hq_contact_helpers_loaded = true;
   function initReadMore(){
     try{
-      var clampLines = 4;
       var cards = document.querySelectorAll('.faq-card');
       cards.forEach(function(card){
         var clamped = card.querySelector('.faq-clamped');
         if (!clamped) return;
-
-        var content = clamped.querySelector('p') || clamped;
         var btn = card.querySelector('.faq-readmore');
-        var readText;
-        var lessText;
-        var createdButton = false;
-
-        if (!btn) {
-          btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'faq-readmore';
-          btn.innerHTML = '<span class="read-text">Read more</span><span class="less-text">Show less</span>';
-          clamped.insertAdjacentElement('afterend', btn);
-          createdButton = true;
-        }
-
+        if (!btn) return;
         if (btn.dataset.hqFaqBound === '1') return;
 
-        readText = btn.querySelector('.read-text');
-        lessText = btn.querySelector('.less-text');
-        if (!readText || !lessText) {
-          btn.innerHTML = '<span class="read-text">Read more</span><span class="less-text">Show less</span>';
-        }
+        btn.dataset.hqFaqBound = '1';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.classList.remove('expanded');
+        card.classList.remove('expanded');
+        clamped.classList.remove('faq-clamped--expanded');
+        clamped.style.maxHeight = '6.4em';
+        clamped.style.overflow = 'hidden';
 
-        var style = window.getComputedStyle(content);
-        var lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize)*1.2 || 16;
-        var maxH = Math.round(lineHeight * clampLines);
-
-        if (content.scrollHeight > maxH + 2) {
-          clamped.style.maxHeight = maxH + 'px';
-          clamped.style.overflow = 'hidden';
-          btn.setAttribute('aria-expanded', 'false');
-          btn.classList.remove('expanded');
-          btn.dataset.hqFaqBound = '1';
-
-          btn.addEventListener('click', function(){
-            var expanded = btn.getAttribute('aria-expanded') === 'true';
-            clamped.classList.toggle('faq-clamped--expanded', !expanded);
-            card.classList.toggle('expanded', !expanded);
-            btn.classList.toggle('expanded', !expanded);
-            btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-            clamped.style.maxHeight = expanded ? (maxH + 'px') : '';
-
-            if (!expanded) {
-              setTimeout(function(){
-                clamped.scrollIntoView({behavior:'smooth', block:'nearest'});
-              }, 60);
-            }
-          });
-        } else {
-          card.classList.remove('expanded');
-          clamped.style.maxHeight = '';
-          clamped.style.overflow = '';
-          btn.style.display = 'none';
-          if (createdButton) {
-            btn.setAttribute('hidden', 'hidden');
+        requestAnimationFrame(function() {
+          var overflows = clamped.scrollHeight > clamped.clientHeight + 8;
+          if (!overflows) {
+            btn.style.display = 'none';
+            return;
           }
-        }
+          btn.style.display = '';
+        });
+
+        btn.addEventListener('click', function(){
+          var expanded = btn.getAttribute('aria-expanded') === 'true';
+          if (expanded) {
+            clamped.classList.remove('faq-clamped--expanded');
+            clamped.style.maxHeight = '6.4em';
+            clamped.style.overflow = 'hidden';
+            card.classList.remove('expanded');
+            btn.classList.remove('expanded');
+            btn.setAttribute('aria-expanded', 'false');
+          } else {
+            clamped.classList.add('faq-clamped--expanded');
+            clamped.style.maxHeight = clamped.scrollHeight + 'px';
+            clamped.style.overflow = 'visible';
+            card.classList.add('expanded');
+            btn.classList.add('expanded');
+            btn.setAttribute('aria-expanded', 'true');
+            setTimeout(function(){
+              clamped.scrollIntoView({behavior:'smooth', block:'nearest'});
+            }, 60);
+          }
+        });
       });
     }catch(e){console && console.error && console.error('readmore init failed', e);}  
   }

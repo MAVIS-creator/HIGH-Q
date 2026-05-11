@@ -252,8 +252,8 @@ include __DIR__ . '/includes/header.php';
 		<h2 class="section-title">Frequently Asked <span style="color:var(--hq-yellow);">Questions</span></h2>
 		<p class="lead">Find answers to common questions about our programs and services.</p>
 
-		<div class="faq-grid">
-			<div class="faq-card">
+		<div class="faq-grid contact-faq-grid">
+			<div class="faq-card contact-faq-card">
 				<h4>What programs do you offer?</h4>
 				<div class="faq-clamped">
 					<p>We offer comprehensive JAMB/Post-UTME preparation, WAEC/NECO preparation, digital skills training, CBT preparation, tutorial classes, and educational consultancy services.</p>
@@ -261,7 +261,7 @@ include __DIR__ . '/includes/header.php';
 				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
-			<div class="faq-card">
+			<div class="faq-card contact-faq-card">
 				<h4>How much do your programs cost?</h4>
 				<div class="faq-clamped">
 					<p>Program and tuition fees vary by track and duration. Academic prep (WAEC/NECO/JAMB) typically ranges ₦25,000-₦40,000 per cycle, while tech/digital skills and professional tracks are priced by module. Contact us for a full fee sheet or payment plans.</p>
@@ -274,8 +274,8 @@ include __DIR__ . '/includes/header.php';
 
 <section class="faq-section alt">
 	<div class="container">
-		<div class="faq-grid" style="margin-top:8px;">
-			<div class="faq-card">
+		<div class="faq-grid contact-faq-grid" style="margin-top:8px;">
+			<div class="faq-card contact-faq-card">
 				<h4>What is your success rate?</h4>
 				<div class="faq-clamped">
 					<p>We maintain a 99% pass rate in WAEC/NECO, a 95% JAMB/Post-UTME success rate, and a 75% placement rate for tech/digital skills graduates. Our top JAMB score was 305 and alumni study at LAUTECH and other leading universities.</p>
@@ -283,7 +283,7 @@ include __DIR__ . '/includes/header.php';
 				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
-			<div class="faq-card">
+			<div class="faq-card contact-faq-card">
 				<h4>Do you offer online classes?</h4>
 				<div class="faq-clamped">
 					<p>Yes, we offer both in-person and online classes to accommodate different learning preferences and schedules. Our CBT training is particularly effective online.</p>
@@ -291,7 +291,7 @@ include __DIR__ . '/includes/header.php';
 				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
-			<div class="faq-card">
+			<div class="faq-card contact-faq-card">
 				<h4>How can I register for a program?</h4>
 				<div class="faq-clamped">
 					<p>You can register by visiting our offices, calling 0807 208 8794, or filling out our online registration form. We also offer consultation to help you choose the right program.</p>
@@ -299,7 +299,7 @@ include __DIR__ . '/includes/header.php';
 				<button class="faq-readmore"><span class="read-text">Read more</span><span class="less-text">Show less</span></button>
 			</div>
 
-			<div class="faq-card">
+			<div class="faq-card contact-faq-card">
 				<h4>What makes High Q Academy different?</h4>
 				<div class="faq-clamped">
 					<p>Our experienced tutors, proven track record, personalized attention, and comprehensive approach to both academic and digital skills development set us apart.</p>

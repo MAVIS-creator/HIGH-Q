@@ -37,33 +37,56 @@
 }
 
 /* FAQ styles - Desktop: show full content, no buttons */
-.faq-clamped {
+.contact-faq-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.contact-faq-card {
+  flex: 1 1 calc(50% - 12px);
+  min-width: 280px;
+  align-self: flex-start;
+}
+
+.contact-faq-card .faq-clamped {
   max-height: none;
   overflow: visible;
 }
 
-.faq-readmore {
+.contact-faq-card .faq-readmore {
   display: none;
 }
 
 /* FAQ styles - Mobile only (768px and below) */
 @media (max-width: 768px) {
   /* FAQ card container should expand with content */
-  .faq-card {
-    overflow: hidden !important;
-    height: auto !important;
-    min-height: 0 !important;
-    transition: all 0.3s ease;
+  .contact-faq-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    align-items: start !important;
   }
 
-  .faq-card.expanded {
+  .contact-faq-card {
+    flex: 1 1 calc(50% - 6px) !important;
+    overflow: hidden !important;
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: start !important;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .contact-faq-card.expanded {
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
   }
 
   /* Lock pointer events for gradient overlays but allow the read-more button to be clickable */
-  .faq-clamped::after {
+  .contact-faq-card .faq-clamped::after {
     content: '';
     position: absolute;
     left: 0;
@@ -76,10 +99,12 @@
   }
 
   /* FAQ read-more/show-less button - mobile only */
-  .faq-readmore {
+  .contact-faq-card .faq-readmore {
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
+    align-self: flex-start !important;
+    flex: 0 0 auto !important;
     margin-top: 8px;
     background: transparent;
     border: none;
@@ -88,6 +113,8 @@
     cursor: pointer;
     pointer-events: auto;
     padding: 8px 12px;
+    height: 44px !important;
+    max-height: 44px !important;
     min-height: 44px;
     min-width: 44px;
     touch-action: manipulation;
@@ -97,40 +124,42 @@
     white-space: nowrap;
   }
 
-  .faq-readmore:active {
+  .contact-faq-card .faq-readmore:active {
     transform: scale(0.98);
   }
 
   /* Toggle button text - by default show "Read more", hide "Show less" */
-  .faq-readmore.faq-readmore .read-text {
+  .contact-faq-card .faq-readmore .read-text {
     display: inline !important;
   }
-  .faq-readmore.faq-readmore .less-text {
+  .contact-faq-card .faq-readmore .less-text {
     display: none !important;
   }
   
   /* When expanded - show "Show less", hide "Read more" */
-  .faq-readmore.expanded.expanded .read-text {
+  .contact-faq-card .faq-readmore.expanded .read-text {
     display: none !important;
   }
-  .faq-readmore.expanded.expanded .less-text {
+  .contact-faq-card .faq-readmore.expanded .less-text {
     display: inline !important;
   }
 
-  .faq-clamped {
-    overflow: hidden;
-    max-height: 80px; /* approx 3-4 lines */
+  .contact-faq-card .faq-clamped {
+    display: block !important;
+    height: 6.4em !important;
+    overflow: hidden !important;
     position: relative;
-    transition: max-height 0.4s ease-out;
+    transition: height 0.25s ease;
   }
 
   /* When expanded - content AND card grow together */
-  .faq-clamped--expanded {
-    max-height: 800px !important; /* Large enough for any content */
+  .contact-faq-card .faq-clamped--expanded {
+    display: block !important;
+    height: auto !important;
     overflow: visible !important;
   }
 
-  .faq-clamped--expanded::after {
+  .contact-faq-card .faq-clamped--expanded::after {
     display: none !important;
     opacity: 0 !important;
     height: 0 !important;
@@ -138,13 +167,16 @@
 }
 
 @media (max-width: 600px) {
-  .faq-grid {
-    grid-template-columns: 1fr !important;
+  .contact-faq-grid {
+    display: block !important;
   }
 
-  .faq-card {
+  .contact-faq-card {
+    min-width: 0 !important;
+    width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
+    margin-bottom: 12px;
   }
 }
 
