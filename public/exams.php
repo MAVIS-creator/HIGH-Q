@@ -19,3 +19,4 @@ require_once __DIR__ . '/includes/header.php';
 @keyframes pulse { 0% { transform: scale(1); opacity: 1 } 50% { transform: scale(1.6); opacity: .5 } 100% { transform: scale(1); opacity: 1 } }
 </style>
 <?php require_once __DIR__ . '/includes/footer.php';
+
