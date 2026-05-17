@@ -31,19 +31,20 @@ Stay inside these boundaries:
 - Prefer dedicated exam-prefixed tables
 - Return JSON for the exam frontend
 - Keep APIs under a dedicated exam namespace
+- Keep exam portal implementation artifacts inside `exam/` wherever practical
 
 Recommended API location:
-- `public/api/exam/`
+- `exam/api/`
 
 Recommended structure:
-- `public/api/exam/auth/`
-- `public/api/exam/student/`
-- `public/api/exam/exams/`
-- `public/api/exam/attempts/`
-- `public/api/exam/results/`
-- `public/api/exam/leaderboard/`
-- `public/api/exam/subscriptions/`
-- `public/api/exam/admin/`
+- `exam/api/auth/`
+- `exam/api/exams/`
+- `exam/api/attempts/`
+- `exam/api/results/`
+- `exam/api/leaderboard/`
+- `exam/api/subscriptions/`
+- `exam/api/admin/`
+- `exam/database/`
 
 ## 4. Recommended Database Plan
 
@@ -95,68 +96,68 @@ Do not force reuse of current public registration users unless a later integrati
 
 | Method | Route | Purpose |
 |---|---|---|
-| `POST` | `/public/api/exam/auth/register.php` | create exam student account |
-| `POST` | `/public/api/exam/auth/login.php` | login |
-| `POST` | `/public/api/exam/auth/logout.php` | logout |
-| `GET` | `/public/api/exam/auth/me.php` | current student session |
+| `POST` | `/exam/api/auth/register.php` | create exam student account |
+| `POST` | `/exam/api/auth/login.php` | login |
+| `POST` | `/exam/api/auth/logout.php` | logout |
+| `GET` | `/exam/api/auth/me.php` | current student session |
 
 ### Exams
 
 | Method | Route | Purpose |
 |---|---|---|
-| `GET` | `/public/api/exam/exams/index.php` | list available exams |
-| `GET` | `/public/api/exam/exams/show.php?id=` | single exam details |
-| `POST` | `/public/api/exam/exams/start.php` | create attempt |
+| `GET` | `/exam/api/exams/index.php` | list available exams |
+| `GET` | `/exam/api/exams/show.php?id=` | single exam details |
+| `POST` | `/exam/api/exams/start.php` | create attempt |
 
 ### Attempts
 
 | Method | Route | Purpose |
 |---|---|---|
-| `GET` | `/public/api/exam/attempts/questions.php?attempt_id=` | fetch questions for attempt |
-| `POST` | `/public/api/exam/attempts/save-answer.php` | save answer |
-| `POST` | `/public/api/exam/attempts/flag.php` | flag/unflag question |
-| `GET` | `/public/api/exam/attempts/status.php?attempt_id=` | timer/progress status |
-| `POST` | `/public/api/exam/attempts/submit.php` | submit exam |
+| `GET` | `/exam/api/attempts/questions.php?attempt_id=` | fetch questions for attempt |
+| `POST` | `/exam/api/attempts/save-answer.php` | save answer |
+| `POST` | `/exam/api/attempts/flag.php` | flag/unflag question |
+| `GET` | `/exam/api/attempts/status.php?attempt_id=` | timer/progress status |
+| `POST` | `/exam/api/attempts/submit.php` | submit exam |
 
 ### Results
 
 | Method | Route | Purpose |
 |---|---|---|
-| `GET` | `/public/api/exam/results/show.php?attempt_id=` | result summary |
-| `GET` | `/public/api/exam/results/review.php?attempt_id=` | review payload |
-| `GET` | `/public/api/exam/results/history.php` | student history |
+| `GET` | `/exam/api/results/show.php?attempt_id=` | result summary |
+| `GET` | `/exam/api/results/review.php?attempt_id=` | review payload |
+| `GET` | `/exam/api/results/history.php` | student history |
 
 ### Leaderboard
 
 | Method | Route | Purpose |
 |---|---|---|
-| `GET` | `/public/api/exam/leaderboard/index.php` | leaderboard list |
-| `GET` | `/public/api/exam/leaderboard/my-rank.php` | student rank |
+| `GET` | `/exam/api/leaderboard/index.php` | leaderboard list |
+| `GET` | `/exam/api/leaderboard/my-rank.php` | student rank |
 
 ### Subscriptions
 
 | Method | Route | Purpose |
 |---|---|---|
-| `GET` | `/public/api/exam/subscriptions/plans.php` | plan list |
-| `GET` | `/public/api/exam/subscriptions/current.php` | active plan |
-| `POST` | `/public/api/exam/subscriptions/subscribe.php` | start subscription |
-| `POST` | `/public/api/exam/subscriptions/verify.php` | verify payment status |
+| `GET` | `/exam/api/subscriptions/plans.php` | plan list |
+| `GET` | `/exam/api/subscriptions/current.php` | active plan |
+| `POST` | `/exam/api/subscriptions/subscribe.php` | start subscription |
+| `POST` | `/exam/api/subscriptions/verify.php` | verify payment status |
 
 ### Admin
 
 | Method | Route | Purpose |
 |---|---|---|
-| `POST` | `/public/api/exam/admin/login.php` | admin login |
-| `GET` | `/public/api/exam/admin/dashboard.php` | admin dashboard payload |
-| `GET` | `/public/api/exam/admin/exams.php` | list exams |
-| `POST` | `/public/api/exam/admin/exams-create.php` | create exam |
-| `POST` | `/public/api/exam/admin/exams-update.php` | update exam |
-| `POST` | `/public/api/exam/admin/questions-create.php` | create question |
-| `POST` | `/public/api/exam/admin/questions-update.php` | update question |
-| `GET` | `/public/api/exam/admin/students.php` | list students |
-| `GET` | `/public/api/exam/admin/results.php` | results analytics |
-| `GET` | `/public/api/exam/admin/settings.php` | settings payload |
-| `POST` | `/public/api/exam/admin/settings-update.php` | update settings |
+| `POST` | `/exam/api/admin/login.php` | admin login |
+| `GET` | `/exam/api/admin/dashboard.php` | admin dashboard payload |
+| `GET` | `/exam/api/admin/exams.php` | list exams |
+| `POST` | `/exam/api/admin/exams-create.php` | create exam |
+| `POST` | `/exam/api/admin/exams-update.php` | update exam |
+| `POST` | `/exam/api/admin/questions-create.php` | create question |
+| `POST` | `/exam/api/admin/questions-update.php` | update question |
+| `GET` | `/exam/api/admin/students.php` | list students |
+| `GET` | `/exam/api/admin/results.php` | results analytics |
+| `GET` | `/exam/api/admin/settings.php` | settings payload |
+| `POST` | `/exam/api/admin/settings-update.php` | update settings |
 
 ## 7. Response Shape Rules
 

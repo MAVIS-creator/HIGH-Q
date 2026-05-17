@@ -21,6 +21,7 @@ Establish the project foundation for the Exam Portal backend based strictly on t
 **Requirement:** Finalize exam schema, create migration plan, and seed approach.
 **Details:**
 - Create SQL migration scripts using strictly `exam_` prefixed tables.
+- Keep the exam portal schema artifact inside the `exam/` workspace so the whole workstream stays self-contained.
 - Ensure no conflicts with existing `HIGH-Q` site tables.
 
 **Schema Draft (Tables Needed):**
@@ -58,7 +59,7 @@ Establish the project foundation for the Exam Portal backend based strictly on t
 ## Task 3: API Contract & Route Map Definition
 **Requirement:** Define API contract draft and route map.
 **Details:**
-- **Namespace:** `public/api/exam/`
+- **Namespace:** `exam/api/`
 - **Response Format:**
   ```json
   {
@@ -72,34 +73,34 @@ Establish the project foundation for the Exam Portal backend based strictly on t
 **Route Map Draft:**
 *Note: Week 1 focuses on drafting these contracts and establishing the file structure. Logic implementation starts Week 2.*
 
-*   **Auth (`public/api/exam/auth/`)**
+*   **Auth (`exam/api/auth/`)**
     *   `POST /register.php`
     *   `POST /login.php`
     *   `POST /logout.php`
     *   `GET /me.php`
-*   **Exams (`public/api/exam/exams/`)**
+*   **Exams (`exam/api/exams/`)**
     *   `GET /index.php`
     *   `GET /show.php?id=`
     *   `POST /start.php`
-*   **Attempts (`public/api/exam/attempts/`)**
+*   **Attempts (`exam/api/attempts/`)**
     *   `GET /questions.php?attempt_id=`
     *   `POST /save-answer.php`
     *   `POST /flag.php`
     *   `GET /status.php?attempt_id=`
     *   `POST /submit.php`
-*   **Results (`public/api/exam/results/`)**
+*   **Results (`exam/api/results/`)**
     *   `GET /show.php?attempt_id=`
     *   `GET /review.php?attempt_id=`
     *   `GET /history.php`
-*   **Leaderboard (`public/api/exam/leaderboard/`)**
+*   **Leaderboard (`exam/api/leaderboard/`)**
     *   `GET /index.php`
     *   `GET /my-rank.php`
-*   **Subscriptions (`public/api/exam/subscriptions/`)**
+*   **Subscriptions (`exam/api/subscriptions/`)**
     *   `GET /plans.php`
     *   `GET /current.php`
     *   `POST /subscribe.php`
     *   `POST /verify.php`
-*   **Admin (`public/api/exam/admin/`)**
+*   **Admin (`exam/api/admin/`)**
     *   `POST /login.php`
     *   `GET /dashboard.php`
     *   `GET /exams.php`
@@ -119,6 +120,7 @@ Establish the project foundation for the Exam Portal backend based strictly on t
 - Frontend is auditing Stitch screens, creating page inventories, and setting up UI tokens.
 - Frontend is replacing static placeholders in `exam/` (naming plan only).
 - **Backend responsibility to Frontend for Week 1:** Provide this solid API contract (routes and JSON structure) so Frontend knows the target URLs for their UI components.
+- **Workspace rule:** New exam portal implementation should live inside `exam/` unless a file is explicitly acting as a bridge from the main site.
 
 ---
 
@@ -126,20 +128,20 @@ Establish the project foundation for the Exam Portal backend based strictly on t
 - [x] Documented Auth/Session Decision (Completed in Task 1).
 - [x] Drafted MySQL Schema with `exam_` prefix (Completed in Task 2).
 - [x] Documented API Contracts and Route Map (Completed in Task 3).
-- [x] Created the initial SQL migration/seed script file: `migrations/2026-05-12-exam-portal-schema.sql`
-- [x] Scaffolded the `public/api/exam/` directory structure matching the Route Map.
+- [x] Created the initial SQL migration/seed script file: `exam/database/2026-05-12-exam-portal-schema.sql`
+- [x] Scaffolded the `exam/api/` directory structure matching the Route Map.
 
 ## Week 1 Implementation Notes
 
 Artifacts created in the repo:
-- `migrations/2026-05-12-exam-portal-schema.sql`
-- `public/api/exam/_bootstrap.php`
-- `public/api/exam/auth/`
-- `public/api/exam/exams/`
-- `public/api/exam/attempts/`
-- `public/api/exam/results/`
-- `public/api/exam/leaderboard/`
-- `public/api/exam/subscriptions/`
-- `public/api/exam/admin/`
+- `exam/database/2026-05-12-exam-portal-schema.sql`
+- `exam/api/_bootstrap.php`
+- `exam/api/auth/`
+- `exam/api/exams/`
+- `exam/api/attempts/`
+- `exam/api/results/`
+- `exam/api/leaderboard/`
+- `exam/api/subscriptions/`
+- `exam/api/admin/`
 
-Week 1 backend status is now ready to hand to frontend as a stable route contract baseline.
+Week 1 backend status is now ready to hand to frontend as a stable route contract baseline, with `exam/` as the canonical working area for this portal.

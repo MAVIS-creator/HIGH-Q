@@ -18,6 +18,7 @@ Current repo facts:
 - Existing static exam prototype lives in [exam](C:/xampp/htdocs/HIGH-Q/exam)
 - New UI source-of-truth mockups live in [stitch_high_q_solid_exam_portal](C:/xampp/htdocs/HIGH-Q/stitch_high_q_solid_exam_portal)
 - Current exam prototype is localStorage-based and documented in [EXAM_SYSTEM_COMPREHENSIVE_OVERVIEW.md](C:/xampp/htdocs/HIGH-Q/EXAM_SYSTEM_COMPREHENSIVE_OVERVIEW.md)
+- New rule: the exam portal implementation itself should live inside `exam/` wherever practical
 
 ## 2. Delivery Outcome
 
@@ -67,11 +68,12 @@ These are important. They keep the work from drifting.
 Use the current repo shape instead of pretending this is a brand-new monorepo.
 
 ### Student-facing exam pages
-- `public/exams.php` = public site bridge page
+- `public/exams.php` = optional public bridge page only
 - `exam/` = actual exam portal UI surface
 
 ### Backend/API
-- `public/api/exam/` = new exam portal API endpoints
+- `exam/api/` = exam portal API endpoints
+- `exam/database/` = exam portal schema/migration artifacts
 - `config/` = shared DB/bootstrap usage where needed
 - `src/` = reusable PHP service classes if the backend dev wants cleaner structure
 
@@ -82,10 +84,11 @@ Use the current repo shape instead of pretending this is a brand-new monorepo.
 ## 5. Route Strategy
 
 To avoid navbar churn, keep this stable:
-- Navbar exam link continues to hit `public/exams.php`
+- Navbar exam link may continue to hit `public/exams.php` if you want a bridge from the main site
 
-Then `public/exams.php` should become the bridge into the exam portal:
+Then `public/exams.php` should only act as a bridge into the exam portal:
 - `public/exams.php` shows the stitched landing page or redirects into `exam/index.php`
+- New feature work should happen in `exam/`, not inside `public/`
 
 Recommended student routes:
 - `/public/exams.php`

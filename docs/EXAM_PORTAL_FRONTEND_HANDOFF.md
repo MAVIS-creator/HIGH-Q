@@ -8,6 +8,11 @@ Your job is to turn the Stitch screens into real routed pages inside the current
 
 You are not building a disconnected mockup. You are replacing the old static exam UI in [exam](C:/xampp/htdocs/HIGH-Q/exam) and wiring the public site exam entry from [public/exams.php](C:/xampp/htdocs/HIGH-Q/public/exams.php).
 
+Important workspace rule:
+- Build the actual exam portal inside `exam/`
+- Treat `public/exams.php` only as a bridge from the main site if needed
+- Do not spread new exam feature implementation across unrelated `public/` pages
+
 ## 2. Current State You Are Replacing
 
 Existing legacy pages:
