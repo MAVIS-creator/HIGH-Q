@@ -33,6 +33,12 @@ Stay inside these boundaries:
 - Keep APIs under a dedicated exam namespace
 - Keep exam portal implementation artifacts inside `exam/` wherever practical
 
+Implementation lock for backend:
+- Build new exam APIs under `exam/api/`
+- Keep exam schema and migration artifacts under `exam/database/`
+- Do not create new exam API work under `public/api/`
+- Only touch non-`exam/` PHP when you are intentionally reusing shared bootstrap/config code
+
 Recommended API location:
 - `exam/api/`
 

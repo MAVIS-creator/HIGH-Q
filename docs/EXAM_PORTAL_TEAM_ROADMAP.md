@@ -63,6 +63,15 @@ These are important. They keep the work from drifting.
 - Add extra features beyond the agreed week target
 - Break the current public site while building the exam portal
 
+### Workspace lock
+- Treat `exam/` as the exam portal workspace
+- New student pages belong in `exam/`
+- New exam admin pages belong in `exam/admin/`
+- New exam APIs belong in `exam/api/`
+- New exam schema/migration artifacts belong in `exam/database/`
+- `public/exams.php` is allowed only as a bridge into the portal
+- Anything outside `exam/` should be touched only when bridging into the portal or reusing shared infrastructure intentionally
+
 ## 4. Recommended Repo Working Boundaries
 
 Use the current repo shape instead of pretending this is a brand-new monorepo.
@@ -89,6 +98,11 @@ To avoid navbar churn, keep this stable:
 Then `public/exams.php` should only act as a bridge into the exam portal:
 - `public/exams.php` shows the stitched landing page or redirects into `exam/index.php`
 - New feature work should happen in `exam/`, not inside `public/`
+
+That means:
+- frontend implementation target = `exam/...`
+- backend implementation target = `exam/api/...`
+- schema artifact target = `exam/database/...`
 
 Recommended student routes:
 - `/public/exams.php`
