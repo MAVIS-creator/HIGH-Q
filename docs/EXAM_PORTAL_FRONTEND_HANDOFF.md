@@ -8,17 +8,6 @@ Your job is to turn the Stitch screens into real routed pages inside the current
 
 You are not building a disconnected mockup. You are replacing the old static exam UI in [exam](C:/xampp/htdocs/HIGH-Q/exam) and wiring the public site exam entry from [public/exams.php](C:/xampp/htdocs/HIGH-Q/public/exams.php).
 
-Important workspace rule:
-- Build the actual exam portal inside `exam/`
-- Treat `public/exams.php` only as a bridge from the main site if needed
-- Do not spread new exam feature implementation across unrelated `public/` pages
-
-Implementation lock for frontend:
-- Your owned page work should live in `exam/` and `exam/admin/`
-- Do not create new exam feature pages under `public/`
-- Do not redesign unrelated main-site pages as part of this task
-- Only touch `public/exams.php` if you are wiring or polishing the bridge into `exam/`
-
 ## 2. Current State You Are Replacing
 
 Existing legacy pages:
@@ -34,9 +23,8 @@ The public nav currently points to:
 - link target: `app_url('exams.php')`
 
 So your first route rule is:
-- keep `public/exams.php` as a simple public entry bridge only
+- keep `public/exams.php` as the public entry point
 - make it lead cleanly into the exam portal
-- do the real page implementation work in `exam/`
 
 ## 3. Frontend Route Map
 
@@ -44,8 +32,8 @@ So your first route rule is:
 
 | Current/Target | Purpose | Stitch source |
 |---|---|---|
-| `public/exams.php` | optional bridge from main site only | `exam_landing_page` |
-| `exam/index.php` | real exam portal landing | `exam_landing_page` |
+| `public/exams.php` | main site entry into exam portal | `exam_landing_page` |
+| `exam/index.php` | standalone exam portal landing | `exam_landing_page` |
 
 ### Student routes
 
